@@ -115,7 +115,7 @@ var MenuItemMapper = /** @class */ (function () {
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.RowGroupingModule, 'Copy from Menu')) {
+                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy from Menu')) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -127,7 +127,7 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -139,7 +139,7 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'paste':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),

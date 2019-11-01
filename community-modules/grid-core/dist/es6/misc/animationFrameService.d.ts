@@ -1,7 +1,6 @@
 // Type definitions for @ag-community/grid-core v22.0.0-beta.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridPanel } from "../gridPanel/gridPanel";
 export declare class AnimationFrameService {
     private gridOptionsWrapper;
     private eventService;
@@ -12,13 +11,12 @@ export declare class AnimationFrameService {
     private useAnimationFrame;
     private scrollGoingDown;
     private lastScrollTop;
-    private gridPanel;
     setScrollTop(scrollTop: number): void;
-    registerGridComp(gridPanel: GridPanel): void;
     private init;
     private verifyAnimationFrameOn;
-    addCreateP1Task(task: () => void, index: number): void;
-    addCreateP2Task(task: () => void, index: number): void;
+    createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2'): void;
+    private addTaskToList;
+    private sortTaskList;
     addDestroyTask(task: () => void): void;
     private executeFrame;
     private stopTicking;

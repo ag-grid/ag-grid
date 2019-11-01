@@ -26,12 +26,14 @@ export declare class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_KEY;
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
+    private static supports;
     /**
      * If the key was passed before, then doesn't execute the func
      * @param {Function} func
      * @param {string} key
      */
     static doOnce(func: () => void, key: string): void;
+    static isEventSupported: (eventName: any) => boolean;
     /**
      * Checks if event was issued by a left click
      * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press

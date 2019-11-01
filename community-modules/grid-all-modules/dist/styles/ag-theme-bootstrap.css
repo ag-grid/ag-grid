@@ -837,7 +837,10 @@
   .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
     padding-left: 2px; }
   .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
-    margin: 4px 2px 4px 0; }
+    margin-top: 4px;
+    margin-right: 2px;
+    margin-bottom: 4px;
+    margin-left: 0; }
   .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
   .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
     padding-left: 1rem; }
@@ -1600,37 +1603,40 @@
       border-right: 0; }
     .ag-theme-bootstrap .ag-rtl .ag-side-bar.full-width .ag-panel-container {
       border-left: 0; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
-    padding-right: 2px; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
-    margin: 4px 0 4px 2px; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
-    padding-right: 1rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-2 .ag-group-component-title-bar,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-2 .ag-group-component-title-bar {
-    padding-right: 1rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-2 .ag-filter-toolpanel-header,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-2 .ag-filter-toolpanel-header {
-    padding-right: 2rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-3 .ag-group-component-title-bar,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-3 .ag-group-component-title-bar {
-    padding-right: 2rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-3 .ag-filter-toolpanel-header,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-3 .ag-filter-toolpanel-header {
-    padding-right: 3rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-4 .ag-group-component-title-bar,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-4 .ag-group-component-title-bar {
-    padding-right: 3rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-4 .ag-filter-toolpanel-header,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-4 .ag-filter-toolpanel-header {
-    padding-right: 4rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-5 .ag-group-component-title-bar,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-5 .ag-group-component-title-bar {
-    padding-right: 4rem; }
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-5 .ag-filter-toolpanel-header,
-  .ag-theme-bootstrap .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-5 .ag-filter-toolpanel-header {
-    padding-right: 5rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
+      padding-right: 2px; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {
+      margin-top: 4px;
+      margin-bottom: 4px;
+      margin-right: 0;
+      margin-left: 2px; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-1 .ag-filter-toolpanel-header,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-1 .ag-filter-toolpanel-header {
+      padding-right: 1rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-2 .ag-group-component-title-bar,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-2 .ag-group-component-title-bar {
+      padding-right: 1rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-2 .ag-filter-toolpanel-header,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-2 .ag-filter-toolpanel-header {
+      padding-right: 2rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-3 .ag-group-component-title-bar,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-3 .ag-group-component-title-bar {
+      padding-right: 2rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-3 .ag-filter-toolpanel-header,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-3 .ag-filter-toolpanel-header {
+      padding-right: 3rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-4 .ag-group-component-title-bar,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-4 .ag-group-component-title-bar {
+      padding-right: 3rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-4 .ag-filter-toolpanel-header,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-4 .ag-filter-toolpanel-header {
+      padding-right: 4rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-5 .ag-group-component-title-bar,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-5 .ag-group-component-title-bar {
+      padding-right: 4rem; }
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item:not(.ag-filter-toolpanel-instance).ag-level-5 .ag-filter-toolpanel-header,
+    .ag-theme-bootstrap .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item > .ag-group-component.ag-level-5 .ag-filter-toolpanel-header {
+      padding-right: 5rem; }
   .ag-theme-bootstrap .sass-variables::after {
     content: '{ "autoSizePadding": "12px", "headerHeight": "25px", "groupPaddingSize": "24px", "footerPaddingAddition": "16px", "virtualItemHeight": "20px", "aggFuncPopupHeight": "70px", "checkboxIndentWidth": "16px", "leafNodePadding": "12px", "rowHeight": "25px", "gridSize": "4px", "iconSize": "12px" }';
     display: none; }

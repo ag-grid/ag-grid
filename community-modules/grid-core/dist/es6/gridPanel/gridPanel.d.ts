@@ -67,7 +67,6 @@ export declare class GridPanel extends Component {
     private eAllCellContainers;
     private scrollLeft;
     private scrollTop;
-    private nextScrollTop;
     private lastHorizontalScrollElement;
     private readonly resetLastHorizontalScrollElementDebounce;
     private bodyHeight;
@@ -157,7 +156,6 @@ export declare class GridPanel extends Component {
     scrollVertically(pixels: number): number;
     private addScrollListener;
     private onVerticalScroll;
-    executeFrame(): boolean;
     private isControllingScroll;
     private onFakeHorizontalScroll;
     private onCenterViewportScroll;

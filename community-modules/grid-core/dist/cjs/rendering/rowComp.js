@@ -195,7 +195,7 @@ var RowComp = /** @class */ (function (_super) {
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
             if (useAnimationsFrameForCreate) {
-                _this.beans.taskQueue.addCreateP1Task(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex);
+                _this.beans.taskQueue.createTask(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex, 'createTasksP1');
             }
             else {
                 _this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
@@ -476,7 +476,7 @@ var RowComp = /** @class */ (function (_super) {
             if (this.columnRefreshPending) {
                 return;
             }
-            this.beans.taskQueue.addCreateP1Task(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex, 'createTasksP1');
         }
     };
     RowComp.prototype.refreshCellsInAnimationFrame = function () {
@@ -1066,7 +1066,7 @@ var RowComp = /** @class */ (function (_super) {
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
-            this.beans.taskQueue.addCreateP2Task(this.addHoverFunctionality.bind(this, eRow), this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(this.addHoverFunctionality.bind(this, eRow), this.rowNode.rowIndex, 'createTasksP2');
         }
         else {
             this.addHoverFunctionality(eRow);

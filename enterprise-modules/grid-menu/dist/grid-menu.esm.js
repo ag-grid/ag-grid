@@ -2447,6 +2447,33 @@ var Utils = /** @class */ (function () {
     Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
     Utils.doOnceFlags = {};
+    Utils.supports = {};
+    Utils.isEventSupported = (function () {
+        var tags = {
+            select: 'input',
+            change: 'input',
+            submit: 'form',
+            reset: 'form',
+            error: 'img',
+            load: 'img',
+            abort: 'img'
+        };
+        var isEventSupported = function (eventName) {
+            if (typeof Utils.supports[eventName] === 'boolean') {
+                return Utils.supports[eventName];
+            }
+            var el = document.createElement(tags[eventName] || 'div');
+            eventName = 'on' + eventName;
+            var isSupported = (eventName in el);
+            if (!isSupported) {
+                el.setAttribute(eventName, 'return;');
+                isSupported = typeof el[eventName] == 'function';
+            }
+            el = null;
+            return Utils.supports[eventName] = isSupported;
+        };
+        return isEventSupported;
+    })();
     Utils.areEqual = function (a, b) {
         return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
     };
@@ -16873,7 +16900,7 @@ var CellComp = /** @class */ (function (_super) {
             }
         };
         if (useTaskService) {
-            this.beans.taskQueue.addCreateP2Task(task, this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(task, this.rowNode.rowIndex, 'createTasksP2');
         }
         else {
             task();
@@ -17459,7 +17486,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
-        if (!_.isIOSUserAgent()) {
+        if (_.isIOSUserAgent() && !_.isEventSupported('dblclick')) {
             return false;
         }
         var nowMillis = new Date().getTime();
@@ -17844,6 +17871,11 @@ var CellComp = /** @class */ (function (_super) {
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
+            // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
+            // IE can fail to focus the cell after the first call to focus(), and needs a second call
+            if (!document.activeElement || document.activeElement === document.body) {
+                this.getGui().focus();
+            }
         }
         // if another cell was focused, and we are editing, then stop editing
         var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
@@ -18132,7 +18164,7 @@ var RowComp = /** @class */ (function (_super) {
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow);
             if (useAnimationsFrameForCreate) {
-                _this.beans.taskQueue.addCreateP1Task(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex);
+                _this.beans.taskQueue.createTask(_this.lazyCreateCells.bind(_this, cols, eRow), _this.rowNode.rowIndex, 'createTasksP1');
             }
             else {
                 _this.callAfterRowAttachedOnCells(cellTemplatesAndComps.cellComps, eRow);
@@ -18413,7 +18445,7 @@ var RowComp = /** @class */ (function (_super) {
             if (this.columnRefreshPending) {
                 return;
             }
-            this.beans.taskQueue.addCreateP1Task(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(this.refreshCellsInAnimationFrame.bind(this), this.rowNode.rowIndex, 'createTasksP1');
         }
     };
     RowComp.prototype.refreshCellsInAnimationFrame = function () {
@@ -19003,7 +19035,7 @@ var RowComp = /** @class */ (function (_super) {
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
-            this.beans.taskQueue.addCreateP2Task(this.addHoverFunctionality.bind(this, eRow), this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(this.addHoverFunctionality.bind(this, eRow), this.rowNode.rowIndex, 'createTasksP2');
         }
         else {
             this.addHoverFunctionality(eRow);
@@ -24615,7 +24647,6 @@ var GridPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, GRID_PANEL_NORMAL_TEMPLATE) || this;
         _this.scrollLeft = -1;
         _this.scrollTop = -1;
-        _this.nextScrollTop = -1;
         _this.resetLastHorizontalScrollElementDebounce = _.debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
         return _this;
     }
@@ -24693,7 +24724,6 @@ var GridPanel = /** @class */ (function (_super) {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
@@ -25585,21 +25615,8 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.onVerticalScroll = function () {
         var scrollTop = this.eBodyViewport.scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
-        this.nextScrollTop = scrollTop;
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-            this.redrawRowsAfterScroll();
-        }
-        else {
-            this.animationFrameService.schedule();
-        }
-    };
-    GridPanel.prototype.executeFrame = function () {
-        var frameNeeded = this.scrollTop !== this.nextScrollTop;
-        if (frameNeeded) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        }
-        return frameNeeded;
+        this.scrollTop = scrollTop;
+        this.redrawRowsAfterScroll();
     };
     GridPanel.prototype.isControllingScroll = function (eDiv) {
         if (!this.lastHorizontalScrollElement) {
@@ -30896,8 +30913,8 @@ var AnimationFrameService = /** @class */ (function () {
         // p1 and p2 are create tasks are to do with row and cell creation.
         // for them we want to execute according to row order, so we use
         // TaskItem so we know what index the item is for.
-        this.createTasksP1 = []; // eg drawing back-ground of rows
-        this.createTasksP2 = []; // eg cell renderers, adding hover functionality
+        this.createTasksP1 = { list: [], sorted: false }; // eg drawing back-ground of rows
+        this.createTasksP2 = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
         // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
         // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
         // important.
@@ -30912,9 +30929,6 @@ var AnimationFrameService = /** @class */ (function () {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
     };
-    AnimationFrameService.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-    };
     AnimationFrameService.prototype.init = function () {
         this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
     };
@@ -30927,74 +30941,62 @@ var AnimationFrameService = /** @class */ (function () {
             console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
         }
     };
-    AnimationFrameService.prototype.addCreateP1Task = function (task, index) {
-        this.verifyAnimationFrameOn('addP1Task');
+    AnimationFrameService.prototype.createTask = function (task, index, list) {
+        this.verifyAnimationFrameOn(list);
         var taskItem = { task: task, index: index };
-        this.createTasksP1.push(taskItem);
+        this.addTaskToList(this[list], taskItem);
         this.schedule();
     };
-    AnimationFrameService.prototype.addCreateP2Task = function (task, index) {
-        this.verifyAnimationFrameOn('addP2Task');
-        var taskItem = { task: task, index: index };
-        this.createTasksP2.push(taskItem);
-        this.schedule();
+    AnimationFrameService.prototype.addTaskToList = function (taskList, task) {
+        taskList.list.push(task);
+        taskList.sorted = false;
+    };
+    AnimationFrameService.prototype.sortTaskList = function (taskList) {
+        if (taskList.sorted) {
+            return;
+        }
+        var ascSortFunc = function (a, b) { return b.index - a.index; };
+        var descSortFunc = function (a, b) { return a.index - b.index; };
+        taskList.list.sort(this.scrollGoingDown ? ascSortFunc : descSortFunc);
+        taskList.sorted = true;
     };
     AnimationFrameService.prototype.addDestroyTask = function (task) {
-        this.verifyAnimationFrameOn('addP3Task');
+        this.verifyAnimationFrameOn('createTasksP3');
         this.destroyTasks.push(task);
         this.schedule();
     };
     AnimationFrameService.prototype.executeFrame = function (millis) {
         this.verifyAnimationFrameOn('executeFrame');
-        // create a copy of p1Tasks, so that when addP1Task is called,
-        // the new task is held until next frame so that it can be
-        // sorted and executed in the right order. we don't do this for p2
-        // tasks as p2 tasks are not ordered.
-        var createP1TasksThisFrame = this.createTasksP1;
-        var createP2TasksThisFrame = this.createTasksP2;
-        var destroyTasksThisFrame = this.destroyTasks;
-        this.createTasksP1 = [];
-        this.createTasksP2 = [];
-        this.destroyTasks = [];
-        if (this.scrollGoingDown) {
-            var ascSortFunc = function (a, b) { return b.index - a.index; };
-            createP1TasksThisFrame.sort(ascSortFunc);
-            createP2TasksThisFrame.sort(ascSortFunc);
-        }
-        else {
-            var descSortFunc = function (a, b) { return a.index - b.index; };
-            createP1TasksThisFrame.sort(descSortFunc);
-            createP2TasksThisFrame.sort(descSortFunc);
-        }
+        var p1TaskList = this.createTasksP1;
+        var p1Tasks = p1TaskList.list;
+        var p2TaskList = this.createTasksP2;
+        var p2Tasks = p2TaskList.list;
+        var destroyTasks = this.destroyTasks;
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
         // 16ms is 60 fps
         var noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
-            var gridPanelUpdated = this.gridPanel.executeFrame();
-            if (!gridPanelUpdated) {
-                if (createP1TasksThisFrame.length > 0) {
-                    var taskItem = createP1TasksThisFrame.pop();
-                    taskItem.task();
-                }
-                else if (createP2TasksThisFrame.length > 0) {
-                    var taskItem = createP2TasksThisFrame.pop();
-                    taskItem.task();
-                }
-                else if (destroyTasksThisFrame.length > 0) {
-                    var task = destroyTasksThisFrame.pop();
-                    task();
-                }
-                else {
-                    break;
-                }
+            if (p1Tasks.length) {
+                this.sortTaskList(p1TaskList);
+                var taskItem = p1Tasks.pop();
+                taskItem.task();
+            }
+            else if (p2Tasks.length) {
+                this.sortTaskList(p2TaskList);
+                var taskItem = p2Tasks.pop();
+                taskItem.task();
+            }
+            else if (destroyTasks.length) {
+                var task = destroyTasks.pop();
+                task();
+            }
+            else {
+                break;
             }
             duration = (new Date().getTime()) - frameStart;
         }
-        this.createTasksP1 = createP1TasksThisFrame.concat(this.createTasksP1);
-        this.createTasksP2 = createP2TasksThisFrame.concat(this.createTasksP2);
-        this.destroyTasks = destroyTasksThisFrame.concat(this.destroyTasks);
-        if (this.createTasksP1.length > 0 || this.createTasksP2.length > 0 || this.destroyTasks.length > 0) {
+        if (p1Tasks.length || p2Tasks.length || destroyTasks.length) {
             this.requestFrame();
         }
         else {
@@ -36985,7 +36987,7 @@ var MenuItemMapper = /** @class */ (function () {
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -36997,7 +36999,7 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -37009,7 +37011,7 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'paste':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),

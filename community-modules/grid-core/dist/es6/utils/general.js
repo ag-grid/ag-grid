@@ -1963,6 +1963,33 @@ var Utils = /** @class */ (function () {
     Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
     Utils.doOnceFlags = {};
+    Utils.supports = {};
+    Utils.isEventSupported = (function () {
+        var tags = {
+            select: 'input',
+            change: 'input',
+            submit: 'form',
+            reset: 'form',
+            error: 'img',
+            load: 'img',
+            abort: 'img'
+        };
+        var isEventSupported = function (eventName) {
+            if (typeof Utils.supports[eventName] === 'boolean') {
+                return Utils.supports[eventName];
+            }
+            var el = document.createElement(tags[eventName] || 'div');
+            eventName = 'on' + eventName;
+            var isSupported = (eventName in el);
+            if (!isSupported) {
+                el.setAttribute(eventName, 'return;');
+                isSupported = typeof el[eventName] == 'function';
+            }
+            el = null;
+            return Utils.supports[eventName] = isSupported;
+        };
+        return isEventSupported;
+    })();
     Utils.areEqual = function (a, b) {
         return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
     };

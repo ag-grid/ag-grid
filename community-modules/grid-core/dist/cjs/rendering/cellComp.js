@@ -682,7 +682,7 @@ var CellComp = /** @class */ (function (_super) {
             }
         };
         if (useTaskService) {
-            this.beans.taskQueue.addCreateP2Task(task, this.rowNode.rowIndex);
+            this.beans.taskQueue.createTask(task, this.rowNode.rowIndex, 'createTasksP2');
         }
         else {
             task();
@@ -1268,7 +1268,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
-        if (!utils_1._.isIOSUserAgent()) {
+        if (utils_1._.isIOSUserAgent() && !utils_1._.isEventSupported('dblclick')) {
             return false;
         }
         var nowMillis = new Date().getTime();
@@ -1653,6 +1653,11 @@ var CellComp = /** @class */ (function (_super) {
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
             this.getGui().focus();
+            // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
+            // IE can fail to focus the cell after the first call to focus(), and needs a second call
+            if (!document.activeElement || document.activeElement === document.body) {
+                this.getGui().focus();
+            }
         }
         // if another cell was focused, and we are editing, then stop editing
         var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();

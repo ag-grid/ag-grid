@@ -48,7 +48,6 @@ var GridPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, GRID_PANEL_NORMAL_TEMPLATE) || this;
         _this.scrollLeft = -1;
         _this.scrollTop = -1;
-        _this.nextScrollTop = -1;
         _this.resetLastHorizontalScrollElementDebounce = utils_1._.debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
         return _this;
     }
@@ -126,7 +125,6 @@ var GridPanel = /** @class */ (function (_super) {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
         }
@@ -1021,21 +1019,8 @@ var GridPanel = /** @class */ (function (_super) {
     GridPanel.prototype.onVerticalScroll = function () {
         var scrollTop = this.eBodyViewport.scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
-        this.nextScrollTop = scrollTop;
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-            this.redrawRowsAfterScroll();
-        }
-        else {
-            this.animationFrameService.schedule();
-        }
-    };
-    GridPanel.prototype.executeFrame = function () {
-        var frameNeeded = this.scrollTop !== this.nextScrollTop;
-        if (frameNeeded) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        }
-        return frameNeeded;
+        this.scrollTop = scrollTop;
+        this.redrawRowsAfterScroll();
     };
     GridPanel.prototype.isControllingScroll = function (eDiv) {
         if (!this.lastHorizontalScrollElement) {
