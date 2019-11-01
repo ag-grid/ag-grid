@@ -110,9 +110,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 width: 3,
             },
             marker: {
+                type: 'circle',
                 enabled: true,
-                size: isBubble ? 15 : 3,
-                minSize: isBubble ? 3 : undefined,
+                size: isBubble ? 30 : 6,
+                minSize: isBubble ? 6 : undefined,
                 strokeWidth: 1,
             },
             tooltip: {

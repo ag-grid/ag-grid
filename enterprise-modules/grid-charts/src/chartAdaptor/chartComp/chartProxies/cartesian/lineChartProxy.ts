@@ -102,7 +102,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             marker: {
                 type: 'circle',
                 enabled: true,
-                size: 3,
+                size: 6,
                 strokeWidth: 1,
             },
             tooltip: {
