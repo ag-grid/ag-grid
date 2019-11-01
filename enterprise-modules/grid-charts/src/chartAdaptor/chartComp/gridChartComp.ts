@@ -84,7 +84,7 @@ export class GridChartComp extends Component {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
             aggFunc: this.params.aggFunc,
-            cellRanges: [this.params.cellRange],
+            cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
@@ -245,7 +245,9 @@ export class GridChartComp extends Component {
         const data = model.getData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
-        if (chartEmpty) { return; }
+        if (chartEmpty) { 
+            return; 
+        }
 
         const selectedDimension = model.getSelectedDimension();
         const chartUpdateParams: UpdateChartParams = {

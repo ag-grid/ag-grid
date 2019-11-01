@@ -50,13 +50,13 @@ export class ChartDataPanel extends Component {
 
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
-            [ ...dimensionCols, ...valueCols ].forEach(col => {
+            [...dimensionCols, ...valueCols].forEach(col => {
                 this.columnComps.get(col.colId)!.setValue(col.selected, true);
             });
 
             if (this.chartController.isActiveXYChart()) {
                 const getSeriesLabel = this.generateGetSeriesLabel();
-                
+
                 valueCols.forEach(col => {
                     this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
                 });
@@ -78,7 +78,7 @@ export class ChartDataPanel extends Component {
     private addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
         this.addDestroyableEventListener(component, AgAbstractField.EVENT_CHANGED, () => {
             columnState.selected = component.getValue();
-            this.chartController.updateForMenuChange(columnState);
+            this.chartController.updateForPanelChange(columnState);
         });
     }
 
@@ -94,7 +94,7 @@ export class ChartDataPanel extends Component {
 
         columns.forEach(col => {
             const comp = this.categoriesGroupComp!.wireDependentBean(new AgRadioButton());
-            
+
             comp.setLabel(_.escape(col.displayName)!);
             comp.setValue(col.selected);
             comp.setInputName(inputName);
@@ -119,7 +119,7 @@ export class ChartDataPanel extends Component {
 
         columns.forEach(col => {
             const comp = this.seriesGroupComp!.wireDependentBean(new AgCheckbox());
-            
+
             comp.setLabel(getSeriesLabel(col));
             comp.setValue(col.selected);
 
@@ -147,7 +147,7 @@ export class ChartDataPanel extends Component {
             }
 
             activeSeriesCount++;
-            
+
             let axisLabel;
 
             if (activeSeriesCount === 1) {

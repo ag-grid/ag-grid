@@ -27,7 +27,7 @@ export interface ChartModelParams {
     pivotChart: boolean;
     chartType: ChartType;
     aggFunc?: string | IAggFunc;
-    cellRanges: CellRange[];
+    cellRange: CellRange;
     suppressChartRanges: boolean;
 }
 
@@ -40,9 +40,9 @@ export class ChartModel extends BeanStub {
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
-    // model state
-    private cellRanges: CellRange[];
     private referenceCellRange: CellRange;
+    private dimensionCellRange?: CellRange;
+    private valueCellRange?: CellRange;
     private dimensionColState: ColState[] = [];
     private valueColState: ColState[] = [];
     private chartData: any[];
@@ -52,8 +52,6 @@ export class ChartModel extends BeanStub {
     private readonly suppressChartRanges: boolean;
 
     private readonly aggFunc?: string | IAggFunc;
-
-    private initialising = true;
 
     private datasource: ChartDatasource;
 
@@ -68,7 +66,7 @@ export class ChartModel extends BeanStub {
         this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
         this.aggFunc = params.aggFunc;
-        this.cellRanges = params.cellRanges;
+        this.referenceCellRange = params.cellRange;
         this.suppressChartRanges = params.suppressChartRanges;
 
         // this is used to associate chart ranges with charts
@@ -79,143 +77,29 @@ export class ChartModel extends BeanStub {
     private init(): void {
         this.datasource = this.wireBean(new ChartDatasource());
 
-        // use first range as a reference range to be used after removing all cols (via menu) so we can re-add later
-        this.referenceCellRange = this.cellRanges[0];
+        this.updateCellRanges();
     }
 
-    public updateData(): void {
-        const { startRow, endRow } = this.getRowIndexes();
-        const selectedDimension = this.getSelectedDimension();
-        const selectedValueCols = this.getSelectedValueCols();
+    public updateCellRanges(updatedColState?: ColState): void {
+        if (this.valueCellRange) {
+            this.referenceCellRange = this.valueCellRange;
+        }
 
-        this.grouping = this.isGrouping();
-
-        const params: ChartDatasourceParams = {
-            aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
-            grouping: this.grouping,
-            pivoting: this.isPivotActive(),
-            multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
-            startRow,
-            endRow
-        };
-
-        const result = this.datasource.getData(params);
-
-        this.chartData = result.data;
-        this.columnNames = result.columnNames;
-    }
-
-    public resetColumnState(): void {
         const { dimensionCols, valueCols } = this.getAllChartColumns();
-        const allCols = this.pivotChart ? this.columnController.getAllDisplayedColumns() : this.getAllColumnsFromRanges();
-
-        this.valueColState = valueCols.map(column => {
-            return {
-                column,
-                colId: column.getColId(),
-                displayName: this.getColDisplayName(column),
-                selected: allCols.indexOf(column) > -1
-            };
-        });
-
-        this.dimensionColState = dimensionCols.map(column => {
-            return {
-                column,
-                colId: column.getColId(),
-                displayName: this.getColDisplayName(column),
-                selected: false
-            };
-        });
-
-        const dimensionsInCellRange = dimensionCols.filter(col => allCols.indexOf(col) > -1);
-
-        if (dimensionsInCellRange.length > 0) {
-            // select the first dimension from the range
-            const selectedDimensionId = dimensionsInCellRange[0].getColId();
-            this.dimensionColState.forEach(cs => cs.selected = cs.colId === selectedDimensionId);
-        }
-
-        // if no dimensions in range select the default
-        const defaultCategory = {
-            colId: ChartModel.DEFAULT_CATEGORY,
-            displayName: '(None)',
-            selected: dimensionsInCellRange.length === 0
-        };
-
-        this.dimensionColState.unshift(defaultCategory);
-    }
-
-    public updateColumnState(updatedCol: ColState) {
-        const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
-        const isDimensionCol = this.dimensionColState.filter(idsMatch).length > 0;
-        const isValueCol = this.valueColState.filter(idsMatch).length > 0;
-
-        if (isDimensionCol) {
-            // only one dimension should be selected
-            this.dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
-
-        } else if (isValueCol) {
-            // just update the selected value on the supplied value column
-            this.valueColState.forEach(cs => cs.selected = idsMatch(cs) ? updatedCol.selected : cs.selected);
-        }
-    }
-
-    public updateCellRanges(updatedCol?: ColState) {
-        const { dimensionCols, valueCols } = this.getAllChartColumns();
-        const lastRange = _.last(this.cellRanges) as CellRange;
-        if (lastRange) {
-            // update the reference range
-            this.referenceCellRange = lastRange;
-
-            if (updatedCol) {
-                const updatingStartCol = lastRange.columns[0] === updatedCol.column;
-                this.referenceCellRange.startColumn = updatingStartCol ? lastRange.columns[1] : lastRange.columns[0];
-            }
-        }
-
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
-        // clear ranges
-        this.cellRanges = [];
-
-        const dimensionColsInRange = dimensionCols.filter(col => allColsFromRanges.indexOf(col) > -1);
-        if (this.initialising) {
-            // first time in just take the first dimension from the range as the column state hasn't been updated yet
-            if (dimensionColsInRange.length > 0) {
-                this.addRange(CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
-            }
-            this.initialising = false;
+        if (updatedColState) {
+            this.updateColumnState(updatedColState);
         }
 
-        if (updatedCol && dimensionCols.indexOf(updatedCol.column as Column) > -1) {
-            // if updated col is dimension col and is not the default category
-            if (updatedCol!.colId !== ChartModel.DEFAULT_CATEGORY) {
-                this.addRange(CellRangeType.DIMENSION, [updatedCol!.column as Column]);
-            }
-        } else {
-            // otherwise use current selected dimension
-            const selectedDimension = this.dimensionColState.filter(cs => cs.selected)[0];
-            if (selectedDimension && selectedDimension.colId !== ChartModel.DEFAULT_CATEGORY) {
-                this.addRange(CellRangeType.DIMENSION, [selectedDimension.column!]);
-            }
+        this.setDimensionCellRange(dimensionCols, allColsFromRanges, updatedColState);
+        this.setValueCellRange(valueCols, allColsFromRanges, updatedColState);
+
+        if (!updatedColState) {
+            this.resetColumnState();
         }
 
-        let valueColsInRange = valueCols.filter(col => _.includes(allColsFromRanges, col));
-
-        if (updatedCol && _.includes(valueCols, updatedCol.column!)) {
-            if (updatedCol.selected) {
-                valueColsInRange.push(updatedCol.column);
-                valueColsInRange = this.getColumnInDisplayOrder(valueCols, valueColsInRange);
-            } else {
-                valueColsInRange = valueColsInRange.filter(col => col.getColId() !== updatedCol.colId);
-            }
-        }
-
-        if (valueColsInRange.length > 0) {
-            this.addRange(CellRangeType.VALUE, valueColsInRange);
-        }
+        this.updateData();
     }
 
     public getData(): any[] {
@@ -227,7 +111,7 @@ export class ChartModel extends BeanStub {
         const colId = this.getSelectedDimension().colId;
 
         // replacing the selected dimension with a complex object to facilitate duplicated categories
-        return this.chartData.map((d: any, index: number) => {
+        return this.chartData.map((d, index) => {
             const value = d[colId];
             const valueString = value && value.toString ? value.toString() : '';
 
@@ -275,7 +159,7 @@ export class ChartModel extends BeanStub {
 
     public getDimensionColState = (): ColState[] => this.dimensionColState;
 
-    public getCellRanges = (): CellRange[] => this.cellRanges;
+    public getCellRanges = (): CellRange[] => [this.dimensionCellRange, this.valueCellRange].filter(r => r);
 
     public getChartType = (): ChartType => this.chartType;
 
@@ -293,57 +177,63 @@ export class ChartModel extends BeanStub {
 
     public getSelectedDimension = (): ColState => this.dimensionColState.filter(cs => cs.selected)[0];
 
-    private getColumnInDisplayOrder(allDisplayedColumns: Column[], listToSort: Column[]): Column[] {
-        return allDisplayedColumns.filter(col => _.includes(listToSort, col));
-    }
-
-    private addRange(cellRangeType: CellRangeType, columns: Column[]) {
-        const newRange = {
-            id: this.chartId,
+    private createCellRange(cellRangeType: CellRangeType, ...columns: Column[]): CellRange {
+        return {
+            id: this.chartId, // set range ID to match chart ID so we can identify changes to the ranges for this chart
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
             columns: columns,
-            startColumn: this.referenceCellRange.startColumn,
+            startColumn: columns[0],
             type: cellRangeType
         };
-
-        cellRangeType === CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
     }
 
-    private getAllColumnsFromRanges = (): Column[] => _.flatten(this.cellRanges.map(range => range.columns));
+    private getAllColumnsFromRanges(): Set<Column> {
+        let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
+
+        if (this.dimensionCellRange) {
+            columns.push(...this.dimensionCellRange.columns);
+        }
+
+        if (this.valueCellRange) {
+            columns.push(...this.valueCellRange.columns);
+        }
+
+        return _.convertToSet(columns);
+    }
 
     private getColDisplayName = (col: Column): string => this.columnController.getDisplayNameForColumn(col, 'chart')!;
 
     private getRowIndexes(): { startRow: number, endRow: number } {
         let startRow = 0, endRow = 0;
-        const range = _.last(this.cellRanges) as CellRange;
+        const { rangeController } = this;
+        const { valueCellRange: range } = this;
 
-        if (this.rangeController && range) {
-            startRow = this.rangeController.getRangeStartRow(range).rowIndex;
-            endRow = this.rangeController.getRangeEndRow(range).rowIndex;
+        if (rangeController && range) {
+            startRow = rangeController.getRangeStartRow(range).rowIndex;
+            endRow = rangeController.getRangeEndRow(range).rowIndex;
         }
 
         return { startRow, endRow };
     }
 
-    private getAllChartColumns(): { dimensionCols: Column[], valueCols: Column[] } {
+    private getAllChartColumns(): { dimensionCols: Set<Column>, valueCols: Set<Column> } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
-        const dimensionCols: Column[] = [];
-        const valueCols: Column[] = [];
+        const dimensionCols = new Set<Column>();
+        const valueCols = new Set<Column>();
 
         displayedCols.forEach(col => {
             const colDef = col.getColDef();
-
             const chartDataType = colDef.chartDataType;
 
             if (chartDataType) {
                 // chart data type was specified explicitly
                 switch (chartDataType) {
                     case 'category':
-                        dimensionCols.push(col);
+                        dimensionCols.add(col);
                         return;
                     case 'series':
-                        valueCols.push(col);
+                        valueCols.add(col);
                         return;
                     case 'excluded':
                         return;
@@ -354,28 +244,32 @@ export class ChartModel extends BeanStub {
             }
 
             if (colDef.colId === 'ag-Grid-AutoColumn') {
-                dimensionCols.push(col);
+                dimensionCols.add(col);
                 return;
             }
 
             if (!col.isPrimary()) {
-                valueCols.push(col);
+                valueCols.add(col);
                 return;
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            this.isNumberCol(col.getColId()) ? valueCols.push(col) : dimensionCols.push(col);
+            (this.isNumberCol(col.getColId()) ? valueCols : dimensionCols).add(col);
         });
 
         return { dimensionCols, valueCols };
     }
 
     private isNumberCol(colId: any) {
-        if (colId === 'ag-Grid-AutoColumn') { return false; }
+        if (colId === 'ag-Grid-AutoColumn') {
+            return false;
+        }
 
         const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: undefined });
 
-        if (!row) { return false; }
+        if (!row) {
+            return false;
+        }
 
         let cellData;
 
@@ -390,11 +284,15 @@ export class ChartModel extends BeanStub {
     }
 
     private extractAggregateValue(row: RowNode, colId: any) {
-        if (!row.aggData) { return null; }
+        if (!row.aggData) {
+            return null;
+        }
 
         const aggDatum = row.aggData[colId];
 
-        if (!aggDatum) { return null; }
+        if (!aggDatum) {
+            return null;
+        }
 
         return typeof aggDatum.toNumber === 'function' ? aggDatum.toNumber() : aggDatum;
     }
@@ -412,17 +310,147 @@ export class ChartModel extends BeanStub {
     }
 
     private displayNameMapper(col: ColState) {
-        if (this.columnNames[col.colId]) {
-            col.displayName = this.columnNames[col.colId].join(' - ');
-        } else {
-            col.displayName = this.getColDisplayName(col.column as Column);
-        }
+        const columnNames = this.columnNames[col.colId];
+
+        col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column);
+        
         return col;
     }
 
-    private isMultiCategoryChart = (): boolean => !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
+    private isMultiCategoryChart(): boolean {
+        return !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
+    } 
 
-    private generateId = (): string => 'id-' + Math.random().toString(36).substr(2, 16);
+    private generateId(): string {
+        return 'id-' + Math.random().toString(36).substr(2, 16);
+    } 
+
+    private updateData(): void {
+        const { startRow, endRow } = this.getRowIndexes();
+        const selectedDimension = this.getSelectedDimension();
+        const selectedValueCols = this.getSelectedValueCols();
+
+        this.grouping = this.isGrouping();
+
+        const params: ChartDatasourceParams = {
+            aggFunc: this.aggFunc,
+            dimensionCols: [selectedDimension],
+            grouping: this.grouping,
+            pivoting: this.isPivotActive(),
+            multiCategories: this.isMultiCategoryChart(),
+            valueCols: selectedValueCols,
+            startRow,
+            endRow
+        };
+
+        const result = this.datasource.getData(params);
+
+        this.chartData = result.data;
+        this.columnNames = result.columnNames;
+    }
+
+    private resetColumnState(): void {
+        const { dimensionCols, valueCols } = this.getAllChartColumns();
+        const allCols = this.pivotChart ? _.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+        this.dimensionColState = [];
+        this.valueColState = [];
+
+        let hasSelectedDimension = false;
+
+        dimensionCols.forEach(column => {
+            const selected = !hasSelectedDimension && allCols.has(column);
+
+            this.dimensionColState.push({
+                column,
+                colId: column.getColId(),
+                displayName: this.getColDisplayName(column),
+                selected
+            });
+
+            if (selected) {
+                hasSelectedDimension = true;
+            }
+        });
+
+        const defaultCategory = {
+            colId: ChartModel.DEFAULT_CATEGORY,
+            displayName: '(None)',
+            selected: !hasSelectedDimension // if no dimensions in range select the default
+        };
+
+        this.dimensionColState.unshift(defaultCategory);
+
+        valueCols.forEach(column => {
+            this.valueColState.push({
+                column,
+                colId: column.getColId(),
+                displayName: this.getColDisplayName(column),
+                selected: allCols.has(column)
+            });
+        });
+    }
+
+    private updateColumnState(updatedCol: ColState) {
+        const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
+        const { dimensionColState, valueColState } = this;
+
+        if (dimensionColState.filter(idsMatch).length > 0) {
+            // only one dimension should be selected
+            dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
+        } else {
+            // just update the selected value on the supplied value column
+            valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
+        }
+    }
+
+    private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
+        this.dimensionCellRange = undefined;
+
+        const { dimensionColState } = this;
+
+        if (!updatedColState && !dimensionColState.length) {
+            // use first dimension column in range by default
+            dimensionCols.forEach(col => {
+                if (this.dimensionCellRange || !colsInRange.has(col)) {
+                    return;
+                }
+
+                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, col);
+            });
+
+            return;
+        }
+                
+        let selectedDimensionColState = updatedColState;
+
+        if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
+            selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
+        }
+
+        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartModel.DEFAULT_CATEGORY) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column);
+        }
+    }
+
+    private setValueCellRange(valueCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
+        this.valueCellRange = undefined;
+
+        let selectedValueCols: Column[] = [];
+
+        valueCols.forEach(col => {
+            if (updatedColState && updatedColState.colId === col.getColId()) {
+                if (updatedColState.selected) {
+                    selectedValueCols.push(updatedColState.column);
+                }
+            } else if (colsInRange.has(col)) {
+                selectedValueCols.push(col);
+            }
+        });
+        
+        if (selectedValueCols.length > 0) {
+            this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
+        }
+    }
 
     public destroy() {
         super.destroy();

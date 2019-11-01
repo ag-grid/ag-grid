@@ -8,7 +8,10 @@ import {
     ChartOptionsChanged,
     PostConstruct,
     _,
-    IRangeController
+    IRangeController,
+    ChartRangeSelectionChanged,
+    ColumnApi,
+    GridApi
 } from "@ag-community/grid-core";
 import { ChartModel, ColState } from "./chartModel";
 import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
@@ -22,6 +25,8 @@ export class ChartController extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: IRangeController;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartProxy: ChartProxy<any, any>;
     private chartPaletteName: ChartPaletteName;
@@ -36,9 +41,9 @@ export class ChartController extends BeanStub {
     private init(): void {
         this.updateForGridChange();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, event => {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
             if (event.id && event.id === this.model.getChartId()) {
-                this.updateForGridChange();
+                this.updateForRangeChange();
             }
         });
 
@@ -53,21 +58,23 @@ export class ChartController extends BeanStub {
         // don't update chart if chart is detached from grid data
         if (this.model.isDetached()) { return; }
 
-        // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
-        this.model.resetColumnState();
-        this.model.updateData();
 
         this.setChartRange();
     }
 
-    public updateForMenuChange(updatedCol: ColState): void {
-        // update the column state before updating the cell ranges to be sent to the grid
-        this.model.updateColumnState(updatedCol);
+    public updateForRangeChange() {
+        this.updateForGridChange();
+
+        this.raiseChartRangeSelectionChangedEvent();
+    }
+
+    public updateForPanelChange(updatedCol: ColState): void {
         this.model.updateCellRanges(updatedCol);
-        this.model.updateData();
 
         this.setChartRange();
+
+        this.raiseChartRangeSelectionChangedEvent();
     }
 
     public getChartType = (): ChartType => this.model.getChartType();
@@ -99,8 +106,9 @@ export class ChartController extends BeanStub {
     public setChartRange() {
         if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
-            this.raiseChartUpdatedEvent();
         }
+
+        this.raiseChartUpdatedEvent();
     }
 
     public detachChartRange() {
@@ -144,6 +152,17 @@ export class ChartController extends BeanStub {
             chartType: this.getChartType(),
             chartPalette: this.chartPaletteName,
             chartOptions: this.getChartProxy().getChartOptions(),
+        });
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private raiseChartRangeSelectionChangedEvent() {
+        const event: ChartRangeSelectionChanged = Object.freeze({
+            type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
+            id: this.model.getChartId(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
         });
 
         this.eventService.dispatchEvent(event);

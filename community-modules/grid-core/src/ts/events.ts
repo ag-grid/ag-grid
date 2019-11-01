@@ -160,11 +160,13 @@ export interface FirstDataRenderedEvent extends AgGridEvent {
 }
 
 export interface RangeSelectionChangedEvent extends AgGridEvent {
+    id?: string;
     finished: boolean;
     started: boolean;
 }
 
 export interface ChartRangeSelectionChanged extends AgGridEvent {
+    id: string;
 }
 
 export interface ChartOptionsChanged extends AgEvent {

@@ -35,7 +35,7 @@ export interface ISelectionHandle {
     refresh(cellComp: CellComp): void;
 }
 
-export enum CellRangeType {VALUE, DIMENSION}
+export enum CellRangeType { VALUE, DIMENSION }
 
 export interface CellRange {
     id?: string;
