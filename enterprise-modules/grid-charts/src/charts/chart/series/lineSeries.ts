@@ -12,6 +12,7 @@ import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -37,6 +38,8 @@ export class LineSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
+    readonly marker = new SeriesMarker();
+
     constructor() {
         super();
 
@@ -46,8 +49,8 @@ export class LineSeries extends Series<CartesianChart> {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addCategoryListener('style', this.update.bind(this));
     }
 
     onMarkerTypeChange() {
@@ -167,7 +170,6 @@ export class LineSeries extends Series<CartesianChart> {
     set fill(value: string) {
         if (this._fill !== value) {
             this._fill = value;
-            this.stroke = Color.fromString(value).darker().toHexString();
             this.scheduleData();
         }
     }
@@ -237,15 +239,15 @@ export class LineSeries extends Series<CartesianChart> {
             xData,
             yData,
             fill,
+            stroke,
             marker,
             lineNode
         } = this;
 
         const linePath = lineNode.path;
-        const Marker = marker.type;
         const markerSize = marker.size;
-        const markerFill = this.fill;
-        const markerStroke = this.stroke;
+        const markerFill = fill;
+        const markerStroke = stroke;
         const markerStrokeWidth = marker.strokeWidth;
 
         linePath.clear();
@@ -270,14 +272,30 @@ export class LineSeries extends Series<CartesianChart> {
                     y,
                     fill: markerFill,
                     stroke: markerStroke,
-                    strokeWidth: markerStrokeWidth,
+                    strokeWidth: markerStrokeWidth || 1,
                     size: markerSize
                 });
             }
         });
 
-        lineNode.stroke = fill; // use fill colour for the line
+        lineNode.stroke = stroke;
         lineNode.strokeWidth = this.strokeWidth;
+
+        this.updateGroupSelection(groupSelectionData);
+    }
+
+    private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
+        const { marker } = this;
+        const Marker = marker.type;
+        let { groupSelection } = this;
+
+        // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
+        if (!Marker) {
+            if (!groupSelection.size) {
+                this.groupSelection.remove();
+            }
+            return;
+        }
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
@@ -286,7 +304,7 @@ export class LineSeries extends Series<CartesianChart> {
         enterGroups.append(Marker);
 
         const highlightedNode = this.highlightedNode;
-        const groupSelection = updateGroups.merge(enterGroups);
+        groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
         groupSelection.selectByClass(Marker)

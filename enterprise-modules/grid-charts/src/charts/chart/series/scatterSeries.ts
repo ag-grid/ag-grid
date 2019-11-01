@@ -8,6 +8,8 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import linearScale from "../../scale/linearScale";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
+import { Circle } from "../marker/circle";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -39,11 +41,14 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
+    readonly marker = new SeriesMarker();
+
     constructor() {
         super();
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addCategoryListener('style', this.update.bind(this));
+        this.marker.addCategoryListener('legend', () => this.chart && this.chart.updateLegend());
     }
 
     onMarkerTypeChange() {
@@ -217,7 +222,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             highlightedNode
         } = this;
 
-        const Marker = marker.type;
+        const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
 
         this.sizeScale.range = [marker.minSize, marker.size];
 
@@ -227,7 +232,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             y: yScale.convert(yData[i]) + yOffset,
             fill: marker.fill,
             stroke: marker.stroke,
-            strokeWidth: marker.strokeWidth,
+            strokeWidth: marker.strokeWidth || 0,
             size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
 

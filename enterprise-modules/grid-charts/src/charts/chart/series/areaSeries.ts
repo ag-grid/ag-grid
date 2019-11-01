@@ -13,6 +13,7 @@ import { Path } from "../../scene/shape/path";
 import palette from "../palettes";
 import { numericExtent } from "../../util/array";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -51,11 +52,13 @@ export class AreaSeries extends Series<CartesianChart> {
      */
     private readonly yKeyEnabled = new Map<string, boolean>();
 
+    readonly marker = new SeriesMarker();
+
     constructor() {
         super();
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addCategoryListener('style', this.update.bind(this));
     }
 
     onMarkerTypeChange() {
