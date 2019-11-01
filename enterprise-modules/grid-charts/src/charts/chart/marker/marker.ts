@@ -1,4 +1,5 @@
 import { Path } from "../../scene/shape/path";
+import { BBox } from "../../scene/bbox";
 
 export abstract class Marker extends Path {
     protected _x: number = 0;
@@ -32,5 +33,12 @@ export abstract class Marker extends Path {
     }
     get size(): number {
         return this._size;
+    }
+
+    getBBox(): BBox {
+        const { x, y, size } = this;
+        const half = size / 2;
+
+        return new BBox(x - half, y - half, size, size);
     }
 }
