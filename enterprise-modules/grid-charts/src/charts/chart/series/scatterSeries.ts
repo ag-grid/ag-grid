@@ -326,17 +326,22 @@ export class ScatterSeries extends Series<CartesianChart> {
     tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xKey && this.yKey) {
+        const { id, title, visible, xKey, yKey, marker } = this;
+
+        if (this.data.length && xKey && yKey) {
             data.push({
-                id: this.id,
+                id,
                 itemId: undefined,
-                enabled: this.visible,
+                enabled: visible,
                 label: {
-                    text: this.title || this.yKey
+                    text: title || yKey
                 },
                 marker: {
-                    fill: this.marker.fill || 'gray',
-                    stroke: this.marker.stroke || 'black'
+                    type: marker.type,
+                    fill: marker.fill || 'gray',
+                    stroke: marker.stroke || 'black',
+                    fillOpacity: marker.fillOpacity,
+                    strokeOpacity: marker.strokeOpacity
                 }
             });
         }

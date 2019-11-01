@@ -593,7 +593,9 @@ export class BarSeries extends Series<CartesianChart> {
                     },
                     marker: {
                         fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length]
+                        stroke: strokes[index % strokes.length],
+                        fillOpacity: this.fillOpacity,
+                        strokeOpacity: this.strokeOpacity
                     }
                 });
             });

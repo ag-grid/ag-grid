@@ -4,17 +4,22 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { LegendPosition } from "./chart";
+import { Marker } from "./marker/marker";
+import { Square } from "./marker/square";
 
 export interface LegendDatum {
     id: string;       // component ID
     itemId: any;      // sub-component ID
     enabled: boolean; // the current state of the sub-component
     marker: {
-        fill: string,
-        stroke: string
+        type?: new () => Marker;
+        fill: string;
+        stroke: string;
+        fillOpacity: number;
+        strokeOpacity: number;
     };
     label: {
-        text: string  // display name for the sub-component
+        text: string;  // display name for the sub-component
     };
 }
 
@@ -199,9 +204,9 @@ export class Legend {
         return this._labelFontFamily;
     }
 
-    private _markerSize: number = 14;
+    private _markerSize: number = MarkerLabel.defaults.markerSize;
     set markerSize(value: number) {
-        value = isFinite(value) ? value : 14;
+        value = isFinite(value) ? value : MarkerLabel.defaults.markerSize;
         if (this._markerSize !== value) {
             this._markerSize = value;
             this.requestLayout();
@@ -242,10 +247,17 @@ export class Legend {
      * @param height
      */
     performLayout(width: number, height: number) {
-        const updateSelection = this.itemSelection.setData(this.data);
+        const updateSelection = this.itemSelection.setData(this.data, (node, datum) => {
+            const markerType = datum.marker.type;
+            const markerName = markerType ? markerType.name : 'Square';
+            return datum.id + '-' + datum.itemId + '-' + markerName;
+        });
         updateSelection.exit.remove();
 
-        const enterSelection = updateSelection.enter.append(MarkerLabel);
+        const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
+            const Marker = datum.marker.type || Square;
+            node.marker = new Marker();
+        });
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
 
         const itemCount = itemSelection.size;
@@ -410,6 +422,8 @@ export class Legend {
             markerLabel.markerFill = marker.fill;
             markerLabel.markerStroke = marker.stroke;
             markerLabel.markerStrokeWidth = this.markerStrokeWidth;
+            markerLabel.markerFillOpacity = marker.fillOpacity;
+            markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
             markerLabel.labelColor = this.labelColor;
         });

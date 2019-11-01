@@ -317,18 +317,26 @@ export abstract class Chart {
     processData(): void {
         this.layoutPending = false;
 
-        const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
             if (series.visible) {
                 series.processData();
             }
+        });
+        this.updateLegend();
+
+        this.layoutPending = true;
+    }
+
+    updateLegend(): void {
+        const legendData: LegendDatum[] = [];
+
+        this.series.forEach(series => {
             if (series.showInLegend) {
                 series.listSeriesItems(legendData);
             }
         });
 
         this.legend.data = legendData;
-        this.layoutPending = true;
     }
 
     abstract performLayout(): void;
@@ -347,14 +355,18 @@ export abstract class Chart {
             title.node.y = paddingTop;
             titleVisible = true;
             const titleBBox = title.node.getBBox(); // make sure to set node's x/y, then getBBox
-            paddingTop = titleBBox.y + titleBBox.height;
+            if (titleBBox) {
+                paddingTop = titleBBox.y + titleBBox.height;
+            }
 
             if (subtitle && subtitle.enabled) {
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop + spacing;
                 subtitleVisible = true;
                 const subtitleBBox = subtitle.node.getBBox();
-                paddingTop = subtitleBBox.y + subtitleBBox.height;
+                if (subtitleBBox) {
+                    paddingTop = subtitleBBox.y + subtitleBBox.height;
+                }
             }
         }
 

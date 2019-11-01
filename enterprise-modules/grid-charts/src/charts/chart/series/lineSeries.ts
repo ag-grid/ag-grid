@@ -367,6 +367,7 @@ export class LineSeries extends Series<CartesianChart> {
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xKey && this.yKey) {
+            const { marker } = this;
             data.push({
                 id: this.id,
                 itemId: undefined,
@@ -375,8 +376,11 @@ export class LineSeries extends Series<CartesianChart> {
                     text: this.title || this.yKey
                 },
                 marker: {
+                    type: marker.type,
                     fill: this.fill,
-                    stroke: this.stroke
+                    stroke: this.stroke,
+                    fillOpacity: marker.fillOpacity,
+                    strokeOpacity: marker.strokeOpacity
                 }
             });
         }
