@@ -306,9 +306,20 @@ export class BarSeries extends Series<CartesianChart> {
 
         const { yKeyEnabled, data } = this;
 
-        this.xData = data.map(datum => datum[xKey]);
+        let keysFound = true; // only warn once
+        this.xData = data.map(datum => {
+            if (keysFound && !(xKey in datum)) {
+                keysFound = false;
+                console.warn(`The key '${xKey}' was not found in the data: `, datum);
+            }
+            return datum[xKey];
+        });
 
         this.yData = data.map(datum => yKeys.map(key => {
+            if (keysFound && !(key in datum)) {
+                keysFound = false;
+                console.warn(`The key '${key}' was not found in the data: `, datum);
+            }
             const value = datum[key];
 
             return isFinite(value) && yKeyEnabled.get(key) ? value : 0;
