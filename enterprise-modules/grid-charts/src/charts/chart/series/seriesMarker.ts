@@ -1,13 +1,12 @@
 import { Marker } from "../marker/marker";
-import { Color } from "../../util/color";
-import { Observable, reactive, listener } from "../../util/observable";
+import { Observable, reactive } from "../../util/observable";
 import palette from "../palettes";
 
 export class SeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    @reactive(['type', 'legend']) type?: new () => Marker;
+    @reactive(['legend']) type?: new () => Marker;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs

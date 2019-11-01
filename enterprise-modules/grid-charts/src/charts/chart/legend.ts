@@ -6,6 +6,7 @@ import { FontStyle, FontWeight } from "../scene/shape/text";
 import { LegendPosition } from "./chart";
 import { Marker } from "./marker/marker";
 import { Square } from "./marker/square";
+import { reactive } from "../util/observable";
 
 export interface LegendDatum {
     id: string;       // component ID
