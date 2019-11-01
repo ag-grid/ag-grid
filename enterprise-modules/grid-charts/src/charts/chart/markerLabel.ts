@@ -162,6 +162,6 @@ export class MarkerLabel extends Group {
 
         marker.size = markerSize;
 
-        this.label.x = markerSize * 2.5 / 2 + this.padding;
+        this.label.x = markerSize / 2 + this.padding;
     }
 }
