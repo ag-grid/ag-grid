@@ -231,7 +231,20 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
         const typeTransformed: ExcelDataType = getType();
 
-        const massageText = (val: string) => this.suppressTextAsCDATA ? _.escape(val) : `<![CDATA[${val}]]>`;
+        const massageText = (val: string) => {
+            if (this.suppressTextAsCDATA) {
+                return _.escape(val);
+            }
+            const cdataStart = '<![CDATA[';
+            const cdataEnd = ']]>';
+            const cdataEndRegex = new RegExp(cdataEnd, "g");
+            return cdataStart
+                // CDATA sections are closed by the character sequence ']]>' and there is no
+                // way of escaping this, so if the text contains the offending sequence, emit
+                // multiple CDATA sections and split the characters between them.
+                + String(val).replace(cdataEndRegex, ']]' + cdataEnd + cdataStart + '>')
+                + cdataEnd;
+        }
         const convertBoolean = (val: boolean | string): string => {
             if (!val || val === '0' || val === 'false') { return '0'; }
             return '1';
