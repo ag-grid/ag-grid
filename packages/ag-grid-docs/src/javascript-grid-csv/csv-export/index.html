@@ -1,0 +1,70 @@
+<style>
+label, .row {
+    box-sizing: border-box;
+    display: block;
+    padding: 2px;
+}
+.row label {
+    display: inline;
+    padding: 0;
+}
+button {
+    display: inline-block;
+    font-weight: bold;
+}
+#myGrid {
+    height: 100%;
+    width: 47%;
+    display: block;
+}
+#csvResult {
+    height: 100%;
+    width: 47%;
+    margin-left: 5%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1em;
+}
+#customValue {
+    width: 300px;
+}
+</style>
+
+<div style="display: flex; flex-direction: column; height: 100%;">
+
+<div style="display: flex;">
+    <div>
+        <br>
+        <label><input type="checkbox" id="suppressQuotes"/> suppressQuotes = true</label>
+        <div class="row"> 
+            <label><input type="checkbox" id="columnSeparator"/> columnSeparator = </label>
+            <input type="text" id="columnSeparatorValue" value="|" style="width: 30px;" />
+        </div>
+    </div>
+
+    <div style="margin-left: 10px;">
+        Value for customHeader and customFooter (JSON)<br>
+        <textarea id="customValue" rows="6" style="width: 400px;">null</textarea>
+    </div>
+
+    <div style="margin-left: 10px;">
+        <br>
+            <button onclick="setCustomValue('&quot;Value for custom headers and footers\\nmulti-line, and, commas, are, not, escaped&quot;')">&lt;- text</button><br>
+            <button onclick="setCustomValue(JSON.stringify(sampleExcelCellContent, null, '  '))">&lt;- ExcelCell[][]</button><br>
+            <button onclick="setCustomValue('null')">&lt;- null</button><br>
+    </div>
+</div>
+
+<div style="margin: 10px 0;">
+    <button onclick="onBtnUpdate()">Show api.getDataAsCsv() text</button>
+    <button onclick="onBtnExport()">Download file (api.exportDataAsCsv())</button>
+</div>
+
+
+<div style="flex: 1; position: relative;">
+    <div id="myGrid" class="ag-theme-balham"></div>
+    <textarea id="csvResult">Press the api.getDataAsCsv() button to view exported CSV here</textarea>
+</div>
+</div>
+

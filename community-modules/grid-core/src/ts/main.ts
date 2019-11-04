@@ -226,7 +226,7 @@ export { IChartService } from "./interfaces/IChartService";
 
 // exporter
 export {
-    CsvExportParams, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
+    CsvExportParams, CsvCustomContent, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
     ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory"

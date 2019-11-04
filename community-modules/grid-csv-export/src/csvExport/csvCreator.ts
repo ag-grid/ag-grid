@@ -12,7 +12,8 @@ import {
     ICsvCreator,
     PostConstruct,
     RowNode,
-    ValueService
+    ValueService,
+    CsvCustomContent
 } from "@ag-community/grid-core"
 
 import {
@@ -32,7 +33,7 @@ export interface CsvSerializingParams extends GridSerializingParams {
     columnSeparator: string;
 }
 
-export class CsvSerializingSession extends BaseGridSerializingSession<string> {
+export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
     private result: string = '';
     private lineOpened: boolean = false;
     private suppressQuotes: boolean;
@@ -50,18 +51,42 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     public prepare(columnsToExport: Column[]): void {
     }
 
-    public addCustomHeader(customHeader: string): void {
-        if (!customHeader) {
-            return;
-        }
-        this.result += customHeader + LINE_SEPARATOR;
+    public addCustomHeader(customHeader: CsvCustomContent): void {
+        this.addCustomContent(customHeader, false);
     }
 
-    public addCustomFooter(customFooter: string): void {
-        if (!customFooter) {
-            return;
+    public addCustomFooter(customFooter: CsvCustomContent): void {
+        this.addCustomContent(customFooter, true);
+    }
+
+    private addCustomContent(content: CsvCustomContent, isFooter: boolean) {
+        if (!content) { return; }
+        if (typeof content === 'string') {
+            // we used to require the customFooter to be prefixed with a newline but no longer do,
+            // so only add the newline if the user has not supplied one
+            if (isFooter && !/^\s*\n/.test(content)) {
+                content = LINE_SEPARATOR + content;
+            }
+            // replace whatever newlines are supplied with the style we're using
+            content = content.replace(/\r?\n/g, LINE_SEPARATOR);
+            this.result += content + LINE_SEPARATOR;
+        } else {
+            if (isFooter) {
+                this.result += LINE_SEPARATOR;
+            }
+            content.forEach(row => {
+                row.forEach((cell, index) => {
+                    if (index !== 0) {
+                        this.result += this.columnSeparator;
+                    }
+                    this.result += this.putInQuotes(cell.data.value || '');
+                    if (cell.mergeAcross) {
+                        this.appendEmptyCells(cell.mergeAcross);
+                    }
+                });
+                this.result += LINE_SEPARATOR;
+            })
         }
-        this.result += customFooter + LINE_SEPARATOR;
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
@@ -79,12 +104,16 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
             this.result += this.columnSeparator;
         }
 
-        this.result += this.putInQuotes(header, this.suppressQuotes);
+        this.result += this.putInQuotes(header);
 
-        for (let i = 1; i <= span; i++) {
-            this.result += this.columnSeparator + this.putInQuotes("", this.suppressQuotes);
-        }
+        this.appendEmptyCells(span);
         this.lineOpened = true;
+    }
+
+    private appendEmptyCells(count: number) {
+        for (let i = 1; i <= count; i++) {
+            this.result += this.columnSeparator + this.putInQuotes("");
+        }
     }
 
     public onNewHeaderRow(): RowAccumulator {
@@ -101,7 +130,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractHeaderValue(column), this.suppressQuotes);
+        this.result += this.putInQuotes(this.extractHeaderValue(column));
         this.lineOpened = true;
     }
 
@@ -119,12 +148,12 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node));
         this.lineOpened = true;
     }
 
-    private putInQuotes(value: any, suppressQuotes: boolean): string {
-        if (suppressQuotes) {
+    private putInQuotes(value: any): string {
+        if (this.suppressQuotes) {
             return value;
         }
 
@@ -224,7 +253,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 }
 
 @Bean('csvCreator')
-export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
+export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSession, CsvExportParams> implements ICsvCreator {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;

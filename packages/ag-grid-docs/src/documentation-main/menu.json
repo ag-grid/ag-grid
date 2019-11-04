@@ -709,13 +709,19 @@
         "icon": "icon-import-export",
         "items": [
           {
-            "title": "CSV Export",
-            "url": "javascript-grid-export/"
-          },
-          {
-            "title": "Excel Export",
-            "url": "javascript-grid-excel/",
-            "enterprise": true
+            "title": "Export",
+            "url": "javascript-grid-export/",
+            "items": [
+              {
+                "title": "CSV Export",
+                "url": "javascript-grid-csv/"
+              },
+              {
+                "title": "Excel Export",
+                "url": "javascript-grid-excel/",
+                "enterprise": true
+              }
+            ]
           },
           {
             "title": "Clipboard",

@@ -44,6 +44,8 @@ export class ExpressionService {
             // tslint:disable-next-line
             console.log('Expression = ' + expression);
             // tslint:disable-next-line
+            console.log('Params =', params);
+            // tslint:disable-next-line
             console.log('Exception = ' + e);
             return null;
         }

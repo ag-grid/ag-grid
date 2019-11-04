@@ -165,7 +165,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     private createValueForGroupNode(node: RowNode): string {
         if (this.processRowGroupCallback) {
             return this.processRowGroupCallback({
-                rowNode: node,
+                node: node,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),

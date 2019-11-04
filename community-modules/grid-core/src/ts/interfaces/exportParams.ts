@@ -34,7 +34,18 @@ export interface ExportParams<T> extends BaseExportParams {
     customFooter?: T;
 }
 
-export interface CsvExportParams extends ExportParams<string> {
+export interface CsvCell {
+    data: CsvCellData;
+    mergeAcross?: number;
+}
+
+export interface CsvCellData {
+    value: string | null;
+}
+
+export type CsvCustomContent = CsvCell[][] | string;
+
+export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     columnSeparator?: string;
 }
 
@@ -69,7 +80,7 @@ export interface ProcessGroupHeaderForExportParams {
 }
 
 export interface ProcessRowGroupForExportParams {
-    rowNode: RowNode;
+    node: RowNode;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     context: any;
