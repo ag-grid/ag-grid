@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-community/grid-core";
+import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-grid-community/grid-core";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartModel } from "../../chartModel";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";

@@ -1,4 +1,4 @@
-import { CellComp, RowRenderer, DragService, Component, MouseEventService, ColumnController, CellNavigationService, CellRange, RowPosition, CellPosition, ISelectionHandle, RowPositionUtils } from "@ag-community/grid-core";
+import { CellComp, RowRenderer, DragService, Component, MouseEventService, ColumnController, CellNavigationService, CellRange, RowPosition, CellPosition, ISelectionHandle, RowPositionUtils } from "@ag-grid-community/grid-core";
 import { RangeController } from "./rangeController";
 export declare abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
     protected rowRenderer: RowRenderer;

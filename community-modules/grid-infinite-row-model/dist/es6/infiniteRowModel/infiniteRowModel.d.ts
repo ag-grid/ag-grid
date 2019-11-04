@@ -1,4 +1,4 @@
-import { BeanStub, IDatasource, RowBounds, RowDataTransaction, RowNode, IInfiniteRowModel } from "@ag-community/grid-core";
+import { BeanStub, IDatasource, RowBounds, RowDataTransaction, RowNode, IInfiniteRowModel } from "@ag-grid-community/grid-core";
 export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     private gridOptionsWrapper;
     private filterManager;

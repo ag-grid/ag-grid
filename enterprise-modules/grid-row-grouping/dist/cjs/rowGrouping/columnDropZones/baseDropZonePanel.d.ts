@@ -1,4 +1,4 @@
-import { Column, Component, Context, DragAndDropService, EventService, GridOptionsWrapper, LoggerFactory } from "@ag-community/grid-core";
+import { Column, Component, Context, DragAndDropService, EventService, GridOptionsWrapper, LoggerFactory } from "@ag-grid-community/grid-core";
 export interface BaseDropZonePanelParams {
     dragAndDropIcon: string;
     emptyMessage: string;

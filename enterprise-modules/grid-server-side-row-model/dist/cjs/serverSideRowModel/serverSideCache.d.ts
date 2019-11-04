@@ -1,4 +1,4 @@
-import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCacheParams, RowNodeCache } from "@ag-community/grid-core";
+import { ColumnVO, IServerSideCache, IServerSideDatasource, NumberSequence, RowBounds, RowNode, RowNodeCacheParams, RowNodeCache } from "@ag-grid-community/grid-core";
 import { ServerSideBlock } from "./serverSideBlock";
 export interface ServerSideCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];

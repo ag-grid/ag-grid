@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var dropShadow_1 = require("../../../charts/scene/dropShadow");
 var padding_1 = require("../../../charts/util/padding");
 var ChartProxy = /** @class */ (function () {

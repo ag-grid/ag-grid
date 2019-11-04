@@ -65,16 +65,16 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
     }
 
     if (bindings.gridSettings.enterprise) {
-        imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
+        imports.push('import {AllModules} from "@ag-grid-enterprise/grid-all-modules";');
     } else {
-        imports.push('import {AllCommunityModules} from "@ag-community/grid-all-modules";');
+        imports.push('import {AllCommunityModules} from "@ag-grid-community/grid-all-modules";');
     }
 
-    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
+    imports.push('import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";');
 
     // to account for the (rare) example that has more than one class...just default to balham if it does
     const theme = bindings.gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${theme}.css";`);
+    imports.push(`import "@ag-grid-community/grid-all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
         let titleCase = (s) => {

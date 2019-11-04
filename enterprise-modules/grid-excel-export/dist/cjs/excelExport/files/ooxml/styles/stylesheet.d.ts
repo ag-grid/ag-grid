@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelStyle } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelStyle } from '@ag-grid-community/grid-core';
 export declare const convertLegacyColor: (color: string) => string;
 declare const stylesheetFactory: ExcelOOXMLTemplate;
 export declare const getStyleId: (name: string) => number;

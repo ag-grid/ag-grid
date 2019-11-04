@@ -1,5 +1,5 @@
 import { AggFuncService } from "./aggFuncService";
-import { GridOptionsWrapper } from "@ag-community/grid-core";
+import { GridOptionsWrapper } from "@ag-grid-community/grid-core";
 function createService() {
     var getAggFuncs = jest.fn();
     var gridOptionsWrapper = new GridOptionsWrapper();

@@ -1,4 +1,4 @@
-import { Column } from "@ag-community/grid-core";
+import { Column } from "@ag-grid-community/grid-core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 export declare class PivotDropZonePanel extends BaseDropZonePanel {
     private columnController;

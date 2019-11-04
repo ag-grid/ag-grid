@@ -1,8 +1,8 @@
-import { Column, ExcelCell, ExcelColumn, ExcelDataType, ExcelOOXMLDataType, ExcelRow, ExcelStyle, RowNode } from '@ag-community/grid-core';
+import { Column, ExcelCell, ExcelColumn, ExcelDataType, ExcelOOXMLDataType, ExcelRow, ExcelStyle, RowNode } from '@ag-grid-community/grid-core';
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import { GridSerializingParams, RowType, BaseGridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "@ag-community/grid-csv-export";
+import { GridSerializingParams, RowType, BaseGridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "@ag-grid-community/grid-csv-export";
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     excelFactory: ExcelXmlFactory | ExcelXlsxFactory;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var angularFrameworkOverrides_1 = require("./angularFrameworkOverrides");
 var agGridColumn_1 = require("./agGridColumn");
 var angularFrameworkComponentWrapper_1 = require("./angularFrameworkComponentWrapper");

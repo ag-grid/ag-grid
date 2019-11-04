@@ -1,4 +1,4 @@
-import { _ } from '@ag-community/grid-core';
+import { _ } from '@ag-grid-community/grid-core';
 import { getStyleId } from './styles/stylesheet';
 var convertLegacyType = function (type) {
     var t = type.charAt(0).toLowerCase();

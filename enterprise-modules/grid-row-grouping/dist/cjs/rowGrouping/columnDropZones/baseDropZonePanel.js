@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var dropZoneColumnComp_1 = require("./dropZoneColumnComp");
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);

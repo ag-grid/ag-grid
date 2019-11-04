@@ -1,4 +1,4 @@
-import { IStatusPanelComp } from '@ag-community/grid-core';
+import { IStatusPanelComp } from '@ag-grid-community/grid-core';
 import { NameValueComp } from "./nameValueComp";
 export declare class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     private eventService;

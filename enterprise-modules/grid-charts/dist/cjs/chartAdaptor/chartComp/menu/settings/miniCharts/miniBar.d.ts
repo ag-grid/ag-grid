@@ -1,4 +1,4 @@
-import { ChartType } from "@ag-community/grid-core";
+import { ChartType } from "@ag-grid-community/grid-core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 export declare class MiniBar extends MiniChartWithAxes {
     static chartType: ChartType;

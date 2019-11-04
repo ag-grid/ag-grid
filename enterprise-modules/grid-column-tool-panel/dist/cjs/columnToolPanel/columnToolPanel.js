@@ -19,9 +19,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var pivotModePanel_1 = require("./pivotModePanel");
-var grid_row_grouping_1 = require("@ag-enterprise/grid-row-grouping");
+var grid_row_grouping_1 = require("@ag-grid-enterprise/grid-row-grouping");
 var ColumnToolPanel = /** @class */ (function (_super) {
     __extends(ColumnToolPanel, _super);
     function ColumnToolPanel() {

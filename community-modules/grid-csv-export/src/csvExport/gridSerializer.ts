@@ -23,7 +23,7 @@ import {
     SelectionController,
     ShouldRowBeSkippedParams,
     ValueService
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface

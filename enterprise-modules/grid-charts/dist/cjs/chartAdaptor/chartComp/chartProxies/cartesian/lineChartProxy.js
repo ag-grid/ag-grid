@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
 var LineChartProxy = /** @class */ (function (_super) {

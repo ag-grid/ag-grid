@@ -1,4 +1,4 @@
-import {Bean, HeaderElement, PrefixedXmlAttributes, XmlElement} from "@ag-community/grid-core";
+import {Bean, HeaderElement, PrefixedXmlAttributes, XmlElement} from "@ag-grid-community/grid-core";
 
 const LINE_SEPARATOR = '\r\n';
 

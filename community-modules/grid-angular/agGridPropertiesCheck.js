@@ -7,7 +7,7 @@ MouseEvent = typeof MouseEvent === 'undefined' ? function () {} : MouseEvent;
 
 /* Checks for missing gridOptions on agGridAngular */
 const {AgGridAngular} = require('./dist/agGridAngular');
-const {ComponentUtil} = require("@ag-community/grid-core");
+const {ComponentUtil} = require("@ag-grid-community/grid-core");
 
 const missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
@@ -35,7 +35,7 @@ if(missingProperties.length || missingEvents.length) {
 
 /* Checks for missing colDef properties on agGridColumn.ts */
 const {AgGridColumn} = require('./dist/agGridColumn');
-const {ColDefUtil} = require("@ag-community/grid-core");
+const {ColDefUtil} = require("@ag-grid-community/grid-core");
 
 // colDef properties that dont make sense in an angular context (or are private)
 const skippableProperties = ['template', 'templateUrl', 'pivotKeys', 'pivotValueColumn', 'pivotTotalColumnIds', 'templateUrl'];

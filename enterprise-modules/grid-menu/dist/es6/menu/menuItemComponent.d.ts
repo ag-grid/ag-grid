@@ -1,4 +1,4 @@
-import { AgEvent, Component, MenuItemDef } from "@ag-community/grid-core";
+import { AgEvent, Component, MenuItemDef } from "@ag-grid-community/grid-core";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
     disabled?: boolean;

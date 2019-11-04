@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.

@@ -1,5 +1,5 @@
 import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
-import "../node_modules/@ag-community/grid-polymer/index.js";
+import "../node_modules/@ag-grid-community/grid-polymer/index.js";
 
 import CubeCellRenderer from "./cubed-cell-renderer.js";
 import ChildCellRenderer from "./child-cell-renderer.js";
@@ -10,8 +10,8 @@ import SquareCellRenderer from "./square-cell-renderer.js";
 class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
-            <link rel="stylesheet" href="https://unpkg.com/@ag-community/grid-core/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/@ag-community/grid-core/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/grid-core/dist/styles/ag-grid.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/grid-core/dist/styles/ag-theme-balham.css">
           
             <button on-click="refreshRowData" style="margin-bottom: 15px">Refresh Data</button>
             <ag-grid-polymer style="width: 100%; height: 420px; "

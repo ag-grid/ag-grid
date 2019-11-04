@@ -7,7 +7,7 @@ import {
     IAggFuncService,
     PostConstruct,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 @Bean('aggFuncService')
 export class AggFuncService implements IAggFuncService {

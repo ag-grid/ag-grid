@@ -18,7 +18,7 @@ import {
     ModelUpdatedEvent,
     RowRenderer,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 @Bean('rowModel')
 export class ViewportRowModel implements IRowModel {

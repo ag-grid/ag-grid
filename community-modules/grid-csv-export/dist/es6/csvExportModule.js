@@ -1,4 +1,4 @@
-import { ModuleNames } from "@ag-community/grid-core";
+import { ModuleNames } from "@ag-grid-community/grid-core";
 import { CsvCreator } from "./csvExport/csvCreator";
 import { Downloader } from "./csvExport/downloader";
 import { XmlFactory } from "./csvExport/xmlFactory";

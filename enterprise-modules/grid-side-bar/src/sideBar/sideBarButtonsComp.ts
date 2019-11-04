@@ -7,7 +7,7 @@ import {
     ToolPanelDef,
     RefSelector,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;

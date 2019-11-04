@@ -1,4 +1,4 @@
-import { Column, Component } from "@ag-community/grid-core";
+import { Column, Component } from "@ag-grid-community/grid-core";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
     private static TEMPLATE;

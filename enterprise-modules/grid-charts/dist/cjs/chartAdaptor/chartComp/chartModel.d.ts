@@ -1,4 +1,4 @@
-import { BeanStub, CellRange, ChartType, Column, IAggFunc, IRangeController } from "@ag-community/grid-core";
+import { BeanStub, CellRange, ChartType, Column, IAggFunc, IRangeController } from "@ag-grid-community/grid-core";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 export interface ColState {

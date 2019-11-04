@@ -1,4 +1,4 @@
-import { ChartType } from "@ag-community/grid-core";
+import { ChartType } from "@ag-grid-community/grid-core";
 import { MiniStackedBar } from "./miniStackedBar";
 export declare class MiniNormalizedBar extends MiniStackedBar {
     static chartType: ChartType;

@@ -29,7 +29,7 @@ import {
     RowRenderer,
     RowNodeBlockLoader,
     RowNodeCache
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
 

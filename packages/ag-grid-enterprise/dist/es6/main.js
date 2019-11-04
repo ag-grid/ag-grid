@@ -4,4 +4,4 @@
  * @link http://www.ag-grid.com/
  * @license Commercial
  */
-export * from "@ag-enterprise/grid-all-modules";
+export * from "@ag-grid-enterprise/grid-all-modules";

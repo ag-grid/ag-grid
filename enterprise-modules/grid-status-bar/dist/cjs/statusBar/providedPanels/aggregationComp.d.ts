@@ -1,4 +1,4 @@
-import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from '@ag-community/grid-core';
+import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from '@ag-grid-community/grid-core';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;
     private eventService;

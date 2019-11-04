@@ -1,9 +1,9 @@
-import {Module, ModuleNames} from "@ag-community/grid-core";
-import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
+import {Module, ModuleNames} from "@ag-grid-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-grid-enterprise/grid-core";
 import {FiltersToolPanelHeaderPanel} from "./filterToolPanel/filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filterToolPanel/filtersToolPanelListPanel";
 import {FiltersToolPanel} from "./filterToolPanel/filtersToolPanel";
-import {SideBarModule} from "@ag-enterprise/grid-side-bar";
+import {SideBarModule} from "@ag-grid-enterprise/grid-side-bar";
 
 export const FiltersToolPanelModule: Module = {
     moduleName: ModuleNames.FiltersToolPanelModule,

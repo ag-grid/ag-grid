@@ -35,7 +35,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Autowired, _ } from '@ag-community/grid-core';
+import { Autowired, _ } from '@ag-grid-community/grid-core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 var FillHandle = /** @class */ (function (_super) {
     __extends(FillHandle, _super);

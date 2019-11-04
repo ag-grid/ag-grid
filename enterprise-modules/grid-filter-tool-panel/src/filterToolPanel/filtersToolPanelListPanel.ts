@@ -10,13 +10,13 @@ import {
     GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
 import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
-import {ToolPanelColDefService} from "@ag-enterprise/grid-side-bar";
+import {ToolPanelColDefService} from "@ag-grid-enterprise/grid-side-bar";
 
 export class FiltersToolPanelListPanel extends Component {
 

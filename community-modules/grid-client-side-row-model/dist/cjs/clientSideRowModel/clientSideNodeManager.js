@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;

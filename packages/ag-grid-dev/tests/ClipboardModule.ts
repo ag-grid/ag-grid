@@ -1,1 +1,1 @@
-import  {ClipboardModule} from "@ag-enterprise/clipboard/src/clipboardModule"
+import  {ClipboardModule} from "@ag-grid-enterprise/clipboard/src/clipboardModule"

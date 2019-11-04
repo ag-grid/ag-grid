@@ -22,7 +22,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var serverSideCache_1 = require("./serverSideCache");
 var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideRowModel = /** @class */ (function (_super) {

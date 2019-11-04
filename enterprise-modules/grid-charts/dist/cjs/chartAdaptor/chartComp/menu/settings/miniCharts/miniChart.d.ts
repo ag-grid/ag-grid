@@ -1,4 +1,4 @@
-import { Component } from "@ag-community/grid-core";
+import { Component } from "@ag-grid-community/grid-core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { Group } from "../../../../../charts/scene/group";
 import { Scene } from "../../../../../charts/scene/scene";

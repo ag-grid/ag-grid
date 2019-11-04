@@ -1,4 +1,4 @@
-import { BeanStub, Column, IAggFunc, IAggregationStage, IRowModel, ValueService } from "@ag-community/grid-core";
+import { BeanStub, Column, IAggFunc, IAggregationStage, IRowModel, ValueService } from "@ag-grid-community/grid-core";
 import { ColState } from "./chartModel";
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];

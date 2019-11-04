@@ -23,7 +23,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { ChartProxy } from "../chartProxy";
-import { _ } from "@ag-community/grid-core";
+import { _ } from "@ag-grid-community/grid-core";
 import { ChartModel } from "../../chartModel";
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);

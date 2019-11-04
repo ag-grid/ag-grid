@@ -9,7 +9,7 @@ import {
     RefSelector,
     FontStyle,
     FontWeight,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { ShadowPanel } from "./shadowPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";

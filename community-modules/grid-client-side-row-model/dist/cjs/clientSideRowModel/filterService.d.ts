@@ -1,4 +1,4 @@
-import { ChangedPath } from "@ag-community/grid-core";
+import { ChangedPath } from "@ag-grid-community/grid-core";
 export declare class FilterService {
     private filterManager;
     private gridOptionsWrapper;

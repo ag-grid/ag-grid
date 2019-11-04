@@ -1,4 +1,4 @@
-import { CreateRangeChartParams, CreatePivotChartParams, ChartRef, ChartType, IChartService } from "@ag-community/grid-core";
+import { CreateRangeChartParams, CreatePivotChartParams, ChartRef, ChartType, IChartService } from "@ag-grid-community/grid-core";
 export declare class ChartService implements IChartService {
     private rangeController;
     private columnController;

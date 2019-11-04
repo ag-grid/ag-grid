@@ -1,4 +1,4 @@
-import { ColDef, Column, IRowModel, ValueFormatterService } from "@ag-community/grid-core";
+import { ColDef, Column, IRowModel, ValueFormatterService } from "@ag-grid-community/grid-core";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
     PROVIDED_CB = 1,

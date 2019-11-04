@@ -33,8 +33,8 @@ function getReferencedImports(source) {
     return referencedImports.map(referencedImport => nameToImports[referencedImport])
         .filter(referencedImport => referencedImport !== 'ag-grid-community' &&
             referencedImport !== 'ag-grid-enterprise' &&
-            referencedImport.indexOf('@ag-community') === -1 &&
-            referencedImport.indexOf('@ag-enterprise') === -1);
+            referencedImport.indexOf('@ag-grid-community') === -1 &&
+            referencedImport.indexOf('@ag-grid-enterprise') === -1);
 }
 
 /** Generate documention for all classes in a set of .ts files */

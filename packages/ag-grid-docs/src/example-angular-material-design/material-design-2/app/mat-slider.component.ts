@@ -1,5 +1,5 @@
 import { Component, ElementRef } from "@angular/core";
-import { ICellEditorAngularComp } from "@ag-community/grid-angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/grid-angular";
 
 @Component({
     selector: "slider-cell",

@@ -24,7 +24,7 @@ import {
     Promise,
     Utils as _,
     Module
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";

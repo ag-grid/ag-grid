@@ -1,5 +1,5 @@
-import { XmlElement } from '@ag-community/grid-core';
-import { ExcelBorder, ExcelStyle, ExcelXMLTemplate } from '@ag-community/grid-core';
+import { XmlElement } from '@ag-grid-community/grid-core';
+import { ExcelBorder, ExcelStyle, ExcelXMLTemplate } from '@ag-grid-community/grid-core';
 
 const borders: ExcelXMLTemplate = {
     getTemplate(styleProperties: ExcelStyle): XmlElement {

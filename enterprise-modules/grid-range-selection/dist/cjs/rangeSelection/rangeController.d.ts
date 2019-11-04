@@ -1,4 +1,4 @@
-import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils } from "@ag-community/grid-core";
+import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils } from "@ag-grid-community/grid-core";
 export declare class RangeController implements IRangeController {
     private loggerFactory;
     private rowModel;

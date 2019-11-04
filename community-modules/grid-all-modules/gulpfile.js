@@ -118,11 +118,11 @@ const webpackTask = (minify, styles) => {
 // End of webpack related tasks
 
 const copyGridCoreStyles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-community/grid-core/dist/styles')) {
-        done("node_modules/@ag-community/grid-core/dist/styles doesn't exist - exiting")
+    if(!fs.existsSync('./node_modules/@ag-grid-community/grid-core/dist/styles')) {
+        done("node_modules/@ag-grid-community/grid-core/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    return gulp.src('./node_modules/@ag-grid-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
 };
 
 gulp.task('clean', cleanDist);

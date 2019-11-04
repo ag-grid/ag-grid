@@ -26,7 +26,7 @@ import {
     RowPositionUtils,
     PinnedRowModel,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 @Bean('rangeController')
 export class RangeController implements IRangeController {

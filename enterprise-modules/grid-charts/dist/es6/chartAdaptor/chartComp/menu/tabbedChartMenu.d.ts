@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, Component } from "@ag-community/grid-core";
+import { ChartMenuOptions, ChartType, Component } from "@ag-grid-community/grid-core";
 import { ChartController } from "../chartController";
 export declare class TabbedChartMenu extends Component {
     static EVENT_TAB_SELECTED: string;

@@ -25,7 +25,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var polarChartProxy_1 = require("./polarChartProxy");
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends(DoughnutChartProxy, _super);

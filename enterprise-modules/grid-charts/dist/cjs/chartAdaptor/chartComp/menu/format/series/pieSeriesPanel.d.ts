@@ -1,4 +1,4 @@
-import { Component } from "@ag-community/grid-core";
+import { Component } from "@ag-grid-community/grid-core";
 import { ChartController } from "../../../chartController";
 export declare class PieSeriesPanel extends Component {
     static TEMPLATE: string;

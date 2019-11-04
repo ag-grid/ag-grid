@@ -1,4 +1,4 @@
-import { Component, IFloatingFilter, IFloatingFilterParams } from "@ag-community/grid-core";
+import { Component, IFloatingFilter, IFloatingFilterParams } from "@ag-grid-community/grid-core";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFloatingFilterComp extends Component implements IFloatingFilter {
     private eFloatingFilterText;

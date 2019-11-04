@@ -1,5 +1,5 @@
-import {Module, ModuleNames} from "@ag-community/grid-core";
-import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
+import {Module, ModuleNames} from "@ag-grid-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-grid-enterprise/grid-core";
 import {AggregationStage} from "./rowGrouping/aggregationStage";
 import {GroupStage} from "./rowGrouping/groupStage";
 import {PivotColDefService} from "./rowGrouping/pivotColDefService";

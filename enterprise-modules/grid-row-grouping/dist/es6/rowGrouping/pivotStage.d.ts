@@ -1,4 +1,4 @@
-import { ColDef, IRowNodeStage, StageExecuteParams } from "@ag-community/grid-core";
+import { ColDef, IRowNodeStage, StageExecuteParams } from "@ag-grid-community/grid-core";
 export declare class PivotStage implements IRowNodeStage {
     private rowModel;
     private valueService;

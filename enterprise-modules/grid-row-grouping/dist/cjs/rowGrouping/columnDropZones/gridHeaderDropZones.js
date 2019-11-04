@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var rowGroupDropZonePanel_1 = require("./rowGroupDropZonePanel");
 var pivotDropZonePanel_1 = require("./pivotDropZonePanel");
 var GridHeaderDropZones = /** @class */ (function (_super) {

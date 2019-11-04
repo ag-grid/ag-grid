@@ -1,4 +1,4 @@
-import { ChangedPath, Column, RowNode } from "@ag-community/grid-core";
+import { ChangedPath, Column, RowNode } from "@ag-grid-community/grid-core";
 export interface SortOption {
     inverter: number;
     column: Column;

@@ -1,4 +1,4 @@
-import { Component } from "@ag-community/grid-core";
+import { Component } from "@ag-grid-community/grid-core";
 export declare class GridHeaderDropZones extends Component {
     private gridOptionsWrapper;
     private columnController;

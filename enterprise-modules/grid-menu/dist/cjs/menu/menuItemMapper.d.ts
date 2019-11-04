@@ -1,4 +1,4 @@
-import { Column, MenuItemDef } from '@ag-community/grid-core';
+import { Column, MenuItemDef } from '@ag-grid-community/grid-core';
 export declare class MenuItemMapper {
     private gridOptionsWrapper;
     private columnController;

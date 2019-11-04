@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var AngularFrameworkOverrides = /** @class */ (function (_super) {
     __extends(AngularFrameworkOverrides, _super);
     function AngularFrameworkOverrides(_ngZone) {

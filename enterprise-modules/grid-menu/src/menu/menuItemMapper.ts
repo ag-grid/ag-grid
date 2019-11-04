@@ -15,7 +15,7 @@ import {
     MenuItemDef,
     ModuleNames, ModuleRegistry,
     Optional
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/grid-core';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {

@@ -8,7 +8,7 @@ import {
     Promise,
     UserComponentFactory,
     GridOptionsWrapper
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 export class RichSelectRow extends Component {
 

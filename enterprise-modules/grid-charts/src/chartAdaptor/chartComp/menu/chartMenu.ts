@@ -10,7 +10,7 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     Promise
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { GridChartComp } from "../gridChartComp";

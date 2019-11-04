@@ -26,7 +26,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var chartController_1 = require("../../chartController");
 var ChartDataPanel = /** @class */ (function (_super) {
     __extends(ChartDataPanel, _super);

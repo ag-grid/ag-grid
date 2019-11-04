@@ -1,1 +1,1 @@
-import  {StatusBarModule} from "@ag-enterprise/status-bar/src/statusBarModule"
+import  {StatusBarModule} from "@ag-grid-enterprise/status-bar/src/statusBarModule"

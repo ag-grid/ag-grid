@@ -1,4 +1,4 @@
-import { RowNode, IEventEmitter, RowNodeBlock } from "@ag-community/grid-core";
+import { RowNode, IEventEmitter, RowNodeBlock } from "@ag-grid-community/grid-core";
 import { InfiniteCacheParams } from "./infiniteCache";
 export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
     private gridOptionsWrapper;

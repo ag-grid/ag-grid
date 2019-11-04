@@ -1,7 +1,7 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
 import {IFilterParams} from "ag-grid-community";
-import {IFilterAngularComp} from "@ag-community/grid-angular";
+import {IFilterAngularComp} from "@ag-grid-community/grid-angular";
 
 @Component({
     selector: 'filter-cell',

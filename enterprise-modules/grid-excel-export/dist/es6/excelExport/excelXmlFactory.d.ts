@@ -1,4 +1,4 @@
-import { ExcelStyle, ExcelWorksheet } from '@ag-community/grid-core';
+import { ExcelStyle, ExcelWorksheet } from '@ag-grid-community/grid-core';
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */

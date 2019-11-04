@@ -1,4 +1,4 @@
-import { Component, IToolPanelComp, ToolPanelDef } from "@ag-community/grid-core";
+import { Component, IToolPanelComp, ToolPanelDef } from "@ag-grid-community/grid-core";
 export declare class ToolPanelWrapper extends Component {
     private userComponentFactory;
     private gridOptionsWrapper;

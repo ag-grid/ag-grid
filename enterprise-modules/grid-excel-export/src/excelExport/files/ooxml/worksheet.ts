@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _ } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelWorksheet, ExcelRow, ExcelColumn, _ } from '@ag-grid-community/grid-core';
 import columnFactory from './column';
 import rowFactory from './row';
 import mergeCell from './mergeCell';

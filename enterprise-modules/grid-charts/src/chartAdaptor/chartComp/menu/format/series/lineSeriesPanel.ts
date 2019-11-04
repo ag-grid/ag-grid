@@ -7,7 +7,7 @@ import {
     Component,
     PostConstruct,
     RefSelector
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";

@@ -1,4 +1,4 @@
-import { AbstractColDef, Component, ToolPanelColumnCompParams } from "@ag-community/grid-core";
+import { AbstractColDef, Component, ToolPanelColumnCompParams } from "@ag-grid-community/grid-core";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
 export declare type ColumnFilterResults = {

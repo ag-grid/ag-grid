@@ -1,4 +1,4 @@
-import { ExcelStyle, ExcelWorksheet } from '@ag-community/grid-core';
+import { ExcelStyle, ExcelWorksheet } from '@ag-grid-community/grid-core';
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */

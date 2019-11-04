@@ -10,11 +10,11 @@
         "noImplicitAny": false
     },
     "include": [ 
-        "./_dev/@ag-community/src/**/*.ts",
-        "./_dev/@ag-enterprise/src/**/*.ts",
+        "./_dev/@ag-grid-community/src/**/*.ts",
+        "./_dev/@ag-grid-enterprise/src/**/*.ts",
         "./_dev/ag-grid-enterprise/src/**/*.ts",
-        "./_dev/@ag-community/grid-angular/src/**/*.ts",
-        "./_dev/@ag-community/grid-react/src/**/*.ts"
+        "./_dev/@ag-grid-community/grid-angular/src/**/*.ts",
+        "./_dev/@ag-grid-community/grid-react/src/**/*.ts"
     ],
 
     "exclude": [ "node_modules" ]

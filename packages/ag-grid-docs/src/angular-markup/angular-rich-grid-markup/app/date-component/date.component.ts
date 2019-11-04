@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {IDateParams} from "ag-grid-community";
-import {IDateAngularComp} from "@ag-community/grid-angular";
+import {IDateAngularComp} from "@ag-grid-community/grid-angular";
 
 
 @Component({

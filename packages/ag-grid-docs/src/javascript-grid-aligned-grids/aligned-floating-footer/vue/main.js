@@ -1,10 +1,10 @@
 import Vue from "vue";
-import { AgGridVue } from "@ag-community/grid-vue";
+import { AgGridVue } from "@ag-grid-community/grid-vue";
 
-import {AllCommunityModules} from '@ag-community/grid-all-modules';
+import {AllCommunityModules} from '@ag-grid-community/grid-all-modules';
 
-import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 const VueExample = {
   template: `

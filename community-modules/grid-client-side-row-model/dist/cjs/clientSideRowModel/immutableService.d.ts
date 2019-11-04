@@ -1,4 +1,4 @@
-import { IImmutableService, RowDataTransaction } from "@ag-community/grid-core";
+import { IImmutableService, RowDataTransaction } from "@ag-grid-community/grid-core";
 export declare class ImmutableService implements IImmutableService {
     private rowModel;
     private gridOptionsWrapper;

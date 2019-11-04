@@ -1,4 +1,4 @@
-import { ChartType } from "@ag-community/grid-core";
+import { ChartType } from "@ag-grid-community/grid-core";
 import { MiniChart } from "./miniChart";
 export declare class MiniDoughnut extends MiniChart {
     static chartType: ChartType;

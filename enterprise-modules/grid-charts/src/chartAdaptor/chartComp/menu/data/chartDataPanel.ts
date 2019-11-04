@@ -8,7 +8,7 @@ import {
     Component,
     PostConstruct,
     ChartType
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartModel";
 import { ChartTranslator } from "../../chartTranslator";

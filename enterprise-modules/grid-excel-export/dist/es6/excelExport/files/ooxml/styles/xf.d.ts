@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelAlignment, ExcelProtection } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelAlignment, ExcelProtection } from '@ag-grid-community/grid-core';
 declare const xfFactory: ExcelOOXMLTemplate;
 export default xfFactory;
 export interface Xf {

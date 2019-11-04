@@ -1,5 +1,5 @@
 import { Component, ViewChildren } from "@angular/core";
-import { ICellEditorAngularComp } from "@ag-community/grid-angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/grid-angular";
 import { MatRadioButton } from "@angular/material";
 
 @Component({

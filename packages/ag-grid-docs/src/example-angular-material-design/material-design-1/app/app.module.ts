@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 // ag-grid
-import { AgGridModule } from "@ag-community/grid-angular";
+import { AgGridModule } from "@ag-grid-community/grid-angular";
 
 // material design
 import {

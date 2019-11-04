@@ -1,1 +1,1 @@
-import  {RowGroupingModule} from "@ag-enterprise/row-grouping/src/rowGroupingModule"
+import  {RowGroupingModule} from "@ag-grid-enterprise/row-grouping/src/rowGroupingModule"

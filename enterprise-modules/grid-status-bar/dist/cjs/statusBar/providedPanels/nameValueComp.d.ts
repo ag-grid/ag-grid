@@ -1,4 +1,4 @@
-import { Component, GridOptionsWrapper } from '@ag-community/grid-core';
+import { Component, GridOptionsWrapper } from '@ag-grid-community/grid-core';
 export declare class NameValueComp extends Component {
     protected gridOptionsWrapper: GridOptionsWrapper;
     private static TEMPLATE;

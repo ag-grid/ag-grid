@@ -13,11 +13,11 @@ import {
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";
-import {ToolPanelColDefService} from "@ag-enterprise/grid-side-bar";
+import {ToolPanelColDefService} from "@ag-grid-enterprise/grid-side-bar";
 import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;

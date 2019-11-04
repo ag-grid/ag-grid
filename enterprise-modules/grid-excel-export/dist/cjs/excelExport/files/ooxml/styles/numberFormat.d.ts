@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
 export interface NumberFormat {
     formatCode: string;
     numFmtId: number;

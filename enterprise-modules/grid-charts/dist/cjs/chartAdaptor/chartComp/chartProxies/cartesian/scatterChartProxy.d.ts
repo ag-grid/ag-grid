@@ -1,4 +1,4 @@
-import { ScatterSeriesOptions, CartesianChartOptions } from "@ag-community/grid-core";
+import { ScatterSeriesOptions, CartesianChartOptions } from "@ag-grid-community/grid-core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 export declare class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions> {

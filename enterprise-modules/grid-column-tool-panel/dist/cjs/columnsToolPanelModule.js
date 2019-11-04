@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
-var grid_core_2 = require("@ag-enterprise/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
+var grid_core_2 = require("@ag-grid-enterprise/grid-core");
 var primaryColsHeaderPanel_1 = require("./columnToolPanel/primaryColsHeaderPanel");
 var primaryColsListPanel_1 = require("./columnToolPanel/primaryColsListPanel");
 var columnToolPanel_1 = require("./columnToolPanel/columnToolPanel");
 var primaryColsPanel_1 = require("./columnToolPanel/primaryColsPanel");
-var grid_row_grouping_1 = require("@ag-enterprise/grid-row-grouping");
-var grid_side_bar_1 = require("@ag-enterprise/grid-side-bar");
+var grid_row_grouping_1 = require("@ag-grid-enterprise/grid-row-grouping");
+var grid_side_bar_1 = require("@ag-grid-enterprise/grid-side-bar");
 exports.ColumnsToolPanelModule = {
     moduleName: grid_core_1.ModuleNames.ColumnToolPanelModule,
     beans: [],

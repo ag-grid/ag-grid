@@ -1,4 +1,4 @@
-import { RowNode, GridOptionsWrapper, Context, EventService, ColumnController, GridApi, ColumnApi, SelectionController, RowDataTransaction, RowNodeTransaction } from "@ag-community/grid-core";
+import { RowNode, GridOptionsWrapper, Context, EventService, ColumnController, GridApi, ColumnApi, SelectionController, RowDataTransaction, RowNodeTransaction } from "@ag-grid-community/grid-core";
 export declare class ClientSideNodeManager {
     private static TOP_LEVEL;
     private rootNode;

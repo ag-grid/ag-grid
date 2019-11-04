@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var miniChart_1 = require("./miniChart");
 var sector_1 = require("../../../../../charts/scene/shape/sector");
 var angle_1 = require("../../../../../charts/util/angle");

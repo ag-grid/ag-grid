@@ -1,5 +1,5 @@
 /**
- * @ag-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @ag-grid-community/grid-core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v22.0.0-beta.0
  * @link http://www.ag-grid.com/
  * @license MIT
@@ -282,24 +282,24 @@ var Grid = /** @class */ (function () {
         else {
             if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_INFINITE) {
                 console.error("ag-Grid: Row Model \"Infinite\" not found. Please ensure the "
-                    + "InfiniteRowModelModule is loaded using: import '@ag-community/grid-infinite-row-model';");
+                    + "InfiniteRowModelModule is loaded using: import '@ag-grid-community/grid-infinite-row-model';");
             }
             console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
             if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_VIEWPORT) {
                 console.error("ag-Grid: Row Model \"Viewport\" not found. For this row model to work you must " +
                     "a) be using ag-Grid Enterprise and " +
                     "b) ensure ViewportRowModelModule is " +
-                    "loaded using: import '@ag-enterprise/grid-viewport-row-model;");
+                    "loaded using: import '@ag-grid-enterprise/grid-viewport-row-model;");
             }
             if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
                 console.error("ag-Grid: Row Model \"Server Side\" not found. For this row model to work you must " +
                     "a) be using ag-Grid Enterprise and " +
                     "b) ensure ServerSideRowModelModule is " +
-                    "loaded using: import '@ag-enterprise/grid-server-server-side-row-model';");
+                    "loaded using: import '@ag-grid-enterprise/grid-server-server-side-row-model';");
             }
             if (rowModelType === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
                 console.error("ag-Grid: Row Model \"Client Side\" not found. Please ensure the "
-                    + "ClientSideRowModelModule is loaded using: import '@ag-community/grid-client-side-row-model';");
+                    + "ClientSideRowModelModule is loaded using: import '@ag-grid-community/grid-client-side-row-model';");
             }
             return undefined;
         }

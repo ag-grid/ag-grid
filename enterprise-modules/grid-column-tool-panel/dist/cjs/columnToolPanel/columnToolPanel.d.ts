@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, Component, IToolPanelComp, IToolPanelParams, IColumnToolPanel } from "@ag-community/grid-core";
+import { ColDef, ColGroupDef, Component, IToolPanelComp, IToolPanelParams, IColumnToolPanel } from "@ag-grid-community/grid-core";
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
     suppressValues: boolean;

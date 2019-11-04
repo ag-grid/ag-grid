@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var getFont = function (props) {
     var type = props[0], typeface = props[1], script = props[2], panose = props[3];
     return {

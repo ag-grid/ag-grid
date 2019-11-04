@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {RowNode} from 'ag-grid-community';
-import {ICellRendererAngularComp} from "@ag-community/grid-angular";
+import {ICellRendererAngularComp} from "@ag-grid-community/grid-angular";
 
 @Component({
     selector: 'floating-cell',

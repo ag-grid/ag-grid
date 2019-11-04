@@ -1,9 +1,9 @@
-import {Module, ModuleNames} from "@ag-community/grid-core";
-import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
+import {Module, ModuleNames} from "@ag-grid-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-grid-enterprise/grid-core";
 import {ChartService} from "./chartAdaptor/chartService";
 import {ChartTranslator} from "./chartAdaptor/chartComp/chartTranslator";
 
-import {RangeSelectionModule} from "@ag-enterprise/grid-range-selection";
+import {RangeSelectionModule} from "@ag-grid-enterprise/grid-range-selection";
 
 export const GridChartsModule: Module = {
     moduleName: ModuleNames.GridChartsModule,

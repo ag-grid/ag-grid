@@ -8,7 +8,7 @@ import {
     GridOptionsWrapper,
     NumberSequence,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];

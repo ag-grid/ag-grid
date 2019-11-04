@@ -1,4 +1,4 @@
-import { IRowNodeStage, StageExecuteParams } from "@ag-community/grid-core";
+import { IRowNodeStage, StageExecuteParams } from "@ag-grid-community/grid-core";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
     private gridOptionsWrapper;

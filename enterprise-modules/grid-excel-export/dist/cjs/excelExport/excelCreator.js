@@ -19,10 +19,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var excelXmlSerializingSession_1 = require("./excelXmlSerializingSession");
 var excelXlsxSerializingSession_1 = require("./excelXlsxSerializingSession");
-var grid_csv_export_1 = require("@ag-community/grid-csv-export");
+var grid_csv_export_1 = require("@ag-grid-community/grid-csv-export");
 var ExcelCreator = /** @class */ (function (_super) {
     __extends(ExcelCreator, _super);
     function ExcelCreator() {

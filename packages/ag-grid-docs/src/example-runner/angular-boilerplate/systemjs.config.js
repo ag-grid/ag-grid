@@ -121,105 +121,105 @@
                     }
                 }
             },
-            "@ag-community/grid-angular": {
+            "@ag-grid-community/grid-angular": {
                 main: "./main.js",
                 defaultExtension: "js"
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            '@ag-community/grid-core/dist/cjs/utils': {
+            '@ag-grid-community/grid-core/dist/cjs/utils': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-enterprise/grid-charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/grid-charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */
-           '@ag-community/grid-all-modules': { 
+           '@ag-grid-community/grid-all-modules': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-community/grid-client-side-row-model': { 
+           '@ag-grid-community/grid-client-side-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-community/grid-core': { 
+           '@ag-grid-community/grid-core': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-community/grid-csv-export': { 
+           '@ag-grid-community/grid-csv-export': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-community/grid-infinite-row-model': { 
+           '@ag-grid-community/grid-infinite-row-model': { 
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-all-modules': { 
+           '@ag-grid-enterprise/grid-all-modules': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-charts': { 
+           '@ag-grid-enterprise/grid-charts': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-clipboard': { 
+           '@ag-grid-enterprise/grid-clipboard': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-column-tool-panel': { 
+           '@ag-grid-enterprise/grid-column-tool-panel': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-core': { 
+           '@ag-grid-enterprise/grid-core': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-excel-export': { 
+           '@ag-grid-enterprise/grid-excel-export': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-filter-tool-panel': { 
+           '@ag-grid-enterprise/grid-filter-tool-panel': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-master-detail': { 
+           '@ag-grid-enterprise/grid-master-detail': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-menu': { 
+           '@ag-grid-enterprise/grid-menu': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-range-selection': { 
+           '@ag-grid-enterprise/grid-range-selection': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-rich-select': { 
+           '@ag-grid-enterprise/grid-rich-select': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-row-grouping': { 
+           '@ag-grid-enterprise/grid-row-grouping': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-server-side-row-model': { 
+           '@ag-grid-enterprise/grid-server-side-row-model': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-set-filter': { 
+           '@ag-grid-enterprise/grid-set-filter': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-side-bar': { 
+           '@ag-grid-enterprise/grid-side-bar': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-status-bar': { 
+           '@ag-grid-enterprise/grid-status-bar': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-           '@ag-enterprise/grid-viewport-row-model': { 
+           '@ag-grid-enterprise/grid-viewport-row-model': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },

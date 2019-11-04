@@ -6,7 +6,7 @@ const common = require('./webpack.common.config.js');
 module.exports = merge(common, {
     mode: 'development',
     entry: {
-        '@ag-community/grid-all-modules': './src/_assets/ts/community-grid-all-modules-umd.js'
+        '@ag-grid-community/grid-all-modules': './src/_assets/ts/community-grid-all-modules-umd.js'
     },
 
     output: {

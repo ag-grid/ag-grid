@@ -1,4 +1,4 @@
-import { Component, ToolPanelColumnCompParams } from "@ag-community/grid-core";
+import { Component, ToolPanelColumnCompParams } from "@ag-grid-community/grid-core";
 export declare enum EXPAND_STATE {
     EXPANDED = 0,
     COLLAPSED = 1,

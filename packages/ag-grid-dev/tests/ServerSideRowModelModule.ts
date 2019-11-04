@@ -1,1 +1,1 @@
-import  {ServerSideRowModelModule} from "@ag-enterprise/server-side-row-model/src/serverSideRowModelModule"
+import  {ServerSideRowModelModule} from "@ag-grid-enterprise/server-side-row-model/src/serverSideRowModelModule"

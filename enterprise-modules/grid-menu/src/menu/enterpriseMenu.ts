@@ -25,7 +25,7 @@ import {
     Promise,
     TabbedItem,
     TabbedLayout
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";

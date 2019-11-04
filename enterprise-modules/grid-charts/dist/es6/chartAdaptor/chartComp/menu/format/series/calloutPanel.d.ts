@@ -1,4 +1,4 @@
-import { Component } from "@ag-community/grid-core";
+import { Component } from "@ag-grid-community/grid-core";
 import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
 export declare class CalloutPanel extends Component {

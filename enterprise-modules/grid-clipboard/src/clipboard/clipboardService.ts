@@ -39,7 +39,7 @@ import {
     ICsvCreator,
     IRangeController,
     Optional
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;

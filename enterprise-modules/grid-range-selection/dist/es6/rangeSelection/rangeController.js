@@ -11,7 +11,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Autowired, Bean, Constants, Events, PostConstruct, _ } from "@ag-community/grid-core";
+import { Autowired, Bean, Constants, Events, PostConstruct, _ } from "@ag-grid-community/grid-core";
 var RangeController = /** @class */ (function () {
     function RangeController() {
         this.cellRanges = [];

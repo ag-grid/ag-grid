@@ -4,4 +4,4 @@
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-export * from "@ag-community/grid-all-modules";
+export * from "@ag-grid-community/grid-all-modules";

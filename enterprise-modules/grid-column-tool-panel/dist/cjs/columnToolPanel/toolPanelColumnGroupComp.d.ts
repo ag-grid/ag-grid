@@ -1,4 +1,4 @@
-import { Component, OriginalColumnGroup } from "@ag-community/grid-core";
+import { Component, OriginalColumnGroup } from "@ag-grid-community/grid-core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
 export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {

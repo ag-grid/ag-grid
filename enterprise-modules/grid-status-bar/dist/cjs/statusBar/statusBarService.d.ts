@@ -1,4 +1,4 @@
-import { IStatusPanelComp, IStatusBarService } from '@ag-community/grid-core';
+import { IStatusPanelComp, IStatusBarService } from '@ag-grid-community/grid-core';
 export declare class StatusBarService implements IStatusBarService {
     private allComponents;
     constructor();

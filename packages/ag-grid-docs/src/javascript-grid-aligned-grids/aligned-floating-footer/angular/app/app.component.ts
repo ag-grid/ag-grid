@@ -1,9 +1,9 @@
 import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {AllCommunityModules} from '@ag-community/grid-all-modules';
+import {AllCommunityModules} from '@ag-grid-community/grid-all-modules';
 
-import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 @Component({
     selector: 'my-app',

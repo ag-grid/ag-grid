@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { _, Autowired, Bean, BeanStub, Constants, Events, NumberSequence, PostConstruct, PreDestroy, Qualifier, RowNode, RowNodeBlockLoader, RowNodeCache } from "@ag-community/grid-core";
+import { _, Autowired, Bean, BeanStub, Constants, Events, NumberSequence, PostConstruct, PreDestroy, Qualifier, RowNode, RowNodeBlockLoader, RowNodeCache } from "@ag-grid-community/grid-core";
 import { ServerSideCache } from "./serverSideCache";
 import { ServerSideBlock } from "./serverSideBlock";
 var ServerSideRowModel = /** @class */ (function (_super) {

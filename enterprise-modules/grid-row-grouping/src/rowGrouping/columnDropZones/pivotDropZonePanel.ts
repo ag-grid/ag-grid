@@ -12,7 +12,7 @@ import {
     ColumnApi,
     GridApi,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class PivotDropZonePanel extends BaseDropZonePanel {

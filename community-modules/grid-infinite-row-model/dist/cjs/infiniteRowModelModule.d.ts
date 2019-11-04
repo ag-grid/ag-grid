@@ -1,2 +1,2 @@
-import { Module } from "@ag-community/grid-core";
+import { Module } from "@ag-grid-community/grid-core";
 export declare const InfiniteRowModelModule: Module;

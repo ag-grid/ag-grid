@@ -19,7 +19,7 @@ import {
     SeriesOptions,
     Optional,
     IRangeController,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 
 @Bean('chartService')

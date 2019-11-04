@@ -1,6 +1,6 @@
-import { Column, ExcelCell, ExcelDataType, ExcelOOXMLDataType, RowNode } from '@ag-community/grid-core';
+import { Column, ExcelCell, ExcelDataType, ExcelOOXMLDataType, RowNode } from '@ag-grid-community/grid-core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
-import { RowSpanningAccumulator } from "@ag-community/grid-csv-export";
+import { RowSpanningAccumulator } from "@ag-grid-community/grid-csv-export";
 export declare class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
     private stringList;
     private stringMap;

@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
-import {AgGridReact} from "@ag-community/grid-react";
+import {AgGridReact} from "@ag-grid-community/grid-react";
 import {actions} from './actions/fileActions.jsx'
 
-import {AllModules} from "@ag-enterprise/grid-all-modules";
+import {AllModules} from "@ag-grid-enterprise/grid-all-modules";
 
-import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/grid-all-modules/dist/styles/ag-theme-balham.css";
 
 class FileView extends Component {
   colDefs = [

@@ -1,4 +1,4 @@
-import { Column, GridOptionsWrapper, IAggFunc, IAggFuncService } from "@ag-community/grid-core";
+import { Column, GridOptionsWrapper, IAggFunc, IAggFuncService } from "@ag-grid-community/grid-core";
 export declare class AggFuncService implements IAggFuncService {
     private static AGG_SUM;
     private static AGG_FIRST;

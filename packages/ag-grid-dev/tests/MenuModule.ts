@@ -1,1 +1,1 @@
-import  {MenuModule} from "@ag-enterprise/menu/src/menuModule"
+import  {MenuModule} from "@ag-grid-enterprise/menu/src/menuModule"

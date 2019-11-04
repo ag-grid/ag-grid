@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelCell, _ } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelCell, _ } from '@ag-grid-community/grid-core';
 import { getStyleId } from './styles/stylesheet';
 
 const convertLegacyType = (type: string): string => {

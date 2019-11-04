@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
-var grid_core_2 = require("@ag-enterprise/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
+var grid_core_2 = require("@ag-grid-enterprise/grid-core");
 var aggregationStage_1 = require("./rowGrouping/aggregationStage");
 var groupStage_1 = require("./rowGrouping/groupStage");
 var pivotColDefService_1 = require("./rowGrouping/pivotColDefService");

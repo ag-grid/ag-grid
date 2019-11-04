@@ -1,5 +1,5 @@
-import {Module, ModuleNames} from "@ag-community/grid-core";
-import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
+import {Module, ModuleNames} from "@ag-grid-community/grid-core";
+import {EnterpriseCoreModule} from "@ag-grid-enterprise/grid-core";
 import {RichSelectCellEditor} from "./richSelect/richSelectCellEditor";
 
 export const RichSelectModule: Module = {

@@ -37,9 +37,9 @@ const populateDevFolder = () => {
                 .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
     });
 
-    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-react`));
-    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-angular`));
-    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-vue`));
+    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-react`));
+    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-angular`));
+    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-vue`));
 
     return merge(...copyTasks, react, angular, vue);
 };
@@ -99,8 +99,8 @@ const processSource = () => {
             .src(['./src/**/*',
                 '!./src/dist/ag-grid-community/',
                 '!./src/dist/ag-grid-enterprise/',
-                '!./src/dist/@ag-community/',
-                '!./src/dist/@ag-enterprise/',
+                '!./src/dist/@ag-grid-community/',
+                '!./src/dist/@ag-grid-enterprise/',
                 `!${DEV_DIR}`])
             // inline the PHP part
             .pipe(phpFilter)
@@ -164,10 +164,10 @@ const bundleSite = (production) => {
 
 const copyFromDistFolder = () => {
     return merge(
-        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-community/grid-all-modules/dist/')),
+        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-grid-community/grid-all-modules/dist/')),
         gulp
             .src(['../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.js', '../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.min.js'])
-            .pipe(gulp.dest('./dist/@ag-enterprise/grid-all-modules/dist/'))
+            .pipe(gulp.dest('./dist/@ag-grid-enterprise/grid-all-modules/dist/'))
     );
 };
 

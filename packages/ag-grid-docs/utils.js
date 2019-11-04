@@ -25,7 +25,7 @@ const getAllModules = () => {
             const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
 
-            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-community' : '@ag-enterprise';
+            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-grid-community' : '@ag-grid-enterprise';
             const publishedName = `${barrelNamePrefix}/${moduleDirName}`;
 
             return {

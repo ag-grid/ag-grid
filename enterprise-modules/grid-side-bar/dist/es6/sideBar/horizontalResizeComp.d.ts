@@ -1,4 +1,4 @@
-import { Component } from "@ag-community/grid-core";
+import { Component } from "@ag-grid-community/grid-core";
 export declare class HorizontalResizeComp extends Component {
     private horizontalResizeService;
     private gridOptionsWrapper;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-community/grid-core");
+var grid_core_1 = require("@ag-grid-community/grid-core");
 var csvCreator_1 = require("./csvExport/csvCreator");
 var downloader_1 = require("./csvExport/downloader");
 var xmlFactory_1 = require("./csvExport/xmlFactory");

@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, Component, ToolPanelColumnCompParams, IPrimaryColsPanel } from "@ag-community/grid-core";
+import { ColDef, ColGroupDef, Component, ToolPanelColumnCompParams, IPrimaryColsPanel } from "@ag-grid-community/grid-core";
 export interface BaseColumnItem {
     getDisplayName(): string | null;
     onSelectAllChanged(value: boolean): void;

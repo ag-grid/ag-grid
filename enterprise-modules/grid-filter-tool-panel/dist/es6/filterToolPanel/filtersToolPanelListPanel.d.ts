@@ -1,4 +1,4 @@
-import { AbstractColDef, Component } from "@ag-community/grid-core";
+import { AbstractColDef, Component } from "@ag-grid-community/grid-core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 export declare class FiltersToolPanelListPanel extends Component {
     private static TEMPLATE;

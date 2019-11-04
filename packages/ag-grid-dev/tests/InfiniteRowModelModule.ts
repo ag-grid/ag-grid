@@ -1,1 +1,1 @@
-import  {InfiniteRowModelModule} from "@ag-community/infinite-row-model/src/infiniteRowModelModule"
+import  {InfiniteRowModelModule} from "@ag-grid-community/infinite-row-model/src/infiniteRowModelModule"

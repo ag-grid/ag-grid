@@ -1,4 +1,4 @@
-import {Autowired, Component, GridOptionsWrapper, RefSelector} from '@ag-community/grid-core';
+import {Autowired, Component, GridOptionsWrapper, RefSelector} from '@ag-grid-community/grid-core';
 
 export class NameValueComp extends Component {
 

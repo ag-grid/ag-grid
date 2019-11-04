@@ -1,4 +1,4 @@
-import { ModuleNames } from "@ag-community/grid-core";
+import { ModuleNames } from "@ag-grid-community/grid-core";
 import { ClientSideRowModel } from "./clientSideRowModel/clientSideRowModel";
 import { FilterStage } from "./clientSideRowModel/filterStage";
 import { SortStage } from "./clientSideRowModel/sortStage";

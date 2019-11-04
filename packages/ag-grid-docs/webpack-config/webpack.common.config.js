@@ -13,7 +13,7 @@ module.exports = {
         // we prioritise main (cjs) vs module (es6) as when doing dev we only rebuild cjs for performance reasons
         mainFields: ["main", "module"],
         alias: {
-            "@ag-community/grid-core": path.resolve(__dirname, "../_dev/@ag-community/grid-core")
+            "@ag-grid-community/grid-core": path.resolve(__dirname, "../_dev/@ag-grid-community/grid-core")
         },
         extensions: ['.js']
     },

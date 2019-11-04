@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Autowired, Events, PostConstruct, Qualifier, RowNodeCache, } from "@ag-community/grid-core";
+import { Autowired, Events, PostConstruct, Qualifier, RowNodeCache, } from "@ag-grid-community/grid-core";
 import { InfiniteBlock } from "./infiniteBlock";
 var InfiniteCache = /** @class */ (function (_super) {
     __extends(InfiniteCache, _super);

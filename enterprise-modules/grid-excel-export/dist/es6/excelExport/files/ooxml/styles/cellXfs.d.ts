@@ -1,3 +1,3 @@
-import { ExcelOOXMLTemplate } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
 declare const cellXfsFactory: ExcelOOXMLTemplate;
 export default cellXfsFactory;

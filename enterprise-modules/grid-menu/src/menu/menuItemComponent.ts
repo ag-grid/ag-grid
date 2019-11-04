@@ -8,7 +8,7 @@ import {
     TooltipManager,
     _,
     RefSelector
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/grid-core";
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;

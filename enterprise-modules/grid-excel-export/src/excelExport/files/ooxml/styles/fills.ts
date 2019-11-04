@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
 import fillFactory, { Fill } from './fill';
 
 const fillsFactory: ExcelOOXMLTemplate = {
