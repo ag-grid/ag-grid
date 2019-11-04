@@ -6,7 +6,7 @@ export class Observable {
     private categoryListeners = new Map();
 
     addListener<K extends string & keyof this>(name: K, listener: Listener<this, this[K]>) {
-        const { nameListeners } = this;
+        const nameListeners = this.nameListeners as Map<K, Set<Listener<this, this[K]>>>;
         let listeners = nameListeners.get(name);
 
         if (!listeners) {
@@ -21,12 +21,16 @@ export class Observable {
         }
     }
 
-    removeListener<K extends string & keyof this>(name: K, listener: Listener<this, this[K]>) {
-        const { nameListeners } = this;
+    removeListener<K extends string & keyof this>(name: K, listener?: Listener<this, this[K]>) {
+        const nameListeners = this.nameListeners as Map<K, Set<Listener<this, this[K]>>>;
         let listeners = nameListeners.get(name);
 
         if (listeners) {
-            listeners.delete(listener);
+            if (listener) {
+                listeners.delete(listener);
+            } else {
+                listeners.clear();
+            }
         }
     }
 
@@ -40,7 +44,7 @@ export class Observable {
     };
 
     addCategoryListener(category: string, listener: (instance: this) => any) {
-        const { categoryListeners } = this;
+        const categoryListeners = this.categoryListeners as Map<string, Set<CategoryListener<this>>>;
         let listeners = categoryListeners.get(category);
 
         if (!listeners) {
@@ -55,12 +59,16 @@ export class Observable {
         }
     }
 
-    removeCategoryListener(category: string, listener: (instance: this) => any) {
-        const { categoryListeners } = this;
+    removeCategoryListener(category: string, listener?: (instance: this) => any) {
+        const categoryListeners = this.categoryListeners as Map<string, Set<CategoryListener<this>>>;
         let listeners = categoryListeners.get(category);
 
         if (listeners) {
-            listeners.delete(listener);
+            if (listener) {
+                listeners.delete(listener);
+            } else {
+                listeners.clear();
+            }
         }
     }
 
