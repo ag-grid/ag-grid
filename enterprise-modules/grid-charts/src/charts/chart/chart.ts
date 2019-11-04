@@ -90,11 +90,11 @@ export abstract class Chart {
         const oldTitle = this._title;
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.onChange = undefined;
+                oldTitle.removeCategoryListener('style', this.onLayoutChange);
                 this.scene.root!.removeChild(oldTitle.node);
             }
             if (value) {
-                value.onChange = this.onLayoutChange;
+                value.addCategoryListener('style', this.onLayoutChange);
                 this.scene.root!.appendChild(value.node);
             }
             this._title = value;
@@ -110,11 +110,11 @@ export abstract class Chart {
         const oldSubtitle = this._subtitle;
         if (oldSubtitle !== value) {
             if (oldSubtitle) {
-                oldSubtitle.onChange = undefined;
+                oldSubtitle.removeCategoryListener('style', this.onLayoutChange);
                 this.scene.root!.removeChild(oldSubtitle.node);
             }
             if (value) {
-                value.onChange = this.onLayoutChange;
+                value.addCategoryListener('style', this.onLayoutChange);
                 this.scene.root!.appendChild(value.node);
             }
             this._subtitle = value;

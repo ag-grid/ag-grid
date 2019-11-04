@@ -124,13 +124,13 @@ export class PieSeries extends Series<PolarChart> {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.onChange = undefined;
+                oldTitle.removeCategoryListener('style');
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.onChange = () => this.scheduleLayout();
+                value.addCategoryListener('style', this.scheduleLayout.bind(this));
                 this.group.appendChild(value.node);
             }
 
