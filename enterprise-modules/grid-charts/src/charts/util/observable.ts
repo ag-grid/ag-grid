@@ -39,7 +39,7 @@ export class Observable {
         }
     };
 
-    addCategoryListener(category: string, listener: (category: string) => any) {
+    addCategoryListener(category: string, listener: (instance: this) => any) {
         const { categoryListeners } = this;
         let listeners = categoryListeners.get(category);
 
@@ -55,7 +55,7 @@ export class Observable {
         }
     }
 
-    removeCategoryListener(category: string, listener: (category: string) => any) {
+    removeCategoryListener(category: string, listener: (instance: this) => any) {
         const { categoryListeners } = this;
         let listeners = categoryListeners.get(category);
 
