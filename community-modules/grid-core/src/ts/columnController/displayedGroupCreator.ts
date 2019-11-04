@@ -46,8 +46,12 @@ export class DisplayedGroupCreator {
             for (let i = 0; i < currentOriginalPath.length; i++) {
                 if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
                     // new group needed
-                    const newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator,
-                        oldColumnsMapped, pinned);
+                    const newGroup = this.createColumnGroup(
+                        currentOriginalPath[i],
+                        groupInstanceIdCreator,
+                        oldColumnsMapped,
+                        pinned);
+
                     currentRealPath[i] = newGroup;
                     // if top level, add to result, otherwise add to parent
                     if (i == 0) {
@@ -80,10 +84,12 @@ export class DisplayedGroupCreator {
         return result;
     }
 
-    private createColumnGroup(originalGroup: OriginalColumnGroup,
-                              groupInstanceIdCreator: GroupInstanceIdCreator,
-                              oldColumnsMapped: {[key: string]: ColumnGroup},
-                              pinned: string): ColumnGroup {
+    private createColumnGroup(
+            originalGroup: OriginalColumnGroup,
+            groupInstanceIdCreator: GroupInstanceIdCreator,
+            oldColumnsMapped: {[key: string]: ColumnGroup},
+            pinned: string
+        ): ColumnGroup {
 
         const groupId = originalGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
@@ -140,68 +146,35 @@ export class DisplayedGroupCreator {
         });
     }
 
-    // private createFakePath(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
-    //     let fakePath: OriginalColumnGroup[] = [];
-    //     let currentChildren = balancedColumnTree;
-    //     // this while loop does search on the balanced tree, so our result is the right length
-    //     let index = 0;
-    //     while (currentChildren && currentChildren[0] && currentChildren[0] instanceof OriginalColumnGroup) {
-    //         // putting in a deterministic fake id, in case the API in the future needs to reference the col
-    //         let fakeGroup = new OriginalColumnGroup(null, 'FAKE_PATH_' + index, true);
-    //         this.context.wireBean(fakeGroup);
-    //
-    //         // fakePath.setChildren(children);
-    //
-    //         fakePath.push(fakeGroup);
-    //         currentChildren = (<OriginalColumnGroup>currentChildren[0]).getChildren();
-    //         index++;
-    //     }
-    //
-    //     fakePath.forEach( (fakePathGroup: OriginalColumnGroup, i: number) => {
-    //         let lastItemInList = i === fakePath.length-1;
-    //         let child = lastItemInList ? column : fakePath[i+1];
-    //         fakePathGroup.setChildren([child]);
-    //     });
-    //
-    //     return fakePath;
-    // }
-
     private getOriginalPathForColumn(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
-
         const result: OriginalColumnGroup[] = [];
         let found = false;
+
+        const recursePath = (balancedColumnTree: OriginalColumnGroupChild[], dept: number): void => {
+            for (let i = 0; i < balancedColumnTree.length; i++) {
+                // quit the search, so 'result' is kept with the found result
+                if (found) { return; }
+
+                const node = balancedColumnTree[i];
+
+                if (node instanceof OriginalColumnGroup) {
+                    const nextNode = node;
+                    recursePath(nextNode.getChildren(), dept + 1);
+                    result[dept] = node;
+                } else if (node === column) {
+                    found = true;
+                }
+            }
+        };
 
         recursePath(balancedColumnTree, 0);
 
         // it's possible we didn't find a path. this happens if the column is generated
         // by the grid (auto-group), in that the definition didn't come from the client. in this case,
         // we create a fake original path.
-        if (found) {
-            return result;
-        } else {
-            console.warn('could not get path');
-            return null;
-            // return this.createFakePath(balancedColumnTree, column);
-        }
+        if (found) { return result; }
 
-        function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
-
-            for (let i = 0; i < balancedColumnTree.length; i++) {
-                if (found) {
-                    // quit the search, so 'result' is kept with the found result
-                    return;
-                }
-                const node = balancedColumnTree[i];
-                if (node instanceof OriginalColumnGroup) {
-                    const nextNode = node;
-                    recursePath(nextNode.getChildren(), dept + 1);
-                    result[dept] = node;
-                } else {
-                    if (node === column) {
-                        found = true;
-                    }
-                }
-            }
-        }
+        console.warn('could not get path');
+        return null;
     }
 }

@@ -106,7 +106,6 @@ export class HeaderGroupWrapperComp extends Component {
 
     public getTooltipText(): string | undefined {
         const colGroupDef = this.getComponentHolder();
-
         return colGroupDef && colGroupDef.headerTooltip;
     }
 
@@ -182,34 +181,28 @@ export class HeaderGroupWrapperComp extends Component {
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
         // columnGroup.getColGroupDef
-        if (this.columnGroup.isPadding()) {
-            this.addCssClass('ag-header-group-cell-no-group');
-        } else {
-            this.addCssClass('ag-header-group-cell-with-group');
-        }
+        const style = this.columnGroup.isPadding() ? 'no' : 'with';
+
+        this.addCssClass(`ag-header-group-cell-${style}-group`);
     }
 
     private setupMove(eHeaderGroup: HTMLElement, displayName: string): void {
         if (!eHeaderGroup) { return; }
-
         if (this.isSuppressMoving()) { return; }
 
         const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
-
-        if (eHeaderGroup) {
-            const dragSource: DragSource = {
-                type: DragSourceType.HeaderCell,
-                eElement: eHeaderGroup,
-                dragItemName: displayName,
-                // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItemCallback: this.getDragItemForGroup.bind(this),
-                dragSourceDropTarget: this.dragSourceDropTarget,
-                dragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
-                dragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
-            };
-            this.dragAndDropService.addDragSource(dragSource, true);
-            this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
-        }
+        const dragSource: DragSource = {
+            type: DragSourceType.HeaderCell,
+            eElement: eHeaderGroup,
+            dragItemName: displayName,
+            // we add in the original group leaf columns, so we move both visible and non-visible items
+            dragItemCallback: this.getDragItemForGroup.bind(this),
+            dragSourceDropTarget: this.dragSourceDropTarget,
+            dragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
+            dragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged"))
+        };
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
@@ -333,7 +326,6 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     public onResizeStart(shiftKey: boolean): void {
-
         const leafCols = this.columnGroup.getDisplayedLeafColumns();
         this.resizeCols = leafCols.filter(col => col.isResizable());
         this.resizeStartWidth = 0;
@@ -401,11 +393,9 @@ export class HeaderGroupWrapperComp extends Component {
             if (this.pinned !== Constants.PINNED_LEFT) {
                 result *= -1;
             }
-        } else {
+        } else if (this.pinned === Constants.PINNED_RIGHT) {
             // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            if (this.pinned === Constants.PINNED_RIGHT) {
-                result *= -1;
-            }
+            result *= -1;
         }
         return result;
     }

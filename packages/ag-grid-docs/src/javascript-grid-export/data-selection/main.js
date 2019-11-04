@@ -84,7 +84,6 @@ function getBooleanValue(checkboxSelector) {
 }
 
 function only20YearOlds(params) {
-    debugger;
     return params.node.data && params.node.data.age != 20;
 }
 

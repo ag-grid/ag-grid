@@ -77,13 +77,7 @@ export class ColumnGroup implements ColumnGroupChild {
         const allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
         if (!allLeafColumns || allLeafColumns.length === 0) { return false; }
 
-        let allMoving = true;
-        allLeafColumns.forEach(col => {
-            if (!col.isMoving()) {
-                allMoving = false;
-            }
-        });
-        return allMoving;
+        return allLeafColumns.every(col => col.isMoving());
     }
 
     public checkLeft(): void {
@@ -132,9 +126,7 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     private createAgEvent(type: string): AgEvent {
-        return {
-            type: type,
-        };
+        return { type };
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -301,7 +293,6 @@ export class ColumnGroup implements ColumnGroupChild {
             this.displayedChildren = this.children;
         } else {
             // Add cols based on columnGroupShow
-
             // Note - the below also adds padding groups, these are always added because they never have
             // colDef.columnGroupShow set.
             this.children.forEach(abstractColumn => {
@@ -320,8 +311,15 @@ export class ColumnGroup implements ColumnGroupChild {
                         }
                         break;
                     default:
-                        // default is always show the column
-                        this.displayedChildren.push(abstractColumn);
+                        // if this abstractColumn is padding, we just want to add it
+                        // to the displayedChildren list if it has displayedChildren itself.
+                        if (!(
+                            abstractColumn instanceof ColumnGroup &&
+                            abstractColumn.isPadding() &&
+                            !abstractColumn.displayedChildren.length)
+                        ) {
+                            this.displayedChildren.push(abstractColumn);
+                        }
                         break;
                 }
             });
