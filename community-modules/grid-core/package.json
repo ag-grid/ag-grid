@@ -14,7 +14,8 @@
         "package": "node ../../common-build/rollup/build.js",
         "build-es6": "npx gulp tsc-no-clean-es6",
         "build-cjs": "npx gulp tsc-no-clean-es5",
-        "build-docs": "tsc -p tsconfig.docs.json"
+        "build-docs": "tsc -p tsconfig.docs.json",
+        "build-css": "npx gulp scss-no-clean"
     },
     "repository": {
         "type": "git",

@@ -45,6 +45,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />
@@ -62,6 +63,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/node_modules" />
     </content>
+    <content url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

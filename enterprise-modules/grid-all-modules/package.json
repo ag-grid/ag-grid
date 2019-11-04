@@ -8,6 +8,7 @@
     "build-cjs": "tsc -p tsconfig.es5.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "build-docs": "tsc -p tsconfig.docs.json",
+    "build-css": "npx gulp copy-grid-core-styles",
     "build": "npm run precheck && npm run lint && npm run build-cjs && npm run build-es6",
     "package": "gulp copy-grid-core-styles && npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
     "test:debug": "node --inspect-brk ./node_modules/.bin/jest --no-cache -runInBand",
