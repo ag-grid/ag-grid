@@ -28,6 +28,16 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         /* START OF CSS DEV - DO NOT DELETE */
+        "@ag-community/grid-all-modules/dist/styles/ag-grid.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-grid.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-alpine-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-alpine.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-balham-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-blue.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-blue.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-bootstrap.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-bootstrap.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-dark.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-fresh.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-fresh.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-material.css" => "$prefix/@ag-community/grid-all-modules/dist/styles/ag-theme-material.css",
         /* END OF CSS DEV - DO NOT DELETE */
         /* START OF MODULES DEV - DO NOT DELETE */
         "@ag-community/grid-all-modules" => "$prefix/@ag-community/grid-all-modules",
@@ -100,6 +110,16 @@ if (USE_LOCAL) {
 
     $systemJsMap = array(
         /* START OF CSS PROD - DO NOT DELETE */
+        "@ag-community/grid-all-modules/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-alpine-dark.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-blue.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-blue.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-bootstrap.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-bootstrap.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-dark.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-dark.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-fresh.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-fresh.css",
+        "@ag-community/grid-all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
         /* END OF CSS PROD - DO NOT DELETE */
         /* START OF MODULES PROD - DO NOT DELETE */
         "@ag-community/grid-all-modules" => "https://unpkg.com/@ag-community/grid-all-modules@" . AG_GRID_VERSION . "/",
