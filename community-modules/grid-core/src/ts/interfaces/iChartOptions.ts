@@ -82,10 +82,12 @@ export interface LegendItemOptions {
 export interface LegendLabelOptions extends FontOptions {
 }
 
+export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 export interface LegendMarkerOptions {
-    size: number;
-    padding: number;
-    strokeWidth: number;
+    type?: MarkerType;
+    size?: number;
+    padding?: number;
+    strokeWidth?: number;
 }
 
 export interface CartesianChartOptions<T extends SeriesOptions> extends ChartOptions<T> {
@@ -205,6 +207,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 
 export interface MarkerOptions {
+    type?: MarkerType;
     enabled: boolean;
     size: number;
     strokeWidth: number;

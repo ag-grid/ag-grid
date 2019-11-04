@@ -109,20 +109,6 @@ export class MarkerLabel extends Group {
         return this.marker.fill;
     }
 
-    set markerFillOpacity(value: number) {
-        this.marker.fillOpacity = value;
-    }
-    get markerFillOpacity(): number {
-        return this.marker.fillOpacity;
-    }
-
-    set markerStrokeOpacity(value: number) {
-        this.marker.strokeOpacity = value;
-    }
-    get markerStrokeOpacity(): number {
-        return this.marker.strokeOpacity;
-    }
-
     set markerStroke(value: string | undefined) {
         this.marker.stroke = value;
     }
@@ -135,6 +121,20 @@ export class MarkerLabel extends Group {
     }
     get markerStrokeWidth(): number {
         return this.marker.strokeWidth;
+    }
+
+    set markerFillOpacity(value: number) {
+        this.marker.fillOpacity = value;
+    }
+    get markerFillOpacity(): number {
+        return this.marker.fillOpacity;
+    }
+
+    set markerStrokeOpacity(value: number) {
+        this.marker.strokeOpacity = value;
+    }
+    get markerStrokeOpacity(): number {
+        return this.marker.strokeOpacity;
     }
 
     set opacity(value: number) {
