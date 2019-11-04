@@ -85,6 +85,8 @@ export class PieChartProxy extends PolarChartProxy {
             shadow: this.getDefaultDropShadowOptions(),
         };
 
+        options.legend.item.marker.type = 'square';
+
         return options;
     }
 }
