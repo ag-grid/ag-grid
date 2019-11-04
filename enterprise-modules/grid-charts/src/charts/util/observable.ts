@@ -76,10 +76,11 @@ export class Observable {
     };
 }
 
-export function reactive(tags?: string[]) {
+export function reactive(tags?: string[], property?: string) {
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = '__' + key;
+        const backingProperty = property ? property.split('.') : undefined;
         const privateKeyCategories = privateKey + 'Tags';
 
         if (!target[key]) {
@@ -88,10 +89,27 @@ export function reactive(tags?: string[]) {
             }
             Object.defineProperty(target, key, {
                 set: function (value: any) {
-                    const oldValue = this[privateKey];
+                    let oldValue: any;
+
+                    if (backingProperty) {
+                        oldValue = this;
+                        backingProperty.forEach(key => {
+                            oldValue = oldValue[key];
+                        });
+                    } else {
+                        oldValue = this[privateKey];
+                    }
 
                     if (oldValue !== value) {
-                        this[privateKey] = value;
+                        if (backingProperty) {
+                            let i = 0, last = backingProperty.length - 1, obj = this;
+                            while (i < last) {
+                                obj = obj[backingProperty[i++]];
+                            }
+                            obj[backingProperty[last]] = value;
+                        } else {
+                            this[privateKey] = value;
+                        }
                         this.notifyListeners(key, oldValue, value);
                         const categories = this[privateKeyCategories];
                         if (categories) {
@@ -100,7 +118,16 @@ export function reactive(tags?: string[]) {
                     }
                 },
                 get: function (): any {
-                    return this[privateKey];
+                    let value: any;
+                    if (backingProperty) {
+                        value = this;
+                        backingProperty.forEach(key => {
+                            value = value[key];
+                        });
+                    } else {
+                        value = this[privateKey];
+                    }
+                    return value;
                 },
                 enumerable: true,
                 configurable: true
