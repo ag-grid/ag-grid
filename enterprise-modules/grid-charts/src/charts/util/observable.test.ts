@@ -7,6 +7,7 @@ class SubComponent {
 class Component extends Observable {
     subComponent = new SubComponent();
     @reactive(['name']) john = 'smith';
+    @reactive(['name']) bob = 'marley';
     @reactive(['style'], 'subComponent.foo') foo: string;
 }
 
@@ -42,3 +43,67 @@ test('reactive', async () => {
 
     return Promise.all([johnListenerPromise, nameCategoryListenerPromise]);
 }, 100);
+
+test('addListener', () => {
+    const c = new Component();
+
+    let sum = 0;
+    const listener1 = () => { sum += 1 };
+    const listener2 = () => { sum += 2 };
+    const listener3 = () => { sum += 3 };
+
+    c.addListener('john', listener1);
+    c.addListener('john', listener2);
+    c.addListener('john', listener3);
+
+    c.john = 'test';
+
+    expect(sum).toBe(6);
+});
+
+test('removeListener', () => {
+    const c = new Component();
+
+    let triggered = false;
+
+    c.addListener('john', () => { triggered = true });
+    c.addListener('john', () => { triggered = true });
+    c.addListener('john', () => { triggered = true });
+
+    c.removeListener('john');
+
+    c.john = 'test';
+
+    expect(triggered).toBe(false);
+});
+
+test('addCategoryListener', () => {
+    const c = new Component();
+
+    let sum = 0;
+
+    c.addCategoryListener('name', () => {
+        sum += 1;
+    });
+
+    c.john = 'test';
+    c.bob = 'test';
+
+    expect(sum).toBe(2);
+});
+
+test('removeCategoryListener', () => {
+    const c = new Component();
+
+    let triggered = false;
+
+    c.addCategoryListener('name', () => { triggered = true });
+    c.addCategoryListener('name', () => { triggered = true });
+    c.addCategoryListener('name', () => { triggered = true });
+
+    c.removeCategoryListener('name');
+
+    c.john = 'test';
+
+    expect(triggered).toBe(false);
+});
