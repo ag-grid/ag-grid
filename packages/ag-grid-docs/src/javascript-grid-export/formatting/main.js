@@ -89,10 +89,6 @@ function getUIValue(checkboxSelector, onWindow) {
     return factory();
 }
 
-function skipPinnedRowsCallback(params) {
-    return params.node.isRowPinned();
-}
-
 function makeCustomContent () {
     return [
         [],
