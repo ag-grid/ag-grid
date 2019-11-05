@@ -314,7 +314,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                         ...this.getDefaultFontOptions(),
                     },
                     marker: {
-                        padding: 4,
+                        padding: 8,
                         size: 14,
                         strokeWidth: 1,
                     },
