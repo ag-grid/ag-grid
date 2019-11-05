@@ -222,6 +222,15 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
                 {ignore: ['**/*_angular.js', '**/*_react.js', '**/*_vue.js']}
             );
             moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
+
+            // allow developers to override the example theme with an environment variable
+            const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
+            if (themeOverride) {
+                const indexFile = path.join(_gen, 'vanilla', 'index.html');
+                let content = fs.readFileSync(indexFile, {encoding: 'utf8'});
+                content = content.replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`)
+                fs.writeFileSync(indexFile, content, 'utf8');
+            }
         },
         () => {
             console.log(`// ${count} examples generated`);
