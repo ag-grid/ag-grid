@@ -309,6 +309,11 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (_.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
+
+            if (!this.isHorizontalScrollShowing()) {
+                this.columnController.refreshFlexedColumns();
+            }
+
         } else {
             this.bodyHeight = 0;
         }

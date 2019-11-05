@@ -104,6 +104,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private rowGroupActive = false;
     private pivotActive = false;
     private aggregationActive = false;
+    private flex: number;
 
     private readonly primary: boolean;
 
@@ -164,6 +165,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.maxWidth = this.colDef.maxWidth;
         } else {
             this.maxWidth = maxColWidth;
+        }
+
+        if (this.colDef.flex) {
+            this.flex = this.colDef.flex;
         }
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
@@ -660,6 +665,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getMaxWidth(): number {
         return this.maxWidth;
+    }
+
+    public getFlex(): number {
+        return this.flex || 0;
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {
