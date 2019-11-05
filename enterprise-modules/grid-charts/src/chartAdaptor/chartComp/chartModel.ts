@@ -313,17 +313,17 @@ export class ChartModel extends BeanStub {
         const columnNames = this.columnNames[col.colId];
 
         col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column);
-        
+
         return col;
     }
 
     private isMultiCategoryChart(): boolean {
         return !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
-    } 
+    }
 
     private generateId(): string {
         return 'id-' + Math.random().toString(36).substr(2, 16);
-    } 
+    }
 
     private updateData(): void {
         const { startRow, endRow } = this.getRowIndexes();
@@ -420,7 +420,7 @@ export class ChartModel extends BeanStub {
 
             return;
         }
-                
+
         let selectedDimensionColState = updatedColState;
 
         if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column)) {
@@ -446,7 +446,7 @@ export class ChartModel extends BeanStub {
                 selectedValueCols.push(col);
             }
         });
-        
+
         if (selectedValueCols.length > 0) {
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
