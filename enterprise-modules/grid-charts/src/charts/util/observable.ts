@@ -2,6 +2,7 @@ type Listener<O, V> = (instance: O, oldValue: V, value: V) => any;
 type CategoryListener<O> = (instance: O) => any;
 
 export class Observable {
+    static readonly privateKeyPrefix = '_';
     private nameListeners = new Map();
     private categoryListeners = new Map();
 
@@ -87,7 +88,7 @@ export class Observable {
 export function reactive(tags?: string[], property?: string) {
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
-        const privateKey = '__' + key;
+        const privateKey = Observable.privateKeyPrefix + key;
         const backingProperty = property ? property.split('.') : undefined;
         const privateKeyCategories = privateKey + 'Tags';
 

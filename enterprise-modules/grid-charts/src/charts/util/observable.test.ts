@@ -11,6 +11,22 @@ class Component extends Observable {
     @reactive(['style'], 'subComponent.foo') foo: string;
 }
 
+class BaseClass extends Observable {
+    @reactive(['layout']) foo = 5;
+
+    layoutTriggered = false;
+
+    constructor() {
+        super();
+
+        this.addCategoryListener('layout', () => this.layoutTriggered = true);
+    }
+}
+
+class SubClass extends BaseClass {
+    @reactive(['layout']) bar = 10;
+}
+
 test('reactive', async () => {
     const c = new Component();
 
@@ -106,4 +122,18 @@ test('removeCategoryListener', () => {
     c.john = 'test';
 
     expect(triggered).toBe(false);
+});
+
+test('inheritance', () => {
+    const subClass = new SubClass();
+
+    subClass.bar = 42;
+
+    expect(subClass.layoutTriggered).toBe(true);
+
+    subClass.layoutTriggered = false;
+
+    subClass.foo = 42;
+
+    expect(subClass.layoutTriggered).toBe(true);
 });
