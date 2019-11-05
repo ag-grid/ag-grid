@@ -9,6 +9,7 @@ import { Legend, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
+import { Observable, reactive } from "../util/observable";
 
 export interface ChartOptions {
     document?: Document;
@@ -17,22 +18,30 @@ export interface ChartOptions {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export abstract class Chart {
+export abstract class Chart extends Observable {
     readonly scene: Scene;
     readonly background: Rect = new Rect();
-
-    legend = new Legend();
 
     protected legendAutoPadding = new Padding();
     protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement;
-
-    tooltipOffset = [20, 20];
-
     private defaultTooltipClass = 'ag-chart-tooltip';
 
+    legend = new Legend();
+    tooltipOffset = [20, 20];
+
+    @reactive([], 'scene.parent') parent?: HTMLElement;
+    @reactive(['layout']) title?: Caption;
+    @reactive(['layout']) subtitle?: Caption;
+    @reactive(['layout']) padding = new Padding(20);
+    @reactive(['layout'], 'scene.size') size: [number, number];
+    @reactive(['layout'], 'scene.height') height: number; // in CSS pixels
+    @reactive(['layout'], 'scene.width') width: number;   // in CSS pixels
+
     protected constructor(options: ChartOptions = {}) {
+        super();
+
         const root = new Group();
         const background = this.background;
         const document = options.document || window.document;
@@ -52,6 +61,21 @@ export abstract class Chart {
         document.body.appendChild(this.tooltipElement);
 
         this.setupListeners(scene.canvas.element);
+
+        function captionListener(chart: Chart, oldCaption?: Caption, caption?: Caption) {
+            if (oldCaption) {
+                oldCaption.removeCategoryListener('style');
+                chart.scene.root!.removeChild(oldCaption.node);
+            }
+            if (caption) {
+                caption.addCategoryListener('style', chart.onLayoutChange);
+                chart.scene.root!.appendChild(caption.node);
+            }
+        }
+
+        this.addListener('title', captionListener);
+        this.addListener('subtitle', captionListener);
+        this.addCategoryListener('layout', chart => chart.layoutPending = true);
     }
 
     destroy() {
@@ -76,53 +100,6 @@ export abstract class Chart {
 
     get element(): HTMLElement {
         return this.scene.canvas.element;
-    }
-
-    set parent(value: HTMLElement | undefined) {
-        this.scene.parent = value;
-    }
-    get parent(): HTMLElement | undefined {
-        return this.scene.parent;
-    }
-
-    private _title?: Caption = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                oldTitle.removeCategoryListener('style', this.onLayoutChange);
-                this.scene.root!.removeChild(oldTitle.node);
-            }
-            if (value) {
-                value.addCategoryListener('style', this.onLayoutChange);
-                this.scene.root!.appendChild(value.node);
-            }
-            this._title = value;
-            this.layoutPending = true;
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
-
-    private _subtitle?: Caption = undefined;
-    set subtitle(value: Caption | undefined) {
-        const oldSubtitle = this._subtitle;
-        if (oldSubtitle !== value) {
-            if (oldSubtitle) {
-                oldSubtitle.removeCategoryListener('style', this.onLayoutChange);
-                this.scene.root!.removeChild(oldSubtitle.node);
-            }
-            if (value) {
-                value.addCategoryListener('style', this.onLayoutChange);
-                this.scene.root!.appendChild(value.node);
-            }
-            this._subtitle = value;
-            this.layoutPending = true;
-        }
-    }
-    get subtitle(): Caption | undefined {
-        return this._subtitle;
     }
 
     abstract get seriesRoot(): Node;
@@ -220,45 +197,6 @@ export abstract class Chart {
     }
     get data(): any[] {
         return this._data;
-    }
-
-    protected _padding = new Padding(20);
-    set padding(value: Padding) {
-        this._padding = value;
-        this.layoutPending = true;
-    }
-    get padding(): Padding {
-        return this._padding;
-    }
-
-    set size(value: [number, number]) {
-        this.scene.size = value;
-        this.layoutPending = true;
-    }
-    get size(): [number, number] {
-        return this.scene.size;
-    }
-
-    /**
-     * The width of the chart in CSS pixels.
-     */
-    set width(value: number) {
-        this.scene.width = value;
-        this.layoutPending = true;
-    }
-    get width(): number {
-        return this.scene.width;
-    }
-
-    /**
-     * The height of the chart in CSS pixels.
-     */
-    set height(value: number) {
-        this.scene.height = value;
-        this.layoutPending = true;
-    }
-    get height(): number {
-        return this.scene.height;
     }
 
     private layoutCallbackId: number = 0;
