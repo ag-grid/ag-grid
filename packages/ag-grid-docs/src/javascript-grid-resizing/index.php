@@ -6,15 +6,17 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 id="resizing">Column Resizing</h1>
 
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
     </p>
 
-    <h2>Enable Resizing</h2>
+    <h2>Column Flexing</h1>
+
+    <?= example('Column Flexing', 'flex-columns', 'generated', array("processVue" => true)) ?>
+    
+    <h2>Enable Sizing</h2>
 
     <p>
         Turn column resizing on for the grid by setting <code>resizable=true</code> for each column.
