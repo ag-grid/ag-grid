@@ -15,6 +15,7 @@ import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { NumberAxis } from "../axis/numberAxis";
+import { reactive } from "../../util/observable";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yKey: string;
@@ -52,23 +53,12 @@ enum BarSeriesNodeTag {
 }
 
 class BarSeriesLabel extends Label {
-    private _formatter?: BarLabelFormatter;
-    set formatter(value: BarLabelFormatter | undefined) {
-        if (this._formatter !== value) {
-            this._formatter = value;
-            this.update();
-        }
-    }
-    get formatter(): BarLabelFormatter | undefined {
-        return this._formatter;
-    }
+    @reactive(['style']) formatter?: BarLabelFormatter;
 }
 
 export class BarSeries extends Series<CartesianChart> {
 
     static className = 'BarSeries';
-
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
     // Need to put bar and label nodes into separate groups, because even though label nodes are
     // created after the bar nodes, this only guarantees that labels will always be on top of bars
@@ -80,12 +70,11 @@ export class BarSeries extends Series<CartesianChart> {
     private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
 
-    readonly label: BarSeriesLabel = (() => {
-        const label = new BarSeriesLabel();
-        label.enabled = false;
-        label.onChange = this.update.bind(this);
-        return label;
-    })();
+    private xData: string[] = [];
+    private yData: number[][] = [];
+    private domainY: number[] = [];
+
+    readonly label = new BarSeriesLabel();
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -93,65 +82,25 @@ export class BarSeries extends Series<CartesianChart> {
      */
     private readonly yKeyEnabled = new Map<string, boolean>();
 
-    private _fills: string[] = palette.fills;
-    set fills(values: string[]) {
-        this._fills = values;
-        this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
-        this.scheduleData();
-    }
-    get fills(): string[] {
-        return this._fills;
-    }
+    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
-    private _strokes: string[] = palette.strokes;
-    set strokes(values: string[]) {
-        this._strokes = values;
-        this.scheduleData();
-    }
-    get strokes(): string[] {
-        return this._strokes;
-    }
+    @reactive(['data']) fills: string[] = palette.fills;
+    @reactive(['data']) strokes: string[] = palette.strokes;
 
-    private _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
+    @reactive(['layout']) fillOpacity = 1;
+    @reactive(['layout']) strokeOpacity = 1;
 
-    private _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
+    constructor() {
+        super();
 
-    private xData: string[] = [];
-    private yData: number[][] = [];
-    private domainY: number[] = [];
+        this.label.enabled = false;
+        this.label.addCategoryListener('style', () => this.update.bind(this));
+    }
 
     /**
      * Used to get the position of bars within each group.
      */
     private groupScale = new BandScale<string>();
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
-    }
 
     protected _xKey: string = '';
     set xKey(value: string) {
@@ -283,11 +232,8 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { xKey, yKeys } = this;
-
-        if (!(xKey && yKeys.length)) {
-            this._data = [];
-        }
+        const { xKey, yKeys, yKeyEnabled } = this;
+        const data = xKey && yKeys.length ? this.data : [];
 
         // If the data is an array of rows like so:
         //
@@ -303,8 +249,6 @@ export class BarSeries extends Series<CartesianChart> {
         //   yKey3: 20
         // }]
         //
-
-        const { yKeyEnabled, data } = this;
 
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {

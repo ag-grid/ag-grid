@@ -111,16 +111,6 @@ export class AreaSeries extends Series<CartesianChart> {
     private yData: number[][] = [];
     private domainY: any[] = [];
 
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
-    }
-
     protected _xKey: string = '';
     set xKey(value: string) {
         if (this._xKey !== value) {
@@ -225,14 +215,11 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { chart, xKey, yKeys } = this;
+        const { chart, xKey, yKeys, yKeyEnabled } = this;
+        const data = xKey && yKeys.length ? this.data : [];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
-        }
-
-        if (!(xKey && yKeys.length)) {
-            this._data = [];
         }
 
         // If the data is an array of rows like so:
@@ -249,8 +236,6 @@ export class AreaSeries extends Series<CartesianChart> {
         //   yKey3: 20
         // }]
         //
-        const { yKeyEnabled, data } = this;
-
         this.xData = data.map(datum => datum[xKey]);
 
         this.yData = data.map(datum => yKeys.map(yKey => {

@@ -6,7 +6,6 @@ import { Group } from "../../scene/group";
 import palette from "../palettes";
 import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "./series";
 import { numericExtent } from "../../util/array";
-import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
@@ -57,16 +56,6 @@ export class LineSeries extends Series<CartesianChart> {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
-    }
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
     }
 
     protected _title?: string;
@@ -128,17 +117,14 @@ export class LineSeries extends Series<CartesianChart> {
 
     processData(): boolean {
         const { chart, xKey, yKey } = this;
+        const data = xKey && yKey ? this.data : [];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        if (!(xKey && yKey)) {
-            this._data = [];
-        }
-
-        this.xData = this.data.map(datum => datum[xKey]);
-        this.yData = this.data.map(datum => datum[yKey]);
+        this.xData = data.map(datum => datum[xKey]);
+        this.yData = data.map(datum => datum[yKey]);
 
         const isContinuousX = chart.xAxis.scale instanceof ContinuousScale;
         const domainX = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;

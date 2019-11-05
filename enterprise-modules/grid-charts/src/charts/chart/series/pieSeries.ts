@@ -16,6 +16,7 @@ import { LegendDatum } from "../legend";
 import { PolarChart } from "../polarChart";
 import { Caption } from "../../caption";
 import { Shape } from "../../scene/shape/shape";
+import { reactive } from "../../util/observable";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -45,44 +46,8 @@ enum PieSeriesNodeTag {
 }
 
 class PieSeriesLabel extends Label {
-    onDataChange?: () => void;
-
-    set enabled(value: boolean) {
-        if (this._enabled !== value) {
-            this._enabled = value;
-            this.update();
-            if (this.onDataChange) {
-                this.onDataChange();
-            }
-        }
-    }
-    get enabled(): boolean {
-        return this._enabled;
-    }
-
-    private _offset: number = 3; // from the callout line
-    set offset(value: number) {
-        if (this._offset !== value) {
-            this._offset = value;
-            this.update();
-        }
-    }
-    get offset(): number {
-        return this._offset;
-    }
-
-    private _minAngle: number = 20; // in degrees
-    set minAngle(value: number) {
-        if (this._minAngle !== value) {
-            this._minAngle = value;
-            if (this.onDataChange) {
-                this.onDataChange();
-            }
-        }
-    }
-    get minAngle(): number {
-        return this._minAngle;
-    }
+    @reactive(['style']) offset = 3; // from the callout line
+    @reactive(['data']) minAngle = 20; // in degrees
 }
 
 export class PieSeries extends Series<PolarChart> {
@@ -107,16 +72,6 @@ export class PieSeries extends Series<PolarChart> {
     })();
 
     public dataEnabled: boolean[] = [];
-
-    set data(data: any[]) {
-        this._data = data;
-        this.dataEnabled = data.map(() => true);
-
-        this.scheduleData();
-    }
-    get data(): any[] {
-        return this._data;
-    }
 
     private _title?: Caption;
     set title(value: Caption | undefined) {
@@ -178,12 +133,18 @@ export class PieSeries extends Series<PolarChart> {
         return this._calloutLength;
     }
 
-    readonly label: PieSeriesLabel = (() => {
-        const label = new PieSeriesLabel();
-        label.onChange = this.scheduleLayout.bind(this);
-        label.onDataChange = this.scheduleData.bind(this);
-        return label;
-    })();
+    readonly label = new PieSeriesLabel();
+
+    constructor() {
+        super();
+
+        this.label.addCategoryListener('style', () => this.scheduleLayout.bind(this));
+        this.label.addCategoryListener('data', () => this.scheduleData.bind(this));
+
+        this.addListener('data', (series, oldData, data) => {
+            this.dataEnabled = data.map(() => true);
+        });
+    }
 
     private _labelOffset: number = 3; // from the callout line
     set labelOffset(value: number) {
@@ -249,16 +210,6 @@ export class PieSeries extends Series<PolarChart> {
     }
     get labelColor(): string {
         return this._labelColor;
-    }
-
-    set chart(chart: PolarChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleLayout();
-        }
-    }
-    get chart(): PolarChart | undefined {
-        return this._chart;
     }
 
     /**

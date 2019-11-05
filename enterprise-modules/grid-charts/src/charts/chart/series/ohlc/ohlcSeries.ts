@@ -70,22 +70,20 @@ export class OHLCSeries extends Series<CartesianChart> {
         this.marker.type = Candlestick;
         this.marker.onChange = this.update.bind(this);
         this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+
+        this.addListener('data', () => {
+            this.dirtyDateData = true;
+            this.dirtyOpenData = true;
+            this.dirtyHighData = true;
+            this.dirtyLowData = true;
+            this.dirtyCloseData = true;
+        });
     }
 
     onMarkerTypeChange() {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
-    }
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
     }
 
     protected _title?: string;
@@ -97,19 +95,6 @@ export class OHLCSeries extends Series<CartesianChart> {
     }
     get title(): string | undefined {
         return this._title;
-    }
-
-    set data(data: any[]) {
-        this._data = data;
-        this.dirtyDateData = true;
-        this.dirtyOpenData = true;
-        this.dirtyHighData = true;
-        this.dirtyLowData = true;
-        this.dirtyCloseData = true;
-        this.scheduleData();
-    }
-    get data(): any[] {
-        return this._data;
     }
 
     protected _dateKey: string = 'date';
@@ -205,29 +190,27 @@ export class OHLCSeries extends Series<CartesianChart> {
             return false;
         }
 
-        if (!(dateKey && openKey && highKey && lowKey && closeKey)) {
-            this._data = [];
-        }
+        const data = dateKey && openKey && highKey && lowKey && closeKey ? this.data : [];
 
         if (dirtyDateData) {
-            this.domainX = this.calculateDomain(this.dateData = this.data.map(d => d[dateKey]));
+            this.domainX = this.calculateDomain(this.dateData = data.map(d => d[dateKey]));
             this.dirtyDateData = false;
         }
 
         if (dirtyOpenData) {
-            this.openData = this.data.map(d => d[openKey]);
+            this.openData = data.map(d => d[openKey]);
             this.dirtyOpenData = false;
         }
         if (dirtyHighData) {
-            this.highData = this.data.map(d => d[highKey]);
+            this.highData = data.map(d => d[highKey]);
             this.dirtyHighData = false;
         }
         if (dirtyLowData) {
-            this.lowData = this.data.map(d => d[lowKey]);
+            this.lowData = data.map(d => d[lowKey]);
             this.dirtyLowData = false;
         }
         if (dirtyCloseData) {
-            this.closeData = this.data.map(d => d[closeKey]);
+            this.closeData = data.map(d => d[closeKey]);
             this.dirtyCloseData = false;
         }
 

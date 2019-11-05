@@ -2,6 +2,8 @@ import { Group } from "../../scene/group";
 import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
+import { Observable, reactive } from "../../util/observable";
+import { CartesianChart } from "../cartesianChart";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -39,7 +41,7 @@ export interface HighlightStyle {
     stroke?: string;
 }
 
-export abstract class Series<C extends Chart> {
+export abstract class Series<C extends Chart> extends Observable {
 
     readonly id: string = this.createId();
 
@@ -48,7 +50,20 @@ export abstract class Series<C extends Chart> {
      */
     readonly group: Group = new Group();
 
-    // Uniquely identify series.
+    tooltipEnabled: boolean = false;
+
+    @reactive(['data']) data: any[] = [];
+    @reactive(['data']) chart?: C;
+    @reactive(['data']) visible = true;
+    @reactive(['layout']) showInLegend = true;
+
+    protected constructor() {
+        super();
+
+        this.addCategoryListener('layout', () => this.scheduleLayout.bind(this));
+        this.addCategoryListener('data', () => this.scheduleData.bind(this));
+    }
+
     private createId(): string {
         const constructor = this.constructor as any;
         const className = constructor.className;
@@ -58,33 +73,6 @@ export abstract class Series<C extends Chart> {
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
-    onDataChange?: () => {};
-    onLayoutChange?: () => {};
-
-    protected _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        this.scheduleData();
-    }
-    get data(): any[] {
-        return this._data;
-    }
-
-    protected _chart?: C;
-    abstract set chart(chart: C | undefined);
-    abstract get chart(): C | undefined;
-
-    protected _visible: boolean = true;
-    set visible(value: boolean) {
-        if (this._visible !== value) {
-            this._visible = value;
-            this.scheduleData();
-        }
-    }
-    get visible(): boolean {
-        return this._visible;
-    }
-
     abstract getDomainX(): any[];
     abstract getDomainY(): any[];
 
@@ -92,8 +80,6 @@ export abstract class Series<C extends Chart> {
     abstract update(): void;
 
     abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
-
-    tooltipEnabled: boolean = false;
 
     /**
      * @private
@@ -109,33 +95,16 @@ export abstract class Series<C extends Chart> {
         this.visible = enabled;
     }
 
-    private _showInLegend: boolean = true;
-    set showInLegend(value: boolean) {
-        if (this._showInLegend !== value) {
-            this._showInLegend = value;
-            this.scheduleLayout();
-        }
-    }
-    get showInLegend(): boolean {
-        return this._showInLegend;
-    }
-
     abstract highlightNode(node: Shape): void;
     abstract dehighlightNode(): void;
 
     scheduleLayout() {
-        if (this.onLayoutChange) {
-            this.onLayoutChange();
-        }
         if (this.chart) {
             this.chart.layoutPending = true;
         }
     }
 
     scheduleData() {
-        if (this.onDataChange) {
-            this.onDataChange();
-        }
         if (this.chart) {
             this.chart.dataPending = true;
         }
