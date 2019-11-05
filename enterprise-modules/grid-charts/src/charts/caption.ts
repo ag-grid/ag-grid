@@ -7,7 +7,7 @@ import { Observable, reactive } from "./util/observable";
 export class Caption extends Observable {
     readonly node: Text = new Text();
 
-    @reactive(['style']) enabled: boolean;
+    @reactive(['style']) enabled = true;
     @reactive(['style']) padding = new Padding(10);
 
     @reactive(['style'], 'node.text') text: string;
