@@ -45,7 +45,7 @@ export abstract class Chart {
         scene.parent = options.parent;
         scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
-        this.legend.onPositionChange = this.onLegendPositionChange;
+        this.legend.addListener('position', this.onLegendPositionChange);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';

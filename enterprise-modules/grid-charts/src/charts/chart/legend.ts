@@ -32,8 +32,6 @@ export enum Orientation {
 export class Legend extends Observable {
 
     onLayoutChange?: () => void;
-    onPositionChange?: () => void; // The legend's parent component may want to do some special handling
-    // that shouldn't happen on every `onLayoutChange` callback.
 
     readonly group: Group = new Group();
 
@@ -41,64 +39,10 @@ export class Legend extends Observable {
 
     private oldSize: [number, number] = [0, 0];
 
-    constructor() {
-        super();
-
-        this.addCategoryListener('layout', this.requestLayout.bind(this));
-        this.addCategoryListener('style', this.update.bind(this));
-    }
-
-    private _size: [number, number] = [0, 0];
-    get size(): Readonly<[number, number]> {
-        return this._size;
-    }
-
-    private _data: LegendDatum[] = [];
-    set data(data: LegendDatum[]) {
-        this._data = data;
-        this.group.visible = this.enabled && data.length > 0;
-        this.requestLayout();
-    }
-    get data(): LegendDatum[] {
-        return this._data;
-    }
-
-    private _enabled: boolean = true;
-    set enabled(value: boolean) {
-        if (this._enabled !== value) {
-            this._enabled = value;
-            this.group.visible = value && this.data.length > 0;
-            this.requestLayout();
-        }
-    }
-    get enabled(): boolean {
-        return this._enabled;
-    }
-
+    @reactive(['layout']) data: LegendDatum[] = [];
+    @reactive(['layout']) enabled = true;
     @reactive(['layout']) orientation: Orientation = Orientation.Vertical;
-
-    private _position: LegendPosition = 'right';
-    set position(value: LegendPosition) {
-        if (this._position !== value) {
-            this._position = value;
-            switch (value) {
-                case 'right':
-                case 'left':
-                    this.orientation = Orientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    this.orientation = Orientation.Horizontal;
-                    break;
-            }
-            if (this.onPositionChange) {
-                this.onPositionChange();
-            }
-        }
-    }
-    get position(): LegendPosition {
-        return this._position;
-    }
+    @reactive() position: LegendPosition = 'right';
 
     @reactive(['layout']) padding = 20;
     @reactive(['layout']) itemPaddingX = 16;
@@ -116,6 +60,32 @@ export class Legend extends Observable {
     @reactive(['layout']) labelFontWeight?: FontWeight = MarkerLabel.defaults.labelFontWeight;
     @reactive(['layout']) labelFontSize = MarkerLabel.defaults.labelFontSize;
     @reactive(['layout']) labelFontFamily = MarkerLabel.defaults.labelFontFamily;
+
+    constructor() {
+        super();
+
+        this.addListener('data', (legend, oldData, data) => legend.group.visible = legend.enabled && data.length > 0);
+        this.addListener('enabled', (legend, oldValue, value) => legend.group.visible = value && legend.data.length > 0);
+        this.addListener('position', (legend, oldValue, value) => {
+            switch (value) {
+                case 'right':
+                case 'left':
+                    legend.orientation = Orientation.Vertical;
+                    break;
+                case 'bottom':
+                case 'top':
+                    legend.orientation = Orientation.Horizontal;
+                    break;
+            }
+        });
+        this.addCategoryListener('layout', this.requestLayout.bind(this));
+        this.addCategoryListener('style', this.update.bind(this));
+    }
+
+    private _size: [number, number] = [0, 0];
+    get size(): Readonly<[number, number]> {
+        return this._size;
+    }
 
     private requestLayout() {
         if (this.onLayoutChange) {
