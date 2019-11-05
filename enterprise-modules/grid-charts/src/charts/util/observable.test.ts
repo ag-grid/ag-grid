@@ -6,8 +6,8 @@ class SubComponent {
 
 class Component extends Observable {
     subComponent = new SubComponent();
-    @reactive(['name']) john = 'smith';
-    @reactive(['name']) bob = 'marley';
+    @reactive(['name', 'misc']) john = 'smith';
+    @reactive(['name', 'misc']) bob = 'marley';
     @reactive(['style'], 'subComponent.foo') foo: string;
 }
 
@@ -136,4 +136,36 @@ test('inheritance', () => {
     subClass.foo = 42;
 
     expect(subClass.layoutTriggered).toBe(true);
+});
+
+test('listener call order', () => {
+    const c = new Component();
+
+    let name = 2;
+    let category = 2;
+    let category2 = 2;
+
+    c.addListener('bob', () => {
+        name += 2;
+        category += 2;
+    });
+    c.addListener('john', () => {
+        name *= 3;
+        category *= 3;
+    });
+
+    c.addCategoryListener('name', () => {
+        category += 4;
+        category2 += 2;
+    });
+    c.addCategoryListener('misc', () => {
+        category2 *= 3;
+    });
+
+    c.bob = 'aaa';
+    c.john = 'bbb';
+
+    expect(name).toBe(12); // (2 + 2) * 3
+    expect(category).toBe(28); // (2 + 2 + 4) * 3 + 4
+    expect(category2).toBe(42); // ((2 + 2) * 3 + 2) * 3
 });
