@@ -177,14 +177,14 @@ export class ChartModel extends BeanStub {
 
     public getSelectedDimension = (): ColState => this.dimensionColState.filter(cs => cs.selected)[0];
 
-    private createCellRange(cellRangeType: CellRangeType, ...columns: Column[]): CellRange {
+    private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
         return {
             id: this.chartId, // set range ID to match chart ID so we can identify changes to the ranges for this chart
             startRow: this.referenceCellRange.startRow,
             endRow: this.referenceCellRange.endRow,
-            columns: columns,
-            startColumn: columns[0],
-            type: cellRangeType
+            columns,
+            startColumn: type === CellRangeType.DIMENSION ? columns[0] : this.referenceCellRange.startColumn,
+            type
         };
     }
 

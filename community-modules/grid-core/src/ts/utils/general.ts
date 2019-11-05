@@ -79,22 +79,22 @@ export class Utils {
             if (typeof Utils.supports[eventName] === 'boolean') {
                 return Utils.supports[eventName];
             }
-          let el = document.createElement(tags[eventName] || 'div');
-          eventName = 'on' + eventName;
+            let el = document.createElement(tags[eventName] || 'div');
+            eventName = 'on' + eventName;
 
-          let isSupported = (eventName in el);
+            let isSupported = (eventName in el);
 
-          if (!isSupported) {
-            el.setAttribute(eventName, 'return;');
-            isSupported = typeof el[eventName] == 'function';
-          }
-          el = null;
+            if (!isSupported) {
+                el.setAttribute(eventName, 'return;');
+                isSupported = typeof el[eventName] == 'function';
+            }
+            el = null;
 
-          return Utils.supports[eventName] = isSupported;
+            return Utils.supports[eventName] = isSupported;
         };
 
         return isEventSupported;
-      })();
+    })();
 
     /**
      * Checks if event was issued by a left click
@@ -936,45 +936,35 @@ export class Utils {
         if (!className || className.length === 0) {
             return;
         }
+
         if (className.indexOf(' ') >= 0) {
             className.split(' ').forEach(value => this.addCssClass(element, value));
             return;
         }
+
         if (element.classList) {
-            if (!element.classList.contains(className)) {
-                element.classList.add(className);
+            element.classList.add(className);
+        } else if (element.className && element.className.length > 0) {
+            const cssClasses = element.className.split(' ');
+
+            if (cssClasses.indexOf(className) < 0) {
+                cssClasses.push(className);
+                element.setAttribute('class', cssClasses.join(' '));
             }
         } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) < 0) {
-                    cssClasses.push(className);
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            } else {
-                // do not use element.classList = className here, it will cause
-                // a read-only assignment error on some browsers (IE/Edge).
-                element.setAttribute('class', className);
-            }
+            // do not use element.classList = className here, it will cause
+            // a read-only assignment error on some browsers (IE/Edge).
+            element.setAttribute('class', className);
         }
     }
 
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.classList) {
-            if (element.classList.contains(className)) {
-                element.classList.remove(className);
-            }
-        } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) >= 0) {
-                    // remove all instances of the item, not just the first, in case it's in more than once
-                    while (cssClasses.indexOf(className) >= 0) {
-                        cssClasses.splice(cssClasses.indexOf(className), 1);
-                    }
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            }
+            element.classList.remove(className);
+        } else if (element.className && element.className.length > 0) {
+            const newClassName = element.className.split(' ').filter(c => c !== className).join(' ');
+
+            element.setAttribute('class', newClassName);
         }
     }
 
@@ -1000,13 +990,9 @@ export class Utils {
     }
 
     static getElementAttribute(element: any, attributeName: string): string | null {
-        if (element.attributes) {
-            if (element.attributes[attributeName]) {
-                const attribute = element.attributes[attributeName];
-                return attribute.value;
-            } else {
-                return null;
-            }
+        if (element.attributes && element.attributes[attributeName]) {
+            const attribute = element.attributes[attributeName];
+            return attribute.value;
         } else {
             return null;
         }
@@ -1021,7 +1007,7 @@ export class Utils {
     }
 
     static sortNumberArray(numberArray: number[]): void {
-        numberArray.sort((a: number, b: number) => a - b);
+        numberArray.sort((a, b) => a - b);
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {

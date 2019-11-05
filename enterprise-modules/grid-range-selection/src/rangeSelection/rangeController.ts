@@ -121,7 +121,7 @@ export class RangeController implements IRangeController {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allPositions = rangeColumns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
 
-        return _.last(allPositions)! - allPositions[0] + 1 === rangeColumns.length;
+        return _.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     }
 
     public getRangeStartRow(cellRange: CellRange): RowPosition {
@@ -464,6 +464,13 @@ export class RangeController implements IRangeController {
         return columnInRange && rowInRange;
     }
 
+    public isLastCellOfRange(cellRange: CellRange, cell: CellPosition) {
+        const allColumns = this.columnController.getAllDisplayedColumns();
+        const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
+
+        return allColumns.indexOf(cell.column) === _.last(allPositions) && cell.rowIndex === Math.max(cellRange.startRow.rowIndex, cellRange.endRow.rowIndex);
+    }
+
     // returns the number of ranges this cell is in
     public getCellRangeCount(cell: CellPosition): number {
         if (this.isEmpty()) {
@@ -596,8 +603,8 @@ export class RangeController implements IRangeController {
     }
 
     public onDragStop(): void {
-        if (!this.dragging) { 
-            return; 
+        if (!this.dragging) {
+            return;
         }
 
         const { id } = this.draggingRange;

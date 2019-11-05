@@ -1,4 +1,4 @@
-import { 
+import {
     CellRange,
     CellPosition,
     _,
@@ -22,9 +22,7 @@ export class RangeHandle extends AbstractSelectionHandle {
     protected onDrag(e: MouseEvent) {
         const lastCellHovered = this.getLastCellHovered();
 
-        if (!lastCellHovered) { 
-            return; 
-        }
+        if (!lastCellHovered) { return; }
 
         const cellRanges = this.rangeController.getCellRanges();
         const lastRange = _.last(cellRanges);
@@ -33,7 +31,7 @@ export class RangeHandle extends AbstractSelectionHandle {
             this.fixRangeStartEnd(lastRange);
             this.rangeFixed = true;
         }
-        
+
         this.endPosition = {
             rowIndex: lastCellHovered.rowIndex,
             rowPinned: lastCellHovered.rowPinned,
@@ -41,7 +39,7 @@ export class RangeHandle extends AbstractSelectionHandle {
         };
 
         // check if the cell ranges are for a chart
-        if (cellRanges.length === 2 && cellRanges[0].type === CellRangeType.DIMENSION && cellRanges[1].type === CellRangeType.VALUE) {
+        if (cellRanges.length === 2 && cellRanges[0].type === CellRangeType.DIMENSION && lastRange.type === CellRangeType.VALUE) {
             const rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeController.getRangeEndRow(lastRange));
 
             if (rowChanged) {
