@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var stylesheet_1 = require("./styles/stylesheet");
 var convertLegacyType = function (type) {
     var t = type.charAt(0).toLowerCase();
@@ -30,7 +30,7 @@ var cellFactory = {
                     name: 'is',
                     children: [{
                             name: 't',
-                            textNode: grid_core_1._.escape(grid_core_1._.utf8_encode(value))
+                            textNode: core_1._.escape(core_1._.utf8_encode(value))
                         }]
                 }];
         }
@@ -40,7 +40,7 @@ var cellFactory = {
                     textNode: value
                 }];
         }
-        return grid_core_1._.assign({}, obj, { children: children });
+        return core_1._.assign({}, obj, { children: children });
     }
 };
 exports.default = cellFactory;

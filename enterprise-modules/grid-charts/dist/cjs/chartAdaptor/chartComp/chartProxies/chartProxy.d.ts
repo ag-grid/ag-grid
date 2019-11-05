@@ -1,4 +1,4 @@
-import { ChartOptions, ChartType, EventService, ProcessChartOptionsParams, SeriesOptions, PaddingOptions, DropShadowOptions, FontOptions, CaptionOptions } from "@ag-grid-community/grid-core";
+import { ChartOptions, ChartType, EventService, ProcessChartOptionsParams, SeriesOptions, PaddingOptions, DropShadowOptions, FontOptions, CaptionOptions } from "@ag-grid-community/core";
 import { Chart } from "../../../charts/chart/chart";
 import { Palette } from "../../../charts/chart/palettes";
 export interface ChartProxyParams {
@@ -47,7 +47,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     getSeriesOption<T = string>(expression: string): T;
     setSeriesOption(expression: string, value: any): void;
     setTitleOption(property: keyof CaptionOptions, value: any): void;
-    getChartPaddingOption: (property: import("@ag-grid-community/grid-core").LegendPosition) => string;
+    getChartPaddingOption: (property: import("@ag-grid-community/core").LegendPosition) => string;
     setChartPaddingOption(property: keyof PaddingOptions, value: number): void;
     getShadowEnabled: () => boolean;
     getShadowProperty(property: keyof DropShadowOptions): any;

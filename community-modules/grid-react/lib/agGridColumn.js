@@ -1,4 +1,4 @@
-// @ag-grid-community/grid-react v22.0.0-beta.0
+// @ag-grid-community/react v22.0.0-beta.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var react_1 = require("react");
 var PropTypes = require("prop-types");
-var AgGrid = require("@ag-grid-community/grid-core");
+var AgGrid = require("@ag-grid-community/core");
 var AgGridColumn = /** @class */ (function (_super) {
     __extends(AgGridColumn, _super);
     function AgGridColumn(props, state) {

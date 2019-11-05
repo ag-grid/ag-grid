@@ -1,4 +1,4 @@
-import { CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "@ag-grid-community/grid-core";
+import { CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "@ag-grid-community/core";
 export declare class ClipboardService implements IClipboardService {
     private csvCreator;
     private loggerFactory;

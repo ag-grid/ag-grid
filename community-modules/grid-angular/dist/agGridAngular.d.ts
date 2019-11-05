@@ -1,5 +1,5 @@
 import { AfterViewInit, ComponentFactoryResolver, ElementRef, EventEmitter, QueryList, ViewContainerRef } from "@angular/core";
-import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/grid-core";
+import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/core";
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
 import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";

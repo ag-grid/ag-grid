@@ -1,5 +1,5 @@
 import Vue from "vue";
-import {AgGridVue} from "@ag-grid-community/grid-vue";
+import {AgGridVue} from "@ag-grid-community/vue";
 
 export default Vue.extend({
     template: `

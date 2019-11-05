@@ -1,4 +1,4 @@
-import { RowNode, Events, _ } from "@ag-grid-community/grid-core";
+import { RowNode, Events, _ } from "@ag-grid-community/core";
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;

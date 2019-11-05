@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ClipboardService = /** @class */ (function () {
     function ClipboardService() {
     }
@@ -15,7 +15,7 @@ var ClipboardService = /** @class */ (function () {
     };
     ClipboardService.prototype.init = function () {
         this.logger = this.loggerFactory.create('ClipboardService');
-        if (this.rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel;
         }
     };
@@ -26,7 +26,7 @@ var ClipboardService = /** @class */ (function () {
             textArea.focus();
         }, function (element) {
             var data = element.value;
-            if (grid_core_1._.missingOrEmpty(data)) {
+            if (core_1._.missingOrEmpty(data)) {
                 return;
             }
             var parsedData = _this.dataToArray(data);
@@ -34,7 +34,7 @@ var ClipboardService = /** @class */ (function () {
             if (userFunc) {
                 parsedData = userFunc({ data: parsedData });
             }
-            if (grid_core_1._.missingOrEmpty(parsedData)) {
+            if (core_1._.missingOrEmpty(parsedData)) {
                 return;
             }
             _this.removeLastLineIfBlank(parsedData);
@@ -55,7 +55,7 @@ var ClipboardService = /** @class */ (function () {
     // common code to paste operations, eg past to cell, paste to range, and copy range down
     ClipboardService.prototype.doPasteOperation = function (pasteOperationFunc) {
         this.eventService.dispatchEvent({
-            type: grid_core_1.Events.EVENT_PASTE_START,
+            type: core_1.Events.EVENT_PASTE_START,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             source: 'clipboard'
@@ -63,7 +63,7 @@ var ClipboardService = /** @class */ (function () {
         var changedPath;
         if (this.clientSideRowModel) {
             var onlyChangedColumns = this.gridOptionsWrapper.isAggregateOnlyChangedColumns();
-            changedPath = new grid_core_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
+            changedPath = new core_1.ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
@@ -79,7 +79,7 @@ var ClipboardService = /** @class */ (function () {
             this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
-            type: grid_core_1.Events.EVENT_PASTE_END,
+            type: core_1.Events.EVENT_PASTE_END,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             source: 'clipboard'
@@ -113,8 +113,8 @@ var ClipboardService = /** @class */ (function () {
                 }
                 var newValue = currentRowData[idx];
                 var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
-                newValue = _this.userProcessCell(rowNode, column, newValue, processCellFromClipboardFunc, grid_core_1.Constants.EXPORT_TYPE_DRAG_COPY);
-                _this.valueService.setValue(rowNode, column, newValue, grid_core_1.Constants.SOURCE_PASTE);
+                newValue = _this.userProcessCell(rowNode, column, newValue, processCellFromClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                _this.valueService.setValue(rowNode, column, newValue, core_1.Constants.SOURCE_PASTE);
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
                 }
@@ -136,15 +136,15 @@ var ClipboardService = /** @class */ (function () {
             this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, changedPath);
         }
         else {
-            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, grid_core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+            this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
         }
     };
     ClipboardService.prototype.removeLastLineIfBlank = function (parsedData) {
         // remove last row if empty, excel puts empty last row in
-        var lastLine = grid_core_1._.last(parsedData);
+        var lastLine = core_1._.last(parsedData);
         var lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
         if (lastLineIsBlank) {
-            grid_core_1._.removeFromArray(parsedData, lastLine);
+            core_1._.removeFromArray(parsedData, lastLine);
         }
     };
     ClipboardService.prototype.copyRangeDown = function () {
@@ -162,7 +162,7 @@ var ClipboardService = /** @class */ (function () {
                         // get the initial values to copy down
                         var value = _this.valueService.getValue(column, rowNode);
                         var processCellForClipboardFunc = _this.gridOptionsWrapper.getProcessCellForClipboardFunc();
-                        value = _this.userProcessCell(rowNode, column, value, processCellForClipboardFunc, grid_core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                        value = _this.userProcessCell(rowNode, column, value, processCellForClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
                         firstRowValues.push(value);
                     });
                 }
@@ -175,8 +175,8 @@ var ClipboardService = /** @class */ (function () {
                         }
                         var firstRowValue = firstRowValues[index];
                         var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
-                        firstRowValue = _this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, grid_core_1.Constants.EXPORT_TYPE_DRAG_COPY);
-                        _this.valueService.setValue(rowNode, column, firstRowValue, grid_core_1.Constants.SOURCE_PASTE);
+                        firstRowValue = _this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                        _this.valueService.setValue(rowNode, column, firstRowValue, core_1.Constants.SOURCE_PASTE);
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
                         }
@@ -196,7 +196,7 @@ var ClipboardService = /** @class */ (function () {
         }
         rowNodes.forEach(function (rowNode) {
             var event = {
-                type: grid_core_1.Events.EVENT_ROW_VALUE_CHANGED,
+                type: core_1.Events.EVENT_ROW_VALUE_CHANGED,
                 node: rowNode,
                 data: rowNode.data,
                 rowIndex: rowNode.rowIndex,
@@ -234,7 +234,7 @@ var ClipboardService = /** @class */ (function () {
         var rowCallback = function (currentRow, rowNode, columns) {
             updatedRowNodes.push(rowNode);
             columns.forEach(function (column) {
-                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, grid_core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
             });
         };
         this.iterateActiveRanges(false, rowCallback);
@@ -250,7 +250,7 @@ var ClipboardService = /** @class */ (function () {
             return;
         }
         var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
-        this.valueService.setValue(rowNode, column, processedValue, grid_core_1.Constants.SOURCE_PASTE);
+        this.valueService.setValue(rowNode, column, processedValue, core_1.Constants.SOURCE_PASTE);
         var cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
         cellsToFlash[cellId] = true;
         if (changedPath) {
@@ -306,14 +306,14 @@ var ClipboardService = /** @class */ (function () {
         }
         var currentRow = this.rangeController.getRangeStartRow(range);
         var lastRow = this.rangeController.getRangeEndRow(range);
-        if (columnCallback && grid_core_1._.exists(columnCallback) && range.columns) {
+        if (columnCallback && core_1._.exists(columnCallback) && range.columns) {
             columnCallback(range.columns);
         }
         var rangeIndex = 0;
         var isLastRow = false;
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
-        while (!isLastRow && !grid_core_1._.missing(currentRow) && currentRow) {
+        while (!isLastRow && !core_1._.missing(currentRow) && currentRow) {
             var rowNode = this.rowPositionUtils.getRowNode(currentRow);
             isLastRow = currentRow.rowIndex === lastRow.rowIndex && currentRow.rowIndex === lastRow.rowIndex;
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
@@ -340,7 +340,7 @@ var ClipboardService = /** @class */ (function () {
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (grid_core_1._.exists(processedValue)) {
+                if (core_1._.exists(processedValue)) {
                     data += processedValue;
                 }
             });
@@ -350,11 +350,11 @@ var ClipboardService = /** @class */ (function () {
         var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
-                var processedValue = _this.userProcessCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc(), grid_core_1.Constants.EXPORT_TYPE_CLIPBOARD);
+                var processedValue = _this.userProcessCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc(), core_1.Constants.EXPORT_TYPE_CLIPBOARD);
                 if (index != 0) {
                     data += deliminator;
                 }
-                if (grid_core_1._.exists(processedValue)) {
+                if (core_1._.exists(processedValue)) {
                     data += processedValue;
                 }
                 var cellId = _this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
@@ -372,7 +372,7 @@ var ClipboardService = /** @class */ (function () {
         var _a;
         if (includeHeaders === void 0) { includeHeaders = false; }
         var focusedCell = this.focusedCellController.getFocusedCell();
-        if (grid_core_1._.missing(focusedCell)) {
+        if (core_1._.missing(focusedCell)) {
             return;
         }
         var cellId = this.cellPositionUtils.createId(focusedCell);
@@ -380,8 +380,8 @@ var ClipboardService = /** @class */ (function () {
         var rowNode = this.rowPositionUtils.getRowNode(currentRow);
         var column = focusedCell.column;
         var value = this.valueService.getValue(column, rowNode);
-        var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc(), grid_core_1.Constants.EXPORT_TYPE_CLIPBOARD);
-        if (grid_core_1._.missing(processedValue)) {
+        var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc(), core_1.Constants.EXPORT_TYPE_CLIPBOARD);
+        if (core_1._.missing(processedValue)) {
             // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
             // this behaviour is consistent with how Excel works!
             processedValue = '\t';
@@ -400,7 +400,7 @@ var ClipboardService = /** @class */ (function () {
         var _this = this;
         window.setTimeout(function () {
             var event = {
-                type: grid_core_1.Events.EVENT_FLASH_CELLS,
+                type: core_1.Events.EVENT_FLASH_CELLS,
                 cells: cellsToFlash,
                 api: _this.gridApi,
                 columnApi: _this.columnApi
@@ -458,7 +458,7 @@ var ClipboardService = /** @class */ (function () {
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
         var userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
-        if (userProvidedFunc && grid_core_1._.exists(userProvidedFunc)) {
+        if (userProvidedFunc && core_1._.exists(userProvidedFunc)) {
             var params = { data: data };
             userProvidedFunc(params);
         }
@@ -557,7 +557,7 @@ var ClipboardService = /** @class */ (function () {
             }
             // Now that we have our value string, let's add
             // it to the data array.
-            var lastItem = grid_core_1._.last(arrData);
+            var lastItem = core_1._.last(arrData);
             if (lastItem) {
                 lastItem.push(strMatchedValue);
             }
@@ -581,58 +581,58 @@ var ClipboardService = /** @class */ (function () {
         return startRangeIndex - endRangeIndex + 1;
     };
     __decorate([
-        grid_core_1.Autowired('csvCreator')
+        core_1.Autowired('csvCreator')
     ], ClipboardService.prototype, "csvCreator", void 0);
     __decorate([
-        grid_core_1.Autowired('loggerFactory')
+        core_1.Autowired('loggerFactory')
     ], ClipboardService.prototype, "loggerFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('selectionController')
+        core_1.Autowired('selectionController')
     ], ClipboardService.prototype, "selectionController", void 0);
     __decorate([
-        grid_core_1.Optional('rangeController')
+        core_1.Optional('rangeController')
     ], ClipboardService.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], ClipboardService.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], ClipboardService.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('focusedCellController')
+        core_1.Autowired('focusedCellController')
     ], ClipboardService.prototype, "focusedCellController", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], ClipboardService.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ClipboardService.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ClipboardService.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('cellNavigationService')
+        core_1.Autowired('cellNavigationService')
     ], ClipboardService.prototype, "cellNavigationService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], ClipboardService.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], ClipboardService.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('cellPositionUtils')
+        core_1.Autowired('cellPositionUtils')
     ], ClipboardService.prototype, "cellPositionUtils", void 0);
     __decorate([
-        grid_core_1.Autowired('rowPositionUtils')
+        core_1.Autowired('rowPositionUtils')
     ], ClipboardService.prototype, "rowPositionUtils", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ClipboardService.prototype, "init", null);
     ClipboardService = __decorate([
-        grid_core_1.Bean('clipboardService')
+        core_1.Bean('clipboardService')
     ], ClipboardService);
     return ClipboardService;
 }());

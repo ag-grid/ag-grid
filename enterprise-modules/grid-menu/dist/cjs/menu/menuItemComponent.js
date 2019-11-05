@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var MenuItemComponent = /** @class */ (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
@@ -30,10 +30,10 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.prototype.init = function () {
         var _this = this;
         if (this.params.checked) {
-            this.eIcon.appendChild(grid_core_1._.createIconNoSpan('check', this.gridOptionsWrapper));
+            this.eIcon.appendChild(core_1._.createIconNoSpan('check', this.gridOptionsWrapper));
         }
         else if (this.params.icon) {
-            if (grid_core_1._.isNodeOrElement(this.params.icon)) {
+            if (core_1._.isNodeOrElement(this.params.icon)) {
                 this.eIcon.appendChild(this.params.icon);
             }
             else if (typeof this.params.icon === 'string') {
@@ -64,11 +64,11 @@ var MenuItemComponent = /** @class */ (function (_super) {
         if (this.params.subMenu) {
             if (this.gridOptionsWrapper.isEnableRtl()) {
                 // for RTL, we show arrow going left
-                this.ePopupPointer.appendChild(grid_core_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
+                this.ePopupPointer.appendChild(core_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
             }
             else {
                 // for normal, we show arrow going right
-                this.ePopupPointer.appendChild(grid_core_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
+                this.ePopupPointer.appendChild(core_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
             }
         }
         else {
@@ -76,13 +76,13 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         this.eName.innerHTML = this.params.name;
         if (this.params.disabled) {
-            grid_core_1._.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+            core_1._.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(function (it) { return grid_core_1._.addCssClass(_this.getGui(), it); });
+            this.params.cssClasses.forEach(function (it) { return core_1._.addCssClass(_this.getGui(), it); });
         }
     };
     MenuItemComponent.prototype.getTooltipText = function () {
@@ -118,26 +118,26 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('tooltipManager')
+        core_1.Autowired('tooltipManager')
     ], MenuItemComponent.prototype, "tooltipManager", void 0);
     __decorate([
-        grid_core_1.RefSelector('eIcon')
+        core_1.RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);
     __decorate([
-        grid_core_1.RefSelector('eName')
+        core_1.RefSelector('eName')
     ], MenuItemComponent.prototype, "eName", void 0);
     __decorate([
-        grid_core_1.RefSelector('eShortcut')
+        core_1.RefSelector('eShortcut')
     ], MenuItemComponent.prototype, "eShortcut", void 0);
     __decorate([
-        grid_core_1.RefSelector('ePopupPointer')
+        core_1.RefSelector('ePopupPointer')
     ], MenuItemComponent.prototype, "ePopupPointer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.MenuItemComponent = MenuItemComponent;

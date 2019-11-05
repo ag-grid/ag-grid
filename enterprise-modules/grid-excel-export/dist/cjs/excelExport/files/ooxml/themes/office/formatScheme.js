@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var getPropertyVal = function (name, val, children) { return ({
     name: "a:" + name,
     properties: {
@@ -110,7 +110,7 @@ var getEffectStyle = function (shadow) {
     }
     return {
         name: 'a:effectStyle',
-        children: [grid_core_1._.assign({}, {
+        children: [core_1._.assign({}, {
                 name: 'a:effectLst'
             }, children.length ? { children: children } : {})]
     };

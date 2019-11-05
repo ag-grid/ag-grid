@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var dropShadow_1 = require("../../../charts/scene/dropShadow");
 var padding_1 = require("../../../charts/util/padding");
 var ChartProxy = /** @class */ (function () {
@@ -61,10 +61,10 @@ var ChartProxy = /** @class */ (function () {
         }
     };
     ChartProxy.prototype.getChartOption = function (expression) {
-        return grid_core_1._.get(this.chartOptions, expression, undefined);
+        return core_1._.get(this.chartOptions, expression, undefined);
     };
     ChartProxy.prototype.setChartOption = function (expression, value) {
-        grid_core_1._.set(this.chartOptions, expression, value);
+        core_1._.set(this.chartOptions, expression, value);
         var mappings = {
             'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
             'legend.item.marker.size': 'legend.markerSize',
@@ -76,14 +76,14 @@ var ChartProxy = /** @class */ (function () {
             'legend.item.paddingX': 'legend.itemPaddingX',
             'legend.item.paddingY': 'legend.itemPaddingY',
         };
-        grid_core_1._.set(this.chart, mappings[expression] || expression, value);
+        core_1._.set(this.chart, mappings[expression] || expression, value);
         this.raiseChartOptionsChangedEvent();
     };
     ChartProxy.prototype.getSeriesOption = function (expression) {
-        return grid_core_1._.get(this.chartOptions.seriesDefaults, expression, undefined);
+        return core_1._.get(this.chartOptions.seriesDefaults, expression, undefined);
     };
     ChartProxy.prototype.setSeriesOption = function (expression, value) {
-        grid_core_1._.set(this.chartOptions.seriesDefaults, expression, value);
+        core_1._.set(this.chartOptions.seriesDefaults, expression, value);
         var mappings = {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
@@ -98,7 +98,7 @@ var ChartProxy = /** @class */ (function () {
             'callout.length': 'calloutLength',
         };
         var series = this.chart.series;
-        series.forEach(function (s) { return grid_core_1._.set(s, mappings[expression] || expression, value); });
+        series.forEach(function (s) { return core_1._.set(s, mappings[expression] || expression, value); });
         this.raiseChartOptionsChangedEvent();
     };
     ChartProxy.prototype.setTitleOption = function (property, value) {
@@ -108,7 +108,7 @@ var ChartProxy = /** @class */ (function () {
         }
         this.chart.title[property] = value;
         if (property === 'text') {
-            this.setTitleOption('enabled', grid_core_1._.exists(value));
+            this.setTitleOption('enabled', core_1._.exists(value));
         }
         this.raiseChartOptionsChangedEvent();
     };
@@ -156,7 +156,7 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.raiseChartOptionsChangedEvent = function () {
         var event = {
-            type: grid_core_1.Events.EVENT_CHART_OPTIONS_CHANGED,
+            type: core_1.Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartType,
             chartOptions: this.chartOptions
         };

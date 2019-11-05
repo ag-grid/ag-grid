@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var BaseGridSerializingSession = /** @class */ (function () {
     function BaseGridSerializingSession(config) {
         var columnController = config.columnController, valueService = config.valueService, gridOptionsWrapper = config.gridOptionsWrapper, processCellCallback = config.processCellCallback, processHeaderCallback = config.processHeaderCallback, processGroupHeaderCallback = config.processGroupHeaderCallback, cellAndHeaderEscaper = config.cellAndHeaderEscaper;
@@ -105,16 +105,16 @@ var GridSerializer = /** @class */ (function () {
         var context = this.gridOptionsWrapper.getContext();
         // when in pivot mode, we always render cols on screen, never 'all columns'
         var isPivotMode = this.columnController.isPivotMode();
-        var rowModelNormal = this.rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        var rowModelNormal = this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         var onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
         var columnsToExport = [];
-        if (grid_core_1._.existsAndNotEmpty(columnKeys)) {
+        if (core_1._.existsAndNotEmpty(columnKeys)) {
             columnsToExport = this.columnController.getGridColumns(columnKeys);
         }
         else if (allColumns && !isPivotMode) {
             // add auto group column for tree data
             columnsToExport = this.gridOptionsWrapper.isTreeData() ?
-                this.columnController.getGridColumns([grid_core_1.Constants.GROUP_AUTO_COLUMN_ID]) : [];
+                this.columnController.getGridColumns([core_1.Constants.GROUP_AUTO_COLUMN_ID]) : [];
             columnsToExport = columnsToExport.concat(this.columnController.getAllPrimaryColumns() || []);
         }
         else {
@@ -126,7 +126,7 @@ var GridSerializer = /** @class */ (function () {
         gridSerializingSession.prepare(columnsToExport);
         // first pass, put in the header names of the cols
         if (columnGroups) {
-            var groupInstanceIdCreator = new grid_core_1.GroupInstanceIdCreator();
+            var groupInstanceIdCreator = new core_1.GroupInstanceIdCreator();
             var displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnController.getGridBalancedTree(), groupInstanceIdCreator, null);
             this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, processGroupHeaderCallback);
         }
@@ -222,7 +222,7 @@ var GridSerializer = /** @class */ (function () {
             }
             columnGroup.getChildren().forEach(function (it) { return directChildrenHeaderGroups.push(it); });
         });
-        if (displayedGroups.length > 0 && displayedGroups[0] instanceof grid_core_1.ColumnGroup) {
+        if (displayedGroups.length > 0 && displayedGroups[0] instanceof core_1.ColumnGroup) {
             this.doAddHeaderHeader(gridSerializingSession, displayedGroups, processGroupHeaderCallback);
         }
         if (directChildrenHeaderGroups && directChildrenHeaderGroups.length > 0) {
@@ -251,28 +251,28 @@ var GridSerializer = /** @class */ (function () {
         });
     };
     __decorate([
-        grid_core_1.Autowired('displayedGroupCreator')
+        core_1.Autowired('displayedGroupCreator')
     ], GridSerializer.prototype, "displayedGroupCreator", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], GridSerializer.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], GridSerializer.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('pinnedRowModel')
+        core_1.Autowired('pinnedRowModel')
     ], GridSerializer.prototype, "pinnedRowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('selectionController')
+        core_1.Autowired('selectionController')
     ], GridSerializer.prototype, "selectionController", void 0);
     __decorate([
-        grid_core_1.Autowired('columnFactory')
+        core_1.Autowired('columnFactory')
     ], GridSerializer.prototype, "columnFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], GridSerializer.prototype, "gridOptionsWrapper", void 0);
     GridSerializer = __decorate([
-        grid_core_1.Bean("gridSerializer")
+        core_1.Bean("gridSerializer")
     ], GridSerializer);
     return GridSerializer;
 }());

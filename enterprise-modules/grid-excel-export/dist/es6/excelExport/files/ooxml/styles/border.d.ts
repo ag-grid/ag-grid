@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 declare const borderFactory: ExcelOOXMLTemplate;
 export default borderFactory;
 export declare const convertLegacyBorder: (type: string, weight: number) => string;

@@ -1,4 +1,4 @@
-import { NumberSequence, RowBounds, RowNode, RowNodeBlock } from "@ag-grid-community/grid-core";
+import { NumberSequence, RowBounds, RowNode, RowNodeBlock } from "@ag-grid-community/core";
 import { ServerSideCache, ServerSideCacheParams } from "./serverSideCache";
 export declare class ServerSideBlock extends RowNodeBlock {
     private rowRenderer;

@@ -22,7 +22,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideCache = /** @class */ (function (_super) {
     __extends(ServerSideCache, _super);
@@ -157,7 +157,7 @@ var ServerSideCache = /** @class */ (function (_super) {
             }
             for (var i = 1; i <= blocksSkippedCount; i++) {
                 var blockToAddId = blockId - i;
-                if (grid_core_1._.exists(_this.blockHeights[blockToAddId])) {
+                if (core_1._.exists(_this.blockHeights[blockToAddId])) {
                     nextRowTop.value += _this.blockHeights[blockToAddId];
                 }
                 else {
@@ -208,12 +208,12 @@ var ServerSideCache = /** @class */ (function (_super) {
             }
         });
         // when we are moving rows around, we don't want to trigger loads
-        if (grid_core_1._.missing(block) && dontCreateBlock) {
+        if (core_1._.missing(block) && dontCreateBlock) {
             return null;
         }
         var blockSize = this.getBlockSize();
         // if block not found, we need to load it
-        if (grid_core_1._.missing(block)) {
+        if (core_1._.missing(block)) {
             var blockNumber = void 0;
             var displayIndexStart_1;
             var nextRowTop = void 0;
@@ -230,7 +230,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                 while (!isInRange()) {
                     displayIndexStart_1 += blockSize;
                     var cachedBlockHeight = this.blockHeights[blockNumber];
-                    if (grid_core_1._.exists(cachedBlockHeight)) {
+                    if (core_1._.exists(cachedBlockHeight)) {
                         nextRowTop += cachedBlockHeight;
                     }
                     else {
@@ -295,7 +295,7 @@ var ServerSideCache = /** @class */ (function (_super) {
     ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var newBlock = new serverSideBlock_1.ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
         this.getContext().wireBean(newBlock);
-        var displayIndexSequence = new grid_core_1.NumberSequence(displayIndex);
+        var displayIndexSequence = new core_1.NumberSequence(displayIndex);
         newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
         this.postCreateBlock(newBlock);
         return newBlock;
@@ -311,7 +311,7 @@ var ServerSideCache = /** @class */ (function (_super) {
     };
     ServerSideCache.prototype.getChildCache = function (keys) {
         var _this = this;
-        if (grid_core_1._.missingOrEmpty(keys)) {
+        if (core_1._.missingOrEmpty(keys)) {
             return this;
         }
         var nextKey = keys[0];
@@ -322,7 +322,7 @@ var ServerSideCache = /** @class */ (function (_super) {
                 if (rowNode.key === nextKey) {
                     nextServerSideCache = rowNode.childrenCache;
                 }
-            }, new grid_core_1.NumberSequence(), _this.getVirtualRowCount());
+            }, new core_1.NumberSequence(), _this.getVirtualRowCount());
         });
         if (nextServerSideCache) {
             var keyListForNextLevel = keys.slice(1, keys.length);
@@ -365,23 +365,23 @@ var ServerSideCache = /** @class */ (function (_super) {
                             nextCache.refreshCacheAfterSort(changedColumnsInSort, rowGroupColIds);
                         }
                     };
-                    block.forEachNodeShallow(callback, new grid_core_1.NumberSequence(), _this.getVirtualRowCount());
+                    block.forEachNodeShallow(callback, new core_1.NumberSequence(), _this.getVirtualRowCount());
                 }
             });
         }
     };
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ServerSideCache.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        __param(0, grid_core_1.Qualifier('loggerFactory'))
+        __param(0, core_1.Qualifier('loggerFactory'))
     ], ServerSideCache.prototype, "setBeans", null);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ServerSideCache.prototype, "init", null);
     return ServerSideCache;
-}(grid_core_1.RowNodeCache));
+}(core_1.RowNodeCache));
 exports.ServerSideCache = ServerSideCache;

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var HorizontalResizeComp = /** @class */ (function (_super) {
     __extends(HorizontalResizeComp, _super);
     function HorizontalResizeComp() {
@@ -51,17 +51,17 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
         this.inverted = inverted;
     };
     __decorate([
-        grid_core_1.Autowired('horizontalResizeService')
+        core_1.Autowired('horizontalResizeService')
     ], HorizontalResizeComp.prototype, "horizontalResizeService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], HorizontalResizeComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], HorizontalResizeComp.prototype, "postConstruct", null);
     return HorizontalResizeComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.HorizontalResizeComp = HorizontalResizeComp;

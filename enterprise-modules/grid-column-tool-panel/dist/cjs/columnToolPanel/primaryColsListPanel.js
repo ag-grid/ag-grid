@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var toolPanelColumnGroupComp_1 = require("./toolPanelColumnGroupComp");
 var toolPanelColumnComp_1 = require("./toolPanelColumnComp");
 var primaryColsHeaderPanel_1 = require("./primaryColsHeaderPanel");
@@ -29,7 +29,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, PrimaryColsListPanel.TEMPLATE) || this;
         _this.selectAllChecked = true;
         _this.getColumnCompId = function (columnGroupChild) {
-            if (columnGroupChild instanceof grid_core_1.OriginalColumnGroup) {
+            if (columnGroupChild instanceof core_1.OriginalColumnGroup) {
                 // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
                 // to distinguish individual column groups after they have been split by user
                 var childIds = columnGroupChild.getLeafColumns().map(function (child) { return child.getId(); }).join('-');
@@ -46,17 +46,17 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.params = params;
         this.allowDragging = allowDragging;
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+            this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
         var eventsImpactingCheckedState = [
-            grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
-            grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
-            grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
-            grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            grid_core_1.Events.EVENT_COLUMN_VALUE_CHANGED,
-            grid_core_1.Events.EVENT_COLUMN_VISIBLE,
-            grid_core_1.Events.EVENT_NEW_COLUMNS_LOADED
+            core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
+            core_1.Events.EVENT_COLUMN_PIVOT_CHANGED,
+            core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
+            core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
+            core_1.Events.EVENT_COLUMN_VALUE_CHANGED,
+            core_1.Events.EVENT_COLUMN_VISIBLE,
+            core_1.Events.EVENT_NEW_COLUMNS_LOADED
         ];
         eventsImpactingCheckedState.forEach(function (event) {
             // update header select all checkbox with current selection state
@@ -101,7 +101,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     PrimaryColsListPanel.prototype.recursivelyAddComps = function (tree, dept, groupsExist) {
         var _this = this;
         tree.forEach(function (child) {
-            if (child instanceof grid_core_1.OriginalColumnGroup) {
+            if (child instanceof core_1.OriginalColumnGroup) {
                 _this.recursivelyAddGroupComps(child, dept, groupsExist);
             }
             else {
@@ -147,7 +147,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.fireGroupExpandedEvent();
     };
     PrimaryColsListPanel.prototype.doSetExpandedAll = function (value) {
-        grid_core_1._.iterateObject(this.columnComps, function (key, renderedItem) {
+        core_1._.iterateObject(this.columnComps, function (key, renderedItem) {
             if (renderedItem.isExpandable()) {
                 renderedItem.setExpanded(value);
             }
@@ -162,7 +162,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         }
         groupIds.forEach(function (suppliedGroupId) {
             // we need to search through all comps to handle the case when groups are split
-            grid_core_1._.iterateObject(_this.columnComps, function (key, comp) {
+            core_1._.iterateObject(_this.columnComps, function (key, comp) {
                 // check if group comp starts with supplied group id as the tool panel keys contain
                 // groupId + childIds concatenated
                 var foundMatchingGroupComp = key.indexOf(suppliedGroupId) === 0;
@@ -172,7 +172,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 }
             });
         });
-        var unrecognisedGroupIds = groupIds.filter(function (groupId) { return !grid_core_1._.includes(expandedGroupIds, groupId); });
+        var unrecognisedGroupIds = groupIds.filter(function (groupId) { return !core_1._.includes(expandedGroupIds, groupId); });
         if (unrecognisedGroupIds.length > 0) {
             console.warn('ag-Grid: unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }
@@ -184,7 +184,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var recursiveFunc = function (items) {
             items.forEach(function (item) {
                 // only interested in groups
-                if (item instanceof grid_core_1.OriginalColumnGroup) {
+                if (item instanceof core_1.OriginalColumnGroup) {
                     var compId = _this.getColumnCompId(item);
                     var comp = _this.columnComps[compId];
                     if (comp) {
@@ -221,7 +221,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         if (this.columnApi.isPivotMode()) {
             // if pivot mode is on, then selecting columns has special meaning (eg group, aggregate, pivot etc),
             // so there is no bulk operation we can do.
-            grid_core_1._.iterateObject(this.columnComps, function (key, column) {
+            core_1._.iterateObject(this.columnComps, function (key, column) {
                 column.onSelectAllChanged(_this.selectAllChecked);
             });
         }
@@ -229,7 +229,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
-            if (!grid_core_1._.exists(this.filterText)) {
+            if (!core_1._.exists(this.filterText)) {
                 var primaryCols = this.columnApi.getPrimaryColumns();
                 // we don't want to change visibility on lock visible columns
                 var colsToChange = primaryCols.filter(function (col) { return !col.isLockVisible(); });
@@ -238,7 +238,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             }
             // obtain list of columns currently filtered
             var filteredCols_1 = [];
-            grid_core_1._.iterateObject(this.filterResults, function (key, passesFilter) {
+            core_1._.iterateObject(this.filterResults, function (key, passesFilter) {
                 if (passesFilter)
                     filteredCols_1.push(key);
             });
@@ -303,11 +303,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
-        this.filterText = grid_core_1._.exists(filterText) ? filterText.toLowerCase() : null;
+        this.filterText = core_1._.exists(filterText) ? filterText.toLowerCase() : null;
         this.filterColumns();
         this.recursivelySetVisibility(this.columnTree, true);
         // groups selection state may need to be updated when filter is present
-        grid_core_1._.iterateObject(this.columnComps, function (key, columnComp) {
+        core_1._.iterateObject(this.columnComps, function (key, columnComp) {
             if (columnComp instanceof toolPanelColumnGroupComp_1.ToolPanelColumnGroupComp) {
                 columnComp.onColumnStateChanged();
             }
@@ -320,13 +320,13 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var _this = this;
         var filterResults = {};
         var passesFilter = function (item) {
-            if (!grid_core_1._.exists(_this.filterText))
+            if (!core_1._.exists(_this.filterText))
                 return true;
             var columnCompId = _this.getColumnCompId(item);
             var comp = _this.columnComps[columnCompId];
             if (!comp)
                 return false;
-            var isPaddingGroup = item instanceof grid_core_1.OriginalColumnGroup && item.isPadding();
+            var isPaddingGroup = item instanceof core_1.OriginalColumnGroup && item.isPadding();
             if (isPaddingGroup)
                 return false;
             var displayName = comp.getDisplayName();
@@ -334,7 +334,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         };
         var recursivelyCheckFilter = function (item, parentPasses) {
             var atLeastOneChildPassed = false;
-            if (item instanceof grid_core_1.OriginalColumnGroup) {
+            if (item instanceof core_1.OriginalColumnGroup) {
                 var groupPasses_1 = passesFilter(item);
                 item.getChildren().forEach(function (child) {
                     var childPasses = recursivelyCheckFilter(child, groupPasses_1 || parentPasses);
@@ -360,7 +360,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                 var passesFilter = _this.filterResults ? _this.filterResults[compId] : true;
                 comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
-            if (child instanceof grid_core_1.OriginalColumnGroup) {
+            if (child instanceof core_1.OriginalColumnGroup) {
                 var columnGroup = child;
                 var childrenOpen = void 0;
                 if (comp) {
@@ -388,9 +388,9 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     };
     PrimaryColsListPanel.prototype.destroyColumnComps = function () {
-        grid_core_1._.clearElement(this.getGui());
+        core_1._.clearElement(this.getGui());
         if (this.columnComps) {
-            grid_core_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
+            core_1._.iterateObject(this.columnComps, function (key, renderedItem) { return renderedItem.destroy(); });
         }
         this.columnComps = {};
     };
@@ -400,20 +400,20 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
     };
     PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-primary-cols-list-panel\"></div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PrimaryColsListPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PrimaryColsListPanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('toolPanelColDefService')
+        core_1.Autowired('toolPanelColDefService')
     ], PrimaryColsListPanel.prototype, "colDefService", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], PrimaryColsListPanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], PrimaryColsListPanel.prototype, "columnApi", void 0);
     return PrimaryColsListPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.PrimaryColsListPanel = PrimaryColsListPanel;

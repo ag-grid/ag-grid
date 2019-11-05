@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var AggregationStage = /** @class */ (function () {
     function AggregationStage() {
     }
@@ -14,7 +14,7 @@ var AggregationStage = /** @class */ (function () {
     // + gridApi.recomputeAggregates()
     AggregationStage.prototype.execute = function (params) {
         // we don't do aggregation if doing legacy tree good
-        var doingLegacyTreeData = grid_core_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var doingLegacyTreeData = core_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) {
             return null;
         }
@@ -23,7 +23,7 @@ var AggregationStage = /** @class */ (function () {
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        var noValueColumns = grid_core_1._.missingOrEmpty(this.columnController.getValueColumns());
+        var noValueColumns = core_1._.missingOrEmpty(this.columnController.getValueColumns());
         var noUserAgg = !this.gridOptionsWrapper.getGroupRowAggNodesFunc();
         var changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
@@ -100,7 +100,7 @@ var AggregationStage = /** @class */ (function () {
         var pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
         // Step 1: process value columns
         pivotColumnDefs
-            .filter(function (v) { return !grid_core_1._.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
+            .filter(function (v) { return !core_1._.exists(v.pivotTotalColumnIds); }) // only process pivot value columns
             .forEach(function (valueColDef) {
             var keys = valueColDef.pivotKeys || [];
             var values;
@@ -118,7 +118,7 @@ var AggregationStage = /** @class */ (function () {
         });
         // Step 2: process total columns
         pivotColumnDefs
-            .filter(function (v) { return grid_core_1._.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
+            .filter(function (v) { return core_1._.exists(v.pivotTotalColumnIds); }) // only process pivot total columns
             .forEach(function (totalColDef) {
             var aggResults = [];
             var pivotValueColumn = totalColDef.pivotValueColumn, pivotTotalColumnIds = totalColDef.pivotTotalColumnIds, colId = totalColDef.colId;
@@ -205,22 +205,22 @@ var AggregationStage = /** @class */ (function () {
         return aggFunction(values);
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], AggregationStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], AggregationStage.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], AggregationStage.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('pivotStage')
+        core_1.Autowired('pivotStage')
     ], AggregationStage.prototype, "pivotStage", void 0);
     __decorate([
-        grid_core_1.Autowired('aggFuncService')
+        core_1.Autowired('aggFuncService')
     ], AggregationStage.prototype, "aggFuncService", void 0);
     AggregationStage = __decorate([
-        grid_core_1.Bean('aggregationStage')
+        core_1.Bean('aggregationStage')
     ], AggregationStage);
     return AggregationStage;
 }());

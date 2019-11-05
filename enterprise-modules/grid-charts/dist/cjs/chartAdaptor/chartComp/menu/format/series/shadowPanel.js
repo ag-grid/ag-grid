@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ShadowPanel = /** @class */ (function (_super) {
     __extends(ShadowPanel, _super);
     function ShadowPanel(chartProxy) {
@@ -61,26 +61,26 @@ var ShadowPanel = /** @class */ (function (_super) {
     };
     ShadowPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"shadowGroup\">\n                <ag-color-picker ref=\"shadowColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"shadowBlurSlider\"></ag-slider>\n                <ag-slider ref=\"shadowXOffsetSlider\"></ag-slider>\n                <ag-slider ref=\"shadowYOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('shadowGroup')
+        core_1.RefSelector('shadowGroup')
     ], ShadowPanel.prototype, "shadowGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('shadowColorPicker')
+        core_1.RefSelector('shadowColorPicker')
     ], ShadowPanel.prototype, "shadowColorPicker", void 0);
     __decorate([
-        grid_core_1.RefSelector('shadowBlurSlider')
+        core_1.RefSelector('shadowBlurSlider')
     ], ShadowPanel.prototype, "shadowBlurSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('shadowXOffsetSlider')
+        core_1.RefSelector('shadowXOffsetSlider')
     ], ShadowPanel.prototype, "shadowXOffsetSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('shadowYOffsetSlider')
+        core_1.RefSelector('shadowYOffsetSlider')
     ], ShadowPanel.prototype, "shadowYOffsetSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], ShadowPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ShadowPanel.prototype, "init", null);
     return ShadowPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ShadowPanel = ShadowPanel;

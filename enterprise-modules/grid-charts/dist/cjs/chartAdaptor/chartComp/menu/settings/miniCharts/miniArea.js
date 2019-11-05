@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
 var path_1 = require("../../../../../charts/scene/shape/path");
 var linearScale_1 = require("../../../../../charts/scale/linearScale");
@@ -72,7 +72,7 @@ var MiniArea = /** @class */ (function (_super) {
             area.stroke = strokes[i];
         });
     };
-    MiniArea.chartType = grid_core_1.ChartType.Area;
+    MiniArea.chartType = core_1.ChartType.Area;
     MiniArea.data = [
         [1, 3, 5],
         [2, 6, 4],

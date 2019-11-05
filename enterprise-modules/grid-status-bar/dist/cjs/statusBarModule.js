@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var grid_core_2 = require("@ag-grid-enterprise/grid-core");
+var core_1 = require("@ag-grid-community/core");
+var core_2 = require("@ag-grid-enterprise/core");
 var statusBarService_1 = require("./statusBar/statusBarService");
 var statusBar_1 = require("./statusBar/statusBar");
 var nameValueComp_1 = require("./statusBar/providedPanels/nameValueComp");
@@ -11,7 +11,7 @@ var totalRowsComp_1 = require("./statusBar/providedPanels/totalRowsComp");
 var selectedRowsComp_1 = require("./statusBar/providedPanels/selectedRowsComp");
 var aggregationComp_1 = require("./statusBar/providedPanels/aggregationComp");
 exports.StatusBarModule = {
-    moduleName: grid_core_1.ModuleNames.StatusBarModule,
+    moduleName: core_1.ModuleNames.StatusBarModule,
     beans: [statusBarService_1.StatusBarService],
     agStackComponents: [
         { componentName: 'AgStatusBar', componentClass: statusBar_1.StatusBar },
@@ -25,6 +25,6 @@ exports.StatusBarModule = {
         { componentName: 'agTotalAndFilteredRowCountComponent', componentClass: totalAndFilteredRowsComp_1.TotalAndFilteredRowsComp }
     ],
     dependantModules: [
-        grid_core_2.EnterpriseCoreModule
+        core_2.EnterpriseCoreModule
     ]
 };

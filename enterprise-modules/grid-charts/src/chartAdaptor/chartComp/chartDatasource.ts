@@ -11,7 +11,7 @@ import {
     Optional,
     RowNode,
     ValueService
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import {ChartModel, ColState} from "./chartModel";
 import { find } from "../../charts/util/array";
 

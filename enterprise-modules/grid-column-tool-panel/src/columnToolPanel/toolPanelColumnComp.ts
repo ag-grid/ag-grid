@@ -19,7 +19,7 @@ import {
     PostConstruct,
     RefSelector,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {

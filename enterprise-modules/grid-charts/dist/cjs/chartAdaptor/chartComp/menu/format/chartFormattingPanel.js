@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartController_1 = require("../../chartController");
 var legendPanel_1 = require("./legend/legendPanel");
 var barSeriesPanel_1 = require("./series/barSeriesPanel");
@@ -52,31 +52,31 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         this.addComponent(new chartPanel_1.ChartPanel(this.chartController));
         this.addComponent(new legendPanel_1.LegendPanel(this.chartController));
         switch (chartType) {
-            case grid_core_1.ChartType.GroupedColumn:
-            case grid_core_1.ChartType.StackedColumn:
-            case grid_core_1.ChartType.NormalizedColumn:
-            case grid_core_1.ChartType.GroupedBar:
-            case grid_core_1.ChartType.StackedBar:
-            case grid_core_1.ChartType.NormalizedBar:
+            case core_1.ChartType.GroupedColumn:
+            case core_1.ChartType.StackedColumn:
+            case core_1.ChartType.NormalizedColumn:
+            case core_1.ChartType.GroupedBar:
+            case core_1.ChartType.StackedBar:
+            case core_1.ChartType.NormalizedBar:
                 this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
                 this.addComponent(new barSeriesPanel_1.BarSeriesPanel(this.chartController));
                 break;
-            case grid_core_1.ChartType.Pie:
-            case grid_core_1.ChartType.Doughnut:
+            case core_1.ChartType.Pie:
+            case core_1.ChartType.Doughnut:
                 this.addComponent(new pieSeriesPanel_1.PieSeriesPanel(this.chartController));
                 break;
-            case grid_core_1.ChartType.Line:
+            case core_1.ChartType.Line:
                 this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
                 this.addComponent(new lineSeriesPanel_1.LineSeriesPanel(this.chartController));
                 break;
-            case grid_core_1.ChartType.Scatter:
-            case grid_core_1.ChartType.Bubble:
+            case core_1.ChartType.Scatter:
+            case core_1.ChartType.Bubble:
                 this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
                 this.addComponent(new scatterSeriesPanel_1.ScatterSeriesPanel(this.chartController));
                 break;
-            case grid_core_1.ChartType.Area:
-            case grid_core_1.ChartType.StackedArea:
-            case grid_core_1.ChartType.NormalizedArea:
+            case core_1.ChartType.Area:
+            case core_1.ChartType.StackedArea:
+            case core_1.ChartType.NormalizedArea:
                 this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
                 this.addComponent(new areaSeriesPanel_1.AreaSeriesPanel(this.chartController));
                 break;
@@ -92,7 +92,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
     };
     ChartFormattingPanel.prototype.destroyPanels = function () {
         this.panels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -102,8 +102,8 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
     };
     ChartFormattingPanel.TEMPLATE = "<div class=\"ag-chart-format-wrapper\"></div>";
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartFormattingPanel.prototype, "init", null);
     return ChartFormattingPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ChartFormattingPanel = ChartFormattingPanel;

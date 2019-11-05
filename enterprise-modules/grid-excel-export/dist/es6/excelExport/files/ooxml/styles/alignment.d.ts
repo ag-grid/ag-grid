@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 declare const alignmentFactory: ExcelOOXMLTemplate;
 export interface Alignment {
     horizontal: string;

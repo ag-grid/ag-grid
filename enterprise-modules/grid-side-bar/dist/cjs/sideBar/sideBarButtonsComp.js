@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var SideBarButtonsComp = /** @class */ (function (_super) {
     __extends(SideBarButtonsComp, _super);
     function SideBarButtonsComp() {
@@ -52,7 +52,7 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         if (this.buttonComps) {
             this.buttonComps.forEach(function (comp) { return comp.destroy(); });
         }
-        grid_core_1._.clearElement(this.getGui());
+        core_1._.clearElement(this.getGui());
         this.buttonComps.length = 0;
     };
     SideBarButtonsComp.prototype.destroy = function () {
@@ -62,10 +62,10 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\"></div>";
     __decorate([
-        grid_core_1.Autowired("gridOptionsWrapper")
+        core_1.Autowired("gridOptionsWrapper")
     ], SideBarButtonsComp.prototype, "gridOptionsWrapper", void 0);
     return SideBarButtonsComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.SideBarButtonsComp = SideBarButtonsComp;
 var SideBarButtonComp = /** @class */ (function (_super) {
     __extends(SideBarButtonComp, _super);
@@ -82,7 +82,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         this.setTemplate(template);
         var toggleButton = this.eToggleButton;
         var iconDiv = toggleButton.querySelector('div');
-        iconDiv.insertAdjacentElement('afterbegin', grid_core_1._.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
+        iconDiv.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
@@ -100,13 +100,13 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     };
     SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED = 'toggleButtonClicked';
     __decorate([
-        grid_core_1.Autowired("gridOptionsWrapper")
+        core_1.Autowired("gridOptionsWrapper")
     ], SideBarButtonComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eToggleButton')
+        core_1.RefSelector('eToggleButton')
     ], SideBarButtonComp.prototype, "eToggleButton", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], SideBarButtonComp.prototype, "postConstruct", null);
     return SideBarButtonComp;
-}(grid_core_1.Component));
+}(core_1.Component));

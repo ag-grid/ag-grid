@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
@@ -51,11 +51,11 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         this.eFloatingFilterText.value = valuesString;
     };
     __decorate([
-        grid_core_1.RefSelector('eFloatingFilterText')
+        core_1.RefSelector('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
     __decorate([
-        grid_core_1.Autowired('valueFormatterService')
+        core_1.Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
     return SetFloatingFilterComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.SetFloatingFilterComp = SetFloatingFilterComp;

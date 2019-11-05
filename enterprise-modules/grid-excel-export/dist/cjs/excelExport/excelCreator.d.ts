@@ -1,8 +1,8 @@
-import { ExcelExportParams, GridOptionsWrapper, IExcelCreator } from '@ag-grid-community/grid-core';
-import { ExcelCell, ExcelStyle } from '@ag-grid-community/grid-core';
+import { ExcelExportParams, GridOptionsWrapper, IExcelCreator } from '@ag-grid-community/core';
+import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
-import { BaseCreator, ZipContainer } from "@ag-grid-community/grid-csv-export";
+import { BaseCreator, ZipContainer } from "@ag-grid-community/csv-export";
 export interface ExcelMixedStyle {
     key: string;
     excelID: string;

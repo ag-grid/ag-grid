@@ -1,4 +1,4 @@
-import { Component, GridOptions, ICellRendererParams, ICellRenderer, RowNode } from "@ag-grid-community/grid-core";
+import { Component, GridOptions, ICellRendererParams, ICellRenderer, RowNode } from "@ag-grid-community/core";
 export declare class DetailCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE;
     private eDetailGrid;

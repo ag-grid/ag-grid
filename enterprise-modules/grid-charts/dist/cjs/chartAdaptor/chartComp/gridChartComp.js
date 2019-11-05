@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartMenu_1 = require("./menu/chartMenu");
 var chartController_1 = require("./chartController");
 var chartModel_1 = require("./chartModel");
@@ -104,32 +104,32 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.prototype.createChartProxy = function (chartProxyParams) {
         switch (chartProxyParams.chartType) {
-            case grid_core_1.ChartType.GroupedColumn:
-            case grid_core_1.ChartType.StackedColumn:
-            case grid_core_1.ChartType.NormalizedColumn:
-            case grid_core_1.ChartType.GroupedBar:
-            case grid_core_1.ChartType.StackedBar:
-            case grid_core_1.ChartType.NormalizedBar:
+            case core_1.ChartType.GroupedColumn:
+            case core_1.ChartType.StackedColumn:
+            case core_1.ChartType.NormalizedColumn:
+            case core_1.ChartType.GroupedBar:
+            case core_1.ChartType.StackedBar:
+            case core_1.ChartType.NormalizedBar:
                 return new barChartProxy_1.BarChartProxy(chartProxyParams);
-            case grid_core_1.ChartType.Pie:
+            case core_1.ChartType.Pie:
                 return new pieChartProxy_1.PieChartProxy(chartProxyParams);
-            case grid_core_1.ChartType.Doughnut:
+            case core_1.ChartType.Doughnut:
                 return new doughnutChartProxy_1.DoughnutChartProxy(chartProxyParams);
-            case grid_core_1.ChartType.Area:
-            case grid_core_1.ChartType.StackedArea:
-            case grid_core_1.ChartType.NormalizedArea:
+            case core_1.ChartType.Area:
+            case core_1.ChartType.StackedArea:
+            case core_1.ChartType.NormalizedArea:
                 return new areaChartProxy_1.AreaChartProxy(chartProxyParams);
-            case grid_core_1.ChartType.Line:
+            case core_1.ChartType.Line:
                 return new lineChartProxy_1.LineChartProxy(chartProxyParams);
-            case grid_core_1.ChartType.Scatter:
-            case grid_core_1.ChartType.Bubble:
+            case core_1.ChartType.Scatter:
+            case core_1.ChartType.Bubble:
                 return new scatterChartProxy_1.ScatterChartProxy(chartProxyParams);
         }
     };
     GridChartComp.prototype.addDialog = function () {
         var _this = this;
         var title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
-        this.chartDialog = new grid_core_1.AgDialog({
+        this.chartDialog = new core_1.AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
@@ -139,7 +139,7 @@ var GridChartComp = /** @class */ (function (_super) {
             closable: true
         });
         this.getContext().wireBean(this.chartDialog);
-        this.chartDialog.addEventListener(grid_core_1.AgDialog.EVENT_DESTROYED, function () { return _this.destroy(); });
+        this.chartDialog.addEventListener(core_1.AgDialog.EVENT_DESTROYED, function () { return _this.destroy(); });
     };
     GridChartComp.prototype.addMenu = function () {
         this.chartMenu = new chartMenu_1.ChartMenu(this.chartController);
@@ -190,7 +190,7 @@ var GridChartComp = /** @class */ (function (_super) {
         var pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
         var minFieldsRequired = 1;
         if (this.chartController.isActiveXYChart()) {
-            if (this.model.getChartType() === grid_core_1.ChartType.Bubble) {
+            if (this.model.getChartType() === core_1.ChartType.Bubble) {
                 minFieldsRequired = 3;
             }
             else {
@@ -199,7 +199,7 @@ var GridChartComp = /** @class */ (function (_super) {
         }
         var isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
         if (parent) {
-            grid_core_1._.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
+            core_1._.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
         }
         if (pivotModeDisabled) {
             this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
@@ -219,8 +219,8 @@ var GridChartComp = /** @class */ (function (_super) {
     GridChartComp.prototype.refreshCanvasSize = function () {
         var eChartWrapper = this.eChart;
         var chart = this.chartProxy.getChart();
-        chart.height = grid_core_1._.getInnerHeight(eChartWrapper);
-        chart.width = grid_core_1._.getInnerWidth(eChartWrapper);
+        chart.height = core_1._.getInnerHeight(eChartWrapper);
+        chart.width = core_1._.getInnerWidth(eChartWrapper);
     };
     GridChartComp.prototype.addResizeListener = function () {
         var _this = this;
@@ -258,41 +258,41 @@ var GridChartComp = /** @class */ (function (_super) {
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
         var eGui = this.getGui();
-        grid_core_1._.clearElement(eGui);
+        core_1._.clearElement(eGui);
         // remove from parent, so if user provided container, we detach from the provided dom element
-        grid_core_1._.removeFromParent(eGui);
+        core_1._.removeFromParent(eGui);
     };
     GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartComponentsWrapper\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                    <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n                </div>\n            </div>\n            <div ref=\"eDockedContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('eChart')
+        core_1.RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
     __decorate([
-        grid_core_1.RefSelector('eChartComponentsWrapper')
+        core_1.RefSelector('eChartComponentsWrapper')
     ], GridChartComp.prototype, "eChartComponentsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eDockedContainer')
+        core_1.RefSelector('eDockedContainer')
     ], GridChartComp.prototype, "eDockedContainer", void 0);
     __decorate([
-        grid_core_1.RefSelector('eEmpty')
+        core_1.RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
     __decorate([
-        grid_core_1.Autowired('resizeObserverService')
+        core_1.Autowired('resizeObserverService')
     ], GridChartComp.prototype, "resizeObserverService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('environment')
+        core_1.Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], GridChartComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], GridChartComp.prototype, "init", null);
     return GridChartComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.GridChartComp = GridChartComp;

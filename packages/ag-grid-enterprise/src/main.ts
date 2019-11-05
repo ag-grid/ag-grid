@@ -1,1 +1,1 @@
-export * from "@ag-grid-enterprise/grid-all-modules";
+export * from "@ag-grid-enterprise/all-modules";

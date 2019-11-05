@@ -1,4 +1,4 @@
-import { Component } from '@ag-grid-community/grid-core';
+import { Component } from '@ag-grid-community/core';
 export declare class StatusBar extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;

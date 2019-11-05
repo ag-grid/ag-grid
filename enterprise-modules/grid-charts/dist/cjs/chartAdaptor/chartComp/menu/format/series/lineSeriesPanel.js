@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var markersPanel_1 = require("./markersPanel");
 var LineSeriesPanel = /** @class */ (function (_super) {
     __extends(LineSeriesPanel, _super);
@@ -69,7 +69,7 @@ var LineSeriesPanel = /** @class */ (function (_super) {
     };
     LineSeriesPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -79,20 +79,20 @@ var LineSeriesPanel = /** @class */ (function (_super) {
     };
     LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('seriesGroup')
+        core_1.RefSelector('seriesGroup')
     ], LineSeriesPanel.prototype, "seriesGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesTooltipsToggle')
+        core_1.RefSelector('seriesTooltipsToggle')
     ], LineSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesLineWidthSlider')
+        core_1.RefSelector('seriesLineWidthSlider')
     ], LineSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], LineSeriesPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], LineSeriesPanel.prototype, "init", null);
     return LineSeriesPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.LineSeriesPanel = LineSeriesPanel;

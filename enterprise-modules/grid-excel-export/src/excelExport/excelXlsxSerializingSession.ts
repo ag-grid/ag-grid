@@ -9,10 +9,10 @@ import {
     ExcelWorksheet,
     RowNode,
     _
-} from '@ag-grid-community/grid-core';
+} from '@ag-grid-community/core';
 
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
-import {RowSpanningAccumulator, RowType} from "@ag-grid-community/grid-csv-export";
+import {RowSpanningAccumulator, RowType} from "@ag-grid-community/csv-export";
 
 export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 

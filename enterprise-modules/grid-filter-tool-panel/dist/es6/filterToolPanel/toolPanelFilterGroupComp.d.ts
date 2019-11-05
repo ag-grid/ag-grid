@@ -1,4 +1,4 @@
-import { Component, OriginalColumnGroupChild } from "@ag-grid-community/grid-core";
+import { Component, OriginalColumnGroupChild } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 export declare type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 export declare class ToolPanelFilterGroupComp extends Component {

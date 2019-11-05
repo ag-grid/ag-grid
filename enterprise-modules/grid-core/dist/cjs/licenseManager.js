@@ -6,20 +6,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var LicenseManager = /** @class */ (function () {
     function LicenseManager() {
         this.watermarkMessage = undefined;
     }
     LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
-        if (grid_core_1._.missingOrEmpty(LicenseManager_1.licenseKey)) {
+        if (core_1._.missingOrEmpty(LicenseManager_1.licenseKey)) {
             this.outputMissingLicenseKey();
         }
         else if (LicenseManager_1.licenseKey.length > 32) {
             var _a = LicenseManager_1.extractLicenseComponents(LicenseManager_1.licenseKey), md5 = _a.md5, license = _a.license, version = _a.version, isTrial = _a.isTrial;
             if (md5 === this.md5.md5(license)) {
-                if (grid_core_1._.exists(version) && version) {
+                if (core_1._.exists(version) && version) {
                     this.validateLicenseKeyForVersion(version, !!isTrial, license);
                 }
                 else {
@@ -62,7 +62,7 @@ var LicenseManager = /** @class */ (function () {
         };
     };
     LicenseManager.prototype.isDisplayWatermark = function () {
-        return !grid_core_1._.missingOrEmpty(this.watermarkMessage);
+        return !core_1._.missingOrEmpty(this.watermarkMessage);
     };
     LicenseManager.prototype.getWatermarkMessage = function () {
         return this.watermarkMessage;
@@ -236,13 +236,13 @@ var LicenseManager = /** @class */ (function () {
     var LicenseManager_1;
     LicenseManager.RELEASE_INFORMATION = 'MTU3MTgyNDEzMDI0Mw==';
     __decorate([
-        grid_core_1.Autowired('md5')
+        core_1.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
     __decorate([
-        grid_core_1.PreConstruct
+        core_1.PreConstruct
     ], LicenseManager.prototype, "validateLicense", null);
     LicenseManager = LicenseManager_1 = __decorate([
-        grid_core_1.Bean('licenseManager')
+        core_1.Bean('licenseManager')
     ], LicenseManager);
     return LicenseManager;
 }());

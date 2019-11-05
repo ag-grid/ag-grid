@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_2 = require("@ag-grid-community/core");
 var AngularFrameworkOverrides = /** @class */ (function (_super) {
     __extends(AngularFrameworkOverrides, _super);
     function AngularFrameworkOverrides(_ngZone) {
@@ -40,6 +40,6 @@ var AngularFrameworkOverrides = /** @class */ (function (_super) {
         { type: core_1.NgZone, },
     ]; };
     return AngularFrameworkOverrides;
-}(grid_core_1.VanillaFrameworkOverrides));
+}(core_2.VanillaFrameworkOverrides));
 exports.AngularFrameworkOverrides = AngularFrameworkOverrides;
 //# sourceMappingURL=angularFrameworkOverrides.js.map

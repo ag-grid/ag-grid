@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var InfiniteBlock = /** @class */ (function (_super) {
     __extends(InfiniteBlock, _super);
     function InfiniteBlock(pageNumber, params) {
@@ -34,7 +34,7 @@ var InfiniteBlock = /** @class */ (function (_super) {
         return rowNode;
     };
     InfiniteBlock.prototype.setDataAndId = function (rowNode, data, index) {
-        if (grid_core_1._.exists(data)) {
+        if (core_1._.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
             // on index) as long user is not inserting or deleting rows,
@@ -80,12 +80,12 @@ var InfiniteBlock = /** @class */ (function (_super) {
             filterModel: this.cacheParams.filterModel,
             context: this.gridOptionsWrapper.getContext()
         };
-        if (grid_core_1._.missing(this.cacheParams.datasource.getRows)) {
+        if (core_1._.missing(this.cacheParams.datasource.getRows)) {
             console.warn("ag-Grid: datasource is missing getRows method");
             return;
         }
         // check if old version of datasource used
-        var getRowsParams = grid_core_1._.getFunctionParameters(this.cacheParams.datasource.getRows);
+        var getRowsParams = core_1._.getFunctionParameters(this.cacheParams.datasource.getRows);
         if (getRowsParams.length > 1) {
             console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
             console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
@@ -96,14 +96,14 @@ var InfiniteBlock = /** @class */ (function (_super) {
         }, 0);
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], InfiniteBlock.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], InfiniteBlock.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], InfiniteBlock.prototype, "init", null);
     return InfiniteBlock;
-}(grid_core_1.RowNodeBlock));
+}(core_1.RowNodeBlock));
 exports.InfiniteBlock = InfiniteBlock;

@@ -22,7 +22,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var serverSideCache_1 = require("./serverSideCache");
 var serverSideBlock_1 = require("./serverSideBlock");
 var ServerSideRowModel = /** @class */ (function (_super) {
@@ -55,14 +55,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.logger = loggerFactory.create('ServerSideRowModel');
     };
     ServerSideRowModel.prototype.addEventListeners = function () {
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
     ServerSideRowModel.prototype.setDatasource = function (datasource) {
         this.destroyDatasource();
@@ -96,10 +96,10 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
             var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
             var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
-            var sortModelDifferent = !grid_core_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
-            var rowGroupDifferent = !grid_core_1._.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
-            var pivotDifferent = !grid_core_1._.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
-            var valuesDifferent = !grid_core_1._.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
+            var sortModelDifferent = !core_1._.jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+            var rowGroupDifferent = !core_1._.jsonEquals(this.cacheParams.rowGroupCols, rowGroupColumnVos);
+            var pivotDifferent = !core_1._.jsonEquals(this.cacheParams.pivotCols, pivotColumnVos);
+            var valuesDifferent = !core_1._.jsonEquals(this.cacheParams.valueCols, valueColumnVos);
             resetRequired = sortModelDifferent || rowGroupDifferent || pivotDifferent || valuesDifferent;
         }
         if (resetRequired) {
@@ -132,8 +132,8 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             return oldIndex !== newIndex;
         };
         return allColsInBothSorts.filter(function (colId) {
-            var oldSortItem = grid_core_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
-            var newSortItem = grid_core_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
+            var oldSortItem = core_1._.find(oldSortModel, function (sm) { return sm.colId === colId; });
+            var newSortItem = core_1._.find(newSortModel, function (sm) { return sm.colId === colId; });
             return differentSorts(oldSortItem, newSortItem) || differentIndexes(oldSortItem, newSortItem);
         });
     };
@@ -176,12 +176,12 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             if (rowNode.master) {
                 this.createDetailNode(rowNode);
             }
-            else if (grid_core_1._.missing(rowNode.childrenCache)) {
+            else if (core_1._.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
         }
         else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && grid_core_1._.exists(rowNode.childrenCache)) {
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && core_1._.exists(rowNode.childrenCache)) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
@@ -195,7 +195,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         };
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
-            type: grid_core_1.Events.EVENT_MODEL_UPDATED,
+            type: core_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             newPage: false,
@@ -206,7 +206,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(modelUpdatedEvent);
     };
     ServerSideRowModel.prototype.reset = function () {
-        this.rootNode = new grid_core_1.RowNode();
+        this.rootNode = new core_1.RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
         this.getContext().wireBean(this.rootNode);
@@ -218,7 +218,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         // this event: 1) clears selection 2) updates filters 3) shows/hides 'no rows' overlay
         var rowDataChangedEvent = {
-            type: grid_core_1.Events.EVENT_ROW_DATA_CHANGED,
+            type: core_1.Events.EVENT_ROW_DATA_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
@@ -227,7 +227,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer
         // to treat the rows as new rows, as it's all new data
         var modelUpdatedEvent = {
-            type: grid_core_1.Events.EVENT_MODEL_UPDATED,
+            type: core_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
             animate: false,
@@ -241,7 +241,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.destroyRowNodeBlockLoader();
         var maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
         var blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
-        this.rowNodeBlockLoader = new grid_core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
+        this.rowNodeBlockLoader = new core_1.RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
         this.getContext().wireBean(this.rowNodeBlockLoader);
     };
     ServerSideRowModel.prototype.destroyRowNodeBlockLoader = function () {
@@ -286,7 +286,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             sortModel: this.extractSortModel(),
             rowNodeBlockLoader: this.rowNodeBlockLoader,
             datasource: this.datasource,
-            lastAccessedSequence: new grid_core_1.NumberSequence(),
+            lastAccessedSequence: new core_1.NumberSequence(),
             overflowSize: 1,
             initialRowCount: 1,
             maxConcurrentRequests: this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests() || 0,
@@ -318,13 +318,13 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.createNodeCache = function (rowNode) {
         var cache = new serverSideCache_1.ServerSideCache(this.cacheParams, rowNode);
         this.getContext().wireBean(cache);
-        cache.addEventListener(grid_core_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
+        cache.addEventListener(core_1.RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
         rowNode.childrenCache = cache;
     };
     ServerSideRowModel.prototype.onCacheUpdated = function () {
         this.updateRowIndexesAndBounds();
         var modelUpdatedEvent = {
-            type: grid_core_1.Events.EVENT_MODEL_UPDATED,
+            type: core_1.Events.EVENT_MODEL_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi,
             animate: this.gridOptionsWrapper.isAnimateRows(),
@@ -343,14 +343,14 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
     };
     ServerSideRowModel.prototype.setDisplayIndexes = function (cache) {
-        var numberSequence = new grid_core_1.NumberSequence();
+        var numberSequence = new core_1.NumberSequence();
         var nextRowTop = { value: 0 };
         cache.setDisplayIndexes(numberSequence, nextRowTop);
     };
     // resetting row tops is needed for animation, as part of the operation is saving the old location,
     // which is needed for rows that are transitioning in
     ServerSideRowModel.prototype.resetRowTops = function (cache) {
-        var numberSequence = new grid_core_1.NumberSequence();
+        var numberSequence = new core_1.NumberSequence();
         cache.forEachNodeDeep(function (rowNode) { return rowNode.clearRowTop(); }, numberSequence);
     };
     ServerSideRowModel.prototype.getRow = function (index) {
@@ -411,7 +411,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return this.cacheExists() && this.getRowCount() > 0;
     };
     ServerSideRowModel.prototype.getType = function () {
-        return grid_core_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
+        return core_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE;
     };
     ServerSideRowModel.prototype.forEachNode = function (callback) {
         if (this.cacheExists()) {
@@ -432,7 +432,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.executeOnCache(route, function (cache) { return cache.purgeCache(); });
     };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        if (grid_core_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
+        if (core_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
         return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
@@ -473,7 +473,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         // find index of auto group column in sort model
         var autoGroupIndex = -1;
         for (var i = 0; i < sortModel.length; ++i) {
-            if (sortModel[i].colId === grid_core_1.Constants.GROUP_AUTO_COLUMN_ID) {
+            if (sortModel[i].colId === core_1.Constants.GROUP_AUTO_COLUMN_ID) {
                 autoGroupIndex = i;
                 break;
             }
@@ -504,7 +504,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         }
         // strip out multi-column prefix on colId's
         if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
-            var multiColumnPrefix = grid_core_1.Constants.GROUP_AUTO_COLUMN_ID + "-";
+            var multiColumnPrefix = core_1.Constants.GROUP_AUTO_COLUMN_ID + "-";
             for (var i = 0; i < sortModel.length; ++i) {
                 if (sortModel[i].colId.indexOf(multiColumnPrefix) > -1) {
                     sortModel[i].colId = sortModel[i].colId.substr(multiColumnPrefix.length);
@@ -535,19 +535,19 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return false;
     };
     ServerSideRowModel.prototype.cacheExists = function () {
-        return grid_core_1._.exists(this.rootNode) && grid_core_1._.exists(this.rootNode.childrenCache);
+        return core_1._.exists(this.rootNode) && core_1._.exists(this.rootNode.childrenCache);
     };
     ServerSideRowModel.prototype.createDetailNode = function (masterNode) {
-        if (grid_core_1._.exists(masterNode.detailNode)) {
+        if (core_1._.exists(masterNode.detailNode)) {
             return masterNode.detailNode;
         }
         else {
-            var detailNode = new grid_core_1.RowNode();
+            var detailNode = new core_1.RowNode();
             this.getContext().wireBean(detailNode);
             detailNode.detail = true;
             detailNode.selectable = false;
             detailNode.parent = masterNode;
-            if (grid_core_1._.exists(masterNode.id)) {
+            if (core_1._.exists(masterNode.id)) {
                 detailNode.id = 'detail_' + masterNode.id;
             }
             detailNode.data = masterNode.data;
@@ -563,41 +563,41 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ServerSideRowModel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ServerSideRowModel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('filterManager')
+        core_1.Autowired('filterManager')
     ], ServerSideRowModel.prototype, "filterManager", void 0);
     __decorate([
-        grid_core_1.Autowired('sortController')
+        core_1.Autowired('sortController')
     ], ServerSideRowModel.prototype, "sortController", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], ServerSideRowModel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], ServerSideRowModel.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ServerSideRowModel.prototype, "postConstruct", null);
     __decorate([
-        grid_core_1.PreDestroy
+        core_1.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
     __decorate([
-        __param(0, grid_core_1.Qualifier('loggerFactory'))
+        __param(0, core_1.Qualifier('loggerFactory'))
     ], ServerSideRowModel.prototype, "setBeans", null);
     ServerSideRowModel = __decorate([
-        grid_core_1.Bean('rowModel')
+        core_1.Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
-}(grid_core_1.BeanStub));
+}(core_1.BeanStub));
 exports.ServerSideRowModel = ServerSideRowModel;

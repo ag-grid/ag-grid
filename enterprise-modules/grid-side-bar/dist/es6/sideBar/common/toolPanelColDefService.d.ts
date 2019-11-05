@@ -1,4 +1,4 @@
-import { AbstractColDef, OriginalColumnGroupChild } from "@ag-grid-community/grid-core";
+import { AbstractColDef, OriginalColumnGroupChild } from "@ag-grid-community/core";
 export declare class ToolPanelColDefService {
     private columnController;
     createColumnTree(colDefs: AbstractColDef[]): OriginalColumnGroupChild[];

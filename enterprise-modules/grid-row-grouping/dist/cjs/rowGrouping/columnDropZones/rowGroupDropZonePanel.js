@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var baseDropZonePanel_1 = require("./baseDropZonePanel");
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
@@ -38,12 +38,12 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         var title = localeTextFunc('groups', 'Row Groups');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: grid_core_1.DragAndDropService.ICON_GROUP,
-            icon: grid_core_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: core_1.DragAndDropService.ICON_GROUP,
+            icon: core_1._.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -60,7 +60,7 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     RowGroupDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                type: core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -72,34 +72,34 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
         }
     };
     RowGroupDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? grid_core_1.DragAndDropService.ICON_GROUP : grid_core_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_GROUP : core_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     RowGroupDropZonePanel.prototype.getExistingColumns = function () {
         return this.columnController.getRowGroupColumns();
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], RowGroupDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('loggerFactory')
+        core_1.Autowired('loggerFactory')
     ], RowGroupDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('dragAndDropService')
+        core_1.Autowired('dragAndDropService')
     ], RowGroupDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], RowGroupDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], RowGroupDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], RowGroupDropZonePanel.prototype, "passBeansUp", null);
     return RowGroupDropZonePanel;
 }(baseDropZonePanel_1.BaseDropZonePanel));

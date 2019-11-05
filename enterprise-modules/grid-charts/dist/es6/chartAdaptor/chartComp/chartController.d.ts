@@ -1,4 +1,4 @@
-import { AgEvent, BeanStub, ChartType, IRangeController } from "@ag-grid-community/grid-core";
+import { AgEvent, BeanStub, ChartType, IRangeController } from "@ag-grid-community/core";
 import { ChartModel, ColState } from "./chartModel";
 import { Palette } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";

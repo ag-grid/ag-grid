@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ToolPanelColumnComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnComp, _super);
     function ToolPanelColumnComp(column, columnDept, allowDragging, groupsExist) {
@@ -33,11 +33,11 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     }
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
-        this.eDragHandle = grid_core_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        grid_core_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
+        this.eDragHandle = core_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
+        core_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
-        var displayNameSanitised = grid_core_1._.escape(this.displayName);
+        var displayNameSanitised = core_1._.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
@@ -46,16 +46,16 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
         this.addCssClass("ag-toolpanel-indent-" + indent);
         this.setupDragging();
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, grid_core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, grid_core_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, grid_core_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, grid_core_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, grid_core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addDestroyableEventListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
-        grid_core_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        core_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -102,7 +102,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
                 copyOfPivotColumns.push(column);
                 var event_1 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                     columns: copyOfPivotColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -119,7 +119,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
                 copyOfValueColumns.push(column);
                 var event_2 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                     columns: copyOfValueColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -136,7 +136,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
                 copyOfRowGroupColumns.push(column);
                 var event_3 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                     columns: copyOfRowGroupColumns,
                     api: this.gridApi,
                     columnApi: this.columnApi
@@ -158,9 +158,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         if (column.isAllowValue()) {
             if (functionPassive) {
                 var copyOfValueColumns = this.columnController.getValueColumns().slice();
-                grid_core_1._.removeFromArray(copyOfValueColumns, column);
+                core_1._.removeFromArray(copyOfValueColumns, column);
                 var event_4 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfValueColumns
@@ -174,9 +174,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowRowGroup()) {
             if (functionPassive) {
                 var copyOfRowGroupColumns = this.columnController.getRowGroupColumns().slice();
-                grid_core_1._.removeFromArray(copyOfRowGroupColumns, column);
+                core_1._.removeFromArray(copyOfRowGroupColumns, column);
                 var event_5 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfRowGroupColumns
@@ -190,9 +190,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         else if (column.isAllowPivot()) {
             if (functionPassive) {
                 var copyOfPivotColumns = this.columnController.getPivotColumns().slice();
-                grid_core_1._.removeFromArray(copyOfPivotColumns, column);
+                core_1._.removeFromArray(copyOfPivotColumns, column);
                 var event_6 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                     api: this.gridApi,
                     columnApi: this.columnApi,
                     columns: copyOfPivotColumns
@@ -207,11 +207,11 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setupDragging = function () {
         var _this = this;
         if (!this.allowDragging) {
-            grid_core_1._.setDisplayed(this.eDragHandle, false);
+            core_1._.setDisplayed(this.eDragHandle, false);
             return;
         }
         var dragSource = {
-            type: grid_core_1.DragSourceType.ToolPanel,
+            type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
             dragItemCallback: function () { return _this.createDragItem(); }
@@ -281,32 +281,32 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     };
     ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ToolPanelColumnComp.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ToolPanelColumnComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('dragAndDropService')
+        core_1.Autowired('dragAndDropService')
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], ToolPanelColumnComp.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], ToolPanelColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.RefSelector('eLabel')
+        core_1.RefSelector('eLabel')
     ], ToolPanelColumnComp.prototype, "eLabel", void 0);
     __decorate([
-        grid_core_1.RefSelector('cbSelect')
+        core_1.RefSelector('cbSelect')
     ], ToolPanelColumnComp.prototype, "cbSelect", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ToolPanelColumnComp.prototype, "init", null);
     return ToolPanelColumnComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ToolPanelColumnComp = ToolPanelColumnComp;

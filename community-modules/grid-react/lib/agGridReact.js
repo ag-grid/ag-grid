@@ -1,4 +1,4 @@
-// @ag-grid-community/grid-react v22.0.0-beta.0
+// @ag-grid-community/react v22.0.0-beta.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24,7 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var react_1 = require("react");
 var PropTypes = require("prop-types");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var agGridColumn_1 = require("./agGridColumn");
 var reactComponent_1 = require("./reactComponent");
 var changeDetectionService_1 = require("./changeDetectionService");
@@ -73,9 +73,9 @@ var AgGridReact = /** @class */ (function (_super) {
         if (agGridColumn_1.AgGridColumn.hasChildColumns(this.props)) {
             gridOptions.columnDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(this.props);
         }
-        this.gridOptions = grid_core_1.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
+        this.gridOptions = core_1.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
         // don't need the return value
-        new grid_core_1.Grid(this.eGridDiv, this.gridOptions, gridParams);
+        new core_1.Grid(this.eGridDiv, this.gridOptions, gridParams);
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
     };
@@ -159,7 +159,7 @@ var AgGridReact = /** @class */ (function (_super) {
         this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
         if (Object.keys(changes).length > 0) {
-            grid_core_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+            core_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
@@ -185,7 +185,7 @@ var AgGridReact = /** @class */ (function (_super) {
         var debugLogging = !!nextProps.debug;
         var changedKeys = Object.keys(nextProps);
         changedKeys.forEach(function (propKey) {
-            if (grid_core_1.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+            if (core_1.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 var changeDetectionStrategy = _this.changeDetectionService.getStrategy(_this.getStrategyTypeForProp(propKey));
                 if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
@@ -198,7 +198,7 @@ var AgGridReact = /** @class */ (function (_super) {
                 }
             }
         });
-        grid_core_1.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
+        core_1.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
             if (_this.props[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log("agGridReact: [" + funcName + "] event callback changed");
@@ -223,13 +223,13 @@ exports.AgGridReact = AgGridReact;
 AgGridReact.propTypes = {
     gridOptions: PropTypes.object
 };
-addProperties(grid_core_1.ComponentUtil.getEventCallbacks(), PropTypes.func);
-addProperties(grid_core_1.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
-addProperties(grid_core_1.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
-addProperties(grid_core_1.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
-addProperties(grid_core_1.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
-addProperties(grid_core_1.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
-addProperties(grid_core_1.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
+addProperties(core_1.ComponentUtil.getEventCallbacks(), PropTypes.func);
+addProperties(core_1.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
+addProperties(core_1.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
+addProperties(core_1.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
+addProperties(core_1.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
+addProperties(core_1.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
+addProperties(core_1.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 function addProperties(listOfProps, propType) {
     listOfProps.forEach(function (propKey) {
         AgGridReact[propKey] = propType;
@@ -246,4 +246,4 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
         return new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
     };
     return ReactFrameworkComponentWrapper;
-}(grid_core_1.BaseComponentWrapper));
+}(core_1.BaseComponentWrapper));

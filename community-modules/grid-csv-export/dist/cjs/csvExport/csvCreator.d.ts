@@ -1,4 +1,4 @@
-import { Column, CsvExportParams, ExportParams, GridOptionsWrapper, ICsvCreator } from "@ag-grid-community/grid-core";
+import { Column, CsvExportParams, ExportParams, GridOptionsWrapper, ICsvCreator } from "@ag-grid-community/core";
 import { BaseGridSerializingSession, GridSerializer, GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./gridSerializer";
 import { Downloader } from "./downloader";
 export interface CsvSerializingParams extends GridSerializingParams {

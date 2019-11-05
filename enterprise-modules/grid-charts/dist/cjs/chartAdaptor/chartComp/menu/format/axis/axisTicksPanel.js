@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var AxisTicksPanel = /** @class */ (function (_super) {
     __extends(AxisTicksPanel, _super);
     function AxisTicksPanel(chartController) {
@@ -55,23 +55,23 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     };
     AxisTicksPanel.TEMPLATE = "<div>         \n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('axisTicksGroup')
+        core_1.RefSelector('axisTicksGroup')
     ], AxisTicksPanel.prototype, "axisTicksGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('axisTicksColorPicker')
+        core_1.RefSelector('axisTicksColorPicker')
     ], AxisTicksPanel.prototype, "axisTicksColorPicker", void 0);
     __decorate([
-        grid_core_1.RefSelector('axisTicksWidthSlider')
+        core_1.RefSelector('axisTicksWidthSlider')
     ], AxisTicksPanel.prototype, "axisTicksWidthSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('axisTicksSizeSlider')
+        core_1.RefSelector('axisTicksSizeSlider')
     ], AxisTicksPanel.prototype, "axisTicksSizeSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], AxisTicksPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AxisTicksPanel.prototype, "init", null);
     return AxisTicksPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.AxisTicksPanel = AxisTicksPanel;

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var toolPanelFilterComp_1 = require("./toolPanelFilterComp");
 var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterGroupComp, _super);
@@ -38,7 +38,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         var _this = this;
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
-        grid_core_1._.addCssClass(this.filterGroupComp.getGui(), "ag-level-" + this.depth);
+        core_1._.addCssClass(this.filterGroupComp.getGui(), "ag-level-" + this.depth);
         this.childFilterComps.forEach(function (filterComp) { return _this.filterGroupComp.addItem(filterComp); });
         if (!this.isColumnGroup()) {
             this.addTopLevelColumnGroupExpandListener();
@@ -64,7 +64,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         });
     };
     ToolPanelFilterGroupComp.prototype.isColumnGroup = function () {
-        return this.columnGroup instanceof grid_core_1.OriginalColumnGroup;
+        return this.columnGroup instanceof core_1.OriginalColumnGroup;
     };
     ToolPanelFilterGroupComp.prototype.isExpanded = function () {
         return this.filterGroupComp.isExpanded();
@@ -82,7 +82,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.hideItem(hide, index);
     };
     ToolPanelFilterGroupComp.prototype.hideGroup = function (hide) {
-        grid_core_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
+        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     };
     ToolPanelFilterGroupComp.prototype.addTopLevelColumnGroupExpandListener = function () {
         var _this = this;
@@ -101,20 +101,20 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterGroupComp.prototype.addFilterChangedListeners = function () {
         var _this = this;
-        if (this.columnGroup instanceof grid_core_1.OriginalColumnGroup) {
+        if (this.columnGroup instanceof core_1.OriginalColumnGroup) {
             var group_1 = this.columnGroup;
             var anyChildFiltersActive_1 = function () { return group_1.getLeafColumns().some(function (col) { return col.isFilterActive(); }); };
             group_1.getLeafColumns().forEach(function (column) {
-                _this.addDestroyableEventListener(column, grid_core_1.Column.EVENT_FILTER_CHANGED, function () {
-                    grid_core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive_1());
+                _this.addDestroyableEventListener(column, core_1.Column.EVENT_FILTER_CHANGED, function () {
+                    core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive_1());
                 });
             });
         }
         else {
             var column_1 = this.columnGroup;
-            this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
-            this.addDestroyableEventListener(column_1, grid_core_1.Column.EVENT_FILTER_CHANGED, function () {
-                grid_core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', column_1.isFilterActive());
+            this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addDestroyableEventListener(column_1, core_1.Column.EVENT_FILTER_CHANGED, function () {
+                core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', column_1.isFilterActive());
             });
         }
     };
@@ -139,7 +139,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.filterGroupComp.toggleGroupExpand(false);
     };
     ToolPanelFilterGroupComp.prototype.setGroupTitle = function () {
-        this.filterGroupName = (this.columnGroup instanceof grid_core_1.OriginalColumnGroup) ?
+        this.filterGroupName = (this.columnGroup instanceof core_1.OriginalColumnGroup) ?
             this.getColumnGroupName(this.columnGroup) : this.getColumnName(this.columnGroup);
         this.filterGroupComp.setTitle(this.filterGroupName);
     };
@@ -152,7 +152,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     ToolPanelFilterGroupComp.prototype.destroyFilters = function () {
         this.childFilterComps.forEach(function (filterComp) { return filterComp.destroy(); });
         this.childFilterComps.length = 0;
-        grid_core_1._.clearElement(this.getGui());
+        core_1._.clearElement(this.getGui());
     };
     ToolPanelFilterGroupComp.prototype.destroy = function () {
         this.destroyFilters();
@@ -160,29 +160,29 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     };
     ToolPanelFilterGroupComp.TEMPLATE = "<div>\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n         </div>";
     __decorate([
-        grid_core_1.RefSelector('filterGroupComp')
+        core_1.RefSelector('filterGroupComp')
     ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], ToolPanelFilterGroupComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('filterManager')
+        core_1.Autowired('filterManager')
     ], ToolPanelFilterGroupComp.prototype, "filterManager", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ToolPanelFilterGroupComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ToolPanelFilterGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ToolPanelFilterGroupComp.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.PreConstruct
+        core_1.PreConstruct
     ], ToolPanelFilterGroupComp.prototype, "preConstruct", null);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ToolPanelFilterGroupComp.prototype, "init", null);
     return ToolPanelFilterGroupComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ToolPanelFilterGroupComp = ToolPanelFilterGroupComp;

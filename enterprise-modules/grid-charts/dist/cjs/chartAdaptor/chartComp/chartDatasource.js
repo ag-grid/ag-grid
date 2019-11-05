@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartModel_1 = require("./chartModel");
 var array_1 = require("../../charts/util/array");
 var ChartDatasource = /** @class */ (function (_super) {
@@ -114,8 +114,8 @@ var ChartDatasource = /** @class */ (function (_super) {
             _loop_1(i);
         }
         if (params.grouping) {
-            var groupIndexesToRemove_1 = grid_core_1._.values(groupsToRemove);
-            extractedRowData = extractedRowData.filter(function (value, index) { return !grid_core_1._.includes(groupIndexesToRemove_1, index); });
+            var groupIndexesToRemove_1 = core_1._.values(groupsToRemove);
+            extractedRowData = extractedRowData.filter(function (value, index) { return !core_1._.includes(groupIndexesToRemove_1, index); });
         }
         return { data: extractedRowData, columnNames: columnNames };
     };
@@ -125,7 +125,7 @@ var ChartDatasource = /** @class */ (function (_super) {
         if (!params.aggFunc || dimensionCols.length === 0) {
             return dataFromGrid;
         }
-        var lastCol = grid_core_1._.last(dimensionCols);
+        var lastCol = core_1._.last(dimensionCols);
         var lastColId = lastCol && lastCol.colId;
         var map = {};
         var dataAggregated = [];
@@ -159,7 +159,7 @@ var ChartDatasource = /** @class */ (function (_super) {
         dataAggregated.forEach(function (groupItem) { return params.valueCols.forEach(function (col) {
             var dataToAgg = groupItem.__children.map(function (child) { return child[col.getId()]; });
             var aggResult = 0;
-            if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+            if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
                 aggResult = _this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc);
             }
             groupItem[col.getId()] = aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
@@ -175,17 +175,17 @@ var ChartDatasource = /** @class */ (function (_super) {
         return labels;
     };
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], ChartDatasource.prototype, "gridRowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], ChartDatasource.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Optional('aggregationStage')
+        core_1.Optional('aggregationStage')
     ], ChartDatasource.prototype, "aggregationStage", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ChartDatasource.prototype, "columnController", void 0);
     return ChartDatasource;
-}(grid_core_1.BeanStub));
+}(core_1.BeanStub));
 exports.ChartDatasource = ChartDatasource;

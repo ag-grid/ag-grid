@@ -2,7 +2,7 @@ import {
     CellRange,
     CellPosition,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 

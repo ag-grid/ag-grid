@@ -1,8 +1,8 @@
 import * as React from "react";
 import {Component, ReactElement} from "react";
 import * as PropTypes from "prop-types";
-import * as AgGrid from "@ag-grid-community/grid-core";
-import {ColDef, ColGroupDef} from "@ag-grid-community/grid-core";
+import * as AgGrid from "@ag-grid-community/core";
+import {ColDef, ColGroupDef} from "@ag-grid-community/core";
 
 export interface AgGridColumnProps extends ColDef {
 }

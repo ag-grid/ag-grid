@@ -1,2 +1,2 @@
-import { Module } from "@ag-grid-community/grid-core";
+import { Module } from "@ag-grid-community/core";
 export declare const ViewportRowModelModule: Module;

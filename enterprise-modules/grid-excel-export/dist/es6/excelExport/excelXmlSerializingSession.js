@@ -18,8 +18,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Constants, _ } from '@ag-grid-community/grid-core';
-import { RowType, BaseGridSerializingSession } from "@ag-grid-community/grid-csv-export";
+import { Constants, _ } from '@ag-grid-community/core';
+import { RowType, BaseGridSerializingSession } from "@ag-grid-community/csv-export";
 var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     __extends(ExcelXmlSerializingSession, _super);
     function ExcelXmlSerializingSession(config) {

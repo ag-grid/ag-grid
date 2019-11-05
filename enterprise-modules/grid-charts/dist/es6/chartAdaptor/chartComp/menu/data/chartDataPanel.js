@@ -24,7 +24,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, Autowired, Component, PostConstruct, ChartType } from "@ag-grid-community/grid-core";
+import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, Autowired, Component, PostConstruct, ChartType } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 var ChartDataPanel = /** @class */ (function (_super) {
     __extends(ChartDataPanel, _super);

@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var gridChartComp_1 = require("./chartComp/gridChartComp");
 var ChartService = /** @class */ (function () {
     function ChartService() {
@@ -15,7 +15,7 @@ var ChartService = /** @class */ (function () {
         this.activeCharts = [];
     }
     ChartService.prototype.createChartFromCurrentRange = function (chartType) {
-        if (chartType === void 0) { chartType = grid_core_1.ChartType.GroupedColumn; }
+        if (chartType === void 0) { chartType = core_1.ChartType.GroupedColumn; }
         var selectedRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
     };
@@ -72,7 +72,7 @@ var ChartService = /** @class */ (function () {
             // make sure all styles for the chartMenu are rendered correctly
             var theme = this.environment.getTheme();
             if (theme.el && !theme.el.contains(container)) {
-                grid_core_1._.addCssClass(container, theme.theme);
+                core_1._.addCssClass(container, theme.theme);
             }
         }
         else if (createChartContainerFunc) {
@@ -83,7 +83,7 @@ var ChartService = /** @class */ (function () {
         else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
             chartComp.addEventListener(gridChartComp_1.GridChartComp.EVENT_DESTROYED, function () {
-                grid_core_1._.removeFromArray(_this.activeCharts, chartRef);
+                core_1._.removeFromArray(_this.activeCharts, chartRef);
             });
         }
         return chartRef;
@@ -94,7 +94,7 @@ var ChartService = /** @class */ (function () {
             destroyChart: function () {
                 if (_this.activeCharts.indexOf(chartRef) >= 0) {
                     chartComp.destroy();
-                    grid_core_1._.removeFromArray(_this.activeCharts, chartRef);
+                    core_1._.removeFromArray(_this.activeCharts, chartRef);
                 }
             },
             chartElement: chartComp.getGui()
@@ -112,25 +112,25 @@ var ChartService = /** @class */ (function () {
         activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
     __decorate([
-        grid_core_1.Optional('rangeController')
+        core_1.Optional('rangeController')
     ], ChartService.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ChartService.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('environment')
+        core_1.Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], ChartService.prototype, "context", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ChartService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PreDestroy
+        core_1.PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
     ChartService = __decorate([
-        grid_core_1.Bean('chartService')
+        core_1.Bean('chartService')
     ], ChartService);
     return ChartService;
 }());

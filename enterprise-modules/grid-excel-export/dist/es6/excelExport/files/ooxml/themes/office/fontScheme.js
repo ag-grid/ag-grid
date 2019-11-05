@@ -1,4 +1,4 @@
-import { _ } from '@ag-grid-community/grid-core';
+import { _ } from '@ag-grid-community/core';
 var getFont = function (props) {
     var type = props[0], typeface = props[1], script = props[2], panose = props[3];
     return {

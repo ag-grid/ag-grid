@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChart_1 = require("./miniChart");
 var sector_1 = require("../../../../../charts/scene/shape/sector");
 var angle_1 = require("../../../../../charts/util/angle");
@@ -55,7 +55,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
             sector.stroke = strokes[i];
         });
     };
-    MiniDoughnut.chartType = grid_core_1.ChartType.Doughnut;
+    MiniDoughnut.chartType = core_1.ChartType.Doughnut;
     return MiniDoughnut;
 }(miniChart_1.MiniChart));
 exports.MiniDoughnut = MiniDoughnut;

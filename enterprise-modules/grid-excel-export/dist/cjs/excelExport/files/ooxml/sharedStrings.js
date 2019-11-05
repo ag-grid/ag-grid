@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var buildSharedString = function (textNode) { return ({
     name: 'si',
     children: [{
             name: 't',
-            textNode: grid_core_1._.utf8_encode(grid_core_1._.escape(textNode.toString()))
+            textNode: core_1._.utf8_encode(core_1._.escape(textNode.toString()))
         }]
 }); };
 var sharedStrings = {

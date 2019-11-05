@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { ChartType } from "@ag-grid-community/grid-core";
+import { ChartType } from "@ag-grid-community/core";
 import { MiniChart } from "./miniChart";
 import { Sector } from "../../../../../charts/scene/shape/sector";
 import { toRadians } from "../../../../../charts/util/angle";

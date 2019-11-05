@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-grid-community/core';
 
 const getExcelCellWidth = (width: number): number => Math.max(Math.ceil((width - 12) / 7 + 1), 10);
 

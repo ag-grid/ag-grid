@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var MD5 = /** @class */ (function () {
     function MD5() {
         this.ieCompatibility = false;
@@ -174,10 +174,10 @@ var MD5 = /** @class */ (function () {
         return (msw << 16) | (lsw & 0xFFFF);
     };
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MD5.prototype, "init", null);
     MD5 = __decorate([
-        grid_core_1.Bean('md5')
+        core_1.Bean('md5')
     ], MD5);
     return MD5;
 }());

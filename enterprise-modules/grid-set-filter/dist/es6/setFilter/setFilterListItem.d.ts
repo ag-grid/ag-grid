@@ -1,4 +1,4 @@
-import { AgEvent, Column, Component } from "@ag-grid-community/grid-core";
+import { AgEvent, Column, Component } from "@ag-grid-community/core";
 export interface SelectedEvent extends AgEvent {
 }
 export declare class SetFilterListItem extends Component {

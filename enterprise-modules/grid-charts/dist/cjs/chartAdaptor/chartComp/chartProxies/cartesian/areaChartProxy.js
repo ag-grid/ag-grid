@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
 var categoryAxis_1 = require("../../../../charts/chart/axis/categoryAxis");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
@@ -49,7 +49,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         }
     };
     AreaChartProxy.prototype.update = function (params) {
-        if (this.chartType === grid_core_1.ChartType.Area) {
+        if (this.chartType === core_1.ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
         }
@@ -78,7 +78,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         var _a = this.overriddenPalette || this.chartProxyParams.getSelectedPalette(), fills = _a.fills, strokes = _a.strokes;
         var existingSeriesById = chart.series.reduceRight(function (map, series) {
             var id = series.yKeys[0];
-            if (grid_core_1._.includes(fieldIds, id)) {
+            if (core_1._.includes(fieldIds, id)) {
                 map.set(id, series);
             }
             else {
@@ -119,7 +119,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     AreaChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
-        options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: this.chartType === grid_core_1.ChartType.Area ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
+        options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: this.chartType === core_1.ChartType.Area ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 enabled: true,
                 size: 3,
                 strokeWidth: 1,
@@ -129,7 +129,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         return options;
     };
     AreaChartProxy.prototype.getSeriesDefaults = function () {
-        return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: 'area', normalizedTo: this.chartType === grid_core_1.ChartType.NormalizedArea ? 100 : undefined });
+        return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: 'area', normalizedTo: this.chartType === core_1.ChartType.NormalizedArea ? 100 : undefined });
     };
     return AreaChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));

@@ -8,7 +8,7 @@ import {
     RowNodeBlock,
     RowRenderer,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import {InfiniteCacheParams} from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {

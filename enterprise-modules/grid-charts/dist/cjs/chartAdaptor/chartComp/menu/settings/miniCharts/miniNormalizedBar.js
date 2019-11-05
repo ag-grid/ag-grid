@@ -13,14 +13,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniStackedBar_1 = require("./miniStackedBar");
 var MiniNormalizedBar = /** @class */ (function (_super) {
     __extends(MiniNormalizedBar, _super);
     function MiniNormalizedBar(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
     }
-    MiniNormalizedBar.chartType = grid_core_1.ChartType.NormalizedBar;
+    MiniNormalizedBar.chartType = core_1.ChartType.NormalizedBar;
     MiniNormalizedBar.data = [
         [10, 10, 10],
         [6, 7, 8],

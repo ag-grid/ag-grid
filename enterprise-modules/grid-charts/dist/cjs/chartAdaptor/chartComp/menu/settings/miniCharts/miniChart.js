@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var group_1 = require("../../../../../charts/scene/group");
 var scene_1 = require("../../../../../charts/scene/scene");
 var MiniChart = /** @class */ (function (_super) {
@@ -43,11 +43,11 @@ var MiniChart = /** @class */ (function (_super) {
         this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
     };
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], MiniChart.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MiniChart.prototype, "init", null);
     return MiniChart;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.MiniChart = MiniChart;

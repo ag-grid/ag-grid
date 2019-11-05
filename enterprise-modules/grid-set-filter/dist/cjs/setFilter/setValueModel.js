@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
@@ -21,11 +21,11 @@ var SetValueModel = /** @class */ (function () {
         this.isLoadingFunc = isLoadingFunc;
         this.valueFormatterService = valueFormatterService;
         this.column = column;
-        if (rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = rowModel;
         }
         this.filterParams = this.colDef.filterParams ? this.colDef.filterParams : {};
-        if (grid_core_1._.exists(this.filterParams) && grid_core_1._.exists(this.filterParams.values)) {
+        if (core_1._.exists(this.filterParams) && core_1._.exists(this.filterParams.values)) {
             this.valuesType = Array.isArray(this.filterParams.values) ?
                 SetFilterModelValuesType.PROVIDED_LIST :
                 SetFilterModelValuesType.PROVIDED_CB;
@@ -45,7 +45,7 @@ var SetValueModel = /** @class */ (function () {
         // the length of the array is thousands of records long
         this.selectedValuesMap = {};
         this.selectAllUsingMiniFilter();
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : grid_core_1.TextFilter.DEFAULT_FORMATTER;
+        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : core_1.TextFilter.DEFAULT_FORMATTER;
     }
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
@@ -83,10 +83,10 @@ var SetValueModel = /** @class */ (function () {
         if (this.areValuesSync()) {
             var valuesToUse = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
-            this.filterValuesPromise = grid_core_1.Promise.resolve([]);
+            this.filterValuesPromise = core_1.Promise.resolve([]);
         }
         else {
-            this.filterValuesExternalPromise = grid_core_1.Promise.external();
+            this.filterValuesExternalPromise = core_1.Promise.external();
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
@@ -122,7 +122,7 @@ var SetValueModel = /** @class */ (function () {
         var valuesToUse;
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
             if (Array.isArray(this.filterParams.values)) {
-                valuesToUse = grid_core_1._.toStrings(this.filterParams.values);
+                valuesToUse = core_1._.toStrings(this.filterParams.values);
             }
             else {
                 // In this case the values are async but have already been resolved, so we can reuse them
@@ -134,7 +134,7 @@ var SetValueModel = /** @class */ (function () {
         }
         else {
             var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            valuesToUse = grid_core_1._.toStrings(uniqueValuesAsAnyObjects);
+            valuesToUse = core_1._.toStrings(uniqueValuesAsAnyObjects);
         }
         return valuesToUse;
     };
@@ -145,7 +145,7 @@ var SetValueModel = /** @class */ (function () {
             return;
         }
         var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = grid_core_1._.toStrings(uniqueValuesAsAnyObjects);
+        this.availableUniqueValues = core_1._.toStrings(uniqueValuesAsAnyObjects);
         this.sortValues(this.availableUniqueValues);
     };
     SetValueModel.prototype.sortValues = function (values) {
@@ -156,7 +156,7 @@ var SetValueModel = /** @class */ (function () {
             values.sort(this.colDef.comparator);
         }
         else {
-            values.sort(grid_core_1._.defaultComparator);
+            values.sort(core_1._.defaultComparator);
         }
     };
     SetValueModel.prototype.getUniqueValues = function (filterOutNotAvailable) {
@@ -203,7 +203,7 @@ var SetValueModel = /** @class */ (function () {
     };
     //sets mini filter. returns true if it changed from last value, otherwise false
     SetValueModel.prototype.setMiniFilter = function (newMiniFilter) {
-        newMiniFilter = grid_core_1._.makeNull(newMiniFilter);
+        newMiniFilter = core_1._.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
             return false;
@@ -353,7 +353,7 @@ var SetValueModel = /** @class */ (function () {
             return null;
         }
         var selectedValues = [];
-        grid_core_1._.iterateObject(this.selectedValuesMap, function (key) {
+        core_1._.iterateObject(this.selectedValuesMap, function (key) {
             var value = _this.keyToValue(key);
             selectedValues.push(value);
         });

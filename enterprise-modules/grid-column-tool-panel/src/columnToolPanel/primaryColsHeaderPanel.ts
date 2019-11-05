@@ -10,7 +10,7 @@ import {
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams, Constants
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }

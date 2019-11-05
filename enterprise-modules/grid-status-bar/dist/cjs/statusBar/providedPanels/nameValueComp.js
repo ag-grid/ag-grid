@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var NameValueComp = /** @class */ (function (_super) {
     __extends(NameValueComp, _super);
     function NameValueComp() {
@@ -36,14 +36,14 @@ var NameValueComp = /** @class */ (function (_super) {
     };
     NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eLabel')
+        core_1.RefSelector('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);
     __decorate([
-        grid_core_1.RefSelector('eValue')
+        core_1.RefSelector('eValue')
     ], NameValueComp.prototype, "eValue", void 0);
     return NameValueComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.NameValueComp = NameValueComp;

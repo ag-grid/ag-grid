@@ -1,3 +1,3 @@
-import { ExcelXMLTemplate } from '@ag-grid-community/grid-core';
+import { ExcelXMLTemplate } from '@ag-grid-community/core';
 declare const cell: ExcelXMLTemplate;
 export default cell;

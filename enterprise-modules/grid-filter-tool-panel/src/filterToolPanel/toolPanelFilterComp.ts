@@ -13,7 +13,7 @@ import {
     RefSelector,
     PostConstruct,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =

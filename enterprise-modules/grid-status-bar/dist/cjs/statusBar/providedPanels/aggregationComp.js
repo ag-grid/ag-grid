@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var AggregationComp = /** @class */ (function (_super) {
     __extends(AggregationComp, _super);
     function AggregationComp() {
@@ -35,8 +35,8 @@ var AggregationComp = /** @class */ (function (_super) {
         this.minAggregationComp.setLabel('min', 'Min');
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     };
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
@@ -47,8 +47,8 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.prototype.setAggregationComponentValue = function (aggFuncName, value, visible) {
         var statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
-        if (grid_core_1._.exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(grid_core_1._.formatNumberTwoDecimalPlacesAndCommas(value));
+        if (core_1._.exists(statusBarValueComponent) && statusBarValueComponent) {
+            statusBarValueComponent.setValue(core_1._.formatNumberTwoDecimalPlacesAndCommas(value));
             statusBarValueComponent.setDisplayed(visible);
         }
     };
@@ -58,13 +58,13 @@ var AggregationComp = /** @class */ (function (_super) {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         var statusBarValueComponent = null;
-        var aggregationPanelConfig = grid_core_1._.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? grid_core_1._.find(this.gridOptions.statusBar.statusPanels, function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
-        if (grid_core_1._.exists(aggregationPanelConfig) && aggregationPanelConfig) {
+        var aggregationPanelConfig = core_1._.exists(this.gridOptions.statusBar) && this.gridOptions.statusBar ? core_1._.find(this.gridOptions.statusBar.statusPanels, function (panel) { return panel.statusPanel === 'agAggregationComponent'; }) : null;
+        if (core_1._.exists(aggregationPanelConfig) && aggregationPanelConfig) {
             // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!grid_core_1._.exists(aggregationPanelConfig.statusPanelParams) ||
-                (grid_core_1._.exists(aggregationPanelConfig.statusPanelParams) &&
-                    grid_core_1._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    grid_core_1._.exists(grid_core_1._.find(aggregationPanelConfig.statusPanelParams.aggFuncs, function (func) { return func === aggFuncName; })))) {
+            if (!core_1._.exists(aggregationPanelConfig.statusPanelParams) ||
+                (core_1._.exists(aggregationPanelConfig.statusPanelParams) &&
+                    core_1._.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
+                    core_1._.exists(core_1._.find(aggregationPanelConfig.statusPanelParams.aggFuncs, function (func) { return func === aggFuncName; })))) {
                 statusBarValueComponent = this[refComponentName];
             }
         }
@@ -85,12 +85,12 @@ var AggregationComp = /** @class */ (function (_super) {
         var min = null;
         var max = null;
         var cellsSoFar = {};
-        if (cellRanges && !grid_core_1._.missingOrEmpty(cellRanges)) {
+        if (cellRanges && !core_1._.missingOrEmpty(cellRanges)) {
             cellRanges.forEach(function (cellRange) {
                 var currentRow = _this.rangeController.getRangeStartRow(cellRange);
                 var lastRow = _this.rangeController.getRangeEndRow(cellRange);
                 while (true) {
-                    var finishedAllRows = grid_core_1._.missing(currentRow) || !currentRow || _this.rowPositionUtils.before(lastRow, currentRow);
+                    var finishedAllRows = core_1._.missing(currentRow) || !currentRow || _this.rowPositionUtils.before(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
@@ -109,12 +109,12 @@ var AggregationComp = /** @class */ (function (_super) {
                         }
                         cellsSoFar[cellId] = true;
                         var rowNode = _this.rowRenderer.getRowNode(currentRow);
-                        if (grid_core_1._.missing(rowNode)) {
+                        if (core_1._.missing(rowNode)) {
                             return;
                         }
                         var value = _this.valueService.getValue(col, rowNode);
                         // if empty cell, skip it, doesn't impact count or anything
-                        if (grid_core_1._.missing(value) || value === '') {
+                        if (core_1._.missing(value) || value === '') {
                             return;
                         }
                         // see if value is wrapped, can happen when doing count() or avg() functions
@@ -152,53 +152,53 @@ var AggregationComp = /** @class */ (function (_super) {
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], AggregationComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Optional('rangeController')
+        core_1.Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('cellNavigationService')
+        core_1.Autowired('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptions')
+        core_1.Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('cellPositionUtils')
+        core_1.Autowired('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
     __decorate([
-        grid_core_1.Autowired('rowPositionUtils')
+        core_1.Autowired('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
     __decorate([
-        grid_core_1.RefSelector('sumAggregationComp')
+        core_1.RefSelector('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
     __decorate([
-        grid_core_1.RefSelector('countAggregationComp')
+        core_1.RefSelector('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
     __decorate([
-        grid_core_1.RefSelector('minAggregationComp')
+        core_1.RefSelector('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
     __decorate([
-        grid_core_1.RefSelector('maxAggregationComp')
+        core_1.RefSelector('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
     __decorate([
-        grid_core_1.RefSelector('avgAggregationComp')
+        core_1.RefSelector('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AggregationComp.prototype, "postConstruct", null);
     return AggregationComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.AggregationComp = AggregationComp;

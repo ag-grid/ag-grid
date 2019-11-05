@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var fontPanel_1 = require("../fontPanel");
 var LegendPanel = /** @class */ (function (_super) {
     __extends(LegendPanel, _super);
@@ -127,7 +127,7 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -137,35 +137,35 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"legendGroup\">\n                <ag-select ref=\"legendPositionSelect\"></ag-select>\n                <ag-slider ref=\"legendPaddingSlider\"></ag-slider>\n                <ag-slider ref=\"markerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"markerStrokeSlider\"></ag-slider>\n                <ag-slider ref=\"markerPaddingSlider\"></ag-slider>\n                <ag-slider ref=\"itemPaddingXSlider\"></ag-slider>\n                <ag-slider ref=\"itemPaddingYSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('legendGroup')
+        core_1.RefSelector('legendGroup')
     ], LegendPanel.prototype, "legendGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('legendPositionSelect')
+        core_1.RefSelector('legendPositionSelect')
     ], LegendPanel.prototype, "legendPositionSelect", void 0);
     __decorate([
-        grid_core_1.RefSelector('legendPaddingSlider')
+        core_1.RefSelector('legendPaddingSlider')
     ], LegendPanel.prototype, "legendPaddingSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('markerSizeSlider')
+        core_1.RefSelector('markerSizeSlider')
     ], LegendPanel.prototype, "markerSizeSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('markerStrokeSlider')
+        core_1.RefSelector('markerStrokeSlider')
     ], LegendPanel.prototype, "markerStrokeSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('markerPaddingSlider')
+        core_1.RefSelector('markerPaddingSlider')
     ], LegendPanel.prototype, "markerPaddingSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('itemPaddingXSlider')
+        core_1.RefSelector('itemPaddingXSlider')
     ], LegendPanel.prototype, "itemPaddingXSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('itemPaddingYSlider')
+        core_1.RefSelector('itemPaddingYSlider')
     ], LegendPanel.prototype, "itemPaddingYSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], LegendPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], LegendPanel.prototype, "init", null);
     return LegendPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.LegendPanel = LegendPanel;

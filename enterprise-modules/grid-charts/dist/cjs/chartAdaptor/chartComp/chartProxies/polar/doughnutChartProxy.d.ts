@@ -1,4 +1,4 @@
-import { PolarChartOptions, PieSeriesOptions } from "@ag-grid-community/grid-core";
+import { PolarChartOptions, PieSeriesOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 export declare class DoughnutChartProxy extends PolarChartProxy {

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var scatterChartProxy_1 = require("../../../chartProxies/cartesian/scatterChartProxy");
 var MarkersPanel = /** @class */ (function (_super) {
     __extends(MarkersPanel, _super);
@@ -50,7 +50,7 @@ var MarkersPanel = /** @class */ (function (_super) {
                 .setTextFieldWidth(45)
                 .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption(expression, newValue); });
         };
-        if (this.chartController.getChartType() === grid_core_1.ChartType.Bubble) {
+        if (this.chartController.getChartType() === core_1.ChartType.Bubble) {
             initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 30);
             initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 30);
         }
@@ -62,23 +62,23 @@ var MarkersPanel = /** @class */ (function (_super) {
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('seriesMarkersGroup')
+        core_1.RefSelector('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesMarkerSizeSlider')
+        core_1.RefSelector('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesMarkerMinSizeSlider')
+        core_1.RefSelector('seriesMarkerMinSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesMarkerStrokeWidthSlider')
+        core_1.RefSelector('seriesMarkerStrokeWidthSlider')
     ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], MarkersPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MarkersPanel.prototype, "init", null);
     return MarkersPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.MarkersPanel = MarkersPanel;

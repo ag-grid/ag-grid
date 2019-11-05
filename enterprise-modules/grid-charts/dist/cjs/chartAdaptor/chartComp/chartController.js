@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartModel_1 = require("./chartModel");
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
@@ -36,16 +36,16 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.init = function () {
         var _this = this;
         this.updateForGridChange();
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED, function (event) {
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED, function (event) {
             if (event.id && event.id === _this.model.getChartId()) {
                 _this.updateForGridChange();
             }
         });
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
         // don't update chart if chart is detached from grid data
@@ -107,7 +107,7 @@ var ChartController = /** @class */ (function (_super) {
         }
     };
     ChartController.prototype.isActiveXYChart = function () {
-        return grid_core_1._.includes([grid_core_1.ChartType.Scatter, grid_core_1.ChartType.Bubble], this.getChartType());
+        return core_1._.includes([core_1.ChartType.Scatter, core_1.ChartType.Bubble], this.getChartType());
     };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = {
@@ -123,14 +123,14 @@ var ChartController = /** @class */ (function (_super) {
     };
     ChartController.EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ChartController.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('rangeController')
+        core_1.Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartController.prototype, "init", null);
     return ChartController;
-}(grid_core_1.BeanStub));
+}(core_1.BeanStub));
 exports.ChartController = ChartController;

@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 import cellStyleFactory, { CellStyle } from './cellStyle';
 
 const cellStylesFactory: ExcelOOXMLTemplate = {

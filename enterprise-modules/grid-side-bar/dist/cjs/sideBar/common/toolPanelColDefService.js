@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ToolPanelColDefService = /** @class */ (function () {
     function ToolPanelColDefService() {
         var _this = this;
@@ -23,7 +23,7 @@ var ToolPanelColDefService = /** @class */ (function () {
                 // creating 'dummy' group which is not associated with grid column group
                 var groupDef = abstractColDef;
                 var groupId = (typeof groupDef.groupId !== 'undefined') ? groupDef.groupId : groupDef.headerName;
-                var group = new grid_core_1.OriginalColumnGroup(groupDef, groupId, false, depth);
+                var group = new core_1.OriginalColumnGroup(groupDef, groupId, false, depth);
                 var children_1 = [];
                 groupDef.children.forEach(function (def) {
                     var child = createDummyColGroup(def, depth + 1);
@@ -71,13 +71,13 @@ var ToolPanelColDefService = /** @class */ (function () {
         var getLeafPathTree = function (node, childDef) {
             var leafPathTree;
             // build up tree in reverse order
-            if (node instanceof grid_core_1.OriginalColumnGroup) {
+            if (node instanceof core_1.OriginalColumnGroup) {
                 if (node.isPadding()) {
                     // skip over padding groups
                     leafPathTree = childDef;
                 }
                 else {
-                    var groupDef = grid_core_1._.assign({}, node.getColGroupDef());
+                    var groupDef = core_1._.assign({}, node.getColGroupDef());
                     // ensure group contains groupId
                     groupDef.groupId = node.getGroupId();
                     groupDef.children = [childDef];
@@ -85,7 +85,7 @@ var ToolPanelColDefService = /** @class */ (function () {
                 }
             }
             else {
-                var colDef = grid_core_1._.assign({}, node.getColDef());
+                var colDef = core_1._.assign({}, node.getColDef());
                 // ensure col contains colId
                 colDef.colId = node.getColId();
                 leafPathTree = colDef;
@@ -153,8 +153,8 @@ var ToolPanelColDefService = /** @class */ (function () {
         var _this = this;
         var subGroupIsSplit = function (currentGroup, groupToAdd) {
             var existingChildIds = currentGroup.children.map(_this.getId);
-            var childGroupAlreadyExists = grid_core_1._.includes(existingChildIds, _this.getId(groupToAdd));
-            var lastChild = grid_core_1._.last(currentGroup.children);
+            var childGroupAlreadyExists = core_1._.includes(existingChildIds, _this.getId(groupToAdd));
+            var lastChild = core_1._.last(currentGroup.children);
             var lastChildIsDifferent = lastChild && _this.getId(lastChild) !== _this.getId(groupToAdd);
             return childGroupAlreadyExists && lastChildIsDifferent;
         };
@@ -169,7 +169,7 @@ var ToolPanelColDefService = /** @class */ (function () {
         if (currentGroup.groupId === groupId) {
             // add children that don't already exist to group
             var existingChildIds = currentGroup.children.map(this.getId);
-            var colDefAlreadyPresent = grid_core_1._.includes(existingChildIds, this.getId(groupToAdd));
+            var colDefAlreadyPresent = core_1._.includes(existingChildIds, this.getId(groupToAdd));
             if (!colDefAlreadyPresent) {
                 currentGroup.children.push(groupToAdd);
                 return true;
@@ -180,10 +180,10 @@ var ToolPanelColDefService = /** @class */ (function () {
         return false;
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ToolPanelColDefService.prototype, "columnController", void 0);
     ToolPanelColDefService = __decorate([
-        grid_core_1.Bean('toolPanelColDefService')
+        core_1.Bean('toolPanelColDefService')
     ], ToolPanelColDefService);
     return ToolPanelColDefService;
 }());

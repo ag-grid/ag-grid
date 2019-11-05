@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartDatasource_1 = require("./chartDatasource");
 var ChartModel = /** @class */ (function (_super) {
     __extends(ChartModel, _super);
@@ -46,9 +46,9 @@ var ChartModel = /** @class */ (function (_super) {
         _this.getSelectedValueColState = function () { return _this.getValueColState().filter(function (cs) { return cs.selected; }); };
         _this.getSelectedValueCols = function () { return _this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; }); };
         _this.getSelectedDimension = function () { return _this.dimensionColState.filter(function (cs) { return cs.selected; })[0]; };
-        _this.getAllColumnsFromRanges = function () { return grid_core_1._.flatten(_this.cellRanges.map(function (range) { return range.columns; })); };
+        _this.getAllColumnsFromRanges = function () { return core_1._.flatten(_this.cellRanges.map(function (range) { return range.columns; })); };
         _this.getColDisplayName = function (col) { return _this.columnController.getDisplayNameForColumn(col, 'chart'); };
-        _this.isMultiCategoryChart = function () { return !grid_core_1._.includes([grid_core_1.ChartType.Pie, grid_core_1.ChartType.Doughnut, grid_core_1.ChartType.Scatter, grid_core_1.ChartType.Bubble], _this.chartType); };
+        _this.isMultiCategoryChart = function () { return !core_1._.includes([core_1.ChartType.Pie, core_1.ChartType.Doughnut, core_1.ChartType.Scatter, core_1.ChartType.Bubble], _this.chartType); };
         _this.generateId = function () { return 'id-' + Math.random().toString(36).substr(2, 16); };
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
@@ -134,7 +134,7 @@ var ChartModel = /** @class */ (function (_super) {
     };
     ChartModel.prototype.updateCellRanges = function (updatedCol) {
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        var lastRange = grid_core_1._.last(this.cellRanges);
+        var lastRange = core_1._.last(this.cellRanges);
         if (lastRange) {
             // update the reference range
             this.referenceCellRange = lastRange;
@@ -150,25 +150,25 @@ var ChartModel = /** @class */ (function (_super) {
         if (this.initialising) {
             // first time in just take the first dimension from the range as the column state hasn't been updated yet
             if (dimensionColsInRange.length > 0) {
-                this.addRange(grid_core_1.CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
+                this.addRange(core_1.CellRangeType.DIMENSION, [dimensionColsInRange[0]]);
             }
             this.initialising = false;
         }
         if (updatedCol && dimensionCols.indexOf(updatedCol.column) > -1) {
             // if updated col is dimension col and is not the default category
             if (updatedCol.colId !== ChartModel.DEFAULT_CATEGORY) {
-                this.addRange(grid_core_1.CellRangeType.DIMENSION, [updatedCol.column]);
+                this.addRange(core_1.CellRangeType.DIMENSION, [updatedCol.column]);
             }
         }
         else {
             // otherwise use current selected dimension
             var selectedDimension = this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
             if (selectedDimension && selectedDimension.colId !== ChartModel.DEFAULT_CATEGORY) {
-                this.addRange(grid_core_1.CellRangeType.DIMENSION, [selectedDimension.column]);
+                this.addRange(core_1.CellRangeType.DIMENSION, [selectedDimension.column]);
             }
         }
-        var valueColsInRange = valueCols.filter(function (col) { return grid_core_1._.includes(allColsFromRanges, col); });
-        if (updatedCol && grid_core_1._.includes(valueCols, updatedCol.column)) {
+        var valueColsInRange = valueCols.filter(function (col) { return core_1._.includes(allColsFromRanges, col); });
+        if (updatedCol && core_1._.includes(valueCols, updatedCol.column)) {
             if (updatedCol.selected) {
                 valueColsInRange.push(updatedCol.column);
                 valueColsInRange = this.getColumnInDisplayOrder(valueCols, valueColsInRange);
@@ -178,7 +178,7 @@ var ChartModel = /** @class */ (function (_super) {
             }
         }
         if (valueColsInRange.length > 0) {
-            this.addRange(grid_core_1.CellRangeType.VALUE, valueColsInRange);
+            this.addRange(core_1.CellRangeType.VALUE, valueColsInRange);
         }
     };
     ChartModel.prototype.getData = function () {
@@ -225,7 +225,7 @@ var ChartModel = /** @class */ (function (_super) {
         this.detached = !this.detached;
     };
     ChartModel.prototype.getColumnInDisplayOrder = function (allDisplayedColumns, listToSort) {
-        return allDisplayedColumns.filter(function (col) { return grid_core_1._.includes(listToSort, col); });
+        return allDisplayedColumns.filter(function (col) { return core_1._.includes(listToSort, col); });
     };
     ChartModel.prototype.addRange = function (cellRangeType, columns) {
         var newRange = {
@@ -236,11 +236,11 @@ var ChartModel = /** @class */ (function (_super) {
             startColumn: this.referenceCellRange.startColumn,
             type: cellRangeType
         };
-        cellRangeType === grid_core_1.CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
+        cellRangeType === core_1.CellRangeType.DIMENSION ? this.cellRanges.unshift(newRange) : this.cellRanges.push(newRange);
     };
     ChartModel.prototype.getRowIndexes = function () {
         var startRow = 0, endRow = 0;
-        var range = grid_core_1._.last(this.cellRanges);
+        var range = core_1._.last(this.cellRanges);
         if (this.rangeController && range) {
             startRow = this.rangeController.getRangeStartRow(range).rowIndex;
             endRow = this.rangeController.getRangeEndRow(range).rowIndex;
@@ -338,20 +338,20 @@ var ChartModel = /** @class */ (function (_super) {
     };
     ChartModel.DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ChartModel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ChartModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('rangeController')
+        core_1.Autowired('rangeController')
     ], ChartModel.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], ChartModel.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartModel.prototype, "init", null);
     return ChartModel;
-}(grid_core_1.BeanStub));
+}(core_1.BeanStub));
 exports.ChartModel = ChartModel;

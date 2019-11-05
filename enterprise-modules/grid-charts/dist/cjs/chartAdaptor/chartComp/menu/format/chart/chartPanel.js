@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var paddingPanel_1 = require("./paddingPanel");
 var fontPanel_1 = require("../fontPanel");
 var ChartPanel = /** @class */ (function (_super) {
@@ -82,7 +82,7 @@ var ChartPanel = /** @class */ (function (_super) {
             .onValueChange(function (value) {
             _this.chartProxy.setTitleOption('text', value);
             // only show font panel when title exists
-            fontPanelComp.setEnabled(grid_core_1._.exists(value));
+            fontPanelComp.setEnabled(core_1._.exists(value));
         });
         var params = {
             name: this.chartTranslator.translate('font'),
@@ -94,7 +94,7 @@ var ChartPanel = /** @class */ (function (_super) {
         var fontPanelComp = this.wireBean(new fontPanel_1.FontPanel(params));
         this.chartGroup.addItem(fontPanelComp);
         this.activePanels.push(fontPanelComp);
-        fontPanelComp.setEnabled(grid_core_1._.exists(text));
+        fontPanelComp.setEnabled(core_1._.exists(text));
     };
     ChartPanel.prototype.initPaddingPanel = function () {
         var paddingPanelComp = this.wireBean(new paddingPanel_1.PaddingPanel(this.chartController));
@@ -103,7 +103,7 @@ var ChartPanel = /** @class */ (function (_super) {
     };
     ChartPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -113,17 +113,17 @@ var ChartPanel = /** @class */ (function (_super) {
     };
     ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n                <ag-input-text-area ref=\"titleInput\"></ag-input-text-area>\n            </ag-group-component>\n        <div>";
     __decorate([
-        grid_core_1.RefSelector('chartGroup')
+        core_1.RefSelector('chartGroup')
     ], ChartPanel.prototype, "chartGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('titleInput')
+        core_1.RefSelector('titleInput')
     ], ChartPanel.prototype, "titleInput", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], ChartPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartPanel.prototype, "init", null);
     return ChartPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ChartPanel = ChartPanel;

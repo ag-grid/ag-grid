@@ -1,4 +1,4 @@
-import { ModuleNames } from "@ag-grid-community/grid-core";
+import { ModuleNames } from "@ag-grid-community/core";
 import { LicenseManager } from "./licenseManager";
 import { MD5 } from "./license/md5";
 import { WatermarkComp } from "./license/watermark";

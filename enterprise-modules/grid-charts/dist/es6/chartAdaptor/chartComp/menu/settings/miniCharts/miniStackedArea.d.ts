@@ -1,4 +1,4 @@
-import { ChartType } from "@ag-grid-community/grid-core";
+import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 export declare class MiniStackedArea extends MiniChartWithAxes {
     static chartType: ChartType;

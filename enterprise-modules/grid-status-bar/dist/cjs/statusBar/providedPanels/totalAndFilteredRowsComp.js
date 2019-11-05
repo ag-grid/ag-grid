@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var nameValueComp_1 = require("./nameValueComp");
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     __extends(TotalAndFilteredRowsComp, _super);
@@ -36,11 +36,11 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel');
         this.addCssClass('ag-status-panel-total-and-filtered-row-count');
         this.setDisplayed(true);
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     };
     TotalAndFilteredRowsComp.prototype.onDataChanged = function () {
-        var rowCount = grid_core_1._.formatNumberCommas(this.getFilteredRowCountValue());
-        var totalRowCount = grid_core_1._.formatNumberCommas(this.getTotalRowCount());
+        var rowCount = core_1._.formatNumberCommas(this.getFilteredRowCountValue());
+        var totalRowCount = core_1._.formatNumberCommas(this.getTotalRowCount());
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
         }
@@ -69,13 +69,13 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], TotalAndFilteredRowsComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], TotalAndFilteredRowsComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
     return TotalAndFilteredRowsComp;
 }(nameValueComp_1.NameValueComp));

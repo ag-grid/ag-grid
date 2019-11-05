@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var horizontalResizeComp_1 = require("./horizontalResizeComp");
 var ToolPanelWrapper = /** @class */ (function (_super) {
     __extends(ToolPanelWrapper, _super);
@@ -65,14 +65,14 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     };
     ToolPanelWrapper.TEMPLATE = "<div class=\"ag-tool-panel-wrapper\"/>";
     __decorate([
-        grid_core_1.Autowired("userComponentFactory")
+        core_1.Autowired("userComponentFactory")
     ], ToolPanelWrapper.prototype, "userComponentFactory", void 0);
     __decorate([
-        grid_core_1.Autowired("gridOptionsWrapper")
+        core_1.Autowired("gridOptionsWrapper")
     ], ToolPanelWrapper.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ToolPanelWrapper.prototype, "setupResize", null);
     return ToolPanelWrapper;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ToolPanelWrapper = ToolPanelWrapper;

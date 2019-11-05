@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { Component, DragSourceType, Events, HDirection, VDirection, _ } from "@ag-grid-community/grid-core";
+import { Component, DragSourceType, Events, HDirection, VDirection, _ } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);

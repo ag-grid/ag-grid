@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var menuItemComponent_1 = require("./menuItemComponent");
 var MenuList = /** @class */ (function (_super) {
     __extends(MenuList, _super);
@@ -35,7 +35,7 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.addMenuItems = function (menuItems) {
         var _this = this;
-        if (!menuItems || grid_core_1._.missing(menuItems)) {
+        if (!menuItems || core_1._.missing(menuItems)) {
             return;
         }
         menuItems.forEach(function (menuItemOrString) {
@@ -78,14 +78,14 @@ var MenuList = /** @class */ (function (_super) {
         this.removeActiveItem();
         this.activeMenuItemParams = menuItemParams;
         this.activeMenuItem = menuItem;
-        grid_core_1._.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+        core_1._.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
         if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
         }
     };
     MenuList.prototype.removeActiveItem = function () {
         if (this.activeMenuItem) {
-            grid_core_1._.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+            core_1._.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
             this.activeMenuItem = null;
             this.activeMenuItemParams = null;
         }
@@ -102,7 +102,7 @@ var MenuList = /** @class */ (function (_super) {
         }, 300);
     };
     MenuList.prototype.addSeparator = function () {
-        this.getGui().appendChild(grid_core_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        this.getGui().appendChild(core_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     };
     MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp, mouseEvent) {
         var _this = this;
@@ -110,7 +110,7 @@ var MenuList = /** @class */ (function (_super) {
         var childMenu = new MenuList();
         this.getContext().wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
-        var ePopup = grid_core_1._.loadTemplate('<div class="ag-menu"></div>');
+        var ePopup = core_1._.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
         var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true, undefined, mouseEvent);
         this.popupService.positionPopupForMenu({
@@ -141,8 +141,8 @@ var MenuList = /** @class */ (function (_super) {
     MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
     MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('popupService')
+        core_1.Autowired('popupService')
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.MenuList = MenuList;

@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var abstractSelectionHandle_1 = require("./abstractSelectionHandle");
 var RangeHandle = /** @class */ (function (_super) {
     __extends(RangeHandle, _super);
@@ -40,7 +40,7 @@ var RangeHandle = /** @class */ (function (_super) {
             return;
         }
         var cellRanges = this.rangeController.getCellRanges();
-        var lastRange = grid_core_1._.last(cellRanges);
+        var lastRange = core_1._.last(cellRanges);
         if (!this.rangeFixed) {
             this.fixRangeStartEnd(lastRange);
             this.rangeFixed = true;
@@ -60,7 +60,7 @@ var RangeHandle = /** @class */ (function (_super) {
         this.rangeController.extendLatestRangeToCell(this.endPosition);
     };
     RangeHandle.prototype.onDragEnd = function (e) {
-        var cellRange = grid_core_1._.last(this.rangeController.getCellRanges());
+        var cellRange = core_1._.last(this.rangeController.getCellRanges());
         this.fixRangeStartEnd(cellRange);
         this.rangeFixed = false;
     };

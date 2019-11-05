@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var nameValueComp_1 = require("./nameValueComp");
 var TotalRowsComp = /** @class */ (function (_super) {
     __extends(TotalRowsComp, _super);
@@ -37,10 +37,10 @@ var TotalRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-total-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener);
     };
     TotalRowsComp.prototype.onDataChanged = function () {
-        this.setValue(grid_core_1._.formatNumberCommas(this.getRowCountValue()));
+        this.setValue(core_1._.formatNumberCommas(this.getRowCountValue()));
     };
     TotalRowsComp.prototype.getRowCountValue = function () {
         var totalRowCount = 0;
@@ -50,13 +50,13 @@ var TotalRowsComp = /** @class */ (function (_super) {
     TotalRowsComp.prototype.init = function () {
     };
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], TotalRowsComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], TotalRowsComp.prototype, "postConstruct", null);
     return TotalRowsComp;
 }(nameValueComp_1.NameValueComp));

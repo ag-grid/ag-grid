@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
 var rect_1 = require("../../../../../charts/scene/shape/rect");
 var linearScale_1 = require("../../../../../charts/scale/linearScale");
@@ -55,7 +55,7 @@ var MiniBar = /** @class */ (function (_super) {
             bar.stroke = strokes[i];
         });
     };
-    MiniBar.chartType = grid_core_1.ChartType.GroupedBar;
+    MiniBar.chartType = core_1.ChartType.GroupedBar;
     return MiniBar;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniBar = MiniBar;

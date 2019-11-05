@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var PrimaryColsPanel = /** @class */ (function (_super) {
     __extends(PrimaryColsPanel, _super);
     function PrimaryColsPanel() {
@@ -81,14 +81,14 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     };
     PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PrimaryColsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('primaryColsHeaderPanel')
+        core_1.RefSelector('primaryColsHeaderPanel')
     ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);
     __decorate([
-        grid_core_1.RefSelector('primaryColsListPanel')
+        core_1.RefSelector('primaryColsListPanel')
     ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     return PrimaryColsPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.PrimaryColsPanel = PrimaryColsPanel;

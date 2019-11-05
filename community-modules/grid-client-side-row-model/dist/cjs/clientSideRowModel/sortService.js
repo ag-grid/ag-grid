@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var SortService = /** @class */ (function () {
     function SortService() {
     }
@@ -136,7 +136,7 @@ var SortService = /** @class */ (function () {
             }
             else {
                 //otherwise do our own comparison
-                comparatorResult = grid_core_1._.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
+                comparatorResult = core_1._.defaultComparator(valueA, valueB, this.gridOptionsWrapper.isAccentedSort());
             }
             if (comparatorResult !== 0) {
                 return comparatorResult * sortOption.inverter;
@@ -149,7 +149,7 @@ var SortService = /** @class */ (function () {
         return this.valueService.getValue(column, nodeA);
     };
     SortService.prototype.updateChildIndexes = function (rowNode) {
-        if (grid_core_1._.missing(rowNode.childrenAfterSort)) {
+        if (core_1._.missing(rowNode.childrenAfterSort)) {
             return;
         }
         var listToSort = rowNode.childrenAfterSort;
@@ -180,7 +180,7 @@ var SortService = /** @class */ (function () {
     };
     SortService.prototype.pullDownGroupDataForHideOpenParents = function (rowNodes, clearOperation) {
         var _this = this;
-        if (grid_core_1._.missing(rowNodes)) {
+        if (core_1._.missing(rowNodes)) {
             return;
         }
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
@@ -215,22 +215,22 @@ var SortService = /** @class */ (function () {
         });
     };
     __decorate([
-        grid_core_1.Autowired('sortController')
+        core_1.Autowired('sortController')
     ], SortService.prototype, "sortController", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], SortService.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], SortService.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], SortService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], SortService.prototype, "init", null);
     SortService = __decorate([
-        grid_core_1.Bean('sortService')
+        core_1.Bean('sortService')
     ], SortService);
     return SortService;
 }());

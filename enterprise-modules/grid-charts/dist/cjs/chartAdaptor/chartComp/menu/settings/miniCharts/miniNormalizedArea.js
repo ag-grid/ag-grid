@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniStackedArea_1 = require("./miniStackedArea");
 var MiniNormalizedArea = /** @class */ (function (_super) {
     __extends(MiniNormalizedArea, _super);
@@ -21,7 +21,7 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
         if (data === void 0) { data = MiniNormalizedArea.data; }
         return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
     }
-    MiniNormalizedArea.chartType = grid_core_1.ChartType.NormalizedArea;
+    MiniNormalizedArea.chartType = core_1.ChartType.NormalizedArea;
     MiniNormalizedArea.data = miniStackedArea_1.MiniStackedArea.data.map(function (stack) {
         var sum = stack.reduce(function (p, c) { return p + c; }, 0);
         return stack.map(function (v) { return v / sum * 16; });

@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "@ag-grid-community/grid-core";
+import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "@ag-grid-community/core";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFilter extends ProvidedFilter {
     private valueModel;

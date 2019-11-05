@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var FontPanel = /** @class */ (function (_super) {
     __extends(FontPanel, _super);
     function FontPanel(params) {
@@ -91,7 +91,7 @@ var FontPanel = /** @class */ (function (_super) {
             }
             else {
                 // add user provided value to list
-                var capitalisedFontValue = grid_core_1._.capitalise(family);
+                var capitalisedFontValue = core_1._.capitalise(family);
                 families.push(capitalisedFontValue);
                 initialValue = capitalisedFontValue;
             }
@@ -105,7 +105,7 @@ var FontPanel = /** @class */ (function (_super) {
         var _this = this;
         var sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         var size = this.params.initialFont.size;
-        if (!grid_core_1._.includes(sizes, size)) {
+        if (!core_1._.includes(sizes, size)) {
             sizes.push(size);
         }
         var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "" + value, text: "" + value }); });
@@ -123,7 +123,7 @@ var FontPanel = /** @class */ (function (_super) {
             { name: 'italic', weight: 'normal', style: 'italic' },
             { name: 'boldItalic', weight: 'bold', style: 'italic' }
         ];
-        var selectedOption = grid_core_1._.find(weightStyles, function (x) { return x.weight === weight && x.style === style; });
+        var selectedOption = core_1._.find(weightStyles, function (x) { return x.weight === weight && x.style === style; });
         if (!selectedOption) {
             selectedOption = { name: 'predefined', weight: weight, style: style };
             weightStyles.unshift(selectedOption);
@@ -135,7 +135,7 @@ var FontPanel = /** @class */ (function (_super) {
         this.weightStyleSelect.addOptions(options)
             .setValue(selectedOption.name)
             .onValueChange(function (newValue) {
-            var selectedWeightStyle = grid_core_1._.find(weightStyles, function (x) { return x.name === newValue; });
+            var selectedWeightStyle = core_1._.find(weightStyles, function (x) { return x.name === newValue; });
             _this.params.setFont({ weight: selectedWeightStyle.weight, style: selectedWeightStyle.style });
         });
     };
@@ -149,7 +149,7 @@ var FontPanel = /** @class */ (function (_super) {
     };
     FontPanel.prototype.destroyActiveComps = function () {
         this.activeComps.forEach(function (comp) {
-            grid_core_1._.removeFromParent(comp.getGui());
+            core_1._.removeFromParent(comp.getGui());
             comp.destroy();
         });
     };
@@ -159,26 +159,26 @@ var FontPanel = /** @class */ (function (_super) {
     };
     FontPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"fontGroup\">\n                <ag-select ref=\"familySelect\"></ag-select>\n                <ag-select ref=\"weightStyleSelect\"></ag-select>\n                <div class=\"ag-group-subgroup\">\n                    <ag-select ref=\"sizeSelect\"></ag-select>\n                    <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n                </div>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('fontGroup')
+        core_1.RefSelector('fontGroup')
     ], FontPanel.prototype, "fontGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('familySelect')
+        core_1.RefSelector('familySelect')
     ], FontPanel.prototype, "familySelect", void 0);
     __decorate([
-        grid_core_1.RefSelector('weightStyleSelect')
+        core_1.RefSelector('weightStyleSelect')
     ], FontPanel.prototype, "weightStyleSelect", void 0);
     __decorate([
-        grid_core_1.RefSelector('sizeSelect')
+        core_1.RefSelector('sizeSelect')
     ], FontPanel.prototype, "sizeSelect", void 0);
     __decorate([
-        grid_core_1.RefSelector('colorPicker')
+        core_1.RefSelector('colorPicker')
     ], FontPanel.prototype, "colorPicker", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], FontPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], FontPanel.prototype, "init", null);
     return FontPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.FontPanel = FontPanel;

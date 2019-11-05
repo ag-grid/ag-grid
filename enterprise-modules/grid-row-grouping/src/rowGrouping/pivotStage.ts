@@ -13,7 +13,7 @@ import {
     StageExecuteParams,
     ValueService,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import { PivotColDefService } from "./pivotColDefService";
 
 @Bean('pivotStage')

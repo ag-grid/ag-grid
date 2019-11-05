@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var AggFuncService = /** @class */ (function () {
     function AggFuncService() {
         this.aggFuncsMap = {};
@@ -34,17 +34,17 @@ var AggFuncService = /** @class */ (function () {
         var allKeys = this.getFuncNames(column);
         // use 'sum' if it's a) allowed for the column and b) still registered
         // (ie not removed by user)
-        var sumInKeysList = grid_core_1._.includes(allKeys, AggFuncService_1.AGG_SUM);
-        var sumInFuncs = grid_core_1._.exists(this.aggFuncsMap[AggFuncService_1.AGG_SUM]);
+        var sumInKeysList = core_1._.includes(allKeys, AggFuncService_1.AGG_SUM);
+        var sumInFuncs = core_1._.exists(this.aggFuncsMap[AggFuncService_1.AGG_SUM]);
         if (sumInKeysList && sumInFuncs) {
             return AggFuncService_1.AGG_SUM;
         }
         else {
-            return grid_core_1._.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
+            return core_1._.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
         }
     };
     AggFuncService.prototype.addAggFuncs = function (aggFuncs) {
-        grid_core_1._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
+        core_1._.iterateObject(aggFuncs, this.addAggFunc.bind(this));
     };
     AggFuncService.prototype.addAggFunc = function (key, aggFunc) {
         this.init();
@@ -56,7 +56,7 @@ var AggFuncService = /** @class */ (function () {
     };
     AggFuncService.prototype.getFuncNames = function (column) {
         var userAllowedFuncs = column.getColDef().allowedAggFuncs;
-        if (grid_core_1._.exists(userAllowedFuncs) && userAllowedFuncs) {
+        if (core_1._.exists(userAllowedFuncs) && userAllowedFuncs) {
             return userAllowedFuncs;
         }
         else {
@@ -75,13 +75,13 @@ var AggFuncService = /** @class */ (function () {
     AggFuncService.AGG_COUNT = 'count';
     AggFuncService.AGG_AVG = 'avg';
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], AggFuncService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AggFuncService.prototype, "init", null);
     AggFuncService = AggFuncService_1 = __decorate([
-        grid_core_1.Bean('aggFuncService')
+        core_1.Bean('aggFuncService')
     ], AggFuncService);
     return AggFuncService;
 }());
@@ -95,7 +95,7 @@ function aggFirst(input) {
     return input.length > 0 ? input[0] : null;
 }
 function aggLast(input) {
-    return input.length > 0 ? grid_core_1._.last(input) : null;
+    return input.length > 0 ? core_1._.last(input) : null;
 }
 function aggMin(input) {
     return input
@@ -109,7 +109,7 @@ function aggMax(input) {
 }
 function aggCount(input) {
     var value = input.reduce(function (count, item) {
-        var isGroupAgg = grid_core_1._.exists(item) && typeof item.value === 'number';
+        var isGroupAgg = core_1._.exists(item) && typeof item.value === 'number';
         return count + (isGroupAgg ? item.value : 1);
     }, 0);
     return {
@@ -129,7 +129,7 @@ function aggAvg(input) {
     // the average will be the sum / count
     var _a = input.reduce(function (_a, item) {
         var sum = _a.sum, count = _a.count;
-        var itemIsGroupResult = grid_core_1._.exists(item) &&
+        var itemIsGroupResult = core_1._.exists(item) &&
             typeof item.value === 'number' &&
             typeof item.count === 'number';
         if (typeof item === 'number') {

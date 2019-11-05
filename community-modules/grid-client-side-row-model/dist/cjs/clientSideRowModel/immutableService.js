@@ -6,23 +6,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ImmutableService = /** @class */ (function () {
     function ImmutableService() {
     }
     ImmutableService.prototype.postConstruct = function () {
-        if (this.rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel;
         }
     };
     // converts the setRowData() command to a transaction
     ImmutableService.prototype.createTransactionForRowData = function (data) {
-        if (grid_core_1._.missing(this.clientSideRowModel)) {
+        if (core_1._.missing(this.clientSideRowModel)) {
             console.error('ag-Grid: ImmutableService only works with ClientSideRowModel');
             return;
         }
         var getRowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
-        if (!getRowNodeIdFunc || grid_core_1._.missing(getRowNodeIdFunc)) {
+        if (!getRowNodeIdFunc || core_1._.missing(getRowNodeIdFunc)) {
             console.error('ag-Grid: ImmutableService requires getRowNodeId() callback to be implemented, your row data need IDs!');
             return;
         }
@@ -35,7 +35,7 @@ var ImmutableService = /** @class */ (function () {
         var existingNodesMap = this.clientSideRowModel.getCopyOfNodesMap();
         var suppressSortOrder = this.gridOptionsWrapper.isSuppressMaintainUnsortedOrder();
         var orderMap = suppressSortOrder ? null : {};
-        if (grid_core_1._.exists(data)) {
+        if (core_1._.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
@@ -61,7 +61,7 @@ var ImmutableService = /** @class */ (function () {
             });
         }
         // at this point, all rows that are left, should be removed
-        grid_core_1._.iterateObject(existingNodesMap, function (id, rowNode) {
+        core_1._.iterateObject(existingNodesMap, function (id, rowNode) {
             if (rowNode) {
                 transaction.remove.push(rowNode.data);
             }
@@ -69,16 +69,16 @@ var ImmutableService = /** @class */ (function () {
         return [transaction, orderMap];
     };
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], ImmutableService.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ImmutableService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ImmutableService.prototype, "postConstruct", null);
     ImmutableService = __decorate([
-        grid_core_1.Bean('immutableService')
+        core_1.Bean('immutableService')
     ], ImmutableService);
     return ImmutableService;
 }());

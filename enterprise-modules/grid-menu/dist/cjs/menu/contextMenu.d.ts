@@ -1,4 +1,4 @@
-import { Column, IContextMenuFactory, RowNode } from "@ag-grid-community/grid-core";
+import { Column, IContextMenuFactory, RowNode } from "@ag-grid-community/core";
 export declare class ContextMenuFactory implements IContextMenuFactory {
     private context;
     private popupService;

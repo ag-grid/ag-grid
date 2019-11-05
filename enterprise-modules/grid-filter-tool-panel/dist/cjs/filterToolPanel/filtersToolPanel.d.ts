@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, Component, IToolPanelComp, IToolPanelParams, IFiltersToolPanel } from "@ag-grid-community/grid-core";
+import { ColDef, ColGroupDef, Component, IToolPanelComp, IToolPanelParams, IFiltersToolPanel } from "@ag-grid-community/core";
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
     suppressFilterSearch: boolean;

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var PivotModePanel = /** @class */ (function (_super) {
     __extends(PivotModePanel, _super);
     function PivotModePanel() {
@@ -33,9 +33,9 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addDestroyableEventListener(this.cbPivotMode, grid_core_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.cbPivotMode, core_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = this.cbPivotMode.getValue();
@@ -52,20 +52,20 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.cbPivotMode.setValue(pivotModeActive);
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PivotModePanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], PivotModePanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('cbPivotMode')
+        core_1.RefSelector('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);
     __decorate([
-        grid_core_1.PreConstruct
+        core_1.PreConstruct
     ], PivotModePanel.prototype, "init", null);
     return PivotModePanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.PivotModePanel = PivotModePanel;

@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ChartTranslator = /** @class */ (function () {
     function ChartTranslator() {
     }
@@ -95,10 +95,10 @@ var ChartTranslator = /** @class */ (function () {
         noDataToChart: 'No data available to be charted.',
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
     ChartTranslator = ChartTranslator_1 = __decorate([
-        grid_core_1.Bean("chartTranslator")
+        core_1.Bean("chartTranslator")
     ], ChartTranslator);
     return ChartTranslator;
 }());

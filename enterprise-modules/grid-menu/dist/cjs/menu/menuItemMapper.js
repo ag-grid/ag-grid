@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var MenuItemMapper = /** @class */ (function () {
     function MenuItemMapper() {
     }
@@ -45,19 +45,19 @@ var MenuItemMapper = /** @class */ (function () {
             case 'pinSubMenu':
                 return {
                     name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: grid_core_1._.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
+                    icon: core_1._.createIconNoSpan('menuPin', this.gridOptionsWrapper, null),
                     subMenu: ['pinLeft', 'pinRight', 'clearPinned']
                 };
             case 'pinLeft':
                 return {
                     name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: function () { return _this.columnController.setColumnPinned(column, grid_core_1.Constants.PINNED_LEFT, "contextMenu"); },
+                    action: function () { return _this.columnController.setColumnPinned(column, core_1.Constants.PINNED_LEFT, "contextMenu"); },
                     checked: column.isPinnedLeft()
                 };
             case 'pinRight':
                 return {
                     name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: function () { return _this.columnController.setColumnPinned(column, grid_core_1.Constants.PINNED_RIGHT, "contextMenu"); },
+                    action: function () { return _this.columnController.setColumnPinned(column, core_1.Constants.PINNED_RIGHT, "contextMenu"); },
                     checked: column.isPinnedRight()
                 };
             case 'clearPinned':
@@ -67,10 +67,10 @@ var MenuItemMapper = /** @class */ (function () {
                     checked: !column.isPinned()
                 };
             case 'valueAggSubMenu':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
+                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.RowGroupingModule, 'Aggregation from Menu')) {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                        icon: grid_core_1._.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
+                        icon: core_1._.createIconNoSpan('menuValue', this.gridOptionsWrapper, null),
                         subMenu: this.createAggregationSubMenu(column)
                     };
                 }
@@ -89,15 +89,15 @@ var MenuItemMapper = /** @class */ (function () {
                 };
             case 'rowGroup':
                 return {
-                    name: localeTextFunc('groupBy', 'Group by') + ' ' + grid_core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('groupBy', 'Group by') + ' ' + core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.addRowGroupColumn(column, "contextMenu"); },
-                    icon: grid_core_1._.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
+                    icon: core_1._.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'rowUnGroup':
                 return {
-                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + grid_core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
+                    name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + core_1._.escape(this.columnController.getDisplayNameForColumn(column, 'header')),
                     action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
-                    icon: grid_core_1._.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
+                    icon: core_1._.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
                 };
             case 'resetColumns':
                 return {
@@ -115,11 +115,11 @@ var MenuItemMapper = /** @class */ (function () {
                     action: function () { return _this.gridApi.collapseAll(); }
                 };
             case 'copy':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy from Menu')) {
+                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy from Menu')) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                        icon: grid_core_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        icon: core_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                         action: function () { return _this.clipboardService.copyToClipboard(false); }
                     };
                 }
@@ -127,11 +127,11 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
+                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: grid_core_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        icon: core_1._.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
                         action: function () { return _this.clipboardService.copyToClipboard(true); }
                     };
                 }
@@ -139,12 +139,12 @@ var MenuItemMapper = /** @class */ (function () {
                     return null;
                 }
             case 'paste':
-                if (grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
+                if (core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
-                        icon: grid_core_1._.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
+                        icon: core_1._.createIconNoSpan('clipboardPaste', this.gridOptionsWrapper, null),
                         action: function () { return _this.clipboardService.pasteFromClipboard(); }
                     };
                 }
@@ -153,8 +153,8 @@ var MenuItemMapper = /** @class */ (function () {
                 }
             case 'export':
                 var exportSubMenuItems = [];
-                var csvModuleLoaded = grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.CsvExportModule);
-                var excelModuleLoaded = grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.ExcelExportModule);
+                var csvModuleLoaded = core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.CsvExportModule);
+                var excelModuleLoaded = core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ExcelExportModule);
                 if (!this.gridOptionsWrapper.isSuppressCsvExport() && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
@@ -165,7 +165,7 @@ var MenuItemMapper = /** @class */ (function () {
                 return {
                     name: localeTextFunc('export', 'Export'),
                     subMenu: exportSubMenuItems,
-                    icon: grid_core_1._.createIconNoSpan('save', this.gridOptionsWrapper, null),
+                    icon: core_1._.createIconNoSpan('save', this.gridOptionsWrapper, null),
                 };
             case 'csvExport':
                 return {
@@ -232,7 +232,7 @@ var MenuItemMapper = /** @class */ (function () {
                         'pivotXYChart',
                         'pivotAreaChart'
                     ],
-                    icon: grid_core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+                    icon: core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
             case 'chartRange':
                 return {
@@ -245,7 +245,7 @@ var MenuItemMapper = /** @class */ (function () {
                         'rangeXYChart',
                         'rangeAreaChart'
                     ],
-                    icon: grid_core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
+                    icon: core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
             case 'pivotColumnChart':
                 return {
@@ -253,106 +253,106 @@ var MenuItemMapper = /** @class */ (function () {
                     subMenu: ['pivotGroupedColumn', 'pivotStackedColumn', 'pivotNormalizedColumn']
                 };
             case 'pivotGroupedColumn':
-                return pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', grid_core_1.ChartType.GroupedColumn);
+                return pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', core_1.ChartType.GroupedColumn);
             case 'pivotStackedColumn':
-                return pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', grid_core_1.ChartType.StackedColumn);
+                return pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', core_1.ChartType.StackedColumn);
             case 'pivotNormalizedColumn':
-                return pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedColumn);
+                return pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', core_1.ChartType.NormalizedColumn);
             case 'rangeColumnChart':
                 return {
                     name: localeTextFunc('columnChart', 'Column'),
                     subMenu: ['rangeGroupedColumn', 'rangeStackedColumn', 'rangeNormalizedColumn']
                 };
             case 'rangeGroupedColumn':
-                return rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', grid_core_1.ChartType.GroupedColumn);
+                return rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', core_1.ChartType.GroupedColumn);
             case 'rangeStackedColumn':
-                return rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', grid_core_1.ChartType.StackedColumn);
+                return rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', core_1.ChartType.StackedColumn);
             case 'rangeNormalizedColumn':
-                return rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedColumn);
+                return rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', core_1.ChartType.NormalizedColumn);
             case 'pivotBarChart':
                 return {
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: ['pivotGroupedBar', 'pivotStackedBar', 'pivotNormalizedBar']
                 };
             case 'pivotGroupedBar':
-                return pivotChartMenuItem('groupedBar', 'Grouped&lrm;', grid_core_1.ChartType.GroupedBar);
+                return pivotChartMenuItem('groupedBar', 'Grouped&lrm;', core_1.ChartType.GroupedBar);
             case 'pivotStackedBar':
-                return pivotChartMenuItem('stackedBar', 'Stacked&lrm;', grid_core_1.ChartType.StackedBar);
+                return pivotChartMenuItem('stackedBar', 'Stacked&lrm;', core_1.ChartType.StackedBar);
             case 'pivotNormalizedBar':
-                return pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedBar);
+                return pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', core_1.ChartType.NormalizedBar);
             case 'rangeBarChart':
                 return {
                     name: localeTextFunc('barChart', 'Bar'),
                     subMenu: ['rangeGroupedBar', 'rangeStackedBar', 'rangeNormalizedBar']
                 };
             case 'rangeGroupedBar':
-                return rangeChartMenuItem('groupedBar', 'Grouped&lrm;', grid_core_1.ChartType.GroupedBar);
+                return rangeChartMenuItem('groupedBar', 'Grouped&lrm;', core_1.ChartType.GroupedBar);
             case 'rangeStackedBar':
-                return rangeChartMenuItem('stackedBar', 'Stacked&lrm;', grid_core_1.ChartType.StackedBar);
+                return rangeChartMenuItem('stackedBar', 'Stacked&lrm;', core_1.ChartType.StackedBar);
             case 'rangeNormalizedBar':
-                return rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedBar);
+                return rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', core_1.ChartType.NormalizedBar);
             case 'pivotPieChart':
                 return {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: ['pivotPie', 'pivotDoughnut']
                 };
             case 'pivotPie':
-                return pivotChartMenuItem('pie', 'Pie&lrm;', grid_core_1.ChartType.Pie);
+                return pivotChartMenuItem('pie', 'Pie&lrm;', core_1.ChartType.Pie);
             case 'pivotDoughnut':
-                return pivotChartMenuItem('doughnut', 'Doughnut&lrm;', grid_core_1.ChartType.Doughnut);
+                return pivotChartMenuItem('doughnut', 'Doughnut&lrm;', core_1.ChartType.Doughnut);
             case 'rangePieChart':
                 return {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: ['rangePie', 'rangeDoughnut']
                 };
             case 'rangePie':
-                return rangeChartMenuItem('pie', 'Pie&lrm;', grid_core_1.ChartType.Pie);
+                return rangeChartMenuItem('pie', 'Pie&lrm;', core_1.ChartType.Pie);
             case 'rangeDoughnut':
-                return rangeChartMenuItem('doughnut', 'Doughnut&lrm;', grid_core_1.ChartType.Doughnut);
+                return rangeChartMenuItem('doughnut', 'Doughnut&lrm;', core_1.ChartType.Doughnut);
             case 'pivotLineChart':
-                return pivotChartMenuItem('line', 'Line&lrm;', grid_core_1.ChartType.Line);
+                return pivotChartMenuItem('line', 'Line&lrm;', core_1.ChartType.Line);
             case 'rangeLineChart':
-                return rangeChartMenuItem('line', 'Line&lrm;', grid_core_1.ChartType.Line);
+                return rangeChartMenuItem('line', 'Line&lrm;', core_1.ChartType.Line);
             case 'pivotXYChart':
                 return {
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: ['pivotScatter', 'pivotBubble']
                 };
             case 'pivotScatter':
-                return pivotChartMenuItem('scatter', 'Scatter&lrm;', grid_core_1.ChartType.Scatter);
+                return pivotChartMenuItem('scatter', 'Scatter&lrm;', core_1.ChartType.Scatter);
             case 'pivotBubble':
-                return pivotChartMenuItem('bubble', 'Bubble&lrm;', grid_core_1.ChartType.Bubble);
+                return pivotChartMenuItem('bubble', 'Bubble&lrm;', core_1.ChartType.Bubble);
             case 'rangeXYChart':
                 return {
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
                     subMenu: ['rangeScatter', 'rangeBubble']
                 };
             case 'rangeScatter':
-                return rangeChartMenuItem('scatter', 'Scatter&lrm;', grid_core_1.ChartType.Scatter);
+                return rangeChartMenuItem('scatter', 'Scatter&lrm;', core_1.ChartType.Scatter);
             case 'rangeBubble':
-                return rangeChartMenuItem('bubble', 'Bubble&lrm;', grid_core_1.ChartType.Bubble);
+                return rangeChartMenuItem('bubble', 'Bubble&lrm;', core_1.ChartType.Bubble);
             case 'pivotAreaChart':
                 return {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: ['pivotArea', 'pivotStackedArea', 'pivotNormalizedArea']
                 };
             case 'pivotArea':
-                return pivotChartMenuItem('area', 'Area&lrm;', grid_core_1.ChartType.Area);
+                return pivotChartMenuItem('area', 'Area&lrm;', core_1.ChartType.Area);
             case 'pivotStackedArea':
-                return pivotChartMenuItem('stackedArea', 'Stacked&lrm;', grid_core_1.ChartType.StackedArea);
+                return pivotChartMenuItem('stackedArea', 'Stacked&lrm;', core_1.ChartType.StackedArea);
             case 'pivotNormalizedArea':
-                return pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedArea);
+                return pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', core_1.ChartType.NormalizedArea);
             case 'rangeAreaChart':
                 return {
                     name: localeTextFunc('areaChart', 'Area'),
                     subMenu: ['rangeArea', 'rangeStackedArea', 'rangeNormalizedArea']
                 };
             case 'rangeArea':
-                return rangeChartMenuItem('area', 'Area&lrm;', grid_core_1.ChartType.Area);
+                return rangeChartMenuItem('area', 'Area&lrm;', core_1.ChartType.Area);
             case 'rangeStackedArea':
-                return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', grid_core_1.ChartType.StackedArea);
+                return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', core_1.ChartType.StackedArea);
             case 'rangeNormalizedArea':
-                return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', grid_core_1.ChartType.NormalizedArea);
+                return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', core_1.ChartType.NormalizedArea);
             default:
                 return null;
         }
@@ -368,7 +368,7 @@ var MenuItemMapper = /** @class */ (function () {
         }
         else {
             var pivotValueColumn = column.getColDef().pivotValueColumn;
-            columnToUse = grid_core_1._.exists(pivotValueColumn) ? pivotValueColumn : undefined;
+            columnToUse = core_1._.exists(pivotValueColumn) ? pivotValueColumn : undefined;
         }
         var result = [];
         funcNames.forEach(function (funcName) {
@@ -384,28 +384,28 @@ var MenuItemMapper = /** @class */ (function () {
         return result;
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], MenuItemMapper.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Optional('clipboardService')
+        core_1.Optional('clipboardService')
     ], MenuItemMapper.prototype, "clipboardService", void 0);
     __decorate([
-        grid_core_1.Optional('aggFuncService')
+        core_1.Optional('aggFuncService')
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
     __decorate([
-        grid_core_1.Optional('chartService')
+        core_1.Optional('chartService')
     ], MenuItemMapper.prototype, "chartService", void 0);
     __decorate([
-        grid_core_1.Optional('context')
+        core_1.Optional('context')
     ], MenuItemMapper.prototype, "context", void 0);
     MenuItemMapper = __decorate([
-        grid_core_1.Bean('menuItemMapper')
+        core_1.Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
 }());

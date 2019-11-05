@@ -1,4 +1,4 @@
-import { _ } from '@ag-grid-community/grid-core';
+import { _ } from '@ag-grid-community/core';
 import numberFormatsFactory from './numberFormats';
 import fontsFactory from './fonts';
 import fillsFactory from './fills';

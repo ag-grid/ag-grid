@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var numberFormats_1 = require("./numberFormats");
 var fonts_1 = require("./fonts");
 var fills_1 = require("./fills");
@@ -69,7 +69,7 @@ var registerFill = function (fill) {
     var convertedPattern = convertLegacyPattern(fill.pattern);
     var convertedFillColor = exports.convertLegacyColor(fill.color);
     var convertedPatternColor = exports.convertLegacyColor(fill.patternColor);
-    var pos = grid_core_1._.findIndex(registeredFills, function (currentFill) {
+    var pos = core_1._.findIndex(registeredFills, function (currentFill) {
         var patternType = currentFill.patternType, fgRgb = currentFill.fgRgb, bgRgb = currentFill.bgRgb;
         if (patternType != convertedPattern ||
             fgRgb != convertedFillColor ||
@@ -85,11 +85,11 @@ var registerFill = function (fill) {
     return pos;
 };
 var registerNumberFmt = function (format) {
-    format = grid_core_1._.utf8_encode(format);
+    format = core_1._.utf8_encode(format);
     if (numberFormat_1.numberFormatMap[format]) {
         return numberFormat_1.numberFormatMap[format];
     }
-    var pos = grid_core_1._.findIndex(registeredNumberFmts, function (currentFormat) { return currentFormat.formatCode === format; });
+    var pos = core_1._.findIndex(registeredNumberFmts, function (currentFormat) { return currentFormat.formatCode === format; });
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
         registeredNumberFmts.push({ formatCode: format, numFmtId: pos });
@@ -119,7 +119,7 @@ var registerBorders = function (borders) {
         topStyle = border_1.convertLegacyBorder(borderTop.lineStyle, borderTop.weight);
         topColor = exports.convertLegacyColor(borderTop.color);
     }
-    var pos = grid_core_1._.findIndex(registeredBorders, function (currentBorder) {
+    var pos = core_1._.findIndex(registeredBorders, function (currentBorder) {
         var left = currentBorder.left, right = currentBorder.right, top = currentBorder.top, bottom = currentBorder.bottom;
         if (!left && (leftStyle || leftColor)) {
             return false;
@@ -176,10 +176,10 @@ var registerBorders = function (borders) {
 };
 var registerFont = function (font) {
     var name = font.fontName, color = font.color, size = font.size, bold = font.bold, italic = font.italic, outline = font.outline, shadow = font.shadow, strikeThrough = font.strikeThrough, underline = font.underline, family = font.family;
-    var utf8Name = name ? grid_core_1._.utf8_encode(name) : name;
+    var utf8Name = name ? core_1._.utf8_encode(name) : name;
     var convertedColor = exports.convertLegacyColor(color);
     var familyId = font_1.getFamilyId(family);
-    var pos = grid_core_1._.findIndex(registeredFonts, function (currentFont) {
+    var pos = core_1._.findIndex(registeredFonts, function (currentFont) {
         if (currentFont.name != utf8Name ||
             currentFont.color != convertedColor ||
             currentFont.size != size ||

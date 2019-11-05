@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var grid_core_2 = require("@ag-grid-enterprise/grid-core");
+var core_1 = require("@ag-grid-community/core");
+var core_2 = require("@ag-grid-enterprise/core");
 var filtersToolPanelHeaderPanel_1 = require("./filterToolPanel/filtersToolPanelHeaderPanel");
 var filtersToolPanelListPanel_1 = require("./filterToolPanel/filtersToolPanelListPanel");
 var filtersToolPanel_1 = require("./filterToolPanel/filtersToolPanel");
-var grid_side_bar_1 = require("@ag-grid-enterprise/grid-side-bar");
+var side_bar_1 = require("@ag-grid-enterprise/side-bar");
 exports.FiltersToolPanelModule = {
-    moduleName: grid_core_1.ModuleNames.FiltersToolPanelModule,
+    moduleName: core_1.ModuleNames.FiltersToolPanelModule,
     beans: [],
     agStackComponents: [
         { componentName: 'AgFiltersToolPanelHeader', componentClass: filtersToolPanelHeaderPanel_1.FiltersToolPanelHeaderPanel },
@@ -17,7 +17,7 @@ exports.FiltersToolPanelModule = {
         { componentName: 'agFiltersToolPanel', componentClass: filtersToolPanel_1.FiltersToolPanel },
     ],
     dependantModules: [
-        grid_side_bar_1.SideBarModule,
-        grid_core_2.EnterpriseCoreModule
+        side_bar_1.SideBarModule,
+        core_2.EnterpriseCoreModule
     ]
 };

@@ -1,4 +1,4 @@
-import { Component, MenuItemDef } from "@ag-grid-community/grid-core";
+import { Component, MenuItemDef } from "@ag-grid-community/core";
 export declare class MenuList extends Component {
     private popupService;
     private static TEMPLATE;

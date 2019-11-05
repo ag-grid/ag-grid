@@ -13,7 +13,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var RangeController = /** @class */ (function () {
     function RangeController() {
         this.cellRanges = [];
@@ -26,13 +26,13 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
     };
     RangeController.prototype.onColumnVisibleChange = function () {
         var _this = this;
@@ -43,21 +43,21 @@ var RangeController = /** @class */ (function () {
             var beforeCols = cellRange.columns;
             // remove hidden cols from cell range
             cellRange.columns = cellRange.columns.filter(function (col) { return col.isVisible(); });
-            var colsInRangeChanged = !grid_core_1._.compareArrays(beforeCols, cellRange.columns);
+            var colsInRangeChanged = !core_1._.compareArrays(beforeCols, cellRange.columns);
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
                 _this.onRangeChanged({ started: false, finished: true });
                 // notify chart of cell range change
                 var event_1 = {
                     id: cellRange.id,
-                    type: grid_core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
+                    type: core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
                 };
                 _this.eventService.dispatchEvent(event_1);
             }
         });
     };
     RangeController.prototype.refreshLastRangeStart = function () {
-        var lastRange = grid_core_1._.last(this.cellRanges);
+        var lastRange = core_1._.last(this.cellRanges);
         if (!lastRange) {
             return;
         }
@@ -72,14 +72,14 @@ var RangeController = /** @class */ (function () {
         var allPositions = [];
         rangeColumns.forEach(function (col) { return allPositions.push(allColumns.indexOf(col)); });
         allPositions.sort(function (a, b) { return a - b; });
-        return grid_core_1._.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
+        return core_1._.last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
     };
     RangeController.prototype.getRangeStartRow = function (cellRange) {
         if (cellRange.startRow && cellRange.endRow) {
             var startRowIsFirst = this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow);
             return startRowIsFirst ? cellRange.startRow : cellRange.endRow;
         }
-        var pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? grid_core_1.Constants.PINNED_TOP : undefined;
+        var pinned = (this.pinnedRowModel.getPinnedTopRowCount() > 0) ? core_1.Constants.PINNED_TOP : undefined;
         return { rowIndex: 0, rowPinned: pinned };
     };
     RangeController.prototype.getRangeEndRow = function (cellRange) {
@@ -92,7 +92,7 @@ var RangeController = /** @class */ (function () {
         if (pinnedBottom) {
             return {
                 rowIndex: pinnedBottomRowCount - 1,
-                rowPinned: grid_core_1.Constants.PINNED_BOTTOM
+                rowPinned: core_1.Constants.PINNED_BOTTOM
             };
         }
         return {
@@ -111,7 +111,7 @@ var RangeController = /** @class */ (function () {
         }
         var suppressMultiRangeSelections = this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         // if not appending, then clear previous range selections
-        if (suppressMultiRangeSelections || !appendRange || grid_core_1._.missing(this.cellRanges)) {
+        if (suppressMultiRangeSelections || !appendRange || core_1._.missing(this.cellRanges)) {
             this.removeAllCellRanges(true);
         }
         var rowForCell = {
@@ -138,9 +138,9 @@ var RangeController = /** @class */ (function () {
         if (existingRange) {
             // we need it at the end of the list, as the dragStart picks the last created
             // range as the start point for the drag
-            var atEndOfList = grid_core_1._.last(this.cellRanges) === existingRange;
+            var atEndOfList = core_1._.last(this.cellRanges) === existingRange;
             if (!atEndOfList) {
-                grid_core_1._.removeFromArray(this.cellRanges, existingRange);
+                core_1._.removeFromArray(this.cellRanges, existingRange);
                 this.cellRanges.push(existingRange);
             }
         }
@@ -161,7 +161,7 @@ var RangeController = /** @class */ (function () {
         if (this.isEmpty() || !this.newestRangeStartCell) {
             return;
         }
-        var cellRange = grid_core_1._.last(this.cellRanges);
+        var cellRange = core_1._.last(this.cellRanges);
         this.updateRangeEnd({
             cellRange: cellRange,
             cellPosition: cellPosition
@@ -170,7 +170,7 @@ var RangeController = /** @class */ (function () {
     RangeController.prototype.updateRangeEnd = function (params) {
         var cellRange = params.cellRange, cellPosition = params.cellPosition;
         var beforeCols = __spreadArrays(cellRange.columns);
-        var beforeEndRow = grid_core_1._.cloneObject(cellRange.endRow);
+        var beforeEndRow = core_1._.cloneObject(cellRange.endRow);
         var endColumn = cellPosition.column;
         var colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
         if (!colsToAdd) {
@@ -179,14 +179,14 @@ var RangeController = /** @class */ (function () {
         cellRange.columns = colsToAdd;
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
         this.onRangeChanged({ started: false, finished: true });
-        var colsChanged = !grid_core_1._.compareArrays(beforeCols, cellRange.columns);
+        var colsChanged = !core_1._.compareArrays(beforeCols, cellRange.columns);
         var endRowChanged = JSON.stringify(beforeEndRow) !== JSON.stringify(cellRange.endRow);
         if (colsChanged || endRowChanged) {
             // Note that we are raising a new event as the Chart shouldn't be notified when other ranges are changed
             // or when the chart setCellRanges when the chart gains focus!
             var event_2 = {
                 id: cellRange.id,
-                type: grid_core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
+                type: core_1.Events.EVENT_CHART_RANGE_SELECTION_CHANGED
             };
             this.eventService.dispatchEvent(event_2);
         }
@@ -209,7 +209,7 @@ var RangeController = /** @class */ (function () {
             moveColInCellRange(left, true);
             return;
         }
-        var shouldMoveRightCol = startColumn === grid_core_1._.last(columns) && startColumn === right;
+        var shouldMoveRightCol = startColumn === core_1._.last(columns) && startColumn === right;
         if (shouldMoveRightCol) {
             moveColInCellRange(right, false);
             return;
@@ -228,7 +228,7 @@ var RangeController = /** @class */ (function () {
         allIndices.sort(function (a, b) { return a - b; });
         return {
             left: allColumns[allIndices[0]],
-            right: allColumns[grid_core_1._.last(allIndices)]
+            right: allColumns[core_1._.last(allIndices)]
         };
     };
     // returns true if successful, false if not successful
@@ -236,10 +236,10 @@ var RangeController = /** @class */ (function () {
         if (this.isEmpty() || !this.newestRangeStartCell) {
             return;
         }
-        var lastRange = grid_core_1._.last(this.cellRanges);
+        var lastRange = core_1._.last(this.cellRanges);
         var startCell = this.newestRangeStartCell;
         var firstCol = lastRange.columns[0];
-        var lastCol = grid_core_1._.last(lastRange.columns);
+        var lastCol = core_1._.last(lastRange.columns);
         // find the cell that is at the furthest away corner from the starting cell
         var endCellIndex = lastRange.endRow.rowIndex;
         var endCellFloating = lastRange.endRow.rowPinned;
@@ -426,12 +426,12 @@ var RangeController = /** @class */ (function () {
         var allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
         var mouseCell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
-        if (grid_core_1._.missing(mouseCell)) {
+        if (core_1._.missing(mouseCell)) {
             // if drag wasn't on cell, then do nothing, including do not set dragging=true,
             // (which them means onDragging and onDragStop do nothing)
             return;
         }
-        if (!multiSelectKeyPressed && (!shiftKey || grid_core_1._.exists(grid_core_1._.last(this.cellRanges).type))) {
+        if (!multiSelectKeyPressed && (!shiftKey || core_1._.exists(core_1._.last(this.cellRanges).type))) {
             this.removeAllCellRanges(true);
         }
         this.dragging = true;
@@ -445,7 +445,7 @@ var RangeController = /** @class */ (function () {
         // rather than creating another range. otherwise we end up with two distinct ranges
         // from a drag operation (one from click, and one from drag).
         if (this.cellRanges.length > 0) {
-            this.draggingRange = grid_core_1._.last(this.cellRanges);
+            this.draggingRange = core_1._.last(this.cellRanges);
         }
         else {
             var mouseRowPosition = {
@@ -508,7 +508,7 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.dispatchChangedEvent = function (started, finished) {
         var event = {
-            type: grid_core_1.Events.EVENT_RANGE_SELECTION_CHANGED,
+            type: core_1.Events.EVENT_RANGE_SELECTION_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
             started: started,
@@ -541,46 +541,46 @@ var RangeController = /** @class */ (function () {
         return columns;
     };
     __decorate([
-        grid_core_1.Autowired('loggerFactory')
+        core_1.Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], RangeController.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('mouseEventService')
+        core_1.Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('cellNavigationService')
+        core_1.Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
     __decorate([
-        grid_core_1.Autowired("pinnedRowModel")
+        core_1.Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('rowPositionUtils')
+        core_1.Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
     __decorate([
-        grid_core_1.Autowired('cellPositionUtils')
+        core_1.Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], RangeController.prototype, "init", null);
     RangeController = __decorate([
-        grid_core_1.Bean('rangeController')
+        core_1.Bean('rangeController')
     ], RangeController);
     return RangeController;
 }());
@@ -594,7 +594,7 @@ var AutoScrollService = /** @class */ (function () {
     AutoScrollService.prototype.check = function (mouseEvent, skipVerticalScroll) {
         if (skipVerticalScroll === void 0) { skipVerticalScroll = false; }
         var rect = this.gridPanel.getBodyClientRect();
-        skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== grid_core_1.Constants.DOM_LAYOUT_NORMAL;
+        skipVerticalScroll = skipVerticalScroll || this.gridOptionsWrapper.getDomLayout() !== core_1.Constants.DOM_LAYOUT_NORMAL;
         // we don't do ticking if grid is auto height unless we have a horizontal scroller
         if (skipVerticalScroll && !this.gridPanel.isHorizontalScrollShowing()) {
             return;

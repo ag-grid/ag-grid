@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var PivotStage = /** @class */ (function () {
     function PivotStage() {
         this.uniqueValues = {};
@@ -101,7 +101,7 @@ var PivotStage = /** @class */ (function () {
         // map the children out based on the pivot column
         children.forEach(function (child) {
             var key = _this.valueService.getKeyForNode(pivotColumn, child);
-            if (grid_core_1._.missing(key)) {
+            if (core_1._.missing(key)) {
                 key = '';
             }
             if (!uniqueValues[key]) {
@@ -118,7 +118,7 @@ var PivotStage = /** @class */ (function () {
         }
         else {
             var result_1 = {};
-            grid_core_1._.iterateObject(mappedChildren, function (key, value) {
+            core_1._.iterateObject(mappedChildren, function (key, value) {
                 result_1[key] = _this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
             return result_1;
@@ -128,22 +128,22 @@ var PivotStage = /** @class */ (function () {
         return this.pivotColumnDefs;
     };
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], PivotStage.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], PivotStage.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PivotStage.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], PivotStage.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('pivotColDefService')
+        core_1.Autowired('pivotColDefService')
     ], PivotStage.prototype, "pivotColDefService", void 0);
     PivotStage = __decorate([
-        grid_core_1.Bean('pivotStage')
+        core_1.Bean('pivotStage')
     ], PivotStage);
     return PivotStage;
 }());

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ClientSideNodeManager = /** @class */ (function () {
     function ClientSideNodeManager(rootNode, gridOptionsWrapper, context, eventService, columnController, gridApi, columnApi, selectionController) {
         this.nextId = 0;
@@ -31,14 +31,14 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-        this.doingLegacyTreeData = grid_core_1._.exists(this.getNodeChildDetails);
+        this.doingLegacyTreeData = core_1._.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
         if (this.getNodeChildDetails) {
             console.warn("ag-Grid: the callback nodeChildDetailsFunc() is now deprecated. The new way of doing\n                                    tree data in ag-Grid was introduced in v14 (released November 2017). In the next\n                                    major release of ag-Grid we will be dropping support for the old version of\n                                    tree data. If you are reading this message, please go to the docs to see how\n                                    to implement Tree Data without using nodeChildDetailsFunc().");
         }
     };
     ClientSideNodeManager.prototype.getCopyOfNodesMap = function () {
-        var result = grid_core_1._.cloneObject(this.allNodesMap);
+        var result = core_1._.cloneObject(this.allNodesMap);
         return result;
     };
     ClientSideNodeManager.prototype.getRowNode = function (id) {
@@ -83,7 +83,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         this.executeRemove(rowDataTran, rowNodeTransaction);
         this.executeUpdate(rowDataTran, rowNodeTransaction);
         if (rowNodeOrder) {
-            grid_core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
+            core_1._.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
     };
@@ -140,7 +140,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         if (anyNodesSelected) {
             this.selectionController.updateGroupsFromChildrenSelections();
             var event_1 = {
-                type: grid_core_1.Events.EVENT_SELECTION_CHANGED,
+                type: core_1.Events.EVENT_SELECTION_CHANGED,
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
@@ -164,8 +164,8 @@ var ClientSideNodeManager = /** @class */ (function () {
     };
     ClientSideNodeManager.prototype.addRowNode = function (data, index) {
         var newNode = this.createNode(data, this.rootNode, ClientSideNodeManager.TOP_LEVEL);
-        if (grid_core_1._.exists(index)) {
-            grid_core_1._.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
+        if (core_1._.exists(index)) {
+            core_1._.insertIntoArray(this.rootNode.allLeafChildren, newNode, index);
         }
         else {
             this.rootNode.allLeafChildren.push(newNode);
@@ -175,7 +175,7 @@ var ClientSideNodeManager = /** @class */ (function () {
     ClientSideNodeManager.prototype.lookupRowNode = function (data) {
         var rowNodeIdFunc = this.gridOptionsWrapper.getRowNodeIdFunc();
         var rowNode;
-        if (grid_core_1._.exists(rowNodeIdFunc)) {
+        if (core_1._.exists(rowNodeIdFunc)) {
             // find rowNode using id
             var id = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
@@ -186,7 +186,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
         else {
             // find rowNode using object references
-            rowNode = grid_core_1._.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
+            rowNode = core_1._.find(this.rootNode.allLeafChildren, function (rowNode) { return rowNode.data === data; });
             if (!rowNode) {
                 console.error("ag-Grid: could not find data item as object was not found", data);
                 return null;
@@ -209,10 +209,10 @@ var ClientSideNodeManager = /** @class */ (function () {
         return rowNodes;
     };
     ClientSideNodeManager.prototype.createNode = function (dataItem, parent, level) {
-        var node = new grid_core_1.RowNode();
+        var node = new core_1.RowNode();
         this.context.wireBean(node);
         var doingTreeData = this.gridOptionsWrapper.isTreeData();
-        var doingLegacyTreeData = !doingTreeData && grid_core_1._.exists(this.getNodeChildDetails);
+        var doingLegacyTreeData = !doingTreeData && core_1._.exists(this.getNodeChildDetails);
         var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -296,7 +296,7 @@ var ClientSideNodeManager = /** @class */ (function () {
         }
     };
     ClientSideNodeManager.prototype.isLegacyTreeData = function () {
-        var rowsAlreadyGrouped = grid_core_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        var rowsAlreadyGrouped = core_1._.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
                 'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');

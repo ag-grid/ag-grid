@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate, XmlElement } from '@ag-grid-community/core';
 import { convertLegacyColor } from './stylesheet';
 
 const getBorderColor = (color?: string): XmlElement => {

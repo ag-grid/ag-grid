@@ -1,5 +1,5 @@
-// @ag-grid-community/grid-react v22.0.0-beta.0
-import { Promise } from '@ag-grid-community/grid-core';
+// @ag-grid-community/react v22.0.0-beta.0
+import { Promise } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
 export declare class ReactComponent extends BaseReactComponent {

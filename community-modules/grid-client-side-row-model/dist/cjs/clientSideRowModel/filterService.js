@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var FilterService = /** @class */ (function () {
     function FilterService() {
     }
@@ -109,16 +109,16 @@ var FilterService = /** @class */ (function () {
         return this.gridOptionsWrapper.isTreeData() && !this.gridOptionsWrapper.isExcludeChildrenWhenTreeDataFiltering();
     };
     __decorate([
-        grid_core_1.Autowired('filterManager')
+        core_1.Autowired('filterManager')
     ], FilterService.prototype, "filterManager", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], FilterService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], FilterService.prototype, "postConstruct", null);
     FilterService = __decorate([
-        grid_core_1.Bean("filterService")
+        core_1.Bean("filterService")
     ], FilterService);
     return FilterService;
 }());

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChart_1 = require("./miniChart");
 var line_1 = require("../../../../../charts/scene/shape/line");
 var MiniChartWithAxes = /** @class */ (function (_super) {
@@ -50,7 +50,7 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
         root.append(bottomAxis);
     };
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MiniChartWithAxes.prototype, "addAxes", null);
     return MiniChartWithAxes;
 }(miniChart_1.MiniChart));

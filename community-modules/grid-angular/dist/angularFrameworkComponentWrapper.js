@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_2 = require("@ag-grid-community/core");
 var AngularFrameworkComponentWrapper = /** @class */ (function (_super) {
     __extends(AngularFrameworkComponentWrapper, _super);
     function AngularFrameworkComponentWrapper() {
@@ -65,7 +65,7 @@ var AngularFrameworkComponentWrapper = /** @class */ (function (_super) {
     /** @nocollapse */
     AngularFrameworkComponentWrapper.ctorParameters = function () { return []; };
     return AngularFrameworkComponentWrapper;
-}(grid_core_1.BaseComponentWrapper));
+}(core_2.BaseComponentWrapper));
 exports.AngularFrameworkComponentWrapper = AngularFrameworkComponentWrapper;
 var BaseGuiComponent = /** @class */ (function () {
     function BaseGuiComponent() {

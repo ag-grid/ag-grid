@@ -1,4 +1,4 @@
-import { CellRange, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams } from "@ag-grid-community/grid-core";
+import { CellRange, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams } from "@ag-grid-community/core";
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;

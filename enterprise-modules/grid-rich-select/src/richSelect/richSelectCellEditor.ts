@@ -13,7 +13,7 @@ import {
     RefSelector,
     _,
     VirtualList
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import { RichSelectRow } from "./richSelectRow";
 
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {

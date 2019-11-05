@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var FilterStage = /** @class */ (function () {
     function FilterStage() {
     }
@@ -16,16 +16,16 @@ var FilterStage = /** @class */ (function () {
         this.selectableService.updateSelectableAfterFiltering(rowNode);
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], FilterStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('selectableService')
+        core_1.Autowired('selectableService')
     ], FilterStage.prototype, "selectableService", void 0);
     __decorate([
-        grid_core_1.Autowired('filterService')
+        core_1.Autowired('filterService')
     ], FilterStage.prototype, "filterService", void 0);
     FilterStage = __decorate([
-        grid_core_1.Bean('filterStage')
+        core_1.Bean('filterStage')
     ], FilterStage);
     return FilterStage;
 }());

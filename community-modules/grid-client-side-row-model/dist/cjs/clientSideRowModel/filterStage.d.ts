@@ -1,4 +1,4 @@
-import { IRowNodeStage, StageExecuteParams } from "@ag-grid-community/grid-core";
+import { IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
 export declare class FilterStage implements IRowNodeStage {
     private gridOptionsWrapper;
     private selectableService;

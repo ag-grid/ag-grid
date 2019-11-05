@@ -25,7 +25,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var polarChartProxy_1 = require("./polarChartProxy");
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends(DoughnutChartProxy, _super);
@@ -47,7 +47,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         doughnutChart.series.forEach(function (series) {
             var pieSeries = series;
             var id = pieSeries.angleKey;
-            if (grid_core_1._.includes(fieldIds, id)) {
+            if (core_1._.includes(fieldIds, id)) {
                 seriesMap[id] = pieSeries;
             }
         });
@@ -95,7 +95,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         });
         // Because repaints are automatic, it's important to remove/add/update series at once,
         // so that we don't get painted twice.
-        doughnutChart.series = grid_core_1._.values(seriesMap);
+        doughnutChart.series = core_1._.values(seriesMap);
     };
     DoughnutChartProxy.prototype.getDefaultOptions = function () {
         var strokes = this.chartProxyParams.getSelectedPalette().strokes;

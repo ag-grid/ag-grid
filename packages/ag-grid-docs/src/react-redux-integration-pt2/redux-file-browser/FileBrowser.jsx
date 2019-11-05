@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import * as PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
-import {AgGridReact} from "@ag-grid-community/grid-react";
+import {AgGridReact} from "@ag-grid-community/react";
 import {actions} from './actions/fileActions.jsx'
 
-import {AllModules} from "@ag-grid-enterprise/grid-all-modules";
+import {AllModules} from "@ag-grid-enterprise/all-modules";
 
-import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 

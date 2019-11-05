@@ -1,4 +1,4 @@
-import { Component } from "@ag-grid-community/grid-core";
+import { Component } from "@ag-grid-community/core";
 import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 export declare enum EXPAND_STATE {
     EXPANDED = 0,

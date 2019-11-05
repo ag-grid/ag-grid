@@ -13,14 +13,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniStackedColumn_1 = require("./miniStackedColumn");
 var MiniNormalizedColumn = /** @class */ (function (_super) {
     __extends(MiniNormalizedColumn, _super);
     function MiniNormalizedColumn(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
-    MiniNormalizedColumn.chartType = grid_core_1.ChartType.NormalizedColumn;
+    MiniNormalizedColumn.chartType = core_1.ChartType.NormalizedColumn;
     MiniNormalizedColumn.data = [
         [10, 10, 10],
         [6, 7, 8],

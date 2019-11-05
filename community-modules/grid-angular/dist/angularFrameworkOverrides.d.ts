@@ -1,5 +1,5 @@
 import { NgZone } from "@angular/core";
-import { VanillaFrameworkOverrides } from "@ag-grid-community/grid-core";
+import { VanillaFrameworkOverrides } from "@ag-grid-community/core";
 export declare class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     private _ngZone;
     constructor(_ngZone: NgZone);

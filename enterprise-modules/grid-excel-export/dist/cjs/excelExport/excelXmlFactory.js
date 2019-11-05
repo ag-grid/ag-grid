@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var grid_core_2 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
+var core_2 = require("@ag-grid-community/core");
 var workbook_1 = require("./files/xml/workbook");
 var excelWorkbook_1 = require("./files/xml/excelWorkbook");
 var worksheet_1 = require("./files/xml/worksheet");
@@ -38,7 +38,7 @@ var ExcelXmlFactory = /** @class */ (function () {
             eWorkbook,
             this.stylesXmlElement(styles)
         ].concat(worksheets.map(function (it) { return worksheet_1.default.getTemplate(it); }));
-        return grid_core_1._.assign({}, workbook_1.default.getTemplate(), { children: children });
+        return core_1._.assign({}, workbook_1.default.getTemplate(), { children: children });
     };
     ExcelXmlFactory.prototype.excelXmlHeader = function () {
         return "<?xml version=\"1.0\" ?>\n        <?mso-application progid=\"Excel.Sheet\" ?>\n        ";
@@ -51,8 +51,8 @@ var ExcelXmlFactory = /** @class */ (function () {
         };
     };
     ExcelXmlFactory.prototype.styleXmlElement = function (styleProperties) {
-        var children = grid_core_1._.compose(this.addProperty('alignment', styleProperties), this.addProperty('borders', styleProperties), this.addProperty('font', styleProperties), this.addProperty('interior', styleProperties), this.addProperty('protection', styleProperties), this.addProperty('numberFormat', styleProperties))([]);
-        return grid_core_1._.assign({}, style_1.default.getTemplate(styleProperties), { children: children });
+        var children = core_1._.compose(this.addProperty('alignment', styleProperties), this.addProperty('borders', styleProperties), this.addProperty('font', styleProperties), this.addProperty('interior', styleProperties), this.addProperty('protection', styleProperties), this.addProperty('numberFormat', styleProperties))([]);
+        return core_1._.assign({}, style_1.default.getTemplate(styleProperties), { children: children });
     };
     ExcelXmlFactory.prototype.addProperty = function (property, styleProperties) {
         return function (children) {
@@ -71,10 +71,10 @@ var ExcelXmlFactory = /** @class */ (function () {
         };
     };
     __decorate([
-        grid_core_2.Autowired('xmlFactory')
+        core_2.Autowired('xmlFactory')
     ], ExcelXmlFactory.prototype, "xmlFactory", void 0);
     ExcelXmlFactory = __decorate([
-        grid_core_2.Bean('excelXmlFactory')
+        core_2.Bean('excelXmlFactory')
     ], ExcelXmlFactory);
     return ExcelXmlFactory;
 }());

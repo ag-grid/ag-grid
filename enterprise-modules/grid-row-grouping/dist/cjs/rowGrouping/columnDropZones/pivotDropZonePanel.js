@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var baseDropZonePanel_1 = require("./baseDropZonePanel");
 var PivotDropZonePanel = /** @class */ (function (_super) {
     __extends(PivotDropZonePanel, _super);
@@ -38,14 +38,14 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
         var emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         var title = localeTextFunc('pivots', 'Column Labels');
         _super.prototype.init.call(this, {
-            dragAndDropIcon: grid_core_1.DragAndDropService.ICON_GROUP,
-            icon: grid_core_1._.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
+            dragAndDropIcon: core_1.DragAndDropService.ICON_GROUP,
+            icon: core_1._.createIconNoSpan('pivotPanel', this.gridOptionsWrapper, null),
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
     };
     PivotDropZonePanel.prototype.refresh = function () {
@@ -91,7 +91,7 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     PivotDropZonePanel.prototype.updateColumns = function (columns) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             var event_1 = {
-                type: grid_core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
+                type: core_1.Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST,
                 columns: columns,
                 api: this.gridApi,
                 columnApi: this.columnApi
@@ -103,34 +103,34 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
         }
     };
     PivotDropZonePanel.prototype.getIconName = function () {
-        return this.isPotentialDndColumns() ? grid_core_1.DragAndDropService.ICON_PIVOT : grid_core_1.DragAndDropService.ICON_NOT_ALLOWED;
+        return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_PIVOT : core_1.DragAndDropService.ICON_NOT_ALLOWED;
     };
     PivotDropZonePanel.prototype.getExistingColumns = function () {
         return this.columnController.getPivotColumns();
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PivotDropZonePanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], PivotDropZonePanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('loggerFactory')
+        core_1.Autowired('loggerFactory')
     ], PivotDropZonePanel.prototype, "loggerFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('dragAndDropService')
+        core_1.Autowired('dragAndDropService')
     ], PivotDropZonePanel.prototype, "dragAndDropService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], PivotDropZonePanel.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], PivotDropZonePanel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], PivotDropZonePanel.prototype, "passBeansUp", null);
     return PivotDropZonePanel;
 }(baseDropZonePanel_1.BaseDropZonePanel));

@@ -10,7 +10,7 @@ import {
     LegendPosition,
     FontStyle,
     FontWeight,
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";

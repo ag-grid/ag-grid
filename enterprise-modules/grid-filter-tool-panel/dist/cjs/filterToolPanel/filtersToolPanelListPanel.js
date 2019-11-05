@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var toolPanelFilterComp_1 = require("./toolPanelFilterComp");
 var toolPanelFilterGroupComp_1 = require("./toolPanelFilterGroupComp");
 var filtersToolPanelHeaderPanel_1 = require("./filtersToolPanelHeaderPanel");
@@ -40,13 +40,13 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         };
-        grid_core_1._.mergeDeep(defaultParams, params);
+        core_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
+            this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
         }
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.source === 'filters') {
@@ -76,7 +76,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             this.setFirstAndLastVisible(0, len - 1);
         }
         // perform search if searchFilterText exists
-        if (grid_core_1._.exists(this.searchFilterText)) {
+        if (core_1._.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
         }
         // notify header of expand
@@ -93,7 +93,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             this.setFirstAndLastVisible(0, len - 1);
         }
         // perform search if searchFilterText exists
-        if (grid_core_1._.exists(this.searchFilterText)) {
+        if (core_1._.exists(this.searchFilterText)) {
             this.searchFilters(this.searchFilterText);
         }
         // notify header of expand
@@ -101,9 +101,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.recursivelyAddComps = function (tree, depth) {
         var _this = this;
-        return grid_core_1._.flatten(tree.map(function (child) {
-            if (child instanceof grid_core_1.OriginalColumnGroup) {
-                return grid_core_1._.flatten(_this.recursivelyAddFilterGroupComps(child, depth));
+        return core_1._.flatten(tree.map(function (child) {
+            if (child instanceof core_1.OriginalColumnGroup) {
+                return core_1._.flatten(_this.recursivelyAddFilterGroupComps(child, depth));
             }
             var column = child;
             if (!_this.shouldDisplayFilter(column)) {
@@ -130,7 +130,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             return [];
         }
         var newDepth = columnGroup.isPadding() ? depth : depth + 1;
-        var childFilterComps = grid_core_1._.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
+        var childFilterComps = core_1._.flatten(this.recursivelyAddComps(columnGroup.getChildren(), newDepth));
         if (columnGroup.isPadding())
             return childFilterComps;
         var filterGroupComp = new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
@@ -140,7 +140,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     FiltersToolPanelListPanel.prototype.filtersExistInChildren = function (tree) {
         var _this = this;
         return tree.some(function (child) {
-            if (child instanceof grid_core_1.OriginalColumnGroup) {
+            if (child instanceof core_1.OriginalColumnGroup) {
                 return _this.filtersExistInChildren(child.getChildren());
             }
             return _this.shouldDisplayFilter(child);
@@ -163,7 +163,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         var updatedGroupIds = [];
         var updateGroupExpandState = function (filterGroup) {
             var groupId = filterGroup.getFilterGroupId();
-            var shouldExpandOrCollapse = !groupIds || grid_core_1._.includes(groupIds, groupId);
+            var shouldExpandOrCollapse = !groupIds || core_1._.includes(groupIds, groupId);
             if (shouldExpandOrCollapse) {
                 // don't expand 'column groups', i.e. top level columns wrapped in a group
                 if (expand && filterGroup.isColumnGroup()) {
@@ -212,7 +212,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
                 return anyChildrenChanged_1;
             }
             var colId = filterComp.getColumn().getColId();
-            var updateFilterExpandState = !colIds || grid_core_1._.includes(colIds, colId);
+            var updateFilterExpandState = !colIds || core_1._.includes(colIds, colId);
             if (updateFilterExpandState) {
                 expand ? filterComp.expand() : filterComp.collapse();
                 updatedColIds.push(colId);
@@ -264,7 +264,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.searchFilters = function (searchFilter) {
         var passesFilter = function (groupName) {
-            return !grid_core_1._.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
+            return !core_1._.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
         };
         var recursivelySearch = function (filterItem, parentPasses) {
             if (!(filterItem instanceof toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp)) {
@@ -301,12 +301,12 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.filterGroupComps.forEach(function (filterGroup, idx) {
             recursivelySearch(filterGroup, false);
             if (firstVisible === undefined) {
-                if (!grid_core_1._.containsClass(filterGroup.getGui(), 'ag-hidden')) {
+                if (!core_1._.containsClass(filterGroup.getGui(), 'ag-hidden')) {
                     firstVisible = idx;
                     lastVisible = idx;
                 }
             }
-            else if (!grid_core_1._.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
+            else if (!core_1._.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
                 lastVisible = idx;
             }
         });
@@ -314,13 +314,13 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.setFirstAndLastVisible = function (firstIdx, lastIdx) {
         this.filterGroupComps.forEach(function (filterGroup, idx) {
-            grid_core_1._.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
-            grid_core_1._.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            core_1._.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+            core_1._.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
             if (idx === firstIdx) {
-                grid_core_1._.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+                core_1._.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
             }
             if (idx === lastIdx) {
-                grid_core_1._.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+                core_1._.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
             }
         });
     };
@@ -330,7 +330,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     FiltersToolPanelListPanel.prototype.destroyFilters = function () {
         this.filterGroupComps.forEach(function (filterComp) { return filterComp.destroy(); });
         this.filterGroupComps.length = 0;
-        grid_core_1._.clearElement(this.getGui());
+        core_1._.clearElement(this.getGui());
     };
     FiltersToolPanelListPanel.prototype.destroy = function () {
         this.destroyFilters();
@@ -338,17 +338,17 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.TEMPLATE = "<div class=\"ag-filter-list-panel\"></div>";
     __decorate([
-        grid_core_1.Autowired("gridApi")
+        core_1.Autowired("gridApi")
     ], FiltersToolPanelListPanel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired("eventService")
+        core_1.Autowired("eventService")
     ], FiltersToolPanelListPanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('toolPanelColDefService')
+        core_1.Autowired('toolPanelColDefService')
     ], FiltersToolPanelListPanel.prototype, "toolPanelColDefService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], FiltersToolPanelListPanel.prototype, "columnController", void 0);
     return FiltersToolPanelListPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.FiltersToolPanelListPanel = FiltersToolPanelListPanel;

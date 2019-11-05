@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var core_1 = require("./files/ooxml/core");
+var core_1 = require("@ag-grid-community/core");
+var core_2 = require("./files/ooxml/core");
 var contentTypes_1 = require("./files/ooxml/contentTypes");
 var office_1 = require("./files/ooxml/themes/office");
 var sharedStrings_1 = require("./files/ooxml/sharedStrings");
@@ -41,7 +41,7 @@ var ExcelXlsxFactory = /** @class */ (function () {
         return this.createWorksheet(worksheets);
     };
     ExcelXlsxFactory.prototype.createCore = function () {
-        return this.createXmlPart(core_1.default.getTemplate());
+        return this.createXmlPart(core_2.default.getTemplate());
     };
     ExcelXlsxFactory.prototype.createContentTypes = function () {
         return this.createXmlPart(contentTypes_1.default.getTemplate());
@@ -91,10 +91,10 @@ var ExcelXlsxFactory = /** @class */ (function () {
         return this.createXmlPart(worksheet_1.default.getTemplate(worksheets[0]));
     };
     __decorate([
-        grid_core_1.Autowired('xmlFactory')
+        core_1.Autowired('xmlFactory')
     ], ExcelXlsxFactory.prototype, "xmlFactory", void 0);
     ExcelXlsxFactory = __decorate([
-        grid_core_1.Bean('excelXlsxFactory')
+        core_1.Bean('excelXlsxFactory')
     ], ExcelXlsxFactory);
     return ExcelXlsxFactory;
 }());

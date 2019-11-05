@@ -1,4 +1,4 @@
-import { Component, IRichCellEditorParams } from "@ag-grid-community/grid-core";
+import { Component, IRichCellEditorParams } from "@ag-grid-community/core";
 export declare class RichSelectRow extends Component {
     private userComponentFactory;
     private gridOptionsWrapper;

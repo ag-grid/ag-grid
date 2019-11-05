@@ -11,7 +11,7 @@ import {
     GridOptions,
     Module,
     WrapableInterface
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";

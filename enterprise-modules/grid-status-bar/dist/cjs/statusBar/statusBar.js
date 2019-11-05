@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var StatusBar = /** @class */ (function (_super) {
     __extends(StatusBar, _super);
     function StatusBar() {
@@ -54,7 +54,7 @@ var StatusBar = /** @class */ (function (_super) {
                 promise: promise
             });
         });
-        grid_core_1.Promise.all(componentDetails.map(function (details) { return details.promise; }))
+        core_1.Promise.all(componentDetails.map(function (details) { return details.promise; }))
             .then(function () {
             componentDetails.forEach(function (componentDetail) {
                 componentDetail.promise.then(function (component) {
@@ -77,29 +77,29 @@ var StatusBar = /** @class */ (function (_super) {
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptions')
+        core_1.Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);
     __decorate([
-        grid_core_1.Autowired('userComponentFactory')
+        core_1.Autowired('userComponentFactory')
     ], StatusBar.prototype, "userComponentFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('statusBarService')
+        core_1.Autowired('statusBarService')
     ], StatusBar.prototype, "statusBarService", void 0);
     __decorate([
-        grid_core_1.RefSelector('eStatusBarLeft')
+        core_1.RefSelector('eStatusBarLeft')
     ], StatusBar.prototype, "eStatusBarLeft", void 0);
     __decorate([
-        grid_core_1.RefSelector('eStatusBarCenter')
+        core_1.RefSelector('eStatusBarCenter')
     ], StatusBar.prototype, "eStatusBarCenter", void 0);
     __decorate([
-        grid_core_1.RefSelector('eStatusBarRight')
+        core_1.RefSelector('eStatusBarRight')
     ], StatusBar.prototype, "eStatusBarRight", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
     return StatusBar;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.StatusBar = StatusBar;

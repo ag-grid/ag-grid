@@ -1,4 +1,4 @@
-import { AgEvent, BeanStub, Column, IMenuFactory } from "@ag-grid-community/grid-core";
+import { AgEvent, BeanStub, Column, IMenuFactory } from "@ag-grid-community/core";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }

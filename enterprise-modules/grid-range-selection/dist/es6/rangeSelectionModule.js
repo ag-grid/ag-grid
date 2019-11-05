@@ -1,5 +1,5 @@
-import { ModuleNames } from "@ag-grid-community/grid-core";
-import { EnterpriseCoreModule } from "@ag-grid-enterprise/grid-core";
+import { ModuleNames } from "@ag-grid-community/core";
+import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
 import { RangeController } from "./rangeSelection/rangeController";
 import { FillHandle } from "./rangeSelection/fillHandle";
 import { RangeHandle } from "./rangeSelection/rangeHandle";

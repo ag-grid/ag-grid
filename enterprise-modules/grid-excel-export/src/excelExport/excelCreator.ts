@@ -12,14 +12,14 @@ import {
     StylingService,
     ValueService,
     _
-} from '@ag-grid-community/grid-core';
+} from '@ag-grid-community/core';
 
-import { ExcelCell, ExcelStyle } from '@ag-grid-community/grid-core';
+import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import {BaseCreator, Downloader, GridSerializer, ZipContainer, RowType} from "@ag-grid-community/grid-csv-export";
+import {BaseCreator, Downloader, GridSerializer, ZipContainer, RowType} from "@ag-grid-community/csv-export";
 
 export interface ExcelMixedStyle {
     key: string;

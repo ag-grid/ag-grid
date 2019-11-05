@@ -1,4 +1,4 @@
-import { StageExecuteParams } from "@ag-grid-community/grid-core";
+import { StageExecuteParams } from "@ag-grid-community/core";
 export declare class SortStage {
     private gridOptionsWrapper;
     private sortService;

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var nameValueComp_1 = require("./nameValueComp");
 var FilteredRowsComp = /** @class */ (function (_super) {
     __extends(FilteredRowsComp, _super);
@@ -37,12 +37,12 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-filtered-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener);
     };
     FilteredRowsComp.prototype.onDataChanged = function () {
         var totalRowCountValue = this.getTotalRowCountValue();
         var filteredRowCountValue = this.getFilteredRowCountValue();
-        this.setValue(grid_core_1._.formatNumberCommas(filteredRowCountValue));
+        this.setValue(core_1._.formatNumberCommas(filteredRowCountValue));
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     };
     FilteredRowsComp.prototype.getTotalRowCountValue = function () {
@@ -61,13 +61,13 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     };
     FilteredRowsComp.prototype.init = function () { };
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], FilteredRowsComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], FilteredRowsComp.prototype, "postConstruct", null);
     return FilteredRowsComp;
 }(nameValueComp_1.NameValueComp));

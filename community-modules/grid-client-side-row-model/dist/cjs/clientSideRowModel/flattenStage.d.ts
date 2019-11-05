@@ -1,4 +1,4 @@
-import { IRowNodeStage, RowNode, StageExecuteParams } from "@ag-grid-community/grid-core";
+import { IRowNodeStage, RowNode, StageExecuteParams } from "@ag-grid-community/core";
 export declare class FlattenStage implements IRowNodeStage {
     private gridOptionsWrapper;
     private selectionController;

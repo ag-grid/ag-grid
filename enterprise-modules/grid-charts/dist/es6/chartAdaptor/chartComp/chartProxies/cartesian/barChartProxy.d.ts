@@ -1,4 +1,4 @@
-import { BarSeriesOptions, CartesianChartOptions } from "@ag-grid-community/grid-core";
+import { BarSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 export declare class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {

@@ -23,7 +23,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { _ } from "@ag-grid-community/grid-core";
+import { _ } from "@ag-grid-community/core";
 import { PolarChartProxy } from "./polarChartProxy";
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends(DoughnutChartProxy, _super);

@@ -1,4 +1,4 @@
-import { Column, ColumnController, ColumnGroupChild, ExportParams, GridOptionsWrapper, ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams, RowNode, ValueService } from "@ag-grid-community/grid-core";
+import { Column, ColumnController, ColumnGroupChild, ExportParams, GridOptionsWrapper, ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams, RowNode, ValueService } from "@ag-grid-community/core";
 /**
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
  * must be passed in, the serializer will call back to the provided methods and finally call to parse to obtain the final result

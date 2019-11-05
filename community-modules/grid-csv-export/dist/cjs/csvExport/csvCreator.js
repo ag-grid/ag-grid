@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var gridSerializer_1 = require("./gridSerializer");
 var LINE_SEPARATOR = '\r\n';
 var CsvSerializingSession = /** @class */ (function (_super) {
@@ -98,7 +98,7 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         if (index != 0) {
             this.result += this.columnSeparator;
         }
-        this.result += this.putInQuotes(this.extractRowCellValue(column, index, grid_core_1.Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
+        this.result += this.putInQuotes(this.extractRowCellValue(column, index, core_1.Constants.EXPORT_TYPE_CSV, node), this.suppressQuotes);
         this.lineOpened = true;
     };
     CsvSerializingSession.prototype.putInQuotes = function (value, suppressQuotes) {
@@ -160,8 +160,8 @@ var BaseCreator = /** @class */ (function () {
     BaseCreator.prototype.mergeDefaultParams = function (userParams) {
         var baseParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
         var params = {};
-        grid_core_1._.assign(params, baseParams);
-        grid_core_1._.assign(params, userParams);
+        core_1._.assign(params, baseParams);
+        core_1._.assign(params, userParams);
         return params;
     };
     BaseCreator.prototype.packageFile = function (data) {
@@ -217,25 +217,25 @@ var CsvCreator = /** @class */ (function (_super) {
         return this.gridOptionsWrapper.isSuppressCsvExport();
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], CsvCreator.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], CsvCreator.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('downloader')
+        core_1.Autowired('downloader')
     ], CsvCreator.prototype, "downloader", void 0);
     __decorate([
-        grid_core_1.Autowired('gridSerializer')
+        core_1.Autowired('gridSerializer')
     ], CsvCreator.prototype, "gridSerializer", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], CsvCreator.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], CsvCreator.prototype, "postConstruct", null);
     CsvCreator = __decorate([
-        grid_core_1.Bean('csvCreator')
+        core_1.Bean('csvCreator')
     ], CsvCreator);
     return CsvCreator;
 }(BaseCreator));

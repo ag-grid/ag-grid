@@ -188,7 +188,7 @@ const test = async () => {
 
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -215,7 +215,7 @@ const watch = async (singleModule) => {
 
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -240,7 +240,7 @@ const build = async () => {
 
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {

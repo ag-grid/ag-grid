@@ -1,4 +1,4 @@
-import { IStatusPanelComp } from '@ag-grid-community/grid-core';
+import { IStatusPanelComp } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 export declare class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
     private eventService;

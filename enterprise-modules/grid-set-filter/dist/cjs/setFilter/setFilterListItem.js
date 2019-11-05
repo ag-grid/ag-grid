@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
     function SetFilterListItem(value, column) {
@@ -32,7 +32,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
     SetFilterListItem.prototype.useCellRenderer = function (target, eTarget, params) {
         var cellRendererPromise = this.userComponentFactory.newCellRenderer(target.filterParams, params);
         if (cellRendererPromise != null) {
-            grid_core_1._.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+            core_1._.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
         }
         else {
             if (params.valueFormatted == null && params.value == null) {
@@ -47,15 +47,15 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.prototype.init = function () {
         var _this = this;
-        this.eCheckedIcon = grid_core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = grid_core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eCheckedIcon = core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
         this.eClickableArea = this.getGui();
         this.updateCheckboxIcon();
         this.render();
         var listener = function (mouseEvent) {
             mouseEvent.preventDefault();
-            grid_core_1._.addAgGridEventPath(mouseEvent);
+            core_1._.addAgGridEventPath(mouseEvent);
             _this.selected = !_this.selected;
             _this.updateCheckboxIcon();
             var event = {
@@ -73,7 +73,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.updateCheckboxIcon();
     };
     SetFilterListItem.prototype.updateCheckboxIcon = function () {
-        grid_core_1._.clearElement(this.eCheckbox);
+        core_1._.clearElement(this.eCheckbox);
         if (this.isSelected()) {
             this.eCheckbox.appendChild(this.eCheckedIcon);
         }
@@ -104,17 +104,17 @@ var SetFilterListItem = /** @class */ (function (_super) {
     SetFilterListItem.EVENT_SELECTED = 'selected';
     SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <div class=\"ag-filter-checkbox\"></div>\n            <span class=\"ag-filter-value\"></span>\n        </label>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('valueFormatterService')
+        core_1.Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
     __decorate([
-        grid_core_1.Autowired('userComponentFactory')
+        core_1.Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.SetFilterListItem = SetFilterListItem;

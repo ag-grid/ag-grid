@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var PaddingPanel = /** @class */ (function (_super) {
     __extends(PaddingPanel, _super);
     function PaddingPanel(chartController) {
@@ -54,26 +54,26 @@ var PaddingPanel = /** @class */ (function (_super) {
     };
     PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
     __decorate([
-        grid_core_1.RefSelector('chartPaddingGroup')
+        core_1.RefSelector('chartPaddingGroup')
     ], PaddingPanel.prototype, "chartPaddingGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('paddingTopSlider')
+        core_1.RefSelector('paddingTopSlider')
     ], PaddingPanel.prototype, "paddingTopSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('paddingRightSlider')
+        core_1.RefSelector('paddingRightSlider')
     ], PaddingPanel.prototype, "paddingRightSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('paddingBottomSlider')
+        core_1.RefSelector('paddingBottomSlider')
     ], PaddingPanel.prototype, "paddingBottomSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('paddingLeftSlider')
+        core_1.RefSelector('paddingLeftSlider')
     ], PaddingPanel.prototype, "paddingLeftSlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], PaddingPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], PaddingPanel.prototype, "init", null);
     return PaddingPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.PaddingPanel = PaddingPanel;

@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ChartType, _ } from "@ag-grid-community/grid-core";
+import { ChartType, _ } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 var BarChartProxy = /** @class */ (function (_super) {

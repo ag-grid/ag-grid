@@ -19,10 +19,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var excelXmlSerializingSession_1 = require("./excelXmlSerializingSession");
 var excelXlsxSerializingSession_1 = require("./excelXlsxSerializingSession");
-var grid_csv_export_1 = require("@ag-grid-community/grid-csv-export");
+var csv_export_1 = require("@ag-grid-community/csv-export");
 var ExcelCreator = /** @class */ (function (_super) {
     __extends(ExcelCreator, _super);
     function ExcelCreator() {
@@ -63,8 +63,8 @@ var ExcelCreator = /** @class */ (function (_super) {
         var isXlsx = this.getExportMode() === 'xlsx';
         var excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
         var sheetName = 'ag-grid';
-        if (grid_core_1._.exists(params.sheetName)) {
-            sheetName = grid_core_1._.utf8_encode(params.sheetName.toString().substr(0, 31));
+        if (core_1._.exists(params.sheetName)) {
+            sheetName = core_1._.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
         var config = {
             columnController: columnController,
@@ -84,7 +84,7 @@ var ExcelCreator = /** @class */ (function (_super) {
         return new (isXlsx ? excelXlsxSerializingSession_1.ExcelXlsxSerializingSession : excelXmlSerializingSession_1.ExcelXmlSerializingSession)(config);
     };
     ExcelCreator.prototype.styleLinker = function (rowType, rowIndex, colIndex, value, column, node) {
-        if ((rowType === grid_csv_export_1.RowType.HEADER) || (rowType === grid_csv_export_1.RowType.HEADER_GROUPING)) {
+        if ((rowType === csv_export_1.RowType.HEADER) || (rowType === csv_export_1.RowType.HEADER_GROUPING)) {
             return ["header"];
         }
         var styles = this.gridOptions.excelStyles;
@@ -146,41 +146,41 @@ var ExcelCreator = /** @class */ (function (_super) {
         return zipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     };
     __decorate([
-        grid_core_1.Autowired('excelXmlFactory')
+        core_1.Autowired('excelXmlFactory')
     ], ExcelCreator.prototype, "excelXmlFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('excelXlsxFactory')
+        core_1.Autowired('excelXlsxFactory')
     ], ExcelCreator.prototype, "xlsxFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ExcelCreator.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], ExcelCreator.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptions')
+        core_1.Autowired('gridOptions')
     ], ExcelCreator.prototype, "gridOptions", void 0);
     __decorate([
-        grid_core_1.Autowired('stylingService')
+        core_1.Autowired('stylingService')
     ], ExcelCreator.prototype, "stylingService", void 0);
     __decorate([
-        grid_core_1.Autowired('downloader')
+        core_1.Autowired('downloader')
     ], ExcelCreator.prototype, "downloader", void 0);
     __decorate([
-        grid_core_1.Autowired('gridSerializer')
+        core_1.Autowired('gridSerializer')
     ], ExcelCreator.prototype, "gridSerializer", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ExcelCreator.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('zipContainer')
+        core_1.Autowired('zipContainer')
     ], ExcelCreator.prototype, "zipContainer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ExcelCreator.prototype, "postConstruct", null);
     ExcelCreator = __decorate([
-        grid_core_1.Bean('excelCreator')
+        core_1.Bean('excelCreator')
     ], ExcelCreator);
     return ExcelCreator;
-}(grid_csv_export_1.BaseCreator));
+}(csv_export_1.BaseCreator));
 exports.ExcelCreator = ExcelCreator;

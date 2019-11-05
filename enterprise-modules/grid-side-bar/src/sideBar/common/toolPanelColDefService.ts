@@ -9,7 +9,7 @@ import {
     ColumnController,
     OriginalColumnGroup,
     OriginalColumnGroupChild
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')
 export class ToolPanelColDefService {

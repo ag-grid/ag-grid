@@ -22,7 +22,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var infiniteBlock_1 = require("./infiniteBlock");
 var InfiniteCache = /** @class */ (function (_super) {
     __extends(InfiniteCache, _super);
@@ -94,7 +94,7 @@ var InfiniteCache = /** @class */ (function (_super) {
         }
         this.onCacheUpdated();
         var event = {
-            type: grid_core_1.Events.EVENT_ROW_DATA_UPDATED,
+            type: core_1.Events.EVENT_ROW_DATA_UPDATED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
@@ -132,20 +132,20 @@ var InfiniteCache = /** @class */ (function (_super) {
         this.checkBlockToLoad();
     };
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], InfiniteCache.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], InfiniteCache.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], InfiniteCache.prototype, "gridApi", void 0);
     __decorate([
-        __param(0, grid_core_1.Qualifier('loggerFactory'))
+        __param(0, core_1.Qualifier('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], InfiniteCache.prototype, "init", null);
     return InfiniteCache;
-}(grid_core_1.RowNodeCache));
+}(core_1.RowNodeCache));
 exports.InfiniteCache = InfiniteCache;

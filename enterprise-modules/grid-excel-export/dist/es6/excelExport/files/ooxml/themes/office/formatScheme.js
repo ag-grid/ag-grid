@@ -1,4 +1,4 @@
-import { _ } from '@ag-grid-community/grid-core';
+import { _ } from '@ag-grid-community/core';
 var getPropertyVal = function (name, val, children) { return ({
     name: "a:" + name,
     properties: {

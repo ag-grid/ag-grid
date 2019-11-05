@@ -6,14 +6,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var GroupStage = /** @class */ (function () {
     function GroupStage() {
         // we use a sequence variable so that each time we do a grouping, we don't
         // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
         // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
         // with the other rows.
-        this.groupIdSequence = new grid_core_1.NumberSequence(1);
+        this.groupIdSequence = new core_1.NumberSequence(1);
     }
     GroupStage.prototype.postConstruct = function () {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -37,7 +37,7 @@ var GroupStage = /** @class */ (function () {
         var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransaction = params.rowNodeTransaction, rowNodeOrder = params.rowNodeOrder;
         var groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
         var isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
-        var usingTransaction = isGrouping && grid_core_1._.exists(rowNodeTransaction);
+        var usingTransaction = isGrouping && core_1._.exists(rowNodeTransaction);
         var details = {
             // someone complained that the parent attribute was causing some change detection
             // to break is some angular add-on - which i never used. taking the parent out breaks
@@ -77,7 +77,7 @@ var GroupStage = /** @class */ (function () {
     // this is used when doing delta updates, eg Redux, keeps nodes in right order
     GroupStage.prototype.sortChildren = function (details) {
         details.changedPath.forEachChangedNodeDepthFirst(function (rowNode) {
-            grid_core_1._.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
+            core_1._.sortRowNodesByOrder(rowNode.childrenAfterGroup, details.rowNodeOrder);
         });
     };
     GroupStage.prototype.sortGroupsWithComparator = function (rootNode) {
@@ -86,11 +86,11 @@ var GroupStage = /** @class */ (function () {
             return;
         }
         var comparator = this.gridOptionsWrapper.getDefaultGroupSortComparator();
-        if (grid_core_1._.exists(comparator)) {
+        if (core_1._.exists(comparator)) {
             recursiveSort(rootNode);
         }
         function recursiveSort(rowNode) {
-            var doSort = grid_core_1._.exists(rowNode.childrenAfterGroup) &&
+            var doSort = core_1._.exists(rowNode.childrenAfterGroup) &&
                 // we only want to sort groups, so we do not sort leafs (a leaf group has leafs as children)
                 !rowNode.leafGroup;
             if (doSort) {
@@ -126,7 +126,7 @@ var GroupStage = /** @class */ (function () {
             var infoToKeyMapper = function (item) { return item.key; };
             var oldPath = _this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             var newPath = _this.getGroupInfo(childNode, details).map(infoToKeyMapper);
-            var nodeInCorrectPath = grid_core_1._.compareArrays(oldPath, newPath);
+            var nodeInCorrectPath = core_1._.compareArrays(oldPath, newPath);
             if (!nodeInCorrectPath) {
                 _this.moveNode(childNode, details);
             }
@@ -252,7 +252,7 @@ var GroupStage = /** @class */ (function () {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             }
             else {
-                grid_core_1._.removeFromArray(child.parent.childrenAfterGroup, child);
+                core_1._.removeFromArray(child.parent.childrenAfterGroup, child);
             }
         }
         var mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
@@ -279,7 +279,7 @@ var GroupStage = /** @class */ (function () {
         if (d1.pivotMode !== d2.pivotMode) {
             return false;
         }
-        if (!grid_core_1._.compareArrays(d1.groupedCols, d2.groupedCols)) {
+        if (!core_1._.compareArrays(d1.groupedCols, d2.groupedCols)) {
             return false;
         }
         return true;
@@ -368,7 +368,7 @@ var GroupStage = /** @class */ (function () {
     };
     GroupStage.prototype.createGroup = function (groupInfo, parent, level, details) {
         var _this = this;
-        var groupNode = new grid_core_1.RowNode();
+        var groupNode = new core_1.RowNode();
         this.context.wireBean(groupNode);
         groupNode.group = true;
         groupNode.field = groupInfo.field;
@@ -436,7 +436,7 @@ var GroupStage = /** @class */ (function () {
     GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
         var keys = this.getDataPath ? this.getDataPath(rowNode.data) : null;
         if (keys === null || keys === undefined || keys.length === 0) {
-            grid_core_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
+            core_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
         }
         var groupInfoMapper = function (key) { return ({ key: key, field: null, rowGroupColumn: null }); };
         return keys ? keys.map(groupInfoMapper) : [];
@@ -466,31 +466,31 @@ var GroupStage = /** @class */ (function () {
         return res;
     };
     __decorate([
-        grid_core_1.Autowired('selectionController')
+        core_1.Autowired('selectionController')
     ], GroupStage.prototype, "selectionController", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], GroupStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], GroupStage.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('selectableService')
+        core_1.Autowired('selectableService')
     ], GroupStage.prototype, "selectableService", void 0);
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], GroupStage.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], GroupStage.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], GroupStage.prototype, "context", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], GroupStage.prototype, "postConstruct", null);
     GroupStage = __decorate([
-        grid_core_1.Bean('groupStage')
+        core_1.Bean('groupStage')
     ], GroupStage);
     return GroupStage;
 }());

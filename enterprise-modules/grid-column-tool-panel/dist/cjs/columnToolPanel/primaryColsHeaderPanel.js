@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var EXPAND_STATE;
 (function (EXPAND_STATE) {
     EXPAND_STATE[EXPAND_STATE["EXPANDED"] = 0] = "EXPANDED";
@@ -48,7 +48,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eSelect, 'click', this.onSelectClicked.bind(this));
         this.addDestroyableEventListener(this.eFilterTextField, 'input', this.onFilterTextChanged.bind(this));
         this.addDestroyableEventListener(this.eFilterTextField, 'keypress', this.onMiniFilterKeyPress.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -57,14 +57,14 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         }
     };
     PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
-        this.eExpand.appendChild(this.eExpandChecked = grid_core_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandUnchecked = grid_core_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandIndeterminate = grid_core_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandChecked = core_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = core_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = core_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
     };
     PrimaryColsHeaderPanel.prototype.createCheckIcons = function () {
-        this.eSelect.appendChild(this.eSelectChecked = grid_core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectUnchecked = grid_core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
-        this.eSelect.appendChild(this.eSelectIndeterminate = grid_core_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectChecked = core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectUnchecked = core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper));
+        this.eSelect.appendChild(this.eSelectIndeterminate = core_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper));
     };
     // we only show expand / collapse if we are showing columns
     PrimaryColsHeaderPanel.prototype.showOrHideOptions = function () {
@@ -72,14 +72,14 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         var showSelect = !this.params.suppressColumnSelectAll;
         var showExpand = !this.params.suppressColumnExpandAll;
         var groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
-        grid_core_1._.setDisplayed(this.eFilterWrapper, showFilter);
-        grid_core_1._.setDisplayed(this.eSelect, showSelect);
-        grid_core_1._.setDisplayed(this.eExpand, showExpand && groupsPresent);
+        core_1._.setDisplayed(this.eFilterWrapper, showFilter);
+        core_1._.setDisplayed(this.eSelect, showSelect);
+        core_1._.setDisplayed(this.eExpand, showExpand && groupsPresent);
     };
     PrimaryColsHeaderPanel.prototype.onFilterTextChanged = function () {
         var _this = this;
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = grid_core_1._.debounce(function () {
+            this.onFilterTextChangedDebounced = core_1._.debounce(function () {
                 var filterText = _this.eFilterTextField.value;
                 _this.dispatchEvent({ type: 'filterChanged', filterText: filterText });
             }, 300);
@@ -87,7 +87,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         this.onFilterTextChangedDebounced();
     };
     PrimaryColsHeaderPanel.prototype.onMiniFilterKeyPress = function (e) {
-        if (grid_core_1._.isKeyPressed(e, grid_core_1.Constants.KEY_ENTER)) {
+        if (core_1._.isKeyPressed(e, core_1.Constants.KEY_ENTER)) {
             this.dispatchEvent({ type: 'selectAll' });
         }
     };
@@ -101,43 +101,43 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     };
     PrimaryColsHeaderPanel.prototype.setExpandState = function (state) {
         this.expandState = state;
-        grid_core_1._.setDisplayed(this.eExpandChecked, this.expandState === EXPAND_STATE.EXPANDED);
-        grid_core_1._.setDisplayed(this.eExpandUnchecked, this.expandState === EXPAND_STATE.COLLAPSED);
-        grid_core_1._.setDisplayed(this.eExpandIndeterminate, this.expandState === EXPAND_STATE.INDETERMINATE);
+        core_1._.setDisplayed(this.eExpandChecked, this.expandState === EXPAND_STATE.EXPANDED);
+        core_1._.setDisplayed(this.eExpandUnchecked, this.expandState === EXPAND_STATE.COLLAPSED);
+        core_1._.setDisplayed(this.eExpandIndeterminate, this.expandState === EXPAND_STATE.INDETERMINATE);
     };
     PrimaryColsHeaderPanel.prototype.setSelectionState = function (state) {
         this.selectState = state;
-        grid_core_1._.setDisplayed(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
-        grid_core_1._.setDisplayed(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
-        grid_core_1._.setDisplayed(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
+        core_1._.setDisplayed(this.eSelectChecked, this.selectState === SELECTED_STATE.CHECKED);
+        core_1._.setDisplayed(this.eSelectUnchecked, this.selectState === SELECTED_STATE.UNCHECKED);
+        core_1._.setDisplayed(this.eSelectIndeterminate, this.selectState === SELECTED_STATE.INDETERMINATE);
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PrimaryColsHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], PrimaryColsHeaderPanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.RefSelector('eExpand')
+        core_1.RefSelector('eExpand')
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        grid_core_1.RefSelector('eSelect')
+        core_1.RefSelector('eSelect')
     ], PrimaryColsHeaderPanel.prototype, "eSelect", void 0);
     __decorate([
-        grid_core_1.RefSelector('eFilterWrapper')
+        core_1.RefSelector('eFilterWrapper')
     ], PrimaryColsHeaderPanel.prototype, "eFilterWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eFilterTextField')
+        core_1.RefSelector('eFilterTextField')
     ], PrimaryColsHeaderPanel.prototype, "eFilterTextField", void 0);
     __decorate([
-        grid_core_1.PreConstruct
+        core_1.PreConstruct
     ], PrimaryColsHeaderPanel.prototype, "preConstruct", null);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;

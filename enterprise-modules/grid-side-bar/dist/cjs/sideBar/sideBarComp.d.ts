@@ -1,4 +1,4 @@
-import { Component, IComponent, ISideBar, IToolPanel } from "@ag-grid-community/grid-core";
+import { Component, IComponent, ISideBar, IToolPanel } from "@ag-grid-community/core";
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
 }

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChartsContainer_1 = require("./miniChartsContainer");
 var ChartSettingsPanel = /** @class */ (function (_super) {
     __extends(ChartSettingsPanel, _super);
@@ -40,8 +40,8 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             _this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             _this.addCardLink(idx);
         });
-        this.ePrevBtn.insertAdjacentElement('afterbegin', grid_core_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
-        this.eNextBtn.insertAdjacentElement('afterbegin', grid_core_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
+        this.ePrevBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
+        this.eNextBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
         this.setActivePalette(this.activePalette, 0);
@@ -49,7 +49,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     ChartSettingsPanel.prototype.addCardLink = function (idx) {
         var _this = this;
         var link = document.createElement('div');
-        grid_core_1._.addCssClass(link, 'ag-nav-card-item');
+        core_1._.addCssClass(link, 'ag-nav-card-item');
         this.addDestroyableEventListener(link, 'click', function () {
             if (idx === _this.activePalette || _this.isAnimating) {
                 return;
@@ -89,10 +89,10 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     };
     ChartSettingsPanel.prototype.setActivePalette = function (palette, animate) {
         var _this = this;
-        grid_core_1._.radioCssClass(this.cardItems[palette], 'ag-selected');
+        core_1._.radioCssClass(this.cardItems[palette], 'ag-selected');
         if (!animate) {
             this.miniCharts.forEach(function (miniChart, idx) {
-                grid_core_1._.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== palette);
+                core_1._.addOrRemoveCssClass(miniChart.getGui(), 'ag-hidden', idx !== palette);
             });
             this.miniCharts[this.activePalette].refreshSelected();
             this.activePalette = palette;
@@ -105,10 +105,10 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             currentPalette.refreshSelected();
             futurePalette.refreshSelected();
             var multiplier = animate === 1 ? -1 : 1;
-            var final_1 = futureGui_1.style.left = (grid_core_1._.getAbsoluteWidth(this.getGui()) * multiplier) + "px";
-            grid_core_1._.removeCssClass(futureGui_1, 'ag-hidden');
-            grid_core_1._.addCssClass(currentGui_1, 'ag-animating');
-            grid_core_1._.addCssClass(futureGui_1, 'ag-animating');
+            var final_1 = futureGui_1.style.left = (core_1._.getAbsoluteWidth(this.getGui()) * multiplier) + "px";
+            core_1._.removeCssClass(futureGui_1, 'ag-hidden');
+            core_1._.addCssClass(currentGui_1, 'ag-animating');
+            core_1._.addCssClass(futureGui_1, 'ag-animating');
             this.activePalette = palette;
             this.chartController.setChartWithPalette(this.chartController.getChartType(), this.activePalette);
             this.isAnimating = true;
@@ -118,31 +118,31 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             }, 50);
             window.setTimeout(function () {
                 _this.isAnimating = false;
-                grid_core_1._.removeCssClass(currentGui_1, 'ag-animating');
-                grid_core_1._.removeCssClass(futureGui_1, 'ag-animating');
-                grid_core_1._.addCssClass(currentGui_1, 'ag-hidden');
+                core_1._.removeCssClass(currentGui_1, 'ag-animating');
+                core_1._.removeCssClass(futureGui_1, 'ag-animating');
+                core_1._.addCssClass(currentGui_1, 'ag-hidden');
             }, 500);
         }
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev-btn\">\n                    <button type=\"button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-nav-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next-btn\">\n                    <button type=\"button\"></button>\n                </div>\n            </div>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eMiniChartsContainer')
+        core_1.RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
     __decorate([
-        grid_core_1.RefSelector("eCardSelector")
+        core_1.RefSelector("eCardSelector")
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
     __decorate([
-        grid_core_1.RefSelector("ePrevBtn")
+        core_1.RefSelector("ePrevBtn")
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
     __decorate([
-        grid_core_1.RefSelector("eNextBtn")
+        core_1.RefSelector("eNextBtn")
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
     return ChartSettingsPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ChartSettingsPanel = ChartSettingsPanel;

@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var FlattenStage = /** @class */ (function () {
     function FlattenStage() {
     }
@@ -36,7 +36,7 @@ var FlattenStage = /** @class */ (function () {
         return result;
     };
     FlattenStage.prototype.recursivelyAddToRowsToDisplay = function (rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel) {
-        if (grid_core_1._.missingOrEmpty(rowsToFlatten)) {
+        if (core_1._.missingOrEmpty(rowsToFlatten)) {
             return;
         }
         var groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
@@ -95,10 +95,10 @@ var FlattenStage = /** @class */ (function () {
     FlattenStage.prototype.ensureFooterNodeExists = function (groupNode) {
         // only create footer node once, otherwise we have daemons and
         // the animate screws up with the daemons hanging around
-        if (grid_core_1._.exists(groupNode.sibling)) {
+        if (core_1._.exists(groupNode.sibling)) {
             return;
         }
-        var footerNode = new grid_core_1.RowNode();
+        var footerNode = new core_1.RowNode();
         this.context.wireBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
@@ -106,7 +106,7 @@ var FlattenStage = /** @class */ (function () {
         footerNode.footer = true;
         footerNode.rowTop = null;
         footerNode.oldRowTop = null;
-        if (grid_core_1._.exists(footerNode.id)) {
+        if (core_1._.exists(footerNode.id)) {
             footerNode.id = 'rowGroupFooter_' + footerNode.id;
         }
         // get both header and footer to reference each other as siblings. this is never undone,
@@ -116,18 +116,18 @@ var FlattenStage = /** @class */ (function () {
         groupNode.sibling = footerNode;
     };
     FlattenStage.prototype.createDetailNode = function (masterNode) {
-        if (grid_core_1._.exists(masterNode.detailNode)) {
+        if (core_1._.exists(masterNode.detailNode)) {
             return masterNode.detailNode;
         }
         else {
-            var detailNode = new grid_core_1.RowNode();
+            var detailNode = new core_1.RowNode();
             this.context.wireBean(detailNode);
             detailNode.detail = true;
             detailNode.selectable = false;
             // flower was renamed to 'detail', but keeping for backwards compatibility
             detailNode.flower = detailNode.detail;
             detailNode.parent = masterNode;
-            if (grid_core_1._.exists(masterNode.id)) {
+            if (core_1._.exists(masterNode.id)) {
                 detailNode.id = 'detail_' + masterNode.id;
             }
             detailNode.data = masterNode.data;
@@ -138,22 +138,22 @@ var FlattenStage = /** @class */ (function () {
         }
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], FlattenStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('selectionController')
+        core_1.Autowired('selectionController')
     ], FlattenStage.prototype, "selectionController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], FlattenStage.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], FlattenStage.prototype, "context", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], FlattenStage.prototype, "columnController", void 0);
     FlattenStage = __decorate([
-        grid_core_1.Bean('flattenStage')
+        core_1.Bean('flattenStage')
     ], FlattenStage);
     return FlattenStage;
 }());

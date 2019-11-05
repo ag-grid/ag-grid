@@ -37,7 +37,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var abstractSelectionHandle_1 = require("./abstractSelectionHandle");
 var FillHandle = /** @class */ (function (_super) {
     __extends(FillHandle, _super);
@@ -160,7 +160,7 @@ var FillHandle = /** @class */ (function (_super) {
                 else if (columns) {
                     withinInitialRange = true;
                     resetValues();
-                    columns.forEach(function (col) { return fillValues(values, col, rowNode, function () { return col !== (_this.isLeft ? initialRange.columns[0] : grid_core_1._.last(initialRange.columns)); }); });
+                    columns.forEach(function (col) { return fillValues(values, col, rowNode, function () { return col !== (_this.isLeft ? initialRange.columns[0] : core_1._.last(initialRange.columns)); }); });
                 }
                 finished = _this.rowPositionUtils.sameRow(currentRow, _this.isUp ? finalRangeStartRow : finalRangeEndRow);
                 currentRow = _this.isUp
@@ -255,11 +255,11 @@ var FillHandle = /** @class */ (function (_super) {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 var multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return grid_core_1._.last(values) + 1 * multiplier;
+                return core_1._.last(values) + 1 * multiplier;
             }
             return values[idx % values.length];
         }
-        return grid_core_1._.last(grid_core_1._.findLineByLeastSquares(values.map(Number)));
+        return core_1._.last(core_1._.findLineByLeastSquares(values.map(Number)));
     };
     FillHandle.prototype.clearValues = function () {
         this.clearMarkedPath();
@@ -270,10 +270,10 @@ var FillHandle = /** @class */ (function (_super) {
     FillHandle.prototype.clearMarkedPath = function () {
         this.markedCellComps.forEach(function (cellComp) {
             var eGui = cellComp.getGui();
-            grid_core_1._.removeCssClass(eGui, 'ag-selection-fill-top');
-            grid_core_1._.removeCssClass(eGui, 'ag-selection-fill-right');
-            grid_core_1._.removeCssClass(eGui, 'ag-selection-fill-bottom');
-            grid_core_1._.removeCssClass(eGui, 'ag-selection-fill-left');
+            core_1._.removeCssClass(eGui, 'ag-selection-fill-top');
+            core_1._.removeCssClass(eGui, 'ag-selection-fill-right');
+            core_1._.removeCssClass(eGui, 'ag-selection-fill-bottom');
+            core_1._.removeCssClass(eGui, 'ag-selection-fill-left');
         });
         this.markedCellComps.length = 0;
         this.isUp = false;
@@ -346,10 +346,10 @@ var FillHandle = /** @class */ (function (_super) {
                         this.markedCellComps.push(cellComp);
                         var eGui = cellComp.getGui();
                         if (!cellInRange) {
-                            grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', i === 0);
-                            grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', i === colLen - 1);
+                            core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', i === 0);
+                            core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', i === colLen - 1);
                         }
-                        grid_core_1._.addOrRemoveCssClass(eGui, isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
+                        core_1._.addOrRemoveCssClass(eGui, isMovingUp ? 'ag-selection-fill-top' : 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
                     }
                 }
             }
@@ -373,7 +373,7 @@ var FillHandle = /** @class */ (function (_super) {
                 if (cellComp) {
                     this.markedCellComps.push(cellComp);
                     var eGui = cellComp.getGui();
-                    grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
+                    core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', this.rowPositionUtils.sameRow(row, endPosition));
                 }
             }
             if (isLastRow) {
@@ -403,14 +403,14 @@ var FillHandle = /** @class */ (function (_super) {
                 if (cellComp) {
                     _this.markedCellComps.push(cellComp);
                     var eGui = cellComp.getGui();
-                    grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', _this.rowPositionUtils.sameRow(row, rangeStartRow));
-                    grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', _this.rowPositionUtils.sameRow(row, rangeEndRow));
+                    core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-top', _this.rowPositionUtils.sameRow(row, rangeStartRow));
+                    core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-bottom', _this.rowPositionUtils.sameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         _this.isLeft = true;
-                        grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
+                        core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-left', column === colsToMark[0]);
                     }
                     else {
-                        grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === grid_core_1._.last(colsToMark));
+                        core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === core_1._.last(colsToMark));
                     }
                 }
                 row = _this.cellNavigationService.getRowBelow(row);
@@ -438,7 +438,7 @@ var FillHandle = /** @class */ (function (_super) {
                 if (cellComp) {
                     _this.markedCellComps.push(cellComp);
                     var eGui = cellComp.getGui();
-                    grid_core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[0]);
+                    core_1._.addOrRemoveCssClass(eGui, 'ag-selection-fill-right', column === colsToMark[0]);
                 }
                 row = _this.cellNavigationService.getRowBelow(row);
             } while (!isLastRow);
@@ -455,10 +455,10 @@ var FillHandle = /** @class */ (function (_super) {
     };
     FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
     __decorate([
-        grid_core_1.Autowired('valueService')
+        core_1.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(abstractSelectionHandle_1.AbstractSelectionHandle));

@@ -13,14 +13,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniDoughnut_1 = require("./miniDoughnut");
 var MiniPie = /** @class */ (function (_super) {
     __extends(MiniPie, _super);
     function MiniPie(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
     }
-    MiniPie.chartType = grid_core_1.ChartType.Pie;
+    MiniPie.chartType = core_1.ChartType.Pie;
     return MiniPie;
 }(miniDoughnut_1.MiniDoughnut));
 exports.MiniPie = MiniPie;

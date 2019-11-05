@@ -11,9 +11,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { Constants, _ } from '@ag-grid-community/grid-core';
+import { Constants, _ } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
-import { RowType } from "@ag-grid-community/grid-csv-export";
+import { RowType } from "@ag-grid-community/csv-export";
 var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
     __extends(ExcelXlsxSerializingSession, _super);
     function ExcelXlsxSerializingSession() {

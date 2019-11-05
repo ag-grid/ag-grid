@@ -6,15 +6,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var SortStage = /** @class */ (function () {
     function SortStage() {
     }
     SortStage.prototype.execute = function (params) {
         var sortOptions = this.sortController.getSortForRowController();
-        var sortActive = grid_core_1._.exists(sortOptions) && sortOptions.length > 0;
+        var sortActive = core_1._.exists(sortOptions) && sortOptions.length > 0;
         var deltaSort = sortActive
-            && grid_core_1._.exists(params.rowNodeTransactions)
+            && core_1._.exists(params.rowNodeTransactions)
             // in time we can remove this check, so that delta sort is always
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
@@ -23,7 +23,7 @@ var SortStage = /** @class */ (function () {
         // we only need dirty nodes if doing delta sort
         var dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
         var valueColumns = this.columnController.getValueColumns();
-        var noAggregations = grid_core_1._.missingOrEmpty(valueColumns);
+        var noAggregations = core_1._.missingOrEmpty(valueColumns);
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations);
     };
     SortStage.prototype.calculateDirtyNodes = function (rowNodeTransactions) {
@@ -42,19 +42,19 @@ var SortStage = /** @class */ (function () {
         return dirtyNodes;
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], SortStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('sortService')
+        core_1.Autowired('sortService')
     ], SortStage.prototype, "sortService", void 0);
     __decorate([
-        grid_core_1.Autowired('sortController')
+        core_1.Autowired('sortController')
     ], SortStage.prototype, "sortController", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], SortStage.prototype, "columnController", void 0);
     SortStage = __decorate([
-        grid_core_1.Bean('sortStage')
+        core_1.Bean('sortStage')
     ], SortStage);
     return SortStage;
 }());

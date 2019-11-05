@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var markersPanel_1 = require("./markersPanel");
 var ScatterSeriesPanel = /** @class */ (function (_super) {
     __extends(ScatterSeriesPanel, _super);
@@ -59,7 +59,7 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
     };
     ScatterSeriesPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -69,17 +69,17 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
     };
     ScatterSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('seriesGroup')
+        core_1.RefSelector('seriesGroup')
     ], ScatterSeriesPanel.prototype, "seriesGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesTooltipsToggle')
+        core_1.RefSelector('seriesTooltipsToggle')
     ], ScatterSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], ScatterSeriesPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ScatterSeriesPanel.prototype, "init", null);
     return ScatterSeriesPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ScatterSeriesPanel = ScatterSeriesPanel;

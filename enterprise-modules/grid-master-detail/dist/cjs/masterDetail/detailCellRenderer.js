@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var DetailCellRenderer = /** @class */ (function (_super) {
     __extends(DetailCellRenderer, _super);
     function DetailCellRenderer() {
@@ -45,7 +45,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         this.masterGridApi = params.api;
         this.suppressRefresh = params.suppressRefresh;
         this.selectAndSetTemplate(params);
-        if (grid_core_1._.exists(this.eDetailGrid)) {
+        if (core_1._.exists(this.eDetailGrid)) {
             this.addThemeToDetailGrid();
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
@@ -61,7 +61,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
-        this.addDestroyableEventListener(params.node.parent, grid_core_1.RowNode.EVENT_DATA_CHANGED, function () {
+        this.addDestroyableEventListener(params.node.parent, core_1.RowNode.EVENT_DATA_CHANGED, function () {
             _this.needRefresh = true;
         });
     };
@@ -70,7 +70,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
         var theme = this.environment.getTheme().theme;
         if (theme) {
-            grid_core_1._.addCssClass(this.eDetailGrid, theme);
+            core_1._.addCssClass(this.eDetailGrid, theme);
         }
     };
     DetailCellRenderer.prototype.registerDetailWithMaster = function (rowNode) {
@@ -91,7 +91,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     };
     DetailCellRenderer.prototype.selectAndSetTemplate = function (params) {
         var paramsAny = params;
-        if (grid_core_1._.missing(paramsAny.template)) {
+        if (core_1._.missing(paramsAny.template)) {
             // use default template
             this.setTemplate(DetailCellRenderer.TEMPLATE);
         }
@@ -117,14 +117,14 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         // api and columnApi into gridOptions
         var _this = this;
         var gridOptions = params.detailGridOptions;
-        if (grid_core_1._.missing(gridOptions)) {
+        if (core_1._.missing(gridOptions)) {
             console.warn('ag-Grid: could not find detail grid options for master detail, ' +
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
         }
         // IMPORTANT - gridOptions must be cloned
-        this.detailGridOptions = grid_core_1._.cloneObject(gridOptions);
+        this.detailGridOptions = core_1._.cloneObject(gridOptions);
         // tslint:disable-next-line
-        new grid_core_1.Grid(this.eDetailGrid, this.detailGridOptions, {
+        new core_1.Grid(this.eDetailGrid, this.detailGridOptions, {
             $scope: params.$scope,
             $compile: params.$compile,
             providedBeanInstances: {
@@ -163,14 +163,14 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('eDetailGrid')
+        core_1.RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('environment')
+        core_1.Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
     return DetailCellRenderer;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.DetailCellRenderer = DetailCellRenderer;

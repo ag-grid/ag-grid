@@ -1,4 +1,4 @@
-import {Bean} from "@ag-grid-community/grid-core";
+import {Bean} from "@ag-grid-community/core";
 
 @Bean("downloader")
 export class Downloader {

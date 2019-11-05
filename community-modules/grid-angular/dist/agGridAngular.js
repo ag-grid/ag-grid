@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_2 = require("@ag-grid-community/core");
 var angularFrameworkOverrides_1 = require("./angularFrameworkOverrides");
 var agGridColumn_1 = require("./agGridColumn");
 var angularFrameworkComponentWrapper_1 = require("./angularFrameworkComponentWrapper");
@@ -14,7 +14,7 @@ var AgGridAngular = /** @class */ (function () {
         this._initialised = false;
         this._destroyed = false;
         // in order to ensure firing of gridReady is deterministic
-        this._fullyReady = new grid_core_1.Promise(function (resolve) {
+        this._fullyReady = new core_2.Promise(function (resolve) {
             resolve(true);
         });
         // @START@
@@ -368,7 +368,7 @@ var AgGridAngular = /** @class */ (function () {
     }
     AgGridAngular.prototype.ngAfterViewInit = function () {
         this.checkForDeprecatedEvents();
-        this.gridOptions = grid_core_1.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
+        this.gridOptions = core_2.ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkOverrides: this.angularFrameworkOverrides,
@@ -383,7 +383,7 @@ var AgGridAngular = /** @class */ (function () {
                 return column.toColDef();
             });
         }
-        new grid_core_1.Grid(this._nativeElement, this.gridOptions, this.gridParams);
+        new core_2.Grid(this._nativeElement, this.gridOptions, this.gridParams);
         if (this.gridOptions.api) {
             this.api = this.gridOptions.api;
         }
@@ -398,7 +398,7 @@ var AgGridAngular = /** @class */ (function () {
     };
     AgGridAngular.prototype.ngOnChanges = function (changes) {
         if (this._initialised) {
-            grid_core_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+            core_2.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
         }
     };
     AgGridAngular.prototype.ngOnDestroy = function () {
@@ -413,9 +413,9 @@ var AgGridAngular = /** @class */ (function () {
     };
     AgGridAngular.prototype.checkForDeprecatedEvents = function () {
         var _this = this;
-        grid_core_1.Utils.iterateObject(grid_core_1.Events, function (key, eventName) {
+        core_2.Utils.iterateObject(core_2.Events, function (key, eventName) {
             if (_this[eventName] && _this[eventName].observers.length > 0) {
-                grid_core_1.GridOptionsWrapper.checkEventDeprecation(eventName);
+                core_2.GridOptionsWrapper.checkEventDeprecation(eventName);
             }
         });
     };

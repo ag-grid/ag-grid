@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuList_1 = require("./menuList");
 var ContextMenuFactory = /** @class */ (function () {
@@ -35,7 +35,7 @@ var ContextMenuFactory = /** @class */ (function () {
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions = [];
-        if (grid_core_1._.exists(node) && grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.ClipboardModule)) {
+        if (core_1._.exists(node) && core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ClipboardModule)) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
@@ -46,8 +46,8 @@ var ContextMenuFactory = /** @class */ (function () {
             // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.isEnableCharts() &&
-            grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.RangeSelectionModule) &&
-            grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.GridChartsModule)) {
+            core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.RangeSelectionModule) &&
+            core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.GridChartsModule)) {
             if (this.columnController.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -55,13 +55,13 @@ var ContextMenuFactory = /** @class */ (function () {
                 defaultMenuOptions.push('chartRange');
             }
         }
-        if (grid_core_1._.exists(node)) {
+        if (core_1._.exists(node)) {
             // if user clicks a cell
-            var csvModuleMissing = !grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.CsvExportModule);
-            var excelModuleMissing = !grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.ExcelExportModule);
+            var csvModuleMissing = !core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.CsvExportModule);
+            var excelModuleMissing = !core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ExcelExportModule);
             var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
             var suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
-            var onIPad = grid_core_1._.isIOSUserAgent();
+            var onIPad = core_1._.isIOSUserAgent();
             var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
@@ -85,7 +85,7 @@ var ContextMenuFactory = /** @class */ (function () {
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
-        if (menuItems === undefined || grid_core_1._.missingOrEmpty(menuItems)) {
+        if (menuItems === undefined || core_1._.missingOrEmpty(menuItems)) {
             return;
         }
         var menu = new ContextMenu(menuItems);
@@ -105,35 +105,35 @@ var ContextMenuFactory = /** @class */ (function () {
             hidePopup: hidePopup
         });
         this.activeMenu = menu;
-        menu.addEventListener(grid_core_1.BeanStub.EVENT_DESTROYED, function () {
+        menu.addEventListener(core_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }
         });
     };
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], ContextMenuFactory.prototype, "context", void 0);
     __decorate([
-        grid_core_1.Autowired('popupService')
+        core_1.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], ContextMenuFactory.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.Optional('rangeController')
+        core_1.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], ContextMenuFactory.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ContextMenuFactory.prototype, "init", null);
     ContextMenuFactory = __decorate([
-        grid_core_1.Bean('contextMenuFactory')
+        core_1.Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
@@ -161,13 +161,13 @@ var ContextMenu = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ContextMenu.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('menuItemMapper')
+        core_1.Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
-}(grid_core_1.Component));
+}(core_1.Component));

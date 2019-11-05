@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var setValueModel_1 = require("./setValueModel");
 var setFilterListItem_1 = require("./setFilterListItem");
 var CheckboxState;
@@ -52,7 +52,7 @@ var SetFilter = /** @class */ (function (_super) {
                 var message_1 = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
                     'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
                     'ag-Grid will have the array version of the model removed.';
-                grid_core_1._.doOnce(function () { return console.warn(message_1); }, 'setFilter.modelAsArray');
+                core_1._.doOnce(function () { return console.warn(message_1); }, 'setFilter.modelAsArray');
             }
             // also supporting old filter model for backwards compatibility
             var newValues = (model instanceof Array) ? model : model.values;
@@ -84,13 +84,13 @@ var SetFilter = /** @class */ (function (_super) {
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
-        this.eCheckedIcon = grid_core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
-        this.eUncheckedIcon = grid_core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);
-        this.eIndeterminateCheckedIcon = grid_core_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.eCheckedIcon = core_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.eUncheckedIcon = core_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);
+        this.eIndeterminateCheckedIcon = core_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
         this.initialiseFilterBodyUi();
         var syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange
             // sync values only with CSRM
-            && this.rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+            && this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE
             // sync only needed if user not providing values
             && !params.values;
         if (syncValuesAfterDataChange) {
@@ -102,12 +102,12 @@ var SetFilter = /** @class */ (function (_super) {
             var message_2 = 'ag-Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
                 ' used as this is the default behaviour. To turn this default behaviour off, use the' +
                 ' param suppressSyncValuesAfterDataChange';
-            grid_core_1._.doOnce(function () { return console.warn(message_2); }, 'syncValuesLikeExcel deprecated');
+            core_1._.doOnce(function () { return console.warn(message_2); }, 'syncValuesLikeExcel deprecated');
         }
         if (params.selectAllOnMiniFilter) {
             var message_3 = 'ag-Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
                 ' used as this is the default behaviour.';
-            grid_core_1._.doOnce(function () { return console.warn(message_3); }, 'selectAllOnMiniFilter deprecated');
+            core_1._.doOnce(function () { return console.warn(message_3); }, 'selectAllOnMiniFilter deprecated');
         }
     };
     SetFilter.prototype.resetFilterValuesAndReapplyModel = function () {
@@ -130,11 +130,11 @@ var SetFilter = /** @class */ (function (_super) {
             }
             _this.resetFilterValuesAndReapplyModel();
         };
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_ROW_DATA_UPDATED, rowDataUpdatedListener);
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_CELL_VALUE_CHANGED, cellValueChangedListener);
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_ROW_DATA_UPDATED, rowDataUpdatedListener);
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_CELL_VALUE_CHANGED, cellValueChangedListener);
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
-        grid_core_1._.clearElement(this.eSelectAll);
+        core_1._.clearElement(this.eSelectAll);
         var icon;
         switch (this.selectAllState) {
             case CheckboxState.INTERMEDIATE:
@@ -153,11 +153,11 @@ var SetFilter = /** @class */ (function (_super) {
         this.eSelectAll.appendChild(icon);
     };
     SetFilter.prototype.setLoading = function (loading) {
-        grid_core_1._.setDisplayed(this.eFilterLoading, loading);
+        core_1._.setDisplayed(this.eFilterLoading, loading);
     };
     SetFilter.prototype.initialiseFilterBodyUi = function () {
         var _this = this;
-        this.virtualList = new grid_core_1.VirtualList();
+        this.virtualList = new core_1.VirtualList();
         this.getContext().wireBean(this.virtualList);
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (eSetFilterList) {
@@ -166,7 +166,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
         this.valueModel = new setValueModel_1.SetValueModel(this.setFilterParams.colDef, this.setFilterParams.rowModel, this.setFilterParams.valueGetter, this.setFilterParams.doesRowPassOtherFilter, this.setFilterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.setFilterParams.column);
         this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        grid_core_1._.setDisplayed(this.getGui().querySelector('#ag-mini-filter'), !this.setFilterParams.suppressMiniFilter);
+        core_1._.setDisplayed(this.getGui().querySelector('#ag-mini-filter'), !this.setFilterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.valueModel.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', this.onMiniFilterInput.bind(this));
         this.addDestroyableEventListener(this.eMiniFilter, 'keypress', this.onMiniFilterKeyPress.bind(this));
@@ -174,7 +174,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
         this.updateSelectAll();
         if (this.setFilterParams.suppressSelectAll) {
-            grid_core_1._.setDisplayed(this.eSelectAllContainer, false);
+            core_1._.setDisplayed(this.eSelectAllContainer, false);
         }
         this.virtualList.refresh();
     };
@@ -220,7 +220,7 @@ var SetFilter = /** @class */ (function (_super) {
         if (this.setFilterParams.colDef.keyCreator) {
             value = this.setFilterParams.colDef.keyCreator({ value: value });
         }
-        value = grid_core_1._.makeNull(value);
+        value = core_1._.makeNull(value);
         if (Array.isArray(value)) {
             for (var i = 0; i < value.length; i++) {
                 var valueExistsInMap = !!this.appliedModelValuesMapped[value[i]];
@@ -305,7 +305,7 @@ var SetFilter = /** @class */ (function (_super) {
         this.updateCheckboxIcon();
     };
     SetFilter.prototype.onMiniFilterKeyPress = function (e) {
-        if (grid_core_1._.isKeyPressed(e, grid_core_1.Constants.KEY_ENTER)) {
+        if (core_1._.isKeyPressed(e, core_1.Constants.KEY_ENTER)) {
             this.onEnterKeyOnMiniFilter();
         }
     };
@@ -324,7 +324,7 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.onSelectAll = function (event) {
         event.preventDefault();
-        grid_core_1._.addAgGridEventPath(event);
+        core_1._.addAgGridEventPath(event);
         if (this.selectAllState === CheckboxState.CHECKED) {
             this.selectAllState = CheckboxState.UNCHECKED;
         }
@@ -398,25 +398,25 @@ var SetFilter = /** @class */ (function (_super) {
         return this.valueModel.getUniqueValue(index);
     };
     __decorate([
-        grid_core_1.RefSelector('eSelectAll')
+        core_1.RefSelector('eSelectAll')
     ], SetFilter.prototype, "eSelectAll", void 0);
     __decorate([
-        grid_core_1.RefSelector('eSelectAllContainer')
+        core_1.RefSelector('eSelectAllContainer')
     ], SetFilter.prototype, "eSelectAllContainer", void 0);
     __decorate([
-        grid_core_1.RefSelector('eMiniFilter')
+        core_1.RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
     __decorate([
-        grid_core_1.RefSelector('ag-filter-loading')
+        core_1.RefSelector('ag-filter-loading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
     __decorate([
-        grid_core_1.Autowired('valueFormatterService')
+        core_1.Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], SetFilter.prototype, "eventService", void 0);
     return SetFilter;
-}(grid_core_1.ProvidedFilter));
+}(core_1.ProvidedFilter));
 exports.SetFilter = SetFilter;
 var ModelWrapper = /** @class */ (function () {
     function ModelWrapper(model) {

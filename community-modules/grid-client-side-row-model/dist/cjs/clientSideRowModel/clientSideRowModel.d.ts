@@ -1,4 +1,4 @@
-import { ChangedPath, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction, IClientSideRowModel } from "@ag-grid-community/grid-core";
+import { ChangedPath, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction, IClientSideRowModel } from "@ag-grid-community/core";
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
     callback: ((res: RowNodeTransaction) => void) | undefined;

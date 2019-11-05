@@ -1,4 +1,4 @@
-import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/grid-core";
+import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 
 import { ChartController } from "../../chartController";
 import { ChartTranslator } from "../../chartTranslator";

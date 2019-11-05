@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate } from '@ag-grid-community/grid-core';
+import { ExcelOOXMLTemplate } from '@ag-grid-community/core';
 declare const fillFactory: ExcelOOXMLTemplate;
 export default fillFactory;
 export interface Fill {

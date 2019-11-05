@@ -61,9 +61,9 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-grid-community/grid-angular": "^22.0.0-beta.0",
-    "@ag-grid-community/grid-react": "^22.0.0-beta.0",
-    "@ag-grid-community/grid-vue": "^22.0.0-beta.0",
+    "@ag-grid-community/angular": "^22.0.0-beta.0",
+    "@ag-grid-community/react": "^22.0.0-beta.0",
+    "@ag-grid-community/vue": "^22.0.0-beta.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",

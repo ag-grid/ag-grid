@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var ViewportRowModel = /** @class */ (function () {
     function ViewportRowModel() {
         // rowRenderer tells us these
@@ -20,7 +20,7 @@ var ViewportRowModel = /** @class */ (function () {
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     };
     ViewportRowModel.prototype.start = function () {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
@@ -99,7 +99,7 @@ var ViewportRowModel = /** @class */ (function () {
         }
     };
     ViewportRowModel.prototype.getType = function () {
-        return grid_core_1.Constants.ROW_MODEL_TYPE_VIEWPORT;
+        return core_1.Constants.ROW_MODEL_TYPE_VIEWPORT;
     };
     ViewportRowModel.prototype.getRow = function (rowIndex) {
         if (!this.rowNodesByIndex[rowIndex]) {
@@ -149,7 +149,7 @@ var ViewportRowModel = /** @class */ (function () {
         return this.rowCount > 0;
     };
     ViewportRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        var firstIndex = grid_core_1._.missing(firstInRange) ? 0 : firstInRange.rowIndex;
+        var firstIndex = core_1._.missing(firstInRange) ? 0 : firstInRange.rowIndex;
         var lastIndex = lastInRange.rowIndex;
         var firstNodeOutOfRange = firstIndex < this.firstRow || firstIndex > this.lastRow;
         var lastNodeOutOfRange = lastIndex < this.firstRow || lastIndex > this.lastRow;
@@ -176,7 +176,7 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.setRowData = function (rowData) {
         var _this = this;
-        grid_core_1._.iterateObject(rowData, function (indexStr, dataItem) {
+        core_1._.iterateObject(rowData, function (indexStr, dataItem) {
             var index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -185,7 +185,7 @@ var ViewportRowModel = /** @class */ (function () {
                 // the abnormal case is we requested a row even though the grid didn't need it
                 // as a result of the paging and buffer (ie the row is off screen), in which
                 // case we need to create a new node now
-                if (grid_core_1._.missing(rowNode)) {
+                if (core_1._.missing(rowNode)) {
                     rowNode = _this.createBlankRowNode(index);
                     _this.rowNodesByIndex[index] = rowNode;
                 }
@@ -197,7 +197,7 @@ var ViewportRowModel = /** @class */ (function () {
         });
     };
     ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
-        var rowNode = new grid_core_1.RowNode();
+        var rowNode = new core_1.RowNode();
         this.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
@@ -208,7 +208,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
             var event_1 = {
-                type: grid_core_1.Events.EVENT_MODEL_UPDATED,
+                type: core_1.Events.EVENT_MODEL_UPDATED,
                 api: this.gridApi,
                 columnApi: this.columnApi,
                 newData: false,
@@ -223,34 +223,34 @@ var ViewportRowModel = /** @class */ (function () {
         return false;
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], ViewportRowModel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('selectionController')
+        core_1.Autowired('selectionController')
     ], ViewportRowModel.prototype, "selectionController", void 0);
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], ViewportRowModel.prototype, "context", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], ViewportRowModel.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('rowRenderer')
+        core_1.Autowired('rowRenderer')
     ], ViewportRowModel.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ViewportRowModel.prototype, "init", null);
     __decorate([
-        grid_core_1.PreDestroy
+        core_1.PreDestroy
     ], ViewportRowModel.prototype, "destroyDatasource", null);
     ViewportRowModel = __decorate([
-        grid_core_1.Bean('rowModel')
+        core_1.Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;
 }());

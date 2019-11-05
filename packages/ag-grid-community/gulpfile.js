@@ -119,19 +119,19 @@ const tscMainEs6Task = () => {
 // End of Typescript related tasks
 
 const copyGridCoreStyles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/grid-core/dist/styles')) {
-        done("node_modules/@ag-grid-community/grid-core/dist/styles doesn't exist - exiting")
+    if(!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
+        done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-grid-community/grid-core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    return gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
 };
 
 const copyGridAllUmdFiles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/grid-all-modules/dist')) {
-        done("./node_modules/@ag-grid-community/grid-all-modules/dist doesn't exist - exiting")
+    if(!fs.existsSync('./node_modules/@ag-grid-community/all-modules/dist')) {
+        done("./node_modules/@ag-grid-community/all-modules/dist doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-grid-community/grid-all-modules/dist/ag-grid-community*.js').pipe(gulp.dest('./dist/'));
+    return gulp.src('./node_modules/@ag-grid-community/all-modules/dist/ag-grid-community*.js').pipe(gulp.dest('./dist/'));
 };
 
 // copy from grid-core tasks

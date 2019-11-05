@@ -1,4 +1,4 @@
-import { ChartType } from "@ag-grid-community/grid-core";
+import { ChartType } from "@ag-grid-community/core";
 import { MiniStackedColumn } from "./miniStackedColumn";
 export declare class MiniNormalizedColumn extends MiniStackedColumn {
     static chartType: ChartType;

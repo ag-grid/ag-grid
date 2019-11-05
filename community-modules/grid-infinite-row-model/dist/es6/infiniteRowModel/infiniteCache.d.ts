@@ -1,4 +1,4 @@
-import { IDatasource, RowNode, RowNodeCache, RowNodeCacheParams } from "@ag-grid-community/grid-core";
+import { IDatasource, RowNode, RowNodeCache, RowNodeCacheParams } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

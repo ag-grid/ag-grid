@@ -37,9 +37,9 @@ const populateDevFolder = () => {
                 .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
     });
 
-    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-react`));
-    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-angular`));
-    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/grid-vue`));
+    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
+    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
+    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
     return merge(...copyTasks, react, angular, vue);
 };
@@ -164,10 +164,10 @@ const bundleSite = (production) => {
 
 const copyFromDistFolder = () => {
     return merge(
-        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-grid-community/grid-all-modules/dist/')),
+        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-grid-community/all-modules/dist/')),
         gulp
             .src(['../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.js', '../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.min.js'])
-            .pipe(gulp.dest('./dist/@ag-grid-enterprise/grid-all-modules/dist/'))
+            .pipe(gulp.dest('./dist/@ag-grid-enterprise/all-modules/dist/'))
     );
 };
 

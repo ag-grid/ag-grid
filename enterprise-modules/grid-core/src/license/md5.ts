@@ -1,4 +1,4 @@
-import { Bean, PostConstruct } from "@ag-grid-community/grid-core";
+import { Bean, PostConstruct } from "@ag-grid-community/core";
 
 @Bean('md5')
 export class MD5 {

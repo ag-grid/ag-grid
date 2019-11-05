@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 // table for crc calculation
 // from: https://referencesource.microsoft.com/#System/sys/System/IO/compression/Crc32Helper.cs,3b31978c7d7f7246,references
 var crcTable = [
@@ -96,7 +96,7 @@ var ZipContainer = /** @class */ (function () {
     };
     ZipContainer.prototype.getHeader = function (currentFile, offset) {
         var content = currentFile.content, path = currentFile.path, created = currentFile.created;
-        var utf8_encode = grid_core_1._.utf8_encode, decToHex = grid_core_1._.decToHex;
+        var utf8_encode = core_1._.utf8_encode, decToHex = core_1._.decToHex;
         var utfPath = utf8_encode(path);
         var isUTF8 = utfPath !== path;
         var time = this.convertTime(created);
@@ -130,7 +130,7 @@ var ZipContainer = /** @class */ (function () {
         return { fileHeader: fileHeader, folderHeader: folderHeader, content: content || '' };
     };
     ZipContainer.prototype.buildFolderEnd = function (tLen, cLen, lLen) {
-        var decToHex = grid_core_1._.decToHex;
+        var decToHex = core_1._.decToHex;
         return 'PK\x05\x06' + // central folder end
             '\x00\x00' +
             '\x00\x00' +
@@ -181,7 +181,7 @@ var ZipContainer = /** @class */ (function () {
         return dt;
     };
     ZipContainer = __decorate([
-        grid_core_1.Bean('zipContainer')
+        core_1.Bean('zipContainer')
     ], ZipContainer);
     return ZipContainer;
 }());

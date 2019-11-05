@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniCharts_1 = require("./miniCharts");
 var MiniChartsContainer = /** @class */ (function (_super) {
     __extends(MiniChartsContainer, _super);
@@ -65,7 +65,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var eGui = this.getGui();
         Object.keys(chartGroups).forEach(function (group) {
             var chartGroup = chartGroups[group];
-            var groupComponent = _this.wireBean(new grid_core_1.AgGroupComponent({
+            var groupComponent = _this.wireBean(new core_1.AgGroupComponent({
                 title: _this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
@@ -73,7 +73,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             }));
             chartGroup.forEach(function (MiniClass) {
                 var miniWrapper = document.createElement('div');
-                grid_core_1._.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
+                core_1._.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
                 _this.addDestroyableEventListener(miniWrapper, 'click', function () {
                     _this.chartController.setChartType(MiniClass.chartType);
                     _this.refreshSelected();
@@ -89,16 +89,16 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     MiniChartsContainer.prototype.refreshSelected = function () {
         var type = this.chartController.getChartType();
         for (var wrapper in this.wrappers) {
-            grid_core_1._.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
+            core_1._.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
         }
     };
     MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], MiniChartsContainer.prototype, "init", null);
     return MiniChartsContainer;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.MiniChartsContainer = MiniChartsContainer;

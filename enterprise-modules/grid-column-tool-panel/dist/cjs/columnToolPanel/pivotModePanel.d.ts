@@ -1,4 +1,4 @@
-import { Component } from "@ag-grid-community/grid-core";
+import { Component } from "@ag-grid-community/core";
 export declare class PivotModePanel extends Component {
     private columnController;
     private eventService;

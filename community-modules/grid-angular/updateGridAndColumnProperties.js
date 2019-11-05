@@ -15,7 +15,7 @@ MouseEvent = typeof MouseEvent === 'undefined' ? function () {
 } : MouseEvent;
 
 function getGridPropertiesAndEventsJs() {
-    const {ComponentUtil} = require("@ag-grid-community/grid-core");
+    const {ComponentUtil} = require("@ag-grid-community/core");
 
     let result = '';
 
@@ -38,7 +38,7 @@ function getGridPropertiesAndEventsJs() {
 }
 
 function getGridColumnPropertiesJs() {
-    const {ColDefUtil} = require("@ag-grid-community/grid-core");
+    const {ColDefUtil} = require("@ag-grid-community/core");
 
     // colDef properties that dont make sense in an angular context (or are private)
     const skippableProperties = ['template',
@@ -70,8 +70,8 @@ function getJavascript(filename) {
 }
 
 function getGridPropertiesAndEventsTs() {
-    const eventsSrc = getJavascript('./node_modules/@ag-grid-community/grid-core/src/ts/eventKeys.ts');
-    const propertyKeysSrc = getJavascript('./node_modules/@ag-grid-community/grid-core/src/ts/propertyKeys.ts');
+    const eventsSrc = getJavascript('./node_modules/@ag-grid-community/core/src/ts/eventKeys.ts');
+    const propertyKeysSrc = getJavascript('./node_modules/@ag-grid-community/core/src/ts/propertyKeys.ts');
 
     eval(eventsSrc);
     eval(propertyKeysSrc);
@@ -103,7 +103,7 @@ function getGridPropertiesAndEventsTs() {
 }
 
 function getGridColumnPropertiesTs() {
-    const js = getJavascript('./node_modules/@ag-grid-community/grid-core/src/ts/components/colDefUtil.ts');
+    const js = getJavascript('./node_modules/@ag-grid-community/core/src/ts/components/colDefUtil.ts');
     eval(js);
 
     // colDef properties that dont make sense in an angular context (or are private)

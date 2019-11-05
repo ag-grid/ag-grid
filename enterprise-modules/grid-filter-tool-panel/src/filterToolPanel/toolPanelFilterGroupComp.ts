@@ -16,7 +16,7 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;

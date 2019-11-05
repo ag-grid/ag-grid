@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var FiltersToolPanel = /** @class */ (function (_super) {
     __extends(FiltersToolPanel, _super);
     function FiltersToolPanel() {
@@ -35,7 +35,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         };
-        grid_core_1._.mergeDeep(defaultParams, params);
+        core_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
@@ -94,20 +94,20 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanel.TEMPLATE = "<div class=\"ag-filter-panel\">\n            <ag-filters-tool-panel-header ref=\"filtersToolPanelHeaderPanel\"></ag-filters-tool-panel-header>\n            <ag-filters-tool-panel-list ref=\"filtersToolPanelListPanel\"></ag-filters-tool-panel-list> \n         </div>";
     __decorate([
-        grid_core_1.RefSelector('filtersToolPanelHeaderPanel')
+        core_1.RefSelector('filtersToolPanelHeaderPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelHeaderPanel", void 0);
     __decorate([
-        grid_core_1.RefSelector('filtersToolPanelListPanel')
+        core_1.RefSelector('filtersToolPanelListPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
     __decorate([
-        grid_core_1.Autowired("gridApi")
+        core_1.Autowired("gridApi")
     ], FiltersToolPanel.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired("eventService")
+        core_1.Autowired("eventService")
     ], FiltersToolPanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], FiltersToolPanel.prototype, "columnController", void 0);
     return FiltersToolPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.FiltersToolPanel = FiltersToolPanel;

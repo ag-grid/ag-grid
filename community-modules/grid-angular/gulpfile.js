@@ -40,8 +40,8 @@ const compileSource = (callback) => {
 
 const watch = () => {
     gulp.watch([
-            './node_modules/@ag-grid-community/grid-core/src/ts/propertyKeys.ts',
-            './node_modules/@ag-grid-community/grid-core/ts/components/colDefUtil.ts'
+            './node_modules/@ag-grid-community/core/src/ts/propertyKeys.ts',
+            './node_modules/@ag-grid-community/core/ts/components/colDefUtil.ts'
         ],
         series('update-properties'));
 };

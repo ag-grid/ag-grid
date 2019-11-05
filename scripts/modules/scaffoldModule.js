@@ -47,9 +47,9 @@ const main = async () => {
     templatePackageJson.name = moduleName;
     templatePackageJson.version = packageVersionNumber;
     templatePackageJson.license = answers.enterprise ? 'Commercial' : 'MIT';
-    templatePackageJson.dependencies['@ag-grid-community/grid-core'] = `~${packageVersionNumber}`;
+    templatePackageJson.dependencies['@ag-grid-community/core'] = `~${packageVersionNumber}`;
     if(answers.enterprise) {
-        templatePackageJson.dependencies['@ag-grid-enterprise/grid-core'] = `~${packageVersionNumber}`;
+        templatePackageJson.dependencies['@ag-grid-enterprise/core'] = `~${packageVersionNumber}`;
     }
 
     fs.mkdirSync(`./${moduleDirName}`);

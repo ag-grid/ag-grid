@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef } from "@ag-grid-community/grid-core";
+import { ColDef, ColGroupDef } from "@ag-grid-community/core";
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     pivotColumnDefs: ColDef[];

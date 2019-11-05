@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
 var linearScale_1 = require("../../../../../charts/scale/linearScale");
 var clipRect_1 = require("../../../../../charts/scene/clipRect");
@@ -62,7 +62,7 @@ var MiniScatter = /** @class */ (function (_super) {
             line.fill = fills[i % fills.length];
         });
     };
-    MiniScatter.chartType = grid_core_1.ChartType.Scatter;
+    MiniScatter.chartType = core_1.ChartType.Scatter;
     return MiniScatter;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniScatter = MiniScatter;

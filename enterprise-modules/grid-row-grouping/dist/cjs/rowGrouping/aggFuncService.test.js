@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var aggFuncService_1 = require("./aggFuncService");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 function createService() {
     var getAggFuncs = jest.fn();
-    var gridOptionsWrapper = new grid_core_1.GridOptionsWrapper();
+    var gridOptionsWrapper = new core_1.GridOptionsWrapper();
     gridOptionsWrapper.getAggFuncs = getAggFuncs;
     var service = new aggFuncService_1.AggFuncService();
     service.gridOptionsWrapper = gridOptionsWrapper;

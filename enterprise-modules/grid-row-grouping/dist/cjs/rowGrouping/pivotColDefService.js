@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var PivotColDefService = /** @class */ (function () {
     function PivotColDefService() {
     }
@@ -18,14 +18,14 @@ var PivotColDefService = /** @class */ (function () {
         var pivotColumns = this.columnController.getPivotColumns();
         var valueColumns = this.columnController.getValueColumns();
         var levelsDeep = pivotColumns.length;
-        var columnIdSequence = new grid_core_1.NumberSequence();
+        var columnIdSequence = new core_1.NumberSequence();
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        var pivotColumnDefsClone = pivotColumnDefs.map(function (colDef) { return grid_core_1._.cloneObject(colDef); });
+        var pivotColumnDefsClone = pivotColumnDefs.map(function (colDef) { return core_1._.cloneObject(colDef); });
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
             pivotColumnDefs: pivotColumnDefsClone
@@ -37,7 +37,7 @@ var PivotColDefService = /** @class */ (function () {
     // @pivotKeys - the keys for the pivot, eg if pivoting on {Language,Country} then could be {English,Ireland}
     PivotColDefService.prototype.recursivelyAddGroup = function (parentChildren, pivotColumnDefs, index, uniqueValues, pivotKeys, columnIdSequence, levelsDeep, primaryPivotColumns) {
         var _this = this;
-        grid_core_1._.iterateObject(uniqueValues, function (key, value) {
+        core_1._.iterateObject(uniqueValues, function (key, value) {
             var newPivotKeys = pivotKeys.slice(0);
             newPivotKeys.push(key);
             var createGroup = index !== levelsDeep;
@@ -212,7 +212,7 @@ var PivotColDefService = /** @class */ (function () {
         var colDef = {};
         if (valueColumn) {
             var colDefToCopy = valueColumn.getColDef();
-            grid_core_1._.assign(colDef, colDefToCopy);
+            core_1._.assign(colDef, colDefToCopy);
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
@@ -269,13 +269,13 @@ var PivotColDefService = /** @class */ (function () {
         }
     };
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], PivotColDefService.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], PivotColDefService.prototype, "gridOptionsWrapper", void 0);
     PivotColDefService = __decorate([
-        grid_core_1.Bean('pivotColDefService')
+        core_1.Bean('pivotColDefService')
     ], PivotColDefService);
     return PivotColDefService;
 }());

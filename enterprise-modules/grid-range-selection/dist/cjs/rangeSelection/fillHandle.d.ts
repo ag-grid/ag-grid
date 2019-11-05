@@ -1,4 +1,4 @@
-import { CellComp } from '@ag-grid-community/grid-core';
+import { CellComp } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class FillHandle extends AbstractSelectionHandle {
     private valueService;

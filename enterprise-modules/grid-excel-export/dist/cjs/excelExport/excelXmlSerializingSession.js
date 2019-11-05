@@ -20,8 +20,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var grid_csv_export_1 = require("@ag-grid-community/grid-csv-export");
+var core_1 = require("@ag-grid-community/core");
+var csv_export_1 = require("@ag-grid-community/csv-export");
 var ExcelXmlSerializingSession = /** @class */ (function (_super) {
     __extends(ExcelXmlSerializingSession, _super);
     function ExcelXmlSerializingSession(config) {
@@ -75,7 +75,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         });
         return {
             onColumn: function (header, index, span) {
-                var styleIds = that.styleLinker(grid_csv_export_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
+                var styleIds = that.styleLinker(csv_export_1.RowType.HEADER_GROUPING, 1, index, "grouping-" + header, undefined, undefined);
                 currentCells.push(that.createMergedCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, "String", header, span));
             }
         };
@@ -101,7 +101,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var that = this;
         return function (column, index, node) {
             var nameForCol = _this.extractHeaderValue(column);
-            var styleIds = that.styleLinker(grid_csv_export_1.RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
+            var styleIds = that.styleLinker(csv_export_1.RowType.HEADER, rowIndex, index, nameForCol, column, undefined);
             currentCells.push(_this.createCell((styleIds && styleIds.length > 0) ? styleIds[0] : undefined, 'String', nameForCol));
         };
     };
@@ -130,8 +130,8 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var _this = this;
         var that = this;
         return function (column, index, node) {
-            var valueForCell = _this.extractRowCellValue(column, index, grid_core_1.Constants.EXPORT_TYPE_EXCEL, node);
-            var styleIds = that.styleLinker(grid_csv_export_1.RowType.BODY, rowIndex, index, valueForCell, column, node);
+            var valueForCell = _this.extractRowCellValue(column, index, core_1.Constants.EXPORT_TYPE_EXCEL, node);
+            var styleIds = that.styleLinker(csv_export_1.RowType.BODY, rowIndex, index, valueForCell, column, node);
             var excelStyleId;
             if (styleIds && styleIds.length == 1) {
                 excelStyleId = styleIds[0];
@@ -143,7 +143,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
                 }
                 excelStyleId = _this.mixedStyles[key].excelID;
             }
-            var type = grid_core_1._.isNumeric(valueForCell) ? 'Number' : 'String';
+            var type = core_1._.isNumeric(valueForCell) ? 'Number' : 'String';
             currentCells.push(that.createCell(excelStyleId, type, valueForCell));
         };
     };
@@ -155,7 +155,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         styleIds.forEach(function (styleId) {
             _this.excelStyles.forEach(function (excelStyle) {
                 if (excelStyle.id === styleId) {
-                    grid_core_1._.mergeDeep(resultantStyle, grid_core_1._.deepCloneObject(excelStyle));
+                    core_1._.mergeDeep(resultantStyle, core_1._.deepCloneObject(excelStyle));
                 }
             });
         });
@@ -201,7 +201,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
             return type;
         }
         var typeTransformed = getType();
-        var massageText = function (val) { return _this.suppressTextAsCDATA ? grid_core_1._.escape(val) : "<![CDATA[" + val + "]]>"; };
+        var massageText = function (val) { return _this.suppressTextAsCDATA ? core_1._.escape(val) : "<![CDATA[" + val + "]]>"; };
         var convertBoolean = function (val) {
             if (!val || val === '0' || val === 'false') {
                 return '0';
@@ -230,5 +230,5 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         };
     };
     return ExcelXmlSerializingSession;
-}(grid_csv_export_1.BaseGridSerializingSession));
+}(csv_export_1.BaseGridSerializingSession));
 exports.ExcelXmlSerializingSession = ExcelXmlSerializingSession;

@@ -1,9 +1,9 @@
 import {AfterViewInit, Component} from "@angular/core";
 
-import {AllModules, GridOptions} from "@ag-grid-enterprise/grid-all-modules";
+import {AllModules, GridOptions} from "@ag-grid-enterprise/all-modules";
 
-import "@ag-grid-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import {MatSliderComponent} from "./mat-slider.component";
 import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";

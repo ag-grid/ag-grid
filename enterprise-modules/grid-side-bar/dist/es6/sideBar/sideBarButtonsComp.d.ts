@@ -1,4 +1,4 @@
-import { AgEvent, Component, ToolPanelDef } from "@ag-grid-community/grid-core";
+import { AgEvent, Component, ToolPanelDef } from "@ag-grid-community/core";
 export interface SideBarButtonClickedEvent extends AgEvent {
     toolPanelId: string;
 }

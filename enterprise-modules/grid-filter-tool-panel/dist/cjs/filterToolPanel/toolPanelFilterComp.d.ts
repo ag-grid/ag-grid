@@ -1,4 +1,4 @@
-import { Column, Component } from "@ag-grid-community/grid-core";
+import { Column, Component } from "@ag-grid-community/core";
 export declare class ToolPanelFilterComp extends Component {
     private static TEMPLATE;
     private eFilterToolPanelHeader;

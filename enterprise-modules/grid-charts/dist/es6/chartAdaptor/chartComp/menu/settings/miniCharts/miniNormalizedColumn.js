@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { ChartType } from "@ag-grid-community/grid-core";
+import { ChartType } from "@ag-grid-community/core";
 import { MiniStackedColumn } from "./miniStackedColumn";
 var MiniNormalizedColumn = /** @class */ (function (_super) {
     __extends(MiniNormalizedColumn, _super);

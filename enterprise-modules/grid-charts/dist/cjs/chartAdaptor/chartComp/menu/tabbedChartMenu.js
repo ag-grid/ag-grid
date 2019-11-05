@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartDataPanel_1 = require("./data/chartDataPanel");
 var chartFormattingPanel_1 = require("./format/chartFormattingPanel");
 var chartSettingsPanel_1 = require("./settings/chartSettingsPanel");
@@ -43,14 +43,14 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             _this.tabs.push(tab);
             _this.addDestroyFunc(function () { return comp.destroy(); });
         });
-        this.tabbedLayout = new grid_core_1.TabbedLayout({
+        this.tabbedLayout = new core_1.TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
     };
     TabbedChartMenu.prototype.createTab = function (name, title, ChildClass) {
         var eWrapperDiv = document.createElement('div');
-        grid_core_1._.addCssClass(eWrapperDiv, "ag-chart-" + title);
+        core_1._.addCssClass(eWrapperDiv, "ag-chart-" + title);
         var comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
@@ -60,7 +60,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             comp: comp,
             tab: {
                 title: titleEl,
-                bodyPromise: grid_core_1.Promise.resolve(eWrapperDiv),
+                bodyPromise: core_1.Promise.resolve(eWrapperDiv),
                 name: name
             }
         };
@@ -69,9 +69,9 @@ var TabbedChartMenu = /** @class */ (function (_super) {
         return this.tabbedLayout.getMinDimensions();
     };
     TabbedChartMenu.prototype.updateCurrentChartType = function (chartType) {
-        grid_core_1._.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
+        core_1._.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
         this.currentChartType = chartType;
-        grid_core_1._.addCssClass(this.chartIcons[chartType], 'ag-selected');
+        core_1._.addCssClass(this.chartIcons[chartType], 'ag-selected');
     };
     TabbedChartMenu.prototype.showTab = function (tab) {
         var tabItem = this.tabs[tab];
@@ -101,11 +101,11 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], TabbedChartMenu.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], TabbedChartMenu.prototype, "init", null);
     return TabbedChartMenu;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.TabbedChartMenu = TabbedChartMenu;

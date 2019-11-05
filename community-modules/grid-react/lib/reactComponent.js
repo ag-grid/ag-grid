@@ -1,4 +1,4 @@
-// @ag-grid-community/grid-react v22.0.0-beta.0
+// @ag-grid-community/react v22.0.0-beta.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var ReactDOM = require("react-dom");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var baseReactComponent_1 = require("./baseReactComponent");
 var utils_1 = require("./utils");
 var keyGenerator_1 = require("./keyGenerator");
@@ -42,7 +42,7 @@ var ReactComponent = /** @class */ (function (_super) {
     };
     ReactComponent.prototype.init = function (params) {
         var _this = this;
-        return new grid_core_1.Promise(function (resolve) {
+        return new core_1.Promise(function (resolve) {
             _this.eParentElement = _this.createParentElement(params);
             _this.createReactComponent(params, resolve);
         });
@@ -78,12 +78,12 @@ var ReactComponent = /** @class */ (function (_super) {
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             var parentContainerClasses = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(function (className) { return grid_core_1.Utils.addCssClass(_this.eParentElement, className); });
+            parentContainerClasses.forEach(function (className) { return core_1.Utils.addCssClass(_this.eParentElement, className); });
         }
     };
     ReactComponent.prototype.createParentElement = function (params) {
         var eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
-        grid_core_1.Utils.addCssClass(eParentElement, 'ag-react-container');
+        core_1.Utils.addCssClass(eParentElement, 'ag-react-container');
         // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
         // so user can have access to the react container, to add css class or style
         params.reactContainer = eParentElement;

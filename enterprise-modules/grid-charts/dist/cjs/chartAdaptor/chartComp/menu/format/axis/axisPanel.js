@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var axisTicksPanel_1 = require("./axisTicksPanel");
 var fontPanel_1 = require("../fontPanel");
 var AxisPanel = /** @class */ (function (_super) {
@@ -102,7 +102,7 @@ var AxisPanel = /** @class */ (function (_super) {
     AxisPanel.prototype.addAdditionalLabelComps = function (labelPanelComp) {
         var _this = this;
         var createAngleComp = function (label, initialValue, updateFunc) {
-            var rotationInput = _this.wireBean(new grid_core_1.AgAngleSelect()
+            var rotationInput = _this.wireBean(new core_1.AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(initialValue || 0)
@@ -122,7 +122,7 @@ var AxisPanel = /** @class */ (function (_super) {
             _this.chartProxy.getChart().performLayout();
         };
         createAngleComp(yRotationLabel, this.chartProxy.getChartOption("yAxis.label.rotation"), yUpdateFunc);
-        var labelPaddingSlider = this.wireBean(new grid_core_1.AgSlider());
+        var labelPaddingSlider = this.wireBean(new core_1.AgSlider());
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
             .setValue(this.chartProxy.getAxisProperty("label.padding"))
             .setMaxValue(30)
@@ -132,7 +132,7 @@ var AxisPanel = /** @class */ (function (_super) {
     };
     AxisPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -142,20 +142,20 @@ var AxisPanel = /** @class */ (function (_super) {
     };
     AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('axisGroup')
+        core_1.RefSelector('axisGroup')
     ], AxisPanel.prototype, "axisGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('axisLineWidthSlider')
+        core_1.RefSelector('axisLineWidthSlider')
     ], AxisPanel.prototype, "axisLineWidthSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('axisColorInput')
+        core_1.RefSelector('axisColorInput')
     ], AxisPanel.prototype, "axisColorInput", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], AxisPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AxisPanel.prototype, "init", null);
     return AxisPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.AxisPanel = AxisPanel;

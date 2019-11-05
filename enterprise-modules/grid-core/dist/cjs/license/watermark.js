@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var WatermarkComp = /** @class */ (function (_super) {
     __extends(WatermarkComp, _super);
     function WatermarkComp() {
@@ -28,7 +28,7 @@ var WatermarkComp = /** @class */ (function (_super) {
     WatermarkComp.prototype.postConstruct = function () {
         var _this = this;
         var show = this.shouldDisplayWatermark();
-        grid_core_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
+        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
         if (show) {
             this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
             window.setTimeout(function () { return _this.addCssClass('ag-opacity-zero'); }, 0);
@@ -42,14 +42,14 @@ var WatermarkComp = /** @class */ (function (_super) {
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
     };
     __decorate([
-        grid_core_1.Autowired('licenseManager')
+        core_1.Autowired('licenseManager')
     ], WatermarkComp.prototype, "licenseManager", void 0);
     __decorate([
-        grid_core_1.RefSelector('eLicenseTextRef')
+        core_1.RefSelector('eLicenseTextRef')
     ], WatermarkComp.prototype, "eLicenseTextRef", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], WatermarkComp.prototype, "postConstruct", null);
     return WatermarkComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.WatermarkComp = WatermarkComp;

@@ -1,4 +1,4 @@
-import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "@ag-grid-community/grid-core";
+import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "@ag-grid-community/core";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
     private eventService;

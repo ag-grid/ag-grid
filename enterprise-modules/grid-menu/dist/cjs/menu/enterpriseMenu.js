@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var menuList_1 = require("./menuList");
 var menuItemComponent_1 = require("./menuItemComponent");
 var EnterpriseMenuFactory = /** @class */ (function () {
@@ -94,7 +94,7 @@ var EnterpriseMenuFactory = /** @class */ (function () {
         });
         column.setMenuVisible(true, "contextMenu");
         this.activeMenu = menu;
-        menu.addEventListener(grid_core_1.BeanStub.EVENT_DESTROYED, function () {
+        menu.addEventListener(core_1.BeanStub.EVENT_DESTROYED, function () {
             if (_this.activeMenu === menu) {
                 _this.activeMenu = null;
             }
@@ -104,16 +104,16 @@ var EnterpriseMenuFactory = /** @class */ (function () {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
     __decorate([
-        grid_core_1.Autowired('context')
+        core_1.Autowired('context')
     ], EnterpriseMenuFactory.prototype, "context", void 0);
     __decorate([
-        grid_core_1.Autowired('popupService')
+        core_1.Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
     EnterpriseMenuFactory = __decorate([
-        grid_core_1.Bean('menuFactory')
+        core_1.Bean('menuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
@@ -143,13 +143,13 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         var _this = this;
         var tabs = this.getTabsToCreate()
             .map(function (menuTabName) { return _this.createTab(menuTabName); });
-        this.tabbedLayout = new grid_core_1.TabbedLayout({
+        this.tabbedLayout = new core_1.TabbedLayout({
             items: tabs,
             cssClass: 'ag-menu',
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
         var _this = this;
@@ -163,7 +163,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.isModuleLoaded = function (menuTabName) {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
-            return grid_core_1.ModuleRegistry.isRegistered(grid_core_1.ModuleNames.ColumnToolPanelModule);
+            return core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ColumnToolPanelModule);
         }
         else {
             return true;
@@ -255,7 +255,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         // GUI looks weird when two separators are side by side. this can happen accidentally
         // if we remove items from the menu then two separators can edit up adjacent.
-        grid_core_1._.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        core_1._.removeRepeatsFromArray(result, EnterpriseMenu.MENU_ITEM_SEPARATOR);
         return result;
     };
     EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
@@ -268,7 +268,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         var allowRowGroup = this.column.isAllowRowGroup();
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
-        var isInMemoryRowModel = this.rowModel.getType() === grid_core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+        var isInMemoryRowModel = this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
         var usingTreeData = this.gridOptionsWrapper.isTreeData();
         var allowValueAgg = 
         // if primary, then only allow aggValue if grouping and it's a value columns
@@ -324,8 +324,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.mainMenuList.addMenuItems(menuItemsMapped);
         this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
-            title: grid_core_1._.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-            bodyPromise: grid_core_1.Promise.resolve(this.mainMenuList.getGui()),
+            title: core_1._.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            bodyPromise: core_1.Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
@@ -348,7 +348,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             });
         }
         this.tabItemFilter = {
-            title: grid_core_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            title: core_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
             bodyPromise: filterWrapper.guiPromise.promise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -357,7 +357,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createColumnsPanel = function () {
         var eWrapperDiv = document.createElement('div');
-        grid_core_1._.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+        core_1._.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = this.getContext().createComponent('AG-PRIMARY-COLS');
         this.columnSelectPanel.init(false, {
             suppressValues: false,
@@ -374,8 +374,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         });
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
-            title: grid_core_1._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
-            bodyPromise: grid_core_1.Promise.resolve(eWrapperDiv),
+            title: core_1._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
+            bodyPromise: core_1.Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
         return this.tabItemColumns;
@@ -419,29 +419,29 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], EnterpriseMenu.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('filterManager')
+        core_1.Autowired('filterManager')
     ], EnterpriseMenu.prototype, "filterManager", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], EnterpriseMenu.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('menuItemMapper')
+        core_1.Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
     __decorate([
-        grid_core_1.Autowired('rowModel')
+        core_1.Autowired('rowModel')
     ], EnterpriseMenu.prototype, "rowModel", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
-}(grid_core_1.BeanStub));
+}(core_1.BeanStub));
 exports.EnterpriseMenu = EnterpriseMenu;

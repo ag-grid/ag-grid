@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var EXPAND_STATE;
 (function (EXPAND_STATE) {
     EXPAND_STATE[EXPAND_STATE["EXPANDED"] = 0] = "EXPANDED";
@@ -40,7 +40,7 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
         this.addDestroyableEventListener(this.eSearchTextField, 'input', this.onSearchTextChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, grid_core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     FiltersToolPanelHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -49,9 +49,9 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         }
     };
     FiltersToolPanelHeaderPanel.prototype.createExpandIcons = function () {
-        this.eExpand.appendChild(this.eExpandChecked = grid_core_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandUnchecked = grid_core_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
-        this.eExpand.appendChild(this.eExpandIndeterminate = grid_core_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandChecked = core_1._.createIconNoSpan('columnSelectOpen', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandUnchecked = core_1._.createIconNoSpan('columnSelectClosed', this.gridOptionsWrapper));
+        this.eExpand.appendChild(this.eExpandIndeterminate = core_1._.createIconNoSpan('columnSelectIndeterminate', this.gridOptionsWrapper));
     };
     // we only show expand / collapse if we are showing filters
     FiltersToolPanelHeaderPanel.prototype.showOrHideOptions = function () {
@@ -59,13 +59,13 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         var showExpand = !this.params.suppressExpandAll;
         var isFilterGroupPresent = function (col) { return col.getOriginalParent() && col.isFilterAllowed(); };
         var filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
-        grid_core_1._.setDisplayed(this.eFilterWrapper, showFilterSearch);
-        grid_core_1._.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
+        core_1._.setDisplayed(this.eFilterWrapper, showFilterSearch);
+        core_1._.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     };
     FiltersToolPanelHeaderPanel.prototype.onSearchTextChanged = function () {
         var _this = this;
         if (!this.onSearchTextChangedDebounced) {
-            this.onSearchTextChangedDebounced = grid_core_1._.debounce(function () {
+            this.onSearchTextChangedDebounced = core_1._.debounce(function () {
                 _this.dispatchEvent({ type: 'searchChanged', searchText: _this.eSearchTextField.value });
             }, 300);
         }
@@ -77,34 +77,34 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelHeaderPanel.prototype.setExpandState = function (state) {
         this.currentExpandState = state;
-        grid_core_1._.setDisplayed(this.eExpandChecked, this.currentExpandState === EXPAND_STATE.EXPANDED);
-        grid_core_1._.setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
-        grid_core_1._.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
+        core_1._.setDisplayed(this.eExpandChecked, this.currentExpandState === EXPAND_STATE.EXPANDED);
+        core_1._.setDisplayed(this.eExpandUnchecked, this.currentExpandState === EXPAND_STATE.COLLAPSED);
+        core_1._.setDisplayed(this.eExpandIndeterminate, this.currentExpandState === EXPAND_STATE.INDETERMINATE);
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], FiltersToolPanelHeaderPanel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], FiltersToolPanelHeaderPanel.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], FiltersToolPanelHeaderPanel.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.RefSelector('eExpand')
+        core_1.RefSelector('eExpand')
     ], FiltersToolPanelHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
-        grid_core_1.RefSelector('eFilterWrapper')
+        core_1.RefSelector('eFilterWrapper')
     ], FiltersToolPanelHeaderPanel.prototype, "eFilterWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eFilterTextField')
+        core_1.RefSelector('eFilterTextField')
     ], FiltersToolPanelHeaderPanel.prototype, "eSearchTextField", void 0);
     __decorate([
-        grid_core_1.PreConstruct
+        core_1.PreConstruct
     ], FiltersToolPanelHeaderPanel.prototype, "preConstruct", null);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], FiltersToolPanelHeaderPanel.prototype, "postConstruct", null);
     return FiltersToolPanelHeaderPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.FiltersToolPanelHeaderPanel = FiltersToolPanelHeaderPanel;

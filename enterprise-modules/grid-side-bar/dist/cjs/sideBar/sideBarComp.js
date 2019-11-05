@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var sideBarButtonsComp_1 = require("./sideBarButtonsComp");
 var toolPanelWrapper_1 = require("./toolPanelWrapper");
 var SideBarComp = /** @class */ (function (_super) {
@@ -72,8 +72,8 @@ var SideBarComp = /** @class */ (function (_super) {
         var isLeft = position === 'left';
         var resizerSide = isLeft ? 'right' : 'left';
         var eGui = this.getGui();
-        grid_core_1._.addOrRemoveCssClass(eGui, 'ag-side-bar-left', isLeft);
-        grid_core_1._.addOrRemoveCssClass(eGui, 'ag-side-bar-right', !isLeft);
+        core_1._.addOrRemoveCssClass(eGui, 'ag-side-bar-left', isLeft);
+        core_1._.addOrRemoveCssClass(eGui, 'ag-side-bar-right', !isLeft);
         this.toolPanelWrappers.forEach(function (wrapper) {
             wrapper.setResizerSizerSide(resizerSide);
         });
@@ -88,13 +88,13 @@ var SideBarComp = /** @class */ (function (_super) {
             }
             // helpers, in case user doesn't have the right module loaded
             if (def.toolPanel === 'agColumnsToolPanel') {
-                var moduleMissing = !grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.ColumnToolPanelModule, 'Column Tool Panel');
+                var moduleMissing = !core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.ColumnToolPanelModule, 'Column Tool Panel');
                 if (moduleMissing) {
                     return;
                 }
             }
             if (def.toolPanel === 'agFiltersToolPanel') {
-                var moduleMissing = !grid_core_1.ModuleRegistry.assertRegistered(grid_core_1.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
+                var moduleMissing = !core_1.ModuleRegistry.assertRegistered(core_1.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
                 if (moduleMissing) {
                     return;
                 }
@@ -136,7 +136,7 @@ var SideBarComp = /** @class */ (function (_super) {
     };
     SideBarComp.prototype.raiseToolPanelVisibleEvent = function (key) {
         var event = {
-            type: grid_core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+            type: core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
             source: key,
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
@@ -165,7 +165,7 @@ var SideBarComp = /** @class */ (function (_super) {
     };
     SideBarComp.prototype.destroyToolPanelWrappers = function () {
         this.toolPanelWrappers.forEach(function (wrapper) {
-            grid_core_1._.removeFromParent(wrapper.getGui());
+            core_1._.removeFromParent(wrapper.getGui());
             wrapper.destroy();
         });
         this.toolPanelWrappers.length = 0;
@@ -176,17 +176,17 @@ var SideBarComp = /** @class */ (function (_super) {
     };
     SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n              <ag-side-bar-buttons ref=\"sideBarButtons\">\n          </div>";
     __decorate([
-        grid_core_1.Autowired("eventService")
+        core_1.Autowired("eventService")
     ], SideBarComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired("gridOptionsWrapper")
+        core_1.Autowired("gridOptionsWrapper")
     ], SideBarComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('sideBarButtons')
+        core_1.RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], SideBarComp.prototype, "postConstruct", null);
     return SideBarComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.SideBarComp = SideBarComp;

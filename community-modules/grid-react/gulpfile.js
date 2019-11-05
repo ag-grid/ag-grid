@@ -58,7 +58,7 @@ const umd = () => {
                 react: 'React',
                 'react-dom': 'ReactDOM',
                 'prop-types': 'PropTypes',
-                '@ag-grid-community/grid-core': 'agGrid'
+                '@ag-grid-community/core': 'agGrid'
             },
         },
         plugins: [typescript(), commonjs(),

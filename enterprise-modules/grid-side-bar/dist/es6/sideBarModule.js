@@ -1,5 +1,5 @@
-import { ModuleNames } from "@ag-grid-community/grid-core";
-import { EnterpriseCoreModule } from "@ag-grid-enterprise/grid-core";
+import { ModuleNames } from "@ag-grid-community/core";
+import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
 import { HorizontalResizeComp } from "./sideBar/horizontalResizeComp";
 import { SideBarComp } from "./sideBar/sideBarComp";
 import { SideBarButtonsComp } from "./sideBar/sideBarButtonsComp";

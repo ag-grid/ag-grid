@@ -25,7 +25,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var chartProxy_1 = require("../chartProxy");
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartModel_1 = require("../../chartModel");
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
@@ -33,14 +33,14 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         return _super.call(this, params) || this;
     }
     CartesianChartProxy.prototype.getAxisProperty = function (expression) {
-        return grid_core_1._.get(this.chartOptions.xAxis, expression, undefined);
+        return core_1._.get(this.chartOptions.xAxis, expression, undefined);
     };
     CartesianChartProxy.prototype.setAxisProperty = function (expression, value) {
-        grid_core_1._.set(this.chartOptions.xAxis, expression, value);
-        grid_core_1._.set(this.chartOptions.yAxis, expression, value);
+        core_1._.set(this.chartOptions.xAxis, expression, value);
+        core_1._.set(this.chartOptions.yAxis, expression, value);
         var chart = this.chart;
-        grid_core_1._.set(this.chart.xAxis, expression, value);
-        grid_core_1._.set(this.chart.yAxis, expression, value);
+        core_1._.set(this.chart.xAxis, expression, value);
+        core_1._.set(this.chart.yAxis, expression, value);
         chart.performLayout();
         this.raiseChartOptionsChangedEvent();
     };

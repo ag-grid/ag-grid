@@ -1,4 +1,4 @@
-import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "@ag-grid-community/grid-core";
+import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "@ag-grid-community/core";
 export declare class ViewportRowModel implements IRowModel {
     private gridOptionsWrapper;
     private eventService;

@@ -20,7 +20,7 @@ import {
     IStatusPanelParams,
     IToolPanelParams,
     ITooltipParams
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 export interface AgFrameworkComponent<T> {
     agInit(params: T): void;

@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
-var grid_core_2 = require("@ag-grid-enterprise/grid-core");
+var core_1 = require("@ag-grid-community/core");
+var core_2 = require("@ag-grid-enterprise/core");
 var primaryColsHeaderPanel_1 = require("./columnToolPanel/primaryColsHeaderPanel");
 var primaryColsListPanel_1 = require("./columnToolPanel/primaryColsListPanel");
 var columnToolPanel_1 = require("./columnToolPanel/columnToolPanel");
 var primaryColsPanel_1 = require("./columnToolPanel/primaryColsPanel");
-var grid_row_grouping_1 = require("@ag-grid-enterprise/grid-row-grouping");
-var grid_side_bar_1 = require("@ag-grid-enterprise/grid-side-bar");
+var row_grouping_1 = require("@ag-grid-enterprise/row-grouping");
+var side_bar_1 = require("@ag-grid-enterprise/side-bar");
 exports.ColumnsToolPanelModule = {
-    moduleName: grid_core_1.ModuleNames.ColumnToolPanelModule,
+    moduleName: core_1.ModuleNames.ColumnToolPanelModule,
     beans: [],
     agStackComponents: [
         { componentName: 'AgPrimaryColsHeader', componentClass: primaryColsHeaderPanel_1.PrimaryColsHeaderPanel },
@@ -20,8 +20,8 @@ exports.ColumnsToolPanelModule = {
         { componentName: 'agColumnsToolPanel', componentClass: columnToolPanel_1.ColumnToolPanel },
     ],
     dependantModules: [
-        grid_core_2.EnterpriseCoreModule,
-        grid_row_grouping_1.RowGroupingModule,
-        grid_side_bar_1.SideBarModule
+        core_2.EnterpriseCoreModule,
+        row_grouping_1.RowGroupingModule,
+        side_bar_1.SideBarModule
     ]
 };

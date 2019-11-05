@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var RichSelectRow = /** @class */ (function (_super) {
     __extends(RichSelectRow, _super);
     function RichSelectRow(params) {
@@ -32,12 +32,12 @@ var RichSelectRow = /** @class */ (function (_super) {
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, valueFormatted);
         }
-        grid_core_1._.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
     };
     RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
         var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
         var valueToRender = valueFormattedExits ? valueFormatted : value;
-        if (grid_core_1._.exists(valueToRender) && valueToRender !== '') {
+        if (core_1._.exists(valueToRender) && valueToRender !== '') {
             // not using innerHTML to prevent injection of HTML
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
             this.getGui().textContent = valueToRender.toString();
@@ -57,7 +57,7 @@ var RichSelectRow = /** @class */ (function (_super) {
         };
         var cellRendererPromise = this.userComponentFactory.newCellRenderer(this.params, params);
         if (cellRendererPromise != null) {
-            grid_core_1._.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
+            core_1._.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         }
         else {
             this.getGui().innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -73,11 +73,11 @@ var RichSelectRow = /** @class */ (function (_super) {
         return false;
     };
     __decorate([
-        grid_core_1.Autowired('userComponentFactory')
+        core_1.Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.RichSelectRow = RichSelectRow;

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var AbstractSelectionHandle = /** @class */ (function (_super) {
     __extends(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
@@ -47,7 +47,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.onDragEnd(e);
                 _this.clearValues();
                 _this.rangeController.autoScrollService.ensureCleared();
-                grid_core_1._.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
+                core_1._.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();
                 }
@@ -91,7 +91,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
         this.cellHoverListener = this.addDestroyableEventListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
-        grid_core_1._.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
+        core_1._.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {
         var cell = this.mouseEventService.getCellPositionForEvent(e);
@@ -109,7 +109,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         var _this = this;
         var oldCellComp = this.getCellComp();
         var eGui = this.getGui();
-        var cellRange = grid_core_1._.last(this.rangeController.getCellRanges());
+        var cellRange = core_1._.last(this.rangeController.getCellRanges());
         var start = cellRange.startRow;
         var end = cellRange.endRow;
         if (start && end) {
@@ -123,7 +123,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 this.setRangeEndRow(end);
             }
         }
-        if (oldCellComp !== cellComp || !grid_core_1._.isVisible(eGui)) {
+        if (oldCellComp !== cellComp || !core_1._.isVisible(eGui)) {
             this.setCellComp(cellComp);
             window.setTimeout(function () {
                 if (_this.isAlive()) {
@@ -145,7 +145,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     };
     AbstractSelectionHandle.prototype.destroy = function () {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
-            grid_core_1._.setDisplayed(this.getGui(), false);
+            core_1._.setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;
             return;
         }
@@ -158,29 +158,29 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        grid_core_1.Autowired("rowRenderer")
+        core_1.Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
     __decorate([
-        grid_core_1.Autowired("dragService")
+        core_1.Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
     __decorate([
-        grid_core_1.Autowired("rangeController")
+        core_1.Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
     __decorate([
-        grid_core_1.Autowired("mouseEventService")
+        core_1.Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
     __decorate([
-        grid_core_1.Autowired("columnController")
+        core_1.Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired("cellNavigationService")
+        core_1.Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
     __decorate([
-        grid_core_1.Autowired('rowPositionUtils')
+        core_1.Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.AbstractSelectionHandle = AbstractSelectionHandle;

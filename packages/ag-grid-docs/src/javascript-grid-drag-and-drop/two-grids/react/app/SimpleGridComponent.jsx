@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AgGridReact} from '@ag-grid-community/grid-react';
+import {AgGridReact} from '@ag-grid-community/react';
 
 export default class extends Component {
     constructor(props) {

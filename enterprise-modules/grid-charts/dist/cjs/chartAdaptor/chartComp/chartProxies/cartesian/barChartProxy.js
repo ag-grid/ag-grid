@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
 var BarChartProxy = /** @class */ (function (_super) {
@@ -71,12 +71,12 @@ var BarChartProxy = /** @class */ (function (_super) {
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
-        return grid_core_1._.includes([grid_core_1.ChartType.GroupedColumn, grid_core_1.ChartType.StackedColumn, grid_core_1.ChartType.NormalizedColumn], this.chartType);
+        return core_1._.includes([core_1.ChartType.GroupedColumn, core_1.ChartType.StackedColumn, core_1.ChartType.NormalizedColumn], this.chartType);
     };
     BarChartProxy.prototype.getSeriesDefaults = function () {
         var chartType = this.chartType;
-        var isGrouped = chartType === grid_core_1.ChartType.GroupedColumn || chartType === grid_core_1.ChartType.GroupedBar;
-        var isNormalized = chartType === grid_core_1.ChartType.NormalizedColumn || chartType === grid_core_1.ChartType.NormalizedBar;
+        var isGrouped = chartType === core_1.ChartType.GroupedColumn || chartType === core_1.ChartType.GroupedBar;
+        var isNormalized = chartType === core_1.ChartType.NormalizedColumn || chartType === core_1.ChartType.NormalizedBar;
         return __assign(__assign({}, this.chartOptions.seriesDefaults), { type: 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;

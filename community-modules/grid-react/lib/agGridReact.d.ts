@@ -1,7 +1,7 @@
-// @ag-grid-community/grid-react v22.0.0-beta.0
+// @ag-grid-community/react v22.0.0-beta.0
 import * as React from "react";
 import { Component, ReactPortal } from "react";
-import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/grid-core";
+import { ColumnApi, GridApi, GridOptions, Module } from "@ag-grid-community/core";
 import { ReactComponent } from "./reactComponent";
 import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
 export interface AgGridReactProps extends GridOptions {

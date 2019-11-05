@@ -24,7 +24,7 @@ import {
     SelectionController,
     SortController,
     IInfiniteRowModel
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
 
 @Bean('rowModel')

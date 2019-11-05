@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var markersPanel_1 = require("./markersPanel");
 var shadowPanel_1 = require("./shadowPanel");
 var AreaSeriesPanel = /** @class */ (function (_super) {
@@ -94,7 +94,7 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
     };
     AreaSeriesPanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
-            grid_core_1._.removeFromParent(panel.getGui());
+            core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
@@ -104,26 +104,26 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
     };
     AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
-        grid_core_1.RefSelector('seriesGroup')
+        core_1.RefSelector('seriesGroup')
     ], AreaSeriesPanel.prototype, "seriesGroup", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesTooltipsToggle')
+        core_1.RefSelector('seriesTooltipsToggle')
     ], AreaSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesLineWidthSlider')
+        core_1.RefSelector('seriesLineWidthSlider')
     ], AreaSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesLineOpacitySlider')
+        core_1.RefSelector('seriesLineOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
     __decorate([
-        grid_core_1.RefSelector('seriesFillOpacitySlider')
+        core_1.RefSelector('seriesFillOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
     __decorate([
-        grid_core_1.Autowired('chartTranslator')
+        core_1.Autowired('chartTranslator')
     ], AreaSeriesPanel.prototype, "chartTranslator", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], AreaSeriesPanel.prototype, "init", null);
     return AreaSeriesPanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.AreaSeriesPanel = AreaSeriesPanel;

@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _, Events, } from "@ag-grid-community/grid-core";
+import { _, Events, } from "@ag-grid-community/core";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { Padding } from "../../../charts/util/padding";
 var ChartProxy = /** @class */ (function () {

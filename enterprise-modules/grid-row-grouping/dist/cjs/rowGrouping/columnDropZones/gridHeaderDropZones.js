@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var rowGroupDropZonePanel_1 = require("./rowGroupDropZonePanel");
 var pivotDropZonePanel_1 = require("./pivotDropZonePanel");
 var GridHeaderDropZones = /** @class */ (function (_super) {
@@ -29,8 +29,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
@@ -45,11 +45,11 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         this.addDestroyFunc(function () { return _this.pivotComp.destroy(); });
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
-        this.rowGroupComp.addEventListener(grid_core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.pivotComp.addEventListener(grid_core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.rowGroupComp.addEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.pivotComp.addEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         this.addDestroyFunc(function () {
-            _this.rowGroupComp.removeEventListener(grid_core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-            _this.pivotComp.removeEventListener(grid_core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+            _this.rowGroupComp.removeEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+            _this.pivotComp.removeEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
         });
         this.onDropPanelVisible();
         return topPanelGui;
@@ -64,10 +64,10 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
             return;
         }
         var rowGroupPanelShow = this.gridOptionsWrapper.getRowGroupPanelShow();
-        if (rowGroupPanelShow === grid_core_1.Constants.ALWAYS) {
+        if (rowGroupPanelShow === core_1.Constants.ALWAYS) {
             this.rowGroupComp.setDisplayed(true);
         }
-        else if (rowGroupPanelShow === grid_core_1.Constants.ONLY_WHEN_GROUPING) {
+        else if (rowGroupPanelShow === core_1.Constants.ONLY_WHEN_GROUPING) {
             var grouping = !this.columnController.isRowGroupEmpty();
             this.rowGroupComp.setDisplayed(grouping);
         }
@@ -76,17 +76,17 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], GridHeaderDropZones.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], GridHeaderDropZones.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], GridHeaderDropZones.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], GridHeaderDropZones.prototype, "postConstruct", null);
     return GridHeaderDropZones;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.GridHeaderDropZones = GridHeaderDropZones;

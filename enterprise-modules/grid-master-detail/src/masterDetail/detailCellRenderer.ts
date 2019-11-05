@@ -12,7 +12,7 @@ import {
     RefSelector,
     RowNode,
     _
-} from "@ag-grid-community/grid-core";
+} from "@ag-grid-community/core";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 

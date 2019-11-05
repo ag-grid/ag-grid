@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var DropZoneColumnComp = /** @class */ (function (_super) {
     __extends(DropZoneColumnComp, _super);
     function DropZoneColumnComp(column, dragSourceDropTarget, ghost, valueColumn) {
@@ -33,8 +33,8 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     }
     DropZoneColumnComp.prototype.init = function () {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
-        this.eDragHandle.appendChild(grid_core_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
-        this.btRemove.appendChild(grid_core_1._.createIconNoSpan('cancel', this.gridOptionsWrapper));
+        this.eDragHandle.appendChild(core_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
+        this.btRemove.appendChild(core_1._.createIconNoSpan('cancel', this.gridOptionsWrapper));
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -44,7 +44,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     DropZoneColumnComp.prototype.addDragSource = function () {
         var _this = this;
         var dragSource = {
-            type: grid_core_1.DragSourceType.ToolPanel,
+            type: core_1.DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemCallback: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
@@ -65,7 +65,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         this.setTextValue();
         this.setupRemove();
         if (this.ghost) {
-            grid_core_1._.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            core_1._.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
         }
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
@@ -73,14 +73,14 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        grid_core_1._.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        core_1._.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
         this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
-        var touchListener = new grid_core_1.TouchListener(this.btRemove);
-        this.addDestroyableEventListener(touchListener, grid_core_1.TouchListener.EVENT_TAP, function (event) {
+        var touchListener = new core_1.TouchListener(this.btRemove);
+        this.addDestroyableEventListener(touchListener, core_1.TouchListener.EVENT_TAP, function (event) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
         });
@@ -99,7 +99,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         else {
             displayValue = this.displayName;
         }
-        var displayValueSanitised = grid_core_1._.escape(displayValue);
+        var displayValueSanitised = core_1._.escape(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     };
     DropZoneColumnComp.prototype.onShowAggFuncSelection = function () {
@@ -108,14 +108,14 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             return;
         }
         this.popupShowing = true;
-        var virtualList = new grid_core_1.VirtualList();
+        var virtualList = new core_1.VirtualList();
         var rows = this.aggFuncService.getFuncNames(this.column);
         virtualList.setModel({
             getRow: function (index) { return rows[index]; },
             getRowCount: function () { return rows.length; }
         });
         this.getContext().wireBean(virtualList);
-        var ePopup = grid_core_1._.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        var ePopup = core_1._.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
@@ -142,7 +142,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             hidePopup();
             if (_this.gridOptionsWrapper.isFunctionsPassive()) {
                 var event_1 = {
-                    type: grid_core_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
+                    type: core_1.Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [_this.column],
                     aggFunc: value,
                     api: _this.gridApi,
@@ -163,43 +163,43 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
     DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span ref=\"eDragHandle\" class=\"ag-column-drag\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"btRemove\" class=\"ag-column-drop-cell-button\"></span>\n        </span>";
     __decorate([
-        grid_core_1.Autowired('dragAndDropService')
+        core_1.Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnController')
+        core_1.Autowired('columnController')
     ], DropZoneColumnComp.prototype, "columnController", void 0);
     __decorate([
-        grid_core_1.Autowired('popupService')
+        core_1.Autowired('popupService')
     ], DropZoneColumnComp.prototype, "popupService", void 0);
     __decorate([
-        grid_core_1.Optional('aggFuncService')
+        core_1.Optional('aggFuncService')
     ], DropZoneColumnComp.prototype, "aggFuncService", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], DropZoneColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.Autowired('eventService')
+        core_1.Autowired('eventService')
     ], DropZoneColumnComp.prototype, "eventService", void 0);
     __decorate([
-        grid_core_1.Autowired('columnApi')
+        core_1.Autowired('columnApi')
     ], DropZoneColumnComp.prototype, "columnApi", void 0);
     __decorate([
-        grid_core_1.Autowired('gridApi')
+        core_1.Autowired('gridApi')
     ], DropZoneColumnComp.prototype, "gridApi", void 0);
     __decorate([
-        grid_core_1.RefSelector('eText')
+        core_1.RefSelector('eText')
     ], DropZoneColumnComp.prototype, "eText", void 0);
     __decorate([
-        grid_core_1.RefSelector('eDragHandle')
+        core_1.RefSelector('eDragHandle')
     ], DropZoneColumnComp.prototype, "eDragHandle", void 0);
     __decorate([
-        grid_core_1.RefSelector('btRemove')
+        core_1.RefSelector('btRemove')
     ], DropZoneColumnComp.prototype, "btRemove", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], DropZoneColumnComp.prototype, "init", null);
     return DropZoneColumnComp;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.DropZoneColumnComp = DropZoneColumnComp;
 var AggItemComp = /** @class */ (function (_super) {
     __extends(AggItemComp, _super);
@@ -211,4 +211,4 @@ var AggItemComp = /** @class */ (function (_super) {
         return _this;
     }
     return AggItemComp;
-}(grid_core_1.Component));
+}(core_1.Component));

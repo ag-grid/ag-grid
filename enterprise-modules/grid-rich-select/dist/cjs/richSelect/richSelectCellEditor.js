@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var richSelectRow_1 = require("./richSelectRow");
 var RichSelectCellEditor = /** @class */ (function (_super) {
     __extends(RichSelectCellEditor, _super);
@@ -34,16 +34,16 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
-        this.eValue.appendChild(grid_core_1._.createIconNoSpan('smallDown', this.gridOptionsWrapper));
-        this.virtualList = new grid_core_1.VirtualList();
+        this.eValue.appendChild(core_1._.createIconNoSpan('smallDown', this.gridOptionsWrapper));
+        this.virtualList = new core_1.VirtualList();
         this.getContext().wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
-        if (grid_core_1._.exists(this.params.cellHeight)) {
+        if (core_1._.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
         }
         this.renderSelectedValue();
-        if (grid_core_1._.missing(params.values)) {
+        if (core_1._.missing(params.values)) {
             console.warn('ag-Grid: richSelectCellEditor requires values for it to work');
             return;
         }
@@ -56,19 +56,19 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         var virtualListGui = this.virtualList.getGui();
         this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-        this.clearSearchString = grid_core_1._.debounce(this.clearSearchString, 300);
-        if (grid_core_1._.exists(params.charPress)) {
+        this.clearSearchString = core_1._.debounce(this.clearSearchString, 300);
+        if (core_1._.exists(params.charPress)) {
             this.searchText(params.charPress);
         }
     };
     RichSelectCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
         switch (key) {
-            case grid_core_1.Constants.KEY_ENTER:
+            case core_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
                 break;
-            case grid_core_1.Constants.KEY_DOWN:
-            case grid_core_1.Constants.KEY_UP:
+            case core_1.Constants.KEY_DOWN:
+            case core_1.Constants.KEY_UP:
                 this.onNavigationKeyPressed(event, key);
                 break;
             default:
@@ -83,7 +83,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         // if we don't stop propagation, then the grids navigation kicks in
         event.stopPropagation();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
-        var newIndex = key === grid_core_1.Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
+        var newIndex = key === core_1.Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {
             var valueToSelect = this.params.values[newIndex];
             this.setSelectedValue(valueToSelect);
@@ -91,7 +91,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     RichSelectCellEditor.prototype.searchText = function (key) {
         if (typeof key !== 'string') {
-            if (!grid_core_1._.isCharacterKey(key)) {
+            if (!core_1._.isCharacterKey(key)) {
                 return;
             }
             key = key.key;
@@ -112,7 +112,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         if (!searchStrings) {
             return;
         }
-        var topSuggestion = grid_core_1._.fuzzySuggestions(this.searchString, searchStrings, true, true)[0];
+        var topSuggestion = core_1._.fuzzySuggestions(this.searchString, searchStrings, true, true)[0];
         if (!topSuggestion) {
             return;
         }
@@ -134,7 +134,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         };
         var promise = this.userComponentFactory.newCellRenderer(this.params, params);
         if (promise != null) {
-            grid_core_1._.bindCellRendererToHtmlElement(promise, eValue);
+            core_1._.bindCellRendererToHtmlElement(promise, eValue);
         }
         else {
             eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
@@ -147,11 +147,11 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
             });
         }
         else {
-            if (grid_core_1._.exists(this.selectedValue)) {
+            if (core_1._.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;
             }
             else {
-                grid_core_1._.clearElement(eValue);
+                core_1._.clearElement(eValue);
             }
         }
     };
@@ -213,17 +213,17 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     // tab index is needed so we can focus, which is needed for keyboard events
     RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
-        grid_core_1.Autowired('userComponentFactory')
+        core_1.Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.RefSelector('eValue')
+        core_1.RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
     __decorate([
-        grid_core_1.RefSelector('eList')
+        core_1.RefSelector('eList')
     ], RichSelectCellEditor.prototype, "eList", void 0);
     return RichSelectCellEditor;
-}(grid_core_1.PopupComponent));
+}(core_1.PopupComponent));
 exports.RichSelectCellEditor = RichSelectCellEditor;

@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
 var LineChartProxy = /** @class */ (function (_super) {
@@ -46,7 +46,7 @@ var LineChartProxy = /** @class */ (function (_super) {
         var _a = this.overriddenPalette || this.chartProxyParams.getSelectedPalette(), fills = _a.fills, strokes = _a.strokes;
         var existingSeriesById = chart.series.reduceRight(function (map, series) {
             var id = series.yKey;
-            if (grid_core_1._.includes(fieldIds, id)) {
+            if (core_1._.includes(fieldIds, id)) {
                 map.set(id, series);
             }
             else {

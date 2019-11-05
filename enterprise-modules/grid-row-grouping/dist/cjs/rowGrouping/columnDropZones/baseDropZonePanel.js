@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var dropZoneColumnComp_1 = require("./dropZoneColumnComp");
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);
@@ -24,7 +24,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         _this.childColumnComponents = [];
         _this.horizontal = horizontal;
         _this.valueColumn = valueColumn;
-        _this.eColumnDropList = grid_core_1._.loadTemplate('<div class="ag-column-drop-list"></div>');
+        _this.eColumnDropList = core_1._.loadTemplate('<div class="ag-column-drop-list"></div>');
         return _this;
     }
     BaseDropZonePanel.prototype.isHorizontal = function () {
@@ -41,13 +41,13 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         this.guiDestroyFunctions.forEach(function (func) { return func(); });
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        grid_core_1._.clearElement(this.getGui());
-        grid_core_1._.clearElement(this.eColumnDropList);
+        core_1._.clearElement(this.getGui());
+        core_1._.clearElement(this.eColumnDropList);
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
         this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
-        this.beans.eventService.addEventListener(grid_core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.beans.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -69,7 +69,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.isInterestedIn = function (type) {
         // not interested in row drags
-        return type === grid_core_1.DragSourceType.HeaderCell || type === grid_core_1.DragSourceType.ToolPanel;
+        return type === core_1.DragSourceType.HeaderCell || type === core_1.DragSourceType.ToolPanel;
     };
     BaseDropZonePanel.prototype.checkInsertIndex = function (draggingEvent) {
         var newIndex;
@@ -90,13 +90,13 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return changed;
     };
     BaseDropZonePanel.prototype.getNewHorizontalInsertIndex = function (draggingEvent) {
-        if (grid_core_1._.missing(draggingEvent.hDirection)) {
+        if (core_1._.missing(draggingEvent.hDirection)) {
             return -1;
         }
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
         var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        var goingLeft = draggingEvent.hDirection === grid_core_1.HDirection.Left;
+        var goingLeft = draggingEvent.hDirection === core_1.HDirection.Left;
         var mouseX = mouseEvent.clientX;
         this.childColumnComponents.forEach(function (childColumn) {
             var rect = childColumn.getGui().getBoundingClientRect();
@@ -109,14 +109,14 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return newIndex;
     };
     BaseDropZonePanel.prototype.getNewVerticalInsertIndex = function (draggingEvent) {
-        if (grid_core_1._.missing(draggingEvent.vDirection)) {
+        if (core_1._.missing(draggingEvent.vDirection)) {
             return -1;
         }
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
         this.childColumnComponents.forEach(function (childColumn) {
             var rect = childColumn.getGui().getBoundingClientRect();
-            if (draggingEvent.vDirection === grid_core_1.VDirection.Down) {
+            if (draggingEvent.vDirection === core_1.VDirection.Down) {
                 var verticalFit = mouseEvent.clientY >= rect.top;
                 if (verticalFit) {
                     newIndex++;
@@ -162,7 +162,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
     };
     BaseDropZonePanel.prototype.isPotentialDndColumns = function () {
-        return grid_core_1._.existsAndNotEmpty(this.potentialDndColumns);
+        return core_1._.existsAndNotEmpty(this.potentialDndColumns);
     };
     BaseDropZonePanel.prototype.onDragLeave = function (draggingEvent) {
         // if the dragging started from us, we remove the group, however if it started
@@ -208,18 +208,18 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.removeColumns = function (columnsToRemove) {
         var newColumnList = this.getExistingColumns().slice();
-        columnsToRemove.forEach(function (column) { return grid_core_1._.removeFromArray(newColumnList, column); });
+        columnsToRemove.forEach(function (column) { return core_1._.removeFromArray(newColumnList, column); });
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.addColumns = function (columnsToAdd) {
         var newColumnList = this.getExistingColumns().slice();
-        grid_core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
         this.updateColumns(newColumnList);
     };
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
-        grid_core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        var noChangeDetected = grid_core_1._.shallowCompare(newColumnList, this.getExistingColumns());
+        core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
+        var noChangeDetected = core_1._.shallowCompare(newColumnList, this.getExistingColumns());
         if (noChangeDetected) {
             return false;
         }
@@ -249,7 +249,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var existingColumns = this.getExistingColumns();
         var nonGhostColumns;
         if (this.isPotentialDndColumns()) {
-            nonGhostColumns = existingColumns.filter(function (column) { return !grid_core_1._.includes(_this.potentialDndColumns, column); });
+            nonGhostColumns = existingColumns.filter(function (column) { return !core_1._.includes(_this.potentialDndColumns, column); });
         }
         else {
             nonGhostColumns = existingColumns;
@@ -304,14 +304,14 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
         var eGroupIcon = this.params.icon;
         var eContainer = document.createElement('div');
-        grid_core_1._.addCssClass(eGroupIcon, 'ag-column-drop-icon');
-        grid_core_1._.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
+        core_1._.addCssClass(eGroupIcon, 'ag-column-drop-icon');
+        core_1._.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
         eContainer.appendChild(eGroupIcon);
         if (!this.horizontal) {
             var eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
-            grid_core_1._.addCssClass(eTitle, 'ag-column-drop-title');
-            grid_core_1._.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
+            core_1._.addCssClass(eTitle, 'ag-column-drop-title');
+            core_1._.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
             eContainer.appendChild(eTitle);
         }
         this.getGui().appendChild(eContainer);
@@ -326,7 +326,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
         var eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
-        grid_core_1._.addCssClass(eMessage, 'ag-column-drop-empty-message');
+        core_1._.addCssClass(eMessage, 'ag-column-drop-empty-message');
         this.getGui().appendChild(eMessage);
     };
     BaseDropZonePanel.prototype.addArrow = function (eParent) {
@@ -334,12 +334,12 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            eParent.appendChild(grid_core_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
+            eParent.appendChild(core_1._.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
         }
     };
     BaseDropZonePanel.STATE_NOT_DRAGGING = 'notDragging';
     BaseDropZonePanel.STATE_NEW_COLUMNS_IN = 'newColumnsIn';
     BaseDropZonePanel.STATE_REARRANGE_COLUMNS = 'rearrangeColumns';
     return BaseDropZonePanel;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.BaseDropZonePanel = BaseDropZonePanel;

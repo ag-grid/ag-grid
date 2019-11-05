@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_core_1 = require("@ag-grid-community/grid-core");
+var core_1 = require("@ag-grid-community/core");
 var tabbedChartMenu_1 = require("./tabbedChartMenu");
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
@@ -67,9 +67,9 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.prototype.toggleDetached = function (e) {
         var target = e.target;
-        var active = grid_core_1._.containsClass(target, 'ag-icon-linked');
-        grid_core_1._.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
-        grid_core_1._.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
+        var active = core_1._.containsClass(target, 'ag-icon-linked');
+        core_1._.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
+        core_1._.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
         this.chartController.detachChartRange();
     };
     ChartMenu.prototype.createButtons = function () {
@@ -78,7 +78,7 @@ var ChartMenu = /** @class */ (function (_super) {
         chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var iconName = buttonConfig[0], callback = buttonConfig[1];
-            var buttonEl = grid_core_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
+            var buttonEl = core_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
             _this.addDestroyableEventListener(buttonEl, 'click', callback);
             _this.getGui().appendChild(buttonEl);
         });
@@ -94,7 +94,7 @@ var ChartMenu = /** @class */ (function (_super) {
         var chartComp = this.getParentComponent();
         var dockedContainer = chartComp.getDockedContainer();
         var context = this.getContext();
-        var menuPanel = this.menuPanel = new grid_core_1.AgPanel({
+        var menuPanel = this.menuPanel = new core_1.AgPanel({
             minWidth: 220,
             width: 220,
             height: '100%',
@@ -110,15 +110,15 @@ var ChartMenu = /** @class */ (function (_super) {
             panels: this.tabs
         });
         context.wireBean(this.tabbedMenu);
-        this.addDestroyableEventListener(this.menuPanel, grid_core_1.Component.EVENT_DESTROYED, function () {
+        this.addDestroyableEventListener(this.menuPanel, core_1.Component.EVENT_DESTROYED, function () {
             _this.tabbedMenu.destroy();
         });
-        return new grid_core_1.Promise(function (res) {
+        return new core_1.Promise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
                 _this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', function () {
-                    if (grid_core_1._.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                    if (core_1._.containsClass(chartComp.getGui(), 'ag-has-menu')) {
                         _this.hideMenu();
                     }
                 });
@@ -131,7 +131,7 @@ var ChartMenu = /** @class */ (function (_super) {
         var chartComp = this.getParentComponent();
         chartComp.slideDockedOut(this.menuPanel.getWidth());
         window.setTimeout(function () {
-            grid_core_1._.addCssClass(_this.getParentComponent().getGui(), 'ag-has-menu');
+            core_1._.addCssClass(_this.getParentComponent().getGui(), 'ag-has-menu');
         }, 500);
     };
     ChartMenu.prototype.showMenu = function (tabName) {
@@ -150,7 +150,7 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.prototype.hideMenu = function () {
         var chartComp = this.getParentComponent();
         chartComp.slideDockedIn();
-        grid_core_1._.removeCssClass(this.getParentComponent().getGui(), 'ag-has-menu');
+        core_1._.removeCssClass(this.getParentComponent().getGui(), 'ag-has-menu');
     };
     ChartMenu.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
@@ -161,11 +161,11 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.EVENT_DOWNLOAD_CHART = 'downloadChart';
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
     __decorate([
-        grid_core_1.Autowired('gridOptionsWrapper')
+        core_1.Autowired('gridOptionsWrapper')
     ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        grid_core_1.PostConstruct
+        core_1.PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
     return ChartMenu;
-}(grid_core_1.Component));
+}(core_1.Component));
 exports.ChartMenu = ChartMenu;

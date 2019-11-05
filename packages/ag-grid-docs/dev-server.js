@@ -104,14 +104,9 @@ function symlinkModules(communityModules, enterpriseModules) {
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/grid-vue/', '_dev/@ag-grid-community', {force: true, type: linkType});
-    lnk('../../community-modules/grid-angular/', '_dev/@ag-grid-community', {force: true, type: linkType});
-    // lnk('../../community-modules/grid-angular/exports.ts', '_dev/@ag-grid-community/grid-angular/', {
-    //     force: true,
-    //     type: linkType,
-    //     rename: 'main.ts'
-    // });
-    lnk('../../community-modules/grid-react/', '_dev/@ag-grid-community', {force: true, type: linkType});
+    lnk('../../community-modules/grid-vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/grid-angular/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'angular'});
+    lnk('../../community-modules/grid-react/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'react'});
 
     communityModules
         .forEach(module => {
@@ -119,7 +114,7 @@ function symlinkModules(communityModules, enterpriseModules) {
             lnk(module.rootDir, '_dev/@ag-grid-community', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName
+                rename: module.moduleDirName.replace('grid-', '')
             });
         });
 
@@ -128,7 +123,7 @@ function symlinkModules(communityModules, enterpriseModules) {
             lnk(module.rootDir, '_dev/@ag-grid-enterprise', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName
+                rename: module.moduleDirName.replace('grid-', '')
             });
         });
 }
@@ -235,7 +230,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
         communityModules,
         [],
-        module => `        "${module.publishedName}" => "$prefix/@ag-grid-community/grid-all-modules/dist/ag-grid-community.cjs.js",`,
+        module => `        "${module.publishedName}" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",`,
         () => {});
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
@@ -243,15 +238,15 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/grid-all-modules/dist/ag-grid-enterprise.cjs.js",`,
-        module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/grid-all-modules/dist/ag-grid-enterprise.cjs.js",`);
+        module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`,
+        module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF CSS DEV - DO NOT DELETE */',
         '/* END OF CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/grid-all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/grid-all-modules/dist/styles/${cssFile}",`,
+        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
         () => {});
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
@@ -267,7 +262,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
         [],
-        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-community/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
         () => {});
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
@@ -275,15 +270,15 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
-        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF CSS PROD - DO NOT DELETE */',
         '/* END OF CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/grid-all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-enterprise/grid-all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
+        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
         () => {});
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
@@ -356,12 +351,12 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     // serve community, enterprise and react
 
     // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/grid-all-modules/dist/ag-grid-community.js
-    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/grid-all-modules/dist');
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist');
 
     // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/grid-all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/grid-all-modules/dist');
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist');
 
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
@@ -374,9 +369,9 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
     serveModules(app, communityModules, enterpriseModules);
 
-    serveFramework(app, '@ag-grid-community/grid-angular');
-    serveFramework(app, '@ag-grid-community/grid-vue');
-    serveFramework(app, '@ag-grid-community/grid-react');
+    serveFramework(app, '@ag-grid-community/angular');
+    serveFramework(app, '@ag-grid-community/vue');
+    serveFramework(app, '@ag-grid-community/react');
 
     // build "packaged" landing page examples (for performance reasons)
     // these aren't watched and regenerated like the other examples

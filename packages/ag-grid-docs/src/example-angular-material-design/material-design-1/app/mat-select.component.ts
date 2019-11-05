@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { ICellEditorAngularComp } from "@ag-grid-community/grid-angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: "radio-cell",
