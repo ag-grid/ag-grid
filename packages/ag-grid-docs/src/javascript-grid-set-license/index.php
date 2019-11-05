@@ -157,28 +157,52 @@ function printFeatureRecursive($parentItem, $indent) {
     <ol>
         <li>
             <p>
-                If using node modules and ES6 imports, firstly reference the <code>ag-grid-enterprise</code>
+                If using node modules and ES6 imports, firstly reference the <code>@ag-grid-enterprise/all-modules</code>
                 module in your <code>package.json</code>:
             </p>
             <snippet>
 "dependencies": {
-    "ag-grid-community": "21.0.x",
-    "ag-grid-enterprise": "21.0.x",
+    "@ag-grid-enterprise/all-modules": "21.0.x"
 ...
             </snippet>
             <p>
                 Then reference the ag-Grid Enterprise module:
             </p>
             <snippet>
-                import 'ag-grid-enterprise';
+                import {AllModules} from 'ag-grid-enterprise';
             </snippet>
+
+            <p>Then depending on your choice of framework you'll need to provide the modules to the grid:</p>
+
+<snippet>
+// javascript
+new Grid(&lt;dom element&gt;, gridOptions, { modules: AllModules});
+
+// angular
+public modules: Module[] = AllModules;
+
+&lt;ag-grid-angular&gt;
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [modules]="modules"
+&lt;/ag-grid-angular&gt;
+
+// react
+&lt;ag-grid-react&gt;
+    rowData={rowData}
+    columnDefs={columnDefs}
+    modules={AllModules}
+&lt;/ag-grid-react&gt;
+</snippet>
+            <p>Here we are including all modules provided by ag-Grid - if you want to only pull in the modules you need (and thus
+            reduce your overall bundle size) then please refer to the <a href="../javascript-grid-modules">modules</a> documentation.</p>
             <p>
                 How you use ag-Grid (eg how you create a grid) does not change. With the one 'import' line of code
                 above the grid will have all of the enterprise features at your disposal.
             </p>
             <note>
-                The versions of <code>ag-grid-community</code> and
-                <code>ag-grid-enterprise</code> should match. They are released in tandem and expect the same
+                The versions of the modules you use (for example <code>@ag-grid-community/all-modules</code> and
+                <code>@ag-grid-enterprise/all-modules</code> should match. They are released in tandem and expect the same
                 version of each other.
             </note>
             <p>
@@ -188,7 +212,7 @@ function printFeatureRecursive($parentItem, $indent) {
         <li>
             <p>
                 If including the bundled ag-Grid script directly into your webpage, then reference
-                <code>ag-grid-enterprise.js</code> instead of <code>ag-grid-community.js</code>.
+                <code>@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js</code> instead of <code>@ag-grid-community/all-modules/dist/ag-grid-community.js</code>.
             </p>
             <p>
                 As before, you use ag-Grid in the same way, but including the enterprise script
@@ -238,7 +262,7 @@ function printFeatureRecursive($parentItem, $indent) {
     <h3>JavaScript</h3>
 
     <p>
-        Use this if you are using the bundled version of ag-Grid (e.g. you are using <code>ag-grid-enterprise.js</code>).
+        Use this if you are using the bundled version of ag-Grid (e.g. you are using <code>@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js</code>).
     </p>
 
 <snippet>
@@ -249,7 +273,7 @@ agGrid.LicenseManager.setLicenseKey("your license key");
 
     <p>Use this if you are using CommonJS to load ag-Grid.</p>
 <snippet>
-var enterprise = require("ag-grid-enterprise");
+var enterprise = require("@ag-grid-enterprise/all-modules");
 enterprise.LicenseManager.setLicenseKey("your license key");
 </snippet>
 
@@ -271,7 +295,7 @@ enterprise.LicenseManager.setLicenseKey("your license key");
 <snippet>
             // other imports...
 
-            import {LicenseManager} from "ag-grid-enterprise";
+import {LicenseManager} from "@ag-grid-enterprise/all-modules";
 LicenseManager.setLicenseKey("your license key");
 
 // bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
@@ -287,10 +311,10 @@ LicenseManager.setLicenseKey("your license key");
 import React from "react";
 import {render} from "react-dom";
 
-import "ag-grid-root/dist/styles/ag-grid.css";
-import "ag-grid-root/dist/styles/ag-theme-balham.css";
+import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
-import {LicenseManager} from "ag-grid-enterprise";
+import {LicenseManager} from "@ag-grid-enterprise/all-modules";
 LicenseManager.setLicenseKey("your license key");
 
 import App from "./App";
@@ -312,13 +336,15 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 <snippet>
 import Vue from "vue";
 
-import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
+import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
-import "ag-grid-enterprise";
-import {LicenseManager} from "ag-grid-enterprise";
+import {AllModules} from "@ag-grid-enterprise/all-modules";
+import {LicenseManager} from "@ag-grid-enterprise/all-modules";
 
 LicenseManager.setLicenseKey("your license key");
+
+// provide the AllModules array to the vue grid...
 
 new Vue({
     el: "#el",
@@ -334,7 +360,7 @@ new Vue({
         you run a separate script to reference and set the license key - for example:</p>
 
 <snippet language="html">
-&lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
+&lt;script src="../bower_components/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
 &lt;!-- ag-grid-polymer element --&gt;
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
@@ -354,7 +380,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
     <p>If you have a single component, or a single component that in turn has the child components, you can set the license key in this parent component - for example:</p>
 
 <snippet language="html">
-&lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
+&lt;script src="../bower_components/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
 &lt;!-- ag-grid-polymer element --&gt;
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
