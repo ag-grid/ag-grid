@@ -251,6 +251,7 @@ export type ColumnEventType =
     "columnMenu" |
     "rowModelUpdated" |
     "api" |
+    "flex" |
     "pivotChart";
 
 export interface ColumnEvent extends AgGridEvent {

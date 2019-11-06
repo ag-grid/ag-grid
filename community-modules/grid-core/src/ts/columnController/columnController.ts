@@ -165,6 +165,7 @@ export class ColumnController {
 
     private viewportLeft: number;
     private viewportRight: number;
+    private lastCenterViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
     private flexActive: boolean = true;
@@ -923,6 +924,10 @@ export class ColumnController {
         }
 
         this.resizeColumnSets(sets, finished, source);
+
+        if (this.flexActive) {
+            this.refreshFlexedColumns();
+        }
     }
 
     private checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
@@ -2874,8 +2879,15 @@ export class ColumnController {
     private filterOutColumnsWithinViewport(): Column[] {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
-    public refreshFlexedColumns(centerViewportWidth: number, totalWidth: number, source: ColumnEventType = 'api'): void {
+    public refreshFlexedColumns(centerViewportWidth?: number, source: ColumnEventType = 'flex'): void {
         if (!this.flexActive) { return; }
+
+        if (!centerViewportWidth) {
+            if (!this.lastCenterViewportWidth) { return; }
+            centerViewportWidth = this.lastCenterViewportWidth;
+        }
+
+        this.lastCenterViewportWidth = centerViewportWidth;
 
         const displayedCenterColumns = this.getDisplayedCenterColumns();
         const flexedColumns: Column[] = [];
@@ -2917,7 +2929,7 @@ export class ColumnController {
             } else {
                 const lastCol = idx === flexedColumns.length - 1;
                 if (lastCol && remainingSpace > 0) {
-                    col.setActualWidth(remainingSpace, source);
+                    col.setActualWidth(Math.floor(remainingSpace), source);
                 } else {
                     col.setActualWidth(newWidth, source);
                     remainingSpace -= newWidth;

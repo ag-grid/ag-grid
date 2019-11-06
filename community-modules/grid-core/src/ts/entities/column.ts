@@ -647,6 +647,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
         if (this.actualWidth !== actualWidth) {
+            // disable flex for this column if it was manually resized.
+            if (this.flex && source !== 'flex') { this.flex = 0; }
             this.actualWidth = actualWidth;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
