@@ -154,8 +154,8 @@ export interface FillStartEvent extends AgGridEvent {
 }
 
 export interface FillEndEvent extends AgGridEvent {
-    initialRange: CellRange,
-    finalRange: CellRange
+    initialRange: CellRange;
+    finalRange: CellRange;
 }
 
 export interface ViewportChangedEvent extends AgGridEvent {
