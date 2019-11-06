@@ -158,6 +158,42 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 
+<h2>Example - Exporting Master / Detail Data</h2>
+
+<p>
+    By default, exporting the master grid will just export the master rows. If you want to export detail rows, you can
+    configure the <code>getCustomContentBelowRow</code> callback to generate a representation of the detail row that will
+    be inserted below the master rows in the in the export. See the <a href="../javascript-grid-export/">export
+    documentation</a> for more details. The example below exports both master and detail data.
+</p>
+
+<p>
+    There is an important difference between rendering and exporting Master / Detail content. When you expand a master
+    row in the UI, a new instance of the Grid is created to render the detail, meaning that you have the full power of
+    the Grid to manipulate and format the detail data. When exporting, the original data object representing
+    the row is passed to <code>getCustomContentBelowRow</code> which returns styled content to be inserted into the
+    export. No instance of the Grid is created. This means that export performance is good even with large Master /
+    Detail data sets.
+</p>
+
+<p>Note that:</p>
+
+<ul>
+    <li>
+        If your <code>detailGridOptions</code> contains value getters, value formatters,
+        sorting, filtering etc, and you want these to appear in the export, they must be applied by
+        <code>getCustomContentBelowRow</code>.
+    </li>
+    <li>
+        By default, triggering an export through the right-click context menu on a detail grid will export
+        the data for that grid only. If this is not appropriate for your application you can disable the
+        export item in the context menu, or replace it with a custom item that triggers an export on the
+        master grid.
+    </li>
+</ul>
+
+<?= example('Exporting Master / Detail Data', 'exporting', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+
 <h2>Example - Details scrolls horizontally with Master</h2>
 <p>
     If your Grid is scrollable horizontally, you will notice that the Master Detail remains in a fixed position. This happens
