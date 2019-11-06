@@ -75,6 +75,9 @@ export class Events {
     public static EVENT_PASTE_START = 'pasteStart';
     public static EVENT_PASTE_END = 'pasteEnd';
 
+    public static EVENT_FILL_START = 'fillStart';
+    public static EVENT_FILL_END = 'fillEnd';
+
     public static EVENT_CELL_CLICKED = 'cellClicked';
     public static EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
     public static EVENT_CELL_MOUSE_DOWN = 'cellMouseDown';

@@ -7,6 +7,7 @@ import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
+import { CellRange } from "./interfaces/iRangeController";
 
 export { Events } from './eventKeys';
 
@@ -147,6 +148,14 @@ export interface PasteStartEvent extends AgGridEvent {
 
 export interface PasteEndEvent extends AgGridEvent {
     source: string;
+}
+
+export interface FillStartEvent extends AgGridEvent {
+}
+
+export interface FillEndEvent extends AgGridEvent {
+    initialRange: CellRange,
+    finalRange: CellRange
 }
 
 export interface ViewportChangedEvent extends AgGridEvent {

@@ -43,6 +43,7 @@ import {_} from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 import {ModuleRegistry} from "../modules/moduleRegistry";
 import {ModuleNames} from "../modules/moduleNames";
+import {UndoRedoService} from "../undoRedo/undoRedoService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -128,6 +129,7 @@ export class GridPanel extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -516,7 +518,8 @@ export class GridPanel extends Component {
                         cellComp.onKeyDown(keyboardEvent);
                     }
 
-                    this.doClipboardOperations(keyboardEvent, cellComp);
+                    // perform clipboard and undo / redo operations
+                    this.doGridOperations(keyboardEvent, cellComp);
 
                     break;
                 case 'keypress':
@@ -536,7 +539,7 @@ export class GridPanel extends Component {
         }
     }
 
-    private doClipboardOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
+    private doGridOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
         // check if ctrl or meta key pressed
         if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) { return; }
 
@@ -558,6 +561,10 @@ export class GridPanel extends Component {
                 return this.onCtrlAndV();
             case Constants.KEY_D:
                 return this.onCtrlAndD(keyboardEvent);
+            case Constants.KEY_Z:
+                return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
+            case Constants.KEY_Y:
+                return this.undoRedoService.redo();
         }
     }
 

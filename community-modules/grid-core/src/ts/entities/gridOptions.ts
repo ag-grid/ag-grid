@@ -54,8 +54,10 @@ import {
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
-    PasteEndEvent,
     PasteStartEvent,
+    PasteEndEvent,
+    FillStartEvent,
+    FillEndEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
     ChartRangeSelectionChanged,
@@ -225,6 +227,8 @@ export interface GridOptions {
     allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
     excludeChildrenWhenTreeDataFiltering?: boolean;
+    undoRedoCellEditing?: boolean;
+    undoRedoCellEditingLimit?: number;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;
@@ -552,6 +556,10 @@ export interface GridOptions {
     onPasteStart?(event: PasteStartEvent): void;
 
     onPasteEnd?(event: PasteEndEvent): void;
+
+    onFillStart?(event: FillStartEvent): void;
+
+    onFillEnd?(event: FillEndEvent): void;
 
     onBodyScroll?(event: BodyScrollEvent): void;
 

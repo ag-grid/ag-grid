@@ -221,7 +221,10 @@ var gridOptions = {
 
     enableRangeSelection: true,
     enableRangeHandle: false,
-    enableFillHandle: false,
+    enableFillHandle: true,
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 2,
+
     suppressClearOnFillReduction: false,
 
     rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection

@@ -83,6 +83,7 @@ import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IComponent} from "./interfaces/iComponent";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
+import {UndoRedoService} from "./undoRedo/undoRedoService";
 
 export interface GridParams {
     // used by Web Components
@@ -276,7 +277,7 @@ export class Grid {
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache
+            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache, UndoRedoService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

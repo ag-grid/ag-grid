@@ -534,6 +534,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enterMovesDown);
     }
 
+    public isUndoRedoCellEditing() {
+        return isTrue(this.gridOptions.undoRedoCellEditing);
+    }
+
+    public getUndoRedoCellEditingLimit(): number {
+        return this.gridOptions.undoRedoCellEditingLimit;
+    }
+
     public getRowStyle() {
         return this.gridOptions.rowStyle;
     }
