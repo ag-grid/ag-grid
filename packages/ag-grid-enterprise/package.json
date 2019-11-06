@@ -2,12 +2,11 @@
   "name": "ag-grid-enterprise",
   "version": "22.0.0-beta.0",
   "description": "ag-Grid Enterprise Features",
-  "main": "main.js",
+  "main": "./dist/ag-grid-enterprise.cjs.js",
   "types": "main.d.ts",
-  "module": "./dist/es6/main.js",
   "scripts": {
-    "build": "gulp",
-    "package": "gulp package"
+    "build": "gulp && npm run rollup",
+    "rollup": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -32,11 +31,27 @@
     "not blackberry > 0"
   ],
   "homepage": "http://www.ag-grid.com/",
-  "dependencies": {
-    "@ag-grid-enterprise/all-modules": "^22.0.0-beta.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@ag-grid-community/core": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/charts": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/clipboard": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/column-tool-panel": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/core": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/excel-export": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/filter-tool-panel": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/master-detail": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/menu": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/range-selection": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/rich-select": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/row-grouping": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/server-side-row-model": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/set-filter": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/side-bar": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/status-bar": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/viewport-row-model": "^22.0.0-beta.0",
+    "@ag-grid-enterprise/all-modules": "^22.0.0-beta.0",
+    "@rollup/plugin-alias": "^2.2.0",
+    "ag-grid-community": "^22.0.0-beta.0",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
@@ -46,6 +61,10 @@
     "gulp-tsd": "^0.1.0",
     "gulp-typescript": "^5.0.0",
     "merge2": "^1.2.0",
+    "rollup": "^1.21.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.24.3",
     "typescript": "~3.6.0"
   }
 }

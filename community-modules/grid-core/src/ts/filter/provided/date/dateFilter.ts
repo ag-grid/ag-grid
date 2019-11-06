@@ -5,7 +5,6 @@ import { UserComponentFactory } from "../../../components/framework/userComponen
 import { _ } from "../../../utils";
 import { DateCompWrapper } from "./dateCompWrapper";
 import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from "../simpleFilter";
-import { IDateComparatorFunc } from "./dateFilter";
 import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
