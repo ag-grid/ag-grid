@@ -33,7 +33,7 @@ const buildDependencies = async (dependencies, command = 'build-docs') => {
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies}`.split(" ");
-    await execa("lerna", lernaArgs, {stdio: "inherit"});
+    await execa("lerna", lernaArgs, { stdio: "inherit" });
 };
 
 const findParentPackageManifest = changedFile => {
@@ -54,22 +54,20 @@ const findParentPackageManifest = changedFile => {
     return up(startingPath);
 };
 
-const buildDependencyChain = async (packageName, buildChains, singleModule, command = "build-docs") => {
+const buildDependencyChain = async (packageName, buildChains, singleModule = false, command = "build-docs") => {
     const buildChain = buildChains[packageName];
 
     if (singleModule) {
         await buildDependencies(buildChain["0"], command);
     } else {
-        const maxIndex = Object.keys(buildChain).length;
-        for (let i = 0; i < maxIndex; i++) {
-            await buildDependencies(buildChain[i], command);
-        }
+        Object.values(buildChain).forEach(async dependency => await buildDependencies(dependency, command));
     }
 };
 
-const spawnWatcher = async ({paths, buildChains}, singleModule) => {
-    await console.log(`Watching the following paths: ${paths.join('\n')}`);
+const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
     const log = console.log.bind(console);
+
+    log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
     let watcher = chokidar.watch(paths, {
@@ -103,9 +101,10 @@ const spawnWatcher = async ({paths, buildChains}, singleModule) => {
         });
 };
 
-const spawnCssWatcher = async ({paths, buildChains}) => {
-    await console.log(`Watching the following paths: ${paths.join('\n')}`);
+const spawnCssWatcher = async ({ paths, buildChains }) => {
     const log = console.log.bind(console);
+
+    log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
     let watcher = chokidar.watch(paths, {
@@ -165,6 +164,7 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
                 delete dependencyTree[remainingPackage];
             }
         });
+
         if (buildChain[index].length !== 0) {
             index++;
         }
@@ -181,21 +181,24 @@ const exclude = [
     'ag-grid-community',
     'ag-grid-enterprise'
 ];
+
 const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example")
 // && !packageName.includes("-enterprise") && !packageName.includes("-angular") && !packageName.includes("-vue") && !packageName.includes("-react");
 
 const filterExcludedRoots = dependencyTree => {
     const prunedDependencyTree = {};
     const agRoots = Object.keys(dependencyTree).filter(excludePackage);
+
     agRoots.forEach(root => {
         prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : []
     });
+
     return prunedDependencyTree;
 };
 
 const getOrderedDependencies = async packageName => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
-    const {stdout, stderr} = await execa("lerna", lernaArgs);
+    const { stdout } = await execa("lerna", lernaArgs);
     let dependenciesOrdered = JSON.parse(stdout);
     dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name));
 
@@ -210,8 +213,9 @@ const getOrderedDependencies = async packageName => {
 
 const generateBuildChain = async (packageName, allPackagesOrdered) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
-    let {stdout} = await execa("lerna", lernaArgs);
+    let { stdout } = await execa("lerna", lernaArgs);
     let dependencyTree = JSON.parse(stdout);
+
     dependencyTree = filterAgGridOnly(dependencyTree);
     dependencyTree = filterExcludedRoots(dependencyTree);
 
@@ -219,11 +223,11 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
 };
 
 const test = async () => {
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     let buildChainInfo = {};
 
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-community/grid-core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -243,14 +247,13 @@ const test = async () => {
     await buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/enterprise-modules/side-bar/src/sideBar/toolPanelWrapper.ts', buildChainInfo.buildChains)
 };
 
-const watch = async (singleModule) => {
-    singleModule = singleModule || false;
+const watch = async (singleModule = false) => {
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
 
     let buildChainInfo = {};
 
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-community/grid-core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -270,7 +273,7 @@ const watch = async (singleModule) => {
     spawnWatcher(buildChainInfo, singleModule);
 
     const cssBuildChain = {
-        paths: buildChainInfo.paths.filter(path => {console.log(path); return path.includes('community-modules/grid-core') || path.includes('grid-all-modules')}),
+        paths: buildChainInfo.paths.filter(path => { console.log(path); return path.includes('community-modules/grid-core') || path.includes('grid-all-modules') }),
         buildChains: {
             "@ag-community/grid-core": {
                 "0": [
@@ -289,11 +292,11 @@ const watch = async (singleModule) => {
 };
 
 const build = async () => {
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     let buildChainInfo = {};
 
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if (!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+        const { paths, orderedPackageNames } = await getOrderedDependencies("@ag-community/grid-core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -310,7 +313,10 @@ const build = async () => {
         buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
     }
 
-    await buildDependencyChain(path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts'), buildChainInfo.buildChains)
+    const packagePath = path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts');
+    const packageName = manifest(findParentPackageManifest(packagePath)).name;
+
+    await buildDependencyChain(packageName, buildChainInfo.buildChains);
 };
 
 if (commandLineOptions.watch) watch(false);
