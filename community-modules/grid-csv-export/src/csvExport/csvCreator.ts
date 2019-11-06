@@ -48,9 +48,6 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.columnSeparator = columnSeparator;
     }
 
-    public prepare(columnsToExport: Column[]): void {
-    }
-
     public addCustomHeader(customHeader: CsvCustomContent): void {
         this.addCustomContent(customHeader, false);
     }

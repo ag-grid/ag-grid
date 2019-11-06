@@ -75,6 +75,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     }
 
     public prepare(columnsToExport: Column[]): void {
+        super.prepare(columnsToExport);
         this.cols = columnsToExport.map(it => {
             // tslint:disable-next-line
             it.getColDef().cellStyle;

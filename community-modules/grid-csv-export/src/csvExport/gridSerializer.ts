@@ -103,6 +103,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
     public processRowGroupCallback?: (params: ProcessRowGroupForExportParams) => string;
 
+    private firstGroupColumn?: Column;
+
     constructor(config: GridSerializingParams) {
         const {
             columnController, valueService, gridOptionsWrapper, processCellCallback,
@@ -119,7 +121,9 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.processRowGroupCallback = processRowGroupCallback;
     }
 
-    abstract prepare(columnsToExport: Column[]): void;
+    public prepare(columnsToExport: Column[]): void {
+        this.firstGroupColumn = columnsToExport.find(col => col.getColDef().showRowGroup);
+    }
 
     abstract addCustomHeader(customHeader: T): void;
 
@@ -138,10 +142,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
-        const isGroupCell = node && node.group && !!column.getColDef().showRowGroup;
+        const renderGroupSummaryCell = node && node.group && column === this.firstGroupColumn;
 
         let valueForCell: any;
-        if (isGroupCell) {
+        if (renderGroupSummaryCell) {
             valueForCell = this.createValueForGroupNode(node);
         } else {
             valueForCell = this.valueService.getValue(column, node);
