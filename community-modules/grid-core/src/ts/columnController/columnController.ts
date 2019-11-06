@@ -167,6 +167,7 @@ export class ColumnController {
     private viewportRight: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
+    private flexActive: boolean = true;
 
     @PostConstruct
     public init(): void {
@@ -2873,19 +2874,49 @@ export class ColumnController {
     private filterOutColumnsWithinViewport(): Column[] {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
+    public refreshFlexedColumns(centerViewportWidth: number, totalWidth: number, source: ColumnEventType = 'api'): void {
+        if (!this.flexActive) { return; }
 
-    public refreshFlexedColumns(): void {
         const displayedCenterColumns = this.getDisplayedCenterColumns();
-        const flexedColumns = displayedCenterColumns.filter(col => col.getFlex() !== 0);
+        const flexedColumns: Column[] = [];
+        const normalColumns: Column[] = [];
 
-        if (!flexedColumns.length) { return; }
+        displayedCenterColumns.forEach(col => {
+            if (col.getFlex() === 0) {
+                normalColumns.push(col);
+            } else {
+                flexedColumns.push(col);
+            }
+        });
 
-        const flexedCount = flexedColumns.reduce((prev, cur) => prev + cur.getFlex(), 0);
+        if (!flexedColumns.length) {
+            this.flexActive = false;
+            return;
+        }
 
+        if (!normalColumns) {
+            this.sizeColumnsToFit(totalWidth, source, true);
+        }
+
+        const normalColumnsWidth = this.getWidthOfColsInList(normalColumns);
+        const availableSpace = centerViewportWidth - normalColumnsWidth;
+
+        if (availableSpace <= 0) { return; }
+
+        const flexCount = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
+        flexedColumns.forEach(col => {
+            const flex = col.getFlex();
+            const ratio = Math.round((flex * 100 / flexCount) * 10) / 10;
+            col.setActualWidth((availableSpace * ratio) / 100);
+        });
+
+        this.setLeftValues(source);
+        this.updateBodyWidths();
+        this.fireResizedEventForColumns(flexedColumns, source);
     }
 
     // called from api
-    public sizeColumnsToFit(gridWidth: any, source: ColumnEventType = "api"): void {
+    public sizeColumnsToFit(gridWidth: any, source: ColumnEventType = "sizeColumnsToFit", silent?: boolean): void {
         // avoid divide by zero
         const allDisplayedColumns = this.getAllDisplayedColumns();
 
@@ -2952,7 +2983,13 @@ export class ColumnController {
         this.setLeftValues(source);
         this.updateBodyWidths();
 
-        colsToFireEventFor.forEach((column: Column) => {
+        if (silent) { return; }
+
+        this.fireResizedEventForColumns(colsToFireEventFor, source);
+    }
+
+    private fireResizedEventForColumns(columns: Column[], source: ColumnEventType) {
+        columns.forEach((column: Column) => {
             const event: ColumnResizedEvent = {
                 type: Events.EVENT_COLUMN_RESIZED,
                 column: column,
@@ -2960,7 +2997,7 @@ export class ColumnController {
                 finished: true,
                 api: this.gridApi,
                 columnApi: this.columnApi,
-                source: "sizeColumnsToFit"
+                source
             };
             this.eventService.dispatchEvent(event);
         });
@@ -3056,13 +3093,7 @@ export class ColumnController {
     }
 
     private getWidthOfColsInList(columnList: Column[]) {
-        let result = 0;
-
-        for (let i = 0; i < columnList.length; i++) {
-            result += columnList[i].getActualWidth();
-        }
-
-        return result;
+        return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
     }
 
     public getGridBalancedTree(): OriginalColumnGroupChild[] {
