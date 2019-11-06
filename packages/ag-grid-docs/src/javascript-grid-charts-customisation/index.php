@@ -91,7 +91,7 @@ type ChartType =
 <snippet>
 interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
-    chartPalette: ChartPalette;
+    chartPalette: string;
     chartOptions: ChartOptions;
 }
 
@@ -110,6 +110,23 @@ type ChartType =
     'area' |
     'stackedArea' |
     'normalizedArea';
+</snippet>
+
+    <p>
+        Here the <code>chartPalette</code> will be set to the name of the currently selected palette, which will be one of the following:
+        <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
+    </p>
+
+    <p>
+        A <code>ChartRangeSelectionChanged</code> event will also be raised any time the range that the chart is created from is changed,
+        whether by using the range selection handle or making changes in the Data tab of the configuration sidebar. This event contains
+        the ID of the chart, which is also the ID of the cell ranges that are used to produce the chart:
+    </p>
+
+    <snippet>
+interface ChartRangeSelectionChanged extends AgGridEvent {
+    id: string;
+}
 </snippet>
 
     <h3>Example: Saving User Preferences</h3>
