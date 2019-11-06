@@ -5,7 +5,6 @@ import { UserComponentFactory } from "../../../components/framework/userComponen
 import { _ } from "../../../utils";
 import { DateCompWrapper } from "./dateCompWrapper";
 import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from "../simpleFilter";
-import { IDateComparatorFunc } from "./dateFilter";
 import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
 
 // the date filter model is a bit different, it takes strings, although the
@@ -31,7 +30,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     private static readonly FILTER_TYPE = 'date';
 
     public static DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.GREATER_THAN,
-        ScalerFilter.LESS_THAN, ScalerFilter.NOT_EQUAL, ScalerFilter.IN_RANGE];
+    ScalerFilter.LESS_THAN, ScalerFilter.NOT_EQUAL, ScalerFilter.IN_RANGE];
 
     @RefSelector('ePanelFrom1')
     private ePanelFrom1: HTMLElement;
@@ -53,7 +52,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     private dateFilterParams: IDateFilterParams;
 
-    protected mapRangeFromModel(filterModel: DateFilterModel): {from: Date, to: Date} {
+    protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date, to: Date } {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
         //    are in different locations in Date and Number filter models)
@@ -113,8 +112,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     private defaultComparator(filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
         const cellAsDate = cellValue as Date;
-        if  (cellAsDate < filterDate) { return -1; }
-        if  (cellAsDate > filterDate) { return 1; }
+        if (cellAsDate < filterDate) { return -1; }
+        if (cellAsDate > filterDate) { return 1; }
         return cellValue != null ? 0 : -1;
     }
 
@@ -127,7 +126,6 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     private createDateComponents(): void {
-
         // params to pass to all four date comps
         const dateComponentParams: IDateParams = {
             onDateChanged: () => this.onUiChanged(),
@@ -233,5 +231,4 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         _.setDisplayed(this.ePanelTo2, showTo2);
 
     }
-
 }
