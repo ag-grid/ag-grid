@@ -2894,20 +2894,35 @@ export class ColumnController {
             return;
         }
 
-        if (!normalColumns) {
-            this.sizeColumnsToFit(totalWidth, source, true);
-        }
-
+        const flexCount = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
         const normalColumnsWidth = this.getWidthOfColsInList(normalColumns);
         const availableSpace = centerViewportWidth - normalColumnsWidth;
+        let remainingSpace = availableSpace;
 
         if (availableSpace <= 0) { return; }
 
-        const flexCount = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
-        flexedColumns.forEach(col => {
+        flexedColumns.forEach((col, idx) => {
             const flex = col.getFlex();
             const ratio = Math.round((flex * 100 / flexCount) * 10) / 10;
-            col.setActualWidth((availableSpace * ratio) / 100);
+            const newWidth = (availableSpace * ratio) / 100;
+            const minWidth = col.getMinWidth();
+            const maxWidth = col.getMaxWidth() || remainingSpace;
+
+            if (newWidth < minWidth || remainingSpace < minWidth) {
+                col.setMinimum(source);
+                remainingSpace -= minWidth;
+            } else if (newWidth > maxWidth) {
+                col.setActualWidth(maxWidth, source);
+                remainingSpace -= maxWidth;
+            } else {
+                const lastCol = idx === flexedColumns.length - 1;
+                if (lastCol && remainingSpace > 0) {
+                    col.setActualWidth(remainingSpace, source);
+                } else {
+                    col.setActualWidth(newWidth, source);
+                    remainingSpace -= newWidth;
+                }
+            }
         });
 
         this.setLeftValues(source);
