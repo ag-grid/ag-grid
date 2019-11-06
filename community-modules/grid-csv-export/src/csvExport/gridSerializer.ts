@@ -30,45 +30,18 @@ import {
  * This interface works in conjunction with the GridSerializer. When serializing a grid, an instance that implements this interface
  * must be passed in, the serializer will call back to the provided methods and finally call to parse to obtain the final result
  * of the serialization.
- *
- * The lifecycle of a serializer with a GridSerializingSession is as follows.
- *
- * --1 Call to prepare method. An opportunity to do any required work before the call to accumulate data for the rows are about to happen.
- * --2 Call to the row methods as the serializer loops through the different rows of the grid will call these methods so that the data
- * can be accumulated. The methods. if there is relevant data will be called in the following order:
- *      a) addCustomHeader
- *      b) onNewHeaderGroupingRow
- *      c) onNewHeader
- *      d) onNewBodyRow
- *      e) addCustomFooter
- *      IF ANY OF THIS METHODS RETURN A ROW ACCUMULATOR, YOU CAN EXPECT THE SERIALIZER TO CALL ON THAT ACCUMULATOR WITH THE DATA FOR THAT ROW
- *      IMMEDIATELY AFTER IT HAS RECEIVED THE OBJECT AND BEFORE IT CALLS YOU TO OBTAIN A NEW ROW ACCUMULATOR
- * --3 Call to parse method. This method is the last one to be called and is expected to return whatever accumulated
- * parsed string is to be returned as a result of the serialization
- *
- * This interface is closely related to the RowAccumulator and RowSpanningAccumulator interfaces as every time a new row is about
- * to be created a new instances of RowAccumulator or RowSpanningAccumulator need to be provided.
-
  */
 
 export interface GridSerializingSession<T> {
-    /**
-     * INITIAL METHOD
-     */
     prepare(columnsToExport: Column[]): void;
 
-    /**
-     * ROW METHODS
-     */
-    addCustomHeader(customHeader: T): void;
-
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
-
+    
     onNewHeaderRow(): RowAccumulator;
-
+    
     onNewBodyRow(): RowAccumulator;
 
-    addCustomFooter(customFooter: T): void;
+    addCustomContent(customContent: T): void;
 
     /**
      * FINAL RESULT
@@ -125,9 +98,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.firstGroupColumn = columnsToExport.find(col => col.getColDef().showRowGroup);
     }
 
-    abstract addCustomHeader(customHeader: T): void;
-
-    abstract addCustomFooter(customFooter: T): void;
+    abstract addCustomContent(customContent: T): void;
 
     abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
 
@@ -211,40 +182,26 @@ export class GridSerializer {
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params?: ExportParams<T>): string {
+    public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
 
-        const dontSkipRows = (): boolean => false;
-
-        const skipGroups = params && params.skipGroups;
-        const skipHeader = params && params.skipHeader;
-        const columnGroups = params && params.columnGroups;
-        const skipFooters = params && params.skipFooters;
-        const skipPinnedTop = params && params.skipPinnedTop;
-        const skipPinnedBottom = params && params.skipPinnedBottom;
-        const includeCustomHeader = params && params.customHeader;
-        const includeCustomFooter = params && params.customFooter;
-        const allColumns = params && params.allColumns;
-        const onlySelected = params && params.onlySelected;
-        const columnKeys = params && params.columnKeys;
-        const onlySelectedAllPages = params && params.onlySelectedAllPages;
-        const processGroupHeaderCallback = params ? params.processGroupHeaderCallback : undefined;
-        const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = (params && params.shouldRowBeSkipped) || dontSkipRows;
-        const api: GridApi = this.gridOptionsWrapper.getApi() as GridApi;
+        const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
+        const api = this.gridOptionsWrapper.getApi();
+        const columnApi = this.gridOptionsWrapper.getColumnApi();
         const skipSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
         const skipLowestSingleChildrenGroup = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
-        const context: any = this.gridOptionsWrapper.getContext();
+        const context = this.gridOptionsWrapper.getContext();
 
         // when in pivot mode, we always render cols on screen, never 'all columns'
         const isPivotMode = this.columnController.isPivotMode();
         const rowModelNormal = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 
-        const onlySelectedNonStandardModel = !rowModelNormal && onlySelected;
+        const onlySelectedNonStandardModel = !rowModelNormal && params.onlySelected;
 
         let columnsToExport: Column[] = [];
 
-        if (_.existsAndNotEmpty(columnKeys)) {
-            columnsToExport = this.columnController.getGridColumns(columnKeys!);
-        } else if (allColumns && !isPivotMode) {
+        if (_.existsAndNotEmpty(params.columnKeys)) {
+            columnsToExport = this.columnController.getGridColumns(params.columnKeys!);
+        } else if (params.allColumns && !isPivotMode) {
             // add auto group column for tree data
             columnsToExport = this.gridOptionsWrapper.isTreeData() ?
                 this.columnController.getGridColumns([Constants.GROUP_AUTO_COLUMN_ID]) : [];
@@ -255,14 +212,14 @@ export class GridSerializer {
             columnsToExport = this.columnController.getAllDisplayedColumns();
         }
 
-        if (includeCustomHeader) {
-            gridSerializingSession.addCustomHeader(includeCustomHeader);
+        if (params.customHeader) {
+            gridSerializingSession.addCustomContent(params.customHeader);
         }
 
         gridSerializingSession.prepare(columnsToExport);
 
         // first pass, put in the header names of the cols
-        if (columnGroups) {
+        if (params.columnGroups) {
             const groupInstanceIdCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
             const displayedGroups: ColumnGroupChild[] = this.displayedGroupCreator.createDisplayedGroups(
                 columnsToExport,
@@ -270,10 +227,10 @@ export class GridSerializer {
                 groupInstanceIdCreator,
                 null
             );
-            this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, processGroupHeaderCallback);
+            this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
         }
 
-        if (!skipHeader) {
+        if (!params.skipHeader) {
             const gridRowIterator = gridSerializingSession.onNewHeaderRow();
             columnsToExport.forEach((column, index) => {
                 gridRowIterator.onColumn(column, index, undefined);
@@ -295,7 +252,7 @@ export class GridSerializer {
             // other pages.
             // onlySelectedNonStandardModel: if user wants selected in non standard row model
             // (eg viewport) then again rowmodel cannot be used, so need to use selected instead.
-            if (onlySelectedAllPages || onlySelectedNonStandardModel) {
+            if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
                 const selectedNodes = this.selectionController.getSelectedNodes();
                 selectedNodes.forEach((node: RowNode) => {
                     processRow(node);
@@ -314,30 +271,30 @@ export class GridSerializer {
 
         this.pinnedRowModel.forEachPinnedBottomRow(processRow);
 
-        if (includeCustomFooter) {
-            gridSerializingSession.addCustomFooter(includeCustomFooter);
+        if (params.customFooter) {
+            gridSerializingSession.addCustomContent(params.customFooter);
         }
 
         function processRow(node: RowNode): void {
             const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
             const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
 
-            if (node.group && (skipGroups || shouldSkipCurrentGroup)) {
+            if (node.group && (params.skipGroups || shouldSkipCurrentGroup)) {
                 return;
             }
-            if (skipFooters && node.footer) {
-                return;
-            }
-
-            if (onlySelected && !node.isSelected()) {
+            if (params.skipFooters && node.footer) {
                 return;
             }
 
-            if (skipPinnedTop && node.rowPinned === 'top') {
+            if (params.onlySelected && !node.isSelected()) {
                 return;
             }
 
-            if (skipPinnedBottom && node.rowPinned === 'bottom') {
+            if (params.skipPinnedTop && node.rowPinned === 'top') {
+                return;
+            }
+
+            if (params.skipPinnedBottom && node.rowPinned === 'bottom') {
                 return;
             }
 
@@ -348,11 +305,7 @@ export class GridSerializer {
                 return;
             }
 
-            const shouldRowBeSkipped: boolean = rowSkipper({
-                node: node,
-                api: api,
-                context: context
-            });
+            const shouldRowBeSkipped: boolean = rowSkipper({node, api, context});
 
             if (shouldRowBeSkipped) {
                 return;
@@ -362,6 +315,13 @@ export class GridSerializer {
             columnsToExport.forEach((column: Column, index: number) => {
                 rowAccumulator.onColumn(column, index, node);
             });
+
+            if (params.getCustomContentBelowRow) {
+                const content = params.getCustomContentBelowRow({node, api, columnApi, context})
+                if (content) {
+                    gridSerializingSession.addCustomContent(content);
+                }
+            }
         }
 
         return gridSerializingSession.parse();

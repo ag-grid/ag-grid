@@ -32,6 +32,7 @@ export interface BaseExportParams {
 export interface ExportParams<T> extends BaseExportParams {
     customHeader?: T;
     customFooter?: T;
+    getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }
 
 export interface CsvCell {

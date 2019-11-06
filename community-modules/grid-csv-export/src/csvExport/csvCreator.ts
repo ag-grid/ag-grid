@@ -48,27 +48,19 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.columnSeparator = columnSeparator;
     }
 
-    public addCustomHeader(customHeader: CsvCustomContent): void {
-        this.addCustomContent(customHeader, false);
-    }
-
-    public addCustomFooter(customFooter: CsvCustomContent): void {
-        this.addCustomContent(customFooter, true);
-    }
-
-    private addCustomContent(content: CsvCustomContent, isFooter: boolean) {
+    public addCustomContent(content: CsvCustomContent) {
         if (!content) { return; }
         if (typeof content === 'string') {
             // we used to require the customFooter to be prefixed with a newline but no longer do,
             // so only add the newline if the user has not supplied one
-            if (isFooter && !/^\s*\n/.test(content)) {
+            if (this.result && !/^\s*\n/.test(content)) {
                 content = LINE_SEPARATOR + content;
             }
             // replace whatever newlines are supplied with the style we're using
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content + LINE_SEPARATOR;
         } else {
-            if (isFooter) {
+            if (this.result) {
                 this.result += LINE_SEPARATOR;
             }
             content.forEach(row => {
