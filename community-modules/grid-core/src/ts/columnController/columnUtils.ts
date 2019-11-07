@@ -6,6 +6,7 @@ import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
+import { _ } from "../utils";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
@@ -16,7 +17,7 @@ export class ColumnUtils {
     public calculateColInitialWidth(colDef: any): number {
         const optionsWrapper = this.gridOptionsWrapper;
         const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
-        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || Number.MAX_SAFE_INTEGER);
+        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || _.getMaxSafeInteger());
         const width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
 
         return Math.max(Math.min(width, maxColWidth), minColWidth);

@@ -64,6 +64,14 @@ export class Utils {
         this.doOnceFlags[key] = true;
     }
 
+    static getMaxSafeInteger(): number {
+        if (!Number.MAX_SAFE_INTEGER) {
+            return 9007199254740991;
+        }
+
+        return Number.MAX_SAFE_INTEGER;
+    }
+
     static isEventSupported = (() => {
         const tags = {
             select: 'input',
