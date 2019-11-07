@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ag-Grid issue demo</title>
+</head>
+<body>
+
+<div id="app"></div>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react/16.8.6/umd/react.production.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.6/umd/react-dom.production.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min.js'></script>
+<script src='./ag-grid-community.min.js'></script>
+<script src='./ag-grid-react.min.js'></script>
+<script>
+  class FrameworkCell extends React.Component {
+    render() {
+      return React.createElement("b", null, this.props.value);
+    }
+  }
+
+  const columnDefs = [
+    {
+      headerName: "ID",
+      field: "id",
+      sort: "desc"
+    },
+    {
+      headerName: "React Data",
+      field: "data",
+      cellRendererFramework: FrameworkCell
+    }
+  ];
+
+  let id = 0;
+  const initialRowData = Array.from({length: 10}, () => ({
+    id: ++id,
+    data: `Data ${id}`
+  }));
+
+  const containerStyle = {
+    height: "300px",
+    width: "400px"
+  };
+
+  function App() {
+    const [rowData, setRowData] = React.useState(initialRowData);
+
+    return (
+            React.createElement(React.Fragment, null,
+                    React.createElement("div", {className: "ag-theme-balham", style: containerStyle},
+                            React.createElement(AgGridReact.AgGridReact, {
+                              columnDefs: columnDefs,
+                              rowData: rowData,
+                            })
+                    )
+            )
+    );
+  }
+
+  ReactDOM.render(React.createElement(App, null), document.getElementById("app"));
+</script>
+
+</body>
+</html>
