@@ -216,7 +216,9 @@ export class FillHandle extends AbstractSelectionHandle {
                 withinInitialRange = updateInitialSet();
             } else {
                 currentValue = this.processValues(e, values, initialValues, col, rowNode, idx++);
-                this.valueService.setValue(rowNode, col, currentValue);
+                if (col.isCellEditable(rowNode)) {
+                    this.valueService.setValue(rowNode, col, currentValue);
+                }
             }
             
             values.push(currentValue);
@@ -244,7 +246,9 @@ export class FillHandle extends AbstractSelectionHandle {
             if (!rowNode) { break; }
 
             columns.forEach((col: Column) => {
-                this.valueService.setValue(rowNode, col, null);
+                if (col.isCellEditable(rowNode)) {
+                    this.valueService.setValue(rowNode, col, null);
+                }
             });
 
             finished = this.rowPositionUtils.sameRow(currentRow, endRow);
