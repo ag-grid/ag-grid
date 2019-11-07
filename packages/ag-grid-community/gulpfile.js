@@ -50,15 +50,19 @@ const cleanDist = () => {
 // End of Typescript related tasks
 
 const copyGridCoreStyles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
         done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    return merge([
+            gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
+            gulp.src('./node_modules/@ag-grid-community/core/src/styles/**/*').pipe(gulp.dest('./src/styles')),
+        ]
+    );
 };
 
 const copyGridCoreTypings = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/core/typings')) {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/core/typings')) {
         done("node_modules/@ag-grid-community/core/typings doesn't exist - exiting")
     }
 
@@ -66,7 +70,7 @@ const copyGridCoreTypings = (done) => {
 };
 
 const copyGridAllUmdFiles = (done) => {
-    if(!fs.existsSync('./node_modules/@ag-grid-community/all-modules/dist')) {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/all-modules/dist')) {
         done("./node_modules/@ag-grid-community/all-modules/dist doesn't exist - exiting")
     }
 

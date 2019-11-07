@@ -1,6 +1,6 @@
 !dist
 
-src
+src/**/*.ts
 .gitignore
 .npmignore
 bower.json

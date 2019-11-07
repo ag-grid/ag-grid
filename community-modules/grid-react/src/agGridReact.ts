@@ -35,6 +35,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     portals: ReactPortal[] = [];
     hasPendingPortalUpdate = false;
 
+    destroyed = false;
+
     protected eGridDiv!: HTMLElement;
 
     private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
@@ -90,7 +92,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
-        if (!this.api) {
+        if (this.destroyed) {
             resolve(null);
             return;
         }
@@ -238,6 +240,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     }
 }
 

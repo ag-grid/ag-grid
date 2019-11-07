@@ -1,6 +1,6 @@
 {
     "name": "@ag-grid-community/all-modules",
-    "version": "22.0.0-beta.0",
+    "version": "22.0.0-beta.2",
     "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
     "main": "./dist/cjs/main.js",
     "module": "./dist/es6/main.js",
@@ -64,6 +64,7 @@
         "gulp": "^4.0.2",
         "gulp-clean": "^0.4.0",
         "gulp-header": "^2.0.0",
+        "merge2": "^1.2.0",
         "postcss-loader": "^3.0.0",
         "protractor": "^5.4.0",
         "rollup": "^1.21.2",

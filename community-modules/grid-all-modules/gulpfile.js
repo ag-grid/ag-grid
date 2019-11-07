@@ -7,6 +7,7 @@ const webpackStream = require('webpack-stream');
 const TerserPlugin = require('terser-webpack-plugin');
 const header = require('gulp-header');
 const pkg = require('./package.json');
+const merge = require('merge2');
 
 const ts = require('gulp-typescript');
 
@@ -122,7 +123,10 @@ const copyGridCoreStyles = (done) => {
         done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
     }
 
-    return gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
+    return merge([
+        gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
+        gulp.src('./node_modules/@ag-grid-community/core/src/styles/**/*').pipe(gulp.dest('./dist/styles'))
+    ]);
 };
 
 gulp.task('clean', cleanDist);

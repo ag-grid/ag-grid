@@ -1,7 +1,7 @@
 e2e
 node_modules
 rollup
-src
+src/
 .npmignore
 github-banner.png
 github-grid-demo.jpg

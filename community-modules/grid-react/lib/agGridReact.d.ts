@@ -20,6 +20,7 @@ export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     columnApi: ColumnApi;
     portals: ReactPortal[];
     hasPendingPortalUpdate: boolean;
+    destroyed: boolean;
     protected eGridDiv: HTMLElement;
     private static MAX_COMPONENT_CREATION_TIME;
     constructor(props: any, state: any);

@@ -38,6 +38,7 @@ var AgGridReact = /** @class */ (function (_super) {
         _this.api = null;
         _this.portals = [];
         _this.hasPendingPortalUpdate = false;
+        _this.destroyed = false;
         return _this;
     }
     AgGridReact.prototype.render = function () {
@@ -83,7 +84,7 @@ var AgGridReact = /** @class */ (function (_super) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
         // if the grid has been destroyed in the meantime just resolve
-        if (!this.api) {
+        if (this.destroyed) {
             resolve(null);
             return;
         }
@@ -215,6 +216,7 @@ var AgGridReact = /** @class */ (function (_super) {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     };
     AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;

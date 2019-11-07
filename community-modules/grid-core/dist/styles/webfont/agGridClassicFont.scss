@@ -1,0 +1,11 @@
+@import '../ag-theme-base/vars/ag-theme-base-vars';
+@import '../mixins/ag-theme-mixins';
+
+@font-face {
+    font-family: '#{$icon-font-family}';
+    src: $icons-data;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@include icons_webfont();

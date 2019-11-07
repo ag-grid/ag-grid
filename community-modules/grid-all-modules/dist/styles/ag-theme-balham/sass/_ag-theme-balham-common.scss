@@ -1,0 +1,231 @@
+@import "../../ag-theme-base/sass/ag-theme-base";
+
+@mixin ag-theme-balham($params) {
+    $border-color: map-get($params, "border-color");
+    $default-background: map-get($params, "default-background");
+    $foreground-color: map-get($params, "foreground-color");
+    $grid-size: map-get($params, "grid-size");
+    $header-background-color: map-get($params, "header-background-color");
+    $header-foreground-color: map-get($params, "header-foreground-color");
+    $header-height: map-get($params, "header-height");
+    $icon-size: map-get($params, "icon-size");
+    $panel-background-color: map-get($params, "panel-background-color");
+    $primary-color: map-get($params, "primary-color");
+    $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
+    $row-height: map-get($params, "row-height");
+    $row-border-width: map-get($params, "row-border-width");
+    $selected-color: map-get($params, "selected-color");
+
+    %card {
+        border: 1px solid $border-color;
+    }
+
+    %tab {
+        border: 1px solid transparent;
+        border-bottom-width: 0;
+        margin: $grid-size;
+        margin-bottom: 0;
+        padding: $grid-size $grid-size * 2;
+    }
+
+    %selected-tab {
+        background-color: $default-background;
+        border-bottom: 2px solid $primary-color;
+        border-bottom: 2px solid $default-background;
+        border-color: $border-color;
+    }
+
+    @include ag-grid-theme($params);
+
+    .ag-cell-highlight {
+        background-color: $range-selection-highlight-color !important;
+    }
+
+    .ag-header-cell-resize::after {
+        height: 80%;
+        margin-top: $grid-size * 2;
+    }
+
+    .ag-header-cell::after,
+    .ag-header-group-cell::after {
+        border-right: 1px solid transparentize($border-color, 0.5);
+        content: " ";
+        height: $header-height - $grid-size * 4;
+        margin-top: $grid-size * 2;
+        position: absolute;
+        text-indent: -2000px;
+        top: 0;
+    }
+
+    .ag-ltr {
+        .ag-header-cell::after,
+        .ag-header-group-cell::after {
+            right: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-header-cell::after,
+        .ag-header-group-cell::after {
+            left: 0;
+        }
+    }
+
+    .ag-column-drop-horizontal.ag-column-drop {
+        border: 1px solid $border-color;
+        border-bottom: 0;
+    }
+
+    .ag-ltr {
+        .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
+            border-right: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
+            border-left: 0;
+        }
+    }
+
+    .ag-row {
+        border-color: lighten($border-color, 10);
+    }
+
+    .ag-row-selected {
+        border-color: $selected-color;
+    }
+
+    .ag-column-drop-cell {
+        min-height: $grid-size * 6;
+
+        .ag-column-drop-cell-button {
+            margin-bottom: $grid-size / 2;
+            margin-top: $grid-size / 2;
+        }
+
+        .ag-column-drop-cell-button:hover {
+            opacity: 1;
+        }
+    }
+
+    .ag-column-drop-vertical .ag-column-drop-cell {
+        margin-left: $grid-size * 2;
+        margin-right: $grid-size * 2;
+
+        .ag-column-drop-cell-text {
+            margin-left: $grid-size * 2;
+        }
+    }
+
+    .ag-column-drop-horizontal {
+        background-color: $panel-background-color;
+        height: $header-height;
+
+        .ag-column-drop-cell-text {
+            margin-left: $grid-size * 2;
+        }
+    }
+
+    .ag-root {
+        border: 1px solid $border-color;
+    }
+
+    // tool panel
+    .ag-tool-panel-wrapper {
+        .ag-column-select-panel {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
+                min-height: $grid-size * 5;
+            }
+        }
+
+        .ag-column-drop {
+            padding-bottom: $grid-size * 2;
+            padding-top: $grid-size * 2;
+        }
+    }
+
+    // context menu spacing
+    .ag-menu-option {
+        height: $grid-size * 7;
+    }
+
+    .ag-column-select-panel {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
+            height: $grid-size * 5;
+        }
+    }
+
+    .ag-tab-header {
+        border-bottom: 1px solid $border-color;
+
+        .ag-tab {
+            margin-bottom: -2px;
+        }
+
+        .ag-tab.ag-tab-selected {
+            background-color: $default-background;
+            border-bottom-color: transparent;
+        }
+    }
+
+    .ag-tab-body,
+    .ag-popup-editor,
+    .ag-menu {
+        background-color: $default-background;
+        color: $foreground-color;
+    }
+
+    .ag-cell.ag-cell-inline-editing {
+        height: $row-height;
+        padding: 0;
+    }
+
+    .ag-details-row {
+        background-color: $default-background;
+    }
+
+    .ag-overlay-loading-wrapper {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ag-overlay-loading-center {
+        background-color: $default-background;
+        border: 1px solid $border-color;
+        color: $foreground-color;
+        padding: $grid-size * 4;
+    }
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-1;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-2;
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-3;
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-4;
+    }
+
+    .ag-rich-select-value {
+        border-bottom: 1px solid $border-color;
+    }
+
+    .ag-filter-apply-panel {
+        border-top: 1px solid $border-color;
+    }
+
+    .ag-group-expanded {
+        .ag-icon-expanded:empty:before {
+            content: map-get($icons-font-codes, tree-open);
+        }
+    }
+}

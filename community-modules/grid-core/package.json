@@ -1,6 +1,6 @@
 {
     "name": "@ag-grid-community/core",
-    "version": "22.0.0-beta.0",
+    "version": "22.0.0-beta.2",
     "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
     "main": "./dist/cjs/main.js",
     "module": "./dist/es6/main.js",
