@@ -66,6 +66,12 @@ include '../documentation-main/documentation_header.php';
             <td>Initial width, min width and max width for the cell. Always stated in pixels (never percentage values).</td>
         </tr>
         <tr>
+            <th>flex</th>
+            <td>Used instead of width when the goal is to fill the remaining empty space of the grid. For
+                more info see: <a href="../javascript-grid-resizing/#column-flexing">Column Flex</a>
+        </td>
+        </tr>
+        <tr>
             <th>filter<br/>filterFramework</th>
             <td>Filter component to use for this column. Set to true to use the default filter.</td>
         </tr>

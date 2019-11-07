@@ -51,7 +51,7 @@ gridOptions: {
 }
 </snippet>
 
-    <h2>Column Flexing</h1>
+    <h2>Column Flex</h1>
 
     <p>
         It's often that need that one or more columns fill the entire available space in
@@ -80,7 +80,7 @@ gridOptions: {
         flex will be automatically disabled for that column.
     </note>
 
-    <?= example('Column Flexing', 'flex-columns', 'generated', array("processVue" => true)) ?>
+    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2>Size Columns to Fit</h2>
 
