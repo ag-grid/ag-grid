@@ -6,6 +6,8 @@
 
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 var agGridCommunity = require('ag-grid-community');
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -33334,3 +33336,5 @@ agGridCommunity.ModuleRegistry.register(SetFilterModule);
 agGridCommunity.ModuleRegistry.register(SideBarModule);
 agGridCommunity.ModuleRegistry.register(StatusBarModule);
 agGridCommunity.ModuleRegistry.register(ViewportRowModelModule);
+
+exports.LicenseManager = LicenseManager;

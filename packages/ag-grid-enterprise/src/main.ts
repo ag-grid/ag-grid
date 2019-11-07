@@ -29,6 +29,4 @@ ModuleRegistry.register(SideBarModule as any);
 ModuleRegistry.register(StatusBarModule as any);
 ModuleRegistry.register(ViewportRowModelModule as any);
 
-export declare class LicenseManager {
-    static setLicenseKey(licenseKey: string): void;
-}
+export {LicenseManager} from "@ag-grid-enterprise/core";

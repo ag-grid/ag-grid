@@ -34,7 +34,7 @@ const tscMainTask = () => {
 
     return merge([
         tsResult.dts
-            // .pipe(replace("\"./", "\"./dist/lib/"))
+            .pipe(replace("\"@ag-grid-enterprise/core", "\"./dist/ag-grid-enterprise.cjs.js"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./')),
