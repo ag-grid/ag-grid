@@ -1,8 +1,11 @@
 var columnDefs = [
     {headerName: 'Author', field: 'author', width: 90 },
-    {headerName: 'Title', field: 'title', flex: 3},
-    {headerName: 'Link', field: 'link', flex: 2},
-    {headerName: 'Date', field: 'date', flex: 1}
+    {headerName: 'Details', children: [
+        {headerName: 'Title', field: 'title', minWidth: 470, flex: 1},
+        {headerName: 'Link', field: 'link', flex: 1},
+        {headerName: 'Date', field: 'date', width: 200}
+    ]},
+    {headerName: 'Foo', width: 100}
 ];
 
 var gridOptions = {

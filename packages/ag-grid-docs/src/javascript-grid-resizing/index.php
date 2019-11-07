@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 id="resizing">Column Resizing</h1>
+    <h1 id="resizing">Column Sizing</h1>
 
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
