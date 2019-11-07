@@ -11,10 +11,6 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
     </p>
-
-    <h2>Column Flexing</h1>
-
-    <?= example('Column Flexing', 'flex-columns', 'generated', array("processVue" => true)) ?>
     
     <h2>Enable Sizing</h2>
 
@@ -54,6 +50,37 @@ gridOptions: {
     ]
 }
 </snippet>
+
+    <h2>Column Flexing</h1>
+
+    <p>
+        It's often that need that one or more columns fill the entire available space in
+        the grid. For this scenario, it is possible to use the <code>flex</code> config.
+        Some columns could be set with a regular <code>width</code> config, while other 
+        columns would have a flex config.
+    </p>
+
+    <p>
+        The flex config works with proportions, for example: <br>
+        If the grid has a total width of 400px and it has three columns. The first column
+        with 100px width; second column with <code>flex: 1</code>; third column with <code>flex: 2</code>.<br>
+        It will divide the remaining 300px between the two columns where the column with <code>flex: 2</code> 
+        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
+    </p>
+
+    <note>
+        The flex config does <strong>not</strong> work with the <code>width</code> config
+        the both in same column. If you need to provide a base(minimum) width for a column. 
+        You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
+        into account.
+    </note>
+
+    <note>
+        If you manually resize a column with flex either via API or dragging the resize handle, 
+        flex will be automatically disabled for that column.
+    </note>
+
+    <?= example('Column Flexing', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2>Size Columns to Fit</h2>
 
