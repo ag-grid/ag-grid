@@ -63,7 +63,7 @@ const copyGridAllUmdFiles = (done) => {
     }
 
     return gulp.src([
-        './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-community*.js',
+        './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise*.js',
         '!./node_modules/@ag-grid-enterprise/all-modules/dist/**/*.cjs*.js']).pipe(gulp.dest('./dist/'));
 };
 
