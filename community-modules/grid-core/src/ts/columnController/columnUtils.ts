@@ -14,51 +14,39 @@ export class ColumnUtils {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public calculateColInitialWidth(colDef: any): number {
-        if (!colDef.width) {
-            // if no width defined in colDef, use default
-            return this.gridOptionsWrapper.getColWidth();
-        } else if (colDef.width < this.gridOptionsWrapper.getMinColWidth()) {
-            // if width in col def to small, set to min width
-            return this.gridOptionsWrapper.getMinColWidth();
-        } else {
-            // otherwise use the provided width
-            return colDef.width;
-        }
+        const optionsWrapper = this.gridOptionsWrapper;
+        const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
+        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || Number.MAX_SAFE_INTEGER);
+        const width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+
+        return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
 
     public getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[] {
         const result: OriginalColumnGroup[] = [];
         let found = false;
 
-        recursePath(originalBalancedTree, 0);
-
-        // we should always find the path, but in case there is a bug somewhere, returning null
-        // will make it fail rather than provide a 'hard to track down' bug
-        if (found) {
-            return result;
-        } else {
-            return null;
-        }
-
-        function recursePath(balancedColumnTree: OriginalColumnGroupChild[], dept: number): void {
-
+        const recursePath = (balancedColumnTree: OriginalColumnGroupChild[], dept: number): void => {
             for (let i = 0; i < balancedColumnTree.length; i++) {
-                if (found) {
+                if (found) { return; }
                     // quit the search, so 'result' is kept with the found result
-                    return;
-                }
+
                 const node = balancedColumnTree[i];
                 if (node instanceof OriginalColumnGroup) {
                     const nextNode = node;
                     recursePath(nextNode.getChildren(), dept + 1);
                     result[dept] = node;
-                } else {
-                    if (node === column) {
-                        found = true;
-                    }
+                } else if (node === column) {
+                    found = true;
                 }
             }
-        }
+        };
+
+        recursePath(originalBalancedTree, 0);
+
+        // we should always find the path, but in case there is a bug somewhere, returning null
+        // will make it fail rather than provide a 'hard to track down' bug
+        return found ? result : null;
     }
 
 /*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
@@ -97,7 +85,6 @@ export class ColumnUtils {
     }*/
 
     public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void {
-
         if (!tree) { return; }
 
         tree.forEach((child: OriginalColumnGroupChild) => {
@@ -110,7 +97,6 @@ export class ColumnUtils {
     }
 
     public depthFirstAllColumnTreeSearch(tree: ColumnGroupChild[] | null, callback: (treeNode: ColumnGroupChild) => void): void {
-
         if (!tree) { return; }
 
         tree.forEach((child: ColumnGroupChild) => {
@@ -123,7 +109,6 @@ export class ColumnUtils {
     }
 
     public depthFirstDisplayedColumnTreeSearch(tree: ColumnGroupChild[], callback: (treeNode: ColumnGroupChild) => void): void {
-
         if (!tree) { return; }
 
         tree.forEach((child: ColumnGroupChild) => {
@@ -132,7 +117,5 @@ export class ColumnUtils {
             }
             callback(child);
         });
-
     }
-
 }

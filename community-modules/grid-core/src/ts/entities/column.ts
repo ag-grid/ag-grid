@@ -646,6 +646,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
+        if (this.minWidth != null) {
+            actualWidth = Math.max(actualWidth, this.minWidth);
+        }
+        if (this.maxWidth != null) {
+            actualWidth = Math.min(actualWidth, this.maxWidth);
+        }
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             if (this.flex && source !== 'flex') { this.flex = 0; }
@@ -655,7 +661,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isGreaterThanMax(width: number): boolean {
-        if (this.maxWidth) {
+        if (this.maxWidth != null) {
             return width > this.maxWidth;
         }
         return false;
