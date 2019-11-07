@@ -113,7 +113,16 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
-        const renderGroupSummaryCell = node && node.group && column === this.firstGroupColumn;
+        // we render the group summary text e.g. "-> Parent -> Child"...
+        const renderGroupSummaryCell =
+            // on group rows
+            node && node.group
+            && (
+                // in the first group column if groups appear in regular grid cells
+                column === this.firstGroupColumn
+                // or the first cell in the row, if we're doing full width rows
+                || (index === 0 && this.gridOptionsWrapper.isGroupUseEntireRow(this.columnController.isPivotMode()))
+            );
 
         let valueForCell: any;
         if (renderGroupSummaryCell) {
