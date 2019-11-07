@@ -37,9 +37,9 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
                 <select onchange="onThemeChanged(this.value)" id="grid-theme">
                     <option value="">-none-</option>
-                    <option value="ag-theme-alpine">Alpine</option>
+                    <option value="ag-theme-alpine" selected>Alpine</option>
                     <option value="ag-theme-alpine-dark">Alpine (Dark)</option>
-                    <option value="ag-theme-balham" selected>Balham</option>
+                    <option value="ag-theme-balham">Balham</option>
                     <option value="ag-theme-balham-dark">Balham (dark)</option>
                     <option value="ag-theme-material">Material</option>
                 </select>
@@ -68,7 +68,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
     <!-- The table div -->
     <div id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
-        <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
+        <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-alpine"></div>
     </div>
 </div> <!-- example wrapper -->
 
