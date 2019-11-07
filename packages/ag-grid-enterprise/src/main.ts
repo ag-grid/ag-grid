@@ -28,3 +28,7 @@ ModuleRegistry.register(SetFilterModule as any);
 ModuleRegistry.register(SideBarModule as any);
 ModuleRegistry.register(StatusBarModule as any);
 ModuleRegistry.register(ViewportRowModelModule as any);
+
+export declare class LicenseManager {
+    static setLicenseKey(licenseKey: string): void;
+}
