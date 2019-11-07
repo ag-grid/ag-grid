@@ -65,10 +65,11 @@ export class Utils {
     }
 
     static getMaxSafeInteger(): number {
+        // eslint-disable-next-line
         if (!Number.MAX_SAFE_INTEGER) {
             return 9007199254740991;
         }
-
+        // eslint-disable-next-line
         return Number.MAX_SAFE_INTEGER;
     }
 
