@@ -109,7 +109,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public extractHeaderValue(column: Column): string {
-        return this.getHeaderName(this.processHeaderCallback, column) || '';
+        const value = this.getHeaderName(this.processHeaderCallback, column);
+        return value != null ? value : '';
     }
 
     public extractRowCellValue(column: Column, index: number, type: string, node: RowNode) {
@@ -130,7 +131,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } else {
             valueForCell = this.valueService.getValue(column, node);
         }
-        return this.processCell(node, column, valueForCell, this.processCellCallback, type) || '';
+        const value = this.processCell(node, column, valueForCell, this.processCellCallback, type);
+        return value != null ? value : '';
     }
 
     private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
