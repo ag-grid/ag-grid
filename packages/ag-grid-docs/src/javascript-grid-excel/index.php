@@ -216,7 +216,7 @@ var gridOptions = {
     <h2>Resolving Excel Styles</h2>
 
         <p>
-            All the defined classes from <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> and all the classes resultant of evaluating
+            All the defined classes from <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> and all the classes resulting from evaluating
             the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a>
             are applied to each cell when exporting to Excel.
             Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles

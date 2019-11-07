@@ -57,6 +57,15 @@
     <div class="columns">
         <div class="column">
             <label class="option">
+                <input type="checkbox" id="columnWidth">
+                columnWidth =
+                <select id="columnWidthValue">
+                    <option>100</option>
+                    <option>200</option>
+                    <option>myColumnWidthCallback</option>
+                </select>
+            </label>
+            <label class="option">
                 <input type="checkbox" id="sheetName">
                 sheetName =
                 <input type="text" id="sheetNameValue" value="custom-name" maxlength="31">
@@ -65,12 +74,12 @@
                 <input type="checkbox" id="exportModeXml">
                 <span class="option-name">exportMode = "xml"</span>
             </label>
+        </div>
+        <div class="column" style="margin-left: 30px">
             <label class="option">
                 <input type="checkbox" id="suppressTextAsCDATA">
                 <span class="option-name">suppressTextAsCDATA</span>
             </label>
-        </div>
-        <div class="column" style="margin-left: 30px">
             <div class="option">
                 <label>
                     <input type="checkbox" id="rowHeight">

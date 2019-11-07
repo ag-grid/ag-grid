@@ -44,7 +44,8 @@ var gridOptions = {
                         cell(record.duration, 'body'),
                         cell(record.switchCode, 'body'),
                     ]
-                })
+                }),
+                [[]]
             )
         },
         columnWidth: 120
@@ -70,7 +71,7 @@ var gridOptions = {
 function cell(text, styleId) {
     return {
         styleId: styleId,
-        data: {type: isNaN(text) ? 'String' : 'Number', value: String(text)}
+        data: {type: /^\d+$/.test(text) ? 'Number' : 'String', value: String(text)}
     };
 }
 

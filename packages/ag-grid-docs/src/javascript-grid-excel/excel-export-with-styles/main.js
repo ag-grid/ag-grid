@@ -252,8 +252,18 @@ function getNumericValue(cssSelector) {
     return value;
 }
 
+function myColumnWidthCallback(params) {
+    var originalWidth = params.column.getActualWidth();
+    if (params.index < 7) {
+        return originalWidth;
+    }
+    return 30;
+}
+
 function onBtExport() {
+    var columnWidth = getBooleanValue('#columnWidth') ? getTextValue('#columnWidthValue') : undefined;
     var params = {
+        columnWidth: columnWidth === 'myColumnWidthCallback' ? myColumnWidthCallback : parseFloat(columnWidth),
         sheetName: getBooleanValue('#sheetName') && getTextValue('#sheetNameValue'),
         exportMode: getBooleanValue('#exportModeXml') ? "xml" : undefined,
         suppressTextAsCDATA: getBooleanValue('#suppressTextAsCDATA'),

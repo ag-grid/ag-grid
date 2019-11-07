@@ -170,27 +170,20 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <p>
     There is an important difference between rendering and exporting Master / Detail content. When you expand a master
     row in the UI, a new instance of the Grid is created to render the detail, meaning that you have the full power of
-    the Grid to manipulate and format the detail data. When exporting, the original data object representing
+    the Grid to sort, filter and format the detail data. When exporting, the original data object representing
     the row is passed to <code>getCustomContentBelowRow</code> which returns styled content to be inserted into the
     export. No instance of the Grid is created. This means that export performance is good even with large Master /
-    Detail data sets.
+    Detail data sets. However, if your <code>detailGridOptions</code> contains value getters, value formatters,
+    sorting, filtering etc, and you want these to appear in the export, they must be applied by
+    <code>getCustomContentBelowRow</code>.
 </p>
 
-<p>Note that:</p>
-
-<ul>
-    <li>
-        If your <code>detailGridOptions</code> contains value getters, value formatters,
-        sorting, filtering etc, and you want these to appear in the export, they must be applied by
-        <code>getCustomContentBelowRow</code>.
-    </li>
-    <li>
-        By default, triggering an export through the right-click context menu on a detail grid will export
-        the data for that grid only. If this is not appropriate for your application you can disable the
-        export item in the context menu, or replace it with a custom item that triggers an export on the
-        master grid.
-    </li>
-</ul>
+<p>
+    Since detail grids are full Grid instances, triggering an export through the right-click context menu on
+    a detail grid will do a normal export for the detail grid only. If this is not appropriate for your application
+    you can disable the export item in the context menu, or replace it with a custom item that triggers an export on
+    the master grid.
+</p>
 
 <?= example('Exporting Master / Detail Data', 'exporting', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
 

@@ -33,6 +33,10 @@ $exportProperties = [
         "String to use as the file name. If missing, the file name 'export.csv' will be used."
     ],
     [
+        "getCustomContentBelowRow",
+        "A callback function to return styled content to be inserted below a row in the export. The callback params has the following attributes: node, api, columnApi, context."
+    ],
+    [
         "onlySelected",
         "Only export selected rows."
     ],
