@@ -55,13 +55,14 @@
     "commander": "^3.0.2",
     "execa": "^3.2.0",
     "inquirer": "^7.0.0",
-    "lerna": "^3.18.1",
+    "lerna": "^3.18.3",
     "lighthouse": "^5.4.0",
-    "walk": "^2.3.14",
     "rollup": "^1.21.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "terser-webpack-plugin": "^2.0.1"
+    "terser-webpack-plugin": "^2.0.1",
+    "walk": "^2.3.14",
+    "webpack": "^4.41.2"
   },
   "dependencies": {
     "fs-extra": "^8.1.0"
