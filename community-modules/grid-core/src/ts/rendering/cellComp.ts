@@ -498,8 +498,8 @@ export class CellComp extends Component {
 
         // populate
         this.putDataIntoCellAfterRefresh();
-
         this.updateAngular1ScopeAndCompile();
+        this.refreshHandle();
     }
 
     private updateAngular1ScopeAndCompile() {
