@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-angular",
-  "version": "22.0.0-beta.0",
+  "version": "22.0.0-beta.2",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
