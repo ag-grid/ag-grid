@@ -25,12 +25,13 @@ export class ColumnFactory {
     }
 
     public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[])
-        : {columnTree: OriginalColumnGroupChild[], treeDept: number} {
+        : { columnTree: OriginalColumnGroupChild[], treeDept: number } {
 
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that could be master/slave) with same column definitions,
         // then this ensures the two grids use identical id's.
         const columnKeyCreator = new ColumnKeyCreator();
+
         if (existingColumns) {
             const existingKeys: string[] = existingColumns.map(col => col.getId());
             columnKeyCreator.addExistingKeys(existingKeys);
@@ -44,7 +45,7 @@ export class ColumnFactory {
             existingColsCopy, columnKeyCreator, null);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
-        const res = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
+        const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
 
         const deptFirstCallback = (child: OriginalColumnGroupChild, parent: OriginalColumnGroup) => {
             if (child instanceof OriginalColumnGroup) {
@@ -54,11 +55,12 @@ export class ColumnFactory {
             // adds extra levels into the tree. so we can only set parents when balancing is done.
             child.setOriginalParent(parent);
         };
-        this.columnUtils.depthFirstOriginalTreeSearch(null, res, deptFirstCallback);
+
+        this.columnUtils.depthFirstOriginalTreeSearch(null, columnTree, deptFirstCallback);
 
         return {
-            columnTree: res,
-            treeDept: treeDept
+            columnTree,
+            treeDept
         };
     }
 
@@ -84,7 +86,8 @@ export class ColumnFactory {
                 null,
                 `FAKE_PATH_${column.getId()}}_${i}`,
                 true,
-                i);
+                i
+            );
             this.context.wireBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
@@ -98,6 +101,7 @@ export class ColumnFactory {
     private findDepth(balancedColumnTree: OriginalColumnGroupChild[]): number {
         let dept = 0;
         let pointer = balancedColumnTree;
+
         while (pointer && pointer[0] && pointer[0] instanceof OriginalColumnGroup) {
             dept++;
             pointer = (pointer[0] as OriginalColumnGroup).getChildren();
@@ -105,8 +109,12 @@ export class ColumnFactory {
         return dept;
     }
 
-    private balanceColumnTree(unbalancedTree: OriginalColumnGroupChild[], currentDept: number,
-                              columnDept: number, columnKeyCreator: ColumnKeyCreator): OriginalColumnGroupChild[] {
+    private balanceColumnTree(
+            unbalancedTree: OriginalColumnGroupChild[],
+            currentDept: number,
+            columnDept: number,
+            columnKeyCreator: ColumnKeyCreator
+        ): OriginalColumnGroupChild[] {
 
         const result: OriginalColumnGroupChild[] = [];
 
@@ -149,6 +157,7 @@ export class ColumnFactory {
                 if (firstPaddedGroup) {
                     result.push(firstPaddedGroup);
                     const hasGroups = unbalancedTree.some(child => child instanceof OriginalColumnGroup);
+
                     if (hasGroups) {
                         currentPaddedGroup.setChildren([child]);
                         continue;
@@ -167,6 +176,7 @@ export class ColumnFactory {
 
     private findMaxDept(treeChildren: OriginalColumnGroupChild[], dept: number): number {
         let maxDeptThisLevel = dept;
+
         for (let i = 0; i < treeChildren.length; i++) {
             const abstractColumn = treeChildren[i];
             if (abstractColumn instanceof OriginalColumnGroup) {
@@ -177,42 +187,53 @@ export class ColumnFactory {
                 }
             }
         }
+
         return maxDeptThisLevel;
     }
 
-    private recursivelyCreateColumns(defs: (ColDef | ColGroupDef)[], level: number,
-                                     primaryColumns: boolean, existingColsCopy: Column[],
-                                     columnKeyCreator: ColumnKeyCreator,
-                                     parent: OriginalColumnGroup | null): OriginalColumnGroupChild[] {
+    private recursivelyCreateColumns(
+            defs: (ColDef | ColGroupDef)[],
+            level: number,
+            primaryColumns: boolean,
+            existingColsCopy: Column[],
+            columnKeyCreator: ColumnKeyCreator,
+            parent: OriginalColumnGroup | null
+        ): OriginalColumnGroupChild[] {
 
         const result: OriginalColumnGroupChild[] = [];
 
-        if (!defs) {
-            return result;
-        }
+        if (!defs) { return result; }
 
         defs.forEach((def: ColDef | ColGroupDef) => {
             let newGroupOrColumn: OriginalColumnGroupChild;
+
             if (this.isColumnGroup(def)) {
                 newGroupOrColumn = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
                     columnKeyCreator, parent);
             } else {
                 newGroupOrColumn = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, parent);
             }
+
             result.push(newGroupOrColumn);
         });
 
         return result;
     }
 
-    private createColumnGroup(primaryColumns: boolean, colGroupDef: ColGroupDef, level: number,
-                              existingColumns: Column[], columnKeyCreator: ColumnKeyCreator,
-                              parent: OriginalColumnGroup | null): OriginalColumnGroup {
+    private createColumnGroup(
+            primaryColumns: boolean,
+            colGroupDef: ColGroupDef,
+            level: number,
+            existingColumns: Column[],
+            columnKeyCreator: ColumnKeyCreator,
+            parent: OriginalColumnGroup | null
+        ): OriginalColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
-
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
+
         this.context.wireBean(originalGroup);
+
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
 
@@ -226,13 +247,19 @@ export class ColumnFactory {
         _.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
         _.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
+
         return colGroupDefMerged;
     }
 
-    private createColumn(primaryColumns: boolean, colDef: ColDef,
-                         existingColsCopy: Column[], columnKeyCreator: ColumnKeyCreator,
-                         parent: OriginalColumnGroup | null): Column {
+    private createColumn(
+            primaryColumns: boolean,
+            colDef: ColDef,
+            existingColsCopy: Column[],
+            columnKeyCreator: ColumnKeyCreator,
+            parent: OriginalColumnGroup | null
+        ): Column {
         const colDefMerged = this.mergeColDefs(colDef);
+
         this.checkForDeprecatedItems(colDefMerged);
 
         // see if column already exists
@@ -251,22 +278,21 @@ export class ColumnFactory {
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {
-
         const res: Column = _.find(existingColsCopy, col => {
             const oldColDef = col.getUserProvidedColDef();
+
             if (!oldColDef) { return false; }
 
             // first check object references
-            if (oldColDef === colDef) {
-                return true;
-            }
+            if (oldColDef === colDef) { return true; }
             // second check id's
             const oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
+
             if (oldColHadId) {
                 return oldColDef.colId === colDef.colId;
-            } else {
-                return false;
             }
+
+            return false;
         });
 
         // make sure we remove, so if user provided duplicate id, then we don't have more than
@@ -361,5 +387,4 @@ export class ColumnFactory {
     private isColumnGroup(abstractColDef: ColDef | ColGroupDef): boolean {
         return (abstractColDef as ColGroupDef).children !== undefined;
     }
-
 }
