@@ -60,8 +60,8 @@ export abstract class Series<C extends Chart> extends Observable {
     protected constructor() {
         super();
 
-        this.addEventListener('layout', event => event.source.scheduleLayout());
-        this.addEventListener('data', event => event.source.scheduleData());
+        this.addEventListener('layout', () => this.scheduleLayout.bind(this));
+        this.addEventListener('data', () => this.scheduleData.bind(this));
     }
 
     private createId(): string {

@@ -77,8 +77,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         this.addPropertyListener('yKey', event => event.source.yData = []);
         this.addPropertyListener('sizeKey', event => event.source.sizeData = []);
 
-        this.addEventListener('layout', event => event.source.scheduleLayout());
-        this.addEventListener('data', event => event.source.scheduleData());
+        this.addEventListener('layout', () => this.scheduleLayout.bind(this));
+        this.addEventListener('data', () => this.scheduleData.bind(this));
     }
 
     onMarkerTypeChange() {

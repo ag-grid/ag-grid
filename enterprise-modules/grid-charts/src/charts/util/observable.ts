@@ -1,19 +1,18 @@
-export interface ObservableEvent<S> {
+export interface TypedEvent {
     type: string;
-    source: S; // the Observable that fired the event
 }
 
-// Should be used when a component listens for a browser event using the native `addEventListener`.
-export interface BrowserEvent<S> extends ObservableEvent<S> {
+export interface BrowserEvent extends TypedEvent {
     event: Event; // Native DOM event, defined in 'lib.dom.d.ts'
 }
 
-export interface PropertyChangeEvent<S, V> extends ObservableEvent<S> {
+export interface PropertyChangeEvent<S, V> extends TypedEvent {
+    source: S;
     value: V;
     oldValue: V;
 }
 
-export type ObservableEventListener<S> = (event: ObservableEvent<S>) => any;
+export type TypedEventListener = (event: TypedEvent) => any;
 export type PropertyChangeEventListener<S, V> = (event: PropertyChangeEvent<S, V>) => any;
 
 export class Observable {
@@ -68,12 +67,12 @@ export class Observable {
         }
     }
 
-    addEventListener(type: string, listener: ObservableEventListener<this>) {
-        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
+    addEventListener(type: string, listener: TypedEventListener) {
+        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
         let listeners = eventListeners.get(type);
 
         if (!listeners) {
-            listeners = new Set<ObservableEventListener<this>>();
+            listeners = new Set<TypedEventListener>();
             eventListeners.set(type, listeners);
         }
 
@@ -85,8 +84,8 @@ export class Observable {
         }
     }
 
-    removeEventListener(type: string, listener?: ObservableEventListener<this>) {
-        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
+    removeEventListener(type: string, listener?: TypedEventListener) {
+        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
         let listeners = eventListeners.get(type);
 
         if (listeners) {
@@ -98,16 +97,17 @@ export class Observable {
         }
     }
 
+    fireEvent<E extends TypedEvent>(event: E) {
+
+    }
+
     protected notifyEventListeners(types: string[]) {
-        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
+        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
 
         types.forEach(type => {
             const listeners = eventListeners.get(type);
             if (listeners) {
-                listeners.forEach(listener => listener({
-                    type,
-                    source: this
-                }));
+                listeners.forEach(listener => listener({type}));
             }
         });
     }

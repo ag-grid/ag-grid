@@ -75,7 +75,7 @@ export abstract class Chart extends Observable {
             }
         });
         this.addPropertyListener('subtitle', captionListener);
-        this.addEventListener('layout', event => event.source.layoutPending = true);
+        this.addEventListener('layout', () => this.layoutPending = true);
     }
 
     destroy() {

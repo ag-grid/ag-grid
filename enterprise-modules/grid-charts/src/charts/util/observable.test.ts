@@ -46,7 +46,6 @@ test('reactive', async () => {
     const nameCategoryListenerPromise = new Promise((resolve, reject) => {
         c.addEventListener('name', event => {
             expect(event.type).toBe('name');
-            expect(event.source).toBe(c);
             resolve();
         });
     });
