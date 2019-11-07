@@ -69,16 +69,16 @@ export class ScatterSeries extends Series<CartesianChart> {
     constructor() {
         super();
 
-        this.marker.addListener('type', this.onMarkerTypeChange.bind(this));
-        this.marker.addCategoryListener('style', this.update.bind(this));
-        this.marker.addCategoryListener('legend', () => this.chart && this.chart.updateLegend());
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addEventListener('style', this.update.bind(this));
+        this.marker.addEventListener('legend', () => this.chart && this.chart.updateLegend());
 
-        this.addListener('xKey', () => this.xData = []);
-        this.addListener('yKey', () => this.yData = []);
-        this.addListener('sizeKey', () => this.sizeData = []);
+        this.addPropertyListener('xKey', event => event.source.xData = []);
+        this.addPropertyListener('yKey', event => event.source.yData = []);
+        this.addPropertyListener('sizeKey', event => event.source.sizeData = []);
 
-        this.addCategoryListener('layout', () => this.scheduleLayout.bind(this));
-        this.addCategoryListener('data', () => this.scheduleData.bind(this));
+        this.addEventListener('layout', event => event.source.scheduleLayout());
+        this.addEventListener('data', event => event.source.scheduleData());
     }
 
     onMarkerTypeChange() {

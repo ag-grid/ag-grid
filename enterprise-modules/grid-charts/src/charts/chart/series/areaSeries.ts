@@ -57,8 +57,8 @@ export class AreaSeries extends Series<CartesianChart> {
     constructor() {
         super();
 
-        this.marker.addListener('type', this.onMarkerTypeChange.bind(this));
-        this.marker.addCategoryListener('style', this.update.bind(this));
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addEventListener('style', this.update.bind(this));
     }
 
     onMarkerTypeChange() {

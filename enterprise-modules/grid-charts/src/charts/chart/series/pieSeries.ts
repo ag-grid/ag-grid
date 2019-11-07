@@ -79,13 +79,13 @@ export class PieSeries extends Series<PolarChart> {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeCategoryListener('style');
+                oldTitle.removeEventListener('style');
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addCategoryListener('style', this.scheduleLayout.bind(this));
+                value.addEventListener('style', this.scheduleLayout.bind(this));
                 this.group.appendChild(value.node);
             }
 
@@ -138,11 +138,11 @@ export class PieSeries extends Series<PolarChart> {
     constructor() {
         super();
 
-        this.label.addCategoryListener('style', () => this.scheduleLayout.bind(this));
-        this.label.addCategoryListener('data', () => this.scheduleData.bind(this));
+        this.label.addEventListener('style', () => this.scheduleLayout.bind(this));
+        this.label.addEventListener('data', () => this.scheduleData.bind(this));
 
-        this.addListener('data', (series, oldData, data) => {
-            this.dataEnabled = data.map(() => true);
+        this.addPropertyListener('data', event => {
+            event.source.dataEnabled = event.value.map(() => true);
         });
     }
 

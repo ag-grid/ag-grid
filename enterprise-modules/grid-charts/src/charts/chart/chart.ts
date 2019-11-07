@@ -54,7 +54,7 @@ export abstract class Chart extends Observable {
         scene.parent = options.parent;
         scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
-        this.legend.addListener('position', this.onLegendPositionChange);
+        this.legend.addPropertyListener('position', this.onLegendPositionChange);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -62,20 +62,20 @@ export abstract class Chart extends Observable {
 
         this.setupListeners(scene.canvas.element);
 
-        function captionListener(chart: Chart, oldCaption?: Caption, caption?: Caption) {
+        const captionListener = this.addPropertyListener('title', event => {
+            const { source: chart, value: caption, oldValue: oldCaption } = event;
+
             if (oldCaption) {
-                oldCaption.removeCategoryListener('style');
+                oldCaption.removeEventListener('style');
                 chart.scene.root!.removeChild(oldCaption.node);
             }
             if (caption) {
-                caption.addCategoryListener('style', chart.onLayoutChange);
+                caption.addEventListener('style', chart.onLayoutChange);
                 chart.scene.root!.appendChild(caption.node);
             }
-        }
-
-        this.addListener('title', captionListener);
-        this.addListener('subtitle', captionListener);
-        this.addCategoryListener('layout', chart => chart.layoutPending = true);
+        });
+        this.addPropertyListener('subtitle', captionListener);
+        this.addEventListener('layout', event => event.source.layoutPending = true);
     }
 
     destroy() {

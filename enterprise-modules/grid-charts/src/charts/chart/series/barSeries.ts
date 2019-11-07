@@ -94,7 +94,7 @@ export class BarSeries extends Series<CartesianChart> {
         super();
 
         this.label.enabled = false;
-        this.label.addCategoryListener('style', () => this.update.bind(this));
+        this.label.addEventListener('style', () => this.update.bind(this));
     }
 
     /**

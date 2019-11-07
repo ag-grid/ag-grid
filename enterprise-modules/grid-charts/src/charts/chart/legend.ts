@@ -64,10 +64,19 @@ export class Legend extends Observable {
     constructor() {
         super();
 
-        this.addListener('data', (legend, oldData, data) => legend.group.visible = legend.enabled && data.length > 0);
-        this.addListener('enabled', (legend, oldValue, value) => legend.group.visible = value && legend.data.length > 0);
-        this.addListener('position', (legend, oldValue, value) => {
-            switch (value) {
+        this.addPropertyListener('data', event => {
+            const { source: legend, value: data } = event;
+            legend.group.visible = legend.enabled && data.length > 0;
+        });
+
+        this.addPropertyListener('enabled', event => {
+            const { source: legend, value } = event;
+            legend.group.visible = value && legend.data.length > 0;
+        });
+
+        this.addPropertyListener('position', event => {
+            const { source: legend, value: position } = event;
+            switch (position) {
                 case 'right':
                 case 'left':
                     legend.orientation = Orientation.Vertical;
@@ -78,8 +87,14 @@ export class Legend extends Observable {
                     break;
             }
         });
-        this.addCategoryListener('layout', this.requestLayout.bind(this));
-        this.addCategoryListener('style', this.update.bind(this));
+
+        this.addEventListener('layout', event => {
+        });
+
+        this.addEventListener('layout', this.requestLayout.bind(this));
+        this.addEventListener('style', this.update.bind(this));
+        this.addEventListener('style', event => {
+        });
     }
 
     private _size: [number, number] = [0, 0];

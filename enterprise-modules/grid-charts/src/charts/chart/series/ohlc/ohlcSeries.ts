@@ -71,7 +71,7 @@ export class OHLCSeries extends Series<CartesianChart> {
         this.marker.onChange = this.update.bind(this);
         this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
 
-        this.addListener('data', () => {
+        this.addPropertyListener('data', () => {
             this.dirtyDateData = true;
             this.dirtyOpenData = true;
             this.dirtyHighData = true;
