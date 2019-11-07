@@ -1,30 +1,47 @@
-type Listener<O, V> = (instance: O, oldValue: V, value: V) => any;
-type CategoryListener<O> = (instance: O) => any;
+export interface ObservableEvent<S> {
+    type: string;
+    source: S; // the Observable that fired the event
+}
+
+// Should be used when a component listens for a browser event using the native `addEventListener`.
+export interface BrowserEvent<S> extends ObservableEvent<S> {
+    event: Event; // Native DOM event, defined in 'lib.dom.d.ts'
+}
+
+export interface PropertyChangeEvent<S, V> extends ObservableEvent<S> {
+    value: V;
+    oldValue: V;
+}
+
+export type ObservableEventListener<S> = (event: ObservableEvent<S>) => any;
+export type PropertyChangeEventListener<S, V> = (event: PropertyChangeEvent<S, V>) => any;
 
 export class Observable {
     static readonly privateKeyPrefix = '_';
-    private nameListeners = new Map();
-    private categoryListeners = new Map();
 
-    addListener<K extends string & keyof this>(name: K, listener: Listener<this, this[K]>) {
-        const nameListeners = this.nameListeners as Map<K, Set<Listener<this, this[K]>>>;
-        let listeners = nameListeners.get(name);
+    private propertyListeners = new Map(); // property name => property change listeners
+    private eventListeners = new Map();    // event type => event listeners
+
+    addPropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>) {
+        const propertyListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
+        let listeners = propertyListeners.get(name);
 
         if (!listeners) {
-            listeners = new Set<Listener<this, this[K]>>();
-            nameListeners.set(name, listeners);
+            listeners = new Set<PropertyChangeEventListener<this, this[K]>>();
+            propertyListeners.set(name, listeners);
         }
 
         if (!listeners.has(listener)) {
             listeners.add(listener);
+            return listener;
         } else {
             console.warn('Listener ', listener, ' already added to ', this);
         }
     }
 
-    removeListener<K extends string & keyof this>(name: K, listener?: Listener<this, this[K]>) {
-        const nameListeners = this.nameListeners as Map<K, Set<Listener<this, this[K]>>>;
-        let listeners = nameListeners.get(name);
+    removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>) {
+        const propertyListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
+        let listeners = propertyListeners.get(name);
 
         if (listeners) {
             if (listener) {
@@ -35,34 +52,42 @@ export class Observable {
         }
     }
 
-    protected notifyListeners<K extends string & keyof this>(name: K, oldValue: this[K], value: this[K]) {
-        const nameListeners = this.nameListeners as Map<K, Set<Listener<this, this[K]>>>;
+    protected notifyPropertyListeners<K extends string & keyof this>(name: K, oldValue: this[K], value: this[K]) {
+        const nameListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
         const listeners = nameListeners.get(name);
 
         if (listeners) {
-            listeners.forEach(listener => listener(this, oldValue, value));
+            listeners.forEach(listener => {
+                listener({
+                    type: name,
+                    source: this,
+                    value,
+                    oldValue
+                });
+            });
         }
-    };
+    }
 
-    addCategoryListener(category: string, listener: (instance: this) => any) {
-        const categoryListeners = this.categoryListeners as Map<string, Set<CategoryListener<this>>>;
-        let listeners = categoryListeners.get(category);
+    addEventListener(type: string, listener: ObservableEventListener<this>) {
+        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
+        let listeners = eventListeners.get(type);
 
         if (!listeners) {
-            listeners = new Set<CategoryListener<this>>();
-            categoryListeners.set(category, listeners);
+            listeners = new Set<ObservableEventListener<this>>();
+            eventListeners.set(type, listeners);
         }
 
         if (!listeners.has(listener)) {
             listeners.add(listener);
+            return listener;
         } else {
             console.warn('Category listener ', listener, ' already added to ', this);
         }
     }
 
-    removeCategoryListener(category: string, listener?: (instance: this) => any) {
-        const categoryListeners = this.categoryListeners as Map<string, Set<CategoryListener<this>>>;
-        let listeners = categoryListeners.get(category);
+    removeEventListener(type: string, listener?: ObservableEventListener<this>) {
+        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
+        let listeners = eventListeners.get(type);
 
         if (listeners) {
             if (listener) {
@@ -73,28 +98,31 @@ export class Observable {
         }
     }
 
-    protected notifyCategoryListeners(categories: string[]) {
-        const categoryListeners = this.categoryListeners as Map<string, Set<CategoryListener<this>>>;
+    protected notifyEventListeners(types: string[]) {
+        const eventListeners = this.eventListeners as Map<string, Set<ObservableEventListener<this>>>;
 
-        categories.forEach(category => {
-            const listeners = categoryListeners.get(category);
+        types.forEach(type => {
+            const listeners = eventListeners.get(type);
             if (listeners) {
-                listeners.forEach(listener => listener(this));
+                listeners.forEach(listener => listener({
+                    type,
+                    source: this
+                }));
             }
         });
-    };
+    }
 }
 
-export function reactive(tags?: string[], property?: string) {
+export function reactive(events?: string[], property?: string) {
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = Observable.privateKeyPrefix + key;
         const backingProperty = property ? property.split('.') : undefined;
-        const privateKeyCategories = privateKey + 'Tags';
+        const privateKeyEvents = privateKey + 'Events';
 
         if (!target[key]) {
-            if (tags) {
-                target[privateKeyCategories] = tags;
+            if (events) {
+                target[privateKeyEvents] = events;
             }
             Object.defineProperty(target, key, {
                 set: function (value: any) {
@@ -119,10 +147,10 @@ export function reactive(tags?: string[], property?: string) {
                         } else {
                             this[privateKey] = value;
                         }
-                        this.notifyListeners(key, oldValue, value);
-                        const categories = this[privateKeyCategories];
-                        if (categories) {
-                            this.notifyCategoryListeners(categories);
+                        this.notifyPropertyListeners(key, oldValue, value);
+                        const events = this[privateKeyEvents];
+                        if (events) {
+                            this.notifyEventListeners(events);
                         }
                     }
                 },

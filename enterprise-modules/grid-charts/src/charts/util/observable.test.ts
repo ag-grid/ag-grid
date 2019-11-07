@@ -19,7 +19,7 @@ class BaseClass extends Observable {
     constructor() {
         super();
 
-        this.addCategoryListener('layout', () => this.layoutTriggered = true);
+        this.addEventListener('layout', () => this.layoutTriggered = true);
     }
 }
 
@@ -34,19 +34,19 @@ test('reactive', async () => {
     expect(c.foo).toBe('bar');
 
     const johnListenerPromise = new Promise((resolve, reject) => {
-        c.addListener('john', function (component, oldValue, value) {
-            expect(arguments.length).toBe(3);
-            expect(component).toBe(c);
-            expect(oldValue).toBe('smith');
-            expect(value).toBe('doe');
+        c.addPropertyListener('john', event => {
+            expect(event.type).toBe('john');
+            expect(event.source).toBe(c);
+            expect(event.oldValue).toBe('smith');
+            expect(event.value).toBe('doe');
             resolve();
         });
     });
 
     const nameCategoryListenerPromise = new Promise((resolve, reject) => {
-        c.addCategoryListener('name', function (component) {
-            expect(arguments.length).toBe(1);
-            expect(component).toBe(c);
+        c.addEventListener('name', event => {
+            expect(event.type).toBe('name');
+            expect(event.source).toBe(c);
             resolve();
         });
     });
@@ -60,7 +60,7 @@ test('reactive', async () => {
     return Promise.all([johnListenerPromise, nameCategoryListenerPromise]);
 }, 100);
 
-test('addListener', () => {
+test('addPropertyListener', () => {
     const c = new Component();
 
     let sum = 0;
@@ -68,39 +68,43 @@ test('addListener', () => {
     const listener2 = () => { sum += 2 };
     const listener3 = () => { sum += 3 };
 
-    c.addListener('john', listener1);
-    c.addListener('john', listener2);
-    c.addListener('john', listener3);
+    expect(c.addPropertyListener('john', listener1)).toBe(listener1);
+    expect(c.addPropertyListener('john', listener1)).toBe(undefined);
+    c.addPropertyListener('john', listener2);
+    c.addPropertyListener('john', listener3);
 
     c.john = 'test';
 
     expect(sum).toBe(6);
 });
 
-test('removeListener', () => {
+test('addPropertyListener', () => {
     const c = new Component();
 
     let triggered = false;
 
-    c.addListener('john', () => { triggered = true });
-    c.addListener('john', () => { triggered = true });
-    c.addListener('john', () => { triggered = true });
+    c.addPropertyListener('john', () => { triggered = true });
+    c.addPropertyListener('john', () => { triggered = true });
+    c.addPropertyListener('john', () => { triggered = true });
 
-    c.removeListener('john');
+    c.removePropertyListener('john');
 
     c.john = 'test';
 
     expect(triggered).toBe(false);
 });
 
-test('addCategoryListener', () => {
+test('addEventListener', () => {
     const c = new Component();
 
     let sum = 0;
 
-    c.addCategoryListener('name', () => {
+    const listener = () => {
         sum += 1;
-    });
+    };
+
+    expect(c.addEventListener('name', listener)).toBe(listener);
+    expect(c.addEventListener('name', listener)).toBe(undefined);
 
     c.john = 'test';
     c.bob = 'test';
@@ -108,16 +112,16 @@ test('addCategoryListener', () => {
     expect(sum).toBe(2);
 });
 
-test('removeCategoryListener', () => {
+test('removeEventListener', () => {
     const c = new Component();
 
     let triggered = false;
 
-    c.addCategoryListener('name', () => { triggered = true });
-    c.addCategoryListener('name', () => { triggered = true });
-    c.addCategoryListener('name', () => { triggered = true });
+    c.addEventListener('name', () => { triggered = true });
+    c.addEventListener('name', () => { triggered = true });
+    c.addEventListener('name', () => { triggered = true });
 
-    c.removeCategoryListener('name');
+    c.removeEventListener('name');
 
     c.john = 'test';
 
@@ -145,20 +149,20 @@ test('listener call order', () => {
     let category = 2;
     let category2 = 2;
 
-    c.addListener('bob', () => {
+    c.addPropertyListener('bob', () => {
         name += 2;
         category += 2;
     });
-    c.addListener('john', () => {
+    c.addPropertyListener('john', () => {
         name *= 3;
         category *= 3;
     });
 
-    c.addCategoryListener('name', () => {
+    c.addEventListener('name', () => {
         category += 4;
         category2 += 2;
     });
-    c.addCategoryListener('misc', () => {
+    c.addEventListener('misc', () => {
         category2 *= 3;
     });
 
