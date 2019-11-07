@@ -25,7 +25,12 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     suppressTextAsCDATA?: boolean;
     rowHeight?: number;
     headerRowHeight?: number;
-    columnWidth?: number | ((column: Column | null, index: number) => number);
+    columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+}
+
+export interface ColumnWidthCallbackParams {
+    column: Column | null;
+    index: number;
 }
 
 export class ExcelXmlSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
@@ -254,11 +259,12 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
             if (typeof columnWidth === 'number') {
                 return { width: columnWidth };
             } else {
-                return { width: columnWidth(column, index) };
+                return { width: columnWidth({column, index}) };
             }
         }
         if (column) {
-            return { width: column.getActualWidth() };
+            const smallestUsefulWidth = 75;
+            return { width: Math.max(column.getActualWidth(), smallestUsefulWidth) };
         }
         return {};
     }

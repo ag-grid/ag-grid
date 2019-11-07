@@ -56,9 +56,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): string {
-        if (params && params.exportMode) {
-            this.setExportMode(params.exportMode);
-        }
+        this.setExportMode(params ? params.exportMode : undefined);
         return this.export(params);
     }
 

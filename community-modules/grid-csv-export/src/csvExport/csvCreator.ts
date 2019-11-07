@@ -35,7 +35,6 @@ export interface CsvSerializingParams extends GridSerializingParams {
 
 export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
     private result: string = '';
-    private lineOpened: boolean = false;
     private suppressQuotes: boolean;
     private columnSeparator: string;
 
@@ -60,9 +59,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content + LINE_SEPARATOR;
         } else {
-            if (this.result) {
-                this.result += LINE_SEPARATOR;
-            }
+            this.beginNewLine();
             content.forEach(row => {
                 row.forEach((cell, index) => {
                     if (index !== 0) {
@@ -73,15 +70,12 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
                         this.appendEmptyCells(cell.mergeAcross);
                     }
                 });
-                this.result += LINE_SEPARATOR;
             })
         }
     }
 
     public onNewHeaderGroupingRow(): RowSpanningAccumulator {
-        if (this.lineOpened) {
-            this.result += LINE_SEPARATOR;
-        }
+        this.beginNewLine();
 
         return {
             onColumn: this.onNewHeaderGroupingRowColumn.bind(this)
@@ -96,7 +90,6 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         this.result += this.putInQuotes(header);
 
         this.appendEmptyCells(span);
-        this.lineOpened = true;
     }
 
     private appendEmptyCells(count: number) {
@@ -106,9 +99,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        if (this.lineOpened) {
-            this.result += LINE_SEPARATOR;
-        }
+        this.beginNewLine();
 
         return {
             onColumn: this.onNewHeaderRowColumn.bind(this)
@@ -120,13 +111,10 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             this.result += this.columnSeparator;
         }
         this.result += this.putInQuotes(this.extractHeaderValue(column));
-        this.lineOpened = true;
     }
 
     public onNewBodyRow(): RowAccumulator {
-        if (this.lineOpened) {
-            this.result += LINE_SEPARATOR;
-        }
+        this.beginNewLine();
 
         return {
             onColumn: this.onNewBodyRowColumn.bind(this)
@@ -138,7 +126,6 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             this.result += this.columnSeparator;
         }
         this.result += this.putInQuotes(this.extractRowCellValue(column, index, Constants.EXPORT_TYPE_CSV, node));
-        this.lineOpened = true;
     }
 
     private putInQuotes(value: any): string {
@@ -167,7 +154,16 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     }
 
     public parse(): string {
+        if (!this.result.endsWith(LINE_SEPARATOR)) {
+            this.result += LINE_SEPARATOR;
+        }
         return this.result;
+    }
+
+    private beginNewLine() {
+        if (this.result) {
+            this.result += LINE_SEPARATOR;
+        }
     }
 }
 
