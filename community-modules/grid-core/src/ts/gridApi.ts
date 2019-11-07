@@ -998,6 +998,13 @@ export class GridApi {
         this.undoRedoService.redo();
     }
 
+    public getChartModels(): ChartModel[] {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartModels') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
+            return this.chartService.getChartModels();
+        }
+    }
+
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createRangeChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart')) {

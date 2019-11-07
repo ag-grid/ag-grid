@@ -383,7 +383,7 @@ include '../documentation-main/documentation_header.php';
     <table class="table reference">
         <tr>
             <th>setAlwaysShowVerticalScroll(show)</th>
-            <td>If true, the vertical scrollbar will always be present even if not required, otherwise, it will only be 
+            <td>If true, the vertical scrollbar will always be present even if not required, otherwise, it will only be
                 displayed when necessary.
             </td>
         </tr>
@@ -486,6 +486,10 @@ include '../documentation-main/documentation_header.php';
 </table>
 <h2>Charts</h2>
 <table class="table reference">
+    <tr>
+        <th>getChartModels()</th>
+        <td>Returns a list of models with information about the charts that are currently rendered from the grid.</td>
+    </tr>
     <tr>
         <th>createRangeChart(params)</th>
         <td>Used to programmatically create charts from a range. See <a href="../javascript-grid-charts-chart-range-api/#range-charts">Range Chart API</a>.</td>

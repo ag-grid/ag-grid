@@ -31,7 +31,7 @@ export interface ChartModelParams {
     suppressChartRanges: boolean;
 }
 
-export class ChartModel extends BeanStub {
+export class ChartDataModel extends BeanStub {
 
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
@@ -373,7 +373,7 @@ export class ChartModel extends BeanStub {
         });
 
         const defaultCategory = {
-            colId: ChartModel.DEFAULT_CATEGORY,
+            colId: ChartDataModel.DEFAULT_CATEGORY,
             displayName: '(None)',
             selected: !hasSelectedDimension // if no dimensions in range select the default
         };
@@ -427,7 +427,7 @@ export class ChartModel extends BeanStub {
             selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
         }
 
-        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartModel.DEFAULT_CATEGORY) {
+        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
             this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column);
         }
     }

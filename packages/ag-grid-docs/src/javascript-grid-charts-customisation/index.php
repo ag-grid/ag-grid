@@ -120,12 +120,26 @@ type ChartType =
     <p>
         A <code>ChartRangeSelectionChanged</code> event will also be raised any time the range that the chart is created from is changed,
         whether by using the range selection handle or making changes in the Data tab of the configuration sidebar. This event contains
-        the ID of the chart, which is also the ID of the cell ranges that are used to produce the chart:
+        a <code>cellRange</code> object that gives you information about the range and would allow you to recreate the chart:
     </p>
 
     <snippet>
 interface ChartRangeSelectionChanged extends AgGridEvent {
     id: string;
+    cellRange: CellRangeParams;
+}
+
+interface CellRangeParams {
+    // start row
+    rowStartIndex?: number;
+    rowStartPinned?: string;
+
+    // end row
+    rowEndIndex?: number;
+    rowEndPinned?: string;
+
+    // columns
+    columns: (string | Column)[];
 }
 </snippet>
 
@@ -145,5 +159,13 @@ interface ChartRangeSelectionChanged extends AgGridEvent {
     </ul>
 
     <?= example('Saving User Preferences', 'saving-user-preferences', 'generated', array("exampleHeight" => 660,"enterprise" => true)) ?>
+
+    <h3>Example: Saving and restoring charts</h3>
+
+    <p>
+        The example below demonstrates how you can save and then later restore a chart.
+    </p>
+
+    <?= example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', array("exampleHeight" => 800,"enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

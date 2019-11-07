@@ -11,9 +11,11 @@ import {
     IRangeController,
     ChartRangeSelectionChanged,
     ColumnApi,
-    GridApi
+    GridApi,
+    ChartModel,
+    CellRangeParams,
 } from "@ag-community/grid-core";
-import { ChartModel, ColState } from "./chartModel";
+import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
@@ -31,7 +33,7 @@ export class ChartController extends BeanStub {
     private chartProxy: ChartProxy<any, any>;
     private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartModel, paletteName: ChartPaletteName) {
+    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName) {
         super();
 
         this.chartPaletteName = paletteName;
@@ -77,6 +79,16 @@ export class ChartController extends BeanStub {
         this.raiseChartRangeSelectionChangedEvent();
     }
 
+    public getChartModel(): ChartModel {
+        return {
+            chartId: this.model.getChartId(),
+            chartType: this.model.getChartType(),
+            chartPalette: this.getPaletteName(),
+            chartOptions: this.chartProxy.getChartOptions(),
+            cellRange: this.getCurrentCellRangeParams()
+        };
+    }
+
     public getChartType = (): ChartType => this.model.getChartType();
     public isPivotChart = () => this.model.isPivotChart();
     public getPaletteName = (): ChartPaletteName => this.chartPaletteName;
@@ -100,7 +112,7 @@ export class ChartController extends BeanStub {
 
     public isDefaultCategorySelected() {
         const selectedDimension = this.model.getSelectedDimension().colId;
-        return selectedDimension && selectedDimension === ChartModel.DEFAULT_CATEGORY;
+        return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
     }
 
     public setChartRange() {
@@ -138,6 +150,19 @@ export class ChartController extends BeanStub {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
+    private getCurrentCellRangeParams(): CellRangeParams {
+        const cellRanges = this.model.getCellRanges();
+        const firstCellRange = cellRanges[0];
+
+        return {
+            rowStartIndex: firstCellRange.startRow.rowIndex,
+            rowStartPinned: firstCellRange.startRow.rowPinned,
+            rowEndIndex: firstCellRange.endRow.rowIndex,
+            rowEndPinned: firstCellRange.endRow.rowPinned,
+            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
+        };
+    }
+
     private raiseChartUpdatedEvent() {
         const event: ChartModelUpdatedEvent = Object.freeze({
             type: ChartController.EVENT_CHART_MODEL_UPDATED
@@ -161,6 +186,7 @@ export class ChartController extends BeanStub {
         const event: ChartRangeSelectionChanged = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.getChartId(),
+            cellRange: this.getCurrentCellRangeParams(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

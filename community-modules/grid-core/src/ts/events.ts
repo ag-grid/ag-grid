@@ -7,7 +7,7 @@ import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
-import { CellRange } from "./interfaces/iRangeController";
+import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
 
 export { Events } from './eventKeys';
 
@@ -176,6 +176,7 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 
 export interface ChartRangeSelectionChanged extends AgGridEvent {
     id: string;
+    cellRange: CellRangeParams;
 }
 
 export interface ChartOptionsChanged extends AgEvent {

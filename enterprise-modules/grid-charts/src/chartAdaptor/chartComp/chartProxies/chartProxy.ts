@@ -73,17 +73,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        const options = this.getDefaultOptions();
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options };
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
             const overriddenOptions = processChartOptions(params) as TOptions;
-            this.overridePalette(overriddenOptions);
-            this.chartOptions = overriddenOptions;
+            const safeOptions = this.getDefaultOptions();
+
+            // ensure we have everything we need, in case the processing removed necessary options
+            _.mergeDeep(safeOptions, overriddenOptions, false);
+
+            this.overridePalette(safeOptions);
+            this.chartOptions = safeOptions;
         } else {
-            this.chartOptions = options;
+            this.chartOptions = this.getDefaultOptions();
         }
 
         // we want to preserve the existing width/height if an existing chart is being changed to a different type,
@@ -96,13 +100,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const { fills: defaultFills, strokes: defaultStrokes } = this.getDefaultPalette();
         const { seriesDefaults } = chartOptions;
         const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
-        const fillsOverridden = fills !== defaultFills;
-        const strokesOverridden = strokes !== defaultStrokes;
+        const fillsOverridden = fills && fills !== defaultFills;
+        const strokesOverridden = strokes && strokes !== defaultStrokes;
 
         if (fillsOverridden || strokesOverridden) {
             this.overriddenPalette = {
-                fills: fillsOverridden && fills ? fills : defaultFills,
-                strokes: strokesOverridden && strokes ? strokes : defaultStrokes
+                fills: fillsOverridden ? fills : defaultFills,
+                strokes: strokesOverridden ? strokes : defaultStrokes
             };
         }
     }
@@ -268,7 +272,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected getDefaultPalette(): ChartPalette {
-        return palettes.get(this.chartProxyParams.getChartPaletteName());
+        return _.deepCloneObject(palettes.get(this.chartProxyParams.getChartPaletteName()));
     }
 
     protected getPalette(): ChartPalette {

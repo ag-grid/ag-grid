@@ -10,7 +10,7 @@ import {
     ChartType
 } from "@ag-community/grid-core";
 import { ChartController } from "../../chartController";
-import { ColState } from "../../chartModel";
+import { ColState } from "../../chartDataModel";
 import { ChartTranslator } from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {

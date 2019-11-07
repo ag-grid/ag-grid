@@ -498,7 +498,7 @@ export class Utils {
         return Object.keys(allValues);
     }
 
-    static mergeDeep(dest: any, source: any): void {
+    static mergeDeep(dest: any, source: any, copyUndefined = true): void {
         if (!this.exists(source)) {
             return;
         }
@@ -512,7 +512,7 @@ export class Utils {
 
             if (typeof oldValue === 'object' && typeof newValue === 'object') {
                 Utils.mergeDeep(oldValue, newValue);
-            } else {
+            } else if (copyUndefined || newValue !== undefined) {
                 dest[key] = newValue;
             }
         });
@@ -2459,6 +2459,18 @@ export class Utils {
         list.forEach(x => set.add(x));
 
         return set;
+    }
+
+    static deepFreeze(object: any): any {
+        Object.freeze(object);
+
+        _.values(object).filter(v => v != null).forEach(v => {
+            if (typeof v === 'object' || typeof v === 'function') {
+                this.deepFreeze(v);
+            }
+        });
+
+        return object;
     }
 }
 

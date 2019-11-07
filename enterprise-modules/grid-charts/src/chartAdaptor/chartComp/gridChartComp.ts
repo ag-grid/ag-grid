@@ -14,10 +14,11 @@ import {
     ProcessChartOptionsParams,
     RefSelector,
     ResizeObserverService,
+    ChartModel
 } from "@ag-community/grid-core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
-import { ChartModel, ChartModelParams } from "./chartModel";
+import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
@@ -64,7 +65,7 @@ export class GridChartComp extends Component {
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
 
-    private model: ChartModel;
+    private model: ChartDataModel;
     private chartController: ChartController;
 
     private chartProxy: ChartProxy<any, any>;
@@ -88,7 +89,7 @@ export class GridChartComp extends Component {
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
-        this.model = this.wireBean(new ChartModel(modelParams));
+        this.model = this.wireBean(new ChartDataModel(modelParams));
         this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 
         this.createChart();
@@ -129,7 +130,7 @@ export class GridChartComp extends Component {
         const processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
 
-        const categorySelected = this.model.getSelectedDimension().colId !== ChartModel.DEFAULT_CATEGORY;
+        const categorySelected = this.model.getSelectedDimension().colId !== ChartDataModel.DEFAULT_CATEGORY;
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
@@ -237,6 +238,10 @@ export class GridChartComp extends Component {
 
     public getCurrentChartType = (): ChartType => this.chartType;
 
+    public getChartModel(): ChartModel {
+        return this.chartController.getChartModel();
+    }
+
     public updateChart() {
         const { model, chartProxy } = this;
 
@@ -245,8 +250,8 @@ export class GridChartComp extends Component {
         const data = model.getData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
-        if (chartEmpty) { 
-            return; 
+        if (chartEmpty) {
+            return;
         }
 
         const selectedDimension = model.getSelectedDimension();
@@ -337,9 +342,11 @@ export class GridChartComp extends Component {
         if (this.chartController) {
             this.chartController.destroy();
         }
+
         if (this.chartProxy) {
             this.chartProxy.destroy();
         }
+
         if (this.chartMenu) {
             this.chartMenu.destroy();
         }

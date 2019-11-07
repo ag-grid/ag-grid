@@ -2,7 +2,7 @@ import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-c
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
-import { ChartModel } from "../../chartModel";
+import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { SeriesOptions } from "../../../../charts/chartOptions";
 
@@ -25,7 +25,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const isBubbleChart = this.chartType === ChartType.Bubble;
         const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
         const fieldIds = yFields.map(f => f.colId);
-        const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
+        const defaultCategorySelected = params.category.id === ChartDataModel.DEFAULT_CATEGORY;
         const { fills, strokes } = this.getPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
         const xFieldDefinition = params.fields[0];

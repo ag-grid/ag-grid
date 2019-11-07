@@ -1,9 +1,11 @@
+import { _ } from "@ag-community/grid-core";
+
 export interface ChartPalette {
     fills: string[];
     strokes: string[];
 }
 
-export const borneo: ChartPalette = {
+export const borneo: ChartPalette = _.deepFreeze({
     fills: [
         '#f3622d',
         '#fba71b',
@@ -24,9 +26,9 @@ export const borneo: ChartPalette = {
         '#8c2d46',
         '#5f5f5f'
     ]
-};
+});
 
-export const material: ChartPalette = {
+export const material: ChartPalette = _.deepFreeze({
     fills: [
         '#f44336',
         '#e91e63',
@@ -63,9 +65,9 @@ export const material: ChartPalette = {
         '#b36a00',
         '#b33d18'
     ]
-};
+});
 
-export const pastel: ChartPalette = {
+export const pastel: ChartPalette = _.deepFreeze({
     fills: [
         '#c16068',
         '#a2bf8a',
@@ -82,9 +84,9 @@ export const pastel: ChartPalette = {
         '#7f637a',
         '#5d8692'
     ]
-};
+});
 
-export const bright: ChartPalette = {
+export const bright: ChartPalette = _.deepFreeze({
     fills: [
         '#5BC0EB',
         '#FDE74C',
@@ -101,9 +103,9 @@ export const bright: ChartPalette = {
         '#af5517',
         '#af225a'
     ]
-};
+});
 
-export const flat: ChartPalette = {
+export const flat: ChartPalette = _.deepFreeze({
     fills: [
         '#febe76',
         '#ff7979',
@@ -128,7 +130,7 @@ export const flat: ChartPalette = {
         '#9d3cb1',
         '#494c9d'
     ]
-};
+});
 
 export default borneo;
 
