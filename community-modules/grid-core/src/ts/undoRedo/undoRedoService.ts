@@ -6,7 +6,6 @@ import {CellValueChangedEvent, FillEndEvent} from "../events";
 import {FocusedCellController} from "../focusedCellController";
 import {IRowModel} from "../interfaces/iRowModel";
 import {GridApi} from "../gridApi";
-import {_} from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 import {CellValueChange, FillUndoRedoAction, LastFocusedCell, UndoRedoAction, UndoRedoStack} from "./undoRedoStack";
 import {RowPosition} from "../entities/rowPosition";
@@ -14,6 +13,7 @@ import {RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
 import {ModuleNames} from "../modules/moduleNames";
 import {ModuleRegistry} from "../modules/moduleRegistry";
+import {CellRange, CellRangeParams} from "../interfaces/iRangeController";
 
 @Bean('undoRedoService')
 export class UndoRedoService {
@@ -79,6 +79,12 @@ export class UndoRedoService {
 
         this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue);
 
+        if (undoAction instanceof FillUndoRedoAction) {
+            this.processRangeAndCellFocus(undoAction.cellValueChanges, undoAction.initialRange);
+        } else {
+            this.processRangeAndCellFocus(undoAction.cellValueChanges);
+        }
+
         this.redoStack.push(undoAction);
     }
 
@@ -89,6 +95,12 @@ export class UndoRedoService {
         }
 
         this.processAction(redoAction, (cellValueChange: CellValueChange) => cellValueChange.newValue);
+
+        if (redoAction instanceof FillUndoRedoAction) {
+            this.processRangeAndCellFocus(redoAction.cellValueChanges, redoAction.finalRange);
+        } else {
+            this.processRangeAndCellFocus(redoAction.cellValueChanges);
+        }
 
         this.undoStack.push(redoAction);
     }
@@ -106,13 +118,36 @@ export class UndoRedoService {
 
             currentRow.setDataValue(columnId, valueExtractor(cellValueChange));
         });
+    }
 
-        if (action instanceof FillUndoRedoAction) {
-            this.setLastFocusedCell(action.lastFocusedCell);
+    private processRangeAndCellFocus(cellValueChanges: CellValueChange[], range?: CellRange) {
+        if (range) {
+            const startRow = range.startRow;
+            const endRow = range.endRow;
+
+            const lastFocusedCell: LastFocusedCell = {
+                rowPinned: startRow.rowPinned,
+                rowIndex: startRow.rowIndex,
+                columnId: range.startColumn.getColId()
+            };
+
+            this.setLastFocusedCell(lastFocusedCell);
+
+            const cellRangeParams: CellRangeParams = {
+                rowStartIndex: startRow.rowIndex,
+                rowStartPinned: startRow.rowPinned,
+                rowEndIndex: endRow.rowIndex,
+                rowEndPinned: endRow.rowPinned,
+                columnStart: range.startColumn,
+                columns: range.columns
+            };
+
+            this.gridApi.addCellRange(cellRangeParams);
+
             return;
         }
 
-        const cellValueChange = action.cellValueChanges[0];
+        const cellValueChange = cellValueChanges[0];
         const {rowIndex, rowPinned} = cellValueChange;
         const rowPosition: RowPosition = {rowIndex, rowPinned};
         const row = this.getRowNode(rowPosition);
@@ -185,17 +220,8 @@ export class UndoRedoService {
         });
 
         this.eventService.addEventListener(Events.EVENT_FILL_END, (event: FillEndEvent) => {
-            const row = event.initialRange.endRow;
-            const column = _.last(event.initialRange.columns);
-
-            const lastFocusedCell: LastFocusedCell = {
-                rowIndex: row.rowIndex,
-                columnId: column.getColId()
-            };
-
-            const action = new FillUndoRedoAction(this.cellValueChanges, lastFocusedCell);
+            const action = new FillUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
             this.pushActionsToUndoStack(action);
-
             this.isFilling = false;
         });
     }

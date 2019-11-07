@@ -1,3 +1,5 @@
+import {CellRange} from "../interfaces/iRangeController";
+
 export type CellValueChange = {
     rowPinned?: string,
     rowIndex: number,
@@ -21,11 +23,13 @@ export class UndoRedoAction {
 }
 
 export class FillUndoRedoAction extends UndoRedoAction {
-    lastFocusedCell?: LastFocusedCell;
+    initialRange: CellRange;
+    finalRange: CellRange;
 
-    constructor(cellValueChanges: CellValueChange[], lastFocusedCell: LastFocusedCell) {
+    constructor(cellValueChanges: CellValueChange[], initialRange: CellRange, finalRange: CellRange) {
         super(cellValueChanges);
-        this.lastFocusedCell = lastFocusedCell;
+        this.initialRange = initialRange;
+        this.finalRange = finalRange;
     }
 }
 

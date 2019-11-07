@@ -223,7 +223,7 @@ var gridOptions = {
     enableRangeHandle: false,
     enableFillHandle: true,
     undoRedoCellEditing: true,
-    undoRedoCellEditingLimit: 2,
+    undoRedoCellEditingLimit: 50,
 
     suppressClearOnFillReduction: false,
 
