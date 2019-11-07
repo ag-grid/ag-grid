@@ -28,10 +28,6 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     columnWidth?: number | ((column: Column | null, index: number) => number);
 }
 
-const defaultConfig: Partial<ExcelGridSerializingParams> = {
-    baseExcelStyles: []
-};
-
 export class ExcelXmlSerializingSession extends BaseGridSerializingSession<ExcelCell[][]> {
     protected stylesByIds: any | undefined;
     protected mixedStyles: { [key: string]: ExcelMixedStyle } = {};
@@ -47,8 +43,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
-        this.config = _.assign({}, defaultConfig, config);
-
+        this.config = _.assign({}, config);
         this.stylesByIds = {};
         this.config.baseExcelStyles.forEach(style => {
             this.stylesByIds[style.id] = style;

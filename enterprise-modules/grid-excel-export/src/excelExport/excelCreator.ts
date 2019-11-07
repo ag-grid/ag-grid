@@ -101,7 +101,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             sheetName,
             excelFactory,
-            baseExcelStyles: this.gridOptions.excelStyles || undefined,
+            baseExcelStyles: this.gridOptions.excelStyles || [],
             styleLinker: this.styleLinker.bind(this)
         };
 
