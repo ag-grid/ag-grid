@@ -675,6 +675,10 @@
           {
             "title": "Provided Editors",
             "url": "javascript-grid-provided-cell-editors/"
+          },
+          {
+            "title": "Undo / Redo Edits",
+            "url": "javascript-grid-undo-redo-edits/"
           }
         ]
       },

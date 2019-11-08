@@ -56,6 +56,7 @@ import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
+import { UndoRedoService } from "./undoRedo/undoRedoService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -137,6 +138,7 @@ export class GridApi {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
+    @Optional('undoRedoService') private undoRedoService: UndoRedoService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -986,6 +988,14 @@ export class GridApi {
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.removeAllCellRanges();
+    }
+
+    public undoCellEditing(): void {
+        this.undoRedoService.undo();
+    }
+
+    public redoCellEditing(): void {
+        this.undoRedoService.redo();
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
