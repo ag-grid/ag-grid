@@ -35,7 +35,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
             <div>
                 <label for="grid-theme">Theme:</label>
 
-                <select onchange="onThemeChanged(this.value)" id="grid-theme">
+                <select onchange="onThemeChanged()" id="grid-theme">
                     <option value="">-none-</option>
                     <option value="ag-theme-alpine" selected>Alpine</option>
                     <option value="ag-theme-alpine-dark">Alpine (Dark)</option>

@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     gridDiv = document.querySelector('#myGrid');
 
+    onThemeChanged();
+
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 
@@ -1093,12 +1095,16 @@ function rowSelected(event) {
     }
 }
 
-function onThemeChanged(newTheme) {
+function onThemeChanged() {
+    const newTheme = document.querySelector('#grid-theme').value;
     gridDiv.className = newTheme;
-    gridOptions.api.resetRowHeights();
-    gridOptions.api.redrawRows();
-    gridOptions.api.refreshHeader();
-    gridOptions.api.refreshToolPanel();
+
+    if (gridOptions.api) {
+        gridOptions.api.resetRowHeights();
+        gridOptions.api.redrawRows();
+        gridOptions.api.refreshHeader();
+        gridOptions.api.refreshToolPanel();
+    }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 
