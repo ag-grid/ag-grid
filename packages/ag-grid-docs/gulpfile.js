@@ -67,13 +67,6 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         [],
         () => {},
         () => {});
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
-        '/* START OF MODULES PROD - DO NOT DELETE */',
-        '/* END OF MODULES PROD - DO NOT DELETE */',
-        [],
-        [],
-        () => {},
-        () => {});
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
 

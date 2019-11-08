@@ -250,14 +250,6 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         () => {});
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
-        '/* START OF MODULES PROD - DO NOT DELETE */',
-        '/* END OF MODULES PROD - DO NOT DELETE */',
-        communityModules,
-        enterpriseModules,
-        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_VERSION . "/",`,
-        module => `        "${module.publishedName}" => "https://unpkg.com/${module.publishedName}@" . AG_GRID_ENTERPRISE_VERSION . "/",`);
-
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         '/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
@@ -270,15 +262,15 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         '/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
         enterpriseModules,
-        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
-        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
+        module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
 
     updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
         '/* START OF CSS PROD - DO NOT DELETE */',
         '/* END OF CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
+        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
         () => {});
 
     fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
