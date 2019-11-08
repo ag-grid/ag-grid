@@ -1096,7 +1096,7 @@ function rowSelected(event) {
 }
 
 function onThemeChanged() {
-    const newTheme = document.querySelector('#grid-theme').value;
+    var newTheme = document.querySelector('#grid-theme').value;
     gridDiv.className = newTheme;
 
     if (gridOptions.api) {
