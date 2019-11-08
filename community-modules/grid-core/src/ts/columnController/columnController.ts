@@ -42,6 +42,8 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "./columnApi";
 import { Constants } from "../constants";
 import { _ } from "../utils";
+import { cpus } from "os";
+import M = require("minimatch");
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -2890,51 +2892,69 @@ export class ColumnController {
         this.lastCenterViewportWidth = centerViewportWidth;
 
         const displayedCenterColumns = this.getDisplayedCenterColumns();
+        const globalMinWidth = this.gridOptionsWrapper.getMinColWidth();
         const flexedColumns: Column[] = [];
         const normalColumns: Column[] = [];
 
-        displayedCenterColumns.forEach(col => {
+        let flexedWithMinTotal: number = 0;
+
+        displayedCenterColumns.forEach((col, idx) => {
             if (col.getFlex() === 0) {
                 normalColumns.push(col);
             } else {
                 flexedColumns.push(col);
+                if (col.getMinWidth() > globalMinWidth) {
+                    flexedWithMinTotal += col.getMinWidth();
+                }
             }
         });
 
-        if (!flexedColumns.length) {
+        const flexedLen = flexedColumns.length;
+
+        if (!flexedLen) {
             this.flexActive = false;
             return;
         }
 
         const flexCount = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
         const normalColumnsWidth = this.getWidthOfColsInList(normalColumns);
+
         const availableSpace = centerViewportWidth - normalColumnsWidth;
+        const availableWithoutMins = availableSpace - flexedWithMinTotal;
+
         let remainingSpace = availableSpace;
 
         if (availableSpace <= 0) { return; }
 
+        const sizes: number[] = [];
+
         flexedColumns.forEach((col, idx) => {
             const flex = col.getFlex();
             const ratio = Math.round((flex * 100 / flexCount) * 10) / 10;
-            const newWidth = (availableSpace * ratio) / 100;
-            const minWidth = col.getMinWidth();
-            const maxWidth = col.getMaxWidth() || remainingSpace;
+            const newWidth = (availableWithoutMins * ratio) / 100;
+            const minWidth = col.getMinWidth() || globalMinWidth;
+            const maxWidth = col.getMaxWidth() || _.getMaxSafeInteger();
 
-            if (newWidth < minWidth || remainingSpace < minWidth) {
-                col.setMinimum(source);
+            if (minWidth && (newWidth < minWidth)) {
+                sizes.push(minWidth);
                 remainingSpace -= minWidth;
             } else if (newWidth > maxWidth) {
-                col.setActualWidth(maxWidth, source);
+                sizes.push(maxWidth);
                 remainingSpace -= maxWidth;
             } else {
-                const lastCol = idx === flexedColumns.length - 1;
-                if (lastCol && remainingSpace > 0) {
-                    col.setActualWidth(Math.floor(remainingSpace), source);
-                } else {
-                    col.setActualWidth(newWidth, source);
-                    remainingSpace -= newWidth;
-                }
+                sizes.push(newWidth);
+                remainingSpace -= newWidth;
             }
+        });
+
+        let valueToAdd = 0;
+
+        if (remainingSpace > 0) {
+            valueToAdd = Math.floor(remainingSpace / flexedLen);
+        }
+
+        flexedColumns.forEach((col, idx) => {
+            col.setActualWidth(sizes[idx] + valueToAdd, source);
         });
 
         this.setLeftValues(source);

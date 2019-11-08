@@ -1,9 +1,9 @@
 var columnDefs = [
-    {headerName: 'Author', field: 'author', width: 90 },
+    {headerName: 'Author', field: 'author', width: 100},
     {headerName: 'Details', children: [
-        {headerName: 'Title', field: 'title', minWidth: 200, flex: 2},
-        {headerName: 'Link', field: 'link', minWidth: 150, flex: 1},
-        {headerName: 'Date', field: 'date', width: 200}
+        {headerName: 'Title', field: 'title', minWidth: 250, flex: 2 },
+        {headerName: 'Link', field: 'link', minWidth: 200, flex: 1 },
+        {headerName: 'Date', field: 'date', width: 170 }
     ]}
 ];
 
