@@ -34,8 +34,8 @@ function redo() {
 function getRows() {
     return new Array(100).fill(null).map(function (_, i) {
         return {
-            a: `a-${i}`, b: `b-${i}`, c: `c-${i}`, d: `d-${i}`,
-            e: `e-${i}`, f: `f-${i}`, g: `g-${i}`, h: `h-${i}`
+            a: 'a-' + i, b: 'b-' + i, c: 'c-' + i, d: 'd-' + i,
+            e: 'e-' + i, f: 'f-' + i, g: 'g-' + i, h: 'h-' + i
         }
     });
 }
