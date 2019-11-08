@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - ag-Grid Enterprise Features * @version v22.0.0-beta.6
+ * ag-grid-enterprise - ag-Grid Enterprise Features * @version v22.0.0
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -243,7 +243,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU3MTgyNDEzMDI0Mw==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU3MzIwODgzODA2OQ==';
     __decorate([
         agGridCommunity.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);

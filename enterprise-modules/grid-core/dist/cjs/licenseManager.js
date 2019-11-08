@@ -234,7 +234,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "Incompatible License Version";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU3MTgyNDEzMDI0Mw==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU3MzIwODgzODA2OQ==';
     __decorate([
         core_1.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);

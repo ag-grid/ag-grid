@@ -1,0 +1,1920 @@
+@import "../../mixins/ag-theme-mixins";
+
+@if $icon-font-family == 'agGridBalham' or
+    $icon-font-family == 'agGridMaterial' or
+    $icon-font-family == 'agGridClassic' {
+    @font-face {
+        font-family: '#{$icon-font-family}';
+        src: $icons-data;
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+@mixin ag-grid-theme($params) {
+    $grid-size: map-get($params, "grid-size");
+    $icon-size: map-get($params, "icon-size");
+    $icon-color: map-get($params, "icon-color");
+    $alt-icon-color: map-get($params, "alt-icon-color");
+    $header-icon-size: map-get($params, "header-icon-size");
+    $row-height: map-get($params, "row-height");
+    $header-height: map-get($params, "header-height");
+    $virtual-item-height: map-get($params, "virtual-item-height");
+    $cell-horizontal-padding: map-get($params, "cell-horizontal-padding");
+
+    $font-family: map-get($params, "font-family");
+    $font-size: map-get($params, "font-size");
+    $font-weight: map-get($params, "font-weight");
+
+    $secondary-font-family: map-get($params, "secondary-font-family");
+    $secondary-font-size: map-get($params, "secondary-font-size");
+    $secondary-font-weight: map-get($params, "secondary-font-weight");
+
+    $foreground-color: map-get($params, "foreground-color");
+    $foreground-opacity: map-get($params, "foreground-opacity");
+
+    $secondary-foreground-color-opacity: map-get($params, "secondary-foreground-color-opacity");
+    $secondary-foreground-color: map-get($params, "secondary-foreground-color");
+
+    $disabled-foreground-color-opacity: map-get($params, "disabled-foreground-color-opacity");
+    $disabled-foreground-color: map-get($params, "disabled-foreground-color");
+    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+
+    $background-color: map-get($params, "background-color");
+    $border-color: map-get($params, "border-color");
+    $row-border-width: map-get($params, "row-border-width");
+    $scroll-spacer-border: map-get($params, "scroll-spacer-border");
+
+    $button-background-color: map-get($params, "button-background-color");
+
+    $cell-data-changed-color: map-get($params, "cell-data-changed-color");
+
+    $chip-background-color: map-get($params, "chip-background-color");
+
+    $editor-background-color-color: map-get($params, "editor-background-color-color");
+
+    $range-selection-background-color: map-get($params, "range-selection-background-color");
+    $range-selection-chart-background-color: map-get($params, "range-selection-chart-background-color");
+    $range-selection-chart-category-background-color: map-get($params, "range-selection-chart-category-background-color");
+    $range-selection-highlight-color: map-get($params, "range-selection-highlight-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
+
+    $header-background-color: map-get($params, "header-background-color");
+    $header-background-image: map-get($params, "header-background-image");
+    $header-cell-hover-background-color: map-get($params, "header-cell-hover-background-color");
+    $header-cell-moving-background-color: map-get($params, "header-cell-moving-background-color");
+    $header-foreground-color: map-get($params, "header-foreground-color");
+    $panel-background-color: map-get($params, "panel-background-color");
+    $tool-panel-background-color: map-get($params, "tool-panel-background-color");
+    $row-stub-background-color: map-get($params, "row-stub-background-color");
+
+    $accent-color: map-get($params, "accent-color");
+    $primary-color: map-get($params, "primary-color");
+    $hover-color: map-get($params, "hover-color");
+    $selected-color: map-get($params, "selected-color");
+
+    $icon-opacity: map-get($params, "icon-opacity");
+    $button-text-transform: map-get($params, "button-text-transform");
+    $card-radius: map-get($params, "card-radius");
+    $card-shadow: map-get($params, "card-shadow");
+    $focused-textbox-border: map-get($params, "focused-textbox-border");
+
+    $tooltip-background-color: map-get($params, "tooltip-background-color");
+    $tooltip-foreground-color: map-get($params, "tooltip-foreground-color");
+    $tooltip-border-radius: map-get($params, "tooltip-border-radius");
+    $tooltip-padding: map-get($params, "tooltip-padding");
+    $tooltip-border-width: map-get($params, "tooltip-border-width");
+    $tooltip-border-style: map-get($params, "tooltip-border-style");
+    $tooltip-border-color: map-get($params, "tooltip-border-color");
+
+    $value-change-delta-up-color: map-get($params, "value-change-delta-up-color");
+    $value-change-delta-down-color: map-get($params, "value-change-delta-down-color");
+    $value-change-value-highlight-background-color: map-get($params, "value-change-value-highlight-background-color");
+    $toolpanel-indent-size: map-get($params, "toolpanel-indent-size");
+    $row-group-indent-size: map-get($params, "row-group-indent-size");
+    $row-floating-background-color: map-get($params, "row-floating-background-color");
+
+    $dialog-background-color: map-get($params, "dialog-background-color");
+    $dialog-border-size: map-get($params, "dialog-border-size");
+    $dialog-border-style: map-get($params, "dialog-border-style");
+    $dialog-border-color: map-get($params, "dialog-border-color");
+
+    $dialog-title-background-color: map-get($params, "dialog-title-background-color");
+    $dialog-title-foreground-color: map-get($params, "dialog-title-foreground-color");
+    $dialog-title-height: map-get($params, "dialog-title-height");
+    $dialog-title-font-family: map-get($params, "dialog-title-font-family");
+    $dialog-title-font-size: map-get($params, "dialog-title-font-size");
+    $dialog-title-font-weight: map-get($params, "dialog-title-font-weight");
+    $dialog-title-padding: map-get($params, "dialog-title-padding");
+    $dialog-title-icon-size: map-get($params, "dialog-title-icon-size");
+
+    ////////////////////////////////////////
+    // Chinese wall of inline vars over
+    ////////////////////////////////////////
+
+    -webkit-font-smoothing: antialiased;
+    background-color: $background-color;
+    color: $foreground-color;
+    font-family: $font-family;
+    font-weight: $font-weight;
+    font-size: $font-size;
+    line-height: normal;
+
+    label {
+        margin-bottom: 0;
+    }
+
+    * {
+        box-sizing: border-box;
+        &:focus, *:before, *:after {
+            outline: none;
+            box-sizing: border-box;
+        }
+    }
+
+    .ag-tab {
+        box-sizing: content-box;
+    }
+
+    // indentation loop
+    @for $i from 1 to 50 {
+        .ag-ltr .ag-toolpanel-indent-#{$i} {
+            padding-left: $i * $toolpanel-indent-size;
+        }
+
+        .ag-rtl .ag-toolpanel-indent-#{$i} {
+            padding-right: $i * $toolpanel-indent-size;
+        }
+
+        .ag-ltr .ag-row-group-indent-#{$i} {
+            padding-left: $i * $row-group-indent-size;
+        }
+
+        .ag-rtl .ag-row-group-indent-#{$i} {
+            padding-right: $i * $row-group-indent-size;
+        }
+    }
+
+    .ag-cell .ag-icon {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+        display: flex;
+        align-items: center;
+        cursor: default;
+        label {
+            cursor: default;
+            &:empty {
+                margin: 0;
+            }
+        }
+        &:not(.ag-label-align-left) {
+            label {
+                margin-left: $grid-size;
+            }
+        }
+    }
+
+    .ag-cell {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
+    // do not remove .ag-ltr from here
+    .ag-ltr {
+        .ag-row-group-leaf-indent {
+            margin-left: $icon-size + $grid-size * 3;
+        }
+        .ag-cell {
+            border-right: $cell-horizontal-border;
+        }
+
+        .ag-cell:not(.ag-cell-focus),
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+                border-right: 1px solid $border-color;
+            }
+        }
+    }
+
+    // used by the animateShowChangedCellRenderer
+    .ag-value-change-delta {
+        padding-right: 2px;
+    }
+
+    .ag-value-change-delta-up {
+        color: $value-change-delta-up-color;
+    }
+
+    .ag-value-change-delta-down {
+        color: $value-change-delta-down-color;
+    }
+
+    .ag-value-change-value {
+        background-color: transparent;
+        border-radius: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        transition: background-color 1s;
+    }
+
+    .ag-value-change-value-highlight {
+        background-color: $value-change-value-highlight-background-color;
+        transition: background-color 0.1s;
+    }
+
+    ////////////////////////////////////////
+    // Basic layout
+    ////////////////////////////////////////
+    .ag-input-wrapper {
+        input:not([type]),
+        input[type="text"],
+        input[type="number"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="datetime-local"] {
+            @include textbox($params);
+        }
+
+        input[type="date"] {
+            flex: 1 1 auto;
+        }
+        input[type="range"] {
+            padding: 0;
+        }
+
+        textarea {
+            @include textbox($params);
+        }
+    }
+
+    .ag-header {
+        @if $header-background-color {
+            background-color: $header-background-color;
+        }
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
+
+        color: $header-foreground-color;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
+        border-bottom: 1px solid $border-color;
+    }
+
+    .ag-pinned-right-header {
+        border-left: 1px solid $border-color;
+    }
+
+    .ag-pinned-left-header {
+        border-right: 1px solid $border-color;
+    }
+
+    .ag-header-row {
+        border: none;
+        height: $header-height;
+    }
+
+    .ag-row {
+        @include row-border($border-color);
+        height: $row-height;
+        border-width: 0;
+        &:not(.ag-row-first) {
+            border-width: $row-border-width 0 0;
+        }
+        &.ag-row-last {
+            border-bottom-width: $row-border-width;
+        }
+    }
+
+    @if map-get($params, "odd-row-background-color") {
+        .ag-row-odd {
+            background-color: map-get($params, "odd-row-background-color");
+        }
+
+        .ag-row-even {
+            background-color: map-get($params, "background-color");
+        }
+    }
+
+    .ag-horizontal-left-spacer {
+        border-right: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-right: none;
+        }
+    }
+    .ag-horizontal-right-spacer  {
+        border-left: $scroll-spacer-border;
+        &.ag-scroller-corner {
+            border-left: none;
+        }
+    }
+
+    .ag-row-hover {
+        background-color: $hover-color;
+    }
+
+    .ag-numeric-cell {
+        text-align: right;
+    }
+
+    .ag-header-cell-label {
+        .ag-header-icon {
+            margin-left: $grid-size;
+            opacity: $foreground-opacity;
+        }
+    }
+
+    .ag-header-cell,
+    .ag-header-group-cell {
+        @include row-border($border-color);
+        @include grid-header-cell($cell-horizontal-padding);
+        @if $header-cell-moving-background-color {
+            &.ag-header-cell-moving {
+                background-color: $header-cell-moving-background-color;
+            }
+        }
+        border-width: 0;
+        &:not(.ag-header-group-cell-no-group) {
+            border-top-width: 1px;
+        }
+    }
+
+    .ag-header-row:first-child {
+        .ag-header-cell, .ag-header-group-cell {
+            border-top-width: 0;
+        }
+    }
+
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:first-of-type,
+    .ag-header-cell:first-of-type {
+        @if ($header-background-color != $header-cell-hover-background-color) {
+            &:hover, &.ag-column-resizing {
+                background-color: $header-cell-hover-background-color;
+            }
+        }
+    }
+
+    .ag-header-cell-resize {
+        cursor: col-resize;
+    }
+
+    .ag-header-select-all {
+        margin-right: $cell-horizontal-padding;
+    }
+
+    .ag-cell {
+        @include grid-cell($row-height - 2, $cell-horizontal-padding);
+
+        // adjust for transparent border
+        border: 1px solid transparent;
+        padding-left: $cell-horizontal-padding - 1px;
+        padding-right: $cell-horizontal-padding - 1px;
+    }
+
+    .ag-row-drag {
+        // added 'move' as IE fallback
+        cursor: move;
+        cursor: grab;
+        min-width: $icon-size + $grid-size * 3;
+    }
+
+    .ag-row-dragging, .ag-row-dragging .ag-row-drag {
+        cursor: move;
+    }
+
+    .ag-column-drag {
+        // added 'move' as IE fallback
+        cursor: move;
+        cursor: grab;
+    }
+
+    .ag-row-dragging {
+        opacity: 0.5;
+    }
+
+    ////////////////////////////////////////
+    // Navigation
+    ////////////////////////////////////////
+
+    .ag-ltr, .ag-rtl {
+        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+        .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+            border: 1px solid $primary-color;
+            outline: initial;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Resizing
+    ////////////////////////////////////////
+    .ag-header-cell-resize {
+        width: $grid-size * 2;
+    }
+
+    ////////////////////////////////////////
+    // Context Menu
+    ////////////////////////////////////////
+    .ag-menu {
+        @include card($params);
+        padding: 0;
+
+        .ag-menu-list {
+            cursor: default;
+            margin-bottom: $grid-size;
+            margin-top: $grid-size;
+            width: 100%;
+        }
+
+        @if $hover-color {
+            .ag-menu-option-active {
+                background-color: $hover-color;
+            }
+        }
+
+        .ag-menu-option-disabled {
+            opacity: 0.5;
+        }
+
+        .ag-menu-option-text {
+            margin-left: $grid-size;
+        }
+
+        .ag-menu-option-icon {
+            padding-left: $grid-size;
+            padding-right: $grid-size;
+            min-width: $icon-size + $grid-size * 2;
+        }
+
+        .ag-menu-option-shortcut {
+            padding-left: $grid-size * 2;
+        }
+
+        .ag-menu-separator {
+            height: $grid-size * 2;
+            & > span {
+                background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'#{$grid-size * 2}'%20viewBox%3D'0%200%201%20#{$grid-size * 2}'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'#{$grid-size}'%20x2%3D'1'%20y2%3D'#{$grid-size}'%20stroke-width%3D'1'%20stroke%3D'#{encodecolor($border-color)}'%2F%3E%3C%2Fsvg%3E");
+            }
+        }
+
+        .ag-menu-option-popup-pointer {
+            width: $icon-size + $grid-size * 2;
+            text-align: center;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Column Reordering
+    ////////////////////////////////////////
+    &.ag-dnd-ghost {
+        @include card($params);
+
+        border: 1px solid $border-color;
+        color: $secondary-foreground-color;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
+        height: $header-height !important;
+        line-height: $header-height;
+        margin: 0;
+        padding: 0 $grid-size * 2;
+        transform: translateY($grid-size * 2);
+
+        span,
+        div {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ag-dnd-ghost-icon {
+            margin-right: $grid-size;
+            opacity: $foreground-opacity;
+        }
+    }
+
+    $full-width-tabs: map-get($params, "full-width-tabs");
+
+    ////////////////////////////////////////
+    // Column Filter
+    ////////////////////////////////////////
+    .ag-tab-header {
+        background: $panel-background-color;
+        min-width: 220px;
+        width: 100%;
+        display: flex;
+
+        .ag-tab {
+            @extend %tab !optional;
+
+            display: flex;
+            border-bottom: 2px solid transparent;
+            height: $grid-size * 4;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+
+            @if $full-width-tabs {
+                flex: 1 1 auto;
+            }
+
+            &.ag-tab-selected {
+                @extend %selected-tab !optional;
+            }
+        }
+    }
+
+    .ag-tab-body {
+        padding: $grid-size / 2 0;
+
+        .ag-menu-list {
+            margin-bottom: 0;
+            margin-top: 0;
+
+            & > div:first-child > span {
+                padding-top: 0;
+            }
+
+            & > div:last-child > span {
+                padding-bottom: 0;
+            }
+
+            & > div:last-child > .ag-menu-option-popup-pointer {
+                background-position-y: 0;
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Value Set Filter
+    ////////////////////////////////////////
+    .ag-filter {
+        .ag-filter-select, .ag-filter-body {
+            margin-bottom: $grid-size;
+        }
+
+        .ag-filter-body {
+            margin-top: 0;
+        }
+
+        .ag-filter-filter {
+            margin-left: $grid-size;
+            margin-right: $grid-size;
+        }
+
+        // string filter type
+        .ag-filter-select {
+            margin: $grid-size;
+        }
+
+        input[type="radio"] {
+            margin: 0 3px 0 6px;
+            width: 12px;
+            height: 17px;
+            vertical-align: top;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            padding-left: $grid-size;
+        }
+
+        .ag-set-filter-list {
+            height: $virtual-item-height * 6;
+        }
+
+        .ag-set-filter-item {
+            height: $virtual-item-height;
+            > {
+                div, span {
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        .ag-filter-header-container {
+            border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size / 2;
+        }
+
+        .ag-filter-apply-panel {
+            display: flex;
+            justify-content: flex-end;
+            padding: $grid-size;
+            padding-top: $grid-size * 2;
+            button {
+                line-height: 1.5;
+                @if map-get($params, "customize-buttons") {
+                    @include regular-button($primary-color, $button-background-color, $button-text-transform);
+                }
+            }
+
+            button + button {
+                margin-left: $grid-size * 2;
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Column selector
+    ////////////////////////////////////////
+    .ag-column-select-panel {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
+            height: $grid-size * 4;
+
+            .ag-column-select-checkbox,
+            .ag-column-tool-panel-column-label,
+            .ag-column-group-icons {
+                margin-left: $grid-size;
+                margin-right: $grid-size;
+            }
+        }
+        .ag-primary-cols-list-panel {
+            border-top: 1px solid $border-color;
+            padding-top: $grid-size;
+            > div {
+                cursor: pointer;
+            }
+        }
+
+        .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
+            margin-left: $icon-size + $grid-size * 2;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Tool panel
+    ////////////////////////////////////////
+    .ag-primary-cols-header-panel {
+        border-top: 1px solid $border-color;
+        height: $header-height;
+        align-items: center;
+
+        > div {
+            cursor: pointer;
+            margin: 0 $grid-size;
+        }
+
+        .ag-filter-body {
+            margin-left: $grid-size;
+            margin-right: $grid-size;
+        }
+    }
+
+    .ag-tool-panel-wrapper {
+        border-right: 0;
+
+        .ag-filter-panel {
+            color: $header-foreground-color;
+            font-weight: $secondary-font-weight;
+            font-size: $secondary-font-size;
+            font-family: $secondary-font-family;
+            .ag-filter-toolpanel-header {
+                &.ag-filter-header {
+                    min-height: $header-height;
+                    height: $header-height;
+                    border-bottom: 1px solid $border-color;
+                    box-sizing: content-box;
+                }
+
+                > div {
+                    &:not(.ag-input-wrapper) {
+                        margin: 0 $grid-size / 2;
+                    }
+                    &.ag-input-wrapper {
+                        padding-left: $grid-size;
+                        padding-right: $grid-size;
+                        input {
+                            width: 100%;
+                        }
+                    }
+                }
+            }
+
+            .ag-filter-list-panel {
+                flex: 1 1 auto;
+                overflow: auto;
+                > div {
+                    &.ag-first-group-visible {
+                        > .ag-group-component {
+                            > .ag-group-component-title-bar {
+                                border-top: none;
+                                min-height: calc(#{$header-height} - 1px);
+                            }
+                        }
+                    }
+                    &.ag-last-group-visible {
+                        > .ag-group-component.ag-collapsed {
+                            border-bottom: 1px solid $border-color;
+                        }
+                    }
+                }
+            }
+
+            .ag-group-component {
+                border: none;
+                background-color: $header-background-color;
+                .ag-group-component-title-bar {
+                    min-height: $header-height;
+                    .ag-group-component-title {
+                        white-space: nowrap;
+                    }
+
+                    .ag-column-group-icons {
+                        margin: 0 $grid-size;
+                    }
+                }
+
+                &.ag-level-0 {
+                    > .ag-group-component-title-bar {
+                        border: 0 solid $border-color;
+                        border-top-width: 1px;
+                    }
+                }
+
+                &.ag-has-filter {
+                    > .ag-group-component-title-bar {
+                        .ag-group-component-title:after {
+                            content: $ag-icon-filter;
+                            font-family: $icon-font-family;
+                            font-size: $icon-size;
+                            margin-left: $grid-size;
+                            color: $icon-color;
+                            font-weight: normal;
+                        }
+                    }
+                }
+            }
+
+            .ag-group-component-container {
+                margin-left: 0;
+                padding: 0;
+                .ag-group-item {
+                    &:not(.ag-filter-toolpanel-instance) {
+                        margin-top: 0;
+                    }
+                    .ag-group-component-title-bar {
+                        background-color: $group-component-background-color;
+                    }
+                    .ag-filter-toolpanel-header {
+                        padding: $grid-size / 2 0;
+                    }
+                    .ag-filter-toolpanel-body {
+                        &:not(:empty) {
+                            margin: $grid-size 0;
+                        }
+                        .ag-filter-air {
+                            border: 1px solid $border-color;
+                            padding-top: $grid-size;
+                            color: $foreground-color;
+                            font-weight: $font-weight;
+                            font-size: $font-size;
+                            font-family: $font-family;
+                        }
+                    }
+                }
+
+                .ag-group-item:not(.ag-filter-toolpanel-instance),
+                .ag-group-item > .ag-group-component {
+                    border-top: none;
+                    margin-bottom: 0;
+                    .ag-group-component-title-bar {
+                        min-height: unset;
+                        height: unset;
+                        margin: $grid-size 0;
+                    }
+                }
+            }
+        }
+
+        .ag-pivot-mode-panel {
+            height: $header-height;
+            display: flex;
+            flex: none;
+
+            .ag-pivot-mode-select {
+                display: flex;
+                align-items: center;
+                margin-left: $grid-size;
+            }
+        }
+
+        .ag-column-select-panel {
+            border-bottom: 1px solid $border-color;
+            padding-bottom: $grid-size - 1; // absorb the bottom border;
+            padding-top: 0;
+        }
+
+        $group-height: $grid-size * 5;
+
+        .ag-column-drop {
+            border-bottom: 1px solid $border-color;
+            padding: $grid-size 0;
+            padding-bottom: $grid-size * 2;
+
+            .ag-column-drop-empty-message {
+                color: $disabled-foreground-color;
+                font-weight: $secondary-font-weight;
+                font-size: $secondary-font-size;
+                font-family: $secondary-font-family;
+                padding-left: $icon-size + $grid-size * 2;
+                padding-right: $grid-size;
+                margin-top: $grid-size;
+            }
+
+            .ag-column-drop-list {
+                cursor: default;
+                margin-top: $grid-size;
+            }
+
+            > div:first-child > span:first-child {
+                margin-left: $grid-size;
+                margin-right: $grid-size;
+            }
+
+            &.ag-last-column-drop {
+                border-bottom-width: 0;
+            }
+        }
+    }
+
+    @include padding-filters(false);
+
+    ////////////////////////////////////////
+    // Sorting
+    ////////////////////////////////////////
+
+    .ag-numeric-header .ag-header-cell-label .ag-header-icon {
+        margin-left: 0;
+        margin-right: $grid-size;
+    }
+
+    ////////////////////////////////////////
+    // Pagination
+    ////////////////////////////////////////
+    .ag-paging-panel {
+        border-top: 1px solid $border-color;
+        color: $secondary-foreground-color;
+        height: $header-height;
+        padding: 0 $cell-horizontal-padding;
+
+        & > span {
+            margin-left: $grid-size * 4;
+        }
+    }
+
+    .ag-paging-page-summary-panel {
+        .ag-icon {
+            width: $icon-size;
+            height: $icon-size;
+        }
+        .ag-paging-button {
+            button {
+                cursor: pointer;
+                opacity: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                padding: 0;
+            }
+            &.ag-disabled {
+                .ag-icon {
+                    color: $disabled-foreground-color;
+                    opacity: $disabled-foreground-color-opacity;
+                }
+                button {
+                    cursor: default;
+                }
+            }
+        }
+
+        span {
+            margin: 0 $grid-size;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Selection
+    ////////////////////////////////////////
+    .ag-row-selected {
+        background-color: $selected-color;
+    }
+
+    .ag-ltr, .ag-rtl {
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+            border: 1px solid transparent;
+            &.ag-cell-range-top {
+                border-top-color: $primary-color;
+            }
+            &.ag-cell-range-right {
+                border-right-color: $primary-color;
+            }
+            &.ag-cell-range-bottom {
+                border-bottom-color: $primary-color;
+            }
+            &.ag-cell-range-left {
+                border-left-color: $primary-color;
+            }
+        }
+    }
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected:not(.ag-cell-focus) {
+        background-color: $range-selection-background-color;
+        &.ag-cell-range-chart {
+            background-color: $range-selection-chart-background-color;
+        }
+
+        &.ag-cell-range-chart.ag-cell-range-chart-category {
+            background-color: $range-selection-chart-category-background-color;
+        }
+    }
+
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-1;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-2;
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-3;
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-4;
+    }
+
+    .ag-ltr, .ag-rtl {
+        .ag-selection-fill-top {
+            border-top: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-top: 1px dashed darken($border-color, 20%);
+            }
+        }
+
+        .ag-selection-fill-right {
+            border-right: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-right: 1px dashed darken($border-color, 20%);
+            }
+        }
+
+        .ag-selection-fill-bottom {
+            border-bottom: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-bottom: 1px dashed darken($border-color, 20%);
+            }
+        }
+
+        .ag-selection-fill-left {
+            border-left: 1px dashed $primary-color;
+            &.ag-cell.ag-cell-range-selected {
+                border-left: 1px dashed darken($border-color, 20%);
+            }
+        }
+    }
+
+    %selection-handle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        bottom: -1px;
+        right: -1px;
+        background-color: $primary-color;
+    }
+
+    .ag-fill-handle {
+        @extend %selection-handle;
+        cursor: cell;
+    }
+
+    .ag-range-handle {
+        @extend %selection-handle;
+        cursor: nwse-resize;
+    }
+
+    ////////////////////////////////////////
+    // Editing
+    ////////////////////////////////////////
+    .ag-cell {
+        &.ag-cell-inline-editing {
+            padding: $cell-horizontal-padding;
+            height: $row-height + $grid-size * 3;
+        }
+        &.ag-cell-inline-editing {
+            @include card($params);
+
+            background-color: $editor-background-color-color;
+        }
+    }
+
+    .ag-popup-editor {
+        @include card($params);
+        background-color: $editor-background-color-color;
+        padding: 0;
+        .ag-large-textarea textarea {
+            height: auto;
+            padding: $cell-horizontal-padding;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Virtual List
+    ////////////////////////////////////////
+    .ag-virtual-list-container {
+        .ag-virtual-list-item {
+            height: $virtual-item-height;
+        }
+    }
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
+    .ag-rich-select {
+        background-color: $editor-background-color-color;
+
+        .ag-rich-select-list {
+            width: 100%;
+            min-width: 200px;
+            height: $row-height * 6.5; // intentional
+        }
+
+        .ag-rich-select-value {
+            padding: 0 $grid-size 0 $cell-horizontal-padding;
+            height: $rich-select-item-height;
+        }
+
+        .ag-virtual-list-item {
+            cursor: default;
+            height: $rich-select-item-height;
+
+            &:hover {
+                background-color: $hover-color;
+            }
+        }
+
+        .ag-rich-select-row {
+            padding-left: $cell-horizontal-padding;
+        }
+
+        .ag-rich-select-row-selected {
+            background-color: $selected-color;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Floating filter
+    ////////////////////////////////////////
+    .ag-ltr .ag-floating-filter-button {
+        margin-left: $grid-size * 3;
+    }
+
+    .ag-floating-filter-button {
+        button {
+            appearance: none;
+            background: transparent;
+            border: 0;
+            height: $icon-size;
+            padding: 0;
+            width: $icon-size;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Selection checkbox
+    ////////////////////////////////////////
+    .ag-selection-checkbox:not(.ag-hidden),
+    .ag-group-expanded:not(.ag-hidden),
+    .ag-group-contracted:not(.ag-hidden),
+    .ag-group-checkbox:not(.ag-invisible) {
+        ~ .ag-cell-value, + .ag-group-value {
+            &:not(:empty) {
+                margin-left: $cell-horizontal-padding;
+            }
+        }
+        ~ .ag-group-checkbox {
+            margin-left: $cell-horizontal-padding;
+        }
+    }
+
+    .ag-group-child-count {
+        margin-left: 2px;
+    }
+
+    .ag-selection-checkbox span {
+        position: relative;
+    }
+
+    ////////////////////////////////////////
+    // Column drop
+    ////////////////////////////////////////
+    .ag-column-drop-horizontal {
+        background-color: $panel-background-color;
+        height: $row-height;
+        padding-left: $cell-horizontal-padding;
+
+        .ag-icon-group,
+        .ag-icon-pivot {
+            margin-right: $cell-horizontal-padding;
+        }
+
+        .ag-icon-small-left,
+        .ag-icon-small-right {
+            margin: 0 $grid-size;
+            opacity: $secondary-foreground-color-opacity;
+        }
+
+        .ag-column-drop-empty-message {
+            opacity: $disabled-foreground-color-opacity;
+        }
+    }
+
+    .ag-column-drop-cell {
+        background: $chip-background-color;
+        border-radius: $grid-size * 4;
+        min-height: $grid-size * 4;
+        padding: 0 $grid-size / 2;
+
+        .ag-column-drop-cell-text {
+            margin: 0 $grid-size;
+        }
+
+        .ag-column-drop-cell-button {
+            min-width: $grid-size * 4;
+
+            margin: 0 $grid-size / 2;
+            opacity: $secondary-foreground-color-opacity;
+
+            &:hover {
+                opacity: $foreground-opacity;
+            }
+        }
+
+        .ag-column-drag {
+            margin-left: $grid-size * 2;
+        }
+    }
+
+    .ag-column-drop-vertical {
+        .ag-column-drop-cell {
+            margin-top: $grid-size;
+        }
+    }
+
+    .ag-select-agg-func-popup {
+        @include card($params);
+
+        background: $background-color;
+        height: $grid-size * 5 * 3.5;
+        padding: 0;
+
+        .ag-virtual-list-item {
+            cursor: default;
+            line-height: $grid-size * 5;
+            padding-left: $grid-size * 2;
+        }
+
+        .ag-virtual-list-item:hover {
+            background-color: map-get($params, "menu-option-active-color");
+        }
+    }
+
+    .ag-set-filter-list,
+    .ag-menu-column-select-wrapper {
+        width: auto;
+    }
+
+    .ag-column-drop-vertical > .ag-column-drop-cell {
+        margin-left: $grid-size;
+        margin-top: 0;
+    }
+
+    // cell data changed
+    .ag-cell-data-changed {
+        background-color: $value-change-value-highlight-background-color !important;
+    }
+
+    .ag-cell-data-changed-animation {
+        background-color: transparent;
+        transition: background-color 1s;
+    }
+
+    .ag-row-stub {
+        background-color: $row-stub-background-color;
+    }
+
+    .ag-stub-cell {
+        padding-left: $cell-horizontal-padding;
+        padding-top: $grid-size;
+        .ag-loading-icon {
+            animation-name: spin;
+            animation-duration: 1000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes spin {
+            from { transform:rotate(0deg); }
+            to { transform:rotate(360deg); }
+        }
+
+        .ag-loading-text {
+            margin-left: $grid-size;
+            margin-top: $grid-size;
+        }
+    }
+
+    .ag-floating-top {
+        border-bottom: 1px solid $border-color;
+    }
+    .ag-floating-bottom {
+        border-top: 1px solid $border-color;
+    }
+
+    .ag-floating-top, .ag-floating-bottom {
+        background-color: $row-floating-background-color;
+
+        .ag-row {
+            background-color: $row-floating-background-color;
+        }
+    }
+
+    .ag-status-bar {
+        background: $background-color;
+        border: 1px solid $border-color;
+        border-top-width: 0;
+        color: $disabled-foreground-color;
+        font-weight: $secondary-font-weight;
+        font-size: $secondary-font-size;
+        font-family: $secondary-font-family;
+        padding-right: $grid-size * 4;
+        padding-left: $grid-size * 4;
+        line-height: 1.5;
+    }
+
+    .ag-name-value-value {
+        color: $foreground-color;
+    }
+
+    .ag-status-bar-center {
+        text-align: center;
+    }
+
+    .ag-name-value {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
+        padding-top: $grid-size * 2;
+        padding-bottom: $grid-size * 2;
+    }
+
+    .ag-details-row {
+        padding: $grid-size * 5;
+    }
+
+    .ag-overlay-loading-wrapper {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ag-overlay-loading-center {
+        @include card($params);
+    }
+
+    %side-bar-left {
+        border-left: 1px solid $border-color;
+        border-right: none;
+        .ag-side-button.ag-selected button {
+            margin-right: -1px;
+            padding-right: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-left: 1px solid $border-color;
+            border-right: none;
+        }
+    }
+
+    %side-bar-right {
+        border-right: 1px solid $border-color;
+        border-left: none;
+        .ag-side-button.ag-selected button {
+            margin-left: -1px;
+            padding-left: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-right: 1px solid $border-color;
+            border-left: none;
+        }
+    }
+
+    .ag-side-bar {
+        background-color: $tool-panel-background-color;
+        border: 1px solid $border-color;
+        border-left-width: 0;
+        position: relative;
+
+        .ag-side-buttons {
+            padding-top: $grid-size * 4;
+            background: $background-color;
+            width: $icon-size + 4;
+            position: relative;
+
+            .ag-side-button {
+                button {
+                    background: transparent;
+                    border: 0;
+                    color: $foreground-color;
+                    padding: $grid-size * 2 0 $grid-size * 2 0;
+                    width: calc(100% + 1px);
+                    margin: 0;
+                    min-height: $grid-size * 18;
+                    border-width: 1px 0 1px 0;
+                    border-style: solid;
+                    border-color: transparent;
+                    background-position-y: center;
+                    background-position-x: center;
+                    background-repeat: no-repeat;
+
+                }
+            }
+
+            .ag-selected {
+              button {
+                background-color: $tool-panel-background-color;
+                border-color: $border-color;
+              }
+            }
+        }
+
+        .ag-panel-container {
+            border-right: 1px solid $border-color;
+        }
+
+        &.full-width .ag-panel-container {
+            border-right: 0;
+        }
+
+        .ag-column-drop {
+            min-height: 50px;
+        }
+    }
+
+    .ag-ltr .ag-side-bar {
+        &.ag-side-bar-left {
+            @extend %side-bar-left;
+        }
+    
+        &.ag-side-bar-right {
+            @extend %side-bar-right;
+        }
+    }
+
+    .ag-primary-cols-filter-wrapper {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
+    }
+
+
+    ////
+    /// Widgets
+    ///
+    .ag-group-component {
+        background-color: $group-component-background-color;
+        padding: 0px;
+        border: 0 solid $group-component-border-color;
+        border-top-width: 1px;
+        &.ag-disabled > {
+            .ag-group-component-label .ag-group-component-title, .ag-group-component-container {
+                opacity: 0.5;
+            }
+        }
+        .ag-group-component-title-bar {
+            background-color: $group-component-title-background-color;
+            height: $icon-size;
+            font-size: $font-size;
+            font-family: $font-family;
+            height: 26px;
+        }
+        &:not(.ag-collapsible) {
+            > {
+                div {
+                    margin-left: 0;
+                }
+                .ag-group-component-title-bar {
+                    margin-left: 0;
+                    padding: $grid-size;
+                    .ag-column-group-icons {
+                        display: none;
+                    }
+                }
+            }
+        }
+        .ag-group-component-toolbar {
+            background-color: darken($group-component-background-color, 2%);
+            padding: $grid-size;
+            border: 0 solid $border-color;
+        }
+        > .ag-group-component-container {
+            margin-left: $grid-size * 2;
+            padding: $grid-size;
+        }
+        .ag-group-item {
+            margin: $grid-size / 2 0;
+            .ag-group-component-title-bar {
+                height: 18px;
+            }
+        }
+    }
+
+    .ag-labeled {
+        label {
+            margin-right: $grid-size;
+            white-space: nowrap;
+        }
+    }
+
+    .ag-labeled.ag-label-align-top {
+        label {
+            margin-bottom: $grid-size / 2;
+        }
+    }
+
+    .ag-slider, .ag-angle-select {
+        > .ag-wrapper {
+            > div:not(:first-of-type) {
+                margin-left: $grid-size * 2;
+            }
+        }
+    }
+
+    .ag-angle-select {
+        .ag-angle-select-field {
+            .ag-parent-circle {
+                width: 24px;
+                height: 24px;
+                border-radius: 12px;
+                box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+                background-color: #ffffff;
+            }
+            .ag-child-circle {
+                top: 4px;
+                left: 12px;
+                width: 6px;
+                height: 6px;
+                margin-left: -3px;
+                margin-top: -4px;
+                border-radius: 3px;
+                background-color: #4c4c4c;
+            }
+        }
+    }
+
+    .ag-toggle-button {
+        .ag-input-wrapper {
+            height: $icon-size;
+            width: 40px;
+            background-color: $background-color;
+            border: 1px solid $icon-color;
+            border-radius: 500rem;
+            .ag-icon {
+                width: $icon-size;
+                height: $icon-size;
+                border: 1px solid $icon-color;
+                border-radius: 500rem;
+                right: calc(100% - #{$icon-size});
+            }
+        }
+        &.ag-selected {
+            .ag-input-wrapper {
+                background-color: $accent-color;
+                .ag-icon {
+                    background: $background-color;
+                    right: -1px;
+                }
+            }
+        }
+    }
+
+    .ag-color-picker {
+        > .ag-wrapper {
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            > div {
+                width: $icon-size;
+                height: $icon-size;
+            }
+            button {
+                background-color: $background-color;
+            }
+            button:hover {
+                background-color: $hover-color;
+            }
+        }
+    }
+
+    .ag-dialog.ag-color-dialog {
+        border-radius: 5px;
+    }
+
+    .ag-color-panel {
+        padding: $grid-size;
+
+        .ag-spectrum-color {
+            background-color: rgb(255, 0, 0);
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-tools {
+            padding: 10px;
+        }
+
+        .ag-spectrum-sat {
+            background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+        }
+
+        .ag-spectrum-val {
+            background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+        }
+
+        .ag-spectrum-dragger {
+            border-radius: 12px;
+            height: 12px;
+            width: 12px;
+            border: 1px solid white;
+            background: black;
+            box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+        }
+
+        .ag-spectrum-hue-background {
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-alpha-background {
+            border-radius: 2px;
+        }
+
+        .ag-hue-alpha {
+            margin-bottom: 10px;
+            height: 11px;
+            border-radius: 2px;
+        }
+
+        .ag-spectrum-slider {
+            margin-top: -12px;
+            width: 13px;
+            height: 13px;
+            border-radius: 13px;
+            background-color: rgb(248, 248, 248);
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .ag-spectrum-text-value {
+            font-weight: bold;
+            line-height: 20px;
+            color: #333;
+        }
+
+        .ag-spectrum-text-value:focus {
+            border: 1px solid #0d77e4;
+            padding: 2px;
+        }
+
+        .ag-recent-colors {
+            > div {
+                margin: 0 3px;
+                &:first-child {
+                    margin-left: 0;
+                }
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Popup
+    ////////////////////////////////////////
+    &.ag-popup > div:not(.ag-tooltip-custom) {
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    ////////////////////////////////////////
+    // Dialog
+    ////////////////////////////////////////
+    .ag-panel {
+        background-color: $dialog-background-color;
+        border: $dialog-border-size $dialog-border-style $dialog-border-color;
+        .ag-dragging-range-handle &.ag-dialog, .ag-dragging-fill-handle &.ag-dialog {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .ag-title-bar {
+            background-color: $dialog-title-background-color;
+            border-bottom: 1px solid lighten($border-color, 10%);
+            color: $dialog-title-foreground-color;
+            height: $dialog-title-height;
+            font-size: $dialog-title-font-size;
+            font-weight: $dialog-title-font-weight;
+            font-family: $dialog-title-font-family;
+            padding-left: $cell-horizontal-padding;
+            padding: $dialog-title-padding;
+
+            .ag-title-bar-buttons {
+                .ag-button {
+                    height: $dialog-title-icon-size;
+                    width: $dialog-title-icon-size;
+                    .ag-icon {
+                        line-height: $dialog-title-icon-size;
+                        font-size: $dialog-title-icon-size;
+                    }
+                    border-radius: 5px;
+                    &:hover, &.ag-has-popup {
+                        background-color: darken($dialog-title-background-color, 10%);
+                    }
+                    &:not(:last-child) {
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+
+        .ag-message-box {
+            .ag-message-box-button-bar {
+                height: 30px;
+                background-color: $header-background-color;
+                padding: 2px;
+                button {
+                    border-radius: $card-radius;
+                }
+            }
+        }
+    }
+    ////////////////////////////////////////
+    // Tooltip
+    ////////////////////////////////////////
+    .ag-tooltip {
+        background-color: $tooltip-background-color;
+        color: $tooltip-foreground-color;
+        border-radius: $tooltip-border-radius;
+        padding: $tooltip-padding;
+        border-width: $tooltip-border-width;
+        border-style: $tooltip-border-style;
+        border-color: $tooltip-border-color;
+        transition: opacity 1s;
+
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
+    .ag-chart {
+        .ag-chart-menu {
+            border-radius: 5px;
+            background: $background-color;
+            > span {
+                &:hover {
+                    background-color: darken($background-color, 10%);
+                }
+            }
+        }
+    }
+
+    .ag-chart-tabbed-menu {
+        .ag-chart-settings {
+            .ag-chart-settings-mini-wrapper {
+                .ag-group-component-container {
+                    margin-left: 0;
+                }
+                .ag-chart-mini-thumbnail {
+                    border: 1px solid $border-color;
+                    border-radius: 5px;
+                    margin: 5px;
+                    &:nth-child(2n + 2):not(:last-child) {
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    &:nth-child(3n + 1) {
+                        margin-left: 2px;
+                    }
+                    &:nth-child(3n) {
+                        margin-right: 2px;
+                    }
+                    &.ag-selected {
+                        border-color: $primary-color;
+                    }
+                }
+            }
+
+            .ag-chart-settings-nav-bar {
+                .ag-nav-card-selector {
+                    .ag-nav-card-item {
+                        background: $foreground-color;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 4px;
+                        &.ag-selected {
+                            background: $primary-color;
+                        }
+                    }
+                }
+            }
+        }
+        .ag-chart-format {
+            .ag-chart-format-wrapper {
+                .ag-group-item {
+                    margin: $grid-size * 1.2 0;
+                }
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Icons
+    ////////////////////////////////////////
+    @include icons_webfont();
+
+    ////////////////////////////////////////
+    // Right-To-Left
+    ////////////////////////////////////////
+    .ag-rtl {
+        text-align: right;
+
+        .ag-numeric-cell {
+            text-align: left;
+        }
+
+        .ag-checkbox, .ag-radio-button, .ag-toggle-button {
+            &:not(.ag-label-align-left) {
+                label {
+                    margin-right: $grid-size;
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .ag-tool-panel-wrapper {
+            .ag-pivot-mode-panel {
+                .ag-pivot-mode-select {
+                    margin-right: $grid-size;
+                }
+            }
+
+            .ag-column-drop {
+                .ag-column-drop-empty-message {
+                    padding-left: $grid-size;
+                    padding-right: $grid-size * 4;
+                }
+            }
+        }
+
+        .ag-column-select-panel {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
+                .ag-column-select-checkbox,
+                .ag-column-group-icons {
+                    margin-left: $grid-size;
+                    margin-right: $grid-size;
+                }
+            }
+
+            .ag-column-group-closed-icon {
+                display: block;
+                transform: rotate(180deg);
+            }
+
+            .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
+                margin-left: 0;
+                margin-right: $icon-size + $grid-size * 2;
+            }
+        }
+
+        .ag-header-select-all {
+            margin-left: $cell-horizontal-padding;
+            margin-right: 0;
+        }
+
+        .ag-selection-checkbox,
+        .ag-group-checkbox,
+        .ag-group-expanded,
+        .ag-group-contracted {
+            + .ag-cell-value, + .ag-group-value {
+                &:not(:empty) {
+                    margin-right: $cell-horizontal-padding;
+                    margin-left: initial;
+                }
+            }
+            + .ag-group-checkbox {
+                margin-right: $cell-horizontal-padding;
+                margin-left: initial;
+            }
+        }
+
+        .ag-group-child-count {
+            margin-left: unset;
+            margin-right: 2px;
+        }
+
+        .ag-column-drop-horizontal {
+            padding-right: $cell-horizontal-padding;
+            .ag-icon-group,
+            .ag-icon-pivot {
+                margin-left: $cell-horizontal-padding;
+                margin-right: 0;
+            }
+        }
+
+        .ag-floating-filter-button {
+            margin-right: $grid-size * 3;
+        }
+
+        .ag-set-filter-item {
+            > {
+                div, span {
+                    margin-left: 0;
+                    margin-right: 5px;
+                }
+            }
+        }
+
+        .ag-header .ag-header-cell-resize::after {
+            border-left: 1px solid $border-color;
+            border-right: 0;
+        }
+
+        .ag-row-group-leaf-indent {
+            margin-right: $icon-size + $grid-size * 3;
+        }
+        .ag-cell {
+            border-left: $cell-horizontal-border;
+        }
+
+        .ag-cell:not(.ag-cell-focus),
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+                border-left: 1px solid $border-color;
+            }
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+                border-right: 1px solid $border-color;
+            }
+        }
+
+        .ag-side-bar {
+            &.ag-side-bar-left {
+                @extend %side-bar-right;
+            }
+        
+            &.ag-side-bar-right {
+                @extend %side-bar-left;
+            }
+
+            .ag-panel-container {
+                border-left: 1px solid $border-color;
+                border-right: 0;
+            }
+
+            &.full-width .ag-panel-container {
+                border-left: 0;
+            }
+        }
+        @include padding-filters(true);
+    }
+
+    $exported: (
+        autoSizePadding: $grid-size * 3,
+        headerHeight: $header-height,
+        groupPaddingSize: $grid-size * 3 + $icon-size,
+        footerPaddingAddition: $grid-size * 4,
+        virtualItemHeight: $virtual-item-height,
+        aggFuncPopupHeight: $virtual-item-height * 3.5,
+        checkboxIndentWidth: $grid-size + $icon-size,
+        leafNodePadding: $grid-size * 3,
+        rowHeight: $row-height,
+        gridSize: $grid-size,
+        iconSize: $icon-size
+    );
+
+    $json-list: ();
+
+    @each $name, $value in $exported {
+        $json-list: append($json-list, unquote('"#{$name}": "#{$value}"'), comma);
+    }
+
+    .sass-variables::after {
+        content: "{ #{$json-list} }";
+        display: none;
+    }
+}

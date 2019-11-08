@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.0.0-beta.0
+// @ag-grid-community/react v22.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var agGridReact_1 = require("./agGridReact");

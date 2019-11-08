@@ -1,0 +1,200 @@
+@import "../../ag-theme-base/vars/flat-colors";
+
+$foreground-opacity: 0.87 !default;
+$secondary-foreground-color-opacity: 0.54 !default;
+$disabled-foreground-color-opacity: 0.38 !default;
+
+// Sizing
+$grid-size: 4px !default;
+$icon-size: 16px !default;
+
+// these three should be changed in environment.ts, too
+$row-height: $grid-size * 7 !default;
+// theme shortcuts
+$default-background: white !default;
+$chrome-background: lighten($flat-gray-1, 3) !default;
+$active: #0091EA !default;
+$foreground-color: #000 !default;
+$border-color: $flat-silver !default;
+$icon-color: $flat-gray-4 !default;
+$alt-icon-color: $default-background !default;
+$alt-background: $flat-gray-1 !default;
+$odd-row-background-color: rgb(252, 253, 254) !default;
+$header-cell-moving-background-color: $default-background !default;
+
+// Derived from above
+$foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
+$secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default; // foreground-secondary
+$disabled-foreground-color: rgba($foreground-color, $disabled-foreground-color-opacity) !default; // foreground-disabled
+$input-border-color: $flat-gray-3 !default;
+$input-disabled-background-color: #ebebeb !default;
+
+$primary-color: $active !default;
+$accent-color: $active !default;
+$range-selection-background-color: transparentize($active, 0.8) !default;
+$range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
+$range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
+$ag-range-selected-color-1: opacify($range-selection-background-color, 0.1) !default;
+$ag-range-selected-color-2: opacify($range-selection-background-color, 0.2) !default;
+$ag-range-selected-color-3: opacify($range-selection-background-color, 0.3) !default;
+$ag-range-selected-color-4: opacify($range-selection-background-color, 0.4) !default;
+$range-selection-highlight-color: $active !default;
+$selected-color: lighten($active, 40) !default;
+
+$background-color: $default-background !default;
+
+$editor-background-color: $chrome-background !default;
+$panel-background-color: $chrome-background !default;
+$tool-panel-background-color: $chrome-background !default;
+$header-background-color: $chrome-background !default;
+$header-cell-hover-background-color: $header-background-color !default;
+$header-foreground-color: $secondary-foreground-color !default;
+
+$hover-color: $alt-background !default;
+$chip-background-color: darken($alt-background, 5) !default;
+
+$row-stub-background-color: inherit !default;
+$row-floating-background-color: inherit !default;
+
+// delta changes
+$cell-data-changed-color: #fce4ec !default;
+$value-change-delta-up-color: #43a047 !default;
+$value-change-delta-down-color: #e53935 !default;
+$value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+
+$header-height: $grid-size * 8 !default;
+$virtual-item-height: $grid-size * 7 !default;
+$row-border-width: 1px !default;
+
+$toolpanel-indent-size: $grid-size + $icon-size !default;
+$row-group-indent-size: $grid-size * 3 + $icon-size !default;
+$cell-horizontal-padding: $grid-size * 3 !default;
+
+$header-icon-size: 14px !default;
+$border-radius: 2px !default;
+
+// Fonts
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
+
+$font-size: 12px !default;
+$font-weight: 400 !default;
+
+$secondary-font-family: $font-family !default; //font-secondary
+$secondary-font-size: 12px !default; // font-secondary-size
+$secondary-font-weight: 600 !default; // font-secondary-weight
+$card-radius: 2px !default;
+$card-shadow: none !default;
+
+$tooltip-background-color: lighten($flat-gray-2, 5%) !default;
+$tooltip-foreground-color: $foreground-color !default;
+$tooltip-border-radius: $border-radius !default;
+$tooltip-border-color: $tooltip-background-color !default;
+
+// Icons
+@import "./font-vars";
+
+@import "../../ag-theme-base/vars/ag-theme-base-vars";
+
+$params: (
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+
+    default-background: $default-background,
+    background-color: $background-color,
+
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
+
+    border-color: $border-color,
+    scroll-spacer-border: $scroll-spacer-border,
+
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
+    header-foreground-color: $header-foreground-color,
+    header-background-color: $header-background-color,
+    header-cell-hover-background-color: $header-cell-hover-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
+
+    odd-row-background-color: $odd-row-background-color,
+    row-stub-background-color: $row-stub-background-color,
+    row-floating-background-color: $row-floating-background-color,
+    cell-data-changed-color: $cell-data-changed-color,
+    chip-background-color: $chip-background-color,
+    card-background-color: $background-color,
+
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+
+    editor-background-color-color: $editor-background-color,
+    input-border-color: $input-border-color,
+    input-disabled-background-color: $input-disabled-background-color,
+
+    icon-color: $icon-color,
+    alt-icon-color: $alt-icon-color,
+    icon-opacity: $foreground-opacity,
+
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-chart-background-color: $range-selection-chart-background-color,
+    range-selection-chart-category-background-color: $range-selection-chart-category-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+    ag-range-selected-color-1: $ag-range-selected-color-1,
+    ag-range-selected-color-2: $ag-range-selected-color-2,
+    ag-range-selected-color-3: $ag-range-selected-color-3,
+    ag-range-selected-color-4: $ag-range-selected-color-4,
+
+    grid-size: $grid-size,
+    input-height: $grid-size * 4,
+
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+
+    header-height: $header-height,
+    row-height: $row-height,
+    row-border-width: $row-border-width,
+    virtual-item-height: $virtual-item-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+    cell-horizontal-border: $cell-horizontal-border,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
+
+    button-text-transform: uppercase,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    use-icons-for-pager-buttons: true,
+
+    tooltip-background-color: $tooltip-background-color,
+    tooltip-foreground-color: $tooltip-foreground-color,
+    tooltip-padding: $tooltip-padding,
+    tooltip-border-radius: $tooltip-border-radius,
+    tooltip-border-color: $tooltip-border-color,
+    tooltip-border-width: $tooltip-border-width,
+    tooltip-border-style: $tooltip-border-style,
+
+    dialog-background-color: $dialog-background-color,
+    dialog-border-size: $dialog-border-size,
+    dialog-border-style: $dialog-border-style,
+    dialog-border-color: $dialog-border-color,
+
+    dialog-title-background-color: $dialog-title-background-color,
+    dialog-title-foreground-color: $dialog-title-foreground-color,
+    dialog-title-height: $dialog-title-height,
+    dialog-title-font-family: $dialog-title-font-family,
+    dialog-title-font-size: $dialog-title-font-size,
+    dialog-title-font-weight: $dialog-title-font-weight,
+    dialog-title-padding: $dialog-title-padding,
+    dialog-title-icon-size: $dialog-title-icon-size
+);
