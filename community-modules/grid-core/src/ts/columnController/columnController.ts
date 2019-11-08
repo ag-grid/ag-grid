@@ -42,8 +42,6 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "./columnApi";
 import { Constants } from "../constants";
 import { _ } from "../utils";
-import { cpus } from "os";
-import M = require("minimatch");
 
 export interface ColumnResizeSet {
     columns: Column[];
