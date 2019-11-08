@@ -1,0 +1,11 @@
+@import '../ag-theme-balham/vars/ag-theme-balham-vars';
+@import '../mixins/ag-theme-mixins';
+
+@font-face {
+    font-family: '#{$icon-font-family}';
+    src: $icons-data;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@include icons_webfont();
