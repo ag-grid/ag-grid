@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>flex</th>
             <td>Used instead of width when the goal is to fill the remaining empty space of the grid. For
-                more info see: <a href="../javascript-grid-resizing/#column-flexing">Column Flex</a>
+                more info see: <a href="../javascript-grid-resizing/#column-flex">Column Flex</a>
         </td>
         </tr>
         <tr>

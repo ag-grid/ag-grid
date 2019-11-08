@@ -54,17 +54,17 @@ gridOptions: {
     <h2>Column Flex</h1>
 
     <p>
-        It's often that need that one or more columns fill the entire available space in
+        It's often required that one or more columns fill the entire available space in
         the grid. For this scenario, it is possible to use the <code>flex</code> config.
         Some columns could be set with a regular <code>width</code> config, while other 
         columns would have a flex config.
     </p>
 
     <p>
-        The flex config works with proportions, for example: <br>
-        If the grid has a total width of 400px and it has three columns. The first column
-        with 100px width; second column with <code>flex: 1</code>; third column with <code>flex: 2</code>.<br>
-        It will divide the remaining 300px between the two columns where the column with <code>flex: 2</code> 
+        Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
+        their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
+        the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
+        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
         has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
     </p>
 
