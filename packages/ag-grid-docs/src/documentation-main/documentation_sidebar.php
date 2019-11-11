@@ -25,6 +25,8 @@
         </p>
         <ul>
             <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-charts-overview/">Charts out of Beta!</a></li>
+            <li><a class="learn-more"
                    href="https://www.ag-grid.com/javascript-grid-modules/">Modularisation</a></li>
 
             <li><a class="learn-more"
