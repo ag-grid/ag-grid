@@ -83,7 +83,7 @@ include '../jira_reports/jira_utilities.php';
         <div class="info-page">
             <div class="row">
                 <section>
-                    <h1>Next Release Target: TBD - 20.1.0 just released</h1>
+                    <h1>Next Release Target: TBD - 22.0.0 just released</h1>
 
                     <div class="note">
                         <p>
