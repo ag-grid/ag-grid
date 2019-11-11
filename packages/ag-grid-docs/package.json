@@ -131,7 +131,7 @@
     "vue-template-compiler": "2.5.22",
     "webdriver-manager": "12.1.0",
     "webpack": "4.18.0",
-    "webpack-dev-server": "3.1.8",
+    "webpack-dev-server": "3.9.0",
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
