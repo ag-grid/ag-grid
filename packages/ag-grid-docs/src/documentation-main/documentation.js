@@ -20,18 +20,18 @@
         return pathname.slice(0, pathname.lastIndexOf('/'));
     };
 
-    let getPathWithTrailingSlash = function () {
+    var getPathWithTrailingSlash = function () {
         var pathname = removeFilenameFromPath(window.location.pathname);
         var trailingSlash = (pathname.indexOf("/", 1) === pathname.length - 1);
         pathname += trailingSlash ? "" : "/";
         return pathname;
     };
 
-    let getExtensionForExample = function (jsfile) {
+    var getExtensionForExample = function (jsfile) {
         return jsfile.indexOf(".ts") >= 0 || jsfile.indexOf(".vue") >= 0 ? "" : ".js";
     };
 
-    let getSourceLang = function (jsfile) {
+    var getSourceLang = function (jsfile) {
         if (jsfile.indexOf(".ts") >= 0) {
             return "TypeScript";
         } else if (jsfile.indexOf(".vue") >= 0) {

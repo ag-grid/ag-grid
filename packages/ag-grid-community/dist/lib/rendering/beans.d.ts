@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
@@ -21,7 +18,7 @@ import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
 import { ColumnHoverService } from "./columnHoverService";
 import { GridPanel } from "../gridPanel/gridPanel";
-import { PaginationProxy } from "../rowModels/paginationProxy";
+import { PaginationProxy } from "../pagination/paginationProxy";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
@@ -60,7 +57,6 @@ export declare class Beans {
     valueFormatterService: ValueFormatterService;
     stylingService: StylingService;
     columnHoverService: ColumnHoverService;
-    enterprise: boolean;
     userComponentFactory: UserComponentFactory;
     taskQueue: AnimationFrameService;
     dragAndDropService: DragAndDropService;

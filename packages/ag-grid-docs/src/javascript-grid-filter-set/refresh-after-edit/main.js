@@ -7,11 +7,10 @@ var rowData = [
 
 var columnDefs = [
     {field: 'col1'},
-    {field: 'col2', filterParams: {syncValuesLikeExcel: true}},
-    {field: 'col3'},
-    {field: 'col4'},
-    {field: 'col5'},
-    {field: 'col6'}
+    {field: 'col2', filterParams: {suppressSyncValuesAfterDataChange: true}},
+    {field: 'col3', filterParams: {suppressSyncValuesAfterDataChange: true}},
+    {field: 'col4', filterParams: {suppressSyncValuesAfterDataChange: true}},
+    {field: 'col5', filterParams: {suppressSyncValuesAfterDataChange: true}}
 ];
 
 var gridOptions = {
@@ -36,7 +35,6 @@ var gridOptions = {
         params.api.getFilterInstance('col3');
         params.api.getFilterInstance('col4');
         params.api.getFilterInstance('col5');
-        params.api.getFilterInstance('col6');
     }
 };
 
@@ -51,9 +49,6 @@ function onCellValueChanged(params) {
                 break;
             case 'col5':
                 refreshCol5(params.api, params.newValue);
-                break;
-            case 'col5':
-                refreshCol6(params.api, params.newValue);
                 break;
         }
 }
@@ -94,14 +89,14 @@ function refreshCol5(api, newValue) {
 }
 
 function onAddRow() {
-    var newRow = {col1: 'C', col2: 'C', col3: 'C', col4: 'C', col5: 'C', col6: 'C'};
+    var newRow = {col1: 'C', col2: 'C', col3: 'C', col4: 'C', col5: 'C'};
     gridOptions.api.updateRowData({
         add: [newRow]
     });
-    // get col3 and col4 to refresh only, means col1 and col2 are missing 'C'
+    // get col4 and col5 to refresh only, means col2 and col3 are missing 'C'.
+    // col1 refreshes automatically
     gridOptions.api.getFilterInstance('col4').resetFilterValues();
     gridOptions.api.getFilterInstance('col5').resetFilterValues();
-    gridOptions.api.getFilterInstance('col6').resetFilterValues();
 }
 
 // setup the grid after the page has finished loading

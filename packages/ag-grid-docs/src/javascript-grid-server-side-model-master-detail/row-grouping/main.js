@@ -1,4 +1,4 @@
-const columnDefs = [
+var columnDefs = [
     {field: 'country', rowGroup: true, hide: true},
     {field: 'accountId', hide: true},
     {field: 'name'},
@@ -6,7 +6,7 @@ const columnDefs = [
     {field: 'totalDuration'}
 ];
 
-const gridOptions = {
+var gridOptions = {
     autoGroupColumnDef: {
         field: 'accountId'
     },
@@ -28,7 +28,7 @@ const gridOptions = {
                 {field: 'switchCode'},
                 {field: 'number'},
             ],
-            onFirstDataRendered(params) {
+            onFirstDataRendered: function(params) {
                 // fit the detail grid columns
                 params.api.sizeColumnsToFit();
             }
@@ -38,13 +38,13 @@ const gridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
-    onGridReady(params) {
-        setTimeout(() => {
+    onGridReady: function(params) {
+        setTimeout(function() {
             // fit the master grid columns
             params.api.sizeColumnsToFit();
 
             // arbitrarily expand some master row
-            const someRow = params.api.getRowNode("3");
+            var someRow = params.api.getRowNode("3");
             if (someRow) someRow.setExpanded(true);
 
         }, 1500);
@@ -55,14 +55,14 @@ var allData;
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/callData.json'}).then(function (data) {
 
         allData = data;
 
-        const dataSource = {
+        var dataSource = {
             getRows: function (getRowParams) {
 
                 // To make the demo look real, wait for 200ms before returning
@@ -81,27 +81,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Note this a stripped down mock server implementation which only supports grouping
 function getMockServerResponse(request) {
-    const groupKeys = request.groupKeys;
-    const rowGroupColIds = request.rowGroupCols.map(x => x.id);
-    const parentId = groupKeys.length > 0 ? groupKeys.join("") : "";
+    var groupKeys = request.groupKeys;
+    var rowGroupColIds = request.rowGroupCols.map(function(x) { return x.id; });
+    var parentId = groupKeys.length > 0 ? groupKeys.join("") : "";
 
-    const rows = group(allData, rowGroupColIds, groupKeys, parentId);
+    var rows = group(allData, rowGroupColIds, groupKeys, parentId);
 
-    const rowsThisBlock = rows.slice(request.startRow, request.endRow);
-    const lastRow = rows.length <= request.endRow ? rows.length : -1;
+    var rowsThisBlock = rows.slice(request.startRow, request.endRow);
+    var lastRow = rows.length <= request.endRow ? rows.length : -1;
 
-    return {rowsThisBlock, lastRow};
+    return { rowsThisBlock: rowsThisBlock, lastRow: lastRow };
 }
 
 function group(data, rowGroupColIds, groupKeys, parentId) {
-    const groupColId = rowGroupColIds.shift();
+    var groupColId = rowGroupColIds.shift();
     if (!groupColId) return data;
 
-    const groupedData = _(data).groupBy(x => x[groupColId]).value();
+    var groupedData = _(data).groupBy(function(x) { return x[groupColId]; }).value();
 
     if (groupKeys.length === 0) {
-        return Object.keys(groupedData).map(key => {
-            const res = {};
+        return Object.keys(groupedData).map(function(key) {
+            var res = {};
 
             // Note: the server provides group id's using a simple heuristic based on group keys:
             // i.e. group node ids will be in the following format: 'Russia', 'Russia-2002'

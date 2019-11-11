@@ -1,5 +1,10 @@
 import React, {Component} from 'react';
-import {AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from '@ag-grid-community/react';
+
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 export default class extends Component {
     constructor(props) {
@@ -87,6 +92,7 @@ export default class extends Component {
                                  columnDefs={this.state.columnDefs}
                                  defaultColDef={{resizable: true}}
                                  onGridReady={this.onGridReady.bind(this)}
+                                 modules={AllCommunityModules}
                                  onFirstDataRendered={this.onFirstDataRendered.bind(this)}/>
                 </div>
 
@@ -94,7 +100,8 @@ export default class extends Component {
 
                 <div style={{width: '100%', height: '45%'}} className="ag-theme-balham">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions}
-                                 columnDefs={this.state.columnDefs}/>
+                                 columnDefs={this.state.columnDefs}
+                                 modules={AllCommunityModules} />
                 </div>
             </div>
         );

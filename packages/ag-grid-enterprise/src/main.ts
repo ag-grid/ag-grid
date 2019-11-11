@@ -1,89 +1,32 @@
-import { Grid } from "ag-grid-community";
-import { EnterpriseMenuFactory } from "./menu/enterpriseMenu";
-import { RangeController } from "./rangeController";
-import { ClipboardService } from "./clipboardService";
-import { GroupStage } from "./rowStages/groupStage";
-import { AggregationStage } from "./rowStages/aggregationStage";
-import { EnterpriseBoot } from "./enterpriseBoot";
-import { ContextMenuFactory } from "./menu/contextMenu";
-import { ViewportRowModel } from "./rowModels/viewport/viewportRowModel";
-import { SideBarComp } from "./sideBar/sideBarComp";
-import { LicenseManager } from "./licenseManager";
-import { MD5 } from "./license/md5";
-import { PivotStage } from "./rowStages/pivotStage";
-import { PivotColDefService } from "./rowStages/pivotColDefService";
-import { AggFuncService } from "./aggregation/aggFuncService";
-import { MenuItemMapper } from "./menu/menuItemMapper";
-import { ExcelCreator } from "./exporter/excelCreator";
-import { ExcelXmlFactory } from "./exporter/excelXmlFactory";
-import { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
-import { ServerSideRowModel } from "./rowModels/serverSide/serverSideRowModel";
-import { HorizontalResizeComp } from "./sideBar/horizontalResizeComp";
-import { SideBarButtonsComp } from "./sideBar/sideBarButtonsComp";
-import { StatusBarService } from "./statusBar/statusBarService";
-import { StatusBar } from "./statusBar/statusBar";
-import { NameValueComp } from "./statusBar/providedPanels/nameValueComp";
-import { PrimaryColsHeaderPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsHeaderPanel";
-import { PrimaryColsListPanel } from "./sideBar/providedPanels/columns/panels/primaryColsPanel/primaryColsListPanel";
-import { GridHeaderDropZones } from "./sideBar/providedPanels/columns/gridHeaderDropZones";
-import { WatermarkComp } from "./license/watermark";
-import { FillHandle } from "./widgets/selection/fillHandle";
-import { RangeHandle } from "./widgets/selection/rangeHandle";
+import {ModuleRegistry} from "ag-grid-community";
 
-export { AggregationStage } from "./rowStages/aggregationStage";
-export { GroupStage } from "./rowStages/groupStage";
-export { SetFilter } from "./setFilter/setFilter";
-export { SetValueModel } from "./setFilter/setValueModel";
-export { StatusBar } from "./statusBar/statusBar";
-export { StatusBarService } from "./statusBar/statusBarService";
-export { ClipboardService } from "./clipboardService";
-export { EnterpriseBoot } from "./enterpriseBoot";
-export { EnterpriseMenu } from "./menu/enterpriseMenu";
-export { MenuItemComponent } from "./menu/menuItemComponent";
-export { MenuList } from "./menu/menuList";
-export { RangeController } from "./rangeController";
-export { RowGroupDropZonePanel } from "./sideBar/providedPanels/columns/panels/rowGroupDropZonePanel";
-export { ContextMenuFactory } from "./menu/contextMenu";
-export { ViewportRowModel } from "./rowModels/viewport/viewportRowModel";
-export { RichSelectCellEditor } from "./rendering/richSelect/richSelectCellEditor";
-export { RichSelectRow } from "./rendering/richSelect/richSelectRow";
-export { VirtualList } from "./rendering/virtualList";
-export { BaseDropZonePanel } from "./sideBar/providedPanels/columns/dropZone/baseDropZonePanel";
-export { PivotDropZonePanel } from "./sideBar/providedPanels/columns/panels/pivotDropZonePanel";
-export { SideBarComp } from "./sideBar/sideBarComp";
-export { LicenseManager } from "./licenseManager";
-export { PivotStage } from "./rowStages/pivotStage";
-export { PivotColDefService } from "./rowStages/pivotColDefService";
-export { PivotModePanel } from "./sideBar/providedPanels/columns/panels/pivotModePanel";
-export { AggFuncService } from "./aggregation/aggFuncService";
-export { MD5 } from "./license/md5";
-export { SetFilterListItem } from "./setFilter/setFilterListItem";
-export { DropZoneColumnComp } from "./sideBar/providedPanels/columns/dropZone/dropZoneColumnComp";
-export { ValuesDropZonePanel } from "./sideBar/providedPanels/columns/panels/valueDropZonePanel";
-export { ExcelCreator } from "./exporter/excelCreator";
-export { ExcelXmlFactory } from "./exporter/excelXmlFactory";
-export { ExcelXlsxFactory } from "./exporter/excelXlsxFactory";
-export { WatermarkComp } from "./license/watermark";
-export { FillHandle } from "./widgets/selection/fillHandle";
-export { RangeHandle } from "./widgets/selection/rangeHandle";
+import {ColumnsToolPanelModule} from "@ag-grid-enterprise/column-tool-panel";
+import {ExcelExportModule} from "@ag-grid-enterprise/excel-export";
+import {FiltersToolPanelModule} from "@ag-grid-enterprise/filter-tool-panel";
+import {GridChartsModule} from "@ag-grid-enterprise/charts";
+import {MasterDetailModule} from "@ag-grid-enterprise/master-detail";
+import {MenuModule} from "@ag-grid-enterprise/menu";
+import {RangeSelectionModule} from "@ag-grid-enterprise/range-selection";
+import {RichSelectModule} from "@ag-grid-enterprise/rich-select";
+import {RowGroupingModule} from "@ag-grid-enterprise/row-grouping";
+import {ServerSideRowModelModule} from "@ag-grid-enterprise/server-side-row-model";
+import {SetFilterModule} from "@ag-grid-enterprise/set-filter";
+import {SideBarModule} from "@ag-grid-enterprise/side-bar";
+import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
+import {ViewportRowModelModule} from "@ag-grid-enterprise/viewport-row-model";
+ModuleRegistry.register(ColumnsToolPanelModule as any);
+ModuleRegistry.register(ExcelExportModule as any);
+ModuleRegistry.register(FiltersToolPanelModule as any);
+ModuleRegistry.register(GridChartsModule as any);
+ModuleRegistry.register(MasterDetailModule as any);
+ModuleRegistry.register(MenuModule as any);
+ModuleRegistry.register(RangeSelectionModule as any);
+ModuleRegistry.register(RichSelectModule as any);
+ModuleRegistry.register(RowGroupingModule as any);
+ModuleRegistry.register(ServerSideRowModelModule as any);
+ModuleRegistry.register(SetFilterModule as any);
+ModuleRegistry.register(SideBarModule as any);
+ModuleRegistry.register(StatusBarModule as any);
+ModuleRegistry.register(ViewportRowModelModule as any);
 
-const rowModelTypes = {viewport: ViewportRowModel, serverSide: ServerSideRowModel};
-
-Grid.setEnterpriseBeans([EnterpriseMenuFactory, ExcelCreator, ExcelXmlFactory, ExcelXlsxFactory,
-    RangeController, ClipboardService, PivotStage, PivotColDefService,
-    ContextMenuFactory, GroupStage, AggregationStage, EnterpriseBoot, AggFuncService, LicenseManager, MD5,
-    MenuItemMapper, StatusBarService], rowModelTypes);
-
-Grid.setEnterpriseComponents([
-    {componentName: 'AgPrimaryColsHeader', theClass: PrimaryColsHeaderPanel},
-    {componentName: 'AgPrimaryColsList', theClass: PrimaryColsListPanel},
-    {componentName: 'AgHorizontalResize', theClass: HorizontalResizeComp},
-    {componentName: 'AgSideBar', theClass: SideBarComp},
-    {componentName: 'AgStatusBar', theClass: StatusBar},
-    {componentName: 'AgNameValue', theClass: NameValueComp},
-    {componentName: 'AgGridHeaderDropZones', theClass: GridHeaderDropZones},
-    {componentName: 'AgSideBarButtons', theClass: SideBarButtonsComp},
-    {componentName: 'AgWatermark', theClass: WatermarkComp},
-    {componentName: 'AgFillHandle', theClass: FillHandle},
-    {componentName: 'AgRangeHandle', theClass: RangeHandle}
-]);
+export {LicenseManager} from "@ag-grid-enterprise/core";

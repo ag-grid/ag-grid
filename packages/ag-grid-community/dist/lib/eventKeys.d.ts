@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
@@ -113,6 +110,7 @@ export declare class Events {
     static EVENT_ROW_DRAG_MOVE: string;
     static EVENT_ROW_DRAG_LEAVE: string;
     static EVENT_ROW_DRAG_END: string;
+    static EVENT_POPUP_TO_FRONT: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;

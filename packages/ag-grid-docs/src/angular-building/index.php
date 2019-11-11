@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     <div>
     <h2>Angular CLI</h2>
     <p> Learn how to get a simple application working using ag-Grid and Angular using Angular CLI.  </p>
-    <p> <a href="/angular-getting-started/">Go to Angular CLI</a> </p>
+    <p> <a href="/angular-grid/">Go to Angular CLI</a> </p>
     </div>
 </div>
 

@@ -404,11 +404,11 @@ var gridOptions = {
 };
 
 function onRowDragMove(event) {
-    let movingNode = event.node;
-    let overNode = event.overNode;
+    var movingNode = event.node;
+    var overNode = event.overNode;
 
     // find out what country group we are hovering over
-    let groupCountry;
+    var groupCountry;
     if (overNode.group) {
         // if over a group, we take the group key (which will be the
         // country as we are grouping by country)
@@ -418,10 +418,10 @@ function onRowDragMove(event) {
         groupCountry = overNode.data.country;
     }
 
-    let needToChangeParent = movingNode.country !== groupCountry;
+    var needToChangeParent = movingNode.country !== groupCountry;
 
     if (needToChangeParent) {
-        let movingData = movingNode.data;
+        var movingData = movingNode.data;
         movingData.country = groupCountry;
         gridOptions.api.updateRowData({
             update: [movingData]

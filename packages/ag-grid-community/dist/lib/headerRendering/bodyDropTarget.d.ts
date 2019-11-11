@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { GridPanel } from "../gridPanel/gridPanel";
 export interface DropListener {
@@ -14,6 +11,7 @@ export declare class BodyDropTarget implements DropTarget {
     private context;
     private dragAndDropService;
     private columnController;
+    private gridOptionsWrapper;
     private gridPanel;
     private pinned;
     private eContainer;

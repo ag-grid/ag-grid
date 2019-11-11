@@ -1,6 +1,6 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+/************************************************************************************************
+ * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
+ ************************************************************************************************/
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
@@ -8,26 +8,23 @@ import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { IDatasource } from "../rowModels/iDatasource";
+import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../exporter/exportParams";
-import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, ChartRangeSelectionChanged, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent } from "../events";
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
+import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartOptionsChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteEndEvent, PasteStartEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, ChartRangeSelectionChanged, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { ChartOptions, ChartType } from "../interfaces/iChartOptions";
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. *
- ****************************************************************/
+import { ChartOptions, ChartType, ChartMenuOptions } from "../interfaces/iChartOptions";
 export interface GridOptions {
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. PLEASE!*
-     ****************************************************************/
+    /*******************************************************************************************************
+     * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
+     *******************************************************************************************************/
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
@@ -56,6 +53,7 @@ export interface GridOptions {
     suppressRowClickSelection?: boolean;
     suppressRowHoverHighlight?: boolean;
     suppressCellSelection?: boolean;
+    suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
     sortingOrder?: string[];
     suppressMultiSort?: boolean;
@@ -158,6 +156,7 @@ export interface GridOptions {
     batchUpdateWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
+    allowDragFromColumnsToolPanel?: boolean;
     suppressMaxRenderedRowRestriction?: boolean;
     excludeChildrenWhenTreeDataFiltering?: boolean;
     cacheOverflowSize?: number;
@@ -185,22 +184,15 @@ export interface GridOptions {
     maxColWidth?: number;
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
-    reactNext?: boolean;
     statusBar?: {
         statusPanels: StatusPanelDef[];
     };
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
     localeText?: any;
     localeTextFunc?: Function;
     suppressAnimationFrame?: boolean;
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;
@@ -219,9 +211,6 @@ export interface GridOptions {
     forPrint?: boolean;
     enableOldSetFilterModel?: boolean;
     enableCharts?: boolean;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
     context?: any;
     rowStyle?: any;
     rowClass?: string | string[];
@@ -247,9 +236,6 @@ export interface GridOptions {
     } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];
@@ -268,9 +254,9 @@ export interface GridOptions {
     groupHeaderHeight?: number;
     pivotGroupHeaderHeight?: number;
     floatingFiltersHeight?: number;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
+    /******************************************************************************************************
+     * If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
+     ******************************************************************************************************/
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: {
@@ -295,9 +281,7 @@ export interface GridOptions {
     } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
-    fillOperations?: {
-        [key: string]: IFillOperation;
-    };
+    fillOperation?: (params: FillOperationParams) => any;
     isExternalFilterPresent?(): boolean;
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
@@ -352,10 +336,11 @@ export interface GridOptions {
     processSecondaryColDef?(colDef: ColDef): void;
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
     postSort?(nodes: RowNode[]): void;
-    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
+    /**********************************************************************************************************
+     * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
+     * as event callbacks are automatically generated.                                                        *
+     **********************************************************************************************************/
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
     onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
@@ -419,20 +404,17 @@ export interface GridOptions {
     onBodyScroll?(event: BodyScrollEvent): void;
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
+    onChartOptionsChanged?(event: ChartOptionsChanged): void;
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
-    /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. *
-     ****************************************************************/
     api?: GridApi | null;
     columnApi?: ColumnApi | null;
 }
-export interface IFillOperation {
-    (params: FillOperationParams): any[];
-}
 export interface FillOperationParams {
+    event: MouseEvent;
     values: any[];
-    resultCount: number;
+    initialValues: any[];
+    currentIndex: number;
     api: GridApi;
     columnApi: ColumnApi;
     context: any;
@@ -467,7 +449,7 @@ export interface NodeChildDetails {
 }
 export interface ProcessChartOptionsParams {
     type: ChartType;
-    options: ChartOptions;
+    options: ChartOptions<any>;
 }
 export interface GetContextMenuItemsParams {
     defaultItems: string[] | undefined;
@@ -482,12 +464,12 @@ export interface GetContextMenuItems {
     (params: GetContextMenuItemsParams): (string | MenuItemDef)[];
 }
 export interface GetChartToolbarItemsParams {
-    defaultItems: string[] | undefined;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    defaultItems?: ChartMenuOptions[];
+    api?: GridApi | null;
+    columnApi?: ColumnApi | null;
 }
 export interface GetChartToolbarItems {
-    (params: GetChartToolbarItemsParams): string[];
+    (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
 export interface MenuItemDef {
     name: string;

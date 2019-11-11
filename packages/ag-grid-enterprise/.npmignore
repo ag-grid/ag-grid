@@ -1,15 +1,11 @@
-!dist/
+!dist
 
+src
+.gitignore
+.npmignore
+bower.json
 gulpfile.js
-
-ts-lint-rules
-
+tsconfig.es6.json
 tsconfig.json
-tsconfig-lint.json
+tsconfig-main.es6.json
 tsconfig-main.json
-tslint.json
-webpack.config.js
-webpack.js
-webpack-with-styles.js
-
-*.test.js

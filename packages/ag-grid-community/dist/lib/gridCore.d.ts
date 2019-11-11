@@ -1,13 +1,8 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
 import { Component } from "./widgets/component";
 import { SideBarDef } from "./entities/sideBar";
+import { IToolPanel } from "./interfaces/iToolPanel";
 export declare class GridCore extends Component {
-    private static TEMPLATE_NORMAL;
-    private static TEMPLATE_ENTERPRISE;
-    private enterprise;
     private gridOptions;
     private gridOptionsWrapper;
     private rowModel;
@@ -31,13 +26,16 @@ export declare class GridCore extends Component {
     private doingVirtualPaging;
     private logger;
     init(): void;
+    private createTemplate;
     private onGridSizeChanged;
     private addRtlSupport;
     getRootGui(): HTMLElement;
     isSideBarVisible(): boolean;
     setSideBarVisible(show: boolean): void;
+    setSideBarPosition(position: 'left' | 'right'): void;
     closeToolPanel(): void;
     getSideBar(): SideBarDef;
+    getToolPanelInstance(key: string): IToolPanel | undefined;
     refreshSideBar(): void;
     setSideBar(def: SideBarDef | string | boolean): void;
     getOpenedToolPanel(): string;

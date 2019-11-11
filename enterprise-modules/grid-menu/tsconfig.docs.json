@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.es5.json",
+  "compilerOptions": {
+    "sourceMap": true
+  }
+}

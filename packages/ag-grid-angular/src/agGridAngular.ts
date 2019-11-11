@@ -22,7 +22,8 @@ import {
     GridOptionsWrapper,
     GridParams,
     Promise,
-    Utils as _
+    Utils as _,
+    Module
 } from "ag-grid-community";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -79,9 +80,10 @@ export class AgGridAngular implements AfterViewInit {
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkOverrides: this.angularFrameworkOverrides,
-            seedBeanInstances: {
+            providedBeanInstances: {
                 frameworkComponentWrapper: this.frameworkComponentWrapper
-            }
+            },
+            modules: (this.modules || []) as any
         };
 
         if (this.columns && this.columns.length > 0) {
@@ -159,6 +161,7 @@ export class AgGridAngular implements AfterViewInit {
     }
 
     @Input() public gridOptions: GridOptions;
+    @Input() public modules: Module[];
 
     // @START@
     @Input() public slaveGrids : any = undefined;
@@ -284,7 +287,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework : any = undefined;
     @Input() public detailCellRenderer : any = undefined;
     @Input() public detailCellRendererFramework : any = undefined;
-    @Input() public onGridReady : any = undefined;
     @Input() public defaultGroupSortComparator : any = undefined;
     @Input() public isRowMaster : any = undefined;
     @Input() public isRowSelectable : any = undefined;
@@ -298,6 +300,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public createChartContainer : any = undefined;
     @Input() public processChartOptions : any = undefined;
     @Input() public getChartToolbarItems : any = undefined;
+    @Input() public fillOperation : any = undefined;
     @Input() public toolPanelSuppressRowGroups : any = undefined;
     @Input() public toolPanelSuppressValues : any = undefined;
     @Input() public toolPanelSuppressPivots : any = undefined;
@@ -346,6 +349,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableRangeSelection : any = undefined;
     @Input() public enableRangeHandle : any = undefined;
     @Input() public enableFillHandle : any = undefined;
+    @Input() public suppressClearOnFillReduction : any = undefined;
     @Input() public deltaSort : any = undefined;
     @Input() public suppressTouch : any = undefined;
     @Input() public suppressAsyncEvents : any = undefined;
@@ -500,6 +504,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public popupToFront: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();

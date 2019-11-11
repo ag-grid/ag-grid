@@ -1,7 +1,9 @@
 import {$} from '../common/vendor';
 
+declare var jQuery;
+
 $(function () {
-    $('#page-changelog').each(function () {
+    $('.changelog-page .info-page').each(function () {
         // show/hide tabs
         $('ul.nav-tabs a').click(function (e) {
             e.preventDefault();

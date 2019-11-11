@@ -42,7 +42,7 @@ foreach ($files as $file) {
 <?php } else { ?>
 <script> var __basePath = "<?php echo $path?>/"</script>
 <?php } ?>
-<style>
+<style media="only screen">
     html, body {
         height: 100%;
         width: 100%;

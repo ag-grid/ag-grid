@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
@@ -33,7 +30,6 @@ export declare class GridPanel extends Component {
     private valueService;
     private dragAndDropService;
     private heightScaler;
-    private enterprise;
     private resizeObserverService;
     private rangeController;
     private contextMenuFactory;
@@ -68,7 +64,6 @@ export declare class GridPanel extends Component {
     private eAllCellContainers;
     private scrollLeft;
     private scrollTop;
-    private nextScrollTop;
     private lastHorizontalScrollElement;
     private readonly resetLastHorizontalScrollElementDebounce;
     private bodyHeight;
@@ -158,7 +153,6 @@ export declare class GridPanel extends Component {
     scrollVertically(pixels: number): number;
     private addScrollListener;
     private onVerticalScroll;
-    executeFrame(): boolean;
     private isControllingScroll;
     private onFakeHorizontalScroll;
     private onCenterViewportScroll;

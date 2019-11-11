@@ -1,8 +1,69 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_22_0_0">
+    <p>Release 22.0.0 (11th Nov 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-1329 - Modularise Grid Features to reduce grid bundle size
+            (see <a href="/javascript-grid-modules/">Modularisation</a>).
+        </li>
+        <li>
+            AG-3269 - A new pivotChart API has been added to charts.
+            (see <a href="/javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a>).
+        </li>
+        <li>
+            AG-2200 - Allow filters to be arranged using column groups in the filters tool panel
+            (see <a href="/javascript-grid-tool-panel-filters/">Filters Tool Panel</a>).
+        </li>
+        <li>
+            AG-2363 - Add filter search to the filters tool panel
+            (see <a href="/javascript-grid-tool-panel-filters/">Filters Tool Panel</a>).
+        </li>
+        <li>
+            AG-1862 - Allow custom column layouts in the Columns Tool Panel
+            (see <a href="/javascript-grid-tool-panel-columns/#custom-column-layout">Custom Column Tool Panel Layout</a>).
+        </li>
+        <li>
+            AG-3131 - Allow custom filter layouts in the Filters Tool Panel
+            (see <a href="javascript-grid-tool-panel-filters/#custom-filters-layout">Custom Filters Tool Panel Layout</a>).
+        </li>
+        <li>
+            AG-1991 - Allow filters and columns tool panel to have API calls to expand/collapse column groups/filters
+            (see <a href="/javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Expand / Collapse Column Groups</a>)
+            (see <a href="/javascript-grid-tool-panel-filters/#expand-collapse-filter-groups">Expand / Collapse Filter Groups</a>).
+        </li>
+
+        <li>
+            AG-1026	- Allow sidebar to be placed in the left or right position of the grid
+            (see <a href="/javascript-grid-side-bar/#sidebardef-configuration">Side Bar Configuration</a>).
+        </li>
+    </ul>
+
+    <p>Breaking Changes:</p>
+    <ul>
+        <li>
+            AG-3316 - agGridReact needs to be updated to use the updated react lifecycle hooks.
+            React 16.3 is now the minimum version supported by AgGridReact.
+        </li>
+        <li>
+            AG-3383 - Property selectAllOnMiniFilter no longer used, its the default behaviour for Set Filter.
+        </li>
+        <li>
+            AG-3369 - syncValuesLikeExcel is enabled by default.
+        </li>
+        <li>
+            AG-3345 / AG-3347 - tool panels are now kept in sync with the column order in the grid. Enable 'suppressSyncLayoutWithGrid'
+            on the tool panels to revert this behaviour.
+        </li>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_21_2_0">
     <p>Release 21.2.0 (30th Aug 2019)</p>
 
     <p>Feature Highlights:</p>
 
+    <span style="font-weight: bold"></span>
     <ul>
         <li>
             AG-3215 - Add Pivot Chart
@@ -211,7 +272,7 @@
         </li>
         <li>
             <code>ag-grid-vue</code>Event bindings are now bound with <code>@</code> instead of <code>:</code>. Please
-            refer to <a href="https://www.ag-grid.com/best-vuejs-data-grid/">Configuring ag-Grid and Vue.js</a>.
+            refer to <a href="https://www.ag-grid.com/vuejs-grid/">Configuring ag-Grid and Vue.js</a>.
         </li>
     </ul>
 
@@ -224,11 +285,11 @@
         </li>
         <li>
             AG-2448 Add declarative support to vue component (column defs)
-            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
+            <a href="https://www.ag-grid.com/vuejs-grid/#declarative_definition">Using Markup to Define Grid Definitions</a>.
         </li>
         <li>
             AG-2280 Allow event handler in Vue too support more idiomatic conventions
-            <a href="https://www.ag-grid.com/best-vuejs-data-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
+            <a href="https://www.ag-grid.com/vuejs-grid/#configuring-ag-grid-in-vuejs">Configuring ag-Grid in Vue</a>.
         </li>
         <li>
             AG-939 Improve horizontal and vertical scrolling in other browsers.

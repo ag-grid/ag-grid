@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.2
+// ag-grid-react v22.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // effectively Object.assign - here for IE compatibility

@@ -36,14 +36,6 @@ function onBtHideYearColumn() {
     ]);
 }
 
-function onBtSortByYear() {
-    gridOptions.api.setSortModel([{colId: 'year', sort: 'asc'},]);
-}
-
-function onBtFilterByYear() {
-    gridOptions.api.setFilterModel({year: {filter: '2008'}});
-}
-
 function sortAndFilter(allOfTheData, sortModel, filterModel) {
     return sortData(sortModel, filterData(filterModel, allOfTheData));
 }

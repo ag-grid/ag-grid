@@ -1,0 +1,101 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+import { _ } from "@ag-grid-community/core";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
+import { CartesianChartProxy } from "./cartesianChartProxy";
+var LineChartProxy = /** @class */ (function (_super) {
+    __extends(LineChartProxy, _super);
+    function LineChartProxy(params) {
+        var _this = _super.call(this, params) || this;
+        _this.initChartOptions();
+        _this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](params.parentElement, _this.chartOptions);
+        return _this;
+    }
+    LineChartProxy.prototype.update = function (params) {
+        var _this = this;
+        var chart = this.chart;
+        if (params.fields.length === 0) {
+            chart.removeAllSeries();
+            return;
+        }
+        var fieldIds = params.fields.map(function (f) { return f.colId; });
+        var _a = this.overriddenPalette || this.chartProxyParams.getSelectedPalette(), fills = _a.fills, strokes = _a.strokes;
+        var existingSeriesById = chart.series.reduceRight(function (map, series) {
+            var id = series.yKey;
+            if (_.includes(fieldIds, id)) {
+                map.set(id, series);
+            }
+            else {
+                chart.removeSeries(series);
+            }
+            return map;
+        }, new Map());
+        var previousSeries = undefined;
+        params.fields.forEach(function (f, index) {
+            var lineSeries = existingSeriesById.get(f.colId);
+            var fill = fills[index % fills.length];
+            var stroke = strokes[index % strokes.length];
+            if (lineSeries) {
+                lineSeries.title = f.displayName;
+                lineSeries.data = params.data;
+                lineSeries.xKey = params.category.id;
+                lineSeries.xName = params.category.name;
+                lineSeries.yKey = f.colId;
+                lineSeries.yName = f.displayName;
+                lineSeries.fill = fill;
+                lineSeries.marker.fill = fill;
+                lineSeries.stroke = stroke;
+                lineSeries.marker.stroke = stroke;
+            }
+            else {
+                var seriesDefaults = _this.chartOptions.seriesDefaults;
+                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: params.data, field: {
+                        xKey: params.category.id,
+                        xName: params.category.name,
+                        yKey: f.colId,
+                        yName: f.displayName,
+                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: stroke }) });
+                lineSeries = ChartBuilder.createSeries(options);
+                chart.addSeriesAfter(lineSeries, previousSeries);
+            }
+            previousSeries = lineSeries;
+        });
+        this.updateLabelRotation(params.category.id);
+    };
+    LineChartProxy.prototype.getDefaultOptions = function () {
+        var options = this.getDefaultCartesianChartOptions();
+        options.xAxis.label.rotation = 335;
+        options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
+                enabled: true,
+                size: 3,
+                strokeWidth: 1,
+            }, tooltip: {
+                enabled: true,
+            } });
+        return options;
+    };
+    return LineChartProxy;
+}(CartesianChartProxy));
+export { LineChartProxy };

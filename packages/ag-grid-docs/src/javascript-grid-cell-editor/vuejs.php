@@ -53,7 +53,7 @@ export default {
 </p>
 
 <p>A VueJS component can be defined in a few different ways (please see <a
-            href="/best-vuejs-data-grid#define_component">
+            href="/vuejs-misc#define_component">
         Defining VueJS Components</a> for all the options), but in this example we're going to define our editor as a
     Single File Component:</p>
 

@@ -14,7 +14,7 @@ CountStatusBarComponent.prototype.init = function (params) {
     this.eCount = document.createElement('span');
     this.eCount.className = 'ag-name-value-value';
 
-    this.eGui.append(this.eCount);
+    this.eGui.appendChild(this.eCount);
 
     params.api.addEventListener('gridReady', this.onGridReady.bind(this));
 };

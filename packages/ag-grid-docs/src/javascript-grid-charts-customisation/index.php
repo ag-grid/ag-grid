@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Charting: Charting Grid Data";
+$pageTitle = "Charts: Chart Customisation";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Customising Charts</h1>
+    <h1 class="heading-enterprise">Chart Customisation</h1>
 
     <p class="lead">
-        This section shows how charts can be customised to suit application requirements.
+        Charts can be customised in a number of ways to suit your applications' requirements.
     </p>
 
     <h2>Overriding Chart Options</h2>
@@ -53,21 +53,21 @@ type ChartType =
     </p>
 
     <p>
-        As there are different <code>ChartOptions</code> for each chart type, refer to the relevant section below for more details:
+        There are different available options to configure depending on the type of chart. Please refer to the relevant section below for more details:
         <ul>
-            <li><a href="../javascript-grid-charts-customisation-bar/">Customising Bar Charts</a></li>
-            <li><a href="../javascript-grid-charts-customisation-line/">Customising Line Charts</a></li>
-            <li><a href="../javascript-grid-charts-customisation-scatter/">Customising Scatter Charts</a></li>
-            <li><a href="../javascript-grid-charts-customisation-area/">Customising Area Charts</a></li>
-            <li><a href="../javascript-grid-charts-customisation-pie/">Customising Pie Charts</a></li>
-            <li><a href="../javascript-grid-charts-customisation-doughnut/">Customising Doughnut Charts</a></li>
+            <li><a href="../javascript-grid-charts-customisation-general/">General Chart Customisation</a> (these apply to all chart types)</li>
+            <li><a href="../javascript-grid-charts-customisation-bar/">Bar/Column Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-customisation-line/">Line Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-customisation-scatter/">Scatter/Bubble Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-customisation-area/">Area Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-customisation-pie/">Pie/Doughnut Chart Customisation</a></li>
         </ul>
     </p>
 
-    <h2>Example - Customising Charts</h2>
+    <h3>Example: Customising Charts</h3>
 
     <p>
-        The example below demonstrates
+        The example below demonstrates:
     </p>
 
     <ul>
@@ -111,10 +111,11 @@ type ChartType =
     'normalizedArea';
 </snippet>
 
-    <h2>Example - Saving User Preferences</h2>
+    <h3>Example: Saving User Preferences</h3>
+    
     <p>
         The example below demonstrates how the <code>ChartOptionsChanged</code> event can be used to save and restore
-        user format chart preferences. Notice the following:
+        user chart formatting preferences. Notice the following:
     </p>
 
     <ul>

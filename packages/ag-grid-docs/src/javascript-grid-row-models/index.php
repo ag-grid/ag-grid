@@ -30,60 +30,58 @@ include '../documentation-main/documentation_header.php';
         The following is a summary of the different row models:
     </p>
 
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Client-side</h2>
-    <p>
+    <ul>
+        <li>
+            <h2>Client-side</h2>
+            <p>
 
-                    This is the default. The grid will load all of the data into the grid in one go.
-                    The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.
-                
-    </p>
+                This is the default. The grid will load all of the data into the grid in one go.
+                The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.
 
-    <p> <a href="../javascript-grid-client-side-model/">Go to Client-side Row Model</a> </p>
-    </div>
-</div>
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Infinite</h2>
-    <p>
+            </p>
+
+            <p> <a href="../javascript-grid-client-side-model/">Go to Client-side Row Model</a> </p>
+        </li>
+        <li>
+            <h2>Infinite</h2>
+            <p>
 
 
-                    This will present the data to
-                    the user and load more data as the user scrolls down.
-                    Use this if you want to display a large flat (not grouped) list of data.
-                
-                
-    </p>
+                This will present the data to
+                the user and load more data as the user scrolls down.
+                Use this if you want to display a large flat (not grouped) list of data.
 
-    <p> <a href="../javascript-grid-infinite-scrolling/">Go to Infinite Row Model</a> </p>
-    </div>
-</div>
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2 class="heading-enterprise">Server-side</h2>
-    <p>
-        the Server-side Row Model builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
-        allows lazy loading of grouped data with server-side grouping and aggregation.
-        Advanced users will use Server-side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
-    </p>
 
-    <p> <a href="../javascript-grid-server-side-model/">Go to Server-side Row Model</a> </p>
-    </div>
-</div>
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2 class="heading-enterprise">Viewport</h2>
-    <p>
-        The grid will inform the server exactly what data it is displaying (first and last row) and the
-        server will provide data for exactly those rows only. Use this if you want the server to know exactly
-        what the user is viewing, useful for updates in very large live datastreams where server only
-        sends updates to clients viewing the impacted rows.
-    </p>
+            </p>
 
-    <p> <a href="../javascript-grid-viewport/">Go to Viewport Row Model</a> </p>
-    </div>
-</div>    
+            <p> <a href="../javascript-grid-infinite-scrolling/">Go to Infinite Row Model</a> </p>
+        </li>
+        <li>
+            <h2 class="heading-enterprise">Server-side</h2>
+            <p>
+                the Server-side Row Model builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
+                allows lazy loading of grouped data with server-side grouping and aggregation.
+                Advanced users will use Server-side Row Model to do ad-hoc slice and dice of data with server-side aggregations.
+            </p>
+
+            <p> <a href="../javascript-grid-server-side-model/">Go to Server-side Row Model</a> </p>
+
+        </li>
+        <li>
+
+            <h2 class="heading-enterprise">Viewport</h2>
+            <p>
+                The grid will inform the server exactly what data it is displaying (first and last row) and the
+                server will provide data for exactly those rows only. Use this if you want the server to know exactly
+                what the user is viewing, useful for updates in very large live datastreams where server only
+                sends updates to clients viewing the impacted rows.
+            </p>
+
+            <p> <a href="../javascript-grid-viewport/">Go to Viewport Row Model</a> </p>
+
+        </li>
+    </ul>
+
     <p>
         What row model you use is set as a grid property <code>rowModelType</code>. Set it to one of
         <code>clientSide, infinite, viewport, serverSide</code>. The default is <code>clientSide</code>.
@@ -93,7 +91,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Which row model you use will depend on your application. Here are some quick rules of thumb:
-</p>
+    </p>
+
         <ul class="content">
             <li>
                 If using <b>ag-Grid Community</b>, use <b>Client-side Row Model</b> if you want to load all

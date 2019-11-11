@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.2
+// ag-grid-react v22.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -13,25 +13,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-var ReactDOM = require("react-dom");
+var react_1 = require("react");
 var PropTypes = require("prop-types");
-var AgGrid = require("ag-grid-community");
 var ag_grid_community_1 = require("ag-grid-community");
 var agGridColumn_1 = require("./agGridColumn");
 var reactComponent_1 = require("./reactComponent");
 var changeDetectionService_1 = require("./changeDetectionService");
-var legacyReactComponent_1 = require("./legacyReactComponent");
 var AgGridReact = /** @class */ (function (_super) {
     __extends(AgGridReact, _super);
     function AgGridReact(props, state) {
@@ -42,6 +38,7 @@ var AgGridReact = /** @class */ (function (_super) {
         _this.api = null;
         _this.portals = [];
         _this.hasPendingPortalUpdate = false;
+        _this.destroyed = false;
         return _this;
     }
     AgGridReact.prototype.render = function () {
@@ -65,32 +62,29 @@ var AgGridReact = /** @class */ (function (_super) {
         return style;
     };
     AgGridReact.prototype.componentDidMount = function () {
+        var modules = this.props.modules || [];
         var gridParams = {
-            seedBeanInstances: {
-                agGridReact: this
-            }
+            providedBeanInstances: {
+                agGridReact: this,
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
+            },
+            modules: modules
         };
         var gridOptions = this.props.gridOptions || {};
         if (agGridColumn_1.AgGridColumn.hasChildColumns(this.props)) {
             gridOptions.columnDefs = agGridColumn_1.AgGridColumn.mapChildColumnDefs(this.props);
         }
-        this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
+        this.gridOptions = ag_grid_community_1.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
         // don't need the return value
-        new AgGrid.Grid(this.eGridDiv, this.gridOptions, gridParams);
+        new ag_grid_community_1.Grid(this.eGridDiv, this.gridOptions, gridParams);
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
-    };
-    AgGridReact.prototype.shouldComponentUpdate = function () {
-        // we want full control of the dom, as ag-Grid doesn't use React internally,
-        // so for performance reasons we tell React we don't need render called after
-        // property changes.
-        return false;
     };
     AgGridReact.prototype.waitForInstance = function (reactComponent, resolve, runningTime) {
         var _this = this;
         if (runningTime === void 0) { runningTime = 0; }
         // if the grid has been destroyed in the meantime just resolve
-        if (!this.api) {
+        if (this.destroyed) {
             resolve(null);
             return;
         }
@@ -114,7 +108,7 @@ var AgGridReact = /** @class */ (function (_super) {
      * Context to work properly.
      */
     AgGridReact.prototype.mountReactPortal = function (portal, reactComponent, resolve) {
-        this.portals = this.portals.concat([portal]);
+        this.portals = __spreadArrays(this.portals, [portal]);
         this.batchUpdate(this.waitForInstance(reactComponent, resolve));
     };
     AgGridReact.prototype.batchUpdate = function (callback) {
@@ -151,11 +145,23 @@ var AgGridReact = /** @class */ (function (_super) {
         // all non row data properties will default to DeepValueCheck
         return changeDetectionService_1.ChangeDetectionStrategyType.DeepValueCheck;
     };
-    AgGridReact.prototype.componentWillReceiveProps = function (nextProps) {
+    AgGridReact.prototype.shouldComponentUpdate = function (nextProps) {
+        this.processPropsChanges(this.props, nextProps);
+        // we want full control of the dom, as ag-Grid doesn't use React internally,
+        // so for performance reasons we tell React we don't need render called after
+        // property changes.
+        return false;
+    };
+    AgGridReact.prototype.componentDidUpdate = function (prevProps) {
+        this.processPropsChanges(prevProps, this.props);
+    };
+    AgGridReact.prototype.processPropsChanges = function (prevProps, nextProps) {
         var changes = {};
-        this.extractGridPropertyChanges(nextProps, changes);
+        this.extractGridPropertyChanges(prevProps, nextProps, changes);
         this.extractDeclarativeColDefChanges(nextProps, changes);
-        AgGrid.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+        if (Object.keys(changes).length > 0) {
+            ag_grid_community_1.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+        }
     };
     AgGridReact.prototype.extractDeclarativeColDefChanges = function (nextProps, changes) {
         var debugLogging = !!nextProps.debug;
@@ -175,31 +181,31 @@ var AgGridReact = /** @class */ (function (_super) {
             }
         }
     };
-    AgGridReact.prototype.extractGridPropertyChanges = function (nextProps, changes) {
+    AgGridReact.prototype.extractGridPropertyChanges = function (prevProps, nextProps, changes) {
         var _this = this;
         var debugLogging = !!nextProps.debug;
         var changedKeys = Object.keys(nextProps);
         changedKeys.forEach(function (propKey) {
-            if (AgGrid.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
+            if (ag_grid_community_1.ComponentUtil.ALL_PROPERTIES.indexOf(propKey) !== -1) {
                 var changeDetectionStrategy = _this.changeDetectionService.getStrategy(_this.getStrategyTypeForProp(propKey));
-                if (!changeDetectionStrategy.areEqual(_this.props[propKey], nextProps[propKey])) {
+                if (!changeDetectionStrategy.areEqual(prevProps[propKey], nextProps[propKey])) {
                     if (debugLogging) {
                         console.log("agGridReact: [" + propKey + "] property changed");
                     }
                     changes[propKey] = {
-                        previousValue: _this.props[propKey],
+                        previousValue: prevProps[propKey],
                         currentValue: nextProps[propKey]
                     };
                 }
             }
         });
-        AgGrid.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
+        ag_grid_community_1.ComponentUtil.getEventCallbacks().forEach(function (funcName) {
             if (_this.props[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log("agGridReact: [" + funcName + "] event callback changed");
                 }
                 changes[funcName] = {
-                    previousValue: _this.props[funcName],
+                    previousValue: prevProps[funcName],
                     currentValue: nextProps[funcName]
                 };
             }
@@ -210,21 +216,22 @@ var AgGridReact = /** @class */ (function (_super) {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     };
     AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;
-}(React.Component));
+}(react_1.Component));
 exports.AgGridReact = AgGridReact;
 AgGridReact.propTypes = {
     gridOptions: PropTypes.object
 };
-addProperties(AgGrid.ComponentUtil.getEventCallbacks(), PropTypes.func);
-addProperties(AgGrid.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
-addProperties(AgGrid.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
-addProperties(AgGrid.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
-addProperties(AgGrid.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
-addProperties(AgGrid.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
-addProperties(AgGrid.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
+addProperties(ag_grid_community_1.ComponentUtil.getEventCallbacks(), PropTypes.func);
+addProperties(ag_grid_community_1.ComponentUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
+addProperties(ag_grid_community_1.ComponentUtil.STRING_PROPERTIES, PropTypes.string);
+addProperties(ag_grid_community_1.ComponentUtil.OBJECT_PROPERTIES, PropTypes.object);
+addProperties(ag_grid_community_1.ComponentUtil.ARRAY_PROPERTIES, PropTypes.array);
+addProperties(ag_grid_community_1.ComponentUtil.NUMBER_PROPERTIES, PropTypes.number);
+addProperties(ag_grid_community_1.ComponentUtil.FUNCTION_PROPERTIES, PropTypes.func);
 function addProperties(listOfProps, propType) {
     listOfProps.forEach(function (propKey) {
         AgGridReact[propKey] = propType;
@@ -232,30 +239,13 @@ function addProperties(listOfProps, propType) {
 }
 var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
     __extends(ReactFrameworkComponentWrapper, _super);
-    function ReactFrameworkComponentWrapper() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function ReactFrameworkComponentWrapper(agGridReact) {
+        var _this = _super.call(this) || this;
+        _this.agGridReact = agGridReact;
+        return _this;
     }
     ReactFrameworkComponentWrapper.prototype.createWrapper = function (UserReactComponent) {
-        // at some point soon unstable_renderSubtreeIntoContainer is going to be dropped (and in a minor release at that)
-        // this uses the existing mechanism as long as possible, but switches over to using Portals when
-        // unstable_renderSubtreeIntoContainer is no longer an option
-        return this.useLegacyReact() ?
-            new legacyReactComponent_1.LegacyReactComponent(UserReactComponent, this.agGridReact) :
-            new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
+        return new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
     };
-    ReactFrameworkComponentWrapper.prototype.useLegacyReact = function () {
-        // force use of react next (ie portals) if unstable_renderSubtreeIntoContainer is no longer present
-        // or if the user elects to try it
-        return (typeof ReactDOM.unstable_renderSubtreeIntoContainer !== "function")
-            || (this.agGridReact && this.agGridReact.gridOptions && !this.agGridReact.gridOptions.reactNext);
-    };
-    __decorate([
-        ag_grid_community_1.Autowired("agGridReact"),
-        __metadata("design:type", AgGridReact)
-    ], ReactFrameworkComponentWrapper.prototype, "agGridReact", void 0);
-    ReactFrameworkComponentWrapper = __decorate([
-        ag_grid_community_1.Bean("frameworkComponentWrapper")
-    ], ReactFrameworkComponentWrapper);
     return ReactFrameworkComponentWrapper;
 }(ag_grid_community_1.BaseComponentWrapper));
-AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);

@@ -1,8 +1,5 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ExportParams } from "../exporter/exportParams";
-import { XmlElement } from '../exporter/xmlFactory';
+import { ExportParams } from "./exportParams";
+import { XmlElement } from "./iXmlFactory";
 export interface ExcelWorksheet {
     name: string;
     table: ExcelTable;

@@ -1,8 +1,4 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ConditionPosition, ISimpleFilterModel } from "../simpleFilter";
-import { IDateComparatorFunc } from "./dateFilter";
 import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
 export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;

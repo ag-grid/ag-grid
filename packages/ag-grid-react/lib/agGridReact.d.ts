@@ -1,32 +1,32 @@
-// ag-grid-react v21.2.2
+// ag-grid-react v22.0.0
 import * as React from "react";
-import { ReactPortal } from "react";
-import * as AgGrid from "ag-grid-community";
-import { ColumnApi, GridApi, GridOptions } from "ag-grid-community";
+import { Component, ReactPortal } from "react";
+import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
 import { ReactComponent } from "./reactComponent";
 import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions;
+    modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
 }
-export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
+export declare class AgGridReact extends Component<AgGridReactProps, {}> {
     props: any;
     state: any;
     static propTypes: any;
-    gridOptions: AgGrid.GridOptions;
+    gridOptions: GridOptions;
     changeDetectionService: ChangeDetectionService;
     api: GridApi | null;
     columnApi: ColumnApi;
     portals: ReactPortal[];
     hasPendingPortalUpdate: boolean;
+    destroyed: boolean;
     protected eGridDiv: HTMLElement;
     private static MAX_COMPONENT_CREATION_TIME;
     constructor(props: any, state: any);
     render(): React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | any | (new (props: any) => React.Component<any, any, any>)>) | (new (props: any) => React.Component<any, any, any>)>;
     createStyleForDiv(): any;
     componentDidMount(): void;
-    shouldComponentUpdate(): boolean;
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime?: number): void;
     /**
      * Mounts a react portal for components registered under the componentFramework.
@@ -37,7 +37,9 @@ export declare class AgGridReact extends React.Component<AgGridReactProps, {}> {
     batchUpdate(callback?: any): any;
     destroyPortal(portal: ReactPortal): void;
     private getStrategyTypeForProp;
-    componentWillReceiveProps(nextProps: any): void;
+    shouldComponentUpdate(nextProps: any): boolean;
+    componentDidUpdate(prevProps: any): void;
+    processPropsChanges(prevProps: any, nextProps: any): void;
     private extractDeclarativeColDefChanges;
     private extractGridPropertyChanges;
     componentWillUnmount(): void;

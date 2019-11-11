@@ -1,9 +1,8 @@
-import { ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef } from "@angular/core";
-import { BaseComponentWrapper, Bean, FrameworkComponentWrapper, WrapableInterface } from 'ag-grid-community';
-import { AgFrameworkComponent } from "./interfaces";
+import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
+import {BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
+import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
-@Bean("frameworkComponentWrapper")
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
     private componentFactoryResolver: ComponentFactoryResolver;

@@ -95,6 +95,12 @@ include '../documentation-main/documentation_header.php';
                 <code>columnApi.resetColumnState()</code> are invoked.
             </td>
         </tr>
+        <tr>
+            <th>allowDragFromColumnsToolPanel</th>
+            <td>
+                Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid.
+            </td>
+        </tr>
     </table>
     <h2>Sort & Filter</h2>
     <table class="table content reference">
@@ -130,12 +136,6 @@ include '../documentation-main/documentation_header.php';
                 Set to 'ctrl' to have multi sorting work using the Control or Command (for Apple) keys. See
                 <a href="../javascript-grid-sorting/#multi-column-sorting">Multi Column Sorting</a>
             </td>
-        </tr>
-        <tr>
-            <th>enableOldSetFilterModel</th>
-            <td>Set to true to return the old set filter model format. This is intended as a temporary measure to
-                facilitate migration.
-                <a href="../javascript-grid-filtering/">Row Filtering</a>.</td>
         </tr>
         <tr>
             <th>suppressMaintainUnsortedOrder</th>

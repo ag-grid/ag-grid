@@ -177,7 +177,7 @@ pivotGroupHeaderHeight:100,
 <p>
     You can provide a header template used by the default header component for simple layout changes. If you
     want to change the behaviour, please look at creating your own <a href="../javascript-grid-header-rendering/">Custom Header Component.</a>
-    The template for the default header is specified in <code>columnDef.headerParams.template</code>
+    The template for the default header is specified in <code>columnDef.headerComponentParams.template</code>
 </p>
 
 <p>

@@ -19,32 +19,56 @@ function clearFilter() {
 
 function filterUKAndIrelandBoxing() {
     gridOptions.api.setFilterModel({
-        country: ['Ireland','Great Britain'],
-        sport: ['Boxing']
+        country: {
+            type: 'set',
+            values: ['Ireland','Great Britain']
+        },
+        sport: {
+            type: 'set',
+            values: ['Boxing']
+        }
     });
     setTitle('UK and Ireland - Boxing')
 }
 
 function filterUKAndIrelandEquestrian() {
     gridOptions.api.setFilterModel({
-        country: ['Ireland','Great Britain'],
-        sport: ['Equestrian']
+        country: {
+            type: 'set',
+            values: ['Ireland','Great Britain']
+        },
+        sport: {
+            type: 'set',
+            values: ['Equestrian']
+        }
     });
     setTitle('UK and Ireland - Equestrian')
 }
 
 function filterUsaAndCanadaBoxing() {
     gridOptions.api.setFilterModel({
-        country: ['United States','Canada'],
-        sport: ['Boxing']
+        country: {
+            type: 'set',
+            values: ['United States','Canada']
+        },
+        sport: {
+            type: 'set',
+            values: ['Boxing']
+        }
     });
     setTitle('USA and Canada - Boxing')
 }
 
 function filterUsaAndCanadaEquestrian() {
     gridOptions.api.setFilterModel({
-        country: ['United States','Canada'],
-        sport: ['Equestrian']
+        country: {
+            type: 'set',
+            values: ['United States','Canada']
+        },
+        sport: {
+            type: 'set',
+            values: ['Equestrian']
+        }
     });
     setTitle('USA and Canada - Equestrian')
 }

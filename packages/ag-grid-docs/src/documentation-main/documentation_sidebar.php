@@ -1,51 +1,55 @@
 <div id="side-bar-announcements">
 </div>
-<div class="card card-highlight">
+
+<div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.2">Version 21.2.2</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Sep 27</h6>
+        <h5 class="card-title"><a href="https://youtu.be/HG_D1_N-RwQ">Angular Connect</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Oct 01</h6>
         <p class="card-text">
-            Patch release with bug fixes
+            <iframe width="180" height="100" src="https://www.youtube.com/embed/HG_D1_N-RwQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </p>
+        <p class="card-text">
+            Niall Crosby presents ag-Grid at Angular Connect 2019
         </p>
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.2.2">Change Log</a>
+            <a class="learn-more" href="https://youtu.be/HG_D1_N-RwQ">Open on YouTube</a>
         </p>
     </div>
 </div>
-<div class="card card-highlight">
+<div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.0">Version 21.2.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Aug 30</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Version 22.0.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Nov 11</h6>
         <p class="card-text">
-            Minor release with new features and bug fixes:
+            Major release with new features and bug fixes:
         </p>
         <ul>
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-pivot-chart/">Pivot Chart</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-modules/">Modularisation</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-pagination/#childRows/">Pagination Enhancements</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-scatter/">Scatter / Bubble Charts</a></li>
-
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-accessibility/">Accessibility Enhancements</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-tool-panel/">Tool Panel Enhancements</a></li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.2.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=22.0.0">Change Log</a>
         </p>
     </div>
 </div>
-<br>
-<div class="card card-highlight">
+<div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">Community or Enterprise?</h5>
         <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/Community.svg"/>
         <p class="font-weight-normal">Everyone can use ag-Grid Community for free.
             It's MIT licensed and Open Source. No restrictions. No strings attached.
         </p>
+        <!--
+                <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/SA.svg"/>
+                <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/MA.svg"/>
+        -->
         <img style="width: 30px; float: left; margin-right: 6px;" src="../_assets/svg/enterprise.svg"/>
         <p class="font-weight-normal">Do you want more features? Then
             <a class="learn-more" href="../javascript-grid-set-license/">get started with ag-Grid Enterprise</a>.
@@ -54,8 +58,7 @@
         </p>
     </div>
 </div>
-<br>
-<div class="card card-highlight">
+<div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">Conferences 2019</h5>
         <p class="font-weight-normal">Come see us at the following conferences that we are attending and sponsoring.</p>
@@ -90,8 +93,6 @@
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Nov 2nd</p>
     </div>
 </div>
-<br>
-
     <!-- Begin Mailchimp Signup Form -->
 <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
 <style type="text/css">

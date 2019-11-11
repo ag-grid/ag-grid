@@ -141,7 +141,6 @@ var AgGridAngular = /** @class */ (function () {
         this.noRowsOverlayComponentFramework = undefined;
         this.detailCellRenderer = undefined;
         this.detailCellRendererFramework = undefined;
-        this.onGridReady = undefined;
         this.defaultGroupSortComparator = undefined;
         this.isRowMaster = undefined;
         this.isRowSelectable = undefined;
@@ -155,6 +154,7 @@ var AgGridAngular = /** @class */ (function () {
         this.createChartContainer = undefined;
         this.processChartOptions = undefined;
         this.getChartToolbarItems = undefined;
+        this.fillOperation = undefined;
         this.toolPanelSuppressRowGroups = undefined;
         this.toolPanelSuppressValues = undefined;
         this.toolPanelSuppressPivots = undefined;
@@ -203,6 +203,7 @@ var AgGridAngular = /** @class */ (function () {
         this.enableRangeSelection = undefined;
         this.enableRangeHandle = undefined;
         this.enableFillHandle = undefined;
+        this.suppressClearOnFillReduction = undefined;
         this.deltaSort = undefined;
         this.suppressTouch = undefined;
         this.suppressAsyncEvents = undefined;
@@ -356,6 +357,7 @@ var AgGridAngular = /** @class */ (function () {
         this.rowDragMove = new core_1.EventEmitter();
         this.rowDragLeave = new core_1.EventEmitter();
         this.rowDragEnd = new core_1.EventEmitter();
+        this.popupToFront = new core_1.EventEmitter();
         this.columnRowGroupChangeRequest = new core_1.EventEmitter();
         this.columnPivotChangeRequest = new core_1.EventEmitter();
         this.columnValueChangeRequest = new core_1.EventEmitter();
@@ -370,9 +372,10 @@ var AgGridAngular = /** @class */ (function () {
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
             frameworkOverrides: this.angularFrameworkOverrides,
-            seedBeanInstances: {
+            providedBeanInstances: {
                 frameworkComponentWrapper: this.frameworkComponentWrapper
-            }
+            },
+            modules: (this.modules || [])
         };
         if (this.columns && this.columns.length > 0) {
             this.gridOptions.columnDefs = this.columns
@@ -464,6 +467,7 @@ var AgGridAngular = /** @class */ (function () {
     AgGridAngular.propDecorators = {
         'columns': [{ type: core_1.ContentChildren, args: [agGridColumn_1.AgGridColumn,] },],
         'gridOptions': [{ type: core_1.Input },],
+        'modules': [{ type: core_1.Input },],
         'slaveGrids': [{ type: core_1.Input },],
         'alignedGrids': [{ type: core_1.Input },],
         'rowData': [{ type: core_1.Input },],
@@ -587,7 +591,6 @@ var AgGridAngular = /** @class */ (function () {
         'noRowsOverlayComponentFramework': [{ type: core_1.Input },],
         'detailCellRenderer': [{ type: core_1.Input },],
         'detailCellRendererFramework': [{ type: core_1.Input },],
-        'onGridReady': [{ type: core_1.Input },],
         'defaultGroupSortComparator': [{ type: core_1.Input },],
         'isRowMaster': [{ type: core_1.Input },],
         'isRowSelectable': [{ type: core_1.Input },],
@@ -601,6 +604,7 @@ var AgGridAngular = /** @class */ (function () {
         'createChartContainer': [{ type: core_1.Input },],
         'processChartOptions': [{ type: core_1.Input },],
         'getChartToolbarItems': [{ type: core_1.Input },],
+        'fillOperation': [{ type: core_1.Input },],
         'toolPanelSuppressRowGroups': [{ type: core_1.Input },],
         'toolPanelSuppressValues': [{ type: core_1.Input },],
         'toolPanelSuppressPivots': [{ type: core_1.Input },],
@@ -649,6 +653,7 @@ var AgGridAngular = /** @class */ (function () {
         'enableRangeSelection': [{ type: core_1.Input },],
         'enableRangeHandle': [{ type: core_1.Input },],
         'enableFillHandle': [{ type: core_1.Input },],
+        'suppressClearOnFillReduction': [{ type: core_1.Input },],
         'deltaSort': [{ type: core_1.Input },],
         'suppressTouch': [{ type: core_1.Input },],
         'suppressAsyncEvents': [{ type: core_1.Input },],
@@ -802,6 +807,7 @@ var AgGridAngular = /** @class */ (function () {
         'rowDragMove': [{ type: core_1.Output },],
         'rowDragLeave': [{ type: core_1.Output },],
         'rowDragEnd': [{ type: core_1.Output },],
+        'popupToFront': [{ type: core_1.Output },],
         'columnRowGroupChangeRequest': [{ type: core_1.Output },],
         'columnPivotChangeRequest': [{ type: core_1.Output },],
         'columnValueChangeRequest': [{ type: core_1.Output },],

@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { DropTarget } from "../../dragAndDrop/dragAndDropService";

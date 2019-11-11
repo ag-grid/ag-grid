@@ -100,7 +100,7 @@ export default class AgGridPolymer extends PolymerElement {
                     new agGrid.VanillaFrameworkOverrides(),
                     new PolymerComponentFactory()
                 ),
-                seedBeanInstances: {
+                providedBeanInstances: {
                     frameworkComponentWrapper: new PolymerFrameworkComponentWrapper()
                 }
             };

@@ -23,19 +23,19 @@
                 "links": [
                     {
                         "title": "Get Started with Angular",
-                        "url": "/angular-getting-started/"
+                        "url": "/angular-grid/"
                     },
                     {
                         "title": "Get Started with React",
-                        "url": "/react-getting-started/"
+                        "url": "/react-grid/"
                     },
                     {
                         "title": "Get Started with Vanilla JS",
-                        "url": "/javascript-getting-started/"
+                        "url": "/javascript-grid/"
                     },
                     {
                         "title": "Get Started with Vue",
-                        "url": "/vue-getting-started/"
+                        "url": "/vuejs-grid/"
                     }
                 ]
             },

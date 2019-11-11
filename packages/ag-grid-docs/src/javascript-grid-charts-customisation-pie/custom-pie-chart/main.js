@@ -1,28 +1,29 @@
 var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze", chartDataType: 'series'},
-    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'}
+    { field: "country", width: 150, chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze", chartDataType: 'series' },
+    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = [
+        "Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    let rowData = [];
-    countries.forEach(function (country, index) {
-        rowData.push({
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
+    ];
+
+    return countries.map(function(country, index) {
+        return {
             country: country,
             gold: Math.floor(((index + 1 / 7) * 333) % 100),
             silver: Math.floor(((index + 1 / 3) * 555) % 100),
             bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
-        });
+        };
     });
-    return rowData;
 }
 
 var gridOptions = {
@@ -35,88 +36,53 @@ var gridOptions = {
     rowData: createRowData(),
     enableRangeSelection: true,
     enableCharts: true,
-    onGridReady: onGridReady,
-    processChartOptions: processChartOptions
+    onFirstDataRendered: onFirstDataRendered,
+    processChartOptions: processChartOptions,
 };
 
-
 function processChartOptions(params) {
-
     var options = params.options;
     console.log('chart options:', options);
 
-    // we are only interested in processing bar type.
+    // we are only interested in processing pie type.
     // so if user changes the type using the chart control,
     // we ignore it.
-    if (params.type !== 'pie') {
+    if (['pie', 'doughnut'].indexOf(params.type) < 0) {
         console.log('chart type is ' + params.type + ', making no changes.');
         return params.options;
     }
 
-    options.height = 500;
-    options.width = 1000;
-
-    options.title = {
-        text: 'Precious Metals Production',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 18,
-        fontFamily: 'Arial, sans-serif',
-        color: '#414182'
-    };
-    options.subtitle = {
-        text: 'by country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
-        color: 'rgb(100, 100, 100)'
-    };
-
-    options.padding = {top: 40, right: 10, bottom: 40, left: 20};
-
-    options.tooltipClass = 'my-tool-tip-class';
-
-    options.legendPosition = 'bottom';
-    options.legendPadding = 20;
-
-    var legend = options.legend;
-    legend.enabled = true;
-    legend.markerStrokeWidth = 2;
-    legend.markerSize = 10;
-    legend.markerPadding = 10;
-    legend.itemPaddingX = 100;
-    legend.itemPaddingY = 5;
-    legend.labelFontStyle = 'italic';
-    legend.labelFontWeight = 'bold';
-    legend.labelFontSize = 18;
-    legend.labelFontFamily = 'Arial, sans-serif';
-    legend.labelColor = '#2222aa';
-
     var seriesDefaults = options.seriesDefaults;
-    seriesDefaults.fills = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
-    seriesDefaults.strokes = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
-    seriesDefaults.fillOpacity = 0.8;
-    seriesDefaults.strokeOpacity = 0.8;
-    // seriesDefaults.tooltipEnabled = false;
+    seriesDefaults.fill.colors = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
+    seriesDefaults.fill.opacity = 0.8;
+    seriesDefaults.stroke.colors = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
+    seriesDefaults.stroke.opacity = 0.8;
+    seriesDefaults.stroke.width = 2;
     seriesDefaults.highlightStyle = {
         fill: 'red',
-        stroke: 'maroon'
+        stroke: 'yellow'
     };
 
-    seriesDefaults.labelEnabled = true;
-    seriesDefaults.labelMinAngle = 30;
-    seriesDefaults.labelFontStyle = 'italic';
-    seriesDefaults.labelFontWeight = 'bold';
-    seriesDefaults.labelFontSize = 14;
-    seriesDefaults.labelFontFamily = 'Arial, sans-serif';
-    seriesDefaults.labelColor = '#2222aa';
+    seriesDefaults.title = {
+        enabled: true,
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 12,
+        fontFamily: 'Arial, sans-serif',
+        color: 'maroon'
+    }
 
-    seriesDefaults.strokeWidth = 2;
-    seriesDefaults.calloutStrokeWidth = 3;
-    seriesDefaults.calloutColors = ['black'];
-    seriesDefaults.calloutLength = 15;
-    seriesDefaults.calloutPadding = 15;
+    seriesDefaults.label.enabled = true;
+    seriesDefaults.label.minRequiredAngle = 30;
+    seriesDefaults.label.fontStyle = 'italic';
+    seriesDefaults.label.fontWeight = 'bold';
+    seriesDefaults.label.fontSize = 14;
+    seriesDefaults.label.fontFamily = 'Arial, sans-serif';
+    seriesDefaults.label.color = '#2222aa';
+
+    seriesDefaults.callout.strokeWidth = 3;
+    seriesDefaults.callout.colors = ['black', '#00ff00'];
+    seriesDefaults.callout.length = 15;
 
     seriesDefaults.shadow = {
         color: 'rgba(96, 96, 175, 0.5)',
@@ -124,34 +90,32 @@ function processChartOptions(params) {
         blur: 10
     };
 
-    seriesDefaults.tooltipRenderer = function (params) {
-        var angleField = params.angleField;
-        var value = params.datum[angleField];
-        return '<b>' + angleField.toUpperCase() + ':</b> ' + value;
+    seriesDefaults.tooltip.renderer = function(params) {
+        var value = params.datum[params.angleKey];
+        var label = params.datum[params.labelKey];
+        return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;
     };
 
     return options;
 }
 
-function onGridReady(params) {
+function onFirstDataRendered(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
-        columns: ['country', 'gold']
+        columns: ['country', 'gold', 'silver']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
-        chartType: 'pie'
+        chartType: 'doughnut'
     };
 
-    setTimeout(function () {
-        params.api.chartRange(chartRangeParams);
-    }, 100);
+    params.api.createRangeChart(createRangeChartParams);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

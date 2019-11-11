@@ -1,28 +1,27 @@
 var columnDefs = [
-    {field: "country", width: 150, chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze", chartDataType: 'series'},
-    {headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'},
-    {headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series'}
+    { field: "country", width: 150, chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze", chartDataType: 'series' },
+    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
-    let countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+    var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
-    let rowData = [];
-    countries.forEach( function(country, index) {
-        rowData.push({
+
+    return countries.map(function(country, index) {
+        return {
             country: country,
-            gold: Math.floor(((index+1 / 7) * 333)%100),
-            silver: Math.floor(((index+1 / 3) * 555)%100),
-            bronze: Math.floor(((index+1 / 7.3) * 777)%100),
-        });
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
+        };
     });
-    return rowData;
 }
 
 var gridOptions = {
@@ -35,50 +34,39 @@ var gridOptions = {
     rowData: createRowData(),
     enableRangeSelection: true,
     enableCharts: true,
-    processChartOptions: processChartOptions
+    processChartOptions: processChartOptions,
 };
 
 function processChartOptions(params) {
     var options = params.options;
+    var legendPosition = 'right';
 
     switch (params.type) {
         case 'groupedBar':
-            options.legendPosition = 'bottom';
-            break;
         case 'stackedBar':
-            options.legendPosition = 'bottom';
-            break;
         case 'normalizedBar':
-            options.legendPosition = 'bottom';
+        case 'area':
+        case 'stackedArea':
+        case 'normalizedArea':
+            legendPosition = 'bottom';
             break;
         case 'groupedColumn':
-            options.legendPosition = 'right';
-            break;
         case 'stackedColumn':
-            options.legendPosition = 'right';
-            break;
         case 'normalizedColumn':
-            options.legendPosition = 'right';
-            break;
-        case 'area':
-            options.legendPosition = 'bottom';
-            break;
-        case 'stackedArea':
-            options.legendPosition = 'bottom';
-            break;
-        case 'normalizedArea':
-            options.legendPosition = 'bottom';
+        case 'doughnut':
+            legendPosition = 'right';
             break;
         case 'pie':
-            options.legendPosition = 'top';
-            break;
-        case 'doughnut':
-            options.legendPosition = 'right';
+            legendPosition = 'top';
             break;
         case 'line':
-            options.legendPosition = 'left';
+            legendPosition = 'left';
             break;
     }
+
+    options.legend.position = legendPosition;
+    options.width = 600;
+    options.height = 300;
 
     return options;
 }
@@ -90,12 +78,12 @@ function chartGroupedBar() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'groupedBar'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartStackedBar() {
@@ -105,12 +93,12 @@ function chartStackedBar() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'stackedBar'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartNormalizedBar() {
@@ -120,12 +108,12 @@ function chartNormalizedBar() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'normalizedBar'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartGroupedColumn() {
@@ -135,12 +123,12 @@ function chartGroupedColumn() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'groupedColumn'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartStackedColumn() {
@@ -150,12 +138,12 @@ function chartStackedColumn() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'stackedColumn'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartNormalizedColumn() {
@@ -165,12 +153,12 @@ function chartNormalizedColumn() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'normalizedColumn'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartArea() {
@@ -180,12 +168,12 @@ function chartArea() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'area'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartStackedArea() {
@@ -195,12 +183,12 @@ function chartStackedArea() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'stackedArea'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartNormalizedArea() {
@@ -210,12 +198,12 @@ function chartNormalizedArea() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'normalizedArea'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartDoughnut() {
@@ -225,12 +213,12 @@ function chartDoughnut() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'doughnut'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartLine() {
@@ -240,12 +228,12 @@ function chartLine() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'line'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartScatter() {
@@ -255,12 +243,12 @@ function chartScatter() {
         columns: ['country', 'gold', 'silver', 'bronze']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'scatter'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 function chartPie() {
@@ -270,12 +258,12 @@ function chartPie() {
         columns: ['country', 'gold']
     };
 
-    var chartRangeParams = {
+    var createRangeChartParams = {
         cellRange: cellRange,
         chartType: 'pie'
     };
 
-    gridOptions.api.chartRange(chartRangeParams);
+    gridOptions.api.createRangeChart(createRangeChartParams);
 }
 
 // setup the grid after the page has finished loading

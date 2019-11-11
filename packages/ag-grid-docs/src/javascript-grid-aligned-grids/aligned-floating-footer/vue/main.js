@@ -1,5 +1,10 @@
 import Vue from "vue";
-import { AgGridVue } from "ag-grid-vue";
+import { AgGridVue } from "@ag-grid-community/vue";
+
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 const VueExample = {
   template: `
@@ -12,12 +17,14 @@ const VueExample = {
             @grid-ready="onGridReady"
             :columnDefs="columnDefs"
             :rowData="rowData"
+            :modules="modules"
         ></ag-grid-vue>
         <ag-grid-vue style="width: 100%; height: 40px;" class="ag-theme-balham"
             :gridOptions="bottomGridOptions"
             :headerHeight="0"
             :columnDefs="columnDefs"
             :rowData="bottomData"
+            :modules="modules"
             :rowStyle="rowStyle"
         ></ag-grid-vue>
     </div>
@@ -37,7 +44,8 @@ const VueExample = {
         athleteVisible: true,
         ageVisible: true,
         countryVisible: true,
-        rowStyle: { fontWeight: 'bold' } 
+        rowStyle: { fontWeight: 'bold' },
+        modules: AllCommunityModules
     };
   },
   beforeMount() {

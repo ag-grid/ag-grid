@@ -8,13 +8,26 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Install ag-Grid with NPM</h1>
 
-    <p>Both ag-Grid Community and ag-Grid Enterprise are available as NPM packages, even if you don't intend to use them with a particular JavaScript framework. To install ag-Grid, run</p>
+    <p class="lead">
+        Both ag-Grid is available through NPM packages. Below is a code example of using ag-Grid with NPM
+        and ECMA 6 imports.
+    </p>
+
+    <?php
+        include './intro.php';
+    ?>
+
+    <p>
+        To install ag-Grid and update your <code>package.json</code> file run:
+    </p>
 
 <snippet language="sh">
-npm install --save ag-grid-community
+npm install --save @ag-grid-community/all-modules
 </snippet>
 
-<p>To install ag-Grid Enterprise, run:</p>
+<p>
+    To install ag-Grid Enterprise and update your <code>package.json</code> file run:
+</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise
@@ -24,22 +37,20 @@ npm install --save ag-grid-enterprise
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid-community');
+var AgGrid = require('@ag-grid-community/all-modules');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid-community';
+import {Grid} from '@ag-grid-community/all-modules';
 </snippet>
 
-<p>for ag-Grid Enterprise, you need to import ag-Grid first, and add ag-grid enterprise after it:</p>
+<p>for ag-Grid Enterprise features you need to import the ag-Grid Enterprise package instead:</p>
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid-community');
-require('ag-grid-enterprise');
+var AgGrid = require('@ag-grid-enterprise/all-modules');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid-community';
-import 'ag-grid-enterprise';
+import {Grid} from '@ag-grid-enterprise/all-modules';
 </snippet>
 
 <p>After you have loaded the scripts, you should include the styles in your project. There are several ways to do it, depending on your module bundler and the specifics of your project. The stylesheet files reside in <code>dist/styles/</code> directory of the ag-grid package - you should include <code>ag-grid.css</code> and the theme of your choice. </p> 

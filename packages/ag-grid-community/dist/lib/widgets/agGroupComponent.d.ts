@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
 declare type GroupItem = Component | HTMLElement;
 interface GroupParams {
@@ -9,6 +6,7 @@ interface GroupParams {
     suppressEnabledCheckbox: boolean;
     suppressOpenCloseIcons: boolean;
     items?: GroupItem[];
+    alignItems?: 'start' | 'end' | 'center' | 'stretch';
 }
 export declare class AgGroupComponent extends Component {
     private static TEMPLATE;
@@ -18,6 +16,7 @@ export declare class AgGroupComponent extends Component {
     private expanded;
     private suppressEnabledCheckbox;
     private suppressOpenCloseIcons;
+    private alignItems;
     private gridOptionsWrapper;
     private groupTitle;
     private eGroupOpenedIcon;
@@ -31,9 +30,11 @@ export declare class AgGroupComponent extends Component {
     private setupExpandContract;
     private setOpenClosedIcons;
     isExpanded(): boolean;
+    setAlignItems(alignment: GroupParams['alignItems']): this;
     toggleGroupExpand(expanded?: boolean): this;
     addItems(items: GroupItem[]): void;
     addItem(item: GroupItem): void;
+    hideItem(hide: boolean, index: number): void;
     setTitle(title: string): this;
     setEnabled(enabled: boolean, skipToggle?: boolean): this;
     isEnabled(): boolean;

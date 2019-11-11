@@ -279,6 +279,12 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#processGroupHeaders')) {
+        params.processGroupHeaderCallback  = function(params) {
+            return params.columnGroup.getColGroupDef().headerName.toUpperCase();
+        };
+    }
+
     if (getBooleanValue('#appendHeader')) {
         params.customHeader = [
             [],
@@ -295,12 +301,6 @@ function onBtExport() {
             [{data: {type: 'String', value: 'Purchases'}, mergeAcross: 2}, {data: {type: 'Number', value: '7896.35'}}],
             []
         ];
-    }
-
-    if (getBooleanValue('#processHeaders')) {
-        params.processHeaderCallback = function(params) {
-            return params.column.getColDef().headerName.toUpperCase();
-        };
     }
 
     gridOptions.api.exportDataAsExcel(params);

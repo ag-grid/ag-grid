@@ -67,12 +67,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-angular-third-party/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/javascript-grid-graphing/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -102,12 +96,6 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-<!--   <url>
-    <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url> -->
   <url>
     <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
     <lastmod>2018-03-07</lastmod>
@@ -175,12 +163,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/example-angular-ngx-bootstrap/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/ag-grid-pipeline/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -205,7 +187,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/javascript-getting-started/</loc>
+    <loc>https://www.ag-grid.com/javascript-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -469,7 +451,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-angularjs-data-grid/</loc>
+    <loc>https://www.ag-grid.com/angular-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -493,7 +475,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-javascript-data-grid/</loc>
+    <loc>https://www.ag-grid.com/javascript-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -535,7 +517,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-vuejs-data-grid/</loc>
+    <loc>https://www.ag-grid.com/vuejs-misc/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -757,12 +739,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/testimonials.php/</loc>
-    <lastmod>2018-03-07</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>https://www.ag-grid.com/example-react-redux/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
@@ -853,13 +829,13 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-angular-2-data-grid/</loc>
+    <loc>https://www.ag-grid.com/angular-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/javascript-grid-in-memory/</loc>
+    <loc>https://www.ag-grid.com/javascript-grid-client-side-model/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -889,7 +865,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/angular-getting-started/</loc>
+    <loc>https://www.ag-grid.com/angular-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -925,7 +901,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/react-getting-started/</loc>
+    <loc>https://www.ag-grid.com/react-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -991,7 +967,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.ag-grid.com/best-react-data-grid/</loc>
+    <loc>https://www.ag-grid.com/react-grid/</loc>
     <lastmod>2018-03-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

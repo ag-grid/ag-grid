@@ -3,7 +3,7 @@
 </h2>
 
 <p>
-    It is possible to provide React cell editorss for ag-Grid to use if you are are using the
+    It is possible to provide React cell editors for ag-Grid to use if you are are using the
     React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
@@ -34,6 +34,9 @@
     All of the other methods (<code>isPopup(), isCancelBeforeStart(), isCancelAfterEnd(), afterGuiAttached()</code> etc)
     should be put onto your React component and will work as normal.
 </p>
+
+<h3>React Hooks</h3>
+<p>Please see <a href="../react-hooks/#hooks-with-methods">here</a> for information on using Hooks as Cell Editors.</p>
 
 <h3>Example: Cell Editing using React Components</h3>
 <p> Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  </p>

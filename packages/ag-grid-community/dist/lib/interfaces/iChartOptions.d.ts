@@ -1,23 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
-export interface ChartOptions {
-    document?: Document;
-    parent?: HTMLElement;
-    width?: number;
-    height?: number;
-    background?: BackgroundOptions;
-    series?: any[];
-    data?: any;
-    padding?: IPadding;
-    legendPosition?: LegendPosition;
-    legendPadding?: number;
-    tooltipClass?: string;
-    legend?: LegendOptions;
-    title?: CaptionOptions;
-    subtitle?: CaptionOptions;
-}
-export declare type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
 export declare enum ChartType {
     GroupedColumn = "groupedColumn",
     StackedColumn = "stackedColumn",
@@ -34,253 +14,211 @@ export declare enum ChartType {
     StackedArea = "stackedArea",
     NormalizedArea = "normalizedArea"
 }
-export interface HighlightStyle {
-    fill?: string;
-    stroke?: string;
+export declare type ChartMenuOptions = "chartSettings" | "chartData" | "chartFormat" | "chartUnlink" | "chartDownload";
+export interface SeriesOptions {
+    fill: FillOptions;
+    stroke: StrokeOptions;
 }
-export interface CartesianChartOptions extends ChartOptions {
-    xAxis: AxisOptions;
-    yAxis: AxisOptions;
+export interface ChartOptions<T extends SeriesOptions> {
+    document?: Document;
+    seriesDefaults: T;
+    width: number;
+    height: number;
+    padding: PaddingOptions;
+    background: BackgroundOptions;
+    title: CaptionOptions;
+    subtitle: CaptionOptions;
+    legend: LegendOptions;
+    tooltipClass?: string;
 }
-export interface BarChartOptions extends CartesianChartOptions {
-    series?: BarSeriesOptions[];
-    seriesDefaults?: BarSeriesOptions;
-}
-export interface LineChartOptions extends CartesianChartOptions {
-    series?: LineChartOptions[];
-    seriesDefaults?: LineSeriesDefaultOptions;
-}
-export interface ScatterChartOptions extends CartesianChartOptions {
-    series?: ScatterChartOptions[];
-    seriesDefaults?: ScatterSeriesDefaultOptions;
-}
-export interface PolarChartOptions extends ChartOptions {
-}
-export interface PieChartOptions extends PolarChartOptions {
-    series?: PieSeriesOptions[];
-    seriesDefaults?: PieSeriesOptions;
-}
-export interface DoughnutChartOptions extends PolarChartOptions {
-    series?: PieSeriesOptions[];
-    seriesDefaults?: PieSeriesOptions;
-}
-export interface AreaChartOptions extends CartesianChartOptions {
-    series?: AreaSeriesOptions[];
-    seriesDefaults?: AreaSeriesOptions;
-}
-interface IPadding {
+export interface PaddingOptions {
     top: number;
     right: number;
     bottom: number;
     left: number;
 }
-export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
-export interface AxisOptions {
-    type?: 'category' | 'number' | 'groupedCategory';
-    title?: CaptionOptions;
-    lineWidth?: number;
-    lineColor?: string;
-    tickWidth?: number;
-    tickSize?: number;
-    tickPadding?: number;
-    tickColor?: string;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
-    labelRotation?: number;
-    mirrorLabels?: boolean;
-    parallelLabels?: boolean;
-    labelFormatter?: (value: any, fractionDigits?: number) => string;
-    gridStyle?: IGridStyle[];
-}
-export interface IGridStyle {
-    stroke: string | null;
-    lineDash: number[] | null;
-}
-export interface DropShadowOptions {
-    enabled?: boolean;
-    color?: string;
-    xOffset?: number;
-    yOffset?: number;
-    blur?: number;
-}
-export interface SeriesOptions {
-    type?: string;
-    data?: any[];
-    visible?: boolean;
-    showInLegend?: boolean;
-    tooltipEnabled?: boolean;
-}
-export interface LineTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
-    title?: string;
-    color?: string;
-}
-export interface LineSeriesOptions extends SeriesOptions {
-    title?: string;
-    xField?: string;
-    yField?: string;
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-    highlightStyle?: HighlightStyle;
-    marker?: boolean;
-    markerSize?: number;
-    markerStrokeWidth?: number;
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
-}
-export interface ScatterTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
-}
-export interface ScatterSeriesOptions extends SeriesOptions {
-    title?: string;
-    xField?: string;
-    yField?: string;
-    radiusField?: string;
-    xFieldName?: string;
-    yFieldName?: string;
-    radiusFieldName?: string;
-    fill?: string;
-    stroke?: string;
-    fillOpacity?: number;
-    strokeOpacity?: number;
-    highlightStyle?: HighlightStyle;
-    marker?: boolean;
-    markerSize?: number;
-    minMarkerSize?: number;
-    markerStrokeWidth?: number;
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
-}
-export interface LineSeriesDefaultOptions extends LineSeriesOptions {
-    fills?: string[];
-    strokes?: string[];
-}
-export interface ScatterSeriesDefaultOptions extends ScatterSeriesOptions {
-    fills?: string[];
-    strokes?: string[];
-}
-export interface BarTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
-    title?: string;
-    color?: string;
-}
-export interface AreaTooltipRendererParams {
-    datum: any;
-    xField: string;
-    yField: string;
-    title?: string;
-    color?: string;
-}
-export interface BarLabelFormatterParams {
-    value: number;
-}
-export declare type BarLabelFormatter = (params: BarLabelFormatterParams) => string;
-export interface BarSeriesOptions extends SeriesOptions {
-    xField?: string;
-    yFields?: string[];
-    yFieldNames?: string[];
-    grouped?: boolean;
-    normalizedTo?: number;
-    fills?: string[];
-    strokes?: string[];
-    fillOpacity?: number;
-    strokeOpacity?: number;
-    strokeWidth?: number;
-    highlightStyle?: HighlightStyle;
-    shadow?: DropShadowOptions;
-    labelEnabled?: boolean;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
-    labelFormatter?: BarLabelFormatter;
-    tooltipRenderer?: (params: BarTooltipRendererParams) => string;
-}
-export interface AreaSeriesOptions extends SeriesOptions {
-    xField?: string;
-    yFields?: string[];
-    yFieldNames?: string[];
-    grouped?: boolean;
-    normalizedTo?: number;
-    fills?: string[];
-    strokes?: string[];
-    fillOpacity?: number;
-    strokeOpacity?: number;
-    strokeWidth?: number;
-    highlightStyle?: HighlightStyle;
-    marker?: boolean;
-    markerSize?: number;
-    markerStrokeWidth?: number;
-    shadow?: DropShadowOptions;
-    tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
-}
-export interface PieTooltipRendererParams {
-    datum: any;
-    angleField: string;
-    radiusField?: string;
-    labelField?: string;
-}
-export interface PieSeriesOptions extends SeriesOptions {
-    title?: CaptionOptions;
-    fills?: string[];
-    strokes?: string[];
-    fillOpacity?: number;
-    strokeOpacity?: number;
-    strokeWidth?: number;
-    highlightStyle?: HighlightStyle;
-    angleField?: string;
-    radiusField?: string;
-    labelEnabled?: boolean;
-    labelField?: string;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
-    labelMinAngle?: number;
-    labelOffset?: number;
-    calloutLength?: number;
-    calloutStrokeWidth?: number;
-    calloutColors?: string[];
-    rotation?: number;
-    outerRadiusOffset?: number;
-    innerRadiusOffset?: number;
-    shadow?: DropShadowOptions;
-    tooltipRenderer?: (params: PieTooltipRendererParams) => string;
-}
-export interface LegendOptions {
-    enabled?: boolean;
-    markerSize?: number;
-    markerPadding?: number;
-    markerStrokeWidth?: number;
-    itemPaddingX?: number;
-    itemPaddingY?: number;
-    labelFontStyle?: string;
-    labelFontWeight?: string;
-    labelFontSize?: number;
-    labelFontFamily?: string;
-    labelColor?: string;
-}
 export interface BackgroundOptions {
-    fill?: string;
-    visible?: boolean;
+    fill: string;
+    visible: boolean;
 }
-export interface CaptionOptions {
-    text?: string;
-    fontStyle?: string;
-    fontWeight?: string;
+export interface FontOptions {
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
     fontSize?: number;
     fontFamily?: string;
     color?: string;
-    enabled?: boolean;
 }
-export {};
+export declare type FontStyle = "normal" | "italic" | "oblique";
+export declare type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+export interface CaptionOptions extends FontOptions {
+    enabled: boolean;
+    text?: string;
+}
+export interface LegendOptions {
+    enabled: boolean;
+    position: LegendPosition;
+    padding: number;
+    item: LegendItemOptions;
+}
+export declare type LegendPosition = "top" | "right" | "bottom" | "left";
+export interface LegendItemOptions {
+    label: LegendLabelOptions;
+    marker: LegendMarkerOptions;
+    paddingX: number;
+    paddingY: number;
+}
+export interface LegendLabelOptions extends FontOptions {
+}
+export interface LegendMarkerOptions {
+    size: number;
+    padding: number;
+    strokeWidth: number;
+}
+export interface CartesianChartOptions<T extends SeriesOptions> extends ChartOptions<T> {
+    xAxis: AxisOptions;
+    yAxis: AxisOptions;
+}
+export interface PolarChartOptions<T extends SeriesOptions> extends ChartOptions<T> {
+}
+export interface AxisOptions {
+    title?: CaptionOptions;
+    line: AxisLineOptions;
+    tick: AxisTickOptions;
+    label: AxisLabelOptions;
+    gridStyle: GridStyle[];
+}
+export interface AxisLineOptions {
+    width: number;
+    color: string;
+}
+export interface AxisTickOptions {
+    width: number;
+    size: number;
+    color: string;
+}
+export interface AxisLabelOptions extends FontOptions {
+    padding: number;
+    rotation?: number;
+    formatter?: (value: any, fractionDigits?: number) => string;
+}
+export interface GridStyle {
+    stroke: string;
+    lineDash?: number[];
+}
+export interface HighlightOptions {
+    fill?: SingleFillOptions;
+    stroke?: SingleStrokeOptions;
+}
+export interface SingleFillOptions {
+    color?: string;
+    opacity?: number;
+}
+export interface SingleStrokeOptions {
+    color?: string;
+    opacity?: number;
+    width?: number;
+}
+export interface FillOptions {
+    colors: string[];
+    opacity: number;
+}
+export interface StrokeOptions {
+    colors: string[];
+    opacity: number;
+    width: number;
+}
+export interface DropShadowOptions {
+    enabled: boolean;
+    color: string;
+    xOffset: number;
+    yOffset: number;
+    blur: number;
+}
+export interface SeriesLabelOptions extends FontOptions {
+    enabled: boolean;
+}
+export interface TooltipOptions<TParams> {
+    enabled: boolean;
+    renderer?: (params: TParams) => string;
+}
+export interface TooltipRendererParams {
+    datum: any;
+    title?: string;
+    color: string;
+}
+export interface CartesianTooltipRendererParams extends TooltipRendererParams {
+    xKey: string;
+    xName: string;
+    yKey: string;
+    yName: string;
+}
+export interface BarSeriesOptions extends SeriesOptions {
+    highlightStyle?: HighlightOptions;
+    shadow: DropShadowOptions;
+    label: BarSeriesLabelOptions;
+    tooltip: TooltipOptions<BarTooltipRendererParams>;
+}
+export interface BarSeriesLabelOptions extends SeriesLabelOptions {
+    formatter?: (params: {
+        value: number;
+    }) => string;
+}
+export interface BarTooltipRendererParams extends CartesianTooltipRendererParams {
+}
+export interface LineSeriesOptions extends SeriesOptions {
+    highlightStyle?: HighlightOptions;
+    marker: MarkerOptions;
+    tooltip: TooltipOptions<LineTooltipRendererParams>;
+}
+export interface MarkerOptions {
+    enabled: boolean;
+    size: number;
+    strokeWidth: number;
+}
+export interface LineTooltipRendererParams extends CartesianTooltipRendererParams {
+}
+export interface ScatterSeriesOptions extends SeriesOptions {
+    highlightStyle?: HighlightOptions;
+    marker?: ScatterMarkerOptions;
+    tooltip?: TooltipOptions<ScatterTooltipRendererParams>;
+}
+export interface ScatterMarkerOptions extends MarkerOptions {
+    minSize?: number;
+}
+export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
+    radiusKey?: string;
+    radiusName?: string;
+    labelKey?: string;
+    labelName?: string;
+}
+export interface AreaSeriesOptions extends SeriesOptions {
+    highlightStyle?: HighlightOptions;
+    marker: MarkerOptions;
+    shadow: DropShadowOptions;
+    tooltip: TooltipOptions<AreaTooltipRendererParams>;
+}
+export interface AreaTooltipRendererParams extends CartesianTooltipRendererParams {
+}
+export interface PieSeriesOptions extends SeriesOptions {
+    title?: CaptionOptions;
+    highlightStyle?: HighlightOptions;
+    label: PieSeriesLabelOptions;
+    callout: PieSeriesCalloutOptions;
+    shadow: DropShadowOptions;
+    tooltip: TooltipOptions<PieTooltipRendererParams>;
+}
+export interface PieSeriesLabelOptions extends SeriesLabelOptions {
+    minRequiredAngle: number;
+    offset: number;
+}
+export interface PieSeriesCalloutOptions {
+    length: number;
+    strokeWidth: number;
+    colors: string[];
+}
+export interface PieTooltipRendererParams extends TooltipRendererParams {
+    angleKey: string;
+    angleName?: string;
+    labelKey?: string;
+    labelName?: string;
+}

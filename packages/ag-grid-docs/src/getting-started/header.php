@@ -47,12 +47,12 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
     <aside id="side-nav">
       <div id="side-nav-container" class="collapse flat">
           <ul>
-            <li><a class="<?=($article_id == "javascript-getting-started/" ? 'active' : '') ?>" href="../javascript-getting-started/">Vanilla JavaScript</a></li>
-            <li><a class="<?=($article_id == "angular-getting-started/" ? 'active' : '') ?>" href="../angular-getting-started/">Angular</a></li>
-            <li><a class="<?=($article_id == "react-getting-started/" ? 'active' : '') ?>" href="../react-getting-started/">React</a></li>
-            <li><a class="<?=($article_id == "vue-getting-started/" ? 'active' : '') ?>" href="../vue-getting-started/">Vue.js</a></li
+            <li><a class="<?=($article_id == "javascript-grid/" ? 'active' : '') ?>" href="../javascript-grid/">Vanilla JavaScript</a></li>
+            <li><a class="<?=($article_id == "angular-grid/" ? 'active' : '') ?>" href="../angular-grid/">Angular</a></li>
+            <li><a class="<?=($article_id == "react-grid/" ? 'active' : '') ?>" href="../react-grid/">React</a></li>
+            <li><a class="<?=($article_id == "vue-getting-started/" ? 'active' : '') ?>" href="../vuejs-grid/">Vue.js</a></li
             <li><hr></li>
-            <li class="misc"><a class="<?=($article_id == "best-angularjs-data-grid/" ? 'active' : '') ?>" href="../best-angularjs-data-grid/">AngularJS 1.x</a></li>
+            <li class="misc"><a class="<?=($article_id == "angular-grid/" ? 'active' : '') ?>" href="../angular-grid/">AngularJS 1.x</a></li>
             <li class="misc"><a class="<?=($article_id == "polymer-getting-started/" ? 'active' : '') ?>" href="../polymer-getting-started/">Polymer</a></li>
             <li class="misc"><a class="<?=($article_id == "best-web-component-data-grid/" ? 'active' : '') ?>" href="../best-web-component-data-grid/">Web Components</a></li>
             <li><hr></li>

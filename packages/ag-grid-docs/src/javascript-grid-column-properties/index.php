@@ -35,8 +35,12 @@ include '../documentation-main/documentation_header.php';
             <td>Class to use for the tool panel cell. Can be string, array of strings, or function.</td>
         </tr>
         <tr>
-            <th>suppressToolPanel</th>
-            <td>Set to true if you do not want this column or group to appear in the tool panel.</td>
+            <th>suppressColumnsToolPanel</th>
+            <td>Set to true if you do not want this column or group to appear in the Columns Tool Panel.</td>
+        </tr>
+        <tr>
+            <th>suppressFiltersToolPanel</th>
+            <td>Set to true if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.</td>
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -231,8 +235,9 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>keyCreator(params)</th>
-            <td>Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-                want to a) use set filter on this field or b) group by this field.</td>
+            <td>Function to return a string key for a value. This string is used for grouping, set filtering,
+                and searching within cell editor dropdowns. When filtering and searching the string is exposed
+                to the user, so return a human-readable value.</td>
         </tr>
         <tr>
             <th>getQuickFilterText</th>

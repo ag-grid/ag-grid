@@ -1,0 +1,6 @@
+$icon-font-family: "{{fontName}}" !default;
+$icons-data: {{{src}}} !default;
+
+{{#each codepoints}}
+${{../classPrefix}}{{@key}}: "\\{{this}}" !default;
+{{/each}}

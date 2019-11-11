@@ -1,9 +1,9 @@
 var columnDefs = [
-    {field: "athlete", width: 150, chartDataType: 'category'},
-    {field: "gold", chartDataType: 'series'},
-    {field: "silver", chartDataType: 'series'},
-    {field: "bronze", chartDataType: 'series'},
-    {field: "total", chartDataType: 'series'}
+    { field: "athlete", width: 150, chartDataType: 'category' },
+    { field: "gold", chartDataType: 'series' },
+    { field: "silver", chartDataType: 'series' },
+    { field: "bronze", chartDataType: 'series' },
+    { field: "total", chartDataType: 'series' }
 ];
 
 var gridOptions = {
@@ -17,10 +17,10 @@ var gridOptions = {
     enableCharts: true,
     createChartContainer: createChartContainer,
     processChartOptions: function(params) {
-        params.options.seriesDefaults.tooltipRenderer = function (params) {
-            let titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-            let title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-            let value = params.datum[params.yField].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        params.options.seriesDefaults.tooltip.renderer = function(params) {
+            var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+            var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+            var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return title + '<div class="content" style="text-align: center">' + value + '</div>';
         };
 
@@ -30,11 +30,11 @@ var gridOptions = {
 
 var chartPanelTemplate
     = '<div class="chart-wrapper ag-theme-balham">' +
-        '<div class="chart-wrapper-top">' +
-            '<span class="chart-wrapper-title"></span>' +
-            '<button class="chart-wrapper-close">Destroy Chart</button>' +
-        '</div>' +
-        '<div class="chart-wrapper-body"></div>' +
+    '<div class="chart-wrapper-top">' +
+    '<span class="chart-wrapper-title"></span>' +
+    '<button class="chart-wrapper-close">Destroy Chart</button>' +
+    '</div>' +
+    '<div class="chart-wrapper-body"></div>' +
     '</div>';
 
 function createChartContainer(chartRef) {
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+    // you will probably use a framework like jQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/wideSpreadOfSports.json');
     httpRequest.send();

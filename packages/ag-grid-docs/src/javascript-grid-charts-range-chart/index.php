@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charting: Range Chart";
+$pageTitle = "Charts: Range Chart";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -98,10 +98,6 @@ include '../documentation-main/documentation_header.php';
         columns around in the grid to connect the series range.
     </note>
 
-    <!--    <p>-->
-    <!--        <img alt="Charting Ranges" src="contiguous-range.gif" style="margin-bottom: 0px; width: 100%">-->
-    <!--    </p>-->
-
     <h2>Defining categories and series</h2>
 
     <p>
@@ -134,16 +130,16 @@ include '../documentation-main/documentation_header.php';
 
     <snippet>
         // 'category' columns
-        {field: "athlete", chartDataType: 'category'},
-        {field: "age", chartDataType: 'category'}, // despite containing numbers
-        {field: "country"}, // contains strings
+        { field: 'athlete', chartDataType: 'category' },
+        { field: 'age', chartDataType: 'category' }, // despite containing numbers
+        { field: 'country' }, // contains strings
 
         // 'excluded' from charts
-        {field: "date", chartDataType: 'excluded'},
+        { field: 'date', chartDataType: 'excluded' },
 
         // 'series' columns
-        {field: "gold", chartDataType: 'series'},
-        {field: "silver", width: 100} // contains numbers
+        { field: 'gold', chartDataType: 'series' },
+        { field: 'silver', width: 100 } // contains numbers
     </snippet>
 
     <h3>Inferred by the Grid</h3>
@@ -154,7 +150,7 @@ include '../documentation-main/documentation_header.php';
         will map to 'categories' and columns containing <code>number</code> values will map to 'series' charting columns.
     </p>
 
-    <h2>Example - Defining categories and series</h2>
+    <h3>Example: Defining categories and series</h3>
 
     <p>
         The example below demonstrates the different ways columns can be defined for charting:

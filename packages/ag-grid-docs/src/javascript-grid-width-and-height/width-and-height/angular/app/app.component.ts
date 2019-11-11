@@ -1,6 +1,13 @@
 import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
+import {AllCommunityModules} from "@ag-grid-community/all-modules";
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+console.log(AllCommunityModules);
+
 @Component({
     selector: 'my-app',
     template: `
@@ -17,6 +24,7 @@ import {HttpClient} from '@angular/common/http';
                         class="ag-theme-balham"
                         [rowData]="rowData"
                         [columnDefs]="columnDefs"
+                        [modules]="modules"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -31,6 +39,7 @@ export class AppComponent {
         height: '100%',
         boxSizing: 'border-box'
     };
+    modules = AllCommunityModules;
 
     @ViewChild('agGrid') agGrid;
 

@@ -5,7 +5,7 @@
 }
 
 %stage {
-    @extend .container-fluid, .py-5;
+    @extend .container-fluid, .py-3, .py-md-5;
 }
 
 .stage-accent {
