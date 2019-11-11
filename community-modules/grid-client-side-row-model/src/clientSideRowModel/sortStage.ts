@@ -8,7 +8,7 @@ import {
     RowNodeTransaction,
     SortController,
     StageExecuteParams
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 import {SortOption, SortService} from "./sortService";
 

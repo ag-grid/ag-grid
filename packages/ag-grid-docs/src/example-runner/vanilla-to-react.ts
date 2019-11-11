@@ -45,16 +45,16 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
     if (bindings.gridSettings.enterprise) {
-        imports.push('import {AllModules} from "@ag-enterprise/grid-all-modules";');
+        imports.push('import {AllModules} from "@ag-grid-enterprise/all-modules";');
     } else {
-        imports.push('import {AllCommunityModules} from "@ag-community/grid-all-modules";');
+        imports.push('import {AllCommunityModules} from "@ag-grid-community/all-modules";');
     }
 
-    imports.push('import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";');
+    imports.push('import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";');
 
     // to account for the (rare) example that has more than one class...just default to balham if it does
     const theme = bindings.gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import "@ag-community/grid-all-modules/dist/styles/${theme}.css";`);
+    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFilenames) {
         let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -155,7 +155,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
 
 import React, {Component} from "react"
 import {render} from "react-dom"
-import {AgGridReact} from '@ag-community/grid-react'
+import {AgGridReact} from '@ag-grid-community/react'
 ${imports.join('\n')}
 
 class GridExample extends Component {

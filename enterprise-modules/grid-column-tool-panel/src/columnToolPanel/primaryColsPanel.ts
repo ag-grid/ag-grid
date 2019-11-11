@@ -7,7 +7,7 @@ import {
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {PrimaryColsListPanel} from "./primaryColsListPanel";
 import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
 

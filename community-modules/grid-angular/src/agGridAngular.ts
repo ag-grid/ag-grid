@@ -24,7 +24,7 @@ import {
     Promise,
     Utils as _,
     Module
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
@@ -508,6 +508,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public popupToFront: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();

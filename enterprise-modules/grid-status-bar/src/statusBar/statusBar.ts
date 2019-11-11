@@ -8,7 +8,7 @@ import {
     Promise,
     RefSelector,
     _
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
 export class StatusBar extends Component {

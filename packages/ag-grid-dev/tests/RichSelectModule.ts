@@ -1,1 +1,1 @@
-import  {RichSelectModule} from "@ag-enterprise/rich-select/src/richSelectModule"
+import  {RichSelectModule} from "@ag-grid-enterprise/rich-select/src/richSelectModule"

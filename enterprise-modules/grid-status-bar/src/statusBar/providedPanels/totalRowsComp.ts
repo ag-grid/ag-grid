@@ -1,4 +1,4 @@
-import { Autowired, Events, EventService, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-community/grid-core';
+import { Autowired, Events, EventService, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {

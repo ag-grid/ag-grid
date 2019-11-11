@@ -1,0 +1,236 @@
+@function encodecolor($string) {
+    @if $string == null {
+        @return "";
+    }
+
+    @if type-of($string) == "color" {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string: unquote("#{$hex}");
+    }
+    $string: "%23" + $string;
+
+    @return $string;
+}
+
+@mixin row-border($color) {
+    border-style: solid;
+    border-color: $color;
+}
+
+@mixin grid-header-cell($padding) {
+    padding-left: $padding;
+    padding-right: $padding;
+}
+
+@mixin grid-cell($height, $padding) {
+    line-height: $height;
+    @include grid-header-cell($padding);
+}
+
+@mixin card($params) {
+    @extend %card !optional;
+
+    background: map-get($params, "card-background-color");
+    border-radius: map-get($params, "card-radius");
+    box-shadow: map-get($params, "card-shadow");
+    padding: map-get($params, "grid-size");
+}
+
+@mixin textbox($params) {
+    $border-color: map-get($params, "border-color");
+    $foreground-color: map-get($params, "foreground-color");
+    $grid-size: map-get($params, "grid-size");
+    $primary-color: map-get($params, "primary-color");
+    $placeholder-color: map-get($params, "disabled-foreground-color");
+    $focused-border: map-get($params, "focused-textbox-border");
+    $input-border-color: map-get($params, "input-border-color");
+    $input-border-width: map-get($params, "input-border-width");
+    $input-bottom-border: map-get($params, "input-bottom-border");
+    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $input-bottom-border-disabled: map-get($params, "input-bottom-border-disabled");
+
+    @if map-get($params, "customize-inputs") {
+        background: transparent;
+        color: $foreground-color;
+        font-family: inherit;
+        font-size: inherit;
+        height: map-get($params, "input-height");
+        padding-bottom: $grid-size;
+
+        @if $input-border-width {
+            border-width: $input-border-width;
+        }
+
+        @if $input-bottom-border {
+            border-bottom: $input-bottom-border;
+        }
+
+        &:focus {
+            @if $focused-border {
+                border-bottom: $focused-border;
+                outline: none;
+            }
+        }
+
+        &::placeholder {
+            color: $placeholder-color;
+        }
+
+        &:disabled {
+            @if $input-bottom-border-disabled {
+                border-bottom: $input-bottom-border-disabled;
+            }
+        }
+    } @else if $input-border-color {
+        border-width: 1px;
+        border-style: solid;
+        border-color: $input-border-color;
+    }
+    &:disabled {
+        color: $placeholder-color;
+        @if $input-disabled-background-color {
+            background-color: $input-disabled-background-color;
+        }
+        @if $input-border-color {
+            border-color: transparentize($input-border-color, 0.7);
+        }
+    }
+}
+
+@mixin regular-button($color, $background-color, $text-transform) {
+    appearance: none;
+    background-color: $background-color;
+    border: 0;
+    color: $color;
+    font-family: inherit;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+    text-transform: $text-transform;
+}
+
+@mixin padding-filters($rtl) {
+    .ag-tool-panel-wrapper .ag-filter-panel {
+        .ag-filter-toolpanel-header {
+            > div {
+                &:not(.ag-input-wrapper) {
+                    @if ($rtl) {
+                        padding-right: $ag-grid-size / 2;
+                    }
+                    @else {
+                        padding-left: $ag-grid-size / 2;
+                    }
+                }
+            }
+        }
+        .ag-group-component-container {
+            .ag-group-item {
+                @if ($rtl) {
+                    margin-top: $ag-grid-size;
+                    margin-bottom: $ag-grid-size;
+                    margin-right: 0;
+                    margin-left: $ag-grid-size / 2;
+                }
+                @else {
+                    margin-top: $ag-grid-size;
+                    margin-right: $ag-grid-size / 2; 
+                    margin-bottom: $ag-grid-size;
+                    margin-left: 0;
+                }
+                
+            }
+            .ag-group-item:not(.ag-filter-toolpanel-instance),
+            .ag-group-item > .ag-group-component {
+                @for $i from 1 through 5 {
+                    &.ag-level-#{$i} {
+                        @if $i > 1 {
+                            .ag-group-component-title-bar {
+                                @if($rtl) {
+                                    padding-right: 1rem * ($i - 1);
+                                }
+                                @else {
+                                    padding-left: 1rem * ($i - 1);
+                                }
+                            }
+                        }
+                        .ag-filter-toolpanel-header {
+                            @if ($rtl) {
+                                padding-right: 1rem * $i;
+                            }
+                            @else {
+                                padding-left: 1rem * $i;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin icons_webfont() {
+  .ag-icon {
+      /* use !important to prevent issues with browser extensions that change fonts */
+      font-family: '#{$ag-icon-font-family}';
+      display: block;
+      speak: none;
+      font-size: $ag-icon-size;
+      color: $ag-icon-color;
+      font-style: normal;
+      font-weight: normal;
+      font-variant: normal;
+      text-transform: none;
+      
+      /* Better Font Rendering =========== */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+  }
+
+  @each $icon, $code in $ag-icons-font-codes {
+      .ag-icon-#{$icon} {
+          &:before {
+              content: $code;
+          }
+      }
+  }
+
+  .ag-icon-checkbox-checked,
+  .ag-icon-checkbox-indeterminate,
+  .ag-icon-checkbox-unchecked {
+      background-color: $ag-alt-icon-color;
+      line-height: $ag-icon-size;
+      border-radius: 3px;
+      &-readonly {
+          cursor: default;
+          opacity: $ag-disabled-foreground-color-opacity;
+      }
+  }
+  .ag-icon-checkbox-checked {
+      color: $ag-accent-color;
+      &-readonly:before {
+          content: map-get($ag-icons-font-codes, checkbox-checked);
+      }
+  }
+  .ag-icon-checkbox-indeterminate-readonly:before {
+      content: map-get($ag-icons-font-codes, checkbox-indeterminate);
+  }
+  .ag-icon-checkbox-unchecked-readonly:before  {
+      content: map-get($ag-icons-font-codes, checkbox-unchecked); 
+  }
+
+  .ag-icon-row-drag:before {
+      content: map-get($ag-icons-font-codes, grip);
+  }
+
+  .ag-right-arrow:before {
+      content: map-get($ag-icons-font-codes, left);
+  }
+
+  .ag-icon-radio-button-on {
+      color: $ag-accent-color;
+  }
+
+  .ag-right-arrow:before {
+      content: map-get($ag-icons-font-codes, right);
+  }
+}

@@ -16,7 +16,7 @@ import {
     _, CellPositionUtils,
     RowPositionUtils,
     RowRenderer, Optional
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {

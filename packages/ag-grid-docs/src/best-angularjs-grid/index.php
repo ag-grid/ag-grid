@@ -77,8 +77,8 @@ include '../documentation-main/documentation_header.php';
 <note>
     <strong>Self Contained Bundles</strong>
 
-    <p>Do <b>not</b> include both ag-Grid and ag-Grid-Enterprise self contained bundles. The ag-Grid-Enterprise
-        contains ag-Grid.</p>
+    <p>Do <b>not</b> include both ag-Grid Community and ag-Grid-Enterprise self contained bundles. The ag-Grid-Enterprise bundle
+        contains ag-Grid Community within it.</p>
 </note>
 
 <p>The creation of the Grid would be the same as the ag-Grid example above.</p>
@@ -107,14 +107,17 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('ag-grid');
-// only include this line if you want to use ag-grid-enterprise
-require('ag-grid-enterprise');
+var AgGrid = require('@ag-grid-community/all-modules');
+
+// or, if using Enterprise features
+var AgGrid = require('@ag-grid-enterprise/all-modules');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid-community';
-// only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise';</snippet>
+import {Grid} from '@ag-grid-community/all-modules'
+
+// or, if using Enterprise features
+// import {Grid} from '@ag-grid-enterprise/all-modules'
+</snippet>
 
 
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>

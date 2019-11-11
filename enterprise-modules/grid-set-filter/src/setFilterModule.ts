@@ -1,5 +1,5 @@
-import {Module, ModuleNames} from "@ag-community/grid-core";
-import {EnterpriseCoreModule} from "@ag-enterprise/grid-core";
+import {Module, ModuleNames} from "@ag-grid-community/core";
+import {EnterpriseCoreModule} from "@ag-grid-enterprise/core";
 import {SetFilter} from "./setFilter/setFilter";
 import {SetFloatingFilterComp} from "./setFilter/setFloatingFilter";
 

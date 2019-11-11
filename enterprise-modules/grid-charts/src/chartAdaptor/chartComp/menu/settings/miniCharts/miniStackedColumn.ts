@@ -1,4 +1,4 @@
-import {_, ChartType} from "@ag-community/grid-core";
+import {_, ChartType} from "@ag-grid-community/core";
 
 import {MiniChartWithAxes} from "./miniChartWithAxes";
 import {Rect} from "../../../../../charts/scene/shape/rect";

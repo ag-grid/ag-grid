@@ -1,6 +1,6 @@
 {
-  "name": "@ag-community/grid-react",
-  "version": "21.2.2",
+  "name": "@ag-grid-community/react",
+  "version": "22.0.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -34,11 +34,11 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
+    "@ag-grid-community/client-side-row-model": "~22.0.0",
+    "@ag-grid-community/core": "~22.0.0",
     "@types/jest": "24.0.18",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
-    "@ag-community/grid-client-side-row-model": "^21.2.0",
-    "@ag-community/grid-core": "^21.2.0",
     "babel-preset-react-app": "^9.0.1",
     "cypress": "3.0.1",
     "enzyme": "^3.10.0",
@@ -68,7 +68,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "@ag-community/grid-core": "^21.2.0",
+    "@ag-grid-community/core": "~22.0.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
   },

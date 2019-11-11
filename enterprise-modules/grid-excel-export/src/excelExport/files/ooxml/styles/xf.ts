@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, XmlElement, ExcelAlignment, ExcelProtection } from '@ag-grid-community/core';
 import alignmentFactory from './alignment';
 import protectionFactory from './protection';
 

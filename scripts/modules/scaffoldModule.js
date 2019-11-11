@@ -12,7 +12,7 @@ const getRequiredInputs = async () => {
             },
             {
                 name: 'packageName',
-                message: 'What is the module name (will become @ag-community/[packageName] / @ag-enterprise/[packageName]) ?',
+                message: 'What is the module name (will become @ag-grid-community/[packageName] / @ag-grid-enterprise/[packageName]) ?',
             },
         ]);
 
@@ -34,7 +34,7 @@ const getRequiredInputs = async () => {
 const main = async () => {
     const answers = await getRequiredInputs();
 
-    const moduleName = `${answers.enterprise ? '@ag-enterprise' : '@ag-community'}/${answers.packageName}`;
+    const moduleName = `${answers.enterprise ? '@ag-grid-enterprise' : '@ag-grid-community'}/${answers.packageName}`;
     const moduleDirName = `${answers.enterprise ? 'enterprise-modules' : 'community-modules'}/${answers.packageName}`;
     if(fs.existsSync(`./${moduleDirName}`)) {
         console.error(`!! ${moduleDirName} already exists - exiting.`);
@@ -47,9 +47,9 @@ const main = async () => {
     templatePackageJson.name = moduleName;
     templatePackageJson.version = packageVersionNumber;
     templatePackageJson.license = answers.enterprise ? 'Commercial' : 'MIT';
-    templatePackageJson.dependencies['@ag-community/grid-core'] = `~${packageVersionNumber}`;
+    templatePackageJson.dependencies['@ag-grid-community/core'] = `~${packageVersionNumber}`;
     if(answers.enterprise) {
-        templatePackageJson.dependencies['@ag-enterprise/grid-core'] = `~${packageVersionNumber}`;
+        templatePackageJson.dependencies['@ag-grid-enterprise/core'] = `~${packageVersionNumber}`;
     }
 
     fs.mkdirSync(`./${moduleDirName}`);

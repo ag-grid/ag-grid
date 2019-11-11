@@ -11,7 +11,7 @@ import {
     DropShadowOptions,
     FontOptions,
     CaptionOptions,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { Chart } from "../../../charts/chart/chart";
 import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
 import { BarSeries } from "../../../charts/chart/series/barSeries";

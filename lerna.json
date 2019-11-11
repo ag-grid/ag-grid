@@ -1,8 +1,8 @@
 {
   "packages": [
-    "packages/*",
     "community-modules/*",
-    "enterprise-modules/*"
+    "enterprise-modules/*",
+    "packages/*"
   ],
   "command": {
     "bootstrap": {
@@ -11,5 +11,5 @@
       ]
     }
   },
-  "version": "21.2.2"
+  "version": "22.0.0"
 }

@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from "@angular/core";
-import {VanillaFrameworkOverrides} from "@ag-community/grid-core";
+import {VanillaFrameworkOverrides} from "@ag-grid-community/core";
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {

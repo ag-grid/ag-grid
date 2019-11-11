@@ -12,7 +12,7 @@ import {
     _,
     RowDataTransaction,
     RowNodeTransaction
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
 

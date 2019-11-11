@@ -14,7 +14,7 @@ import {
     GridApi,
     ChartModel,
     CellRangeParams,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";

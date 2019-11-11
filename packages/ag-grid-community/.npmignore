@@ -1,20 +1,11 @@
-!dist/
+!dist
 
-.sass-cache
-.cache-loader
-
-.prettierrc
-.sasslintrc
-.travis.yml
-
-github-banner.png
-github-grid-demo.jpg
+src/**/*.ts
+.gitignore
+.npmignore
+bower.json
 gulpfile.js
-
+tsconfig.es6.json
 tsconfig.json
+tsconfig-main.es6.json
 tsconfig-main.json
-tslint.json
-tslint-fix.json
-webpack.config.js
-
-e2e

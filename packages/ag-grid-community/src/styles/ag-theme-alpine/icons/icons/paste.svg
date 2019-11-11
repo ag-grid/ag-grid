@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>paste</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="paste" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(4.000000, 3.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M16,3.5 C16,2.5 15,0.5 12,0.5 C9,0.5 8,2.5 8,3.5 L4,3.5 C1.79,3.5 0,5.29 0,7.5 L0,21.5 C0,23.71 1.79,25.5 4,25.5 L20,25.5 C22.21,25.5 24,23.71 24,21.5 L24,7.5 C24,5.29 22.21,3.5 20,3.5 L16,3.5 Z M12,4.046 C12.734,4.046 13.334,4.618 13.334,5.318 C13.334,6.018 12.734,6.59 12,6.59 C11.266,6.59 10.666,6.018 10.666,5.318 C10.666,4.618 11.266,4.046 12,4.046 Z M20,23.5 L4,23.5 C2.896,23.5 2,22.604 2,21.5 L2,7.5 C2,6.396 2.896,5.5 4,5.5 L6,5.5 L6,9.5 L18,9.5 L18,5.5 L20,5.5 C21.104,5.5 22,6.396 22,7.5 L22,21.5 C22,22.604 21.104,23.5 20,23.5 Z"></path>
+        </g>
+    </g>
+</svg>

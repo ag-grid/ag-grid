@@ -15,7 +15,7 @@ import {
     RefSelector,
     ResizeObserverService,
     ChartModel
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";

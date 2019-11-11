@@ -3,30 +3,30 @@
     {
       "moduleSource": {
         "exportedModuleName": "InfiniteRowModelModule",
-        "moduleSource": "@ag-community/infinite-row-model/src/infiniteRowModelModule"
+        "moduleSource": "@ag-grid-community/infinite-row-model/src/infiniteRowModelModule"
       },
       "exposedModules": [
-        "@ag-community/infinite-row-model"
+        "@ag-grid-community/infinite-row-model"
       ],
       "enterprise": false
     },
     {
       "moduleSource": {
         "exportedModuleName": "CsvExportModule",
-        "moduleSource": "@ag-community/csv-export/src/csvExportModule"
+        "moduleSource": "@ag-grid-community/csv-export/src/csvExportModule"
       },
       "exposedModules": [
-        "@ag-community/csv-export"
+        "@ag-grid-community/csv-export"
       ],
       "enterprise": false
     },
     {
       "moduleSource": {
         "exportedModuleName": "ExcelExportModule",
-        "moduleSource": "@ag-enterprise/excel-export/src/excelExportModule"
+        "moduleSource": "@ag-grid-enterprise/excel-export/src/excelExportModule"
       },
       "exposedModules": [
-        "@ag-enterprise/excel-export"
+        "@ag-grid-enterprise/excel-export"
       ],
       "enterprise": true
     },
@@ -43,130 +43,130 @@
     {
       "moduleSource": {
         "exportedModuleName": "ClipboardModule",
-        "moduleSource": "@ag-enterprise/clipboard/src/clipboardModule"
+        "moduleSource": "@ag-grid-enterprise/clipboard/src/clipboardModule"
       },
       "exposedModules": [
-        "@ag-enterprise/clipboard"
+        "@ag-grid-enterprise/clipboard"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "ColumnToolPanelModule",
-        "moduleSource": "@ag-enterprise/column-tool-panel/src/columnsToolPanelModule"
+        "moduleSource": "@ag-grid-enterprise/column-tool-panel/src/columnsToolPanelModule"
       },
       "exposedModules": [
-        "@ag-enterprise/column-tool-panel"
+        "@ag-grid-enterprise/column-tool-panel"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "FiltersToolPanelModule",
-        "moduleSource": "@ag-enterprise/filter-tool-panel/src/filtersToolPanelModule"
+        "moduleSource": "@ag-grid-enterprise/filter-tool-panel/src/filtersToolPanelModule"
       },
       "exposedModules": [
-        "@ag-enterprise/filter-tool-panel"
+        "@ag-grid-enterprise/filter-tool-panel"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "MenuModule",
-        "moduleSource": "@ag-enterprise/menu/src/menuModule"
+        "moduleSource": "@ag-grid-enterprise/menu/src/menuModule"
       },
       "exposedModules": [
-        "@ag-enterprise/menu"
+        "@ag-grid-enterprise/menu"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "RichSelectModule",
-        "moduleSource": "@ag-enterprise/rich-select/src/richSelectModule"
+        "moduleSource": "@ag-grid-enterprise/rich-select/src/richSelectModule"
       },
       "exposedModules": [
-        "@ag-enterprise/rich-select"
+        "@ag-grid-enterprise/rich-select"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "RowGroupingModule",
-        "moduleSource": "@ag-enterprise/row-grouping/src/rowGroupingModule"
+        "moduleSource": "@ag-grid-enterprise/row-grouping/src/rowGroupingModule"
       },
       "exposedModules": [
-        "@ag-enterprise/row-grouping"
+        "@ag-grid-enterprise/row-grouping"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "SetFilterModule",
-        "moduleSource": "@ag-enterprise/set-filter/src/setFilterModule"
+        "moduleSource": "@ag-grid-enterprise/set-filter/src/setFilterModule"
       },
       "exposedModules": [
-        "@ag-enterprise/set-filter"
+        "@ag-grid-enterprise/set-filter"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "SideBarModule",
-        "moduleSource": "@ag-enterprise/side-bar/src/sideBarModule"
+        "moduleSource": "@ag-grid-enterprise/side-bar/src/sideBarModule"
       },
       "exposedModules": [
-        "@ag-enterprise/side-bar"
+        "@ag-grid-enterprise/side-bar"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "StatusBarModule",
-        "moduleSource": "@ag-enterprise/status-bar/src/statusBarModule"
+        "moduleSource": "@ag-grid-enterprise/status-bar/src/statusBarModule"
       },
       "exposedModules": [
-        "@ag-enterprise/status-bar"
+        "@ag-grid-enterprise/status-bar"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "MasterDetailModule",
-        "moduleSource": "@ag-enterprise/master-detail/src/masterDetailModule"
+        "moduleSource": "@ag-grid-enterprise/master-detail/src/masterDetailModule"
       },
       "exposedModules": [
-        "@ag-enterprise/master-detail"
+        "@ag-grid-enterprise/master-detail"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "RangeSelectionModule",
-        "moduleSource": "@ag-enterprise/range-selection/src/rangeSelectionModule"
+        "moduleSource": "@ag-grid-enterprise/range-selection/src/rangeSelectionModule"
       },
       "exposedModules": [
-        "@ag-enterprise/range-selection"
+        "@ag-grid-enterprise/range-selection"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "ServerSideRowModelModule",
-        "moduleSource": "@ag-enterprise/server-side-row-model/src/serverSideRowModelModule"
+        "moduleSource": "@ag-grid-enterprise/server-side-row-model/src/serverSideRowModelModule"
       },
       "exposedModules": [
-        "@ag-enterprise/server-side-row-model"
+        "@ag-grid-enterprise/server-side-row-model"
       ],
       "enterprise": true
     },
     {
       "moduleSource": {
         "exportedModuleName": "ViewportRowModelModule",
-        "moduleSource": "@ag-enterprise/viewport-row-model/src/viewportRowModelModule"
+        "moduleSource": "@ag-grid-enterprise/viewport-row-model/src/viewportRowModelModule"
       },
       "exposedModules": [
-        "@ag-enterprise/viewport-row-model"
+        "@ag-grid-enterprise/viewport-row-model"
       ],
       "enterprise": true
     }

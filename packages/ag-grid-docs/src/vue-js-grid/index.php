@@ -105,7 +105,7 @@ npm install whatwg-fetch --save</snippet>
 
 &lt;script&gt;
     import Vue from "vue";
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
     import 'whatwg-fetch'
 
     export default {
@@ -324,7 +324,7 @@ import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
 
 &lt;script&gt;
     import Vue from "vue";
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
     import 'whatwg-fetch'
 
     export default {
@@ -660,7 +660,7 @@ onRowClicked(params) {
 
 &lt;script&gt;
     import Vue from "vue";
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
     import 'whatwg-fetch'
 
     import SliderFilter from './SilderFilter.vue';

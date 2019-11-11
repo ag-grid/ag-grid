@@ -1,7 +1,7 @@
 {
-  "name": "@ag-community/grid-vue",
+  "name": "@ag-grid-community/vue",
   "description": "ag-Grid Vue Component",
-  "version": "21.2.2",
+  "version": "22.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -28,20 +28,20 @@
     "lint": "vue-cli-service lint"
   },
   "devDependencies": {
-    "vue": "2.6.10",
-    "vue-class-component": "^7.0.0",
-    "vue-property-decorator": "^8.2.0",
+    "@ag-grid-community/core": "~22.0.0",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "@ag-community/grid-core": "^21.2.0",
-    "typescript": "^3.6.0",
-    "vue-template-compiler": "^2.6.10",
+    "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.0",
-    "gulp": "^4.0.0"
+    "typescript": "^3.6.0",
+    "vue": "2.6.10",
+    "vue-class-component": "^7.0.0",
+    "vue-property-decorator": "^8.2.0",
+    "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "@ag-community/grid-all-modules": "^21.2.0",
+    "@ag-grid-community/all-modules": "~22.0.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0"
   },

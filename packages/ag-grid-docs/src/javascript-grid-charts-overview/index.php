@@ -48,8 +48,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        import '@ag-enterprise/grid-range-selection';
-        import '@ag-enterprise/grid-charts';
+        import '@ag-grid-enterprise/range-selection';
+        import '@ag-grid-enterprise/charts';
     </snippet>
 
     <p>

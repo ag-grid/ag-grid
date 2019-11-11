@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
-const PACKAGE_DIR = 'packages';
+const PACKAGE_DIRS = ['packages', 'community-modules', 'enterprise-modules'];
 const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length !== 4) {
@@ -23,17 +23,19 @@ function main() {
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
-    fs.readdirSync(PACKAGE_DIR)
-        .forEach(directory => {
-                // update all package.json files
-                let currentPackageJsonFile = `${CWD}/${PACKAGE_DIR}/${directory}/package.json`;
-                updateFileWithNewVersions(currentPackageJsonFile);
+    PACKAGE_DIRS.forEach(packageDirectory => {
+        fs.readdirSync(packageDirectory)
+            .forEach(directory => {
+                    // update all package.json files
+                    let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
+                    updateFileWithNewVersions(currentPackageJsonFile);
 
-                // update all bower.json files, if they exist
-                let currentBowerFile = `${CWD}/${PACKAGE_DIR}/${directory}/bower.json`;
-                updateFileWithNewVersions(currentBowerFile, true);
-            }
-        );
+                    // update all bower.json files, if they exist
+                    let currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
+                    updateFileWithNewVersions(currentBowerFile, true);
+                }
+            );
+    })
 }
 
 function updateLernaJson() {
@@ -100,7 +102,7 @@ function updateDependency(fileContents, property, dependencyVersion) {
 
     Object.entries(dependencyContents)
         .filter(([key, value]) => {
-            return key.startsWith('ag-grid')
+            return key.startsWith('ag-grid') || key.startsWith('@ag-grid')
         })
         .filter(([key, value]) => {
             return key !== 'ag-grid-testing'

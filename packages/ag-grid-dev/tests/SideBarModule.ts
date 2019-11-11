@@ -1,1 +1,1 @@
-import  {SideBarModule} from "@ag-enterprise/side-bar/src/sideBarModule"
+import  {SideBarModule} from "@ag-grid-enterprise/side-bar/src/sideBarModule"

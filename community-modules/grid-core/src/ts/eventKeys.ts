@@ -158,6 +158,10 @@ export class Events {
     public static EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';
     public static EVENT_ROW_DRAG_END = 'rowDragEnd';
 
+    // primarily for charts
+    public static EVENT_POPUP_TO_FRONT = 'popupToFront';
+
+
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.

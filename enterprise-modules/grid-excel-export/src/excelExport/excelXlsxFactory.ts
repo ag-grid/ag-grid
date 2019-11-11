@@ -1,4 +1,4 @@
-import { Autowired, Bean, XmlElement } from '@ag-community/grid-core';
+import { Autowired, Bean, XmlElement } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -9,8 +9,8 @@ import workbookFactory from './files/ooxml/workbook';
 import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
-import { ExcelStyle, ExcelWorksheet } from '@ag-community/grid-core';
-import {XmlFactory} from "@ag-community/grid-csv-export";
+import { ExcelStyle, ExcelWorksheet } from '@ag-grid-community/core';
+import {XmlFactory} from "@ag-grid-community/csv-export";
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf

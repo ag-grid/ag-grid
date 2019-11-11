@@ -1,4 +1,4 @@
-import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-grid-community/core';
 
 // https://docs.microsoft.com/en-us/office/troubleshoot/excel/determine-column-widths
 const getExcelCellWidth = (width: number): number => Math.ceil((width - 12) / 7 + 1);

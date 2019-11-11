@@ -172,6 +172,11 @@ const minifyCss = () => {
         .pipe(rename(path => path.basename = `${path.basename}.min`))
         .pipe(gulp.dest('./dist/styles'));
 };
+
+const copyGridCoreStyles = () => {
+    return gulp.src('./src/styles/**/*').pipe(gulp.dest('./dist/styles'));
+};
+
 // End of scss/css related tasks
 
 // Typescript related tasks
@@ -186,12 +191,13 @@ gulp.task('tsc', series('clean', 'tsc-no-clean'));
 gulp.task('scss-no-clean', scssTask);
 gulp.task('minify-css', minifyCss);
 gulp.task('scss', series('clean', 'scss-no-clean'));
+gulp.task('copy-styles-for-dist', copyGridCoreStyles);
 
 // tsc & scss/css related tasks
 gulp.task('tsc-scss-clean', series('clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css'))));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 
 // default/release task
-gulp.task('default', series('tsc-scss-clean'));
+gulp.task('default', series('tsc-scss-clean', 'copy-styles-for-dist'));
 
 

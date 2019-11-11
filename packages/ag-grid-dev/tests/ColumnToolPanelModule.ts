@@ -1,1 +1,1 @@
-import  {ColumnToolPanelModule} from "@ag-enterprise/column-tool-panel/src/columnsToolPanelModule"
+import  {ColumnToolPanelModule} from "@ag-grid-enterprise/column-tool-panel/src/columnsToolPanelModule"

@@ -13,7 +13,7 @@ import {
     ValueFormatterService,
     VirtualList,
     VirtualListModel
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {SetFilterModel} from "./setFilterModel";

@@ -1,4 +1,4 @@
-import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-community/grid-core";
+import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../../chartController";
 import { ChartPaletteName } from "../../../../charts/chart/palettes";

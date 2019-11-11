@@ -1,0 +1,6 @@
+src
+node_modules
+tsconfig.docs.json
+tsconfig.es5.json
+tsconfig.es6.json
+tsconfig.json

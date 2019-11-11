@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, PaddingOptions } from "@ag-community/grid-core";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, PaddingOptions } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";

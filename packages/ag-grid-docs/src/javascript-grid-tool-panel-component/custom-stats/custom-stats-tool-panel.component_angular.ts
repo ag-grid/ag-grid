@@ -1,6 +1,6 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IToolPanel, IToolPanelParams} from "ag-grid-community";
+import {IToolPanel, IToolPanelParams} from "@ag-grid-community/all-modules";
 
 @Component({
     selector: 'custom-stats',

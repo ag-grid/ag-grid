@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {ICellRendererAngularComp} from "@ag-community/grid-angular";
+import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'child-cell',

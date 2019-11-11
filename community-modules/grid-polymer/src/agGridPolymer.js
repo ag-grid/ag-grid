@@ -1,4 +1,4 @@
-import { PolymerElement } from "../../@polymer/polymer/polymer-element.js";
+import { PolymerElement } from "../../../@polymer/polymer/polymer-element.js";
 import PolymerComponentFactory from "./PolymerComponentFactory.js";
 import PolymerFrameworkComponentWrapper from "./PolymerFrameworkComponentWrapper.js";
 import PolymerFrameworkFactory from "./PolymerFrameworkFactory.js";

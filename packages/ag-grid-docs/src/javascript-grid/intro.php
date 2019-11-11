@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;title>Ag-Grid Basic Example&lt;/title&gt;
-    &lt;script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://unpkg.com/@ag-grid-community/all-modules/dist/ag-grid-community.min.js"&gt;&lt;/script&gt;
     &lt;script src="main.js"&gt;&lt;/script&gt;
 &lt;/head>
 &lt;body>

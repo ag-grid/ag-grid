@@ -11,7 +11,7 @@ import {
     RefSelector,
     ToolPanelColumnCompParams,
     Constants
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }

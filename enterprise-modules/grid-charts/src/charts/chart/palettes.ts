@@ -1,4 +1,4 @@
-import { _ } from "@ag-community/grid-core";
+import { _ } from "@ag-grid-community/core";
 
 export interface ChartPalette {
     fills: string[];

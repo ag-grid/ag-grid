@@ -1,0 +1,17 @@
+@import "../vars/ag-theme-blue-vars";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
+
+.ag-theme-blue {
+    @include ag-theme-classic($params);
+
+    input,
+    select {
+        background-color: $card-background-color;
+        color: $ag-foreground-color;
+    }
+
+    .ag-row {
+        border-bottom-width: 1px;
+        border-bottom-style: dotted;
+    }
+}

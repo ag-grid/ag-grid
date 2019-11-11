@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ICellRenderer } from "@ag-community/grid-angular";
+import { ICellRenderer } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'app-loading-cell-renderer',

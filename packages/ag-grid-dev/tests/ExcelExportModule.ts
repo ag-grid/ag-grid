@@ -1,1 +1,1 @@
-import  {ExcelExportModule} from "@ag-enterprise/excel-export/src/excelExportModule"
+import  {ExcelExportModule} from "@ag-grid-enterprise/excel-export/src/excelExportModule"

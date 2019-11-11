@@ -1,0 +1,142 @@
+@import "./ag-theme-base-import-legacy-vars";
+
+$ag-foreground-opacity: 1 !default;
+$ag-secondary-foreground-color-opacity: 1 !default;
+$ag-disabled-foreground-color-opacity: 0.5 !default;
+
+// Colors
+$ag-border-color: transparent !default;
+$ag-background-color: #fff !default;
+$ag-foreground-color: #000 !default;
+$ag-header-background-color: $ag-background-color !default;
+$ag-header-foreground-color: $ag-foreground-color !default;
+$ag-icon-color: lightgray !default;
+$ag-alt-icon-color: $ag-background-color !default;
+$ag-accent-color: transparent !default;
+$ag-range-selection-background-color: $ag-icon-color !default;
+
+// Sizing
+$ag-grid-size: 4px !default;
+$ag-icon-size: 12px !default;
+$ag-header-height: $ag-grid-size * 6 + 1 !default;
+$ag-row-height: ($ag-grid-size * 6 + 1) !default;
+$ag-rich-select-item-height: $ag-row-height !default;
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-virtual-item-height: $ag-grid-size * 5 !default;
+$ag-header-icon-size: 14px !default;
+
+// Fonts
+$ag-font-family: 'Helvetica Neue', sans-serif !default;
+$ag-font-size: 14px !default;
+$ag-font-weight: 400 !default;
+
+$ag-secondary-font-family: $ag-font-family !default;
+$ag-secondary-font-size: 14px !default;
+$ag-secondary-font-weight: 400 !default;
+
+// Tooltip
+$ag-tooltip-background-color: $ag-background-color !default;
+$ag-tooltip-foreground-color: $ag-foreground-color !default;
+$ag-tooltip-border-radius: 2px !default;
+$ag-tooltip-padding: 5px !default;
+$ag-tooltip-border-width: 1px !default;
+$ag-tooltip-border-style: solid !default;
+$ag-tooltip-border-color: #ebebeb !default;
+
+// Misc
+$ag-card-shadow: none !default;
+$ag-card-radius: 0 !default;
+$ag-row-border-width: 0 !default;
+$ag-transition-speed: 120ms !default;
+$ag-cell-horizontal-border: 1px solid transparent !default;
+
+$ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
+
+$ag-header-cell-moving-background-color: rgb(190, 190, 190) !default;
+$ag-input-disabled-background-color: #ebebeb !default;
+$ag-input-border-color: #000000 !default;
+$ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
+
+$ag-dialog-background-color: $ag-background-color !default;
+$ag-dialog-border-size: 1px !default;
+$ag-dialog-border-style: solid !default;
+$ag-dialog-border-color: $ag-border-color !default;
+
+$ag-dialog-title-background-color: $ag-header-background-color !default;
+$ag-dialog-title-foreground-color: $ag-header-foreground-color !default;
+$ag-dialog-title-height: $ag-header-height !default;
+$ag-dialog-title-font-family: $ag-secondary-font-family !default;
+$ag-dialog-title-font-size: $ag-secondary-font-size !default;
+$ag-dialog-title-font-weight: $ag-secondary-font-weight !default;
+$ag-dialog-title-padding: 5px 10px !default;
+$ag-dialog-title-icon-size: max(20px, $ag-icon-size) !default;
+
+$ag-tool-panel-background-color: $ag-background-color !default;
+$ag-group-component-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
+$ag-group-component-border-color: lighten($ag-border-color, 5%) !default;
+$ag-group-component-title-background-color: darken($ag-group-component-background-color, 5%) !default;
+
+$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
+$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
+
+// Icons
+@import "./font-vars";
+
+
+$ag-icons-font-codes: (
+    aggregation: $ag-icon-aggregation,
+    arrows: $ag-icon-arrows,
+    asc: $ag-icon-asc,
+    cancel: $ag-icon-cancel,
+    chart: $ag-icon-chart,
+    checkbox-checked: $ag-icon-checkbox-checked,
+    checkbox-indeterminate: $ag-icon-checkbox-indeterminate,
+    checkbox-unchecked: $ag-icon-checkbox-unchecked,
+    color-picker: $ag-icon-color-picker,
+    column: $ag-icon-column,
+    columns: $ag-icon-columns,
+    contracted: $ag-icon-contracted,
+    copy: $ag-icon-copy,
+    cross: $ag-icon-cross,
+    cut: $ag-icon-cut,
+    data: $ag-icon-data,
+    desc: $ag-icon-desc,
+    expanded: $ag-icon-expanded,
+    eye-slash: $ag-icon-eye-slash,
+    eye: $ag-icon-eye,
+    filter: $ag-icon-filter,
+    first: $ag-icon-first,
+    grip: $ag-icon-grip,
+    group: $ag-icon-group,
+    indeterminate: $ag-icon-indeterminate,
+    last: $ag-icon-last,
+    left: $ag-icon-left,
+    linked: $ag-icon-linked,
+    loading: $ag-icon-loading,
+    maximize: $ag-icon-maximize,
+    menu: $ag-icon-menu,
+    minimize: $ag-icon-minimize,
+    minus: $ag-icon-minus,
+    next: $ag-icon-next,
+    none: $ag-icon-none,
+    not-allowed: $ag-icon-not-allowed,
+    paste: $ag-icon-paste,
+    pin: $ag-icon-pin,
+    pivot: $ag-icon-pivot,
+    plus: $ag-icon-plus,
+    previous: $ag-icon-previous,
+    radio-button-off: $ag-icon-radio-button-off,
+    radio-button-on: $ag-icon-radio-button-on,
+    right: $ag-icon-right,
+    save: $ag-icon-save,
+    small-down: $ag-icon-small-down,
+    small-left: $ag-icon-small-left,
+    small-right: $ag-icon-small-right,
+    small-up: $ag-icon-small-up,
+    tick: $ag-icon-tick,
+    tree-closed: $ag-icon-tree-closed,
+    tree-indeterminate: $ag-icon-tree-indeterminate,
+    tree-open: $ag-icon-tree-open,
+    unlinked: $ag-icon-unlinked
+);

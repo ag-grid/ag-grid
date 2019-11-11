@@ -27,7 +27,7 @@ Object.keys(agGridEnterprise).forEach(function(key) {
 });
 
 // also add in in exports for ag-Grid-Standard, as it's webpack, we want both packed up
-var agGrid = require('@ag-community/grid-all-modules');
+var agGrid = require('@ag-grid-community/all-modules');
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];
 });
@@ -59,6 +59,7 @@ require('./dist/styles/ag-theme-bootstrap.css');
 require('./dist/styles/ag-theme-dark.css');
 require('./dist/styles/ag-theme-fresh.css');
 require('./dist/styles/ag-theme-material.css');
+require('./dist/styles/agGridAlpineFont.css');
 require('./dist/styles/agGridBalhamFont.css');
 require('./dist/styles/agGridClassicFont.css');
 require('./dist/styles/agGridMaterialFont.css');

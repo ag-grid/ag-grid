@@ -1,4 +1,4 @@
-import { Autowired, Component, IFloatingFilter, RefSelector, ValueFormatterService, Column, IFloatingFilterParams } from "@ag-community/grid-core";
+import { Autowired, Component, IFloatingFilter, RefSelector, ValueFormatterService, Column, IFloatingFilterParams } from "@ag-grid-community/core";
 import { SetFilterModel } from "./setFilterModel";
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {

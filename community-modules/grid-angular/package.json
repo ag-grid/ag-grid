@@ -1,6 +1,6 @@
 {
-  "name": "@ag-community/grid-angular",
-  "version": "21.2.2",
+  "name": "@ag-grid-community/angular",
+  "version": "22.0.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
@@ -33,10 +33,10 @@
   },
   "homepage": "https://angular-grid.ag-grid.com",
   "devDependencies": {
+    "@ag-grid-community/core": "~22.0.0",
     "@angular/compiler": "^4.0.0",
     "@angular/compiler-cli": "^4.0.0",
     "@angular/core": "^4.0.0",
-    "@ag-community/grid-core": "^21.2.0",
     "core-js": "^2.5.0",
     "del": "^5.1.0",
     "gulp": "^4.0.0",
@@ -50,9 +50,9 @@
     "typescript-simple": "8.0.6"
   },
   "peerDependencies": {
+    "@ag-grid-community/core": "~22.0.0",
     "@angular/compiler": ">=2.1.x",
-    "@angular/core": ">=2.1.x",
-    "@ag-community/grid-core": "^21.2.0"
+    "@angular/core": ">=2.1.x"
   },
   "publishConfig": {
     "access": "public"

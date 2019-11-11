@@ -1,57 +1,57 @@
 {
-    "name": "@ag-enterprise/grid-row-grouping",
-    "version": "21.2.2",
-    "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-    "main": "./dist/cjs/main.js",
-    "module": "./dist/es6/main.js",
-    "scripts": {
-        "test": "jest",
-        "build-cjs": "tsc -p tsconfig.es5.json",
-        "build-es6": "tsc -p tsconfig.es6.json",
-        "build-docs": "tsc -p tsconfig.docs.json",
-        "package": "node ../../common-build/rollup/build.js",
-        "build": "npm run build-cjs && npm run build-es6"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ag-grid/ag-grid.git"
-    },
-    "keywords": [
-        "web-components",
-        "grid",
-        "data",
-        "table",
-        "angular",
-        "angular-component",
-        "react",
-        "react-component",
-        "angularjs",
-        "reactjs"
-    ],
-    "author": "Sean Landsman <sean@thelandsmans.com>",
-    "license": "Commercial",
-    "bugs": {
-        "url": "https://github.com/ag-grid/ag-grid/issues"
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not ie <= 10",
-        "not ie_mob <= 11",
-        "not blackberry > 0"
-    ],
-    "homepage": "http://www.ag-grid.com/",
-    "dependencies": {
-        "@ag-community/grid-core": "~21.2.0",
-        "@ag-enterprise/grid-core": "~21.2.0"
-    },
-    "devDependencies": {
-        "@types/jest": "^24.0.18",
-        "jest": "^24.9.0",
-        "ts-jest": "^24.1.0",
-        "typescript": "^3.6.3"
-    },
-    "publishConfig": {
-        "access": "public"
-    }
+  "name": "@ag-grid-enterprise/row-grouping",
+  "version": "22.0.0",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/es6/main.js",
+  "scripts": {
+    "test": "jest",
+    "build-cjs": "tsc -p tsconfig.es5.json",
+    "build-es6": "tsc -p tsconfig.es6.json",
+    "build-docs": "tsc -p tsconfig.docs.json",
+    "package": "node ../../common-build/rollup/build.js",
+    "build": "npm run build-cjs && npm run build-es6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "Commercial",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0"
+  ],
+  "homepage": "http://www.ag-grid.com/",
+  "dependencies": {
+    "@ag-grid-community/core": "~22.0.0",
+    "@ag-grid-enterprise/core": "~22.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

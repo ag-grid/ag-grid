@@ -1,1 +1,1 @@
-import  {SetFilterModule} from "@ag-enterprise/set-filter/src/setFilterModule"
+import  {SetFilterModule} from "@ag-grid-enterprise/set-filter/src/setFilterModule"

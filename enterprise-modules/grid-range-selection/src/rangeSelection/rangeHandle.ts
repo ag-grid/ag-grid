@@ -3,7 +3,7 @@ import {
     CellPosition,
     _,
     CellRangeType
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 

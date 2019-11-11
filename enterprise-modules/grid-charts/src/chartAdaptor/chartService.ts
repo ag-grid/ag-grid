@@ -20,7 +20,7 @@ import {
     Optional,
     IRangeController,
     ChartModel
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
 import { ChartPaletteName } from "../charts/chart/palettes";
 

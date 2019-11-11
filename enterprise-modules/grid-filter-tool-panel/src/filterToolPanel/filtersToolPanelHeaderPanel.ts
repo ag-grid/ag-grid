@@ -9,7 +9,7 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }

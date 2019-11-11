@@ -9,7 +9,7 @@ import {
     RefSelector,
     FontWeight,
     FontStyle
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { ChartTranslator } from "../../chartTranslator";
 
 export type Font = {

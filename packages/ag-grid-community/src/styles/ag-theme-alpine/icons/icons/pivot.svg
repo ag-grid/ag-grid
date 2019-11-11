@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>pivot</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="pivot" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M3.5,10.5 L3.5,15.5 L9.5,15.5 L9.5,10.5 L3.5,10.5 Z M1.5,8.5 L9.5,8.5 C10.6045695,8.5 11.5,9.3954305 11.5,10.5 L11.5,15.5 C11.5,16.6045695 10.6045695,17.5 9.5,17.5 L1.5,17.5 L1.5,8.5 Z" id="Rectangle-5-Copy" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(6.500000, 13.000000) rotate(90.000000) translate(-6.500000, -13.000000) "></path>
+        <path d="M3.5,22.5 L3.5,27.5 L9.5,27.5 L9.5,22.5 L3.5,22.5 Z M1.5,20.5 L9.5,20.5 C10.6045695,20.5 11.5,21.3954305 11.5,22.5 L11.5,27.5 C11.5,28.6045695 10.6045695,29.5 9.5,29.5 L1.5,29.5 L1.5,20.5 Z" id="Rectangle-5-Copy-2" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(6.500000, 25.000000) rotate(90.000000) translate(-6.500000, -25.000000) "></path>
+        <path d="M14.5,10.5 L14.5,15.5 L20.5,15.5 L20.5,10.5 L14.5,10.5 Z M12.5,8.5 L20.5,8.5 C21.6045695,8.5 22.5,9.3954305 22.5,10.5 L22.5,15.5 C22.5,16.6045695 21.6045695,17.5 20.5,17.5 L12.5,17.5 L12.5,8.5 Z" id="Rectangle-5-Copy-3" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(17.500000, 13.000000) rotate(90.000000) translate(-17.500000, -13.000000) "></path>
+        <path d="M29,12 L29,5 C29,4.44771525 28.5522847,4 28,4 L5,4 C4.44771525,4 4,4.44771525 4,5 L4,6 L2,6 L2,5 C2,3.34314575 3.34314575,2 5,2 L28,2 C29.6568542,2 31,3.34314575 31,5 L31,14 L25,14 L25,12 L29,12 Z" id="Path-4" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+</svg>

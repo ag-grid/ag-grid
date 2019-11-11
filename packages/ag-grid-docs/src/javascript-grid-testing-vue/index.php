@@ -109,7 +109,7 @@ beforeEach((done) => {
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
     import Editor from './Editor.vue';
 
     export default {

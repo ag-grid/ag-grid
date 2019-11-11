@@ -11,7 +11,7 @@ import {
     GridOptions,
     Module,
     WrapableInterface
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {AgGridColumn} from "./agGridColumn";
 import {ReactComponent} from "./reactComponent";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
@@ -34,6 +34,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     columnApi!: ColumnApi;
     portals: ReactPortal[] = [];
     hasPendingPortalUpdate = false;
+
+    destroyed = false;
 
     protected eGridDiv!: HTMLElement;
 
@@ -90,7 +92,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, runningTime = 0) {
         // if the grid has been destroyed in the meantime just resolve
-        if (!this.api) {
+        if (this.destroyed) {
             resolve(null);
             return;
         }
@@ -238,6 +240,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             this.api.destroy();
             this.api = null;
         }
+        this.destroyed = true;
     }
 }
 

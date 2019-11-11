@@ -3,7 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms'; // <-- NgModel lives here
 
 // ag-grid
-import {AgGridModule} from "@ag-community/grid-angular";
+import {AgGridModule} from "@ag-grid-community/angular";
 
 import {RichGridDeclarativeComponent} from "./rich-grid-declarative.component";
 import {DateComponent} from "./date-component/date.component";

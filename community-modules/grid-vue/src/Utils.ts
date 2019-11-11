@@ -1,4 +1,4 @@
-import { ComponentUtil } from '@ag-community/grid-core';
+import { ComponentUtil } from '@ag-grid-community/core';
 
 export interface Properties {
     [propertyName: string]: any;
