@@ -64,7 +64,7 @@ function printFeature($item, $indent)
 }
 ?>
 
-<h1 class="heading-enterprise">ag-Grid Modules</h1>
+<h1 class="first-h1">ag-Grid Modules</h1>
 
 <p class="lead">
     Version 22.0.0 changes the way ag-Grid is made available by providing functionality in modules, allowing you to
@@ -82,13 +82,13 @@ function printFeature($item, $indent)
     and all Enterprise functionality in another dependency (<code>ag-grid-enterprise</code>).
 </p>
 
-<p>With Version 22.0.0 the ag-Grid can now be consumed by feature module which will result in a resulting in a smaller
-    application size overall.</p>
+<p>From Version 22.0.0, ag-Grid can be consumed on a per-feature basis using separate feature modules, resulting in a
+   smaller application size overall.</p>
 
 <h2>Modules</h2>
 
 <p>
-    The below table summarizes the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
+    The below table summarises the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
 </p>
 
 <table class="properties">
@@ -107,8 +107,9 @@ function printFeature($item, $indent)
 
 <h2>Installing ag-Grid Modules</h2>
 
-<p>If you wish to pull in all Community or all Enterprise modules as you did before you can specify the corresponding
-    packages (<code>@ag-grid-community/all-modules</code> and <code>@ag-grid-enterprise/all-modules</code>) and reference them later.</p>
+<p>If you wish to pull in all Community or all Enterprise modules like before, you can specify the corresponding
+    packages (<code>@ag-grid-community/all-modules</code> and <code>@ag-grid-enterprise/all-modules</code>) and reference
+    them later.</p>
 
 <p>If you choose to select modules based on requirements then at a minimum the a
     <a href="../javascript-grid-row-models/">Row Model</a> need to be specified. After that all other modules are optional
@@ -214,7 +215,7 @@ data() {
 <p>This section documents how to quickly migrate from the deprecated <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
     to the new modular based one.</p>
 
-<p>In versions 21.x and before you would have needed to referenced the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>
+<p>In versions 21.x and earlier you would have needed to reference the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>
     packages in <code>package.json</code>:</p>
 <snippet>
 "dependencies": {
@@ -227,7 +228,7 @@ data() {
 
 <snippet>import "ag-grid-enterprise";</snippet>
 
-<p>For Version 22.x onwards you need to update your <code>package.json</code> to reference the new module base package,
+<p>For Version 22.x and onwards you need to update your <code>package.json</code> to reference the new module base package,
     depending on the feature set you require (note you no longer need to specify both Community and Enterprise - just the one will do):</p>
 <snippet>
 "dependencies": {
@@ -323,7 +324,7 @@ data() {
 &lt;/ag-grid-vue&gt;
 </snippet>
 
-<p>Finally, you'll need to update the paths of and CSS or SCSS that you reference:</p>
+<p>Finally, you'll need to update the paths of the CSS or SCSS scripts that you reference:</p>
 
 <snippet>
 // CSS Community
