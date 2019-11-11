@@ -1,6 +1,6 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode} from "ag-grid-community";
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode} from "@ag-grid-community/all-modules";
 import {IFilterAngularComp} from "@ag-grid-community/angular";
 
 @Component({

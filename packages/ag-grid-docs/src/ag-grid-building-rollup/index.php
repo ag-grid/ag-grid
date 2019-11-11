@@ -16,6 +16,10 @@ include '../documentation-main/documentation_header.php';
 
     <note>A full working example of using Rollup.js with ag-Grid can be found on <a
                 href="https://github.com/seanlandsman/ag-grid-rollup">Github</a>.</note>
+
+    <note>This walkthrough uses the <code>@ag-grid-community/all-modules</code> package which will include all features of ag-Grid.
+        If you're using Rollup to reduce your bundle size you probably want to be selective in which packages you include - please
+    see the <a href="../javascript-grid-modules">Modules</a> documentation for more information.</note>
     <h3>Initialise Project</h3>
 
     <snippet language="sh">
@@ -26,23 +30,25 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Install Dependencies</h3>
 
-    <snippet language="sh">
-        npm i --save ag-grid-community
-        npm i --save-dev rollup rollup-plugin-node-resolve
+<snippet language="sh">
+    npm i --save @ag-grid-community/all-modules
 
-        # optional - only necessary if you're using any of the Enterprise features
-        npm i --save ag-grid-enterprise</snippet>
+    // or, if using Enterprise features
+    npm i --save @ag-grid-enterprise/all-modules
+
+    npm i --save-dev rollup rollup-plugin-node-resolve
+</snippet>
 
     <h3>Create Application</h3>
 
     <p>Our application will be a very simple one, consisting of a single file that will render a simple grid:</p>
 
     <snippet>
-// main-community.js
-import {Grid} from 'ag-grid-community';
+// main-ag-grid.js
+import {Grid} from '@ag-grid-community/all-modules'
 
-// import if using any enterprise features
-// import 'ag-grid-enterprise';
+// or, if using enterprise features
+// import {Grid} from '@ag-grid-enterprise/all-modules'
 
 // specify the columns
 var columnDefs = [
@@ -75,28 +81,32 @@ new Grid(eGridDiv, gridOptions);
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    &lt;link rel="stylesheet" href="./node_modules/ag-grid-community/dist/styles/ag-grid.css"&gt;
-    &lt;link rel="stylesheet" href="./node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"&gt;
+    &lt;link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css"&gt;
+    &lt;link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css"&gt;
+
+    <!-- or, if using Enterprise features -->
+    <!-- &lt;link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css"&gt; -->
+    <!-- &lt;link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css"&gt; -->
 &lt;/head&gt;
 &lt;body&gt;
 &lt;div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
 
-&lt;script src="./dist/community-bundle.js"&gt;&lt;/script&gt;
+&lt;script src="./dist/ag-bundle.js"&gt;&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
     </snippet>
 
     <h2>Rollup Configuration</h2>
 
-    <p>Our <code>rollup.community.json</code> is very simple in this example:</p>
+    <p>Our <code>rollup.ag-grid.json</code> is very simple in this example:</p>
 
 <snippet>
 const node = require('rollup-plugin-node-resolve');
 
 export default <span ng-non-bindable>&#123;</span>
-    input: './main-community.js',
+    input: './main-ag-grid.js',
     output: <span ng-non-bindable>&#123;</span>
-        file: './dist/community-bundle.js',
+        file: './dist/ag-bundle.js',
         format: 'umd',
     },
     plugins: [
@@ -117,12 +127,12 @@ export default <span ng-non-bindable>&#123;</span>
     <p>We can now build our bundle:</p>
 
 <snippet language="sh">
-rollup -c rollup.community.config.js
+rollup -c rollup.ag-grid.config.js
 </snippet>
 
-    <p>The resulting bundle will be available in <code>./dist/community-bundle.js</code></p>
+    <p>The resulting bundle will be available in <code>./dist/ag-bundle.js</code></p>
 
-    <p>If we now serve <code>index-community.html</code> our grid will be rendered as expected:</p>
+    <p>If we now serve <code>index-ag-grid.html</code> our grid will be rendered as expected:</p>
 
     <img src="./bundled-grid.png" style="width: 50%" alt="Bundled Grid">
 </div>

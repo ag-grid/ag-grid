@@ -1,5 +1,5 @@
 import {Component, ElementRef} from "@angular/core";
-import {IHeaderParams} from "ag-grid-community";
+import {IHeaderParams} from "@ag-grid-community/all-modules";
 import {IHeaderAngularComp} from "@ag-grid-community/angular";
 
 export interface MyParams extends IHeaderParams {

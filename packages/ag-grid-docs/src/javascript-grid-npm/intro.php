@@ -16,10 +16,10 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import 'ag-grid-community/dist/styles/ag-grid.css'
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css'
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
-import * as agGrid from 'ag-grid-community';
+import {Grid} from '@ag-grid-community/all-modules';
 
 var columnDefs = [
   {headerName: "Make", field: "make"},
@@ -42,7 +42,7 @@ var gridOptions = {
 
 var eGridDiv = document.querySelector('#myGrid');
 
-new agGrid.Grid(eGridDiv, gridOptions);
+new Grid(eGridDiv, gridOptions);
 </snippet>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
@@ -64,7 +64,7 @@ new agGrid.Grid(eGridDiv, gridOptions);
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "ag-grid-community": "latest"
+    "@ag-grid-community/all-modules": "latest"
   }
 }
 </snippet>

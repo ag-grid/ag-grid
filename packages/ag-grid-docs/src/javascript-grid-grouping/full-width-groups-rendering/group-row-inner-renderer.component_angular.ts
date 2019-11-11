@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {RowNode} from 'ag-grid-community';
+import {RowNode} from '@ag-grid-community/all-modules';
 import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 
 @Component({

@@ -71,7 +71,7 @@ npm install -g @angular/cling new my-app --style scss --routing false cd my-app 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-angular">Copy Code</button>
 <snippet language="sh">
-npm install --save ag-grid-community ag-grid-angular
+npm install --save @ag-grid-community/all-modules @ag-grid-community/angular
 npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 </snippet>
 </section>
@@ -84,7 +84,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 
 @NgModule({
   declarations: [AppComponent],
@@ -105,8 +105,8 @@ export class AppModule {}
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "~ag-grid-community/dist/styles/ag-grid.css";
-@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import "~@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+@import "~@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 </snippet>
 </section>
 
@@ -216,7 +216,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -358,7 +358,7 @@ export class AppComponent implements OnInit {
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 @Component({
     selector: 'app-root',
@@ -410,7 +410,7 @@ export class AppComponent implements OnInit {
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 @Component({
     selector: 'app-root',
@@ -467,29 +467,6 @@ ngOnInit() {
 +        this.rowData = this.http.get('https://api.myjson.com/bins/ly7d1');
 }
 </snippet>
-
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
-<button class="btn copy-code-button" type="button">Copy Code</button>
-<snippet language="sh">
-npm install --save ag-grid-enterprise
-</snippet>
-</section>
-<p>Then, add the import to <code>app.module.ts</code>:</p>
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="diff">
-import { AgGridModule } from 'ag-grid-angular';
-import { HttpClientModule } from '@angular/common/http';
-
-+import 'ag-grid-enterprise';
-</snippet>
-</section>
-<p>
-    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
-    You can ignore the message as we are trialing.
-    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
-    feel free to look around:
-</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -560,8 +537,8 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
 </section>
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>

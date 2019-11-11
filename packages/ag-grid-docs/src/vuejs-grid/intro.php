@@ -13,9 +13,14 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { AgGridVue } from 'ag-grid-vue';
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+// or, if using Enterprise features
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+
+import { AgGridVue } from '@ag-grid-community/vue';
 
 export const App = {
     name: 'App',

@@ -169,7 +169,7 @@ function printFeatureRecursive($parentItem, $indent) {
                 Then reference the ag-Grid Enterprise module:
             </p>
             <snippet>
-                import {AllModules} from 'ag-grid-enterprise';
+                import {AllModules} from '@ag-grid-enterprise/all-modules';
             </snippet>
 
             <p>Then depending on your choice of framework you'll need to provide the modules to the grid:</p>

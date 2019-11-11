@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 
-import { IStatusBarItem, IStatusBarItemParams } from "ag-grid-community";
+import { IStatusBarItem, IStatusBarItemParams } from "@ag-grid-community/all-modules";
 
 @Component({
     selector: 'status-component',

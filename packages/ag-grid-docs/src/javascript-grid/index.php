@@ -55,9 +55,9 @@ You can either use your favorite programming text editor, or you can execute the
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
   &lt;head&gt;
-    &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+    &lt;script src=&quot;https://unpkg.com/@ag-grid-community/all-modules/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-grid.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-theme-balham.css&quot;&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -74,9 +74,9 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;script src=&quot;https://unpkg.com/@ag-grid-community/all-modules/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -167,9 +167,9 @@ Notice that the actual data fetching is performed outside of the grid component 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;script src=&quot;https://unpkg.com/@ag-grid-community/all-modules/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-community/all-modules/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -275,7 +275,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 <p>Now, let's use ag-grid-enterprise! Replace the ag-grid script reference in the <code>head</code> with this one:</p>
 
 <snippet language="html">
-&lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
 </snippet>
 
 <p>
@@ -323,9 +323,9 @@ var gridOptions = {
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-  &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;script src=&quot;https://unpkg.com/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;

@@ -1,5 +1,5 @@
 import RefData from "../data/refData";
-import {IFilter, IFilterParams} from "ag-grid-community";
+import {IFilter, IFilterParams} from "@ag-grid-community/all-modules";
 
 const SKILL_TEMPLATE =
     '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">' +
