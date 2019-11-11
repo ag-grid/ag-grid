@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { IComponent } from "../interfaces/iComponent";
@@ -37,7 +34,7 @@ export declare class Component extends BeanStub {
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
     appendChild(newChild: Node | IComponent<any>): void;
-    addFeature(context: Context, feature: BeanStub): void;
+    addFeature(feature: BeanStub, context?: Context): void;
     isDisplayed(): boolean;
     setVisible(visible: boolean): void;
     setDisplayed(displayed: boolean): void;

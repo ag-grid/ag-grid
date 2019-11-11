@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
@@ -30,8 +27,12 @@ export interface AbstractColDef {
     headerValueGetter?: string | Function;
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
-    /** Set to true to not include this column in the toolpanel */
+    /** @deprecated since v22 - use suppressColumnsToolPanel / suppressFiltersToolPanel instead */
     suppressToolPanel?: boolean;
+    /** Set to true to not include this column in the Columns Tool Panel */
+    suppressColumnsToolPanel?: boolean;
+    /** Set to true to not include this column / filter in the Filters Tool Panel */
+    suppressFiltersToolPanel?: boolean;
     /** Tooltip for the column header */
     headerTooltip?: string;
     tooltipComponent?: {
@@ -101,7 +102,7 @@ export interface ColDef extends AbstractColDef {
     valueSetter?: ((params: ValueSetterParams) => boolean) | string;
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
-    keyCreator?: Function;
+    keyCreator?: (value: any) => string;
     /** Initial width, in pixels, of the cell */
     width?: number;
     /** Min width, in pixels, of the cell */
@@ -282,7 +283,6 @@ export interface ColDef extends AbstractColDef {
     };
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;
-    fillOperation?: string;
 }
 export interface IsColumnFunc {
     (params: IsColumnFuncParams): boolean;

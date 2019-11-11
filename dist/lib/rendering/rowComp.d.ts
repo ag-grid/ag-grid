@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
@@ -56,6 +53,7 @@ export declare class RowComp extends Component {
     private parentScope;
     private scope;
     private initialised;
+    private elementOrderChanged;
     private readonly printLayout;
     private readonly embedFullWidth;
     constructor(parentScope: any, bodyContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, rowNode: RowNode, beans: Beans, animateIn: boolean, useAnimationFrameForCreate: boolean, printLayout: boolean, embedFullWidth: boolean);
@@ -94,6 +92,7 @@ export declare class RowComp extends Component {
     private onColumnResized;
     private refreshCells;
     private refreshCellsInAnimationFrame;
+    private onColumnMoved;
     private removeRenderedCells;
     private isCellEligibleToBeRemoved;
     private ensureCellInCorrectContainer;

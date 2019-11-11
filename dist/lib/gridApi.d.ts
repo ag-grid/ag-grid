@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -12,11 +9,10 @@ import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
 import { CellPosition } from "./entities/cellPosition";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IFilterComp } from "./interfaces/iFilter";
-import { CsvExportParams } from "./exporter/exportParams";
+import { CsvExportParams } from "./interfaces/exportParams";
 import { ExcelExportParams } from "./interfaces/iExcelCreator";
-import { IDatasource } from "./rowModels/iDatasource";
+import { IDatasource } from "./interfaces/iDatasource";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { RowDataTransaction, RowNodeTransaction } from "./rowModels/clientSide/clientSideRowModel";
 import { AlignedGridsService } from "./alignedGridsService";
 import { AgEvent, ColumnEventType } from "./events";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
@@ -26,6 +22,9 @@ import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import { IToolPanel } from "./interfaces/iToolPanel";
+import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
+import { RowDataTransaction } from "./interfaces/rowDataTransaction";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -49,13 +48,18 @@ export interface GetCellEditorInstancesParams extends GetCellsParams {
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
 }
-export interface ChartRangeParams {
+export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+}
+export interface CreatePivotChartParams {
+    chartType: ChartType;
+    chartContainer?: HTMLElement;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface DetailGridInfo {
     id: string;
@@ -87,7 +91,6 @@ export declare class GridApi {
     private contextMenuFactory;
     private cellRendererFactory;
     private valueCache;
-    private sideBarComp;
     private animationFrameService;
     private statusBarService;
     private chartService;
@@ -95,7 +98,7 @@ export declare class GridApi {
     private gridCore;
     private headerRootComp;
     private clientSideRowModel;
-    private infinitePageRowModel;
+    private infiniteRowModel;
     private serverSideRowModel;
     private detailGridInfoMap;
     registerGridComp(gridPanel: GridPanel): void;
@@ -176,6 +179,7 @@ export declare class GridApi {
     getRowNode(id: string): RowNode;
     expandAll(): void;
     collapseAll(): void;
+    getToolPanelInstance(id: string): IToolPanel;
     addVirtualRowListener(eventName: string, rowIndex: number, callback: Function): void;
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     setQuickFilter(newFilter: any): void;
@@ -237,6 +241,7 @@ export declare class GridApi {
     setPivotHeaderHeight(headerHeight: number): void;
     isSideBarVisible(): boolean;
     setSideBarVisible(show: boolean): void;
+    setSideBarPosition(position: 'left' | 'right'): void;
     showToolPanel(show: boolean): void;
     openToolPanel(key: string): void;
     closeToolPanel(): void;
@@ -264,7 +269,8 @@ export declare class GridApi {
     addRangeSelection(deprecatedNoLongerUsed: any): void;
     addCellRange(params: CellRangeParams): void;
     clearRangeSelection(): void;
-    chartRange(params: ChartRangeParams): ChartRef | undefined;
+    createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
+    createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void;
     copySelectedRangeToClipboard(includeHeader: boolean): void;
     copySelectedRangeDown(): void;

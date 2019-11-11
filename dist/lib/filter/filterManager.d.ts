@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
 import { Column } from "../entities/column";
 import { ColumnEventType } from "../events";
@@ -17,7 +14,6 @@ export declare class FilterManager {
     private columnController;
     private rowModel;
     private eventService;
-    private enterprise;
     private context;
     private columnApi;
     private gridApi;

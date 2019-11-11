@@ -1,27 +1,19 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
-import { ModuleNames } from "../modules/moduleNames";
 export interface ContextParams {
-    seed: any;
-    beans: any[];
+    providedBeanInstances: any;
+    beanClasses: any[];
     components: ComponentMeta[];
-    enterpriseDefaultComponents: any[];
-    overrideBeans: any[];
-    registeredModules: string[];
     debug: boolean;
 }
 export interface ComponentMeta {
-    theClass: new () => Object;
+    componentClass: new () => Object;
     componentName: string;
 }
 export declare class Context {
     private beanWrappers;
     private contextParams;
     private logger;
-    private registeredModules;
     private componentsMappedByName;
     private destroyed;
     constructor(params: ContextParams, logger: ILogger);
@@ -29,6 +21,7 @@ export declare class Context {
     private setupComponents;
     private addComponent;
     createComponentFromElement(element: Element, afterPreCreateCallback?: (comp: Component) => void): Component;
+    createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void): Component;
     wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void;
     private wireBeans;
     private createBeans;
@@ -41,9 +34,7 @@ export declare class Context {
     private lookupBeanInstance;
     private callLifeCycleMethods;
     getBean(name: string): any;
-    getEnterpriseDefaultComponents(): any[];
     destroy(): void;
-    isModuleRegistered(moduleName: ModuleNames): boolean;
 }
 export declare function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;

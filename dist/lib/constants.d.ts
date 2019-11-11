@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
     static STEP_EVERYTHING: number;
     static STEP_FILTER: number;
@@ -49,4 +46,9 @@ export declare class Constants {
     static DOM_LAYOUT_PRINT: string;
     static DOM_LAYOUT_AUTO_HEIGHT: string;
     static GROUP_AUTO_COLUMN_ID: string;
+    static SOURCE_PASTE: string;
+    static PINNED_RIGHT: string;
+    static PINNED_LEFT: string;
+    static SORT_ASC: string;
+    static SORT_DESC: string;
 }

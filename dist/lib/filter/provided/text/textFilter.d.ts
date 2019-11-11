@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams } from "../../../interfaces/iFilter";
 import { SimpleFilter, ConditionPosition, ISimpleFilterParams, ISimpleFilterModel } from "../simpleFilter";
 export interface TextFilterModel extends ISimpleFilterModel {

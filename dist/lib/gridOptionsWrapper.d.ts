@@ -1,16 +1,13 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
-import { ChartRef, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
+import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnApi";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IDatasource } from "./rowModels/iDatasource";
+import { IDatasource } from "./interfaces/iDatasource";
 import { CellPosition } from "./entities/cellPosition";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./exporter/exportParams";
+import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
 import { AgEvent } from "./events";
 import { SideBarDef } from "./entities/sideBar";
 import { ChartOptions } from "./interfaces/iChartOptions";
@@ -34,7 +31,6 @@ export declare class GridOptionsWrapper {
     private gridOptions;
     private columnController;
     private eventService;
-    private enterprise;
     private gridApi;
     private columnApi;
     private environment;
@@ -52,7 +48,6 @@ export declare class GridOptionsWrapper {
     private checkProperties;
     getDomData(element: Node, key: string): any;
     setDomData(element: Element, key: string, value: any): any;
-    isEnterprise(): boolean;
     isRowSelection(): boolean;
     isRowDeselection(): boolean;
     isRowSelectionMulti(): boolean;
@@ -70,11 +65,13 @@ export declare class GridOptionsWrapper {
     isSuppressFocusAfterRefresh(): boolean;
     isSuppressBrowserResizeObserver(): boolean;
     isSuppressMaintainUnsortedOrder(): boolean;
+    isSuppressClearOnFillReduction(): boolean;
     isShowToolPanel(): boolean;
     getSideBar(): SideBarDef;
     isSuppressTouch(): boolean;
     isSuppressRowTransform(): boolean;
     isSuppressSetColumnStateEvents(): boolean;
+    isAllowDragFromColumnsToolPanel(): boolean;
     useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
     isGroupSelectsChildren(): boolean;
@@ -199,6 +196,7 @@ export declare class GridOptionsWrapper {
     isEnableRangeSelection(): boolean;
     isEnableRangeHandle(): boolean;
     isEnableFillHandle(): boolean;
+    getFillOperation(): ((params: FillOperationParams) => any) | undefined;
     isSuppressMultiRangeSelection(): boolean;
     isPaginationAutoPageSize(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
@@ -257,7 +255,7 @@ export declare class GridOptionsWrapper {
     getViewportRowModelBufferSize(): number;
     isServerSideSortingAlwaysResets(): boolean;
     getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined;
-    getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions;
+    getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any>;
     getClipboardDeliminator(): string;
     setProperty(key: string, value: any): void;
     addLayoutElement(element: HTMLElement): void;

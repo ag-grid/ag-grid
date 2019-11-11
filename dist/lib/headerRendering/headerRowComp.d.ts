@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
 import { DropTarget } from "../dragAndDrop/dragAndDropService";
 import { IComponent } from "../interfaces/iComponent";
@@ -32,7 +29,7 @@ export declare class HeaderRowComp extends Component {
     private onGridColumnsChanged;
     private removeAndDestroyAllChildComponents;
     private onDisplayedColumnsChanged;
-    private getItemsAtDept;
+    private getItemsAtDepth;
     private onVirtualColumnsChanged;
     private createHeaderComp;
 }

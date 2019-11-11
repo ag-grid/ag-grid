@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
 export interface CellPosition extends RowPosition {
@@ -8,5 +5,6 @@ export interface CellPosition extends RowPosition {
 }
 export declare class CellPositionUtils {
     createId(cellPosition: CellPosition): string;
+    createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined): string;
     equals(cellA: CellPosition, cellB: CellPosition): boolean;
 }

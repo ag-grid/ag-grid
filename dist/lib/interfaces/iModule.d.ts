@@ -1,13 +1,19 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ComponentMeta } from "../context/context";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
+import { IComponent } from "./iComponent";
+import { IRowModel } from "./iRowModel";
 export interface Module {
     moduleName: string;
     beans?: any[];
-    enterpriseComponents?: any[];
-    enterpriseBeans?: any[];
-    enterpriseDefaultComponents?: {
+    agStackComponents?: ComponentMeta[];
+    userComponents?: {
         componentName: string;
-        theClass: any;
+        componentClass: AgGridRegisteredComponentInput<IComponent<any>>;
     }[];
+    rowModels?: {
+        [name: string]: {
+            new (): IRowModel;
+        };
+    };
+    dependantModules?: Module[];
 }

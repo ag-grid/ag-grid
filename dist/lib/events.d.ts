@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
 import { ColDef } from "./entities/colDef";
@@ -129,7 +126,7 @@ export interface ChartRangeSelectionChanged extends AgGridEvent {
 }
 export interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
-    chartOptions: ChartOptions;
+    chartOptions: ChartOptions<any>;
 }
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: OriginalColumnGroup;
@@ -246,6 +243,7 @@ export interface CellEditingStoppedEvent extends CellEvent {
 export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
     newValue: any;
+    source: string | undefined;
 }
 export interface ColumnRequestEvent extends AgGridEvent {
     columns: Column[];

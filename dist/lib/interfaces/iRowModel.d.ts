@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
 export interface RowBounds {
     rowTop: number;
@@ -23,7 +20,7 @@ export interface IRowModel {
     /** Returns true if the provided rowNode is in the list of rows to render */
     isRowPresent(rowNode: RowNode): boolean;
     /** Returns row top and bottom for a given row */
-    getRowBounds(index: number): RowBounds;
+    getRowBounds(index: number): RowBounds | null;
     /** Returns true if this model has no rows, regardless of model filter. EG if rows present, but filtered
      * out, this still returns false. If it returns true, then the grid shows the 'no rows' overlay - but we
      * don't show that overlay if the rows are just filtered out. */
@@ -48,4 +45,7 @@ export interface IRowModel {
     isLastRowFound(): boolean;
     /** Used by CSRM only - is makes sure there are now estimated row heights within the range. */
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
+    /** Gets called after grid is initialised. What happens depends on row model. Client Side will take rowData
+     * from gridOptions, the other row models will start calling their datasources. */
+    start(): void;
 }

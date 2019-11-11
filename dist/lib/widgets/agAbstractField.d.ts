@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractLabel } from "./agAbstractLabel";
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractField<T> extends AgAbstractLabel {
