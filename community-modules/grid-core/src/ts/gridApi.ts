@@ -41,7 +41,7 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
-import { IChartService } from "./interfaces/IChartService";
+import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
