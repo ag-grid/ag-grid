@@ -510,7 +510,7 @@ export class Utils {
                 return;
             }
 
-            if (typeof oldValue === 'object' && typeof newValue === 'object') {
+            if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
                 Utils.mergeDeep(oldValue, newValue);
             } else if (copyUndefined || newValue !== undefined) {
                 dest[key] = newValue;

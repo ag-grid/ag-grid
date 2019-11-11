@@ -32,6 +32,7 @@ export interface ChartProxyParams {
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartPaletteName: () => ChartPaletteName;
+    allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
 }
 
@@ -52,7 +53,7 @@ export interface UpdateChartParams {
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
     protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
-    protected overriddenPalette: ChartPalette;
+    protected customPalette: ChartPalette;
     protected chartType: ChartType;
     protected chartOptions: TOptions;
 
@@ -97,14 +98,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private overridePalette(chartOptions: TOptions): void {
-        const { fills: defaultFills, strokes: defaultStrokes } = this.getDefaultPalette();
+        if (!this.chartProxyParams.allowPaletteOverride) {
+            return;
+        }
+
+        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
         const { seriesDefaults } = chartOptions;
         const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
-        const fillsOverridden = fills && fills !== defaultFills;
-        const strokesOverridden = strokes && strokes !== defaultStrokes;
+        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
+        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
 
         if (fillsOverridden || strokesOverridden) {
-            this.overriddenPalette = {
+            this.customPalette = {
                 fills: fillsOverridden ? fills : defaultFills,
                 strokes: strokesOverridden ? strokes : defaultStrokes
             };
@@ -113,6 +118,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public getChartOptions(): TOptions {
         return this.chartOptions;
+    }
+
+    public getCustomPalette(): ChartPalette | undefined {
+        return this.customPalette;
     }
 
     public getChartOption<T = string>(expression: string): T {
@@ -271,16 +280,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getDefaultPalette(): ChartPalette {
-        return _.deepCloneObject(palettes.get(this.chartProxyParams.getChartPaletteName()));
+    protected getPredefinedPalette(): ChartPalette {
+        return palettes.get(this.chartProxyParams.getChartPaletteName());
     }
 
     protected getPalette(): ChartPalette {
-        return this.overriddenPalette || this.getDefaultPalette();
+        return this.customPalette || this.getPredefinedPalette();
     }
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.getDefaultPalette();
+        const { fills, strokes } = this.getPredefinedPalette();
 
         return {
             background: {

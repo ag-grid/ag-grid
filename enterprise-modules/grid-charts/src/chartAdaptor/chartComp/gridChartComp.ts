@@ -102,7 +102,7 @@ export class GridChartComp extends Component {
         this.addMenu();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
@@ -138,6 +138,7 @@ export class GridChartComp extends Component {
             chartType,
             processChartOptions: processChartOptionsFunc,
             getChartPaletteName: this.getChartPaletteName.bind(this),
+            allowPaletteOverride: !this.params.chartPaletteName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,

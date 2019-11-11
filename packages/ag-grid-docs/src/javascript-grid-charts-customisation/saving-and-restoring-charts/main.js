@@ -54,9 +54,6 @@ function saveChart() {
     if (chartModels.length > 0) {
         chartModel = chartModels[0];
 
-        chartModel.chartOptions.seriesDefaults.fill.colors = undefined;
-        chartModel.chartOptions.seriesDefaults.stroke.colors = undefined;
-
         if (currentChartRef) {
             currentChartRef.destroyChart();
             currentChartRef = null;

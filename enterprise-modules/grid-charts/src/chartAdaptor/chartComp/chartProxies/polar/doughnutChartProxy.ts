@@ -100,7 +100,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.getDefaultPalette();
+        const { strokes } = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
         options.seriesDefaults = {

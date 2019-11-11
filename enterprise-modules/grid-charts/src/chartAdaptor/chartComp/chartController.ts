@@ -23,7 +23,7 @@ export interface ChartModelUpdatedEvent extends AgEvent {
 }
 
 export class ChartController extends BeanStub {
-    public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
+    public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: IRangeController;
@@ -33,7 +33,7 @@ export class ChartController extends BeanStub {
     private chartProxy: ChartProxy<any, any>;
     private chartPaletteName: ChartPaletteName;
 
-    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName) {
+    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
         super();
 
         this.chartPaletteName = paletteName;
@@ -91,8 +91,24 @@ export class ChartController extends BeanStub {
 
     public getChartType = (): ChartType => this.model.getChartType();
     public isPivotChart = () => this.model.isPivotChart();
-    public getPaletteName = (): ChartPaletteName => this.chartPaletteName;
-    public getPalettes = (): Map<ChartPaletteName, ChartPalette> => palettes;
+
+    public getPaletteName(): ChartPaletteName {
+        return this.chartPaletteName;
+    }
+
+    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
+        const customPalette = this.chartProxy.getCustomPalette();
+
+        if (customPalette) {
+            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
+
+            map.set(undefined, customPalette);
+
+            return map;
+        }
+
+        return palettes;
+    }
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
@@ -165,7 +181,7 @@ export class ChartController extends BeanStub {
 
     private raiseChartUpdatedEvent() {
         const event: ChartModelUpdatedEvent = Object.freeze({
-            type: ChartController.EVENT_CHART_MODEL_UPDATED
+            type: ChartController.EVENT_CHART_UPDATED
         });
 
         this.dispatchEvent(event);

@@ -105,7 +105,7 @@ export class ChartService implements IChartService {
 
     private createChart(cellRange: CellRange,
         chartType: ChartType,
-        chartPaletteName: ChartPaletteName = 'borneo',
+        chartPaletteName?: ChartPaletteName,
         pivotChart = false,
         suppressChartRanges = false,
         container?: HTMLElement,

@@ -17,15 +17,15 @@ export class ChartFormattingPanel extends Component {
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
-        super();
+        super(ChartFormattingPanel.TEMPLATE);
+
         this.chartController = chartController;
     }
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartFormattingPanel.TEMPLATE);
         this.createPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.createPanels.bind(this));
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
     }
 
     private createPanels() {

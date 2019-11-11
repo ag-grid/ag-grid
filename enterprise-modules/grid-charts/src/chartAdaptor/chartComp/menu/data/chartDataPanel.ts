@@ -33,7 +33,7 @@ export class ChartDataPanel extends Component {
     @PostConstruct
     public init() {
         this.addPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.addPanels.bind(this));
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.addPanels.bind(this));
     }
 
     public destroy(): void {
