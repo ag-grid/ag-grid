@@ -70,7 +70,7 @@ gridOptions: {
 
     <note>
         The flex config does <strong>not</strong> work with the <code>width</code> config
-        the both in same column. If you need to provide a base(minimum) width for a column. 
+        in same column. If you need to provide a minimum width for a column. 
         You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
         into account.
     </note>

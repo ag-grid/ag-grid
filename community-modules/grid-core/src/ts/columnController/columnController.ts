@@ -2894,31 +2894,29 @@ export class ColumnController {
         const flexedColumns: Column[] = [];
         const normalColumns: Column[] = [];
 
-        let flexedWithMinTotal: number = 0;
+        let flexedMinWidthTotal: number = 0;
 
-        displayedCenterColumns.forEach((col, idx) => {
+        displayedCenterColumns.forEach(col => {
             if (col.getFlex() === 0) {
                 normalColumns.push(col);
             } else {
                 flexedColumns.push(col);
                 if (col.getMinWidth() > globalMinWidth) {
-                    flexedWithMinTotal += col.getMinWidth();
+                    flexedMinWidthTotal += col.getMinWidth();
                 }
             }
         });
 
-        const flexedLen = flexedColumns.length;
-
-        if (!flexedLen) {
+        if (!flexedColumns.length) {
             this.flexActive = false;
             return;
         }
 
-        const flexCount = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
+        const flexTotal = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
         const normalColumnsWidth = this.getWidthOfColsInList(normalColumns);
 
         const availableSpace = centerViewportWidth - normalColumnsWidth;
-        const availableWithoutMins = availableSpace - flexedWithMinTotal;
+        const availableWithoutMins = availableSpace - flexedMinWidthTotal;
 
         let remainingSpace = availableSpace;
 
@@ -2926,10 +2924,10 @@ export class ColumnController {
 
         const sizes: number[] = [];
 
-        flexedColumns.forEach((col, idx) => {
+        flexedColumns.forEach(col => {
             const flex = col.getFlex();
-            const ratio = Math.round((flex * 100 / flexCount) * 10) / 10;
-            const newWidth = (availableWithoutMins * ratio) / 100;
+            const percent = Math.round((flex * 100 / flexTotal) * 10) / 10;
+            const newWidth = (availableWithoutMins * percent) / 100;
             const minWidth = col.getMinWidth() || globalMinWidth;
             const maxWidth = col.getMaxWidth() || _.getMaxSafeInteger();
 
@@ -2948,7 +2946,7 @@ export class ColumnController {
         let valueToAdd = 0;
 
         if (remainingSpace > 0) {
-            valueToAdd = Math.floor(remainingSpace / flexedLen);
+            valueToAdd = Math.floor(remainingSpace / flexedColumns.length);
         }
 
         flexedColumns.forEach((col, idx) => {
