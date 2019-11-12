@@ -600,13 +600,19 @@
     ////////////////////////////////////////
     // Side Bar
     ////////////////////////////////////////
+
     .ag-side-bar {
         font: $ag-font-chrome;
-        border: 0;
+
+        border-top: none;
+        border-bottom: none;
+        border-left: 1px solid $ag-color-border-primary;
+        border-left: 1px solid $ag-color-border-primary;
 
         .ag-tool-panel-wrapper {
-            border-left: 1px solid $ag-color-border-primary;
-            // border-right: 1px solid $ag-border-color;
+            // this requires !important because it overrides borders set in the base theme
+            // around rtl/ltr styles.
+            border: none!important;
             background-color: $ag-color-background-alt;
 
             .ag-pivot-mode-select {
@@ -1087,11 +1093,6 @@
         }
 
         .ag-side-bar .ag-tool-panel-wrapper {
-            border-left: 0;
-            border-right: 1px solid $ag-color-border-primary;
-        }
-
-        .ag-side-buttons {
             border-left: 0;
             border-right: 1px solid $ag-color-border-primary;
         }
