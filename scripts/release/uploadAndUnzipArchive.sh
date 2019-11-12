@@ -3,7 +3,7 @@
 if [ "$#" -lt 2 ]
   then
     echo "You must supply a release version and archive file"
-    echo "For example: ./scripts/uploadAndUnzipArchive.sh.sh 19.1.2 archive_20181120_19.1.3.zip"
+    echo "For example: ./scripts/release/uploadAndUnzipArchive.sh.sh 19.1.2 archive_20181120_19.1.3.zip"
     exit 1
 fi
 

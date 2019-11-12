@@ -15,7 +15,7 @@ for example in ${examples[@]}; do
     cd "packages/$example"
 
     git checkout master
-    ../../scripts/git-merge-one-way.sh $1
+    ../../scripts/release/git-merge-one-way.sh $1
     cd ../..
 done
 

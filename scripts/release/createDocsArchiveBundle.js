@@ -3,8 +3,8 @@ const fs = require('fs');
 const archiver = require('archiver');
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/createDocsArchiveBundle.js [Version Number]");
-    console.log("For example: node scripts/createDocsArchiveBundle.js 19.1.0");
+    console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number]");
+    console.log("For example: node scripts/release/createDocsArchiveBundle.js 19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }

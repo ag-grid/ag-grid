@@ -11,7 +11,7 @@
     "build": "npm run precheck && gulp && tsc -p tsconfig.typings.json",
     "test": "npm run validate-es5",
     "validate-es5": "eslint dist/cjs",
-    "package": "node ../../common-build/rollup/build.js",
+    "package": "node ../../module-build/rollup/build.js",
     "build-es6": "npx gulp tsc-no-clean-es6",
     "build-cjs": "npx gulp tsc-no-clean-es5",
     "build-docs": "tsc -p tsconfig.docs.json",

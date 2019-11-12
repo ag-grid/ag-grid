@@ -3,7 +3,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"
-    echo "For example: ./scripts/createDocsReleaseBundle.sh 19.1.2"
+    echo "For example: ./scripts/release/createDocsReleaseBundle.sh 19.1.2"
     exit 1
 fi
 
@@ -17,7 +17,7 @@ cd packages/ag-grid-docs
 npx gulp release-archive
 cd ../../
 
-OUTPUT=$(node scripts/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
+OUTPUT=$(node scripts/release/createDocsArchiveBundle.js $RAW_VERSION | tee /dev/tty)
 ARCHIVE_FILENAME=`echo $OUTPUT | sed 's/.*Archive Complete://'`
 
 echo "Archive Created: $ARCHIVE_FILENAME"

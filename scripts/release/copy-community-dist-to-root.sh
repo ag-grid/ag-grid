@@ -12,4 +12,4 @@ cp packages/ag-grid-community/main.d.ts .
 cp packages/ag-grid-community/main.js .
 cp packages/ag-grid-community/bower.json .
 
-node ./scripts/versionPackageJson.js $1
+node ./scripts/release/versionPackageJson.js $1

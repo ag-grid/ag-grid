@@ -7,8 +7,8 @@ const PACKAGE_DIRS = ['packages', 'community-modules', 'enterprise-modules'];
 const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length !== 4) {
-    console.log("Usage: node scripts/versionModules.js [New Version] [Dependency Version]");
-    console.log("For example: node scripts/versionModules.js 19.1.0 ^19.1.0");
+    console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version]");
+    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }

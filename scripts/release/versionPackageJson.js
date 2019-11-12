@@ -2,8 +2,8 @@
 const fs = require('fs');
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/versionPackageJson.js [New Version]");
-    console.log("For example: node scripts/versionPackageJson.js 19.1.2");
+    console.log("Usage: node scripts/release/versionPackageJson.js [New Version]");
+    console.log("For example: node scripts/release/versionPackageJson.js 19.1.2");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }

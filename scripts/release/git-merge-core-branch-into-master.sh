@@ -8,5 +8,5 @@ if [ "$#" -ne 1 ]
 fi
 
 git checkout master
-./scripts/git-merge-one-way.sh $1
+./scripts/release/git-merge-one-way.sh $1
 

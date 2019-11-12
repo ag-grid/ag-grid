@@ -6,11 +6,13 @@ const GIT_IGNORE = '.gitignore';
 function updateGitIgnore() {
     const contents = fs.readFileSync(GIT_IGNORE, 'utf8');
     const index = contents.indexOf("# latest only")
-    const newGitIgnoreContents = contents.substring(0, index);
+    if(index !== -1) {
+        const newGitIgnoreContents = contents.substring(0, index);
 
-    fs.writeFileSync(GIT_IGNORE,
-        newGitIgnoreContents,
-        "utf8");
+        fs.writeFileSync(GIT_IGNORE,
+            newGitIgnoreContents,
+            "utf8");
+    }
 }
 
 updateGitIgnore();

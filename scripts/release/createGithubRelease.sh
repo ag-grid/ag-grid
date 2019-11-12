@@ -3,7 +3,7 @@
 if [ "$#" -ne 3 ]
   then
     echo "You must supply a Github repo to release (owner/repo), github username and release version"
-    echo "For example: ./scripts/createGithubRelease.sh ag-grid/ag-grid seanlandsman 20.0.0"
+    echo "For example: ./scripts/release/createGithubRelease.sh ag-grid/ag-grid seanlandsman 20.0.0"
     exit 1
 fi
 

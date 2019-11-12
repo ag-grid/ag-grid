@@ -3,7 +3,7 @@ const fs=require('fs')
 const LICENSE_MANAGER_FILE='enterprise-modules/grid-core/src/licenseManager.ts';
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node scripts/updateLicenseManager.js NEW_LICENSE");
+    console.log("Usage: node scripts/release/updateLicenseManager.js NEW_LICENSE");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }

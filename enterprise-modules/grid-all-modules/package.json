@@ -18,15 +18,12 @@
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node rollup/build.js",
     "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.es5.json",
-    "test:e2e": "npm run webdriver-start && npm run ci || npm run webdriver-kill",
+    "test:e2e": "start-server-and-test 'http-server -c-1 --silent .' http://localhost:8080 e2e",
     "e2e": "protractor protractor.conf.js",
     "e2e:debug": " node --inspect-brk ./node_modules/.bin/protractor protractor.conf.js",
     "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
-    "webdriver-stop": "webdriver-manager shutdown",
     "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')",
     "update-webdriver": "webdriver-manager update --gecko false",
-    "start-server": "http-server .",
-    "ci": "start-server-and-test start-server http://localhost:8080 e2e",
     "validate-es5": "eslint dist/lib"
   },
   "repository": {
