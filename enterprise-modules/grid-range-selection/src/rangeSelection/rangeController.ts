@@ -467,8 +467,12 @@ export class RangeController implements IRangeController {
     public isLastCellOfRange(cellRange: CellRange, cell: CellPosition) {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
+        const { startRow, endRow } = cellRange;
+        const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        const isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions)
+        const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
 
-        return allColumns.indexOf(cell.column) === _.last(allPositions) && cell.rowIndex === Math.max(cellRange.startRow.rowIndex, cellRange.endRow.rowIndex);
+        return isLastColumn && isLastRow;
     }
 
     // returns the number of ranges this cell is in
