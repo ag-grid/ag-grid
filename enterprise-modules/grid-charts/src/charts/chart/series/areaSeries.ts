@@ -356,8 +356,8 @@ export class AreaSeries extends Series<CartesianChart> {
                         yKey,
                         x,
                         y,
-                        fill: fills[j % fills.length],
-                        stroke: strokes[j % strokes.length],
+                        fill: marker.fill || fills[j % fills.length],
+                        stroke: marker.stroke || strokes[j % strokes.length],
                         size: markerSize,
                         text: this.yNames[j]
                     });

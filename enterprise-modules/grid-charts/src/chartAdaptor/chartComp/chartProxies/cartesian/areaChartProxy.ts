@@ -92,9 +92,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.yKeys = [f.colId];
                 areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
-                areaSeries.marker.fill = fill;
                 areaSeries.strokes = [stroke];
-                areaSeries.marker.stroke = stroke;
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
                 const options: InternalAreaSeriesOptions = {

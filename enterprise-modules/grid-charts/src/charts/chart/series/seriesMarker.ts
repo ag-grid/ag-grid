@@ -1,6 +1,5 @@
 import { Marker } from "../marker/marker";
 import { Observable, reactive } from "../../util/observable";
-import palette from "../palettes";
 
 export class SeriesMarker extends Observable {
     /**
@@ -23,8 +22,8 @@ export class SeriesMarker extends Observable {
     @reactive(['style']) xOffset = 0;
     @reactive(['style']) yOffset = 0;
 
-    @reactive(['style', 'legend']) fill?: string = palette.fills[0];
-    @reactive(['style', 'legend']) stroke?: string = palette.strokes[0]; // Color.fromString(value).darker().toHexString();
+    @reactive(['style', 'legend']) fill?: string;
+    @reactive(['style', 'legend']) stroke?: string;
 
     @reactive(['style']) strokeWidth?: number;
     @reactive(['style', 'legend']) fillOpacity = 1;

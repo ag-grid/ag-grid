@@ -328,7 +328,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     },
                     marker: {
                         padding: 8,
-                        size: 14,
+                        size: 15,
                         strokeWidth: 1,
                     },
                     paddingX: 16,
