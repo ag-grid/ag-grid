@@ -64,19 +64,17 @@ function printFeature($item, $indent)
 }
 ?>
 
-<h1 class="first-h1">ag-Grid Modules</h1>
+<h1 class="heading-enterprise">ag-Grid Modules</h1>
 
 <p class="lead">
     Version 22.0.0 changes the way ag-Grid is made available by providing functionality in modules, allowing you to
     pick and choose which features you require, resulting in a smaller application size overall.
 </p>
 
-<note>If you use the UMD versions of ag-Grid (<code>ag-grid-community.js</code> or <code>ag-grid-enterprise.js</code>)
-    then the
-    application size will remain the same and all modules will automatically be included and the following documentation
-    does not apply.
-</note>
-
+<note><p>The <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages have now been deprecated (but still supported
+        for the time being).</p>
+    The documentation on this page should be read, but for a quick how-to migration please see the <a href="#migrating-to-modules">Migration</a>
+    section for more information.</note>
 <h2>Introduction</h2>
 
 <p>
@@ -84,16 +82,8 @@ function printFeature($item, $indent)
     and all Enterprise functionality in another dependency (<code>ag-grid-enterprise</code>).
 </p>
 
-
-<p>
-    Since version 22.0.0, ag-Grid can be consumed by just including the feature modules required, which should result in smaller overall application sizes.    
-</p>
-
-<note>
-    The introduction of modules in version 22.0.0 is a significant first step towards reducing the size of ag-Grid inside applications. As most of the new modules 
-    cover enterprise features, community users should not expect to see a size reduction right away. However, in the coming releases, we will strive to reduce
-    the size of the community-core module by splitting it out into separate community modules.
-</note>
+<p>With Version 22.0.0 the ag-Grid can now be consumed by feature module which will result in a resulting in a smaller
+    application size overall.</p>
 
 <h2>Modules</h2>
 
@@ -129,70 +119,227 @@ function printFeature($item, $indent)
 <ol>
     <li>Specify the Grid Modules you wish to import:</li>
 
-<snippet>
-// pull in all community modules
-"dependencies": {
-    "@ag-grid-community/all-modules": "22.0.0"
-}
+    <snippet>
+        // pull in all community modules
+        "dependencies": {
+        "@ag-grid-community/all-modules": "22.0.0"
+        }
 
-// or just specify the minimum you need - in this case we're choosing the Client Side Row Model
+        // or just specify the minimum you need - in this case we're choosing the Client Side Row Model
 
-"dependencies": {
-    "@ag-grid-community/client-side-row-model": "22.0.0"
-}
-</snippet>
+        "dependencies": {
+        "@ag-grid-community/client-side-row-model": "22.0.0"
+        }
+    </snippet>
 
     <p>Note that if you specify an Enterprise module you do not need to specify Community module(s) unless you require them.
-    For example if you use the <code>ServerSideRowModelModule</code> then you only need to specify
+        For example if you use the <code>ServerSideRowModelModule</code> then you only need to specify
         <span style="white-space: nowrap"><code>@ag-grid-enterprise/server-side-row-model</code></span>
-    as a dependency.</p>
+        as a dependency.</p>
 
     <li>Import the module(s) you need</li>
-<snippet>
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    <snippet>
+        import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
-// or if using ag-Grid Enterprise
-import {AllModules} from '@ag-grid-enterprise/all-modules';
+        // or if using ag-Grid Enterprise
+        import {AllModules} from '@ag-grid-enterprise/all-modules';
 
-// or if choosing individual modules
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-</snippet>
+        // or if choosing individual modules
+        import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+    </snippet>
 
     <li>Provide the module(s) to the Grid</li>
+    <snippet>
+        // Javascript
+        new Grid(&lt;dom element&gt;, gridOptions, { modules: AllModules});
+        // or if choosing individual modules
+        new Grid(&lt;dom element&gt;, gridOptions, { modules: [ClientSideRowModelModule]});
+
+        // Angular
+        public modules: Module[] = AllModules;
+        // or if choosing individual modules
+        public modules: Module[] = [ClientSideRowModelModule];
+
+        &lt;ag-grid-angular&gt;
+        [rowData]="rowData"
+        [columnDefs]="columnDefs"
+        [modules]="modules"
+        &lt;/ag-grid-angular&gt;
+
+        // React
+        &lt;ag-grid-react&gt;
+        rowData={rowData}
+        columnDefs={columnDefs}
+        modules={AllModules}
+        &lt;/ag-grid-react&gt;
+        // or if choosing individual modules
+        &lt;ag-grid-react&gt;
+        rowData={rowData}
+        columnDefs={columnDefs}
+        modules={[ClientSideRowModelModule]}
+        &lt;/ag-grid-react&gt;
+
+        // Vue
+        data() {
+        return {
+        columnDefs: ...column defs...,
+        rowData: ....row data...,
+        modules: AllModules
+        }
+        }
+        &lt;ag-grid-vue
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :modules="modules"&gt;
+        &lt;/ag-grid-vue&gt;
+
+        // or if choosing individual modules
+        data() {
+        return {
+        columnDefs: ...column defs...,
+        rowData: ....row data...,
+        modules: [ClientSideRowModelModule]
+        }
+        }
+        &lt;ag-grid-vue
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+        :modules="modules"&gt;
+        &lt;/ag-grid-vue&gt;
+
+    </snippet>
+</ol>
+
+<h2 id="migrating-to-modules">Migrating</h2>
+<p>This section documents how to quickly migrate from the deprecated <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
+    to the new modular based one.</p>
+
+<p>In versions 21.x and before you would have needed to referenced the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>
+    packages in <code>package.json</code>:</p>
 <snippet>
-// Javascript
-new Grid(&lt;dom element&gt;, gridOptions, { modules: AllModules});
-// or if choosing individual modules
-new Grid(&lt;dom element&gt;, gridOptions, { modules: [ClientSideRowModelModule]});
+    "dependencies": {
+    "ag-grid-community": "21.0.0",
+    "ag-grid-enterprise": "21.0.0"
+    }
+</snippet>
 
-// Angular
-public modules: Module[] = AllModules;
-// or if choosing individual modules
-public modules: Module[] = [ClientSideRowModelModule];
+<p>And then import the <code>ag-grid-enterprise</code> package if using Enterprise features:</p>
 
-&lt;ag-grid-angular&gt;
+<snippet>import "ag-grid-enterprise";</snippet>
+
+<p>For Version 22.x onwards you need to update your <code>package.json</code> to reference the new module base package,
+    depending on the feature set you require (note you no longer need to specify both Community and Enterprise - just the one will do):</p>
+<snippet>
+    "dependencies": {
+    "@ag-grid-community/all-modules": "22.0.0"
+    }
+
+    // or, if using Enterprise features
+    "dependencies": {
+    "@ag-grid-enterprise/all-modules": "22.0.0"
+    }
+</snippet>
+
+<p>You then need to import the modules exported by each package:</p>
+
+<snippet>
+    import {AllCommunityModules} from "@ag-grid-community/all-modules";
+
+    // or, if using Enterprise features
+    import {AllModules} from "@ag-grid-enterprise/all-modules";
+</snippet>
+
+<p>You'll now need to supply the modules used to the Grid:</p>
+
+<snippet>
+    // Javascript
+    new Grid(&lt;dom element&gt;, gridOptions, { modules: AllCommunityModules});
+
+    // Angular
+    public modules: Module[] = AllCommunityModules;
+
+    &lt;ag-grid-angular&gt;
     [rowData]="rowData"
     [columnDefs]="columnDefs"
     [modules]="modules"
-&lt;/ag-grid-angular&gt;
+    &lt;/ag-grid-angular&gt;
 
-// React
-&lt;ag-grid-react&gt;
+    // React
+    &lt;ag-grid-react&gt;
+    rowData={rowData}
+    columnDefs={columnDefs}
+    modules={AllCommunityModules}
+    &lt;/ag-grid-react&gt;
+
+    // Vue
+    data() {
+    return {
+    columnDefs: ...column defs...,
+    rowData: ....row data...,
+    modules: AllCommunityModules
+    }
+    }
+    &lt;ag-grid-vue
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
+    &lt;/ag-grid-vue&gt;
+
+    // --------------------------------
+    // or, if using Enterprise features
+    // --------------------------------
+
+    // Javascript
+    new Grid(&lt;dom element&gt;, gridOptions, { modules: AllModules});
+
+    // Angular
+    public modules: Module[] = AllModules;
+
+    &lt;ag-grid-angular&gt;
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [modules]="modules"
+    &lt;/ag-grid-angular&gt;
+
+    // React
+    &lt;ag-grid-react&gt;
     rowData={rowData}
     columnDefs={columnDefs}
     modules={AllModules}
-&lt;/ag-grid-react&gt;
-// or if choosing individual modules
-&lt;ag-grid-react&gt;
-    rowData={rowData}
-    columnDefs={columnDefs}
-    modules={[ClientSideRowModelModule]}
-&lt;/ag-grid-react&gt;
-</snippet>
-</ol>
-<p>
-    Each of the <a href="../javascript-grid-getting-started/">Getting Started</a> guides gives step by step instructions
-    on how to get started using ag-Grid for each framework in question. In most cases, you do one of the following:
-</p>
+    &lt;/ag-grid-react&gt;
 
+    // Vue
+    data() {
+    return {
+    columnDefs: ...column defs...,
+    rowData: ....row data...,
+    modules: AllModules
+    }
+    }
+    &lt;ag-grid-vue
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
+    &lt;/ag-grid-vue&gt;
+</snippet>
+
+<p>Finally, you'll need to update the paths of CSS or SCSS that you reference:</p>
+
+<snippet>
+    // CSS Community
+    import "./node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+    import "./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+    // or, if using Enterprise features
+    import "./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+    import "./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+
+    // SCSS Community
+    @import "./node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+    @import "./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+
+    // or, if using Enterprise features
+    @import "./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.scss";
+    @import "./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+</snippet>
 <?php include '../documentation-main/documentation_footer.php'; ?>
