@@ -175,7 +175,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     <snippet>
 var groupColumn = {
     headerName: "Group",
-    comparator: [yourOwnComparator], // this is the important bit
+    comparator: yourOwnComparator, // this is the important bit
     cellRenderer: {
         renderer: "agGroupCellRenderer",
     }
