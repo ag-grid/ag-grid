@@ -11,7 +11,7 @@ import {SortType} from "./constants";
 @Bean('sortController')
 export class SortController {
 
-    private static DEFAULT_SORTING_ORDER: Array<SortType | null> = [SortType.ASC, null];
+    private static DEFAULT_SORTING_ORDER: Array<SortType | null> = [SortType.ASC, SortType.DESC, null];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
