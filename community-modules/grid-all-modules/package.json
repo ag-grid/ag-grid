@@ -58,6 +58,7 @@
     "gulp-typescript": "^5.0.1"
   },
   "devDependencies": {
+    "http-server": "^0.11.1",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "typescript": "^3.6.3",
