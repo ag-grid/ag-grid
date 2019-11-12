@@ -435,6 +435,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public paginateChildRows : any = undefined;
     @Input() public preventDefaultOnContextMenu : any = undefined;
     @Input() public undoRedoCellEditing : any = undefined;
+    @Input() public allowDragFromColumnsToolPanel : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
