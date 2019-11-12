@@ -119,7 +119,7 @@ export class SortController {
             colId: column.getColId(),
             sort: column.getSort()
         }));
-    }
+    };
 
     public setSortModel(sortModel: any, source: ColumnEventType = "api") {
         // first up, clear any previous sort
