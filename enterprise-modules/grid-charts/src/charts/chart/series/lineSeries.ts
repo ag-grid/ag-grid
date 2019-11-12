@@ -231,10 +231,6 @@ export class LineSeries extends Series<CartesianChart> {
         } = this;
 
         const linePath = lineNode.path;
-        const markerSize = marker.size;
-        const markerFill = fill;
-        const markerStroke = stroke;
-        const markerStrokeWidth = marker.strokeWidth;
 
         linePath.clear();
 
@@ -256,10 +252,10 @@ export class LineSeries extends Series<CartesianChart> {
                     seriesDatum: data[i],
                     x,
                     y,
-                    fill: markerFill,
-                    stroke: markerStroke,
-                    strokeWidth: markerStrokeWidth || 1,
-                    size: markerSize
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
+                    strokeWidth: marker.strokeWidth || 1,
+                    size: marker.size
                 });
             }
         });

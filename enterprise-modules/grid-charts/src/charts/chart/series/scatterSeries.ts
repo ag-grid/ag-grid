@@ -50,8 +50,8 @@ export class ScatterSeries extends Series<CartesianChart> {
         fill?: string,
         stroke?: string
     } = {
-        fill: 'yellow'
-    };
+            fill: 'yellow'
+        };
 
     @reactive(['layout']) title?: string;
     @reactive(['data']) xKey: string = '';
@@ -165,7 +165,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeData,
             sizeScale,
             marker,
-            highlightedNode
+            highlightedNode,
         } = this;
 
         const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
