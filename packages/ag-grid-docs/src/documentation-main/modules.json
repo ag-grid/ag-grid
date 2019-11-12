@@ -21,19 +21,23 @@
   },
   {
     "title": "Angular Support",
-    "module": "@ag-grid-community/angular"
+    "module": "@ag-grid-community/angular",
+    "framework": true
   },
   {
     "title": "React Support",
-    "module": "@ag-grid-community/react"
+    "module": "@ag-grid-community/react",
+    "framework": true
   },
   {
     "title": "Vue Suport",
-    "module": "@ag-grid-community/vue"
+    "module": "@ag-grid-community/vue",
+    "framework": true
   },
   {
     "title": "Polymer Support",
-    "module": "@ag-grid-community/polymer"
+    "module": "@ag-grid-community/polymer",
+    "framework": true
   },
   {
     "title": "All Community & Enterprise Modules",

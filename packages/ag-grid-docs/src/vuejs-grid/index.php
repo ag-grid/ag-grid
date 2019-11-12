@@ -110,7 +110,8 @@ The grid ships several different themes; pick one that matches your project desi
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
-                 :rowData="rowData"&gt;
+                 :rowData="rowData"
+                 :modules="modules"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 </snippet>
@@ -121,13 +122,15 @@ The grid ships several different themes; pick one that matches your project desi
 <snippet>
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
         data() {
             return {
                 columnDefs: null,
-                rowData: null
+                rowData: null,
+                modules: [AllCommunityModules]
             }
         },
         components: {
@@ -150,7 +153,14 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/script&gt;
 </snippet>
 </section>
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+        <strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the <a href="../javascript-grid-modules">modules</a>
+    we wish to use.</p>
+<p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+    modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+    version of ag-Grid.</p>
+
+<p>In our case, the column definitions contain three columns;
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
@@ -239,12 +249,14 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
+                 :modules="modules"
                  rowSelection="multiple"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
@@ -283,6 +295,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
              class="ag-theme-balham"
              :columnDefs="columnDefs"
              :rowData="rowData"
+             :modules="modules"
 
              rowSelection="multiple"&gt;
 &lt;/ag-grid-vue&gt;
@@ -307,6 +320,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
+                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -316,6 +330,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
@@ -405,6 +420,7 @@ beforeMount() {
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
+                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -414,6 +430,7 @@ beforeMount() {
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',

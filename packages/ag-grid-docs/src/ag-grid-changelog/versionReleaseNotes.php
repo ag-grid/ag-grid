@@ -45,6 +45,10 @@
             AG-1026	- Allow sidebar to be placed in the left or right position of the grid
             (see <a href="/javascript-grid-side-bar/#sidebardef-configuration">Side Bar Configuration</a>).
         </li>
+        <li>
+            AG-907 - Rollup Support Added
+            (see <a href="/ag-grid-building-rollup/">Rollup</a>).
+        </li>
     </ul>
 
     <p>Breaking Changes:</p>

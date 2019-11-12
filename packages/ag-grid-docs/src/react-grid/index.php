@@ -57,6 +57,8 @@ npm install --save @ag-grid-enterprise/all-modules @ag-grid-community/react
 import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
@@ -95,7 +97,8 @@ class App extends Component {
       &gt;
         &lt;AgGridReact
           columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}&gt;
+          rowData={this.state.rowData}
+          modules={[AllCommunityModules]}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );
@@ -110,36 +113,45 @@ export default App;</code></pre>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
 // or, if using Enterprise features
 // import '@@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
 // import '@@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';</code></pre>
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+<p>The three lines above import the <code>AgGridReact</code> component, the modules we wish to use, the grid "structure"
+    stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
 </p>
 </section>
-  The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
+    <p><p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+        modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+        version of ag-Grid.</p>
+    </p>
+  <p>The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design.
+    You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
   <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
   <snippet language="jsx">
 constructor(props) {
-super(props);
-this.state = {
-  columnDefs: [{
-    headerName: "Make", field: "make"
-  }, {
-    headerName: "Model", field: "model"
-  },{
-    headerName: "Price", field: "price"
-  }],
-  rowData: [{
-    make: "Toyota", model: "Celica", price: 35000
-  },{
-    make: "Ford", model: "Mondeo", price: 32000
-  },{
-    make: "Porsche", model: "Boxter", price: 72000
-  }]
+    super(props);
+    this.state = {
+      columnDefs: [{
+        headerName: "Make", field: "make"
+      }, {
+        headerName: "Model", field: "model"
+      },{
+        headerName: "Price", field: "price"
+      }],
+      rowData: [{
+        make: "Toyota", model: "Celica", price: 35000
+      },{
+        make: "Ford", model: "Mondeo", price: 32000
+      },{
+        make: "Porsche", model: "Boxter", price: 72000
+      }]
+  }
 }
   </snippet>
 </section>
@@ -151,7 +163,8 @@ each column entry specifies the header label and the data field to be displayed 
 <pre class="language-jsx" ng-non-bindable><code>&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
-        rowData={this.state.rowData}&gt;
+        rowData={this.state.rowData}
+        modules={[AllCommunityModules]}&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;</code></pre>
 </section>

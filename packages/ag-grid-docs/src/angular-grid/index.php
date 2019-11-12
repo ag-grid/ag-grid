@@ -118,6 +118,7 @@ The grid ships several different themes; pick one that matches your project desi
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 import { Component } from '@angular/core';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -125,8 +126,6 @@ import { Component } from '@angular/core';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make' },
         {headerName: 'Model', field: 'model' },
@@ -138,12 +137,22 @@ export class AppComponent {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
+
+    modules = AllCommunityModules;
 }
 </snippet>
 </section>
 
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
-each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
+<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+<strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the modules we
+    wish to use (<code>modules</code>). </p>
+
+<p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+version of ag-Grid.</p>
+
+<p>In our example the column definitions contain three columns; each column entry specifies the header label and the data
+    field to be displayed in the body of the table.</p>
 
 <p>Finally, let's add the component definition to our template. Edit <code>app/app.component.html</code> and remove the scaffold code:</p>
 <section>
@@ -154,7 +163,7 @@ each column entry specifies the header label and the data field to be displayed 
     class="ag-theme-balham"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
-    &gt;
+    [modules]="modules"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -261,6 +270,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>The above code turns the <code>rowData</code> from a hard-coded array to an <code>Observable</code>. For the grid to work with it, we need to add an async pipe to the property:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -320,6 +330,7 @@ export class AppComponent implements OnInit {
 <p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple
         row selection</a>, so that the user can pick many rows:</p>
 <section>
+
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -352,6 +363,7 @@ export class AppComponent implements OnInit {
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
+
 <p>Now let's make the instance accessible in our component:</p> 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -405,6 +417,7 @@ export class AppComponent implements OnInit {
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
+
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
@@ -447,6 +460,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
@@ -469,6 +483,7 @@ ngOnInit() {
 </snippet>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
+</section>
 
 <p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property and change the <code>columnDefs</code> to the following:</p>
 <section>
@@ -512,6 +527,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p> 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -574,5 +590,4 @@ While doing so, we learned how to configure the grid, how to access its API obje
         (amongst others) rich grids, filtering with angular components and master/detail.
     </p>
 </note>
-
 <?php include '../documentation-main/documentation_footer.php'; ?>
