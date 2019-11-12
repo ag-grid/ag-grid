@@ -64,7 +64,18 @@ export class Constants {
     static PINNED_RIGHT = 'right';
     static PINNED_LEFT = 'left';
 
+    /**
+     * @deprecated
+     */
     static SORT_ASC = 'asc';
+    /**
+     * @deprecated
+     */
     static SORT_DESC = 'desc';
 
+}
+
+export enum SortType {
+    ASC = 'asc',
+    DESC = 'desc',
 }

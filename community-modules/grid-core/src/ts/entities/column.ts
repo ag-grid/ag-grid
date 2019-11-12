@@ -22,7 +22,7 @@ import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 import {ColumnGroup} from "./columnGroup";
 import {OriginalColumnGroup} from "./originalColumnGroup";
-import {Constants} from "../constants";
+import {Constants, SortType} from "../constants";
 import {ModuleNames} from "../modules/moduleNames";
 import {ModuleRegistry} from "../modules/moduleRegistry";
 
@@ -83,7 +83,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private left: number;
     private oldLeft: number;
     private aggFunc: string | IAggFunc | null;
-    private sort: string;
+    private sort: SortType;
     private sortedAt: number;
     private moving = false;
     private menuVisible = false;
@@ -434,11 +434,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.moving;
     }
 
-    public getSort(): string {
+    public getSort(): SortType {
         return this.sort;
     }
 
-    public setSort(sort: string | null | undefined, source: ColumnEventType = "api"): void {
+    public setSort(sort: SortType | null | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
@@ -457,11 +457,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isSortAscending(): boolean {
-        return this.sort === Constants.SORT_ASC;
+        return this.sort === SortType.ASC;
     }
 
     public isSortDescending(): boolean {
-        return this.sort === Constants.SORT_DESC;
+        return this.sort === SortType.DESC;
     }
 
     public isSortNone(): boolean {

@@ -83,6 +83,7 @@ import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartOptions, ChartType, ChartMenuOptions } from "../interfaces/iChartOptions";
+import { SortType } from "../constants";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -120,7 +121,7 @@ export interface GridOptions {
     suppressCellSelection?: boolean;
     suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
-    sortingOrder?: string[];
+    sortingOrder?: SortType[];
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;

@@ -10,6 +10,7 @@ import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
+import { SortType } from "../constants";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -79,13 +80,13 @@ export interface ColDef extends AbstractColDef {
     colId?: string;
 
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
-    sort?: string;
+    sort?: SortType;
 
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: string[] | null;
+    sortingOrder?: SortType[] | null;
 
     /** The field of the row to get the cells data from */
     field?: string;

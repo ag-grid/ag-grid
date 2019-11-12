@@ -19,10 +19,10 @@ import {
 } from "./entities/gridOptions";
 import { _ } from "./utils";
 import { EventService } from "./eventService";
-import { Constants } from "./constants";
+import {Constants, SortType} from "./constants";
 import { ComponentUtil } from "./components/componentUtil";
 import { GridApi } from "./gridApi";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./entities/colDef";
 import { Autowired, Bean, Context, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
@@ -879,7 +879,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.aggFuncs;
     }
 
-    public getSortingOrder(): string[] | undefined {
+    public getSortingOrder(): SortType[] | undefined {
         return this.gridOptions.sortingOrder;
     }
 

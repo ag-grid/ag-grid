@@ -27,7 +27,7 @@ import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { TouchListener } from "../../widgets/touchListener";
 import { _ } from "../../utils";
-import {Constants} from "../../constants";
+import {Constants, SortType} from "../../constants";
 
 export class HeaderWrapperComp extends Component {
 
@@ -143,7 +143,7 @@ export class HeaderWrapperComp extends Component {
             progressSort: (multiSort?:boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
-            setSort: (sort: string, multiSort?: boolean) => {
+            setSort: (sort: SortType, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,

@@ -6,12 +6,12 @@ import { ColumnController } from "./columnController/columnController";
 import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
-import {Constants} from "./constants";
+import {SortType} from "./constants";
 
 @Bean('sortController')
 export class SortController {
 
-    private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
+    private static DEFAULT_SORTING_ORDER: Array<SortType | null> = [SortType.ASC, null];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -24,10 +24,10 @@ export class SortController {
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
+    public setSortForColumn(column: Column, sort: SortType | null, multiSort: boolean, source: ColumnEventType = "api"): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
+        if (sort !== SortType.ASC && sort !== SortType.DESC) {
             sort = null;
         }
 
@@ -78,9 +78,9 @@ export class SortController {
         });
     }
 
-    private getNextSortDirection(column: Column): string | null {
+    private getNextSortDirection(column: Column): SortType | null {
 
-        let sortingOrder: (string | null)[] | null | undefined;
+        let sortingOrder: (SortType | null)[] | null | undefined;
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -97,7 +97,7 @@ export class SortController {
         const currentIndex = sortingOrder.indexOf(column.getSort());
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: string | null;
+        let result: SortType | null;
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -171,7 +171,7 @@ export class SortController {
     // used by row controller, when doing the sorting
     public getSortForRowController(): any[] {
         return this.getColumnsWithSortingOrdered().map(column => {
-            const isAscending = column.getSort() === Constants.SORT_ASC;
+            const isAscending = column.getSort() === SortType.ASC;
 
             return {
                 inverter: isAscending ? 1 : -1,
