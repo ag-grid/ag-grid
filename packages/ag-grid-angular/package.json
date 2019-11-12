@@ -8,13 +8,10 @@
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && npm run clean && npm run build-no-verify && npm run verify-properties",
-    "build-no-verify": "ngc -p tsconfig-src.json && npm run clean-src && gulp",
-    "clean-src": "rimraf src/*.d.ts src/*.js*",
+    "build": "npm run precheck && npm run clean && npm run ngc-build && npm run verify-properties",
+    "ngc-build": "ngc -p tsconfig-src.json && gulp",
     "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
-    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
-    "clean-build": "npm run clean && npm run build",
-    "release": "npm run update-properties && npm run clean-build"
+    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main"
   },
   "repository": {
     "type": "git",
