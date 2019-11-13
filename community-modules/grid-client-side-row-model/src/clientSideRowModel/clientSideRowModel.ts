@@ -765,26 +765,21 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
     private executeBatchUpdateRowData(): void {
         this.valueCache.onDataChanged();
-        
-        if (!this.rowDataTransactionBatch) { return; }
 
         const callbackFuncsBound: Function[] = [];
+        const rowNodeTrans: (RowNodeTransaction | null)[] = [];
 
-        const mergedTransaction: RowNodeTransaction = {
-            remove: [],
-            update: [],
-            add: []
-        };
-        this.rowDataTransactionBatch.forEach(tranItem => {
-            _.pushAll(mergedTransaction.remove, tranItem.rowDataTransaction.remove);
-            _.pushAll(mergedTransaction.update, tranItem.rowDataTransaction.update);
-            _.pushAll(mergedTransaction.add, tranItem.rowDataTransaction.add);
-            if (tranItem.callback) {
-                callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
-            }
-        });
-        const rowNodeTran = this.nodeManager.updateRowData(mergedTransaction, null);
-        this.commonUpdateRowData(rowNodeTran);
+        if (this.rowDataTransactionBatch) {
+            this.rowDataTransactionBatch.forEach(tranItem => {
+                const rowNodeTran = this.nodeManager.updateRowData(tranItem.rowDataTransaction, null);
+                rowNodeTrans.push(rowNodeTran);
+                if (tranItem.callback) {
+                    callbackFuncsBound.push(tranItem.callback.bind(null, rowNodeTran));
+                }
+            });
+        }
+
+        this.commonUpdateRowData(rowNodeTrans);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -800,16 +795,16 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         const rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
-        this.commonUpdateRowData(rowNodeTran, rowNodeOrder);
+        this.commonUpdateRowData([rowNodeTran], rowNodeOrder);
 
         return rowNodeTran;
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction, rowNodeOrder?: { [id: string]: number }): void {
+    private commonUpdateRowData(rowNodeTrans: (RowNodeTransaction | null)[], rowNodeOrder?: { [id: string]: number }): void {
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
-            rowNodeTransactions: [rowNodeTrans],
+            rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
