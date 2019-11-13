@@ -63,7 +63,7 @@ export class MenuList extends Component {
         });
 
         cMenuItem.addGuiEventListener('mouseenter', this.mouseEnterItem.bind(this, menuItemDef, cMenuItem));
-        cMenuItem.addGuiEventListener('mouseleave', () => this.timerCount++);
+        cMenuItem.addGuiEventListener('mouseleave', this.mouseLeaveItem.bind(this));
     }
 
     private mouseEnterItem(menuItemParams: MenuItemDef, menuItem: MenuItemComponent): void {
@@ -84,6 +84,11 @@ export class MenuList extends Component {
         if (menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItemParams, menuItem);
         }
+    }
+
+    private mouseLeaveItem() {
+        this.timerCount++;
+        this.removeActiveItem();
     }
 
     private removeActiveItem(): void {

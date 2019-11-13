@@ -10,12 +10,6 @@
         color: $ag-color-foreground;
     }
 
-    .ag-cell,
-    .ag-header-cell,
-    .ag-header-group-cell {
-        box-sizing: border-box;
-    }
-
     .ag-root-wrapper {
         border: 1px solid $ag-color-border-primary;
         border-radius: $ag-border-radius;
@@ -31,10 +25,6 @@
 
     .ag-header-cell {
         border-color: $ag-color-border-primary;
-    }
-
-    .ag-row:not(.ag-row-selected) .ag-cell.ag-column-hover:not(.ag-cell-range-selected) {
-        background-color: transparentize($ag-color-primary, 0.97);
     }
 
     .ag-row:not(.ag-row-first) {
@@ -174,7 +164,6 @@
 
     // resets from the main theme
     .ag-tab-body {
-        border-top: 1px solid $ag-border-color;
         padding: 0;
 
         .ag-menu-list {
@@ -236,7 +225,6 @@
     $resize-handle-color: transparentize($ag-color-border-primary, 0.6);
 
     .ag-header-cell-resize {
-        box-sizing: border-box;
         right: -2px;
         width: $ag-grid-size;
 
@@ -249,10 +237,6 @@
             margin-top: $ag-header-height * 3 / 2 / 4;
             display: block;
             transform: translateX($ag-grid-size / 2 - 2);
-        }
-
-        &:hover::before {
-            background: $ag-color-primary;
         }
     }
 
@@ -605,14 +589,12 @@
         font: $ag-font-chrome;
 
         border-top: none;
-        border-bottom: none;
-        border-left: 1px solid $ag-color-border-primary;
-        border-left: 1px solid $ag-color-border-primary;
 
         .ag-tool-panel-wrapper {
             // this requires !important because it overrides borders set in the base theme
             // around rtl/ltr styles.
-            border: none!important;
+            border-left: 1px solid $ag-color-border-primary!important;
+            border-right: 1px solid $ag-color-border-primary!important;
             background-color: $ag-color-background-alt;
 
             .ag-pivot-mode-select {
@@ -688,16 +670,17 @@
 
         // side buttons
         .ag-side-buttons {
-            border-left: 1px solid $ag-color-border-primary;
             width: $ag-grid-size * 5;
 
             .ag-side-button {
+                box-sizing: border-box;
                 margin-bottom: $ag-grid-size;
                 display: flex;
                 align-items: center;
                 transition: border-color 0.3s linear;
 
                 button {
+                    background: none;
                     display: flex;
                     align-items: flex-start;
                     justify-content: center;
@@ -719,6 +702,7 @@
                     border-color: $ag-color-primary;
 
                     button {
+                        background: none;
                         border: 0;
                         margin-left: 0;
                         color: $ag-color-primary;
