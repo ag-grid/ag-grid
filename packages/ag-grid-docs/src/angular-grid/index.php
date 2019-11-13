@@ -243,6 +243,7 @@ export class AppModule {}
 <snippet language="ts">
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -250,8 +251,6 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true},
         {headerName: 'Model', field: 'model', sortable: true, filter: true},
@@ -259,6 +258,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -280,6 +281,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     &gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
@@ -300,6 +302,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -307,8 +310,6 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'model', field: 'model', sortable: true, filter: true },
@@ -316,6 +317,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -338,6 +341,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
@@ -358,6 +362,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
@@ -371,6 +376,7 @@ export class AppComponent implements OnInit {
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from '@ag-grid-community/angular';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -380,8 +386,6 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'Model', field: 'model', sortable: true, filter: true },
@@ -389,6 +393,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -412,6 +418,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
@@ -424,6 +431,7 @@ export class AppComponent implements OnInit {
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from '@ag-grid-community/angular';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -433,8 +441,6 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'Model', field: 'model', sortable: true, filter: true },
@@ -442,6 +448,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -492,8 +500,6 @@ ngOnInit() {
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', rowGroup: true },
         {headerName: 'Price', field: 'price'}
@@ -509,6 +515,8 @@ export class AppComponent implements OnInit {
     };
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 

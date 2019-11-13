@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TOLERANCE_PCT=12
+# a MASSIVE allowable increase...due to the new alpine theme
+TOLERANCE_PCT=20
 
 command='stat'
 arguments=' -f%z ' # osx
@@ -33,5 +34,5 @@ function compareOldVsNew {
   done
 }
 
-compareOldVsNew "*community*.js" "ag-grid-community"
-compareOldVsNew "*enterprise*.js" "ag-grid-enterprise"
+compareOldVsNew "*community*.js" "@ag-grid-community/all-modules"
+compareOldVsNew "*enterprise*.js" "@ag-grid-enterprise/all-modules"
