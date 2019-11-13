@@ -128,8 +128,6 @@ export class ClientSideNodeManager {
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null {
         if (this.isLegacyTreeData()) { return null; }
 
-        const {add, addIndex, remove, update} = rowDataTran;
-
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],
             update: [],
