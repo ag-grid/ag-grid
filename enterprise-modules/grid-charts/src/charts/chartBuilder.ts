@@ -271,6 +271,7 @@ export class ChartBuilder {
 
         if (options.background) {
             this.setValueIfExists(chart.background, 'fill', options.background.fill);
+            this.setValueIfExists(chart.background, 'opacity', options.background.opacity);
             this.setValueIfExists(chart.background, 'visible', options.background.visible);
         }
 

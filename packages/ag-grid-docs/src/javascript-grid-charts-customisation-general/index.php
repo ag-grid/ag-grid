@@ -40,6 +40,10 @@ interface PaddingOptions {
 
 interface BackgroundOptions {
     fill: string; // default: dependent on light/dark mode
+
+    // Valid range from 0 (transparent) to 1 (opaque)
+    opacity: number; // default: 1
+
     visible: boolean; // default: true
 }
 

@@ -44,6 +44,7 @@ export interface PaddingOptions {
 
 export interface BackgroundOptions {
     fill: string;
+    opacity: number;
     visible: boolean;
 }
 
