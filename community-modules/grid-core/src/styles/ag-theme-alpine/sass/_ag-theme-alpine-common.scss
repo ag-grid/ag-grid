@@ -33,14 +33,14 @@
         .ag-cell {
             border-top: 1px solid $ag-color-border-secondary;
         }
+    }
 
-        &.ag-full-width-row {
-          border-top-width: 1px solid $ag-color-border-secondary;
-          
-          &.ag-row-hover {
-              background: none;
-          }
-        }
+    .ag-row.ag-full-width-row {
+      border-top: 1px solid $ag-color-border-secondary;
+      
+      &.ag-row-hover {
+          background: none;
+      }
     }
 
     ////////////////////////////////////////
