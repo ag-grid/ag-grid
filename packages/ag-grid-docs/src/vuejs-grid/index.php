@@ -130,7 +130,7 @@ The grid ships several different themes; pick one that matches your project desi
             return {
                 columnDefs: null,
                 rowData: null,
-                modules: [AllCommunityModules]
+                modules: AllCommunityModules
             }
         },
         components: {

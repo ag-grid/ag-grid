@@ -98,7 +98,7 @@ class App extends Component {
         &lt;AgGridReact
           columnDefs={this.state.columnDefs}
           rowData={this.state.rowData}
-          modules={[AllCommunityModules]}&gt;
+          modules={AllCommunityModules}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );
@@ -164,7 +164,7 @@ each column entry specifies the header label and the data field to be displayed 
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
         rowData={this.state.rowData}
-        modules={[AllCommunityModules]}&gt;
+        modules={AllCommunityModules}&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;</code></pre>
 </section>

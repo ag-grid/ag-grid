@@ -40,7 +40,7 @@ class App extends Component {
         &lt;AgGridReact
             columnDefs={this.state.columnDefs}
             rowData={this.state.rowData}
-            modules={[AllCommunityModules]}&gt;
+            modules={AllCommunityModules}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );

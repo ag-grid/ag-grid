@@ -441,13 +441,6 @@ then
     error_found=1
 fi
  
-count=$(grep -c 'var RangeSelectionModule = {' ../bundles/GridChartsModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: RangeSelectionModule found in ../bundles/GridChartsModule.bundle.js"
-    error_found=1
-fi
- 
 count=$(grep -c 'var RichSelectModule = {' ../bundles/GridChartsModule.bundle.js)
 if [ $count -gt 0 ]
 then
@@ -501,13 +494,6 @@ count=$(grep -c 'var ClientSideRowModelModule = {' ../bundles/ClipboardModule.bu
 if [ $count -gt 0 ]
 then
     echo "ERROR: ClientSideRowModelModule found in ../bundles/ClipboardModule.bundle.js"
-    error_found=1
-fi
- 
-count=$(grep -c 'var CsvExportModule = {' ../bundles/ClipboardModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: CsvExportModule found in ../bundles/ClipboardModule.bundle.js"
     error_found=1
 fi
  
@@ -693,13 +679,6 @@ then
     error_found=1
 fi
  
-count=$(grep -c 'var RowGroupingModule = {' ../bundles/ColumnsToolPanelModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: RowGroupingModule found in ../bundles/ColumnsToolPanelModule.bundle.js"
-    error_found=1
-fi
- 
 count=$(grep -c 'var ServerSideRowModelModule = {' ../bundles/ColumnsToolPanelModule.bundle.js)
 if [ $count -gt 0 ]
 then
@@ -711,13 +690,6 @@ count=$(grep -c 'var SetFilterModule = {' ../bundles/ColumnsToolPanelModule.bund
 if [ $count -gt 0 ]
 then
     echo "ERROR: SetFilterModule found in ../bundles/ColumnsToolPanelModule.bundle.js"
-    error_found=1
-fi
- 
-count=$(grep -c 'var SideBarModule = {' ../bundles/ColumnsToolPanelModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: SideBarModule found in ../bundles/ColumnsToolPanelModule.bundle.js"
     error_found=1
 fi
  
@@ -739,13 +711,6 @@ count=$(grep -c 'var ClientSideRowModelModule = {' ../bundles/ExcelExportModule.
 if [ $count -gt 0 ]
 then
     echo "ERROR: ClientSideRowModelModule found in ../bundles/ExcelExportModule.bundle.js"
-    error_found=1
-fi
- 
-count=$(grep -c 'var CsvExportModule = {' ../bundles/ExcelExportModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: CsvExportModule found in ../bundles/ExcelExportModule.bundle.js"
     error_found=1
 fi
  
@@ -949,13 +914,6 @@ count=$(grep -c 'var SetFilterModule = {' ../bundles/FiltersToolPanelModule.bund
 if [ $count -gt 0 ]
 then
     echo "ERROR: SetFilterModule found in ../bundles/FiltersToolPanelModule.bundle.js"
-    error_found=1
-fi
- 
-count=$(grep -c 'var SideBarModule = {' ../bundles/FiltersToolPanelModule.bundle.js)
-if [ $count -gt 0 ]
-then
-    echo "ERROR: SideBarModule found in ../bundles/FiltersToolPanelModule.bundle.js"
     error_found=1
 fi
  

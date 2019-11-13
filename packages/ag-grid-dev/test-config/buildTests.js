@@ -78,14 +78,10 @@ const processModules = (module, enterprise) => {
     // add module to list of webpack commands that will be used to generate bundles
     webpackCommands.push(`../node_modules/.bin/webpack --config webpack.config.js --entry ./${moduleEntryFile} -o ../bundles/${exportedModuleName}.bundle.js`);
 
-    // the module source files that we'll pass into the moduleParser - we'll use this to search the webpack bundles for the module entries
-    const moduleSourceImport = `import  {${exportedModuleName}} from "${module.moduleSource}"`;
-    fs.writeFileSync(`../tests/${exportedModuleName}.ts`, moduleSourceImport);
-
     // the contents of the final run tests script that will check for the contents of a module in each bundle
     communityModules
         .filter(checkModule => checkModule.exportedModuleName !== exportedModuleName)
-        .filter(checkModule => !module.dependants.includes(checkModule.exportedModuleName))
+        .filter(checkModule => !module.dependants.includes(checkModule.exposedModule))
         .forEach(checkModule => {
             runTestScriptCommands.push(outputTest(exportedModuleName, checkModule.exportedModuleName));
         });
@@ -95,7 +91,7 @@ const processModules = (module, enterprise) => {
     }
     enterpriseModules
         .filter(checkModule => checkModule.exportedModuleName !== exportedModuleName)
-        .filter(checkModule => !module.dependants.includes(checkModule.exportedModuleName))
+        .filter(checkModule => !module.dependants.includes(checkModule.exposedModule))
         .forEach(checkModule => {
             runTestScriptCommands.push(outputTest(exportedModuleName, checkModule.exportedModuleName));
         });

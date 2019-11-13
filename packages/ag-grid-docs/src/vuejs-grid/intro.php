@@ -29,7 +29,7 @@ export const App = {
         return {
             columnDefs: null,
             rowData: null,
-            modules: [AllCommunityModules]
+            modules: AllCommunityModules
         }
     },
     components: {
