@@ -15,6 +15,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
 import { CaptionOptions } from "../../../../../charts/chartOptions";
+import { BackgroundPanel } from "./backgroundPanel";
 
 export class ChartPanel extends Component {
 
@@ -47,6 +48,7 @@ export class ChartPanel extends Component {
         this.initGroup();
         this.initTitles();
         this.initPaddingPanel();
+        this.initBackgroundPanel();
     }
 
     private initGroup(): void {
@@ -111,6 +113,12 @@ export class ChartPanel extends Component {
         const paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
+    }
+
+    private initBackgroundPanel(): void {
+        const backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
+        this.chartGroup.addItem(backgroundPanelComp);
+        this.activePanels.push(backgroundPanelComp);
     }
 
     private destroyActivePanels(): void {
