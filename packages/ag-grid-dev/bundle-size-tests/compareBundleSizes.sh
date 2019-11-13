@@ -5,9 +5,9 @@ TOLERANCE_PCT=20
 
 command='stat'
 arguments=' -f%z ' # osx
-if [[ "$OSTYPE" -ne "darwin" ]]
+if [ "$OSTYPE" != "darwin19" ] && [ "$OSTYPE" != "darwin" ]
 then
-        arguments=' --printf="%s" '
+  arguments=' --printf="%s" '
 fi
 
 function compareOldVsNew {
