@@ -71,8 +71,8 @@ export {
 export {
     DragAndDropService,
     DragSourceType,
-    HorizontalDirection as HDirection,
-    VerticalDirection as VDirection,
+    HorizontalDirection,
+    VerticalDirection,
     DropTarget,
     DragSource,
     DraggingEvent

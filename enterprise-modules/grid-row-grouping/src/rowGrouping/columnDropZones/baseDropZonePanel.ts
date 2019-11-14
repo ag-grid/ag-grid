@@ -9,10 +9,10 @@ import {
     Events,
     EventService,
     GridOptionsWrapper,
-    HDirection,
+    HorizontalDirection,
     Logger,
     LoggerFactory,
-    VDirection,
+    VerticalDirection,
     _
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
@@ -160,7 +160,7 @@ export abstract class BaseDropZonePanel extends Component {
         let newIndex = 0;
         const mouseEvent = draggingEvent.event;
         const enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        const goingLeft = draggingEvent.hDirection === HDirection.Left;
+        const goingLeft = draggingEvent.hDirection === HorizontalDirection.Left;
         const mouseX = mouseEvent.clientX;
 
         this.childColumnComponents.forEach(childColumn => {
@@ -186,7 +186,7 @@ export abstract class BaseDropZonePanel extends Component {
 
         this.childColumnComponents.forEach(childColumn => {
             const rect = childColumn.getGui().getBoundingClientRect();
-            const verticalFit = mouseEvent.clientY >= (draggingEvent.vDirection === VDirection.Down ? rect.top : rect.bottom);
+            const verticalFit = mouseEvent.clientY >= (draggingEvent.vDirection === VerticalDirection.Down ? rect.top : rect.bottom);
 
             if (verticalFit) {
                 newIndex++;
