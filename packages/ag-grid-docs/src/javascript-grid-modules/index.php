@@ -87,8 +87,15 @@ function printFeature($item, $indent)
     and all Enterprise functionality in another dependency (<code>ag-grid-enterprise</code>).
 </p>
 
-<p>With Version 22.0.0 the ag-Grid can now be consumed by feature module which will result in a resulting in a smaller
-    application size overall.</p>
+<p>
+    Since version 22.0.0, ag-Grid can be consumed by just including the feature modules required, which should result in smaller overall application sizes.    
+</p>
+
+<note>
+    The introduction of modules in version 22.0.0 is a significant first step towards reducing the size of ag-Grid inside applications. As most of the new modules 
+    cover enterprise features, community users should not expect to see a size reduction right away. However, in the coming releases, we will strive to reduce
+    the size of the community-core module by splitting it out into separate community modules.
+</note>
 
 <h2>Modules</h2>
 
