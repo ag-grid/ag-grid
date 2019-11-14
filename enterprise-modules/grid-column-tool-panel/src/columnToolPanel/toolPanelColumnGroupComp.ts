@@ -17,8 +17,8 @@ import {
     RefSelector,
     TouchListener
 } from "@ag-grid-community/core";
-import {BaseColumnItem} from "./primaryColsPanel";
-import {ColumnFilterResults} from "./primaryColsListPanel";
+import { BaseColumnItem } from "./primaryColsPanel";
+import { ColumnFilterResults } from "./primaryColsListPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
@@ -39,11 +39,11 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-    
+
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
     @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
-    
+
     private eDragHandle: HTMLElement;
 
     private readonly columnGroup: OriginalColumnGroup;
@@ -57,7 +57,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private getFilterResultsCallback: () => ColumnFilterResults;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
-                expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
+        expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
@@ -121,8 +121,9 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            dragItemCallback: () => this.createDragItem()
+            getDragItem: () => this.createDragItem()
         };
+
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }

@@ -25,14 +25,14 @@ import {
     VirtualList
 } from "@ag-grid-community/core";
 
-export interface ColumnRemoveEvent extends AgEvent {}
+export interface ColumnRemoveEvent extends AgEvent { }
 
 export class DropZoneColumnComp extends Component {
 
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE =
-       `<span class="ag-column-drop-cell">
+        `<span class="ag-column-drop-cell">
           <span ref="eDragHandle" class="ag-column-drag"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
           <span ref="btRemove" class="ag-column-drop-cell-button"></span>
@@ -84,7 +84,7 @@ export class DropZoneColumnComp extends Component {
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
-            dragItemCallback: () => this.createDragItem(),
+            getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
@@ -142,14 +142,14 @@ export class DropZoneColumnComp extends Component {
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = (typeof aggFunc === 'string') ? aggFunc as string : 'agg';
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            const aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+            const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
 
             displayValue = `${aggFuncStringTranslated}(${this.displayName})`;
         } else {
             displayValue = this.displayName;
         }
 
-        const displayValueSanitised : any = _.escape(displayValue);
+        const displayValueSanitised: any = _.escape(displayValue);
         this.eText.innerHTML = displayValueSanitised;
     }
 
@@ -221,7 +221,7 @@ export class DropZoneColumnComp extends Component {
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         const aggFuncString = value.toString();
-        const aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+        const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
         return comp;
     }

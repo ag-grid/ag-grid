@@ -89,14 +89,10 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return false; }
-
         // we never allow grouping of secondary columns
-        if (!column.isPrimary()) { return false; }
+        if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) { return false; }
 
-        const allowPivot = column.isAllowPivot();
-        const columnNotAlreadyPivoted = !column.isPivotActive();
-        return allowPivot && columnNotAlreadyPivoted;
+        return column.isAllowPivot() && !column.isPivotActive();
     }
 
     protected updateColumns(columns: Column[]): void {
@@ -107,6 +103,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
+
             this.eventService.dispatchEvent(event);
         } else {
             this.columnController.setPivotColumns(columns, "toolPanelUi");
@@ -120,5 +117,4 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     protected getExistingColumns(): Column[] {
         return this.columnController.getPivotColumns();
     }
-
 }

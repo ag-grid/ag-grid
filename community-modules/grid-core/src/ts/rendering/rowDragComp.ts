@@ -9,9 +9,7 @@ import { Column } from "../entities/column";
 import { _ } from "../utils";
 
 export class RowDragComp extends Component {
-
     private readonly beans: Beans;
-
     private readonly rowNode: RowNode;
     private readonly column: Column;
     private readonly cellValue: string;
@@ -32,15 +30,11 @@ export class RowDragComp extends Component {
 
         this.checkCompatibility();
 
-        if (this.beans.gridOptionsWrapper.isRowDragManaged()) {
-            this.addFeature(
-                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column),
-                this.beans.context);
-        } else {
-            this.addFeature(
-                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column),
-                this.beans.context);
-        }
+        const strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
+            new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
+            new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
+
+        this.addFeature(strategy, this.beans.context);
     }
 
     // returns true if all compatibility items work out
@@ -57,7 +51,6 @@ export class RowDragComp extends Component {
     }
 
     private addDragSource(): void {
-
         const dragItem: DragItem = {
             rowNode: this.rowNode
         };
@@ -66,16 +59,16 @@ export class RowDragComp extends Component {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: this.cellValue,
-            dragItemCallback: () => dragItem,
+            getDragItem: () => dragItem,
             dragStartPixels: 0
         };
+
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.beans.dragAndDropService.removeDragSource(dragSource));
     }
 }
 
 class VisibilityStrategy extends BeanStub {
-
     private readonly parent: RowDragComp;
     private readonly column: Column;
     protected readonly rowNode: RowNode;
@@ -108,7 +101,6 @@ class VisibilityStrategy extends BeanStub {
 
 // when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends VisibilityStrategy {
-
     private readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
@@ -136,12 +128,10 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         const neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
         this.setDisplayedOrVisible(neverDisplayed);
     }
-
 }
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
-
     private readonly beans: Beans;
 
     private sortActive: boolean;
@@ -215,6 +205,5 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
 
         this.setDisplayedOrVisible(neverDisplayed);
-
     }
 }

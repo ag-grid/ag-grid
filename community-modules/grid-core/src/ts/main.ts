@@ -71,8 +71,8 @@ export {
 export {
     DragAndDropService,
     DragSourceType,
-    HDirection,
-    VDirection,
+    HorizontalDirection as HDirection,
+    VerticalDirection as VDirection,
     DropTarget,
     DragSource,
     DraggingEvent
@@ -229,7 +229,7 @@ export {
     CsvExportParams, CsvCustomContent, ExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
     ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";
-export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory"
+export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory";
 export { ICsvCreator } from "./interfaces/iCsvCreator";
 
 // root

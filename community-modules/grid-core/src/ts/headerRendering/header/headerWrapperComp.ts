@@ -1,5 +1,5 @@
 import { Component } from "../../widgets/component";
-import { Autowired, Context, PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { Column } from "../../entities/column";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
@@ -27,15 +27,15 @@ import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { TouchListener } from "../../widgets/touchListener";
 import { _ } from "../../utils";
-import {Constants} from "../../constants";
+import { Constants } from "../../constants";
 
 export class HeaderWrapperComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-header-cell" role="presentation" unselectable="on">' +
-          '<div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
-          '<ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
-            // <inner component goes here>
+        '  <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
+        '  <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
+        // <inner component goes here>
         '</div>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -59,7 +59,7 @@ export class HeaderWrapperComp extends Component {
     private readonly pinned: string;
 
     private resizeStartWidth: number;
-    private resizeWithShiftKey:  boolean;
+    private resizeWithShiftKey: boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -119,7 +119,7 @@ export class HeaderWrapperComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private setupSortableClass(enableSorting:boolean):void {
+    private setupSortableClass(enableSorting: boolean): void {
         if (enableSorting) {
             const element = this.getGui();
             _.addCssClass(element, 'ag-header-cell-sortable');
@@ -137,10 +137,10 @@ export class HeaderWrapperComp extends Component {
             displayName: displayName,
             enableSorting: enableSorting,
             enableMenu: enableMenu,
-            showColumnMenu: (source:HTMLElement) => {
+            showColumnMenu: (source: HTMLElement) => {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
             },
-            progressSort: (multiSort?:boolean) => {
+            progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
             setSort: (sort: string, multiSort?: boolean) => {
@@ -183,12 +183,13 @@ export class HeaderWrapperComp extends Component {
             const dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItemCallback: () => this.createDragItem(),
+                getDragItem: () => this.createDragItem(),
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                dragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
-                dragStopped: () => this.column.setMoving(false, "uiColumnMoved")
+                onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
+                onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
             };
+
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
         }
@@ -227,14 +228,18 @@ export class HeaderWrapperComp extends Component {
         this.addDestroyFunc(finishedWithResizeFunc);
 
         const weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
+
             const touchListener: TouchListener = new TouchListener(this.eResize);
+
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
                 this.columnController.autoSizeColumn(this.column, "uiColumnResized");
             });
+
             this.addDestroyFunc(touchListener.destroy.bind(touchListener));
         }
     }
@@ -243,6 +248,7 @@ export class HeaderWrapperComp extends Component {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const newWidth = this.resizeStartWidth + resizeAmountNormalised;
         this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+
         if (finished) {
             _.removeCssClass(this.getGui(), 'ag-column-resizing');
         }
@@ -251,6 +257,7 @@ export class HeaderWrapperComp extends Component {
     public onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
+
         _.addCssClass(this.getGui(), 'ag-column-resizing');
     }
 
@@ -304,6 +311,7 @@ export class HeaderWrapperComp extends Component {
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
     private normaliseResizeAmount(dragChange: number): number {
         let result = dragChange;
+
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (this.pinned !== Constants.PINNED_LEFT) {
@@ -315,7 +323,7 @@ export class HeaderWrapperComp extends Component {
                 result *= -1;
             }
         }
+
         return result;
     }
-
 }

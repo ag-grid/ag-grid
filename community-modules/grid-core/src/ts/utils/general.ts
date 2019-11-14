@@ -1015,8 +1015,8 @@ export class Utils {
         return element && element.clientWidth ? element.clientWidth : 0;
     }
 
-    static sortNumberArray(numberArray: number[]): void {
-        numberArray.sort((a, b) => a - b);
+    static sortNumerically(array: number[]): number[] {
+        return array.sort((a, b) => a - b);
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {

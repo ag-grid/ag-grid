@@ -1,6 +1,6 @@
 import {
     DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
-    VDirection
+    VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { FocusedCellController } from "../focusedCellController";
@@ -12,7 +12,7 @@ import { RowDragEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
-import {IClientSideRowModel} from "../interfaces/iClientSideRowModel";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
 export class RowDragFeature implements DropTarget {
 
@@ -186,10 +186,10 @@ export class RowDragFeature implements DropTarget {
 
         let vDirectionString: string;
         switch (draggingEvent.vDirection) {
-            case VDirection.Down:
+            case VerticalDirection.Down:
                 vDirectionString = 'down';
                 break;
-            case VDirection.Up:
+            case VerticalDirection.Up:
                 vDirectionString = 'up';
                 break;
             default:

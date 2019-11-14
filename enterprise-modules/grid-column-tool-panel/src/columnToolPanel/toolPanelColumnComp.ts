@@ -254,8 +254,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            dragItemCallback: () => this.createDragItem()
+            getDragItem: () => this.createDragItem()
         };
+
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
