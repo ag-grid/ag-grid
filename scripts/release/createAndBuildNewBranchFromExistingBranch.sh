@@ -36,7 +36,7 @@ npm install
 
 echo "########################################################################"
 echo "################# Installing Package Dependencies #########################"
-./node_modules/.bin/lerna bootstrap
+./node_modules/.bin/lerna bootstrap --ignore ag-grid-charts-example
 
 echo "########################################################################"
 echo "###################### Building Packages #############################"
