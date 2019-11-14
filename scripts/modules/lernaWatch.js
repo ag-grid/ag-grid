@@ -175,8 +175,7 @@ const exclude = [
     'ag-grid-enterprise'
 ];
 
-const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example")
-// && !packageName.includes("-enterprise") && !packageName.includes("-angular") && !packageName.includes("-vue") && !packageName.includes("-react");
+const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example");
 
 const filterExcludedRoots = dependencyTree => {
     const prunedDependencyTree = {};
