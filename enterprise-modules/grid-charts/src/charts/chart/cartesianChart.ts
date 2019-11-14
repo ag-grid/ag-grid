@@ -1,12 +1,11 @@
-import { Chart, ChartOptions } from "./chart";
-import { Axis, ILinearAxis } from "../axis";
-import Scale from "../scale/scale";
-import { Series } from "./series/series";
+import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
 import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
+import { reactive } from "../util/observable";
+import { ChartAxisPosition } from "./chartAxis";
 
 /** Defines the orientation used when rendering data series */
 export enum CartesianChartLayout {
@@ -14,24 +13,17 @@ export enum CartesianChartLayout {
     Horizontal
 }
 
-export interface CartesianChartOptions<TX extends ILinearAxis = Axis<Scale<any, number>>, TY extends ILinearAxis = Axis<Scale<any, number>>> extends ChartOptions {
-    xAxis: TX;
-    yAxis: TY;
-}
-
-export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, TY extends ILinearAxis = Axis<Scale<any, number>>> extends Chart {
+export class CartesianChart extends Chart {
     protected axisAutoPadding = new Padding();
 
-    constructor(options: CartesianChartOptions<TX, TY>) {
-        super(options);
+    @reactive(['layoutChange']) flipXY = false;
 
-        const { xAxis, yAxis } = options;
+    constructor(document = window.document) {
+        super(document);
 
-        this._xAxis = xAxis;
-        this._yAxis = yAxis;
-
-        this.scene.root!.append([xAxis.group, yAxis.group, this._seriesRoot]);
-        this.scene.root!.append(this.legend.group);
+        const root = this.scene.root!;
+        root.append(this._seriesRoot);
+        root.append(this.legend.group);
     }
 
     private _seriesRoot = new Group();
@@ -39,30 +31,12 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
         return this._seriesRoot;
     }
 
-    private readonly _xAxis: TX;
-    get xAxis(): TX {
-        return this._xAxis;
-    }
-
-    private readonly _yAxis: TY;
-    get yAxis(): TY {
-        return this._yAxis;
-    }
-
-    set series(values: Series<CartesianChart<TX, TY>>[]) {
-        this.removeAllSeries();
-        values.forEach(series => this.addSeries(series));
-    }
-    get series(): Series<CartesianChart<TX, TY>>[] {
-        return this._series as Series<CartesianChart<TX, TY>>[];
-    }
-
     performLayout(): void {
-        if (this.dataPending || !(this.xAxis && this.yAxis)) {
+        if (this.dataPending) {
             return;
         }
 
-        const { width, height, legend } = this;
+        const { width, height, axes, legend } = this;
 
         const shrinkRect = {
             x: 0,
@@ -98,28 +72,53 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
             }
         }
 
-        const { captionAutoPadding, padding, axisAutoPadding, xAxis, yAxis } = this;
+        const { captionAutoPadding, padding, axisAutoPadding } = this;
 
         shrinkRect.x += padding.left + axisAutoPadding.left;
         shrinkRect.y += padding.top + axisAutoPadding.top + captionAutoPadding;
         shrinkRect.width -= padding.left + padding.right + axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= padding.top + padding.bottom + axisAutoPadding.top + axisAutoPadding.bottom + captionAutoPadding;
 
-        xAxis.scale.range = [0, shrinkRect.width];
-        xAxis.rotation = -90;
-        (xAxis as any).translation.x = Math.floor(shrinkRect.x); // TODO: remove the CartesianChart generic (possibly get rid of xAxis, yAxis too)
-        (xAxis as any).translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
-        xAxis.label.parallel = true;
-        xAxis.gridLength = shrinkRect.height;
+        axes.forEach(axis => {
+            const { position } = axis;
 
-        if (yAxis instanceof CategoryAxis || yAxis instanceof GroupedCategoryAxis) {
-            yAxis.scale.range = [0, shrinkRect.height];
-        } else {
-            yAxis.scale.range = [shrinkRect.height, 0];
-        }
-        (yAxis as any).translation.x = Math.floor(shrinkRect.x); // TODO: remove the CartesianChart generic (possibly get rid of xAxis, yAxis too)
-        (yAxis as any).translation.y = Math.floor(shrinkRect.y);
-        yAxis.gridLength = shrinkRect.width;
+            switch (position) {
+                case ChartAxisPosition.Top:
+                    axis.scale.range = [0, shrinkRect.width];
+                    axis.translation.x = Math.floor(shrinkRect.x);
+                    axis.translation.y = Math.floor(shrinkRect.y + 1);
+                    axis.label.mirrored = true;
+                    axis.gridLength = shrinkRect.height;
+                    break;
+                case ChartAxisPosition.Right:
+                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
+                        axis.scale.range = [0, shrinkRect.height];
+                    } else {
+                        axis.scale.range = [shrinkRect.height, 0];
+                    }
+                    axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
+                    axis.translation.y = Math.floor(shrinkRect.y);
+                    axis.label.mirrored = true;
+                    axis.gridLength = shrinkRect.width;
+                    break;
+                case ChartAxisPosition.Bottom:
+                    axis.scale.range = [0, shrinkRect.width];
+                    axis.translation.x = Math.floor(shrinkRect.x);
+                    axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
+                    axis.gridLength = shrinkRect.height;
+                    break;
+                case ChartAxisPosition.Left:
+                    if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
+                        axis.scale.range = [0, shrinkRect.height];
+                    } else {
+                        axis.scale.range = [shrinkRect.height, 0];
+                    }
+                    axis.translation.x = Math.floor(shrinkRect.x);
+                    axis.translation.y = Math.floor(shrinkRect.y);
+                    axis.gridLength = shrinkRect.width;
+                    break;
+            }
+        });
 
         this.updateAxes();
 
@@ -145,50 +144,45 @@ export class CartesianChart<TX extends ILinearAxis = Axis<Scale<any, number>>, T
     }
 
     updateAxes() {
-        const isHorizontal = this.layout === CartesianChartLayout.Horizontal;
-        const xAxis = isHorizontal ? this.yAxis : this.xAxis;
-        const yAxis = isHorizontal ? this.xAxis : this.yAxis;
+        const { axes } = this;
 
-        if (!(xAxis && yAxis)) {
-            return;
-        }
+        axes.forEach(axis => {
+            const { direction, position, boundSeries } = axis;
+            const domains: any[][] = [];
+            boundSeries.filter(s => s.visible).forEach(series => {
+                domains.push(series.getDomain(direction));
+            });
+            const domain = new Array<any>().concat(...domains);
+            axis.domain = numericExtent(domain) || domain;
 
-        const xDomains: any[][] = [];
-        const yDomains: any[][] = [];
-
-        this.series.filter(s => s.visible).forEach(series => {
-            xDomains.push(series.getDomainX());
-            yDomains.push(series.getDomainY());
+            const axisThickness = Math.floor(axis.getBBox().width);
+            switch (position) {
+                case ChartAxisPosition.Left:
+                    if (this.axisAutoPadding.left !== axisThickness) {
+                        this.axisAutoPadding.left = axisThickness;
+                        this.layoutPending = true;
+                    }
+                    break;
+                case ChartAxisPosition.Right:
+                    if (this.axisAutoPadding.right !== axisThickness) {
+                        this.axisAutoPadding.right = axisThickness;
+                        this.layoutPending = true;
+                    }
+                    break;
+                case ChartAxisPosition.Bottom:
+                    if (this.axisAutoPadding.bottom !== axisThickness) {
+                        this.axisAutoPadding.bottom = axisThickness;
+                        this.layoutPending = true;
+                    }
+                    break;
+                case ChartAxisPosition.Top:
+                    if (this.axisAutoPadding.top !== axisThickness) {
+                        this.axisAutoPadding.top = axisThickness;
+                        this.layoutPending = true;
+                    }
+                    break;
+            }
+            axis.update();
         });
-
-        const xDomain = new Array<any>().concat(...xDomains);
-        const yDomain = new Array<any>().concat(...yDomains);
-
-        xAxis.domain = numericExtent(xDomain) || xDomain;
-        yAxis.domain = numericExtent(yDomain) || yDomain;
-
-        xAxis.update();
-        yAxis.update();
-
-        // The `xAxis` and `yAxis` have `.this` prefix on purpose here,
-        // because the local `xAxis` and `yAxis` variables may be swapped.
-        const xAxisBBox = this.xAxis.getBBox();
-        const yAxisBBox = this.yAxis.getBBox();
-
-        {
-            const axisThickness = Math.floor(xAxisBBox.width);
-            if (this.axisAutoPadding.bottom !== axisThickness) {
-                this.axisAutoPadding.bottom = axisThickness;
-                this.layoutPending = true;
-            }
-        }
-        {
-            const axisThickness = Math.floor(yAxisBBox.width);
-
-            if (this.axisAutoPadding.left !== axisThickness) {
-                this.axisAutoPadding.left = axisThickness;
-                this.layoutPending = true;
-            }
-        }
     }
 }

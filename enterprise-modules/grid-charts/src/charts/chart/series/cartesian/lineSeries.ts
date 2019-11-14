@@ -1,17 +1,19 @@
-import { CartesianChart } from "../cartesianChart";
-import { Path } from "../../scene/shape/path";
-import ContinuousScale from "../../scale/continuousScale";
-import { Selection } from "../../scene/selection";
-import { Group } from "../../scene/group";
-import palette from "../palettes";
-import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "./series";
-import { numericExtent } from "../../util/array";
-import { toFixed } from "../../util/number";
-import { PointerEvents } from "../../scene/node";
-import { LegendDatum } from "../legend";
-import { Shape } from "../../scene/shape/shape";
-import { Marker } from "../marker/marker";
-import { SeriesMarker } from "./seriesMarker";
+import { CartesianChart } from "../../cartesianChart";
+import { Path } from "../../../scene/shape/path";
+import ContinuousScale from "../../../scale/continuousScale";
+import { Selection } from "../../../scene/selection";
+import { Group } from "../../../scene/group";
+import palette from "../../palettes";
+import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "../series";
+import { numericExtent } from "../../../util/array";
+import { toFixed } from "../../../util/number";
+import { PointerEvents } from "../../../scene/node";
+import { LegendDatum } from "../../legend";
+import { Shape } from "../../../scene/shape/shape";
+import { Marker } from "../../marker/marker";
+import { SeriesMarker } from "../seriesMarker";
+import { CartesianSeries } from "./cartesianSeries";
+import { ChartAxisDirection } from "../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -24,12 +26,12 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 
 export { LineTooltipRendererParams };
 
-export class LineSeries extends Series<CartesianChart> {
+export class LineSeries extends CartesianSeries {
 
     static className = 'LineSeries';
 
-    private domainX: any[] = [];
-    private domainY: any[] = [];
+    private xDomain: any[] = [];
+    private yDomain: any[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
 
@@ -48,8 +50,8 @@ export class LineSeries extends Series<CartesianChart> {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
-        this.marker.addEventListener('style', this.update.bind(this));
+        this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        this.marker.addEventListener('change', () => this.update());
     }
 
     onMarkerTypeChange() {
@@ -116,40 +118,48 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { chart, xKey, yKey } = this;
+        const { xKey, yKey } = this;
         const data = xKey && yKey ? this.data : [];
 
-        if (!(chart && chart.xAxis && chart.yAxis)) {
-            return false;
-        }
+        // if (!(chart && chart.xAxis && chart.yAxis)) {
+        //     return false;
+        // }
 
         this.xData = data.map(datum => datum[xKey]);
         this.yData = data.map(datum => datum[yKey]);
 
-        const isContinuousX = chart.xAxis.scale instanceof ContinuousScale;
-        const domainX = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
-        const domainY = numericExtent(this.yData) || [0, 1];
+        const isContinuousX = this.xAxis.scale instanceof ContinuousScale;
+        const xDomain = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
+        const yDomain = numericExtent(this.yData) || [0, 1];
 
         if (isContinuousX) {
-            const [min, max] = domainX as number[];
+            const [min, max] = xDomain as number[];
 
             if (min === max) {
-                domainX[0] = min - 1;
-                domainX[1] = max + 1;
+                xDomain[0] = min - 1;
+                xDomain[1] = max + 1;
             }
         }
 
-        const [min, max] = domainY;
+        const [min, max] = yDomain;
 
         if (min === max) {
-            domainY[0] = min - 1;
-            domainY[1] = max + 1;
+            yDomain[0] = min - 1;
+            yDomain[1] = max + 1;
         }
 
-        this.domainX = domainX;
-        this.domainY = domainY;
+        this.xDomain = xDomain;
+        this.yDomain = yDomain;
 
         return true;
+    }
+
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        } else {
+            return this.yDomain;
+        }
     }
 
     private _fill: string = palette.fills[0];
@@ -209,14 +219,19 @@ export class LineSeries extends Series<CartesianChart> {
     }
 
     update(): void {
-        const chart = this.chart;
-        const visible = this.group.visible = this.visible;
+        const { xAxis, yAxis } = this;
+        this.group.visible = this.visible;
 
-        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!xAxis || !yAxis) {
             return;
         }
 
-        const { xAxis: { scale: xScale }, yAxis: { scale: yScale } } = chart;
+        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        //     return;
+        // }
+
+        const xScale = xAxis.scale;
+        const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
@@ -230,6 +245,10 @@ export class LineSeries extends Series<CartesianChart> {
         } = this;
 
         const linePath = lineNode.path;
+        const markerSize = marker.size;
+        const markerFill = this.getMarkerFill();
+        const markerStroke = this.getMarkerStroke();
+        const markerStrokeWidth = marker.strokeWidth || 1;
 
         linePath.clear();
 
@@ -251,10 +270,10 @@ export class LineSeries extends Series<CartesianChart> {
                     seriesDatum: data[i],
                     x,
                     y,
-                    fill: this.getMarkerFill(),
-                    stroke: this.getMarkerStroke(),
-                    strokeWidth: marker.strokeWidth || 1,
-                    size: marker.size
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize
                 });
             }
         });
@@ -302,14 +321,6 @@ export class LineSeries extends Series<CartesianChart> {
             });
 
         this.groupSelection = groupSelection;
-    }
-
-    getDomainX(): any[] {
-        return this.domainX;
-    }
-
-    getDomainY(): any[] {
-        return this.domainY;
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {

@@ -1,21 +1,20 @@
-import { Group } from "../../scene/group";
-import { Selection } from "../../scene/selection";
-import { CartesianChart } from "../cartesianChart";
-import { Rect } from "../../scene/shape/rect";
-import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
-import { BandScale } from "../../scale/bandScale";
-import { DropShadow } from "../../scene/dropShadow";
-import palette from "../palettes";
-import { HighlightStyle, Series, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "./series";
-import { Label } from "../label";
-import { PointerEvents } from "../../scene/node";
-import { sumPositiveValues } from "../../util/array";
-import { Color } from "../../util/color";
-import { toFixed } from "../../util/number";
-import { LegendDatum } from "../legend";
-import { Shape } from "../../scene/shape/shape";
-import { NumberAxis } from "../axis/numberAxis";
-import { reactive } from "../../util/observable";
+import { Group } from "../../../scene/group";
+import { Selection } from "../../../scene/selection";
+import { Rect } from "../../../scene/shape/rect";
+import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
+import { BandScale } from "../../../scale/bandScale";
+import { DropShadow } from "../../../scene/dropShadow";
+import palette from "../../palettes";
+import { HighlightStyle, Series, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "../series";
+import { Label } from "../../label";
+import { PointerEvents } from "../../../scene/node";
+import { sumPositiveValues } from "../../../util/array";
+import { toFixed } from "../../../util/number";
+import { LegendDatum } from "../../legend";
+import { Shape } from "../../../scene/shape/shape";
+import { reactive } from "../../../util/observable";
+import { CartesianSeries } from "./cartesianSeries";
+import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yKey: string;
@@ -53,10 +52,10 @@ enum BarSeriesNodeTag {
 }
 
 class BarSeriesLabel extends Label {
-    @reactive(['style']) formatter?: BarLabelFormatter;
+    @reactive(['change']) formatter?: BarLabelFormatter;
 }
 
-export class BarSeries extends Series<CartesianChart> {
+export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
 
@@ -72,7 +71,7 @@ export class BarSeries extends Series<CartesianChart> {
 
     private xData: string[] = [];
     private yData: number[][] = [];
-    private domainY: number[] = [];
+    private yDomain: number[] = [];
 
     readonly label = new BarSeriesLabel();
 
@@ -84,23 +83,52 @@ export class BarSeries extends Series<CartesianChart> {
 
     tooltipRenderer?: (params: BarTooltipRendererParams) => string;
 
-    @reactive(['data']) fills: string[] = palette.fills;
-    @reactive(['data']) strokes: string[] = palette.strokes;
+    @reactive(['dataChange']) fills: string[] = palette.fills;
+    @reactive(['dataChange']) strokes: string[] = palette.strokes;
 
-    @reactive(['layout']) fillOpacity = 1;
-    @reactive(['layout']) strokeOpacity = 1;
+    @reactive(['layoutChange']) fillOpacity = 1;
+    @reactive(['layoutChange']) strokeOpacity = 1;
 
     constructor() {
         super();
 
         this.label.enabled = false;
-        this.label.addEventListener('style', () => this.update.bind(this));
+        this.label.addEventListener('change', () => this.update());
     }
 
     /**
      * Used to get the position of bars within each group.
      */
     private groupScale = new BandScale<string>();
+
+    directionKeys = {
+        [ChartAxisDirection.X]: ['xKey'],
+        [ChartAxisDirection.Y]: ['yKeys']
+    };
+
+    @reactive(['layoutChange']) flipXY = false;
+
+    getKeys(direction: ChartAxisDirection): string[] {
+        const { directionKeys } = this;
+        const keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
+        const values: string[] = [];
+
+        if (keys) {
+            keys.forEach(key => {
+                const value = (this as any)[key];
+
+                if (value) {
+                    if (Array.isArray(value)) {
+                        values.push(...value);
+                    } else {
+                        values.push(value);
+                    }
+                }
+            });
+        }
+
+        return values;
+    }
 
     protected _xKey: string = '';
     set xKey(value: string) {
@@ -309,32 +337,38 @@ export class BarSeries extends Series<CartesianChart> {
             // console.warn('Zero or infinite y-range.');
         }
 
-        this.domainY = [yMin, yMax];
+        this.yDomain = [yMin, yMax];
 
-        const chart = this.chart;
-
-        if (chart) {
-            chart.updateAxes();
-        }
+        // if (chart) {
+        //     chart.updateAxes();
+        // }
+        this.fireEvent({type: 'dataProcessed'});
 
         return true;
     }
 
-    getDomainX(): string[] {
-        return this.xData;
-    }
-
-    getDomainY(): number[] {
-        return this.domainY;
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (this.flipXY) {
+            direction = flipChartAxisDirection(direction);
+        }
+        if (direction === ChartAxisDirection.X) {
+            return this.xData;
+        } else {
+            return this.yDomain;
+        }
     }
 
     update(): void {
-        const chart = this.chart;
-        const visible = this.group.visible = this.visible;
+        const { visible, xAxis, yAxis } = this;
+        this.group.visible = visible;
 
-        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        if (!visible || !xAxis || !yAxis) {
             return;
         }
+
+        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        //     return;
+        // }
 
         const selectionData = this.generateSelectionData();
 
@@ -343,8 +377,7 @@ export class BarSeries extends Series<CartesianChart> {
     }
 
     private generateSelectionData() {
-        const { xAxis, yAxis } = this.chart!;
-        const flipXY = xAxis instanceof NumberAxis;
+        const { xAxis, yAxis, flipXY } = this;
         const xScale = (flipXY ? yAxis : xAxis).scale;
         const yScale = (flipXY ? xAxis : yAxis).scale;
 

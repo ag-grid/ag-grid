@@ -19,11 +19,11 @@ import {
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
-import { LineSeries } from "./chart/series/lineSeries";
-import { ScatterSeries } from "./chart/series/scatterSeries";
-import { BarSeries } from "./chart/series/barSeries";
-import { AreaSeries } from "./chart/series/areaSeries";
-import { PieSeries } from "./chart/series/pieSeries";
+import { LineSeries } from "./chart/series/cartesian/lineSeries";
+import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
+import { BarSeries } from "./chart/series/cartesian/barSeries";
+import { AreaSeries } from "./chart/series/cartesian/areaSeries";
+import { PieSeries } from "./chart/series/polar/pieSeries";
 import { Chart } from "./chart/chart";
 import { Series } from "./chart/series/series";
 import { SeriesMarker } from "./chart/series/seriesMarker";
@@ -35,8 +35,6 @@ import { Legend } from "./chart/legend";
 import { Caption } from "./caption";
 import { GroupedCategoryAxis } from "./chart/axis/groupedCategoryAxis";
 import { GroupedCategoryChart, GroupedCategoryChartAxis } from "./chart/groupedCategoryChart";
-import { Axis } from "./axis";
-import Scale from "./scale/scale";
 import { Circle } from "./chart/marker/circle";
 import { Cross } from "./chart/marker/cross";
 import { Diamond } from "./chart/marker/diamond";
@@ -44,32 +42,26 @@ import { Plus } from "./chart/marker/plus";
 import { Square } from "./chart/marker/square";
 import { Triangle } from "./chart/marker/triangle";
 import { Marker } from "./chart/marker/marker";
+import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
 
 export class ChartBuilder {
-    private static createCartesianChart(
-        parent: HTMLElement,
-        xAxis: Axis<Scale<any, number>>,
-        yAxis: Axis<Scale<any, number>>,
-        document?: Document): CartesianChart {
-        return new CartesianChart({
-            parent,
-            xAxis,
-            yAxis,
-            document,
-        });
+    private static createCartesianChart(parent: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
+        const chart = new CartesianChart(document);
+        chart.parent = parent;
+        xAxis.position = ChartAxisPosition.Bottom;
+        yAxis.position = ChartAxisPosition.Left;
+        chart.axes = [xAxis, yAxis];
+        return chart;
     }
 
-    private static createGroupedCategoryChart(
-        parent: HTMLElement,
-        xAxis: GroupedCategoryChartAxis,
-        yAxis: GroupedCategoryChartAxis,
-        document?: Document): GroupedCategoryChart {
-        return new GroupedCategoryChart({
-            parent,
-            xAxis,
-            yAxis,
-            document,
-        });
+    private static createGroupedCategoryChart(parent: HTMLElement,
+        xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis, document?: Document): GroupedCategoryChart {
+        const chart = new GroupedCategoryChart(document);
+        chart.parent = parent;
+        xAxis.position = ChartAxisPosition.Bottom;
+        yAxis.position = ChartAxisPosition.Left;
+        chart.axes = [xAxis, yAxis];
+        return chart;
     }
 
     static createBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
@@ -155,7 +147,9 @@ export class ChartBuilder {
     }
 
     private static createPolarChart<T>(parent: HTMLElement): PolarChart {
-        return new PolarChart({ parent });
+        const chart = new PolarChart();
+        chart.parent = parent;
+        return chart;
     }
 
     static createDoughnutChart(parent: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart {
@@ -281,7 +275,7 @@ export class ChartBuilder {
         return chart;
     }
 
-    static initSeries<S extends Series<any>>(series: S, options: SeriesOptions) {
+    static initSeries<S extends Series>(series: S, options: SeriesOptions) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
@@ -542,7 +536,7 @@ export class ChartBuilder {
         return series;
     }
 
-    private static getMarkerFromType(type: MarkerType): new () => Marker {
+    private static getMarkerFromType(type?: MarkerType): new () => Marker {
         const markerType = (type === 'circle' && Circle)
             || (type === 'cross' && Cross)
             || (type === 'diamond' && Diamond)

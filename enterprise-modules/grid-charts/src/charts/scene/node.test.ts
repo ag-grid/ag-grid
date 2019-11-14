@@ -21,5 +21,5 @@ test('nextSibling', () => {
 
     expect(node1.nextSibling).toBe(node2);
     expect(node2.nextSibling).toBe(node3);
-    expect(node1.nextSibling!.nextSibling).toBe(node3);
+    expect(node1.nextSibling.nextSibling).toBe(node3);
 });

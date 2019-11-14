@@ -1,7 +1,7 @@
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { _, PolarChartOptions, PieSeriesOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PieSeries } from "../../../../charts/chart/series/pieSeries";
+import { PieSeries } from "../../../../charts/chart/series/polar/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";
 import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
 
@@ -68,10 +68,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
             // first series in the legend, we programmatically toggle the corresponding slices of other series.
             if (index === 0) {
                 pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
-                    const chart = pieSeries.chart;
-
-                    if (chart) {
-                        chart.series.forEach(series => {
+                    if (doughnutChart) {
+                        doughnutChart.series.forEach(series => {
                             (series as PieSeries).dataEnabled[itemId] = enabled;
                         });
                     }

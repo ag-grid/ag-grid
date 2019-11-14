@@ -1,6 +1,6 @@
 import { ChartType, _, BarSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { BarSeries } from "../../../../charts/chart/series/barSeries";
+import { BarSeries } from "../../../../charts/chart/series/cartesian/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { BarSeriesOptions as InternalBarSeriesOptions } from "../../../../charts/chartOptions";
@@ -21,6 +21,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.chart = ChartBuilder[builderFunction](params.parentElement, this.chartOptions);
 
         const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+
+        (barSeries as BarSeries).flipXY = !this.isColumnChart();
 
         if (barSeries) {
             this.chart.addSeries(barSeries);

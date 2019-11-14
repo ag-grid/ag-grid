@@ -16,10 +16,9 @@ export abstract class MiniChart extends Component {
     constructor(parent: HTMLElement, tooltipName: string) {
         super();
 
-        const scene = new Scene({
-            width: this.size,
-            height: this.size
-        });
+        const scene = new Scene();
+        scene.width = this.size;
+        scene.height = this.size;
 
         scene.root = this.root;
         scene.parent = parent;

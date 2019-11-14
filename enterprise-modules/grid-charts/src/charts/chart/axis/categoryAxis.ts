@@ -1,7 +1,8 @@
 import { BandScale } from "../../scale/bandScale";
 import { Axis } from "../../axis";
+import { ChartAxis } from "../chartAxis";
 
-export class CategoryAxis extends Axis<BandScale<string>> {
+export class CategoryAxis extends ChartAxis {
     constructor() {
         const scale = new BandScale<string>();
         scale.paddingInner = 0.2;

@@ -5,11 +5,11 @@ import { normalizeAngle360, toRadians } from "../../util/angle";
 import { Text } from "../../scene/shape/text";
 import { BBox } from "../../scene/bbox";
 import { Matrix } from "../../scene/matrix";
-import { Caption } from "../../caption";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { IGridStyle, ILinearAxis, AxisLabel, AxisTick } from "../../axis";
+import { ILinearAxis, AxisLabel, AxisTick } from "../../axis";
+import { ChartAxis } from "../chartAxis";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
@@ -24,8 +24,7 @@ class GroupedCategoryAxisLabel extends AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | number>, string | number> {
-
+export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandScale<string | number>, string | number> {
     // debug (bbox)
     // private bboxRect = (() => {
     //     const rect = new Rect();
@@ -38,9 +37,12 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
 
     static className = 'GroupedCategoryAxis';
     readonly id: string = this.createId();
-    readonly scale = new BandScale<string | number>();
+    // Label scale (labels are positionsed between ticks, tick count = label count + 1).
+    // We don't call is `labelScale` for consistency with other axes.
+    readonly scale: BandScale<string | number>;
     readonly tickScale = new BandScale<string | number>();
     readonly group = new Group();
+
     private gridLineSelection: Selection<Line, Group, any, any>;
     private axisLineSelection: Selection<Line, Group, any, any>;
     private separatorSelection: Selection<Line, Group, any, any>;
@@ -48,18 +50,21 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
     private tickTreeLayout?: TreeLayout;
 
     constructor() {
-        const scale = this.scale;
+        super(new BandScale<string | number>());
+
+        const { group, scale, tickScale } = this;
+
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
 
-        const tickScale = this.tickScale;
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
 
-        this.gridLineSelection = Selection.select(this.group).selectAll<Line>();
-        this.axisLineSelection = Selection.select(this.group).selectAll<Line>();
-        this.separatorSelection = Selection.select(this.group).selectAll<Line>();
-        this.labelSelection = Selection.select(this.group).selectAll<Text>();
+
+        this.gridLineSelection = Selection.select(group).selectAll<Line>();
+        this.axisLineSelection = Selection.select(group).selectAll<Line>();
+        this.separatorSelection = Selection.select(group).selectAll<Line>();
+        this.labelSelection = Selection.select(group).selectAll<Text>();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -147,15 +152,13 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
             color: 'rgba(195, 195, 195, 1)'
         };
 
-    readonly tick = new AxisTick();
+    // readonly tick = new AxisTick();
 
     readonly label = new GroupedCategoryAxisLabel();
 
     private get lineHeight() {
         return this.label.fontSize * 1.5;
     }
-
-    title: Caption | undefined = undefined;
 
     /**
      * The color of the labels.
@@ -166,7 +169,6 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
      */
-    private _gridLength: number = 0;
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
         if (this._gridLength && !value || !this._gridLength && value) {
@@ -177,25 +179,6 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
     }
     get gridLength(): number {
         return this._gridLength;
-    }
-
-    /**
-     * The array of styles to cycle through when rendering grid lines.
-     * For example, use two {@link GridStyle} objects for alternating styles.
-     * Contains only one {@link GridStyle} object by default, meaning all grid lines
-     * have the same style.
-     */
-    private _gridStyle: IGridStyle[] = [{
-        stroke: 'rgba(219, 219, 219, 1)',
-        lineDash: [4, 2]
-    }];
-    set gridStyle(value: IGridStyle[]) {
-        if (value.length) {
-            this._gridStyle = value;
-        }
-    }
-    get gridStyle(): IGridStyle[] {
-        return this._gridStyle;
     }
 
     /**
@@ -435,7 +418,8 @@ export class GroupedCategoryAxis implements ILinearAxis<BandScale<string | numbe
         // bboxRect.height = bbox.height;
     }
 
-    getBBox(includeTitle = true): BBox {
+    getBBox(options?: { excludeTitle: boolean }): BBox {
+        const includeTitle = !options || !options.excludeTitle;
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;

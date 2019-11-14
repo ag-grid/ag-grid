@@ -1,22 +1,23 @@
-import { Group } from "../../scene/group";
-import { Line } from "../../scene/shape/line";
-import { Text, FontStyle, FontWeight } from "../../scene/shape/text";
-import { Selection } from "../../scene/selection";
-import { DropShadow } from "../../scene/dropShadow";
-import { LinearScale } from "../../scale/linearScale";
-import palette from "../palettes";
-import { Sector } from "../../scene/shape/sector";
-import { Series, SeriesNodeDatum, PolarTooltipRendererParams } from "./series";
-import { Label } from "../label";
-import { PointerEvents } from "../../scene/node";
-import { normalizeAngle180, toRadians } from "../../util/angle";
-import { Color } from "../../util/color";
-import { toFixed } from "../../util/number";
-import { LegendDatum } from "../legend";
-import { PolarChart } from "../polarChart";
-import { Caption } from "../../caption";
-import { Shape } from "../../scene/shape/shape";
-import { reactive } from "../../util/observable";
+import { Group } from "../../../scene/group";
+import { Line } from "../../../scene/shape/line";
+import { FontStyle, FontWeight, Text } from "../../../scene/shape/text";
+import { Selection } from "../../../scene/selection";
+import { DropShadow } from "../../../scene/dropShadow";
+import { LinearScale } from "../../../scale/linearScale";
+import palette from "../../palettes";
+import { Sector } from "../../../scene/shape/sector";
+import { PolarTooltipRendererParams, SeriesNodeDatum } from "./../series";
+import { Label } from "../../label";
+import { PointerEvents } from "../../../scene/node";
+import { normalizeAngle180, toRadians } from "../../../util/angle";
+import { Color } from "../../../util/color";
+import { toFixed } from "../../../util/number";
+import { LegendDatum } from "../../legend";
+import { Caption } from "../../../caption";
+import { Shape } from "../../../scene/shape/shape";
+import { reactive } from "../../../util/observable";
+import { PolarSeries } from "./polarSeries";
+import { ChartAxisDirection } from "../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -46,11 +47,11 @@ enum PieSeriesNodeTag {
 }
 
 class PieSeriesLabel extends Label {
-    @reactive(['style']) offset = 3; // from the callout line
-    @reactive(['data']) minAngle = 20; // in degrees
+    @reactive(['change']) offset = 3; // from the callout line
+    @reactive(['dataChange']) minAngle = 20; // in degrees
 }
 
-export class PieSeries extends Series<PolarChart> {
+export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
 
@@ -79,13 +80,13 @@ export class PieSeries extends Series<PolarChart> {
 
         if (oldTitle !== value) {
             if (oldTitle) {
-                oldTitle.removeEventListener('style');
+                oldTitle.removeEventListener('change', this.scheduleLayout);
                 this.group.removeChild(oldTitle.node);
             }
 
             if (value) {
                 value.node.textBaseline = 'bottom';
-                value.addEventListener('style', this.scheduleLayout.bind(this));
+                value.addEventListener('change', this.scheduleLayout);
                 this.group.appendChild(value.node);
             }
 
@@ -138,8 +139,8 @@ export class PieSeries extends Series<PolarChart> {
     constructor() {
         super();
 
-        this.label.addEventListener('style', () => this.scheduleLayout.bind(this));
-        this.label.addEventListener('data', () => this.scheduleData.bind(this));
+        this.label.addEventListener('change', () => this.scheduleLayout());
+        this.label.addEventListener('dataChange', () => this.scheduleData());
 
         this.addPropertyListener('data', event => {
             event.source.dataEnabled = event.value.map(() => true);
@@ -412,12 +413,12 @@ export class PieSeries extends Series<PolarChart> {
         this.scheduleLayout();
     }
 
-    getDomainX(): [number, number] {
-        return this.angleScale.domain as [number, number];
-    }
-
-    getDomainY(): [number, number] {
-        return this.radiusScale.domain as [number, number];
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (direction === ChartAxisDirection.X) {
+            return this.angleScale.domain;
+        } else {
+            return this.radiusScale.domain;
+        }
     }
 
     processData(): boolean {
@@ -514,12 +515,11 @@ export class PieSeries extends Series<PolarChart> {
     }
 
     update(): void {
-        const { chart } = this;
         const visible = this.group.visible = this.visible && this.dataEnabled.indexOf(true) >= 0;
 
-        if (!chart || !visible || chart.dataPending || chart.layoutPending) {
-            return;
-        }
+        // if (!chart || !visible || chart.dataPending || chart.layoutPending) {
+        //     return;
+        // }
 
         const {
             fills,
@@ -533,13 +533,13 @@ export class PieSeries extends Series<PolarChart> {
             title,
         } = this;
 
-        radiusScale.range = [0, chart.radius];
+        radiusScale.range = [0, this.radius];
 
-        this.group.translationX = chart.centerX;
-        this.group.translationY = chart.centerY;
+        this.group.translationX = this.centerX;
+        this.group.translationY = this.centerY;
 
         if (title) {
-            title.node.translationY = -chart.radius - outerRadiusOffset - 2;
+            title.node.translationY = -this.radius - outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
 

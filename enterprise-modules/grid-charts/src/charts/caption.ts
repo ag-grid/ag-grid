@@ -7,15 +7,15 @@ import { Observable, reactive } from "./util/observable";
 export class Caption extends Observable {
     readonly node: Text = new Text();
 
-    @reactive(['style']) enabled = true;
-    @reactive(['style']) padding = new Padding(10);
+    @reactive(['change']) enabled = true;
+    @reactive(['change']) padding = new Padding(10);
 
-    @reactive(['style'], 'node.text') text: string;
-    @reactive(['style'], 'node.fontStyle') fontStyle: FontStyle | undefined;
-    @reactive(['style'], 'node.fontWeight') fontWeight: FontWeight | undefined;
-    @reactive(['style'], 'node.fontSize') fontSize: number;
-    @reactive(['style'], 'node.fontFamily') fontFamily: string;
-    @reactive(['style'], 'node.fill') color: string;
+    @reactive(['change'], 'node.text') text: string;
+    @reactive(['change'], 'node.fontStyle') fontStyle: FontStyle | undefined;
+    @reactive(['change'], 'node.fontWeight') fontWeight: FontWeight | undefined;
+    @reactive(['change'], 'node.fontSize') fontSize: number;
+    @reactive(['change'], 'node.fontFamily') fontFamily: string;
+    @reactive(['change'], 'node.fill') color: string;
 
     constructor() {
         super();

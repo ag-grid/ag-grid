@@ -70,31 +70,23 @@ describe("numericExtent", () => {
         expect(result![0]).toBe(5);
         expect(result![1]).toBe(5);
     });
-
+   
     test("returns valid lowest and highest number from mixed values", () => {
         const result = numericExtent([undefined, 4, 3, 7, null, {}, 1, 5]);
         expect(result![0]).toBe(1);
         expect(result![1]).toBe(7);
     });
-
+   
     test("coerces Dates to numbers", () => {
-        const earliest = 5270400000;
-        const latest = 1568332800000;
-
-        const result = numericExtent([new Date(earliest), new Date(latest), new Date(1985, 5, 5)]);
-
-        expect(result![0]).toBe(earliest);
-        expect(result![1]).toBe(latest);
+        const result = numericExtent([new Date(2019, 9, 13), new Date("03/03/1970"), new Date("05/05/1985")]);
+        expect(result![0]).toBe(5266800000);
+        expect(result![1]).toBe(1570921200000);
     });
 
     test("returns earliest and latest timestamp for mixed Dates and numbers", () => {
-        const earliest = 5270400000;
-        const latest = 1568468277000;
-
-        const result = numericExtent([new Date(2019, 7, 20), new Date(earliest), latest, new Date(1985, 5, 5)]);
-
-        expect(result![0]).toBe(earliest);
-        expect(result![1]).toBe(latest);
+        const result = numericExtent([new Date(2019, 8, 13), new Date("03/03/1970"), 1568468277000, new Date("05/05/1985")]);
+        expect(result![0]).toBe(5266800000);
+        expect(result![1]).toBe(1568468277000);
     });
 
     test("does not coerce objects", () => {
@@ -105,13 +97,13 @@ describe("numericExtent", () => {
 
 describe("sumPositiveValues", () => {
     test("returns sum of positive integer elements", () => {
-        const result = sumPositiveValues([32, 54, -12, 21]);
+        const result = sumPositiveValues([ 32, 54, -12, 21 ]);
 
         expect(result).toBe(107);
     });
 
     test("returns sum of positive floating point elements", () => {
-        const result = sumPositiveValues([54.124, 78.024, -12.543, 21]);
+        const result = sumPositiveValues([ 54.124, 78.024, -12.543, 21 ]);
 
         expect(result).toBe(153.148);
     });

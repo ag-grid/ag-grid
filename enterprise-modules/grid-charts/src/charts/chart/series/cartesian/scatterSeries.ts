@@ -1,16 +1,20 @@
-import { CartesianChart } from "../cartesianChart";
-import { Selection } from "../../scene/selection";
-import { Group } from "../../scene/group";
-import { Series, SeriesNodeDatum, CartesianTooltipRendererParams } from "./series";
-import { numericExtent } from "../../util/array";
-import { toFixed } from "../../util/number";
-import { LegendDatum } from "../legend";
-import { Shape } from "../../scene/shape/shape";
-import linearScale from "../../scale/linearScale";
-import { Marker } from "../marker/marker";
-import { SeriesMarker } from "./seriesMarker";
-import { Circle } from "../marker/circle";
-import { reactive } from "../../util/observable";
+import { CartesianChart } from "../../cartesianChart";
+import { Selection } from "../../../scene/selection";
+import { Group } from "../../../scene/group";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
+import { numericExtent } from "../../../util/array";
+import { toFixed } from "../../../util/number";
+import { LegendDatum } from "../../legend";
+import { Shape } from "../../../scene/shape/shape";
+import linearScale from "../../../scale/linearScale";
+import { Marker } from "../../marker/marker";
+import { SeriesMarker } from "../seriesMarker";
+import { Circle } from "../../marker/circle";
+import { reactive } from "../../../util/observable";
+import { Axis } from "../../../axis";
+import Scale from "../../../scale/scale";
+import { CartesianSeries } from "./cartesianSeries";
+import { ChartAxisDirection } from "../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -29,12 +33,12 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
     labelName?: string;
 }
 
-export class ScatterSeries extends Series<CartesianChart> {
+export class ScatterSeries extends CartesianSeries {
 
     static className = 'ScatterSeries';
 
-    private domainX: number[] = [];
-    private domainY: number[] = [];
+    private xDomain: number[] = [];
+    private yDomain: number[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
     private sizeData: number[] = [];
@@ -50,14 +54,14 @@ export class ScatterSeries extends Series<CartesianChart> {
         fill?: string,
         stroke?: string
     } = {
-            fill: 'yellow'
-        };
+        fill: 'yellow'
+    };
 
-    @reactive(['layout']) title?: string;
-    @reactive(['data']) xKey: string = '';
-    @reactive(['data']) yKey: string = '';
-    @reactive(['data']) sizeKey?: string;
-    @reactive(['data']) labelKey?: string;
+    @reactive(['layoutChange']) title?: string;
+    @reactive(['dataChange']) xKey: string = '';
+    @reactive(['dataChange']) yKey: string = '';
+    @reactive(['dataChange']) sizeKey?: string;
+    @reactive(['dataChange']) labelKey?: string;
 
     xName: string = 'X';
     yName: string = 'Y';
@@ -69,16 +73,14 @@ export class ScatterSeries extends Series<CartesianChart> {
     constructor() {
         super();
 
-        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
-        this.marker.addEventListener('style', this.update.bind(this));
-        this.marker.addEventListener('legend', () => this.chart && this.chart.updateLegend());
+        const { marker } = this;
+        marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        marker.addEventListener('change', () => this.update());
+        marker.addEventListener('legendChange', event => this.fireEvent(event));
 
-        this.addPropertyListener('xKey', event => event.source.xData = []);
-        this.addPropertyListener('yKey', event => event.source.yData = []);
-        this.addPropertyListener('sizeKey', event => event.source.sizeData = []);
-
-        this.addEventListener('layout', () => this.scheduleLayout.bind(this));
-        this.addEventListener('data', () => this.scheduleData.bind(this));
+        this.addPropertyListener('xKey', () => this.xData = []);
+        this.addPropertyListener('yKey', () => this.yData = []);
+        this.addPropertyListener('sizeKey', () => this.sizeData = []);
     }
 
     onMarkerTypeChange() {
@@ -89,15 +91,10 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     processData(): boolean {
         const {
-            chart,
             xKey,
             yKey,
             sizeKey
         } = this;
-
-        if (!(chart && chart.xAxis && chart.yAxis)) {
-            return false;
-        }
 
         const data = xKey && yKey ? this.data : [];
 
@@ -106,14 +103,13 @@ export class ScatterSeries extends Series<CartesianChart> {
 
         if (sizeKey) {
             this.sizeData = data.map(d => d[sizeKey]);
-        }
-        else {
+        } else {
             this.sizeData = [];
         }
 
         this.sizeScale.domain = numericExtent(this.sizeData) || [1, 1];
-        this.domainX = this.calculateDomain(this.xData);
-        this.domainY = this.calculateDomain(this.yData);
+        this.xDomain = this.calculateDomain(this.xData);
+        this.yDomain = this.calculateDomain(this.yData);
 
         return true;
     }
@@ -128,6 +124,14 @@ export class ScatterSeries extends Series<CartesianChart> {
         }
 
         return domain;
+    }
+
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        } else {
+            return this.yDomain;
+        }
     }
 
     highlightNode(node: Shape) {
@@ -145,14 +149,17 @@ export class ScatterSeries extends Series<CartesianChart> {
     }
 
     update(): void {
-        const chart = this.chart;
-        const visible = this.group.visible = this.visible;
+        const { visible, xAxis, yAxis } = this;
+        this.group.visible = visible;
 
-        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        //     return;
+        // }
+
+        if (!visible || !xAxis || !yAxis) {
             return;
         }
 
-        const { xAxis, yAxis } = chart;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -165,7 +172,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeData,
             sizeScale,
             marker,
-            highlightedNode,
+            highlightedNode
         } = this;
 
         const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
@@ -205,14 +212,6 @@ export class ScatterSeries extends Series<CartesianChart> {
             });
 
         this.groupSelection = groupSelection;
-    }
-
-    getDomainX(): any[] {
-        return this.domainX;
-    }
-
-    getDomainY(): any[] {
-        return this.domainY;
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
