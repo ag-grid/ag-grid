@@ -1,6 +1,6 @@
 const gulp = require('gulp');
 const {series, parallel} = gulp;
-
+const sourcemaps = require('gulp-sourcemaps');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
 const autoprefixer = require('autoprefixer');
@@ -36,10 +36,11 @@ const cleanDist = () => {
 };
 
 const tscSrcTask = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig.es5.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('tsconfig.json', {typescript: typescript});
 
     const tsResult = gulp
         .src('src/ts/**/*.ts')
+        .pipe(sourcemaps.init())
         .pipe(tsProject());
 
     return merge([
@@ -48,6 +49,7 @@ const tscSrcTask = () => {
             .pipe(gulp.dest('dist/cjs')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('dist/cjs'))
     ]);
 };
@@ -66,23 +68,6 @@ const tscSrcEs6Task = () => {
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/es6'))
-    ]);
-};
-
-const tscSrcDocsTask = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig.docs.json', {typescript: typescript});
-
-    const tsResult = gulp
-        .src('src/ts/**/*.ts')
-        .pipe(tsProject());
-
-    return merge([
-        tsResult.dts
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/cjs')),
-        tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/cjs'))
     ]);
 };
 // End of Typescript related tasks
@@ -183,7 +168,6 @@ const copyGridCoreStyles = () => {
 gulp.task('clean', cleanDist);
 gulp.task('tsc-no-clean-es5', tscSrcTask);
 gulp.task('tsc-no-clean-es6', tscSrcEs6Task);
-gulp.task('tsc-no-clean-docs', tscSrcDocsTask);
 gulp.task('tsc-no-clean', parallel('tsc-no-clean-es5', 'tsc-no-clean-es6'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 

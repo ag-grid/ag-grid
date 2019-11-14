@@ -1312,27 +1312,23 @@
 
     %side-bar-left {
         border-left: 1px solid $ag-border-color;
-        border-right: none;
         .ag-side-button.ag-selected button {
             margin-right: -1px;
             padding-right: 1px;
         }
         .ag-tool-panel-wrapper {
             border-left: 1px solid $ag-border-color;
-            border-right: none;
         }
     }
 
     %side-bar-right {
         border-right: 1px solid $ag-border-color;
-        border-left: none;
         .ag-side-button.ag-selected button {
             margin-left: -1px;
             padding-left: 1px;
         }
         .ag-tool-panel-wrapper {
             border-right: 1px solid $ag-border-color;
-            border-left: none;
         }
     }
 

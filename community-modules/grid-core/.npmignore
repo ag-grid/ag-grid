@@ -4,7 +4,7 @@ src
 .sasslintrc
 gulpfile.js
 tsconfig.docs.json
-tsconfig.es5.json
+tsconfig.json
 tsconfig.es6.json
 tsconfig.json
 tsconfig-precheck.json

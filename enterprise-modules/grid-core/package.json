@@ -5,9 +5,8 @@
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
   "scripts": {
-    "build-cjs": "tsc -p tsconfig.es5.json",
+    "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
-    "build-docs": "tsc -p tsconfig.docs.json",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-es6",
     "test": "jest"
@@ -46,7 +45,6 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.0",
-    "gulp": "^4.0.2",
     "jest": "^24.9.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.6.3"

@@ -6,9 +6,8 @@
   "module": "./dist/es6/main.js",
   "scripts": {
     "test": "jest",
-    "build-cjs": "tsc -p tsconfig.es5.json",
+    "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
-    "build-docs": "tsc -p tsconfig.docs.json",
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-es6"
   },

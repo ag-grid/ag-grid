@@ -1,18 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "es6",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "outDir": "dist/cjs",
+    "moduleResolution": "node",
     "lib": [
       "es2015",
       "dom"
-    ]
-  },
-  "include": [
-    "src/ts/**/*"
-  ]
+    ],
+  }
 }

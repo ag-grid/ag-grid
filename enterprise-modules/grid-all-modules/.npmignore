@@ -9,7 +9,7 @@ ts-lint-rules
 gulpfile.js
 protractor.conf.js
 tsconfig.docs.json
-tsconfig.es5.json
+tsconfig.json
 tsconfig.es6.json
 tsconfig.json
 tsconfig-lint.json

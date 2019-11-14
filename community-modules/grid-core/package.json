@@ -5,8 +5,8 @@
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
   "scripts": {
-    "lint": "tslint -p tsconfig.es5.json src/ts/**/*.ts",
-    "lint-fix": "tslint -p tsconfig.es5.json -c tslint-fix.json --fix src/ts/**/*.ts",
+    "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
+    "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "precheck": "tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && gulp && tsc -p tsconfig.typings.json",
     "test": "npm run validate-es5",
@@ -14,7 +14,6 @@
     "package": "node ../../module-build/rollup/build.js",
     "build-es6": "npx gulp tsc-no-clean-es6",
     "build-cjs": "npx gulp tsc-no-clean-es5",
-    "build-docs": "tsc -p tsconfig.docs.json",
     "build-css": "npx gulp scss-no-clean"
   },
   "repository": {
@@ -71,7 +70,7 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-stylus": "^2.7.0",
     "gulp-tsd": "^0.1.0",
-    "gulp-typescript": "^5.0.0",
+    "gulp-typescript": "^5.0.1",
     "gulp-uglify": "^3.0.0",
     "image-webpack-loader": "^6.0.0",
     "json-stable-stringify": "^1.0.0",

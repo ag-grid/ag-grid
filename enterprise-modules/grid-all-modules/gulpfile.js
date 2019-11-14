@@ -11,8 +11,7 @@ const pkg = require('./package.json');
 const ts = require('gulp-typescript');
 
 const tsEs6Project = ts.createProject('tsconfig.es6.json');
-const tsEs5Project = ts.createProject('tsconfig.es5.json');
-const tsDocsProject = ts.createProject('tsconfig.dos.json');
+const tsEs5Project = ts.createProject('tsconfig.json');
 
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
@@ -43,13 +42,6 @@ const buildEs5 = () => {
         .pipe(tsEs5Project());
 
     return tsResult.js.pipe(gulp.dest('dist/es5'));
-};
-
-const buildDocs = () => {
-    const tsResult = tsDocsProject.src()
-        .pipe(tsDocsProject());
-
-    return tsResult.js.pipe(gulp.dest('dist/cjs'));
 };
 
 // Start of webpack related tasks
@@ -128,7 +120,6 @@ const copyGridCoreStyles = (done) => {
 gulp.task('clean', cleanDist);
 gulp.task('buildEs5', buildEs5);
 gulp.task('buildEs6', buildEs6);
-gulp.task('buildDocs', buildDocs);
 gulp.task('build', parallel('buildEs5', 'buildEs6'));
 
 // copy from grid-core tasks

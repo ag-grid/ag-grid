@@ -1,9 +1,6 @@
 {
-  "extends": "./tsconfig.es5.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "noEmit": true
-  },
-  "include": [
-    "src/**/*"
-  ]
+  }
 }

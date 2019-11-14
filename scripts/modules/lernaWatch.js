@@ -26,7 +26,7 @@ const manifest = (dir = undefined) =>
         })
     );
 
-const buildDependencies = async (dependencies, command = 'build-docs') => {
+const buildDependencies = async (dependencies, command = 'build-cjs') => {
     console.log("------------------------------------------------------------------------------------------");
     console.log(`Building ${dependencies.map(dependency => `--scope ${dependency}`).join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
@@ -54,7 +54,7 @@ const findParentPackageManifest = changedFile => {
     return up(startingPath);
 };
 
-const buildDependencyChain = async (packageName, buildChains, singleModule = false, command = "build-docs") => {
+const buildDependencyChain = async (packageName, buildChains, singleModule = false, command = "build-cjs") => {
     const buildChain = buildChains[packageName];
 
     if (singleModule) {
