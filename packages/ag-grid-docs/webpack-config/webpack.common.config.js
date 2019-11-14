@@ -1,4 +1,3 @@
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 
 module.exports = {
@@ -25,23 +24,8 @@ module.exports = {
                 enforce: "pre"
             },
             {
-                test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    {loader: 'css-loader', options: {sourceMap: true}},
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            syntax: 'postcss-scss',
-                            plugins: [autoprefixer({
-                                overrideBrowserslist: ["last 2 version"],
-                                flexbox: true
-                            })]
-                        }
-                    },
-                    {loader: 'sass-loader', options: {sourceMap: true}}
-                ]
+                test: /\.css$/,
+                loader: "style-loader!css-loader"
             },
             {
                 test: /\.(svg)$/,

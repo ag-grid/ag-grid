@@ -14,9 +14,6 @@ commandLineOptions
     .option(
         "-b, --build"
     )
-    .option(
-        "-t, --test"
-    )
     .parse(process.argv);
 
 const manifest = (dir = undefined) =>
@@ -60,14 +57,15 @@ const buildDependencyChain = async (packageName, buildChains, singleModule = fal
     if (singleModule) {
         await buildDependencies(buildChain["0"], command);
     } else {
-        Object.values(buildChain).forEach(async dependency => await buildDependencies(dependency, command));
+        const buildBands = Object.values(buildChain);
+        for(let index = 0; index < buildBands.length; index++) {
+            await buildDependencies(buildBands[index], command)
+        }
     }
 };
 
 const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
-    const log = console.log.bind(console);
-
-    log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
+    console.log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
     let watcher = chokidar.watch(paths, {
@@ -88,32 +86,27 @@ const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
     // Add event listeners
     return watcher
         .on("add", path => {
-            log(`File ${path} has been added`);
+            console.log(`File ${path} has been added`);
             buildDependencyChain(packageName(path), buildChains, singleModule);
         })
         .on("change", path => {
-            log(`File ${path} has been changed`);
+            console.log(`File ${path} has been changed`);
             buildDependencyChain(packageName(path), buildChains, singleModule);
         })
         .on("unlink", path => {
-            log(`File ${path} has been removed`);
+            console.log(`File ${path} has been removed`);
             buildDependencyChain(packageName(path), buildChains, singleModule);
         });
 };
 
 const spawnCssWatcher = async ({ paths, buildChains }) => {
-    const log = console.log.bind(console);
-
-    log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
+    console.log(`Watching the following css paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
     let watcher = chokidar.watch(paths, {
         ignored: [
             /(^|[\/\\])\../,        // ignore dotfiles
-            /node_modules/,         // ignore node_modules
-            /lib|dist/,             // ignore build output files
-            /\*___jb_tmp___/,       // ignore jetbrains IDE temp files
-            /ts/
+            /\*___jb_tmp___/       // ignore jetbrains IDE temp files
         ],
         persistent: true,
         ignoreInitial: true,
@@ -123,15 +116,15 @@ const spawnCssWatcher = async ({ paths, buildChains }) => {
     // Add event listeners
     return watcher
         .on("add", path => {
-            log(`File ${path} has been added`);
+            console.log(`File ${path} has been added`);
             buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         })
         .on("change", path => {
-            log(`File ${path} has been changed`);
+            console.log(`File ${path} has been changed`);
             buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         })
         .on("unlink", path => {
-            log(`File ${path} has been removed`);
+            console.log(`File ${path} has been removed`);
             buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         });
 };
@@ -222,29 +215,6 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
     return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
 
-const test = async () => {
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
-    if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
-
-        const buildChains = {};
-        for (let packageName of orderedPackageNames) {
-            buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
-        }
-
-        buildChainInfo = {
-            paths,
-            buildChains
-        };
-
-        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
-    } else {
-        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
-    }
-
-    await buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/enterprise-modules/side-bar/src/sideBar/toolPanelWrapper.ts', buildChainInfo.buildChains)
-};
-
 const watch = async (singleModule = false) => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
@@ -268,7 +238,9 @@ const watch = async (singleModule = false) => {
     spawnWatcher(buildChainInfo, singleModule);
 
     const cssBuildChain = {
-        paths: buildChainInfo.paths.filter(path => { console.log(path); return path.includes('community-modules/grid-core') || path.includes('grid-all-modules') }),
+        paths: buildChainInfo.paths
+            .filter(path => path.includes('community-modules/grid-core'))
+            .map(path => `${path}/src/styles`),
         buildChains: {
             "@ag-grid-community/core": {
                 "0": [
@@ -310,10 +282,10 @@ const build = async () => {
     const packageName = manifest(findParentPackageManifest(packagePath)).name;
 
     await buildDependencyChain(packageName, buildChainInfo.buildChains);
+    await buildDependencyChain(packageName, buildChainInfo.buildChains, 'build-css');
 };
 
 if (commandLineOptions.watch) watch(false);
 if (commandLineOptions.single) watch(true);
 if (commandLineOptions.build) build();
-if (commandLineOptions.test) test();
 

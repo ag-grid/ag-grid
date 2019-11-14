@@ -277,6 +277,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
 }
 
 function watchModules(buildSourceModuleOnly) {
+    console.log("Watching modules...");
     const lernaScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
     const node = 'node';
     const watchMode = buildSourceModuleOnly ? '-s' : '-w';
@@ -352,7 +353,6 @@ module.exports = (buildSourceModuleOnly = false, done) => {
 
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
-
 
     // add community & enterprise modules to express (for importing in the fw examples)
     symlinkModules(communityModules, enterpriseModules);
