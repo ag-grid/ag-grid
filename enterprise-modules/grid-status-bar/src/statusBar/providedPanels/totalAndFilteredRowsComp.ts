@@ -4,8 +4,9 @@ import {
     EventService,
     GridApi,
     IStatusPanelComp,
-    PostConstruct
-} from '@ag-community/grid-core';
+    PostConstruct,
+    _
+} from '@ag-grid-community/core';
 import {NameValueComp} from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -33,8 +34,8 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const rowCount = this.getFilteredRowCountValue();
-        const totalRowCount = this.getTotalRowCount();
+        const rowCount = _.formatNumberCommas(this.getFilteredRowCountValue());
+        const totalRowCount = _.formatNumberCommas(this.getTotalRowCount());
 
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);

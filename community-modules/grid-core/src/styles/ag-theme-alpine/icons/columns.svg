@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>columns</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="columns" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(6.000000, 7.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M8,18 L6,18 L6,0 L8,0 L8,18 Z M14,18 L12,18 L12,0 L14,0 L14,18 Z M20,18 L18,18 L18,0 L20,0 L20,18 Z M2,18 L0,18 L0,0 L2,0 L2,18 Z"></path>
+        </g>
+    </g>
+</svg>

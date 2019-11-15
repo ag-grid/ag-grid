@@ -1,4 +1,3 @@
-import '@ag-enterprise/viewport-row-model';
-import 'ag-grid-enterprise';
+import {ViewportRowModelModule as GridModule} from '@ag-grid-enterprise/viewport-row-model';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

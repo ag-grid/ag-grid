@@ -1,4 +1,4 @@
-import { ChartType, _, BarSeriesOptions, CartesianChartOptions } from "@ag-community/grid-core";
+import { ChartType, _, BarSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { BarSeries } from "../../../../charts/chart/series/barSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -30,7 +30,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     public update(params: UpdateChartParams): void {
         const chart = this.chart;
         const barSeries = chart.series[0] as BarSeries;
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
         barSeries.data = params.data;
         barSeries.xKey = params.category.id;
@@ -62,6 +62,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             },
             shadow: this.getDefaultDropShadowOptions(),
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

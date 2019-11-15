@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>cross</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="cross" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(9.000000, 9.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M7,5.586 L12.292,0.292 C12.764,0.764 13.236,1.236 13.708,1.708 L8.414,7 L13.708,12.292 L12.292,13.708 L7,8.414 L1.708,13.708 L0.292,12.292 L5.586,7 L0.292,1.708 L1.708,0.292 L7,5.586 Z"></path>
+        </g>
+    </g>
+</svg>

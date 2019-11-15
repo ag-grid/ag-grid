@@ -1,4 +1,4 @@
-import {_, PostConstruct} from "@ag-community/grid-core";
+import {_, PostConstruct} from "@ag-grid-community/core";
 
 import {MiniChart} from "./miniChart";
 import {Line} from "../../../../../charts/scene/shape/line";

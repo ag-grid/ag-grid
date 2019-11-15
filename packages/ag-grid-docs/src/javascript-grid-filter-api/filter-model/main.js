@@ -68,7 +68,10 @@ function restoreFilterModel() {
 
 function restoreFromHardCoded() {
     var hardcodedFilter = {
-        country: ['Ireland', 'United States'],
+        country: {
+            type: 'set',
+            values: ['Ireland', 'United States']
+        },
         age: {type: 'lessThan', filter: '30'},
         athlete: {type: 'startsWith', filter: 'Mich'},
         date: {type: 'lessThan', dateFrom: '2010-01-01'}

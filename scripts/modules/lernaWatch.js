@@ -14,9 +14,6 @@ commandLineOptions
     .option(
         "-b, --build"
     )
-    .option(
-        "-t, --test"
-    )
     .parse(process.argv);
 
 const manifest = (dir = undefined) =>
@@ -26,13 +23,13 @@ const manifest = (dir = undefined) =>
         })
     );
 
-const buildDependencies = async dependencies => {
+const buildDependencies = async (dependencies, command = 'build-cjs') => {
     console.log("------------------------------------------------------------------------------------------");
     console.log(`Building ${dependencies.map(dependency => `--scope ${dependency}`).join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
-    const lernaArgs = `run build-docs ${scopedDependencies}`.split(" ");
+    const lernaArgs = `run ${command} ${scopedDependencies}`.split(" ");
     await execa("lerna", lernaArgs, { stdio: "inherit" });
 };
 
@@ -54,32 +51,62 @@ const findParentPackageManifest = changedFile => {
     return up(startingPath);
 };
 
-const buildDependencyChain = async (changeFile, buildChains, singleModule) => {
-    const packageName = manifest(findParentPackageManifest(changeFile)).name;
-
+const buildDependencyChain = async (packageName, buildChains, singleModule = false, command = "build-cjs") => {
     const buildChain = buildChains[packageName];
 
-    if(singleModule) {
-        await buildDependencies(buildChain["0"]);
+    if (singleModule) {
+        await buildDependencies(buildChain["0"], command);
     } else {
-        const maxIndex = Object.keys(buildChain).length;
-        for (let i = 0; i < maxIndex; i++) {
-            await buildDependencies(buildChain[i]);
+        const buildBands = Object.values(buildChain);
+        for(let index = 0; index < buildBands.length; index++) {
+            await buildDependencies(buildBands[index], command)
         }
     }
 };
 
-const spawnWatcher = async ({paths, buildChains}, singleModule) => {
-    await console.log(`Watching the following paths: ${paths.join('\n')}`);
-    const log = console.log.bind(console);
+const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
+    console.log(`Watching the following paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
     let watcher = chokidar.watch(paths, {
         ignored: [
-            /(^|[\/\\])\../, // ignore dotfiles
-            /node_modules/, // ignore node_modules
-            /lib|dist/, // ignore build output files
-            /\*___jb_tmp___/ // ignore jetbrains IDE temp files
+            /(^|[\/\\])\../,        // ignore dotfiles
+            /node_modules/,         // ignore node_modules
+            /lib|dist/,             // ignore build output files
+            /\*___jb_tmp___/,       // ignore jetbrains IDE temp files
+            /styles/,              // ignore scss/css files - these are handled separately
+        ],
+        persistent: true,
+        ignoreInitial: true,
+        awaitWriteFinish: true // Helps minimising thrashing of watch events
+    });
+
+    const packageName = changeFile => manifest(findParentPackageManifest(changeFile)).name;
+
+    // Add event listeners
+    return watcher
+        .on("add", path => {
+            console.log(`File ${path} has been added`);
+            buildDependencyChain(packageName(path), buildChains, singleModule);
+        })
+        .on("change", path => {
+            console.log(`File ${path} has been changed`);
+            buildDependencyChain(packageName(path), buildChains, singleModule);
+        })
+        .on("unlink", path => {
+            console.log(`File ${path} has been removed`);
+            buildDependencyChain(packageName(path), buildChains, singleModule);
+        });
+};
+
+const spawnCssWatcher = async ({ paths, buildChains }) => {
+    console.log(`Watching the following css paths:\n-> ${paths.join('\n-> ')}`);
+
+    // Initialize the watcher
+    let watcher = chokidar.watch(paths, {
+        ignored: [
+            /(^|[\/\\])\../,        // ignore dotfiles
+            /\*___jb_tmp___/       // ignore jetbrains IDE temp files
         ],
         persistent: true,
         ignoreInitial: true,
@@ -89,16 +116,16 @@ const spawnWatcher = async ({paths, buildChains}, singleModule) => {
     // Add event listeners
     return watcher
         .on("add", path => {
-            log(`File ${path} has been added`);
-            buildDependencyChain(path, buildChains, singleModule);
+            console.log(`File ${path} has been added`);
+            buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         })
         .on("change", path => {
-            log(`File ${path} has been changed`);
-            buildDependencyChain(path, buildChains, singleModule);
+            console.log(`File ${path} has been changed`);
+            buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         })
         .on("unlink", path => {
-            log(`File ${path} has been removed`);
-            buildDependencyChain(path, buildChains, singleModule);
+            console.log(`File ${path} has been removed`);
+            buildDependencyChain("@ag-grid-community/core", buildChains, false, 'build-css');
         });
 };
 
@@ -130,6 +157,7 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
                 delete dependencyTree[remainingPackage];
             }
         });
+
         if (buildChain[index].length !== 0) {
             index++;
         }
@@ -146,21 +174,23 @@ const exclude = [
     'ag-grid-community',
     'ag-grid-enterprise'
 ];
-const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example")
-// && !packageName.includes("-enterprise") && !packageName.includes("-angular") && !packageName.includes("-vue") && !packageName.includes("-react");
+
+const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example");
 
 const filterExcludedRoots = dependencyTree => {
     const prunedDependencyTree = {};
     const agRoots = Object.keys(dependencyTree).filter(excludePackage);
+
     agRoots.forEach(root => {
         prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-")) : []
     });
+
     return prunedDependencyTree;
 };
 
 const getOrderedDependencies = async packageName => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
-    const {stdout, stderr} = await execa("lerna", lernaArgs);
+    const { stdout } = await execa("lerna", lernaArgs);
     let dependenciesOrdered = JSON.parse(stdout);
     dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name));
 
@@ -175,47 +205,19 @@ const getOrderedDependencies = async packageName => {
 
 const generateBuildChain = async (packageName, allPackagesOrdered) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
-    let {stdout} = await execa("lerna", lernaArgs);
+    let { stdout } = await execa("lerna", lernaArgs);
     let dependencyTree = JSON.parse(stdout);
+
     dependencyTree = filterAgGridOnly(dependencyTree);
     dependencyTree = filterExcludedRoots(dependencyTree);
 
     return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
 
-const test = async () => {
-    let buildChainInfo = {};
-
+const watch = async (singleModule = false) => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
-
-        const buildChains = {};
-        for (let packageName of orderedPackageNames) {
-            buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
-        }
-
-        buildChainInfo = {
-            paths,
-            buildChains
-        };
-
-        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
-    } else {
-        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
-    }
-
-    await buildDependencyChain('/Users/seanlandsman/IdeaProjects/ag/ag-grid/ag-grid/enterprise-modules/side-bar/src/sideBar/toolPanelWrapper.ts', buildChainInfo.buildChains)
-};
-
-const watch = async (singleModule) => {
-    singleModule = singleModule || false;
-
-    let buildChainInfo = {};
-
-    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
-    if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -233,14 +235,32 @@ const watch = async (singleModule) => {
     }
 
     spawnWatcher(buildChainInfo, singleModule);
+
+    const cssBuildChain = {
+        paths: buildChainInfo.paths
+            .filter(path => path.includes('community-modules/grid-core'))
+            .map(path => `${path}/src/styles`),
+        buildChains: {
+            "@ag-grid-community/core": {
+                "0": [
+                    "@ag-grid-community/core"
+                ],
+                "1": [
+                    "@ag-grid-community/all-modules"
+                ],
+                "2": [
+                    "@ag-grid-enterprise/all-modules"
+                ]
+            }
+        }
+    };
+    spawnCssWatcher(cssBuildChain);
 };
 
 const build = async () => {
-    let buildChainInfo = {};
-
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -257,11 +277,14 @@ const build = async () => {
         buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
     }
 
-    await buildDependencyChain(path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts'), buildChainInfo.buildChains)
+    const packagePath = path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts');
+    const packageName = manifest(findParentPackageManifest(packagePath)).name;
+
+    await buildDependencyChain(packageName, buildChainInfo.buildChains);
+    await buildDependencyChain(packageName, buildChainInfo.buildChains, 'build-css');
 };
 
 if (commandLineOptions.watch) watch(false);
 if (commandLineOptions.single) watch(true);
 if (commandLineOptions.build) build();
-if (commandLineOptions.test) test();
 

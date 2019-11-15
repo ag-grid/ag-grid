@@ -11,9 +11,9 @@ import {
     DropShadowOptions,
     FontOptions,
     CaptionOptions,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { Chart } from "../../../charts/chart/chart";
-import { Palette } from "../../../charts/chart/palettes";
+import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
 import { BarSeries } from "../../../charts/chart/series/barSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/areaSeries";
@@ -31,7 +31,8 @@ export interface ChartProxyParams {
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
-    getSelectedPalette: () => Palette;
+    getChartPaletteName: () => ChartPaletteName;
+    allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
 }
 
@@ -52,7 +53,7 @@ export interface UpdateChartParams {
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
     protected chart: TChart;
     protected chartProxyParams: ChartProxyParams;
-    protected overriddenPalette: Palette;
+    protected customPalette: ChartPalette;
     protected chartType: ChartType;
     protected chartOptions: TOptions;
 
@@ -73,17 +74,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected abstract getDefaultOptions(): TOptions;
 
     protected initChartOptions(): void {
-        const options = this.getDefaultOptions();
         const { processChartOptions } = this.chartProxyParams;
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options };
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
             const overriddenOptions = processChartOptions(params) as TOptions;
-            this.overridePalette(overriddenOptions);
-            this.chartOptions = overriddenOptions;
+            const safeOptions = this.getDefaultOptions();
+
+            // ensure we have everything we need, in case the processing removed necessary options
+            _.mergeDeep(safeOptions, overriddenOptions, false);
+
+            this.overridePalette(safeOptions);
+            this.chartOptions = safeOptions;
         } else {
-            this.chartOptions = options;
+            this.chartOptions = this.getDefaultOptions();
         }
 
         // we want to preserve the existing width/height if an existing chart is being changed to a different type,
@@ -93,20 +98,30 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     private overridePalette(chartOptions: TOptions): void {
-        const palette = this.chartProxyParams.getSelectedPalette();
-        const defaultFills = palette.fills;
-        const defaultStrokes = palette.strokes;
+        if (!this.chartProxyParams.allowPaletteOverride) {
+            return;
+        }
+
+        const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
         const { seriesDefaults } = chartOptions;
         const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
-        const fillsOverridden = fills !== defaultFills;
-        const strokesOverridden = strokes !== defaultStrokes;
+        const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
+        const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
 
         if (fillsOverridden || strokesOverridden) {
-            this.overriddenPalette = {
-                fills: fillsOverridden && fills ? fills : defaultFills,
-                strokes: strokesOverridden && strokes ? strokes : defaultStrokes
+            this.customPalette = {
+                fills: fillsOverridden ? fills : defaultFills,
+                strokes: strokesOverridden ? strokes : defaultStrokes
             };
         }
+    }
+
+    public getChartOptions(): TOptions {
+        return this.chartOptions;
+    }
+
+    public getCustomPalette(): ChartPalette | undefined {
+        return this.customPalette;
     }
 
     public getChartOption<T = string>(expression: string): T {
@@ -237,11 +252,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected raiseChartOptionsChangedEvent(): void {
-        const event: ChartOptionsChanged = {
+        const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartType: this.chartType,
-            chartOptions: this.chartOptions
-        };
+            chartPalette: this.chartProxyParams.getChartPaletteName(),
+            chartOptions: this.chartOptions,
+        });
 
         this.chartProxyParams.eventService.dispatchEvent(event);
     }
@@ -264,12 +280,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
+    protected getPredefinedPalette(): ChartPalette {
+        return palettes.get(this.chartProxyParams.getChartPaletteName());
+    }
+
+    protected getPalette(): ChartPalette {
+        return this.customPalette || this.getPredefinedPalette();
+    }
+
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        const { fills, strokes } = this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPredefinedPalette();
 
         return {
             background: {
                 fill: this.getBackgroundColor(),
+                opacity: 1,
                 visible: true,
             },
             width: 800,
@@ -303,8 +328,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                         ...this.getDefaultFontOptions(),
                     },
                     marker: {
-                        padding: 4,
-                        size: 14,
+                        padding: 8,
+                        size: 15,
                         strokeWidth: 1,
                     },
                     paddingX: 16,

@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-community/grid-core";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
 import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
@@ -58,11 +58,11 @@ export class MarkersPanel extends Component {
         };
 
         if (this.chartController.getChartType() === ChartType.Bubble) {
-            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 30);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 30);
+            initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "maxSize", 60);
         } else {
             this.seriesMarkerMinSizeSlider.setDisplayed(false);
-            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 30);
+            initInput("marker.size", this.seriesMarkerSizeSlider, "size", 60);
         }
 
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);

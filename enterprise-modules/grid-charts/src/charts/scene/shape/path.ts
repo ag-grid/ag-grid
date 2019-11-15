@@ -63,6 +63,7 @@ export class Path extends Shape {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
+        // this.matrix.transformBBox(this.getBBox()!).render(ctx);
         this.matrix.toContext(ctx);
 
         if (this.dirtyPath) {

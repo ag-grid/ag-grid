@@ -2,7 +2,6 @@ import {
     Autowired,
     ColumnController,
     EventService,
-    Context,
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
@@ -13,7 +12,7 @@ import {
     ColumnApi,
     GridApi,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class ValuesDropZonePanel extends BaseDropZonePanel {
@@ -60,14 +59,10 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return false; }
-
         // we never allow grouping of secondary columns
-        if (!column.isPrimary()) { return false; }
+        if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) { return false; }
 
-        const columnValue = column.isAllowValue();
-        const columnNotValue = !column.isValueActive();
-        return columnValue && columnNotValue;
+        return column.isAllowValue() && !column.isValueActive();
     }
 
     protected updateColumns(columns: Column[]): void {
@@ -87,5 +82,4 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     protected getExistingColumns(): Column[] {
         return this.columnController.getValueColumns();
     }
-
 }

@@ -1,7 +1,7 @@
 import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBarItem, IStatusBarItemParams} from "ag-grid-community";
-import {IFilterAngularComp} from "@ag-community/grid-angular";
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBarItem, IStatusBarItemParams} from "@ag-grid-community/all-modules";
+import {IFilterAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'status-component',

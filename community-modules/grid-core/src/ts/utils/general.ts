@@ -41,7 +41,7 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
-    private static isIPad: boolean;
+    private static isIOS: boolean;
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
 
@@ -49,6 +49,7 @@ export class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
 
     private static doOnceFlags: { [key: string]: boolean } = {};
+    private static supports: { [key: string]: boolean } = {};
 
     /**
      * If the key was passed before, then doesn't execute the func
@@ -62,6 +63,47 @@ export class Utils {
         func();
         this.doOnceFlags[key] = true;
     }
+
+    static getMaxSafeInteger(): number {
+        // eslint-disable-next-line
+        if (!Number.MAX_SAFE_INTEGER) {
+            return 9007199254740991;
+        }
+        // eslint-disable-next-line
+        return Number.MAX_SAFE_INTEGER;
+    }
+
+    static isEventSupported = (() => {
+        const tags = {
+            select: 'input',
+            change: 'input',
+            submit: 'form',
+            reset: 'form',
+            error: 'img',
+            load: 'img',
+            abort: 'img'
+        } as any;
+
+        const isEventSupported = (eventName: any) => {
+            if (typeof Utils.supports[eventName] === 'boolean') {
+                return Utils.supports[eventName];
+            }
+            let el = document.createElement(tags[eventName] || 'div');
+            eventName = 'on' + eventName;
+
+            let isSupported = (eventName in el);
+
+            if (!isSupported) {
+                el.setAttribute(eventName, 'return;');
+                isSupported = typeof el[eventName] == 'function';
+            }
+            el = null;
+
+            return Utils.supports[eventName] = isSupported;
+        };
+
+        return isEventSupported;
+    })();
 
     /**
      * Checks if event was issued by a left click
@@ -456,7 +498,7 @@ export class Utils {
         return Object.keys(allValues);
     }
 
-    static mergeDeep(dest: any, source: any): void {
+    static mergeDeep(dest: any, source: any, copyUndefined = true): void {
         if (!this.exists(source)) {
             return;
         }
@@ -468,9 +510,9 @@ export class Utils {
                 return;
             }
 
-            if (typeof oldValue === 'object' && typeof newValue === 'object') {
+            if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
                 Utils.mergeDeep(oldValue, newValue);
-            } else {
+            } else if (copyUndefined || newValue !== undefined) {
                 dest[key] = newValue;
             }
         });
@@ -903,45 +945,35 @@ export class Utils {
         if (!className || className.length === 0) {
             return;
         }
+
         if (className.indexOf(' ') >= 0) {
             className.split(' ').forEach(value => this.addCssClass(element, value));
             return;
         }
+
         if (element.classList) {
-            if (!element.classList.contains(className)) {
-                element.classList.add(className);
+            element.classList.add(className);
+        } else if (element.className && element.className.length > 0) {
+            const cssClasses = element.className.split(' ');
+
+            if (cssClasses.indexOf(className) < 0) {
+                cssClasses.push(className);
+                element.setAttribute('class', cssClasses.join(' '));
             }
         } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) < 0) {
-                    cssClasses.push(className);
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            } else {
-                // do not use element.classList = className here, it will cause
-                // a read-only assignment error on some browsers (IE/Edge).
-                element.setAttribute('class', className);
-            }
+            // do not use element.classList = className here, it will cause
+            // a read-only assignment error on some browsers (IE/Edge).
+            element.setAttribute('class', className);
         }
     }
 
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.classList) {
-            if (element.classList.contains(className)) {
-                element.classList.remove(className);
-            }
-        } else {
-            if (element.className && element.className.length > 0) {
-                const cssClasses = element.className.split(' ');
-                if (cssClasses.indexOf(className) >= 0) {
-                    // remove all instances of the item, not just the first, in case it's in more than once
-                    while (cssClasses.indexOf(className) >= 0) {
-                        cssClasses.splice(cssClasses.indexOf(className), 1);
-                    }
-                    element.setAttribute('class', cssClasses.join(' '));
-                }
-            }
+            element.classList.remove(className);
+        } else if (element.className && element.className.length > 0) {
+            const newClassName = element.className.split(' ').filter(c => c !== className).join(' ');
+
+            element.setAttribute('class', newClassName);
         }
     }
 
@@ -967,13 +999,9 @@ export class Utils {
     }
 
     static getElementAttribute(element: any, attributeName: string): string | null {
-        if (element.attributes) {
-            if (element.attributes[attributeName]) {
-                const attribute = element.attributes[attributeName];
-                return attribute.value;
-            } else {
-                return null;
-            }
+        if (element.attributes && element.attributes[attributeName]) {
+            const attribute = element.attributes[attributeName];
+            return attribute.value;
         } else {
             return null;
         }
@@ -987,8 +1015,8 @@ export class Utils {
         return element && element.clientWidth ? element.clientWidth : 0;
     }
 
-    static sortNumberArray(numberArray: number[]): void {
-        numberArray.sort((a: number, b: number) => a - b);
+    static sortNumerically(array: number[]): number[] {
+        return array.sort((a, b) => a - b);
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {
@@ -1012,12 +1040,7 @@ export class Utils {
     }
 
     static removeAllFromArray<T>(array: T[], toRemove: T[]) {
-        toRemove.forEach(item => {
-            const index = array.indexOf(item);
-            if (index >= 0) {
-                array.splice(index, 1);
-            }
-        });
+        toRemove.forEach(item => this.removeFromArray(array, item));
     }
 
     static insertIntoArray<T>(array: T[], object: T, toIndex: number) {
@@ -1273,69 +1296,138 @@ export class Utils {
         }
     }
 
+    //
+    // IMPORTANT NOTE!
+    //
+    // The comments below provide one example of how each icon is used, so that you can find
+    // an instance of it in the UI and see what it looks like in the UI. Many icons are used
+    // in multiple places.
+    //
+
     static iconNameClassMap: { [key: string]: string } = {
+        // header column group shown when expanded (click to contract)
         columnGroupOpened: 'expanded',
+        // header column group shown when contracted (click to expand)
         columnGroupClosed: 'contracted',
+        // tool panel column group contracted (click to expand)
         columnSelectClosed: 'tree-closed',
+        // tool panel column group expanded (click to contract)
         columnSelectOpen: 'tree-open',
+        // column tool panel header expand/collapse all button, shown when some children are expanded and
+        //     others are collapsed
         columnSelectIndeterminate: 'tree-indeterminate',
+        // shown on ghost icon while dragging column to the side of the grid to pin
         columnMovePin: 'pin',
+        // ??? doesn't seem to be used?
         columnMoveAdd: 'plus',
+        // shown on ghost icon while dragging over part of the page that is not a drop zone
         columnMoveHide: 'eye-slash',
+        // shown on ghost icon while dragging columns to reorder
         columnMoveMove: 'arrows',
+        // animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
         columnMoveLeft: 'left',
+        // animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
         columnMoveRight: 'right',
+        // shown on ghost icon while dragging over Row Groups drop zone
         columnMoveGroup: 'group',
+        // shown on ghost icon while dragging over Values drop zone
         columnMoveValue: 'aggregation',
+        // shown on ghost icon while dragging over pivot drop zone
         columnMovePivot: 'pivot',
+        // shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
+        //     string column over aggregation drop zone
         dropNotAllowed: 'not-allowed',
+        // shown on row group when contracted (click to expand)
         groupContracted: 'contracted',
+        // shown on row group when expanded (click to contract)
         groupExpanded: 'expanded',
+        // context menu chart item
         chart: 'chart',
+        // chart window title bar
         close: 'cross',
+        // X (remove) on column 'pill' after adding it to a drop zone list
         cancel: 'cancel',
+        // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
         check: 'tick',
+        // the following checkbox-* items are for checkboxes on themes that don't use a
+        //     native <input type="radio">
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
         checkboxIndeterminate: 'checkbox-indeterminate',
         checkboxCheckedReadOnly: 'checkbox-checked-readonly',
         checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
         checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
+        // "go to first" button in pagination controls
         first: 'first',
+        // "go to previous" button in pagination controls
         previous: 'previous',
+        // "go to next" button in pagination controls
         next: 'next',
+        // "go to last" button in pagination controls
         last: 'last',
+        // shown on top right of chart when chart is linked to range data (click to unlink)
         linked: 'linked',
+        // shown on top right of chart when chart is not linked to range data (click to link)
         unlinked: 'unlinked',
+        // "Choose colour" button on chart settings tab
         colorPicker: 'color-picker',
+        // the following radio-button-* items are for radio buttons on themes that don't use a
+        //     native <input type="radio">
         radioButtonOn: 'radio-button-on',
         radioButtonOff: 'radio-button-off',
+        // rotating spinner shown by the loading cell renderer
         groupLoading: 'loading',
+        // ??? doesn't seem to be used?
         data: 'data',
+        // button to launch enterprise column menu
         menu: 'menu',
+        // filter tool panel tab
         filter: 'filter',
+        // column tool panel tab
         columns: 'columns',
+        // button in chart regular size window title bar (click to maximise)
         maximize: 'maximize',
+        // button in chart maximised window title bar (click to make regular size)
         minimize: 'minimize',
+        // "Pin column" item in column header menu
         menuPin: 'pin',
+        // "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
         menuValue: 'aggregation',
+        // "Group by {column-name}" item in column header menu
         menuAddRowGroup: 'group',
+        // "Un-Group by {column-name}" item in column header menu
         menuRemoveRowGroup: 'group',
+        // context menu copy item
         clipboardCopy: 'copy',
+        // ??? doesn't seem toi be used?
         clipboardCut: 'cut',
+        // context menu paste item
         clipboardPaste: 'paste',
+        // identifies the pivot drop zone
         pivotPanel: 'pivot',
+        // "Row groups" drop zone in column tool panel
         rowGroupPanel: 'group',
+        // columns tool panel Values drop zone
         valuePanel: 'aggregation',
+        // drag handle used to pick up draggable columns
         columnDrag: 'grip',
+        // drag handle used to pick up draggable rows
         rowDrag: 'grip',
+        // context menu export item
         save: 'save',
+        // version of small-right used in RTL mode
         smallLeft: 'small-left',
+        // separater between column 'pills' when you add multiple columns to the header drop zone
         smallRight: 'small-right',
+        // ??? doesn't seem to be used?
         smallUp: 'small-up',
+        // ??? doesn't seem to be used?
         smallDown: 'small-down',
+        // show on column header when column is sorted ascending
         sortAscending: 'asc',
+        // show on column header when column is sorted descending
         sortDescending: 'desc',
+        // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
         sortUnSort: 'none'
     };
 
@@ -1391,14 +1483,15 @@ export class Utils {
             } else if (this.isNodeOrElement(rendererResult)) {
                 return rendererResult;
             } else {
-                throw new Error('iconRenderer should return back a string or a dom object');
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
             }
         } else {
             const span = document.createElement('span');
             let cssClass = this.iconNameClassMap[iconName];
             if (!cssClass) {
                 if (!forceCreate) {
-                    throw new Error(`${iconName} did not find class`);
+                    console.warn(`ag-Grid: Did not find icon ${iconName}`);
+                    cssClass = '';
                 } else {
                     cssClass = iconName;
                 }
@@ -1612,12 +1705,15 @@ export class Utils {
         return this.isFirefox;
     }
 
-    static isUserAgentIPad(): boolean {
-        if (this.isIPad === undefined) {
-            // taken from https://davidwalsh.name/detect-ipad
-            this.isIPad = navigator.userAgent.match(/iPad|iPhone/i) != null;
+    static isIOSUserAgent(): boolean {
+        if (this.isIOS === undefined) {
+            // taken from https://stackoverflow.com/a/58064481/1388233
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                // eslint-disable-next-line
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
         }
-        return this.isIPad;
+        return this.isIOS;
     }
 
     /**
@@ -2169,9 +2265,8 @@ export class Utils {
         eElement: HTMLElement,
         event: string, listener: (event?: any) => void
     ) {
-        const isPassive = Utils.PASSIVE_EVENTS.indexOf(event) >= 0;
-        const isOutsideAngular = Utils.OUTSIDE_ANGULAR_EVENTS.indexOf(event) >= 0;
-
+        const isPassive = this.includes(Utils.PASSIVE_EVENTS, event);
+        const isOutsideAngular = this.includes(Utils.OUTSIDE_ANGULAR_EVENTS, event);
         const options = isPassive ? { passive: true } : undefined;
 
         if (isOutsideAngular) {
@@ -2425,6 +2520,26 @@ export class Utils {
                 }
             }
         });
+    }
+
+    static convertToSet<T>(list: T[]): Set<T> {
+        const set = new Set<T>();
+
+        list.forEach(x => set.add(x));
+
+        return set;
+    }
+
+    static deepFreeze(object: any): any {
+        Object.freeze(object);
+
+        _.values(object).filter(v => v != null).forEach(v => {
+            if (typeof v === 'object' || typeof v === 'function') {
+                this.deepFreeze(v);
+            }
+        });
+
+        return object;
     }
 }
 

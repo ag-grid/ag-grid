@@ -6,15 +6,13 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
-    <h1 id="resizing">Column Resizing</h1>
+    <h1 id="resizing">Column Sizing</h1>
 
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
     </p>
-
-    <h2>Enable Resizing</h2>
+    
+    <h2>Enable Sizing</h2>
 
     <p>
         Turn column resizing on for the grid by setting <code>resizable=true</code> for each column.
@@ -52,6 +50,37 @@ gridOptions: {
     ]
 }
 </snippet>
+
+    <h2>Column Flex</h1>
+
+    <p>
+        It's often required that one or more columns fill the entire available space in
+        the grid. For this scenario, it is possible to use the <code>flex</code> config.
+        Some columns could be set with a regular <code>width</code> config, while other 
+        columns would have a flex config.
+    </p>
+
+    <p>
+        Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
+        their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
+        the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
+        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
+        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
+    </p>
+
+    <note>
+        The flex config does <strong>not</strong> work with the <code>width</code> config
+        in same column. If you need to provide a minimum width for a column. 
+        You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
+        into account.
+    </note>
+
+    <note>
+        If you manually resize a column with flex either via API or dragging the resize handle, 
+        flex will be automatically disabled for that column.
+    </note>
+
+    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2>Size Columns to Fit</h2>
 

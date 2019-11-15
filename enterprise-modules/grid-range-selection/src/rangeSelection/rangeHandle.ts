@@ -1,8 +1,9 @@
-import { 
+import {
     CellRange,
     CellPosition,
-    _
-} from "@ag-community/grid-core";
+    _,
+    CellRangeType
+} from "@ag-grid-community/core";
 
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
@@ -22,35 +23,37 @@ export class RangeHandle extends AbstractSelectionHandle {
         const lastCellHovered = this.getLastCellHovered();
 
         if (!lastCellHovered) { return; }
+
         const cellRanges = this.rangeController.getCellRanges();
-        const lastRange = _.last(cellRanges) as CellRange;
+        const lastRange = _.last(cellRanges);
 
         if (!this.rangeFixed) {
             this.fixRangeStartEnd(lastRange);
             this.rangeFixed = true;
         }
 
-        const newEndRow = {
+        this.endPosition = {
             rowIndex: lastCellHovered.rowIndex,
             rowPinned: lastCellHovered.rowPinned,
-        };
-
-        const rowChanged = !this.rowPositionUtils.sameRow(newEndRow, this.rangeController.getRangeEndRow(lastRange));
-
-        if (cellRanges.length === 2 && rowChanged) {
-            this.rangeController.updateRangeEnd({
-                cellRange: cellRanges[0],
-                cellPosition: {
-                    ...newEndRow,
-                    column: cellRanges[0].columns[0]
-                }
-            });
-        }
-        
-        this.endPosition = {
-            ...newEndRow,
             column: lastCellHovered.column
         };
+
+        // check if the cell ranges are for a chart
+        if (cellRanges.length === 2 && cellRanges[0].type === CellRangeType.DIMENSION && lastRange.type === CellRangeType.VALUE) {
+            const rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeController.getRangeEndRow(lastRange));
+
+            if (rowChanged) {
+                // ensure the dimension range is kept in sync with the value range (which has the handle)
+                this.rangeController.updateRangeEnd(
+                    cellRanges[0],
+                    {
+                        ...this.endPosition,
+                        column: cellRanges[0].columns[0]
+                    },
+                    true,
+                );
+            }
+        }
 
         this.rangeController.extendLatestRangeToCell(this.endPosition);
     }

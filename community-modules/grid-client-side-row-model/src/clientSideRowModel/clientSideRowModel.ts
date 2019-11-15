@@ -29,7 +29,7 @@ import {
     ValueCache,
     ValueService,
     IClientSideRowModel
-} from "@ag-community/grid-core"
+} from "@ag-grid-community/core"
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
 enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
@@ -650,14 +650,22 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         if (this.groupStage) {
 
-            if (rowNodeTransactions && _.exists(rowNodeTransactions)) {
+            if (rowNodeTransactions) {
+                const merged: RowNodeTransaction = {
+                    add: [],
+                    remove: [],
+                    update: []
+                }
                 rowNodeTransactions.forEach(tran => {
-                    this.groupStage.execute({
-                        rowNode: this.rootNode,
-                        rowNodeTransaction: tran,
-                        rowNodeOrder: rowNodeOrder,
-                        changedPath: changedPath
-                    });
+                    _.pushAll(merged.add, tran.add);
+                    _.pushAll(merged.remove, tran.remove);
+                    _.pushAll(merged.update, tran.update);
+                });
+                this.groupStage.execute({
+                    rowNode: this.rootNode,
+                    rowNodeTransaction: merged,
+                    rowNodeOrder: rowNodeOrder,
+                    changedPath: changedPath
                 });
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected

@@ -24,7 +24,7 @@ import {
     Promise,
     Utils as _,
     Module
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
@@ -242,6 +242,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public batchUpdateWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public keepDetailRowsCount : any = undefined;
+    @Input() public undoRedoCellEditingLimit : any = undefined;
     @Input() public localeTextFunc : any = undefined;
     @Input() public groupRowInnerRenderer : any = undefined;
     @Input() public groupRowInnerRendererFramework : any = undefined;
@@ -433,6 +434,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public keepDetailRows : any = undefined;
     @Input() public paginateChildRows : any = undefined;
     @Input() public preventDefaultOnContextMenu : any = undefined;
+    @Input() public undoRedoCellEditing : any = undefined;
+    @Input() public allowDragFromColumnsToolPanel : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -460,6 +463,8 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public modelUpdated: EventEmitter<any> = new EventEmitter<any>();
     @Output() public pasteStart: EventEmitter<any> = new EventEmitter<any>();
     @Output() public pasteEnd: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public fillStart: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public fillEnd: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellClicked: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellDoubleClicked: EventEmitter<any> = new EventEmitter<any>();
     @Output() public cellMouseDown: EventEmitter<any> = new EventEmitter<any>();
@@ -504,6 +509,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public popupToFront: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();

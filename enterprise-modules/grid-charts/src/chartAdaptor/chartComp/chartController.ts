@@ -1,31 +1,51 @@
-import { AgEvent, Autowired, BeanStub, ChartType, Events, EventService, PostConstruct, _, IRangeController } from "@ag-community/grid-core";
-import { ChartModel, ColState } from "./chartModel";
-import { Palette } from "../../charts/chart/palettes";
+import {
+    AgEvent,
+    Autowired,
+    BeanStub,
+    ChartType,
+    Events,
+    EventService,
+    ChartOptionsChanged,
+    PostConstruct,
+    _,
+    IRangeController,
+    ChartRangeSelectionChanged,
+    ColumnApi,
+    GridApi,
+    ChartModel,
+    CellRangeParams,
+} from "@ag-grid-community/core";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
 
 export class ChartController extends BeanStub {
-    public static EVENT_CHART_MODEL_UPDATED = 'chartModelUpdated';
+    public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: IRangeController;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
-    private model: ChartModel;
+    private chartProxy: ChartProxy<any, any>;
+    private chartPaletteName: ChartPaletteName;
 
-    public constructor(chartModel: ChartModel) {
+    public constructor(private readonly model: ChartDataModel, paletteName: ChartPaletteName = 'borneo') {
         super();
-        this.model = chartModel;
+
+        this.chartPaletteName = paletteName;
     }
 
     @PostConstruct
     private init(): void {
         this.updateForGridChange();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHART_RANGE_SELECTION_CHANGED, (event) => {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
             if (event.id && event.id === this.model.getChartId()) {
-                this.updateForGridChange();
+                this.updateForRangeChange();
             }
         });
 
@@ -40,45 +60,66 @@ export class ChartController extends BeanStub {
         // don't update chart if chart is detached from grid data
         if (this.model.isDetached()) { return; }
 
-        // update the model with changes to the cell ranges from the grid before updating the column state
         this.model.updateCellRanges();
-        this.model.resetColumnState();
 
-        this.model.updateData();
-
-        // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
         this.setChartRange();
-
-        this.raiseChartUpdatedEvent();
     }
 
-    public updateForMenuChange(updatedCol: ColState): void {
+    public updateForRangeChange() {
+        this.updateForGridChange();
 
-        // update the column state before updating the cell ranges to be sent to the grid
-        this.model.updateColumnState(updatedCol);
+        this.raiseChartRangeSelectionChangedEvent();
+    }
+
+    public updateForPanelChange(updatedCol: ColState): void {
         this.model.updateCellRanges(updatedCol);
-        this.model.updateData();
 
-        // updates ranges with raising a new EVENT_CHART_RANGE_SELECTION_CHANGED
         this.setChartRange();
 
-        this.raiseChartUpdatedEvent();
+        this.raiseChartRangeSelectionChangedEvent();
+    }
+
+    public getChartModel(): ChartModel {
+        return {
+            chartId: this.model.getChartId(),
+            chartType: this.model.getChartType(),
+            chartPalette: this.getPaletteName(),
+            chartOptions: this.chartProxy.getChartOptions(),
+            cellRange: this.getCurrentCellRangeParams()
+        };
     }
 
     public getChartType = (): ChartType => this.model.getChartType();
     public isPivotChart = () => this.model.isPivotChart();
-    public getActivePalette = (): number => this.model.getActivePalette();
-    public getPalettes = (): Palette[] => this.model.getPalettes();
+
+    public getPaletteName(): ChartPaletteName {
+        return this.chartPaletteName;
+    }
+
+    public getPalettes(): Map<ChartPaletteName | undefined, ChartPalette> {
+        const customPalette = this.chartProxy.getCustomPalette();
+
+        if (customPalette) {
+            const map = new Map<ChartPaletteName | undefined, ChartPalette>();
+
+            map.set(undefined, customPalette);
+
+            return map;
+        }
+
+        return palettes;
+    }
 
     public setChartType(chartType: ChartType): void {
         this.model.setChartType(chartType);
         this.raiseChartUpdatedEvent();
+        this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartWithPalette(chartType: ChartType, palette: number): void {
-        this.model.setChartType(chartType);
-        this.model.setActivePalette(palette);
+    public setChartPaletteName(palette: ChartPaletteName): void {
+        this.chartPaletteName = palette;
         this.raiseChartUpdatedEvent();
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
@@ -87,13 +128,15 @@ export class ChartController extends BeanStub {
 
     public isDefaultCategorySelected() {
         const selectedDimension = this.model.getSelectedDimension().colId;
-        return selectedDimension && selectedDimension === ChartModel.DEFAULT_CATEGORY;
+        return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
     }
 
     public setChartRange() {
         if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
+
+        this.raiseChartUpdatedEvent();
     }
 
     public detachChartRange() {
@@ -106,25 +149,65 @@ export class ChartController extends BeanStub {
                 this.rangeController.setCellRanges([]);
             }
         } else {
-            // update grid with chart range
-            this.setChartRange();
-
             // update chart data may have changed
             this.updateForGridChange();
         }
     }
 
-    public getChartProxy = (): ChartProxy<any, any> => this.model.getChartProxy();
+    public setChartProxy(chartProxy: ChartProxy<any, any>) {
+        this.chartProxy = chartProxy;
+    }
+
+    public getChartProxy(): ChartProxy<any, any> {
+        return this.chartProxy;
+    }
 
     public isActiveXYChart() {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
-    private raiseChartUpdatedEvent() {
-        const event: ChartModelUpdatedEvent = {
-            type: ChartController.EVENT_CHART_MODEL_UPDATED
+    private getCurrentCellRangeParams(): CellRangeParams {
+        const cellRanges = this.model.getCellRanges();
+        const firstCellRange = cellRanges[0];
+
+        return {
+            rowStartIndex: firstCellRange.startRow.rowIndex,
+            rowStartPinned: firstCellRange.startRow.rowPinned,
+            rowEndIndex: firstCellRange.endRow.rowIndex,
+            rowEndPinned: firstCellRange.endRow.rowPinned,
+            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
         };
+    }
+
+    private raiseChartUpdatedEvent() {
+        const event: ChartModelUpdatedEvent = Object.freeze({
+            type: ChartController.EVENT_CHART_UPDATED
+        });
+
         this.dispatchEvent(event);
+    }
+
+    private raiseChartOptionsChangedEvent(): void {
+        const event: ChartOptionsChanged = Object.freeze({
+            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartType: this.getChartType(),
+            chartPalette: this.chartPaletteName,
+            chartOptions: this.getChartProxy().getChartOptions(),
+        });
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private raiseChartRangeSelectionChangedEvent() {
+        const event: ChartRangeSelectionChanged = Object.freeze({
+            type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
+            id: this.model.getChartId(),
+            cellRange: this.getCurrentCellRangeParams(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
     }
 
     public destroy() {

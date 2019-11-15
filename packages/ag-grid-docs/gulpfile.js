@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const gulp = require('gulp');
@@ -15,7 +16,7 @@ const merge = require('merge-stream');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
-const getAllModules = require("./utils").getAllModules;
+const {updateBetweenStrings, getAllModules} = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateExamples = require('./example-generator');
@@ -28,7 +29,7 @@ const {communityModules, enterpriseModules} = getAllModules();
 
 // copy core project libs (community, enterprise, angular etc) to dist/dev folder
 const populateDevFolder = () => {
-    console.log("Polulating dev folder with modules...");
+    console.log("Populating dev folder with modules...");
     const copyTasks = [];
     communityModules.concat(enterpriseModules).forEach(module => {
         copyTasks.push(
@@ -36,11 +37,38 @@ const populateDevFolder = () => {
                 .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
     });
 
-    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
-    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-community/grid-angular`));
-    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+    const react = gulp.src(['../../community-modules/grid-react/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
+    const angular = gulp.src(['../../community-modules/grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
+    const vue = gulp.src(['../../community-modules/grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
     return merge(...copyTasks, react, angular, vue);
+};
+
+updateFrameworkBoilerplateSystemJsEntry = (done) => {
+    console.log("updating fw systemjs boilerplate config...");
+
+    const boilerPlateLocation = [
+        './dist/example-runner/angular-boilerplate/',
+        './dist/example-runner/vue-boilerplate/',
+        './dist/example-runner/react-boilerplate/',
+    ];
+
+    boilerPlateLocation.forEach(boilerPlateLocation => {
+        fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`)
+    });
+
+    const utilFileContent = fs.readFileSync('./dist/example-runner/utils.php', 'UTF-8');
+    let updatedUtilFileContent = updateBetweenStrings(utilFileContent,
+        '/* START OF MODULES DEV - DO NOT DELETE */',
+        '/* END OF MODULES DEV - DO NOT DELETE */',
+        [],
+        [],
+        () => {},
+        () => {});
+
+    fs.writeFileSync('./dist/example-runner/utils.php', updatedUtilFileContent, 'UTF-8');
+
+    done();
 };
 
 const processSource = () => {
@@ -62,8 +90,8 @@ const processSource = () => {
             .src(['./src/**/*',
                 '!./src/dist/ag-grid-community/',
                 '!./src/dist/ag-grid-enterprise/',
-                '!./src/dist/@ag-community/',
-                '!./src/dist/@ag-enterprise/',
+                '!./src/dist/@ag-grid-community/',
+                '!./src/dist/@ag-grid-enterprise/',
                 `!${DEV_DIR}`])
             // inline the PHP part
             .pipe(phpFilter)
@@ -127,10 +155,10 @@ const bundleSite = (production) => {
 
 const copyFromDistFolder = () => {
     return merge(
-        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-community/grid-all-modules/dist/')),
+        gulp.src(['../../community-modules/grid-all-modules/dist/ag-grid-community.js']).pipe(gulp.dest('./dist/@ag-grid-community/all-modules/dist/')),
         gulp
             .src(['../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.js', '../../enterprise-modules/grid-all-modules/dist/ag-grid-enterprise.min.js'])
-            .pipe(gulp.dest('./dist/@ag-enterprise/grid-all-modules/dist/'))
+            .pipe(gulp.dest('./dist/@ag-grid-enterprise/all-modules/dist/'))
     );
 };
 
@@ -187,15 +215,17 @@ gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {
     done();
 }));
 gulp.task('populate-dev-folder', populateDevFolder);
+gulp.task('update-dist-systemjs-files', updateFrameworkBoilerplateSystemJsEntry);
 gulp.task('process-src', processSource);
 gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder'));
-gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'replace-references-with-cdn'));
+gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
+gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 gulp.task('generate-examples', series('generate-examples-dev'));
 gulp.task('serve', require('./dev-server').bind(null, false));
 gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true));
+

@@ -15,7 +15,7 @@ import {
     MenuItemDef,
     ModuleNames, ModuleRegistry,
     Optional
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/core';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper {
@@ -135,7 +135,7 @@ export class MenuItemMapper {
                     action: () => this.gridApi.collapseAll()
                 };
             case 'copy':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -146,7 +146,7 @@ export class MenuItemMapper {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -157,7 +157,7 @@ export class MenuItemMapper {
                     return null;
                 }
             case 'paste':
-                if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Copy with Headers from Menu')) {
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Headers from Menu')) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),

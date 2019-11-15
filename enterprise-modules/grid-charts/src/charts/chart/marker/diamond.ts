@@ -4,10 +4,16 @@ export class Diamond extends Marker {
     static className = 'Diamond';
 
     updatePath() {
-        const s = this.size * 1.25;
-        const x = this.x - this.strokeWidth / 2;
-        const y = this.y;
+        let { x, y } = this;
+        const { path, size } = this;
+        const s = size / 2;
 
-        this.path.setFromString(['M', x, y - s, 'l', s, s, -s, s, -s, -s, s, -s, 'z'].toString());
+        path.clear();
+        path.moveTo(x, y -= s);
+        path.lineTo(x += s, y += s);
+        path.lineTo(x -= s, y += s);
+        path.lineTo(x -= s, y -= s);
+        path.lineTo(x += s, y -= s);
+        path.closePath();
     }
 }

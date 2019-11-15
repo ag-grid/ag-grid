@@ -1,8 +1,8 @@
-import {_, ChartType} from "@ag-community/grid-core";
+import { _, ChartType } from "@ag-grid-community/core";
 
-import {MiniChart} from "./miniChart";
-import {Sector} from "../../../../../charts/scene/shape/sector";
-import {toRadians} from "../../../../../charts/util/angle";
+import { MiniChart } from "./miniChart";
+import { Sector } from "../../../../../charts/scene/shape/sector";
+import { toRadians } from "../../../../../charts/util/angle";
 
 export class MiniDoughnut extends MiniChart {
     static chartType = ChartType.Doughnut;
@@ -41,8 +41,8 @@ export class MiniDoughnut extends MiniChart {
 
     updateColors(fills: string[], strokes: string[]) {
         this.sectors.forEach((sector, i) => {
-            sector.fill = fills[i];
-            sector.stroke = strokes[i];
+            sector.fill = fills[i % fills.length];
+            sector.stroke = strokes[i % strokes.length];
         });
     }
 }

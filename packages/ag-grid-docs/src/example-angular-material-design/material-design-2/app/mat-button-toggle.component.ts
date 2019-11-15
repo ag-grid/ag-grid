@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {IHeaderAngularComp} from "@ag-community/grid-angular";
+import {IHeaderAngularComp} from "@ag-grid-community/angular";
 import {ColumnAlignmentService} from "./columnAlignmentService";
 
 @Component({

@@ -73,7 +73,7 @@ export class Line extends Shape {
         return this._y2;
     }
 
-    readonly getBBox = (): BBox => {
+    getBBox(): BBox {
         return new BBox(
             this.x1,
             this.y1,

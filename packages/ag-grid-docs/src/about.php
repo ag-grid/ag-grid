@@ -10,6 +10,7 @@ gtm_data_layer('about');
         meta_and_links("Our Mission, Our Principles and Our Team at ag-Grid", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
         ?>
         <link rel="stylesheet" href="dist/homepage.css">
+        <script src="dist/homepage.js"></script>
     </head>
     <body>
         <header id="nav" class="compact">

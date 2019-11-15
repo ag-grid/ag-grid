@@ -1,7 +1,6 @@
 .idea/
 *.iml
 main.ts
-node_modules/
 typings/
 npm-debug.log
 

@@ -1,11 +1,18 @@
-import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-community/grid-core';
+import { ExcelOOXMLTemplate, ExcelColumn } from '@ag-grid-community/core';
 
-const getExcelCellWidth = (width: number): number => Math.max(Math.ceil((width - 12) / 7 + 1), 10);
+// https://docs.microsoft.com/en-us/office/troubleshoot/excel/determine-column-widths
+const getExcelCellWidth = (width: number): number => Math.ceil((width - 12) / 7 + 1);
 
 const columnFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelColumn) {
-        const {min, max, s, width = 10, hidden, bestFit} = config;
-        const excelWidth = getExcelCellWidth(width);
+        const {min, max, s, width, hidden, bestFit} = config;
+        let excelWidth = 1;
+        let customWidth = '0';
+        
+        if (width > 1) {
+            excelWidth = getExcelCellWidth(width);
+            customWidth = '1';
+        }
 
         return {
             name: 'col',
@@ -17,7 +24,7 @@ const columnFactory: ExcelOOXMLTemplate = {
                     style: s,
                     hidden: hidden ? '1' : '0',
                     bestFit: bestFit ? '1' : '0',
-                    customWidth: excelWidth != 10 ? '1' : '0'
+                    customWidth: customWidth
                 }
             }
         };

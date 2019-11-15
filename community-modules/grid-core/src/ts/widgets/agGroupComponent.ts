@@ -21,8 +21,8 @@ export class AgGroupComponent extends Component {
         `<div class="ag-group-component">
             <div class="ag-group-component-title-bar" ref="groupTitle">
                  <span class="ag-column-group-icons">
-                    <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
-                    <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
+                    <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
+                    <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 </span>
                 <span ref="lbGroupTitle" class="ag-group-component-title"></span>
             </div>

@@ -1,14 +1,12 @@
 const path = require('path');
-const autoprefixer = require('autoprefixer');
 
 const ROOT = path.resolve(__dirname, 'test-input');
-const DESTINATION = path.resolve(__dirname, '../bundles');
 
 module.exports = {
-    mode: 'development',
+    mode: 'none',
 
     output: {
-        path: DESTINATION
+        libraryTarget: 'commonjs'
     },
 
     resolve: {
@@ -16,41 +14,16 @@ module.exports = {
         modules: [
             ROOT,
             'node_modules'
-        ]
+        ],
     },
 
     module: {
         rules: [
-            /****************
-             * PRE-LOADERS
-             *****************/
             {
-                enforce: 'pre',
                 test: /\.js$/,
-                use: 'source-map-loader'
+                use: ["source-map-loader"],
+                enforce: "pre"
             },
-            {
-                test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    {loader: 'css-loader', options: {sourceMap: true}},
-                    {loader: 'sass-loader', options: {sourceMap: true}},
-                    {
-                        loader: 'postcss-loader',
-                        options: {sourceMap: true, syntax: 'postcss-scss', plugins: [autoprefixer()]}
-                    },
-                ]
-            },
-            {
-                test: /\.(svg)$/,
-                use: [
-                    {loader: 'url-loader', options: {limit: 8192}}
-                ]
-            },
-
-            /****************
-             * LOADERS
-             *****************/
             {
                 test: /\.ts$/,
                 exclude: [/node_modules/],
@@ -59,6 +32,5 @@ module.exports = {
         ]
     },
 
-    devtool: 'eval-source-map',
-    devServer: {}
+    devtool: 'inline-source-map'
 };

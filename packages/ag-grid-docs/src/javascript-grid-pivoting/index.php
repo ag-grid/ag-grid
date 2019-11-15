@@ -113,7 +113,7 @@ gridOptions.columnDefs = [
 
     <p>
         When not in pivot mode, only columns that are visible are shown in the grid. To remove a column
-        from the grid, use columnApi.setVisible(). Checking a column in the toolPanel will set the visibility
+        from the grid, use <code>columnApi.setColumnVisible(colKey, visible)</code>. Checking a column in the toolPanel will set the visibility
         on the column.
     </p>
 

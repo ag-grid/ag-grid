@@ -19,8 +19,10 @@ import {
     SeriesOptions,
     Optional,
     IRangeController,
-} from "@ag-community/grid-core";
+    ChartModel
+} from "@ag-grid-community/core";
 import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
+import { ChartPaletteName } from "../charts/chart/palettes";
 
 @Bean('chartService')
 export class ChartService implements IChartService {
@@ -33,7 +35,16 @@ export class ChartService implements IChartService {
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
-    private activeCharts: ChartRef[] = [];
+    private activeCharts = new Set<ChartRef>();
+    private activeChartComps = new Set<GridChartComp>();
+
+    public getChartModels(): ChartModel[] {
+        const models: ChartModel[] = [];
+
+        this.activeChartComps.forEach(c => models.push(c.getChartModel()));
+
+        return models;
+    }
 
     public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
@@ -53,6 +64,7 @@ export class ChartService implements IChartService {
         return this.createChart(
             cellRange,
             params.chartType,
+            params.chartPalette as ChartPaletteName,
             false,
             params.suppressChartRanges,
             params.chartContainer,
@@ -81,11 +93,19 @@ export class ChartService implements IChartService {
         }
 
         return this.createChart(
-            cellRange, params.chartType, true, true, params.chartContainer, undefined, params.processChartOptions);
+            cellRange,
+            params.chartType,
+            params.chartPalette as ChartPaletteName,
+            true,
+            true,
+            params.chartContainer,
+            undefined,
+            params.processChartOptions);
     }
 
     private createChart(cellRange: CellRange,
         chartType: ChartType,
+        chartPaletteName?: ChartPaletteName,
         pivotChart = false,
         suppressChartRanges = false,
         container?: HTMLElement,
@@ -98,6 +118,7 @@ export class ChartService implements IChartService {
             pivotChart,
             cellRange,
             chartType,
+            chartPaletteName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,
             aggFunc,
@@ -117,6 +138,7 @@ export class ChartService implements IChartService {
             // has the grid's theme, we manually add the current theme to
             // make sure all styles for the chartMenu are rendered correctly
             const theme = this.environment.getTheme();
+
             if (theme.el && !theme.el.contains(container)) {
                 _.addCssClass(container, theme.theme!);
             }
@@ -126,9 +148,12 @@ export class ChartService implements IChartService {
             createChartContainerFunc(chartRef);
         } else {
             // add listener to remove from active charts list when charts are destroyed, e.g. closing chart dialog
-            chartComp.addEventListener(GridChartComp.EVENT_DESTROYED, () => {
-                _.removeFromArray(this.activeCharts, chartRef);
-            });
+            chartComp.addEventListener(
+                GridChartComp.EVENT_DESTROYED,
+                () => {
+                    this.activeChartComps.delete(chartComp);
+                    this.activeCharts.delete(chartRef);
+                });
         }
 
         return chartRef;
@@ -137,15 +162,18 @@ export class ChartService implements IChartService {
     private createChartRef(chartComp: GridChartComp): ChartRef {
         const chartRef: ChartRef = {
             destroyChart: () => {
-                if (this.activeCharts.indexOf(chartRef) >= 0) {
+                if (this.activeCharts.has(chartRef)) {
                     chartComp.destroy();
-                    _.removeFromArray(this.activeCharts, chartRef);
+                    this.activeChartComps.delete(chartComp);
+                    this.activeCharts.delete(chartRef);
                 }
             },
             chartElement: chartComp.getGui()
         };
 
-        this.activeCharts.push(chartRef);
+        this.activeCharts.add(chartRef);
+        this.activeChartComps.add(chartComp);
+
         return chartRef;
     }
 
@@ -156,8 +184,6 @@ export class ChartService implements IChartService {
 
     @PreDestroy
     private destroyAllActiveCharts(): void {
-        // we take copy as the forEach is removing from the array as we process
-        const activeCharts = this.activeCharts.slice();
-        activeCharts.forEach(chart => chart.destroyChart());
+        this.activeCharts.forEach(chart => chart.destroyChart());
     }
 }

@@ -7,6 +7,7 @@ import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
+import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
 
 export { Events } from './eventKeys';
 
@@ -149,6 +150,14 @@ export interface PasteEndEvent extends AgGridEvent {
     source: string;
 }
 
+export interface FillStartEvent extends AgGridEvent {
+}
+
+export interface FillEndEvent extends AgGridEvent {
+    initialRange: CellRange;
+    finalRange: CellRange;
+}
+
 export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;
     lastRow: number;
@@ -160,15 +169,19 @@ export interface FirstDataRenderedEvent extends AgGridEvent {
 }
 
 export interface RangeSelectionChangedEvent extends AgGridEvent {
+    id?: string;
     finished: boolean;
     started: boolean;
 }
 
 export interface ChartRangeSelectionChanged extends AgGridEvent {
+    id: string;
+    cellRange: CellRangeParams;
 }
 
 export interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
+    chartPalette: string;
     chartOptions: ChartOptions<any>;
 }
 
@@ -239,6 +252,7 @@ export type ColumnEventType =
     "columnMenu" |
     "rowModelUpdated" |
     "api" |
+    "flex" |
     "pivotChart";
 
 export interface ColumnEvent extends AgGridEvent {

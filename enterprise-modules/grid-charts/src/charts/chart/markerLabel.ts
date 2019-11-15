@@ -1,14 +1,15 @@
 import { Group } from "../scene/group";
-import { Rect } from "../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../scene/shape/text";
+import { Square } from "./marker/square";
+import { Marker } from "./marker/marker";
 
 export class MarkerLabel extends Group {
 
     static className = 'MarkerLabel';
 
     static defaults = Object.freeze({
-        padding: 4,
-        markerSize: 14,
+        padding: 8,
+        markerSize: 12,
         labelFont: '12px Verdana, sans-serif',
         labelFontStyle: undefined,
         labelFontWeight: undefined,
@@ -17,13 +18,10 @@ export class MarkerLabel extends Group {
         labelColor: 'black'
     });
 
-    private marker = new Rect();
     private label = new Text();
 
     constructor() {
         super();
-
-        this.marker.crisp = true;
 
         const label = this.label;
         label.textBaseline = 'middle';
@@ -80,6 +78,19 @@ export class MarkerLabel extends Group {
         return this.label.fill;
     }
 
+    private _marker: Marker = new Square();
+    set marker(value: Marker) {
+        if (this._marker !== value) {
+            this.removeChild(this._marker);
+            this._marker = value;
+            this.appendChild(value);
+            this.update();
+        }
+    }
+    get marker(): Marker {
+        return this._marker;
+    }
+
     private _markerSize: number = MarkerLabel.defaults.markerSize;
     set markerSize(value: number) {
         if (this._markerSize !== value) {
@@ -112,6 +123,20 @@ export class MarkerLabel extends Group {
         return this.marker.strokeWidth;
     }
 
+    set markerFillOpacity(value: number) {
+        this.marker.fillOpacity = value;
+    }
+    get markerFillOpacity(): number {
+        return this.marker.fillOpacity;
+    }
+
+    set markerStrokeOpacity(value: number) {
+        this.marker.strokeOpacity = value;
+    }
+    get markerStrokeOpacity(): number {
+        return this.marker.strokeOpacity;
+    }
+
     set opacity(value: number) {
         this.marker.opacity = value;
         this.label.opacity = value;
@@ -135,10 +160,7 @@ export class MarkerLabel extends Group {
         const marker = this.marker;
         const markerSize = this.markerSize;
 
-        marker.x = -markerSize / 2;
-        marker.y = -markerSize / 2;
-        marker.width = markerSize;
-        marker.height = markerSize;
+        marker.size = markerSize;
 
         this.label.x = markerSize / 2 + this.padding;
     }

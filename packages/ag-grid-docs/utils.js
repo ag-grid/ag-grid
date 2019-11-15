@@ -25,8 +25,8 @@ const getAllModules = () => {
             const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
 
-            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-community' : '@ag-enterprise';
-            const publishedName = `${barrelNamePrefix}/${moduleDirName}`;
+            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-grid-community' : '@ag-grid-enterprise';
+            const publishedName = `${barrelNamePrefix}/${moduleDirName.replace('grid-', '')}`;
 
             return {
                 publishedName,
@@ -46,4 +46,23 @@ const getAllModules = () => {
     return {communityModules, enterpriseModules};
 };
 
+function updateBetweenStrings(fileContents,
+                                startString,
+                                endString,
+                                communityModules,
+                                enterpriseModules,
+                                communityMappingFunc,
+                                enterpriseMappingFunc) {
+
+    const startIndex = fileContents.indexOf(startString) + startString.length;
+    const endIndex = fileContents.indexOf(endString) ;
+
+    const communityModuleEntries = communityModules.map(communityMappingFunc);
+    const enterpriseModuleEntries = enterpriseModules.map(enterpriseMappingFunc);
+
+    const fragmentToBeInserted = communityModuleEntries.concat(enterpriseModuleEntries).join('\n');
+    return `${fileContents.substring(0, startIndex)}\n${fragmentToBeInserted}\n${fileContents.substring(endIndex)}`;
+}
+
 exports.getAllModules = getAllModules;
+exports.updateBetweenStrings = updateBetweenStrings;

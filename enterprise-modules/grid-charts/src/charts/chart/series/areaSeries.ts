@@ -2,7 +2,7 @@ import { Group } from "../../scene/group";
 import { Selection } from "../../scene/selection";
 import { CartesianChart } from "../cartesianChart";
 import { DropShadow } from "../../scene/dropShadow";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "./series";
 import ContinuousScale from "../../scale/continuousScale";
 import { PointerEvents } from "../../scene/node";
 import { sumPositiveValues } from "../../util/array";
@@ -12,8 +12,8 @@ import { Shape } from "../../scene/shape/shape";
 import { Path } from "../../scene/shape/path";
 import palette from "../palettes";
 import { numericExtent } from "../../util/array";
-import { AreaTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -30,6 +30,8 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     stroke?: string;
     text?: string;
 }
+
+export { AreaTooltipRendererParams };
 
 export class AreaSeries extends Series<CartesianChart> {
     static className = 'AreaSeries';
@@ -50,11 +52,13 @@ export class AreaSeries extends Series<CartesianChart> {
      */
     private readonly yKeyEnabled = new Map<string, boolean>();
 
+    readonly marker = new SeriesMarker();
+
     constructor() {
         super();
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addEventListener('style', this.update.bind(this));
     }
 
     onMarkerTypeChange() {
@@ -106,16 +110,6 @@ export class AreaSeries extends Series<CartesianChart> {
     private xData: string[] = [];
     private yData: number[][] = [];
     private domainY: any[] = [];
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
-    }
 
     protected _xKey: string = '';
     set xKey(value: string) {
@@ -221,14 +215,11 @@ export class AreaSeries extends Series<CartesianChart> {
     }
 
     processData(): boolean {
-        const { chart, xKey, yKeys } = this;
+        const { chart, xKey, yKeys, yKeyEnabled } = this;
+        const data = xKey && yKeys.length ? this.data : [];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
-        }
-
-        if (!(xKey && yKeys.length)) {
-            this._data = [];
         }
 
         // If the data is an array of rows like so:
@@ -245,8 +236,6 @@ export class AreaSeries extends Series<CartesianChart> {
         //   yKey3: 20
         // }]
         //
-        const { yKeyEnabled, data } = this;
-
         this.xData = data.map(datum => datum[xKey]);
 
         this.yData = data.map(datum => yKeys.map(yKey => {
@@ -367,8 +356,8 @@ export class AreaSeries extends Series<CartesianChart> {
                         yKey,
                         x,
                         y,
-                        fill: fills[j % fills.length],
-                        stroke: strokes[j % strokes.length],
+                        fill: marker.fill || fills[j % fills.length],
+                        stroke: marker.stroke || strokes[j % strokes.length],
                         size: markerSize,
                         text: this.yNames[j]
                     });
@@ -552,7 +541,9 @@ export class AreaSeries extends Series<CartesianChart> {
                     },
                     marker: {
                         fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length]
+                        stroke: strokes[index % strokes.length],
+                        fillOpacity: this.fillOpacity,
+                        strokeOpacity: this.strokeOpacity
                     }
                 });
             });

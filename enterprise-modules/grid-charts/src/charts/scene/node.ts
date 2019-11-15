@@ -231,6 +231,19 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return node;
     }
 
+    get nextSibling(): Node | undefined {
+        const { parent } = this;
+
+        if (parent) {
+            const { children } = parent;
+            const index = children.indexOf(this);
+
+            if (index >= 0 && index <= children.length - 1) {
+                return children[index + 1];
+            }
+        }
+    }
+
     // These matrices may need to have package level visibility
     // for performance optimization purposes.
     matrix = new Matrix();

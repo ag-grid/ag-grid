@@ -40,14 +40,6 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <note>
-        We are very excited to be introducing ag-Grid's new charting capability, but please be advised that there
-        could be some breaking changes around the API while it is still in beta. Please give us your feedback via
-        <a href="https://ag-grid.zendesk.com/">Zendesk</a>, for existing customers, or alternatively
-        <a href="https://github.com/ag-grid/ag-grid/">GitHub</a> can also be used.
-        </br>
-    </note>
-
     <h2>Charts Module</h2>
 
     <p>
@@ -56,8 +48,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        import '@ag-enterprise/grid-range-selection';
-        import '@ag-enterprise/grid-charts';
+        import '@ag-grid-enterprise/range-selection';
+        import '@ag-grid-enterprise/charts';
     </snippet>
 
     <p>

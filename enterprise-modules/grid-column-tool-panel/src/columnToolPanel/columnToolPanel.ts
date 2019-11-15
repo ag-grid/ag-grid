@@ -5,15 +5,16 @@ import {
     ColGroupDef,
     Component,
     EventService,
+    Events,
     GridApi,
     GridOptionsWrapper,
     IToolPanelComp,
     IToolPanelParams,
     ModuleNames,
     IColumnToolPanel, ModuleRegistry
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {PivotModePanel} from "./pivotModePanel";
-import {RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-enterprise/grid-row-grouping"
+import {RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-grid-enterprise/row-grouping"
 import {PrimaryColsPanel} from "./primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
@@ -101,13 +102,15 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 this.pivotDropZonePanel = new PivotDropZonePanel(false);
                 this.addComponent(this.pivotDropZonePanel);
             }
+            this.setLastVisible();
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
         }
 
         this.initialised = true;
     }
 
     public setPivotModeSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) return;
+        if (!this.isRowGroupingModuleLoaded()) { return };
 
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
@@ -119,10 +122,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.getGui().insertBefore(this.pivotModePanel.getGui(), this.getGui().firstChild);
             this.childDestroyFuncs.push(this.pivotModePanel.destroy.bind(this.pivotModePanel));
         }
+        this.setLastVisible();
     }
 
     public setRowGroupsSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) return;
+        if (!this.isRowGroupingModuleLoaded()) { return };
 
         if (this.rowGroupDropZonePanel) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
@@ -130,10 +134,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
             this.addComponent(new RowGroupDropZonePanel(false));
         }
+
+        this.setLastVisible();
     }
 
     public setValuesSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) return;
+        if (!this.isRowGroupingModuleLoaded()) { return };
 
         if (this.valuesDropZonePanel) {
             this.valuesDropZonePanel.setDisplayed(visible);
@@ -141,10 +147,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.valuesDropZonePanel = new ValuesDropZonePanel(false);
             this.addComponent(this.valuesDropZonePanel);
         }
+
+        this.setLastVisible();
     }
 
     public setPivotSectionVisible(visible: boolean): void {
-        if (!this.isRowGroupingModuleLoaded()) return;
+        if (!this.isRowGroupingModuleLoaded()) { return };
 
         if (this.pivotDropZonePanel) {
             this.pivotDropZonePanel.setDisplayed(visible);
@@ -152,6 +160,22 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             this.pivotDropZonePanel = new PivotDropZonePanel(false);
             this.addComponent(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
+        }
+
+        this.setLastVisible();
+    }
+
+    private setLastVisible(): void {
+        const eGui = this.getGui();
+
+        const columnDrops: HTMLElement[] = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
+
+        columnDrops.forEach(columnDrop => _.removeCssClass(columnDrop, 'ag-last-column-drop'));
+
+        const lastVisible = _.last(eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)') as any) as HTMLElement;
+
+        if (lastVisible) {
+            _.addCssClass(lastVisible, 'ag-last-column-drop');
         }
     }
 

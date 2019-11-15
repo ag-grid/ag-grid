@@ -11,6 +11,7 @@ meta_and_links("Cookies Policy", "About ag-Grid", "This page outlines our policy
   the cookies that we collect on our website.", true);
 ?>
 <title>ag-Grid: Cookie Policy</title>
+<script src="dist/homepage.js"></script>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>
 

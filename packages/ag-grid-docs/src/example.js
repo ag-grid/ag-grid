@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     gridDiv = document.querySelector('#myGrid');
 
+    onThemeChanged();
+
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 
@@ -221,7 +223,10 @@ var gridOptions = {
 
     enableRangeSelection: true,
     enableRangeHandle: false,
-    enableFillHandle: false,
+    enableFillHandle: true,
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 50,
+
     suppressClearOnFillReduction: false,
 
     rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
@@ -1090,12 +1095,16 @@ function rowSelected(event) {
     }
 }
 
-function onThemeChanged(newTheme) {
+function onThemeChanged() {
+    var newTheme = document.querySelector('#grid-theme').value;
     gridDiv.className = newTheme;
-    gridOptions.api.resetRowHeights();
-    gridOptions.api.redrawRows();
-    gridOptions.api.refreshHeader();
-    gridOptions.api.refreshToolPanel();
+
+    if (gridOptions.api) {
+        gridOptions.api.resetRowHeights();
+        gridOptions.api.redrawRows();
+        gridOptions.api.refreshHeader();
+        gridOptions.api.refreshToolPanel();
+    }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
 

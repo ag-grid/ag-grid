@@ -1,5 +1,5 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-community/grid-core';
+import {Bean, ComponentUtil, Grid, GridOptions, Module} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import {getAgGridProperties, Properties} from './Utils';
 import {AgGridColumn} from './AgGridColumn';

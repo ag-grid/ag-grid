@@ -4,10 +4,23 @@ export class Cross extends Marker {
     static className = 'Cross';
 
     updatePath() {
-        const s = this.size / 1.7;
-        const x = this.x - this.strokeWidth / 2;
-        const y = this.y;
+        let { x, y } = this;
+        const { path, size } = this;
+        const s = size / 4.2;
 
-        this.path.setFromString(`M${x - s},${y}l${[-s, -s, s, -s, s, s, s, -s, s, s, -s, s, s, s, -s, s, -s, -s, -s, s, -s, -s]}z`);
+        path.clear();
+        path.moveTo(x -= s, y);
+        path.lineTo(x -= s, y -= s);
+        path.lineTo(x += s, y -= s);
+        path.lineTo(x += s, y += s);
+        path.lineTo(x += s, y -= s);
+        path.lineTo(x += s, y += s);
+        path.lineTo(x -= s, y += s);
+        path.lineTo(x += s, y += s);
+        path.lineTo(x -= s, y += s);
+        path.lineTo(x -= s, y -= s);
+        path.lineTo(x -= s, y += s);
+        path.lineTo(x -= s, y -= s);
+        path.closePath();
     }
 }

@@ -1,4 +1,3 @@
-import '@ag-enterprise/excel-export';
-import 'ag-grid-enterprise';
+import {ExcelExportModule as GridModule} from '@ag-grid-enterprise/excel-export';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

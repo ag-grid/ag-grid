@@ -1,4 +1,4 @@
-import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-community/grid-core";
+import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 
 import { ChartController } from "../../chartController";
 import { ChartTranslator } from "../../chartTranslator";
@@ -35,14 +35,12 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    constructor(activePalette: number, chartController: ChartController) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[]) {
         super(MiniChartsContainer.TEMPLATE);
 
-        const palettes = chartController.getPalettes();
-        this.fills = palettes[activePalette].fills;
-        this.strokes = palettes[activePalette].strokes;
-
         this.chartController = chartController;
+        this.fills = fills;
+        this.strokes = strokes;
     }
 
     @PostConstruct

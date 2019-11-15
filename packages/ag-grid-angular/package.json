@@ -1,11 +1,17 @@
 {
   "name": "ag-grid-angular",
-  "version": "21.2.2",
+  "version": "22.0.0",
   "description": "ag-Grid Angular Component",
   "main": "main.js",
   "typings": "main.d.ts",
   "scripts": {
-    "build": ""
+    "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
+    "verify-properties": "node agGridPropertiesCheck.js",
+    "precheck": "tsc -p tsconfig-precheck.json",
+    "build": "npm run precheck && npm run clean && npm run ngc-build && npm run verify-properties",
+    "ngc-build": "ngc -p tsconfig-src.json && gulp",
+    "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
+    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main"
   },
   "repository": {
     "type": "git",
@@ -24,11 +30,28 @@
   },
   "homepage": "https://angular-grid.ag-grid.com",
   "devDependencies": {
-    "typescript": "^2.9.0"
+    "ag-grid-community": "~22.0.0",
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "core-js": "^2.5.0",
+    "del": "^5.1.0",
+    "gulp": "^4.0.0",
+    "gulp-ngc": "~0.3.3",
+    "gulp-rename": "^1.4.0",
+    "gulp-typescript": "^5.0.0",
+    "replace-in-file": "^4.1.0",
+    "rimraf": "^3.0.0",
+    "rxjs": "^5.5.0",
+    "typescript": "^2.9.0",
+    "typescript-simple": "8.0.6"
   },
   "peerDependencies": {
+    "ag-grid-community": "~22.0.0",
     "@angular/compiler": ">=2.1.x",
-    "@angular/core": ">=2.1.x",
-    "@ag-community/grid-angular": "~21.2.0"
+    "@angular/core": ">=2.1.x"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -41,7 +41,7 @@ import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
-import { IChartService } from "./interfaces/IChartService";
+import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
@@ -56,6 +56,7 @@ import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
+import { UndoRedoService } from "./undoRedo/undoRedoService";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -87,6 +88,7 @@ export interface RedrawRowsParams {
 export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -95,6 +97,7 @@ export interface CreateRangeChartParams {
 
 export interface CreatePivotChartParams {
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
@@ -135,6 +138,7 @@ export class GridApi {
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
     @Optional('chartService') private chartService: IChartService;
+    @Optional('undoRedoService') private undoRedoService: UndoRedoService;
 
     private gridPanel: GridPanel;
     private gridCore: GridCore;
@@ -984,6 +988,21 @@ export class GridApi {
     public clearRangeSelection(): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.removeAllCellRanges();
+    }
+
+    public undoCellEditing(): void {
+        this.undoRedoService.undo();
+    }
+
+    public redoCellEditing(): void {
+        this.undoRedoService.redo();
+    }
+
+    public getChartModels(): ChartModel[] {
+        if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.getChartModels') &&
+            ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels')) {
+            return this.chartService.getChartModels();
+        }
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {

@@ -1,11 +1,11 @@
 {
   "name": "ag-grid-community",
-  "version": "21.2.2",
+  "version": "22.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-  "main": "./main.js",
-  "module": "./dist/es6/main.js",
+  "main": "./dist/ag-grid-community.cjs.js",
   "scripts": {
-    "build": "gulp"
+    "build": "gulp && npm run rollup",
+    "rollup": "node build.js"
   },
   "typings": "./main.d.ts",
   "repository": {
@@ -40,11 +40,13 @@
     "not blackberry > 0"
   ],
   "homepage": "http://www.ag-grid.com/",
-  "dependencies": {
-    "@ag-community/grid-all-modules": "~21.2.0",
-    "@ag-community/grid-core": "~21.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@ag-grid-community/all-modules": "~22.0.0",
+    "@ag-grid-community/core": "~22.0.0",
+    "@ag-grid-community/client-side-row-model": "~22.0.0",
+    "@ag-grid-community/csv-export": "~22.0.0",
+    "@ag-grid-community/infinite-row-model": "~22.0.0",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
@@ -54,6 +56,10 @@
     "gulp-tsd": "^0.1.0",
     "gulp-typescript": "^5.0.0",
     "merge2": "^1.2.0",
+    "rollup": "^1.21.2",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.24.3",
     "typescript": "~3.6.0"
   }
 }

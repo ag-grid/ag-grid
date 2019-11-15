@@ -4,15 +4,14 @@ import ContinuousScale from "../../scale/continuousScale";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
 import palette from "../palettes";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "./series";
 import { numericExtent } from "../../util/array";
-import { Color } from "../../util/color";
 import { toFixed } from "../../util/number";
 import { PointerEvents } from "../../scene/node";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
-import { LineTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -22,6 +21,8 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     strokeWidth: number;
     size: number;
 }
+
+export { LineTooltipRendererParams };
 
 export class LineSeries extends Series<CartesianChart> {
 
@@ -36,6 +37,8 @@ export class LineSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
 
+    readonly marker = new SeriesMarker();
+
     constructor() {
         super();
 
@@ -45,24 +48,14 @@ export class LineSeries extends Series<CartesianChart> {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addEventListener('style', this.update.bind(this));
     }
 
     onMarkerTypeChange() {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
-    }
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
     }
 
     protected _title?: string;
@@ -124,17 +117,14 @@ export class LineSeries extends Series<CartesianChart> {
 
     processData(): boolean {
         const { chart, xKey, yKey } = this;
+        const data = xKey && yKey ? this.data : [];
 
         if (!(chart && chart.xAxis && chart.yAxis)) {
             return false;
         }
 
-        if (!(xKey && yKey)) {
-            this._data = [];
-        }
-
-        this.xData = this.data.map(datum => datum[xKey]);
-        this.yData = this.data.map(datum => datum[yKey]);
+        this.xData = data.map(datum => datum[xKey]);
+        this.yData = data.map(datum => datum[yKey]);
 
         const isContinuousX = chart.xAxis.scale instanceof ContinuousScale;
         const domainX = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
@@ -166,7 +156,6 @@ export class LineSeries extends Series<CartesianChart> {
     set fill(value: string) {
         if (this._fill !== value) {
             this._fill = value;
-            this.stroke = Color.fromString(value).darker().toHexString();
             this.scheduleData();
         }
     }
@@ -236,16 +225,12 @@ export class LineSeries extends Series<CartesianChart> {
             xData,
             yData,
             fill,
+            stroke,
             marker,
             lineNode
         } = this;
 
         const linePath = lineNode.path;
-        const Marker = marker.type;
-        const markerSize = marker.size;
-        const markerFill = this.fill;
-        const markerStroke = this.stroke;
-        const markerStrokeWidth = marker.strokeWidth;
 
         linePath.clear();
 
@@ -267,16 +252,32 @@ export class LineSeries extends Series<CartesianChart> {
                     seriesDatum: data[i],
                     x,
                     y,
-                    fill: markerFill,
-                    stroke: markerStroke,
-                    strokeWidth: markerStrokeWidth,
-                    size: markerSize
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
+                    strokeWidth: marker.strokeWidth || 1,
+                    size: marker.size
                 });
             }
         });
 
-        lineNode.stroke = fill; // use fill colour for the line
+        lineNode.stroke = stroke;
         lineNode.strokeWidth = this.strokeWidth;
+
+        this.updateGroupSelection(groupSelectionData);
+    }
+
+    private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
+        const { marker } = this;
+        const Marker = marker.type;
+        let { groupSelection } = this;
+
+        // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
+        if (!Marker) {
+            if (!groupSelection.size) {
+                this.groupSelection.remove();
+            }
+            return;
+        }
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
@@ -285,7 +286,7 @@ export class LineSeries extends Series<CartesianChart> {
         enterGroups.append(Marker);
 
         const highlightedNode = this.highlightedNode;
-        const groupSelection = updateGroups.merge(enterGroups);
+        groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
 
         groupSelection.selectByClass(Marker)
@@ -348,6 +349,7 @@ export class LineSeries extends Series<CartesianChart> {
 
     listSeriesItems(data: LegendDatum[]): void {
         if (this.data.length && this.xKey && this.yKey) {
+            const { marker } = this;
             data.push({
                 id: this.id,
                 itemId: undefined,
@@ -356,8 +358,11 @@ export class LineSeries extends Series<CartesianChart> {
                     text: this.title || this.yKey
                 },
                 marker: {
+                    type: marker.type,
                     fill: this.fill,
-                    stroke: this.stroke
+                    stroke: this.stroke,
+                    fillOpacity: marker.fillOpacity,
+                    strokeOpacity: marker.strokeOpacity
                 }
             });
         }

@@ -16,7 +16,7 @@ import {
     PostConstruct,
     PreConstruct,
     RefSelector
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import {ToolPanelFilterComp} from "./toolPanelFilterComp";
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
@@ -115,14 +115,18 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public hideGroup(hide: boolean) {
-        _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-hidden', hide);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     }
 
     private addTopLevelColumnGroupExpandListener() {
         this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
             this.childFilterComps.forEach(filterComp => {
+                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
                 if (filterComp instanceof ToolPanelFilterComp) {
                    filterComp.expand();
+                   filterComp.refreshFilter();
+                } else {
+                    filterComp.refreshFilters();
                 }
             });
         });

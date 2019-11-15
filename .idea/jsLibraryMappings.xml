@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <excludedPredefinedLibrary name="HTML" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-all-modules/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-angular/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-client-side-row-model/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-core/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-csv-export/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-infinite-row-model/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-react/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/community-modules/grid-vue/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-all-modules/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-charts/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-clipboard/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-column-tool-panel/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-core/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-excel-export/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-filter-tool-panel/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-master-detail/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-menu/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-range-selection/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-rich-select/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-row-grouping/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-server-side-row-model/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-set-filter/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-side-bar/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-status-bar/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/enterprise-modules/grid-viewport-row-model/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-angular-cli-example/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-angular/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-community/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-dev/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-docs/src/javascript-grid-filter-component/polymer-filter/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-enterprise/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-polymer-example/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-react-example/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-react/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-vue-example/node_modules" />
+    <excludedPredefinedLibrary name="ag-grid/packages/ag-grid-vue/node_modules" />
+  </component>
+</project>

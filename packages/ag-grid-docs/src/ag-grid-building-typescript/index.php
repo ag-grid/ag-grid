@@ -27,12 +27,14 @@ npm init --yes
     <h3>Install Dependencies</h3>
 
     <snippet language="sh">
-npm i --save ag-grid-community
+npm i --save @ag-grid-community/all-modules
+
+# or, if using Enterprise features
+# npm i --save @ag-grid-enterprise/all-modules
+
 npm i --save-dev typescript ts-loader webpack webpack-dev-server extract-text-webpack-plugin
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin
-
-# optional - only necessary if you're using any of the Enterprise features
-npm i --save ag-grid-enterprise</snippet>
+</snippet>
 
     <h3>Create Application</h3>
 
@@ -40,13 +42,14 @@ npm i --save ag-grid-enterprise</snippet>
 
     <snippet>
 // src/SimpleGrid.ts 
-import {Grid, GridOptions} from "ag-grid-community";
+import {Grid, GridOptions} from "@ag-grid-community/all-modules";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
-// for ag-grid-enterprise users only
-//import 'ag-grid-enterprise';
-
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+// or, if using Enterprise features
+// import {Grid, GridOptions} from "@ag-grid-enterprise/all-modules";
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = &lt;GridOptions&gt;{};

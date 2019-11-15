@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Filters Tool Panel</h1>
 
     <p class="lead">
-        The <b>Filters Tool Panel</b> allows accessing the grids filters without needing to open up the column menu.
+        The <b>Filters Tool Panel</b> allows accessing the grid's filters without needing to open up the column menu.
     </p>
 
     <p>

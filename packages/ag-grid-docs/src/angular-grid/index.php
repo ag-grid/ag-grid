@@ -71,7 +71,7 @@ npm install -g @angular/cling new my-app --style scss --routing false cd my-app 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-angular">Copy Code</button>
 <snippet language="sh">
-npm install --save ag-grid-community ag-grid-angular
+npm install --save @ag-grid-community/all-modules @ag-grid-community/angular
 npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 </snippet>
 </section>
@@ -84,7 +84,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 
 @NgModule({
   declarations: [AppComponent],
@@ -105,8 +105,8 @@ export class AppModule {}
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "~ag-grid-community/dist/styles/ag-grid.css";
-@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import "~@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+@import "~@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 </snippet>
 </section>
 
@@ -118,6 +118,7 @@ The grid ships several different themes; pick one that matches your project desi
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 import { Component } from '@angular/core';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -125,8 +126,6 @@ import { Component } from '@angular/core';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make' },
         {headerName: 'Model', field: 'model' },
@@ -138,12 +137,22 @@ export class AppComponent {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
+
+    modules = AllCommunityModules;
 }
 </snippet>
 </section>
 
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
-each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
+<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+<strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the modules we
+    wish to use (<code>modules</code>). </p>
+
+<p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+version of ag-Grid.</p>
+
+<p>In our example the column definitions contain three columns; each column entry specifies the header label and the data
+    field to be displayed in the body of the table.</p>
 
 <p>Finally, let's add the component definition to our template. Edit <code>app/app.component.html</code> and remove the scaffold code:</p>
 <section>
@@ -154,7 +163,7 @@ each column entry specifies the header label and the data field to be displayed 
     class="ag-theme-balham"
     [rowData]="rowData" 
     [columnDefs]="columnDefs"
-    &gt;
+    [modules]="modules"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -216,7 +225,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -234,6 +243,7 @@ export class AppModule {}
 <snippet language="ts">
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -241,8 +251,6 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true},
         {headerName: 'Model', field: 'model', sortable: true, filter: true},
@@ -250,6 +258,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -261,6 +271,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>The above code turns the <code>rowData</code> from a hard-coded array to an <code>Observable</code>. For the grid to work with it, we need to add an async pipe to the property:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -270,6 +281,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     &gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
@@ -290,6 +302,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -297,8 +310,6 @@ import { HttpClient } from '@angular/common/http';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    title = 'app';
-
     columnDefs = [
         {headerName: 'make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'model', field: 'model', sortable: true, filter: true },
@@ -306,6 +317,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -320,6 +333,7 @@ export class AppComponent implements OnInit {
 <p>Next, let's enable <a href="https://www.ag-grid.com/javascript-grid-selection/#multi-row-selection">multiple
         row selection</a>, so that the user can pick many rows:</p>
 <section>
+
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="html">
 &lt;ag-grid-angular 
@@ -327,6 +341,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
@@ -347,18 +362,21 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
+
 <p>Now let's make the instance accessible in our component:</p> 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -368,8 +386,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'Model', field: 'model', sortable: true, filter: true },
@@ -377,6 +393,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -400,17 +418,20 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
+    [modules]="modules"
     rowSelection="multiple"
     &gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
+
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AgGridAngular } from 'ag-grid-angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 @Component({
     selector: 'app-root',
@@ -420,8 +441,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
 
-    title = 'app';
-
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
         {headerName: 'Model', field: 'model', sortable: true, filter: true },
@@ -429,6 +448,8 @@ export class AppComponent implements OnInit {
     ];
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -447,6 +468,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend. 
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
 
@@ -468,30 +490,8 @@ ngOnInit() {
 }
 </snippet>
 
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
-<button class="btn copy-code-button" type="button">Copy Code</button>
-<snippet language="sh">
-npm install --save ag-grid-enterprise
-</snippet>
-</section>
-<p>Then, add the import to <code>app.module.ts</code>:</p>
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="diff">
-import { AgGridModule } from 'ag-grid-angular';
-import { HttpClientModule } from '@angular/common/http';
-
-+import 'ag-grid-enterprise';
-</snippet>
-</section>
-<p>
-    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
-    You can ignore the message as we are trialing.
-    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
-    feel free to look around:
-</p>
-
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
+</section>
 
 <p>Now, let's enable grouping! Add an <code>autoGroupColumnDef</code> property and change the <code>columnDefs</code> to the following:</p>
 <section>
@@ -499,8 +499,6 @@ import { HttpClientModule } from '@angular/common/http';
 <snippet language="ts">
 export class AppComponent implements OnInit {
     @ViewChild('agGrid') agGrid: AgGridAngular;
-
-    title = 'app';
 
     columnDefs = [
         {headerName: 'Make', field: 'make', rowGroup: true },
@@ -517,6 +515,8 @@ export class AppComponent implements OnInit {
     };
 
     rowData: any;
+
+    modules = AllCommunityModules;
 
     constructor(private http: HttpClient) {
 
@@ -535,6 +535,7 @@ export class AppComponent implements OnInit {
 }
 </snippet>
 </section>
+
 <p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p> 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -560,8 +561,8 @@ override the theme variable values, and refer the ag-grid Sass files instead of 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
 </section>
 <p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
@@ -597,5 +598,4 @@ While doing so, we learned how to configure the grid, how to access its API obje
         (amongst others) rich grids, filtering with angular components and master/detail.
     </p>
 </note>
-
 <?php include '../documentation-main/documentation_footer.php'; ?>

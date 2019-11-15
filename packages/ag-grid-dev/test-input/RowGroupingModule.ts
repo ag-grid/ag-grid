@@ -1,4 +1,3 @@
-import '@ag-enterprise/row-grouping';
-import 'ag-grid-enterprise';
+import {RowGroupingModule as GridModule} from '@ag-grid-enterprise/row-grouping';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

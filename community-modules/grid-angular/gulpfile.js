@@ -40,8 +40,8 @@ const compileSource = (callback) => {
 
 const watch = () => {
     gulp.watch([
-            './node_modules/@ag-community/grid-core/src/ts/propertyKeys.ts',
-            './node_modules/@ag-community/grid-core/ts/components/colDefUtil.ts'
+            './node_modules/@ag-grid-community/core/src/ts/propertyKeys.ts',
+            './node_modules/@ag-grid-community/core/ts/components/colDefUtil.ts'
         ],
         series('update-properties'));
 };
@@ -52,4 +52,4 @@ gulp.task('main-post-compile-rename', mainPostCompileRename);
 gulp.task('update-properties', updateProperties);
 gulp.task('compile-source', compileSource);
 gulp.task('watch', series('update-properties', 'compile-source', watch));
-gulp.task('default', series('update-properties', 'compile-main', 'main-post-compile-rename','clean-post-build-artifacts'));
+gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename','clean-post-build-artifacts'));

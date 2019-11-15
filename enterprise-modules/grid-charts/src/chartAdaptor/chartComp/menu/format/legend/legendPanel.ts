@@ -10,7 +10,7 @@ import {
     LegendPosition,
     FontStyle,
     FontWeight,
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
@@ -113,7 +113,7 @@ export class LegendPanel extends Component {
 
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 200);
+        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 20);
         initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
         initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
     }

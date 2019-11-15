@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>not-allowed</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="not-allowed" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M16,26 C21.5228475,26 26,21.5228475 26,16 C26,10.4771525 21.5228475,6 16,6 C10.4771525,6 6,10.4771525 6,16 C6,21.5228475 10.4771525,26 16,26 Z M16,28 C9.372583,28 4,22.627417 4,16 C4,9.372583 9.372583,4 16,4 C22.627417,4 28,9.372583 28,16 C28,22.627417 22.627417,28 16,28 Z" id="Oval" fill="#000000" fill-rule="nonzero"></path>
+        <polygon id="Line" fill="#000000" fill-rule="nonzero" points="23.652124 7.08578644 24.9142136 8.34787596 9.26208952 24 8 22.7379105"></polygon>
+    </g>
+</svg>

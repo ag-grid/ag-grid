@@ -1,1 +1,0 @@
-import  {MasterDetailModule} from "@ag-enterprise/master-detail/src/masterDetailModule"

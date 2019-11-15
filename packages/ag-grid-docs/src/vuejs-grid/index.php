@@ -73,7 +73,10 @@ npm run serve
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="sh">
-npm install --save ag-grid-community ag-grid-vue vue-property-decorator
+npm install --save @ag-grid-community/all-modules @ag-grid-community/vue vue-property-decorator
+
+# or, if using Enterprise featuers
+npm install --save @ag-grid-enterprise/all-modules @ag-grid-community/vue vue-property-decorator
 </snippet>
 </section>
 
@@ -83,8 +86,12 @@ npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
 &lt;style lang="scss"&gt;
-  @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
+  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+  // or, if using Enterprise featuers
+  // @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+  // @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 &lt;/style&gt;
 </snippet>
 </section>
@@ -103,7 +110,8 @@ The grid ships several different themes; pick one that matches your project desi
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
-                 :rowData="rowData"&gt;
+                 :rowData="rowData"
+                 :modules="modules"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 </snippet>
@@ -113,14 +121,16 @@ The grid ships several different themes; pick one that matches your project desi
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
 &lt;script&gt;
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
         data() {
             return {
                 columnDefs: null,
-                rowData: null
+                rowData: null,
+                modules: AllCommunityModules
             }
         },
         components: {
@@ -143,7 +153,14 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/script&gt;
 </snippet>
 </section>
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
+<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+        <strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the <a href="../javascript-grid-modules">modules</a>
+    we wish to use.</p>
+<p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+    modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+    version of ag-Grid.</p>
+
+<p>In our case, the column definitions contain three columns;
 each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
@@ -151,7 +168,7 @@ We have set the class to <code>ag-theme-balham</code>, which defines the grid th
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
-<p>Finally, note that we've imported the <code>ag-grid-vue</code> component - this is actual component that will provide the ag-Grid functionality.</p>
+<p>Finally, note that we've imported the <code>@ag-grid-community/vue</code> component - this is actual component that will provide the ag-Grid functionality.</p>
 
 <p>If everything works as expected, you should see a simple grid like the one on the screenshot:</p> 
 
@@ -232,12 +249,14 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
+                 :modules="modules"
                  rowSelection="multiple"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
@@ -276,6 +295,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
              class="ag-theme-balham"
              :columnDefs="columnDefs"
              :rowData="rowData"
+             :modules="modules"
 
              rowSelection="multiple"&gt;
 &lt;/ag-grid-vue&gt;
@@ -300,6 +320,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
+                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -308,7 +329,8 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
@@ -362,7 +384,9 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another
+    effective way for the user to make sense out of large amounts of data. In our case, the data is not that much.
+    Let's switch to a slightly larger data set:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
@@ -382,30 +406,6 @@ beforeMount() {
 }
 </snippet>
 </section>
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="sh">
-npm install --save ag-grid-enterprise
-</snippet>
-</section>
-<p>Then, add the import to <code>src/main.js</code>:</p>
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="diff">
-import Vue from 'vue'
-
-+import 'ag-grid-enterprise';
-
-import App from './App'
-</snippet>
-</section>
-<p>
-    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
-    You can ignore the message as we are trialing.
-    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
-    feel free to look around:
-</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -420,6 +420,7 @@ import App from './App'
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
+                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -428,7 +429,8 @@ import App from './App'
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
     export default {
         name: 'App',
@@ -502,8 +504,12 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
+  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+
+// or, if using Enterprise features
+//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
+//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
 </snippet>
 </section>

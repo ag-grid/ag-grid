@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <td>boolean</td>
-            <td>Set to true to display the side bar with default configuration.</td>
+            <td>Set to <code>true</code> to display the side bar with default configuration.</td>
         </tr>
         <tr>
             <td>string</td>
@@ -40,8 +40,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <td>SideBarDef<br/>(long form)</td>
-            <td>An object of type SideBarDef (explained below) to allow detailed configuration
-            of the side bar. Use this to configure the provided tool panels (eg pass parameters to the
+            <td>An object of type <code>SideBarDef</code> (explained below) to allow detailed configuration
+            of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the
                 columns or filters panel) or to include custom tool panels.</td>
         </tr>
     </table>
@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The default side bar contains the Columns and Filters tool panels. To use the default side bar,
-        set the grid property <code>sideBar=true</code>. The Columns panel will be open by default
+        set the grid property <code>sideBar=true</code>. The Columns panel will be open by default.
     </p>
 
     <p>
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         In the following example note the following:
         <ul>
-            <li>The grid property <code>sideBar</code> is set to true.</li>
+            <li>The grid property <code>sideBar</code> is set to <code>true</code>.</li>
             <li>The side bar is displayed with tool panels Columns and Filters.</li>
             <li>The Columns panel is displayed by default.</li>
         </ul>
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below demonstrates using the string configuration. Note the following:
         <ul>
-            <li>The grid property <code>sideBar</code> is set to 'filters'.</li>
+            <li>The grid property <code>sideBar</code> is set to <code>'filters'</code>.</li>
             <li>The side bar is displayed showing only the Filters panel.</li>
         </ul>
     </p>
@@ -89,9 +89,9 @@ include '../documentation-main/documentation_header.php';
     <h3>SideBarDef Configuration</h3>
 
     <p>
-        The previous configurations are shortcuts for the full fledged configuration using a SideBarDef object.
+        The previous configurations are shortcuts for the full fledged configuration using a <code>SideBarDef</code> object.
         For full control over the configuration, you must provide a <code>SideBarDef</code> object.
-        The properties of SideBarDef are as follows:
+        The properties of <code>SideBarDef</code> are as follows:
     <table class="table reference">
 
         <?php include './toolPanelProperties.php' ?>
@@ -146,7 +146,7 @@ sideBar = {
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
     <p>
-        The boolean and string configurations are shortcuts for more detailed configurations.
+        The <code>boolean</code> and <code>string</code> configurations are shortcuts for more detailed configurations.
         When you use a shortcut the grid replaces it with the equivalent long form of the configuration
         by building the equivalent <code>SideBarDef</code>.
     </p>
@@ -178,13 +178,12 @@ sideBar = {
             toolPanel: 'agFiltersToolPanel',
         }
     ],
-    defaultToolPanel: 'columns'
-    }
+    defaultToolPanel: 'columns',
 }
 </snippet>
 
 <p>
-    The following code snippet shows and example of the <code>string</code> shortcut and the equivalent
+    The following code snippet shows an example of the <code>string</code> shortcut and the equivalent
     <code>SideBarDef</code> long form.
 </p>
 
@@ -203,8 +202,7 @@ sideBar = {
             toolPanel: 'agFiltersToolPanel',
         }
     ],
-    defaultToolPanel: 'filters'
-    }
+    defaultToolPanel: 'filters',
 }
 </snippet>
 
@@ -215,7 +213,7 @@ sideBar = {
 <snippet>
 // shortcut
 sideBar = {
-    toolPanels: ['columns','filters']
+    toolPanels: ['columns', 'filters']
 };
 
 // equivalent detailed long form
@@ -298,7 +296,7 @@ sideBar = {
 </p>
 
 <ul>
-    <li>Initially the side is not visible as <code>sideBar.hiddenByDefault=true</code>.</li>
+    <li>Initially the side bar is not visible as <code>sideBar.hiddenByDefault=true</code>.</li>
     <li>
         <b>Visibility Buttons:</b> These toggle visibility of the tool panel. Note that when you make <code>visible=false</code>,
         the entire tool panel is hidden including the tabs. Make sure the tool panel is left visible before testing

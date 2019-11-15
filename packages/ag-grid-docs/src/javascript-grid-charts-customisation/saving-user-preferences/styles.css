@@ -4,7 +4,7 @@
     height: 100%;
 }
 
-.my-grid {
+#myGrid {
     flex-grow: 1;
     height: 10px !important;
 }

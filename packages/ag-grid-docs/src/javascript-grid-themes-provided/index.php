@@ -41,6 +41,19 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
+            <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
+            <td>
+                <p>
+                    <strong>New</strong> modern looking themes using styled components and two accent colors. <code>ag-theme-alpine-dark</code> is a dark
+                    version of <code>ag-theme-alpine</code>.
+                </p>
+                <p>
+                    <span class="reccommendation">Recommendation:</span>
+                    This is the most recent and polished theme set, upgrading the Balham theme.  
+                </p>
+            </td>
+        </tr>
+        <tr>
             <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
             <td>
                 <p>
@@ -118,6 +131,139 @@ include '../documentation-main/documentation_header.php';
         &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
     </snippet>
 
+  <h1>Alpine Themes</h1>
+    <p>
+        The Alpine theme comes in two versions: 1) light and 2) dark. Below shows examples of each type.
+    </p>
+
+    <p>Example Alpine Light (ag-theme-alpine)</p>
+
+    <?= example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+
+    <p>Example Alpine Dark (ag-theme-alpine-dark)</p>
+
+    <?= example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+
+    <h3>Customizing the Alpine Theme</h3>
+
+    <p>In addition to the basic set of Sass variables, the Alpine theme exposes the following Sass variables which you can override to change the theme look:
+
+<snippet>
+$ag-alpine-blue: #2196f3;
+$ag-alpine-orange: #ff9800;
+$ag-alpine-purple: #e040fb; 
+$ag-alpine-green: #76ff03;
+
+$ag-alpine-black: #181d1f;
+$ag-alpine-white: #fff;
+
+$ag-alpine-gray-1: #222628;
+$ag-alpine-gray-2: #585652;
+$ag-alpine-gray-3: #68686e;
+$ag-alpine-gray-4: #babfc7;
+$ag-alpine-gray-5: #fcfdfe;
+
+$ag-alpine-light-pink: #fce4ec;
+$ag-alpine-dim-green: #43a047;
+$ag-alpine-dim-red: #e53935;
+$ag-alpine-deep-teal: #16a085;
+
+////////////////////////////////////////
+// Colors
+////////////////////////////////////////
+
+// Used as an active state across the grid - focus forms, caret, etc.
+$ag-color-primary: $ag-alpine-blue !default;
+// color used for the grid selection and selection checkboxes.
+$ag-color-secondary: $ag-alpine-orange !default;
+// background
+$ag-color-background: $ag-alpine-white !default;
+
+// text
+$ag-color-foreground: $ag-alpine-black !default;
+
+// used for panels and popups
+$ag-color-background-alt: $ag-alpine-gray-5 !default;
+
+// borders between the grid elements (body, panel, header, etc.)
+$ag-color-border-primary: $ag-alpine-gray-4 !default;
+
+// borders between body cells
+$ag-color-border-secondary: transparentize($ag-alpine-gray-4, 0.5) !default;
+
+$ag-color-icon: $ag-alpine-gray-3 !default;
+
+// range selection
+$ag-color-selected: lighten($ag-color-secondary, 40) !default;
+$ag-color-background-range-selection: lighten($ag-color-secondary, 44) !default;
+$ag-color-background-range-selected-1: darken($ag-color-background-range-selection, 10) !default;
+$ag-color-background-range-selected-2: darken($ag-color-background-range-selection, 20) !default;
+$ag-color-background-range-selected-3: darken($ag-color-background-range-selection, 30) !default;
+$ag-color-background-range-selected-4: darken($ag-color-background-range-selection, 40) !default;
+
+$ag-color-row-hover: transparentize($ag-color-primary, 0.9) !default;
+
+// shadows of popups, menus, etc
+$ag-color-chrome-shadow: $ag-alpine-gray-4 !default;
+
+// dropdown arrow
+$ag-url-data-image-dropdown-arrow: url($ag-black-dropdown-arrow) !default;
+$ag-url-hover-data-image-dropdown-arrow: url($ag-blue-dropdown-arrow) !default;
+$ag-url-pressed-data-image-dropdown-arrow: url($ag-white-dropdown-arrow) !default;
+
+// color for the reset / cancel buttons
+$ag-color-form-element-secondary: $ag-alpine-gray-3;
+$ag-color-border-form-element: $ag-alpine-gray-4 !default;
+$ag-color-background-form-element-disabled: transparentize($ag-alpine-gray-4, 0.8) !default;
+
+// inactive color for the switch
+$ag-color-background-toggle-button: $ag-alpine-gray-4 !default;
+
+// chart selections
+$ag-color-background-chart-range-selection-category: $ag-alpine-green !default;
+$ag-color-background-chart-range-selection: $ag-alpine-blue !default;
+
+// chips in grouping and aggregation
+$ag-color-background-chip: transparentize($ag-alpine-gray-4, 0.8) !default;
+
+// delta changes
+$ag-color-cell-data-changed: $ag-alpine-light-pink !default;
+$ag-color-value-change-delta-up: $ag-alpine-dim-green !default;
+$ag-color-value-change-delta-down: $ag-alpine-dim-red !default;
+$ag-color-value-change-value-highlight-background: transparentize($ag-alpine-deep-teal, 0.5) !default;
+
+////////////////////////////////////////
+//Fonts
+////////////////////////////////////////
+
+// Primary
+$ag-font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
+$ag-size-font-default: 14px !default;
+$ag-weight-font-default: 400 !default;
+$ag-font-default: $ag-weight-font-default $ag-size-font-default $ag-font-family-default;
+
+// Secondary (used mostly in headers)
+$ag-font-family-secondary: $ag-font-family-default !default;
+$ag-size-font-secondary: 13px !default;
+$ag-weight-font-secondary: 700 !default;
+$ag-font-secondary: $ag-weight-font-secondary $ag-size-font-secondary $ag-font-family-secondary;
+
+// Form elements
+$ag-font-family-form-element: $ag-font-family-default !default;
+$ag-size-font-form-element: 13px !default;
+$ag-weight-font-form-element: 400 !default;
+$ag-font-form-element: $ag-weight-font-form-element $ag-size-font-form-element $ag-font-family-form-element;
+
+// Chrome UI (menu, tool panel, etc)
+$ag-font-family-chrome: $ag-font-family-default !default;
+$ag-size-font-chrome: 13px !default;
+$ag-weight-font-chrome: 400 !default;
+$ag-font-chrome: $ag-weight-font-chrome $ag-size-font-chrome $ag-font-family-chrome;
+
+// tooltip and status bar are chrome but smaller
+$ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
+$ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
+</snippet>
 
     <h1>Balham Themes</h1>
 
@@ -137,13 +283,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         In addition to the finer grained Scss color variables available for the rest of the themes, the Balham
-        theme has a 'catch all' Sass variable named '$active' that determines the color of the selected checkboxes,
+        theme has a 'catch all' Sass variable named '$ag-active' that determines the color of the selected checkboxes,
         selected rows and icons in the column menu.
     </p>
 
     <snippet>
         // Set the colors to blue and amber
-        $active: #E91E63; // pink-500 from https://www.materialui.co/colors
+        $ag-active: #E91E63; // pink-500 from https://www.materialui.co/colors
         // Import the ag-Grid balham theme
         @import '~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham';</snippet>
 
@@ -185,8 +331,8 @@ include '../documentation-main/documentation_header.php';
 
     <snippet>
         // Set the colors to blue and amber
-        $primary-color: #2196F3; // blue-500
-        $accent-color: #FFD740; // amber-A200
+        $ag-primary-color: #2196F3; // blue-500
+        $ag-accent-color: #FFD740; // amber-A200
 
         // Import the ag-Grid material theme
         @import '~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material';</snippet>
@@ -203,7 +349,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The material design guidelines specify the size of the icons, height of the headers and the rows. We recommend keeping them to the default values for "true" material look.
         However, In case you wish to change the sizing, you should do that both in the grid configuration
-        and by overriding the <code>$grid-size</code> and <code>$icon-size</code>.
+        and by overriding the <code>$ag-grid-size</code> and <code>$ag-icon-size</code>.
         A working example that showcases this using webpack can be found <a href="https://github.com/ag-grid/ag-grid-material/tree/master/custom-sizing">ag-grid-material GitHub repository</a>.
     </p>
 
@@ -403,7 +549,7 @@ include '../documentation-main/documentation_header.php';
             </div>
             <div class="row">
                 <div class="col p-2">header-cell-hover-background-color</div>
-                <div class="col p-2">$header-background-color</div>
+                <div class="col p-2">$ag-header-background-color</div>
                 <div class="col p-2">The header background color while hovering</div>
             </div>
             <div class="row">
@@ -833,11 +979,11 @@ include '../documentation-main/documentation_header.php';
             </div>
             <div class="row">
                 <div class="col p-2">toolpanel-indent-size</div>
-                <div class="col p-2"><code>$grid-size</code> + <code>$icon-size</code></div>
+                <div class="col p-2"><code>$ag-grid-size</code> + <code>$ag-icon-size</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">row-group-indent-size</div>
-                <div class="col p-2"><code>$grid-size</code> * 3 + <code>$icon-size</code></div>
+                <div class="col p-2"><code>$ag-grid-size</code> * 3 + <code>$ag-icon-size</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">cell-horizontal-padding</div>
@@ -877,7 +1023,7 @@ include '../documentation-main/documentation_header.php';
             </div>
             <div class="row">
                 <div class="col p-2">tooltip-background-color</div>
-                <div class="col p-2"><code>lighten($flat-gray-2, 5%)</code></div>
+                <div class="col p-2"><code>lighten($ag-flat-gray-2, 5%)</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">tooltip-foreground-color</div>
@@ -1019,23 +1165,23 @@ include '../documentation-main/documentation_header.php';
             </div>
             <div class="row">
                 <div class="col p-2">disabled-foreground-color</div>
-                <div class="col p-2"><code>rgba(#000, $disabled-foreground-color-opacity)</code></div>
+                <div class="col p-2"><code>rgba(#000, $ag-disabled-foreground-color-opacity)</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">header-background-color</div>
-                <div class="col p-2">$background-color</div>
+                <div class="col p-2">$ag-background-color</div>
             </div>
             <div class="row">
                 <div class="col p-2">header-cell-hover-background-color</div>
-                <div class="col p-2">darken(<code>$header-background-color</code>, 5%)</div>
+                <div class="col p-2">darken(<code>$ag-header-background-color</code>, 5%)</div>
             </div>
             <div class="row">
                 <div class="col p-2">header-cell-moving-background-color</div>
-                <div class="col p-2"><code>$header-cell-hover-background-color</code></div>
+                <div class="col p-2"><code>$ag-header-cell-hover-background-color</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">header-foreground-color</div>
-                <div class="col p-2"><code>$secondary-foreground-color</code></div>
+                <div class="col p-2"><code>$ag-secondary-foreground-color</code></div>
             </div>
             <div class="row">
                 <div class="col p-2">border-color</div>

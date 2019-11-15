@@ -13,6 +13,10 @@
             "enterprise": true
           },
           {
+            "title": "Modules",
+            "url": "javascript-grid-modules/"
+          },
+          {
             "title": "Supported Browsers",
             "url": "javascript-grid-supported-browsers/"
           },
@@ -675,6 +679,10 @@
           {
             "title": "Provided Editors",
             "url": "javascript-grid-provided-cell-editors/"
+          },
+          {
+            "title": "Undo / Redo Edits",
+            "url": "javascript-grid-undo-redo-edits/"
           }
         ]
       },
@@ -714,13 +722,19 @@
         "icon": "icon-import-export",
         "items": [
           {
-            "title": "CSV Export",
-            "url": "javascript-grid-export/"
-          },
-          {
-            "title": "Excel Export",
-            "url": "javascript-grid-excel/",
-            "enterprise": true
+            "title": "Export",
+            "url": "javascript-grid-export/",
+            "items": [
+              {
+                "title": "CSV Export",
+                "url": "javascript-grid-csv/"
+              },
+              {
+                "title": "Excel Export",
+                "url": "javascript-grid-excel/",
+                "enterprise": true
+              }
+            ]
           },
           {
             "title": "Clipboard",

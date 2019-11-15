@@ -11,8 +11,9 @@ import {
     Optional,
     RowNode,
     ValueService
-} from "@ag-community/grid-core";
-import {ChartModel, ColState} from "./chartModel";
+} from "@ag-grid-community/core";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { find } from "../../charts/util/array";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -79,7 +80,7 @@ export class ChartDatasource extends BeanStub {
 
                         if (params.multiCategories) {
                             // add group labels to group column for multi category charts
-                            data[colId] = { labels, toString: () => labels[0] };
+                            data[colId] = { labels, toString: function() { return find(this.labels as string[], v => !!v) || ''; } };
                         } else {
                             // concat group keys from the top group key down (used when grouping Pie charts)
                             data[colId] = labels.slice().reverse().join(' - ');
@@ -102,7 +103,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // introduce a default category when no dimensions exist with a value based off row index (+1)
-                    data[ChartModel.DEFAULT_CATEGORY] = i + 1;
+                    data[ChartDataModel.DEFAULT_CATEGORY] = i + 1;
                 }
             });
 
@@ -202,7 +203,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private getGroupLabels(rowNode: RowNode, initialLabel: string): string[] {
-        const labels = [ initialLabel ];
+        const labels = [initialLabel];
 
         while (rowNode.level !== 0) {
             rowNode = rowNode.parent!;

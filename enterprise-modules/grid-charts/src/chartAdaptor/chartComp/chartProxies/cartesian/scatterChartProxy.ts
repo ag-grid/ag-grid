@@ -1,8 +1,8 @@
-import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-community/grid-core";
+import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/scatterSeries";
-import { ChartModel } from "../../chartModel";
+import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { SeriesOptions } from "../../../../charts/chartOptions";
 
@@ -23,18 +23,19 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         }
 
         const isBubbleChart = this.chartType === ChartType.Bubble;
-        const yFields = params.fields.slice(1, params.fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
+        const { fields } = params;
+        const yFields = fields.slice(1, fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
         const fieldIds = yFields.map(f => f.colId);
-        const defaultCategorySelected = params.category.id === ChartModel.DEFAULT_CATEGORY;
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const defaultCategorySelected = params.category.id === ChartDataModel.DEFAULT_CATEGORY;
+        const { fills, strokes } = this.getPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
-        const xFieldDefinition = params.fields[0];
+        const xFieldDefinition = fields[0];
         const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
 
-        const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series) => {
+        const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
             const id = series.yKey;
 
-            if (series.xKey === xFieldDefinition.colId && _.includes(fieldIds, id)) {
+            if (series.xKey === xFieldDefinition.colId && fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
                 chart.removeSeries(series);
@@ -42,6 +43,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
             return map;
         }, new Map<string, ScatterSeries>());
+
+        let previousSeries: ScatterSeries | undefined = undefined;
 
         yFields.forEach((yFieldDefinition, index) => {
             const existingSeries = existingSeriesById.get(yFieldDefinition.colId);
@@ -59,7 +62,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.marker.stroke = strokes[index % strokes.length];
 
             if (isBubbleChart) {
-                const radiusFieldDefinition = params.fields[index * 2 + 2];
+                const radiusFieldDefinition = fields[index * 2 + 2];
 
                 if (radiusFieldDefinition) {
                     series.sizeKey = radiusFieldDefinition.colId;
@@ -84,8 +87,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             }
 
             if (!existingSeries) {
-                chart.addSeries(series);
+                chart.addSeriesAfter(series, previousSeries);
             }
+
+            previousSeries = series;
         });
     }
 
@@ -110,15 +115,18 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 width: 3,
             },
             marker: {
+                type: 'circle',
                 enabled: true,
-                size: isBubble ? 15 : 3,
-                minSize: isBubble ? 3 : undefined,
+                size: isBubble ? 30 : 6,
+                minSize: isBubble ? 6 : undefined,
                 strokeWidth: 1,
             },
             tooltip: {
                 enabled: true,
             },
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

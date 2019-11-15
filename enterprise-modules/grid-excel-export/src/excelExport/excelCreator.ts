@@ -12,14 +12,14 @@ import {
     StylingService,
     ValueService,
     _
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/core';
 
-import { ExcelCell, ExcelStyle } from '@ag-community/grid-core';
+import { ExcelCell, ExcelStyle } from '@ag-grid-community/core';
 import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import {BaseCreator, Downloader, GridSerializer, ZipContainer, RowType} from "@ag-community/grid-csv-export";
+import {BaseCreator, Downloader, GridSerializer, ZipContainer, RowType} from "@ag-grid-community/csv-export";
 
 export interface ExcelMixedStyle {
     key: string;
@@ -56,9 +56,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): string {
-        if (params && params.exportMode) {
-            this.setExportMode(params.exportMode);
-        }
+        this.setExportMode(params ? params.exportMode : undefined);
         return this.export(params);
     }
 
@@ -84,7 +82,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
         const {columnController, valueService, gridOptionsWrapper} = this;
-        const {processCellCallback, processHeaderCallback, processGroupHeaderCallback, suppressTextAsCDATA, rowHeight, headerRowHeight} = params;
         const isXlsx = this.getExportMode() === 'xlsx';
         const excelFactory = isXlsx ? this.xlsxFactory : this.excelXmlFactory;
 
@@ -94,23 +91,19 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             sheetName = _.utf8_encode(params.sheetName!.toString().substr(0, 31));
         }
 
-        const config = {
+        const config: ExcelGridSerializingParams = {
+            ...params,
             columnController,
             valueService,
             gridOptionsWrapper,
-            processCellCallback,
-            processHeaderCallback,
-            processGroupHeaderCallback,
-            rowHeight,
-            headerRowHeight: headerRowHeight || rowHeight,
+            headerRowHeight: params.headerRowHeight || params.rowHeight,
             sheetName,
             excelFactory,
-            baseExcelStyles: this.gridOptions.excelStyles || undefined,
-            styleLinker: this.styleLinker.bind(this),
-            suppressTextAsCDATA: suppressTextAsCDATA || false
+            baseExcelStyles: this.gridOptions.excelStyles || [],
+            styleLinker: this.styleLinker.bind(this)
         };
 
-        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)((config as ExcelGridSerializingParams));
+        return new (isXlsx ? ExcelXlsxSerializingSession : ExcelXmlSerializingSession)((config));
     }
 
     private styleLinker(rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode): string[] | null {

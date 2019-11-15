@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, PaddingOptions } from "@ag-community/grid-core";
+import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, PaddingOptions } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
@@ -46,17 +46,17 @@ export class PaddingPanel extends Component {
     }
 
     private initChartPaddingItems(): void {
-        const initInput = (property: keyof PaddingOptions, input: AgSlider, labelKey: string) => {
-            input.setLabel(this.chartTranslator.translate(labelKey))
+        const initInput = (property: keyof PaddingOptions, input: AgSlider) => {
+            input.setLabel(this.chartTranslator.translate(property))
                 .setValue(this.chartProxy.getChartPaddingOption(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartProxy.setChartPaddingOption(property, newValue));
         };
 
-        initInput("top", this.paddingTopSlider, "top");
-        initInput("right", this.paddingRightSlider, "right");
-        initInput("bottom", this.paddingBottomSlider, "bottom");
-        initInput("left", this.paddingLeftSlider, "left");
+        initInput('top', this.paddingTopSlider);
+        initInput('right', this.paddingRightSlider);
+        initInput('bottom', this.paddingBottomSlider);
+        initInput('left', this.paddingLeftSlider);
     }
 }

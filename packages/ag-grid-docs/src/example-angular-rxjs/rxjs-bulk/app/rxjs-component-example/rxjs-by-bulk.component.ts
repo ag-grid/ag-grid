@@ -1,9 +1,9 @@
 import {Component} from "@angular/core";
 
-import {AllModules, GridOptions} from "@ag-enterprise/grid-all-modules";
+import {AllModules, GridOptions} from "@ag-grid-enterprise/all-modules";
 
-import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import {MockServerService} from "./mockServer.service";
 

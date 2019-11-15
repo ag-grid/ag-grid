@@ -13,16 +13,23 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import { AgGridVue } from 'ag-grid-vue';
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+// or, if using Enterprise features
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+// import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+
+import { AgGridVue } from '@ag-grid-community/vue';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 export const App = {
     name: 'App',
     data() {
         return {
             columnDefs: null,
-            rowData: null
+            rowData: null,
+            modules: AllCommunityModules
         }
     },
     components: {
@@ -45,7 +52,8 @@ export const App = {
     &lt;ag-grid-vue style="width: 500px; height: 300px;"
         class="ag-theme-balham"
         :columnDefs="columnDefs"
-        :rowData="rowData"&gt;
+        :rowData="rowData"
+        :modules="modules"&gt;
     &lt;/ag-grid-vue&gt;
     `
 }

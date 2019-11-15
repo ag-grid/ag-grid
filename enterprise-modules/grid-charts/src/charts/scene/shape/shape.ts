@@ -7,6 +7,30 @@ export type ShapeLineJoin = null | 'round' | 'bevel';  // null is for 'miter'
 
 export abstract class Shape extends Node {
     /**
+     * Creates a light-weight instance of the given shape (that serves as a template).
+     * The created instance only stores the properites set on the instance itself
+     * and the rest of the properties come via the prototype chain from the template.
+     * This can greatly reduce memory usage in cases where one has many simular shapes,
+     * for example, circles of different size, position and color. The exact memory usage
+     * reduction will depend on the size of the template and the number of own properties
+     * set on its lightweight instances, but will typically be around an order of magnitude
+     * or more.
+     *
+     * Note: template shapes are not supposed to be part of the scene graph (they should not
+     * have a parent).
+     *
+     * @param template
+     */
+    static createInstance<T extends Shape>(template: T): T {
+        const shape = Object.create(template);
+        shape._setParent(undefined);
+        shape.id = template.id + '-Instance-' + String(++template.lastInstanceId);
+        return shape;
+    }
+
+    private lastInstanceId = 0;
+
+    /**
      * Defaults for style properties. Note that properties that affect the position
      * and shape of the node are not considered style properties, for example:
      * `x`, `y`, `width`, `height`, `radius`, `rotation`, etc.

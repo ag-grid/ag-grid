@@ -1,5 +1,5 @@
-import { XmlElement } from '@ag-community/grid-core';
-import { ExcelRow, ExcelXMLTemplate } from '@ag-community/grid-core';
+import { XmlElement } from '@ag-grid-community/core';
+import { ExcelRow, ExcelXMLTemplate } from '@ag-grid-community/core';
 import cell from './cell';
 
 const row: ExcelXMLTemplate = {

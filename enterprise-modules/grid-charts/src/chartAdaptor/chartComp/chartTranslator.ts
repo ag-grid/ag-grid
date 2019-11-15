@@ -1,4 +1,4 @@
-import { Autowired, Bean, GridOptionsWrapper } from "@ag-community/grid-core";
+import { Autowired, Bean, GridOptionsWrapper } from "@ag-grid-community/core";
 
 @Bean("chartTranslator")
 export class ChartTranslator {
@@ -16,6 +16,7 @@ export class ChartTranslator {
         xyValues: 'X Y Values',
         axis: 'Axis',
         color: 'Color',
+        opacity: 'Opacity',
         thickness: 'Thickness',
         xRotation: 'X Rotation',
         yRotation: 'Y Rotation',
@@ -25,6 +26,7 @@ export class ChartTranslator {
         padding: 'Padding',
         chart: 'Chart',
         title: 'Title',
+        background: 'Background',
         font: 'Font',
         top: 'Top',
         right: 'Right',

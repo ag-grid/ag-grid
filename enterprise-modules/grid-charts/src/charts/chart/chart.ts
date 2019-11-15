@@ -9,6 +9,7 @@ import { Legend, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { Caption } from "../caption";
+import { Observable, reactive } from "../util/observable";
 
 export interface ChartOptions {
     document?: Document;
@@ -17,22 +18,30 @@ export interface ChartOptions {
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-export abstract class Chart {
+export abstract class Chart extends Observable {
     readonly scene: Scene;
     readonly background: Rect = new Rect();
-
-    legend = new Legend();
 
     protected legendAutoPadding = new Padding();
     protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement;
-
-    tooltipOffset = [20, 20];
-
     private defaultTooltipClass = 'ag-chart-tooltip';
 
+    legend = new Legend();
+    tooltipOffset = [20, 20];
+
+    @reactive([], 'scene.parent') parent?: HTMLElement;
+    @reactive(['layout']) title?: Caption;
+    @reactive(['layout']) subtitle?: Caption;
+    @reactive(['layout']) padding = new Padding(20);
+    @reactive(['layout'], 'scene.size') size: [number, number];
+    @reactive(['layout'], 'scene.height') height: number; // in CSS pixels
+    @reactive(['layout'], 'scene.width') width: number;   // in CSS pixels
+
     protected constructor(options: ChartOptions = {}) {
+        super();
+
         const root = new Group();
         const background = this.background;
         const document = options.document || window.document;
@@ -45,13 +54,28 @@ export abstract class Chart {
         scene.parent = options.parent;
         scene.root = root;
         this.legend.onLayoutChange = this.onLayoutChange;
-        this.legend.onPositionChange = this.onLegendPositionChange;
+        this.legend.addPropertyListener('position', this.onLegendPositionChange);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
 
         this.setupListeners(scene.canvas.element);
+
+        const captionListener = this.addPropertyListener('title', event => {
+            const { source: chart, value: caption, oldValue: oldCaption } = event;
+
+            if (oldCaption) {
+                oldCaption.removeEventListener('style');
+                chart.scene.root!.removeChild(oldCaption.node);
+            }
+            if (caption) {
+                caption.addEventListener('style', chart.onLayoutChange);
+                chart.scene.root!.appendChild(caption.node);
+            }
+        });
+        this.addPropertyListener('subtitle', captionListener);
+        this.addEventListener('layout', () => this.layoutPending = true);
     }
 
     destroy() {
@@ -76,53 +100,6 @@ export abstract class Chart {
 
     get element(): HTMLElement {
         return this.scene.canvas.element;
-    }
-
-    set parent(value: HTMLElement | undefined) {
-        this.scene.parent = value;
-    }
-    get parent(): HTMLElement | undefined {
-        return this.scene.parent;
-    }
-
-    private _title?: Caption = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                oldTitle.onChange = undefined;
-                this.scene.root!.removeChild(oldTitle.node);
-            }
-            if (value) {
-                value.onChange = this.onLayoutChange;
-                this.scene.root!.appendChild(value.node);
-            }
-            this._title = value;
-            this.layoutPending = true;
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
-
-    private _subtitle?: Caption = undefined;
-    set subtitle(value: Caption | undefined) {
-        const oldSubtitle = this._subtitle;
-        if (oldSubtitle !== value) {
-            if (oldSubtitle) {
-                oldSubtitle.onChange = undefined;
-                this.scene.root!.removeChild(oldSubtitle.node);
-            }
-            if (value) {
-                value.onChange = this.onLayoutChange;
-                this.scene.root!.appendChild(value.node);
-            }
-            this._subtitle = value;
-            this.layoutPending = true;
-        }
-    }
-    get subtitle(): Caption | undefined {
-        return this._subtitle;
     }
 
     abstract get seriesRoot(): Node;
@@ -222,45 +199,6 @@ export abstract class Chart {
         return this._data;
     }
 
-    protected _padding = new Padding(20);
-    set padding(value: Padding) {
-        this._padding = value;
-        this.layoutPending = true;
-    }
-    get padding(): Padding {
-        return this._padding;
-    }
-
-    set size(value: [number, number]) {
-        this.scene.size = value;
-        this.layoutPending = true;
-    }
-    get size(): [number, number] {
-        return this.scene.size;
-    }
-
-    /**
-     * The width of the chart in CSS pixels.
-     */
-    set width(value: number) {
-        this.scene.width = value;
-        this.layoutPending = true;
-    }
-    get width(): number {
-        return this.scene.width;
-    }
-
-    /**
-     * The height of the chart in CSS pixels.
-     */
-    set height(value: number) {
-        this.scene.height = value;
-        this.layoutPending = true;
-    }
-    get height(): number {
-        return this.scene.height;
-    }
-
     private layoutCallbackId: number = 0;
     set layoutPending(value: boolean) {
         if (value) {
@@ -317,18 +255,26 @@ export abstract class Chart {
     processData(): void {
         this.layoutPending = false;
 
-        const legendData: LegendDatum[] = [];
         this.series.forEach(series => {
             if (series.visible) {
                 series.processData();
             }
+        });
+        this.updateLegend();
+
+        this.layoutPending = true;
+    }
+
+    updateLegend(): void {
+        const legendData: LegendDatum[] = [];
+
+        this.series.forEach(series => {
             if (series.showInLegend) {
                 series.listSeriesItems(legendData);
             }
         });
 
         this.legend.data = legendData;
-        this.layoutPending = true;
     }
 
     abstract performLayout(): void;
@@ -339,22 +285,26 @@ export abstract class Chart {
         let titleVisible = false;
         let subtitleVisible = false;
 
-        const spacing = 5;
-        let paddingTop = 0;
+        const spacing = 10;
+        let paddingTop = spacing;
 
         if (title && title.enabled) {
             title.node.x = this.width / 2;
-            title.node.y = 10;
+            title.node.y = paddingTop;
             titleVisible = true;
-            const bbox = title.node.getBBox();
-            paddingTop += bbox ? bbox.y + bbox.height * 1.5 : 0;
+            const titleBBox = title.node.getBBox(); // make sure to set node's x/y, then getBBox
+            if (titleBBox) {
+                paddingTop = titleBBox.y + titleBBox.height;
+            }
 
             if (subtitle && subtitle.enabled) {
-                const bbox = subtitle.node.getBBox();
                 subtitle.node.x = this.width / 2;
-                subtitle.node.y = paddingTop;
+                subtitle.node.y = paddingTop + spacing;
                 subtitleVisible = true;
-                paddingTop += spacing + (bbox ? bbox.height : 0);
+                const subtitleBBox = subtitle.node.getBBox();
+                if (subtitleBBox) {
+                    paddingTop = subtitleBBox.y + subtitleBBox.height;
+                }
             }
         }
 

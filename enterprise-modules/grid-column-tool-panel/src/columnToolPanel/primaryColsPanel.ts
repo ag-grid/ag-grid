@@ -1,15 +1,13 @@
 import {
-    Autowired,
     ColDef,
     ColGroupDef,
     Component,
-    GridOptionsWrapper,
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel
-} from "@ag-community/grid-core";
-import {PrimaryColsListPanel} from "./primaryColsListPanel";
-import {PrimaryColsHeaderPanel} from "./primaryColsHeaderPanel";
+} from "@ag-grid-community/core";
+import { PrimaryColsListPanel } from "./primaryColsListPanel";
+import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
 
 export interface BaseColumnItem {
     getDisplayName(): string | null;
@@ -28,8 +26,6 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('primaryColsHeaderPanel')
     private primaryColsHeaderPanel: PrimaryColsHeaderPanel;
 
@@ -45,12 +41,12 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
         this.allowDragging = allowDragging;
         this.params = params;
 
-
         this.primaryColsHeaderPanel.init(this.params);
 
         const hideFilter = this.params.suppressColumnFilter;
         const hideSelect = this.params.suppressColumnSelectAll;
         const hideExpand = this.params.suppressColumnExpandAll;
+
         if (hideExpand && hideFilter && hideSelect) {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }

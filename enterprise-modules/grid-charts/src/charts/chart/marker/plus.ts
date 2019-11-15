@@ -4,10 +4,24 @@ export class Plus extends Marker {
     static className = 'Plus';
 
     updatePath() {
-        const s = this.size / 1.3;
-        const x = this.x - this.strokeWidth / 2;
-        const y = this.y;
+        let { x, y } = this;
+        const { path, size } = this;
+        const s = size / 3;
+        const hs = s / 2;
 
-        this.path.setFromString(`M${x - s/2},${y - s/2}l${[0, -s, s, 0, 0, s, s, 0, 0, s, -s, 0, 0, s, -s, 0, 0, -s, -s, 0, 0, -s]}z`);
+        path.clear();
+        path.moveTo(x -= hs, y -= hs);
+        path.lineTo(x, y -= s);
+        path.lineTo(x += s, y);
+        path.lineTo(x, y += s);
+        path.lineTo(x += s, y);
+        path.lineTo(x, y += s);
+        path.lineTo(x -= s, y);
+        path.lineTo(x, y += s);
+        path.lineTo(x -= s, y);
+        path.lineTo(x, y -= s);
+        path.lineTo(x -= s, y);
+        path.lineTo(x, y -= s);
+        path.closePath();
     }
 }

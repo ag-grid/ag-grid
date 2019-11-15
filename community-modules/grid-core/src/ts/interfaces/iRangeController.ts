@@ -10,6 +10,7 @@ export interface IRangeController {
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
+    isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
     onDragStart(mouseEvent: MouseEvent): void;
@@ -35,7 +36,7 @@ export interface ISelectionHandle {
     refresh(cellComp: CellComp): void;
 }
 
-export enum CellRangeType {VALUE, DIMENSION}
+export enum CellRangeType { VALUE, DIMENSION }
 
 export interface CellRange {
     id?: string;

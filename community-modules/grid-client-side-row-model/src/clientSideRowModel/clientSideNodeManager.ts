@@ -12,7 +12,7 @@ import {
     _,
     RowDataTransaction,
     RowNodeTransaction
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
 
@@ -127,8 +127,6 @@ export class ClientSideNodeManager {
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction | null {
         if (this.isLegacyTreeData()) { return null; }
-
-        const {add, addIndex, remove, update} = rowDataTran;
 
         const rowNodeTransaction: RowNodeTransaction = {
             remove: [],

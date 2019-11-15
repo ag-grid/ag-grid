@@ -1,4 +1,4 @@
-import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp } from '@ag-community/grid-core';
+import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -20,7 +20,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.addCssClass('ag-status-panel-selected-row-count');
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(_.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
 
         const eventListener = this.onRowSelectionChanged.bind(this);
@@ -36,7 +36,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private onRowSelectionChanged() {
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(selectedRowCount);
+        this.setValue(_.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
     }
 

@@ -4,10 +4,14 @@ export class Triangle extends Marker {
     static className = 'Triangle';
 
     updatePath() {
-        const s = this.size * 2.7;
-        const x = this.x;
-        const y = this.y;
+        let { x, y } = this;
+        const { path, size } = this;
+        const s = size * 1.1;
 
-        this.path.setFromString(`M${x},${y}m0-${s * 0.48}l${s * 0.5},${s * 0.87}-${s},0z`);
+        path.clear();
+        path.moveTo(x, y -= s * 0.48);
+        path.lineTo(x += s * 0.5, y += s * 0.87);
+        path.lineTo(x -= s, y);
+        path.closePath();
     }
 }

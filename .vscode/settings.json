@@ -15,5 +15,11 @@
         "csrm",
         "tran",
         "trans"
-    ]
+    ],
+    "files.exclude": {
+        "packages/ag-grid-community": true,
+        "packages/ag-grid-enterprise": true,
+        "**/.git": true,
+        "**/.DS_Store": true
+    }
 }

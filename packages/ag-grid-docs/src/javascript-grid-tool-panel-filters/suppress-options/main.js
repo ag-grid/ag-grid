@@ -1,16 +1,36 @@
 var columnDefs = [
-    { field: "athlete", width: 150, filter: 'agTextColumnFilter' },
-    { field: "age", width: 90 },
-    { field: "country", width: 120 },
-    { field: "date", width: 110, suppressFiltersToolPanel: true },
-    { field: "gold", width: 100, filter: false },
-    { field: "silver", width: 100, filter: false },
-    { field: "bronze", width: 100, filter: false },
-    { field: "total", width: 100, filter: false }
+    {
+        groupId: 'athleteGroupId',
+        headerName: 'Athlete',
+        children: [
+            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { field: "age", width: 90},
+            {
+                groupId: 'competitionGroupId',
+                headerName: 'Competition',
+                children: [
+                    { field: "year", width: 90 },
+                    { field: "date", width: 110, suppressFiltersToolPanel: true },
+                ]
+            },
+            { field: "country", width: 120}
+        ]
+    },
+    { colId: 'sport', field: "sport", width: 110 },
+    {
+        headerName: 'Medals',
+        children: [
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 }
+        ]
+    }
 ];
 
 var gridOptions = {
     defaultColDef: {
+        filter: true,
         sortable: true,
         enablePivot: true
     },

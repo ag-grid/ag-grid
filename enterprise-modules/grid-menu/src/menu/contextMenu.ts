@@ -22,7 +22,7 @@ import {
     RowNode,
     Optional,
     IRangeController, ModuleRegistry
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
@@ -82,7 +82,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
             const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
             const suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport() || excelModuleMissing;
             const suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport() || csvModuleMissing;
-            const onIPad = _.isUserAgentIPad();
+            const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');

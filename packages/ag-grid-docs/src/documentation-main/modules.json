@@ -1,0 +1,124 @@
+[
+  {
+    "title": "All Community Modules",
+    "module": "@ag-grid-community/all-modules"
+  },
+  {
+    "title": "Grid Core",
+    "module": "@ag-grid-community/core"
+  },
+  {
+    "title": "Client Side Row Model",
+    "module": "@ag-grid-community/client-side-row-model"
+  },
+  {
+    "title": "Infinite Row Model",
+    "module": "@ag-grid-community/infinite-row-model"
+  },
+  {
+    "title": "CSV Export",
+    "module": "@ag-grid-community/csv-export"
+  },
+  {
+    "title": "Angular Support",
+    "module": "@ag-grid-community/angular",
+    "framework": true
+  },
+  {
+    "title": "React Support",
+    "module": "@ag-grid-community/react",
+    "framework": true
+  },
+  {
+    "title": "Vue Suport",
+    "module": "@ag-grid-community/vue",
+    "framework": true
+  },
+  {
+    "title": "Polymer Support",
+    "module": "@ag-grid-community/polymer",
+    "framework": true
+  },
+  {
+    "title": "All Community & Enterprise Modules",
+    "module": "@ag-grid-enterprise/all-modules",
+    "enterprise":  true
+  },
+  {
+    "title": "Charts",
+    "module": "@ag-grid-enterprise/charts",
+    "enterprise": true
+  },
+  {
+    "title": "Clipboard",
+    "module": "@ag-grid-enterprise/clipboard",
+    "enterprise": true
+  },
+  {
+    "title": "Column Tool Panel",
+    "module": "@ag-grid-enterprise/column-tool-panel",
+    "enterprise": true
+  },
+  {
+    "title": "Excel Export",
+    "module": "@ag-grid-enterprise/excel-export",
+    "enterprise": true
+  },
+  {
+    "title": "Filter Tool Panel",
+    "module": "@ag-grid-enterprise/filter-tool-panel",
+    "enterprise": true
+  },
+  {
+    "title": "Master Detail",
+    "module": "@ag-grid-enterprise/master-detail",
+    "enterprise": true
+  },
+  {
+    "title": "Context Menu",
+    "module": "@ag-grid-enterprise/menu",
+    "enterprise": true
+  },
+  {
+    "title": "Range Selection",
+    "module": "@ag-grid-enterprise/range-selection",
+    "enterprise": true
+  },
+  {
+    "title": "Rich Select",
+    "module": "@ag-grid-enterprise/rich-select",
+    "enterprise": true
+  },
+  {
+    "title": "Row Grouping",
+    "module": "@ag-grid-enterprise/row-grouping",
+    "enterprise": true
+  },
+  {
+    "title": "Server Side Row Model",
+    "module": "@ag-grid-enterprise/server-side-row-model",
+    "enterprise": true
+  },
+  {
+    "title": "Set Filter",
+    "module": "@ag-grid-enterprise/set-filter",
+    "enterprise": true
+  },
+  {
+    "title": "Side Bar",
+    "module": "@ag-grid-enterprise/side-bar",
+    "enterprise": true
+  },
+  {
+    "title": "Status Bar",
+    "module": "@ag-grid-enterprise/status-bar",
+    "enterprise": true
+  },
+  {
+    "title": "Viewport Row Model",
+    "module": "@ag-grid-enterprise/viewport-row-model",
+    "enterprise": true
+  }
+]
+
+

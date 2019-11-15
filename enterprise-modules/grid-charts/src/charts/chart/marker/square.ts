@@ -4,11 +4,15 @@ export class Square extends Marker {
     static className = 'Square';
 
     updatePath() {
-        const size = this.size * 1.2;
-        const s = size * 2;
-        const x = this.x - this.strokeWidth / 2;
-        const y = this.y;
+        const { path, x, y } = this;
+        const hs = this.size / 2;
 
-        this.path.setFromString(`M${x - size},${y - size}l${[s, 0, 0, s, -s, 0, 0, -s, 'z']}`);
+        path.clear();
+
+        path.moveTo(x - hs, y - hs);
+        path.lineTo(x + hs, y - hs);
+        path.lineTo(x + hs, y + hs);
+        path.lineTo(x - hs, y + hs);
+        path.closePath();
     }
 }

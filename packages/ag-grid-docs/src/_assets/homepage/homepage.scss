@@ -11,6 +11,7 @@
 @import "../common/mixins.scss";
 @import "./punch.scss";
 @import "./demo.scss";
+@import "../pages/media_pages";
 @import "../pages/about.scss";
 @import "../pages/example.scss";
 @import "../pages/support.scss";
@@ -370,6 +371,14 @@ body > div.page-content {
             border: 1px solid $gray-400;
             width: 100%;
             height: 515px;
+        }
+
+        #bestHtml5Grid.small {
+            height: 460px;
+        }
+
+        #bestHtml5Grid.small:not(.tall) {
+            height: 320px;
         }
     }
 }

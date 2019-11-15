@@ -1,1 +1,0 @@
-import  {ClipboardModule} from "@ag-enterprise/clipboard/src/clipboardModule"

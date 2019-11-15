@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import {AgGridReact} from '@ag-community/grid-react';
+import {AgGridReact} from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 export default class extends Component {
     constructor(props) {
@@ -92,7 +96,7 @@ export default class extends Component {
                 </div>
 
                 <div style={{width: '100%', height: '420px'}} className="ag-theme-balham">
-                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions} columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} />
+                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions} columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} modules={AllCommunityModules}/>
                 </div>
 
                 <div style={{width: '100%', height: '40px'}} className="ag-theme-balham">
@@ -101,6 +105,7 @@ export default class extends Component {
                         gridOptions={this.state.bottomOptions}
                         columnDefs={this.state.columnDefs}
                         headerHeight="0"
+                        modules={AllCommunityModules}
                         rowStyle={{fontWeight: 'bold'}}
                     />
                 </div>

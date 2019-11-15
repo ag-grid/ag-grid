@@ -32,6 +32,8 @@ export class Constants {
     static KEY_C = 67;
     static KEY_V = 86;
     static KEY_D = 68;
+    static KEY_Z = 90;
+    static KEY_Y = 89;
 
     static KEY_F2 = 113;
 

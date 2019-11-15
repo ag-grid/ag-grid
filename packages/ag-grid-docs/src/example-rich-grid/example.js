@@ -23,6 +23,99 @@
     var IT_SKILLS = ["android", "css", "html5", "mac", "windows"];
     var IT_SKILLS_NAMES = ["Android", "CSS", "HTML 5", "Mac", "Windows"];
 
+    var docEl = document.documentElement;
+    var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth < 768;
+    var isTall = docEl.clientHeight >= 570;
+
+    function createIcon(cls) {
+        var iconEl = document.createElement('i');
+        iconEl.classList.add('fas');
+        iconEl.classList.add(cls);
+        iconEl.style.width = '13px';
+        iconEl.style.height = '13px';
+        iconEl.style.marginRight = '5px';
+
+        return iconEl;
+    }
+
+    function ContactInfoRenderer() {}
+
+    ContactInfoRenderer.prototype.init = function(params) {
+        var wrapperEl = document.createElement('div');
+        wrapperEl.style.lineHeight = 'normal';
+        wrapperEl.style.padding = '10px 0';
+
+        var nameEl = document.createElement('p');
+        var landlineEl = document.createElement('p');
+        landlineEl.appendChild(createIcon('fa-phone'));
+        landlineEl.style.marginBottom = '10px'
+
+        var mobileEl = document.createElement('p');
+        mobileEl.appendChild(createIcon('fa-mobile-alt'))
+        mobileEl.style.marginBottom = '5px'
+
+        var name = params.data.name;
+        var landline = params.data.landline;
+        var mobile = params.data.mobile;
+
+        nameEl.style.fontWeight = 'bold';
+        nameEl.innerHTML = name;
+
+        var landlineText = document.createTextNode(landline)
+        landlineEl.appendChild(landlineText);
+
+        var mobileText = document.createTextNode(mobile);
+        mobileEl.appendChild(mobileText);
+        
+        wrapperEl.appendChild(nameEl);
+        wrapperEl.appendChild(landlineEl);
+        wrapperEl.appendChild(mobileEl);
+
+        this.eGui = wrapperEl;
+    }
+
+    ContactInfoRenderer.prototype.getGui = function() {
+        return this.eGui;
+    }
+
+    var columnDefsMobile = [
+        {
+            headerName:  'Contact Info',
+            cellRenderer: ContactInfoRenderer,
+            field: 'name',
+            sort: 'asc',
+            autoHeight: true,
+            width: 200
+        },
+        {
+            headerName: "Skills",
+            width: 100,
+            sortable: false,
+            cellRenderer: skillsCellRenderer,
+            suppressSizeToFit: true
+        },
+        {
+            headerName: "Proficiency",
+            field: "proficiency",
+            filter: "number",
+            width: 150,
+            cellRenderer: percentCellRenderer,
+            cellStyle: {
+                padding: '0 2px'
+            }
+        },
+        {
+            headerName: "Country",
+            field: "country",
+            width: 150,
+            cellRenderer: countryCellRenderer,
+            cellStyle: {
+                display: 'flex',
+                alignItems: 'center'
+            }
+        }
+    ];
+
     var columnDefs = [
         {
             headerName: "",
@@ -53,7 +146,7 @@
             children: [
                 {
                     headerName: "Skills",
-                    width: 125,
+                    width: 130,
                     sortable: false,
                     cellRenderer: skillsCellRenderer,
                     filter: SkillFilter
@@ -64,7 +157,10 @@
                     filter: "number",
                     width: 150,
                     cellRenderer: percentCellRenderer,
-                    filter: ProficiencyFilter
+                    filter: ProficiencyFilter,
+                    cellStyle: {
+                        padding: '0 2px'
+                    }
                 }
             ]
         },
@@ -85,7 +181,7 @@
             filter: true,
             minWidth: 80
         },
-        columnDefs: columnDefs,
+        columnDefs: isSmall ? columnDefsMobile : columnDefs,
         rowSelection: "multiple",
         enableRangeSelection: true,
         suppressRowClickSelection: true,
@@ -120,6 +216,14 @@
 
     function onBtBringGridBack() {
         var eGridDiv = document.querySelector("#bestHtml5Grid");
+        if (isSmall) {
+            eGridDiv.classList.add('small');
+        }
+
+        if (isTall) {
+            eGridDiv.classList.add('tall');
+        }
+
         new agGrid.Grid(eGridDiv, gridOptions);
         if (btBringGridBack) {
             btBringGridBack.disabled = true;
@@ -136,14 +240,29 @@
     }
 
     function skillsCellRenderer(params) {
+        var wrapperEl = document.createElement('div');
+        wrapperEl.style.whiteSpace = isSmall ? 'normal' : 'nowrap';
+
+        if (!isSmall) {
+            wrapperEl.style.overflow = 'hidden';
+            wrapperEl.style.textOverflow = 'ellipsis';
+        }
+
         var data = params.data;
-        var skills = [];
         IT_SKILLS.forEach(function (skill) {
+            var img;
             if (data && data.skills[skill]) {
-                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" alt="' + skill + '" />');
+                img = document.createElement('img');
+                img.src = '/images/skills/' + skill + '.png';
+                img.style.width = '16px';
+                img.style.margin = '2px';
+                img.title = skill;
+                img.alt = skill;
+                
+                wrapperEl.appendChild(img);
             }
         });
-        return skills.join(" ");
+        return wrapperEl;
     }
 
     function countryCellRenderer(params) {
@@ -165,9 +284,14 @@
     function percentCellRenderer(params) {
         var value = params.value;
 
-        var eDivPercentBar = document.createElement("div");
+        var eDivPercentBarWrapper = document.createElement('div');
+        eDivPercentBarWrapper.className = 'div-percent-bar-wrapper';
+        var eDivPercentBar = document.createElement('div');
+
+        eDivPercentBarWrapper.appendChild(eDivPercentBar);
         eDivPercentBar.className = "div-percent-bar";
         eDivPercentBar.style.width = value + "%";
+
         if (value < 20) {
             eDivPercentBar.style.backgroundColor = "#f55d51";
         } else if (value < 60) {
@@ -182,7 +306,10 @@
 
         var eOuterDiv = document.createElement("div");
         eOuterDiv.className = "div-outer-div";
-        eOuterDiv.appendChild(eDivPercentBar);
+        if (isSmall) {
+            eOuterDiv.classList.add('small');
+        }
+        eOuterDiv.appendChild(eDivPercentBarWrapper);
         eOuterDiv.appendChild(eValue);
 
         return eOuterDiv;

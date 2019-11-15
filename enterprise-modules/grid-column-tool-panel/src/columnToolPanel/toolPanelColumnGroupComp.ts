@@ -16,17 +16,17 @@ import {
     PostConstruct,
     RefSelector,
     TouchListener
-} from "@ag-community/grid-core";
-import {BaseColumnItem} from "./primaryColsPanel";
-import {ColumnFilterResults} from "./primaryColsListPanel";
+} from "@ag-grid-community/core";
+import { BaseColumnItem } from "./primaryColsPanel";
+import { ColumnFilterResults } from "./primaryColsListPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
         `<div class="ag-column-tool-panel-column-group">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" ref="eGroupOpenedIcon"></span>
-                <span class="ag-column-group-opened-icon" ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
+                <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
@@ -39,11 +39,11 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-    
+
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
     @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
-    
+
     private eDragHandle: HTMLElement;
 
     private readonly columnGroup: OriginalColumnGroup;
@@ -57,7 +57,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     private getFilterResultsCallback: () => ColumnFilterResults;
 
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean,
-                expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
+        expandedCallback: () => void, getFilterResults: () => ColumnFilterResults) {
         super();
         this.columnGroup = columnGroup;
         this.columnDept = columnDept;
@@ -121,8 +121,9 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
             dragItemName: this.displayName,
-            dragItemCallback: () => this.createDragItem()
+            getDragItem: () => this.createDragItem()
         };
+
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }

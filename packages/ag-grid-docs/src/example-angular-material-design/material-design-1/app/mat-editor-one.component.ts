@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 
-import {GridOptions, Module, AllModules} from "@ag-enterprise/grid-all-modules";
+import {GridOptions, Module, AllModules} from "@ag-grid-enterprise/all-modules";
 
-import "@ag-community/grid-all-modules/dist/styles/ag-grid.css";
-import "@ag-community/grid-all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import { MatCheckboxComponent } from "./mat-checkbox.component";
 import { MatInputComponent } from "./mat-input.component";

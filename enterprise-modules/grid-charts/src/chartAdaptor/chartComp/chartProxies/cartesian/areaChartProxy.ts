@@ -1,4 +1,4 @@
-import { CartesianChartOptions, AreaSeriesOptions, ChartType, _ } from "@ag-community/grid-core";
+import { CartesianChartOptions, AreaSeriesOptions, ChartType, _ } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
@@ -41,7 +41,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         } else {
             // stacked and normalized has a single series
             const areaSeries = this.chart.series[0] as AreaSeries;
-            const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+            const { fills, strokes } = this.getPalette();
 
             areaSeries.data = params.data;
             areaSeries.xKey = params.category.id;
@@ -64,12 +64,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series) => {
+        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series, i) => {
             const id = series.yKeys[0];
 
-            if (_.includes(fieldIds, id)) {
+            if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
                 chart.removeSeries(series);
@@ -78,7 +78,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             return map;
         }, new Map<string, AreaSeries>());
 
-        let previousSeries: AreaSeries = undefined;
+        let previousSeries: AreaSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);
@@ -92,9 +92,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.yKeys = [f.colId];
                 areaSeries.yNames = [f.displayName];
                 areaSeries.fills = [fill];
-                areaSeries.marker.fill = fill;
                 areaSeries.strokes = [stroke];
-                areaSeries.marker.stroke = stroke;
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
                 const options: InternalAreaSeriesOptions = {
@@ -141,8 +139,9 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 width: 3,
             },
             marker: {
+                type: 'circle',
                 enabled: true,
-                size: 3,
+                size: 6,
                 strokeWidth: 1,
             },
             tooltip: {
@@ -150,6 +149,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             },
             shadow: this.getDefaultDropShadowOptions(),
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

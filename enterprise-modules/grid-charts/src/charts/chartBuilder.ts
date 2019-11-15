@@ -15,6 +15,7 @@ import {
     AxisOptions,
     SeriesLabelOptions,
     MarkerOptions,
+    MarkerType,
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -24,7 +25,8 @@ import { BarSeries } from "./chart/series/barSeries";
 import { AreaSeries } from "./chart/series/areaSeries";
 import { PieSeries } from "./chart/series/pieSeries";
 import { Chart } from "./chart/chart";
-import { Series, SeriesMarker } from "./chart/series/series";
+import { Series } from "./chart/series/series";
+import { SeriesMarker } from "./chart/series/seriesMarker";
 import { DropShadow } from "./scene/dropShadow";
 import { CategoryAxis } from "./chart/axis/categoryAxis";
 import { NumberAxis } from "./chart/axis/numberAxis";
@@ -36,6 +38,12 @@ import { GroupedCategoryChart, GroupedCategoryChartAxis } from "./chart/groupedC
 import { Axis } from "./axis";
 import Scale from "./scale/scale";
 import { Circle } from "./chart/marker/circle";
+import { Cross } from "./chart/marker/cross";
+import { Diamond } from "./chart/marker/diamond";
+import { Plus } from "./chart/marker/plus";
+import { Square } from "./chart/marker/square";
+import { Triangle } from "./chart/marker/triangle";
+import { Marker } from "./chart/marker/marker";
 
 export class ChartBuilder {
     private static createCartesianChart(
@@ -263,6 +271,7 @@ export class ChartBuilder {
 
         if (options.background) {
             this.setValueIfExists(chart.background, 'fill', options.background.fill);
+            this.setValueIfExists(chart.background, 'opacity', options.background.opacity);
             this.setValueIfExists(chart.background, 'visible', options.background.visible);
         }
 
@@ -534,6 +543,17 @@ export class ChartBuilder {
         return series;
     }
 
+    private static getMarkerFromType(type: MarkerType): new () => Marker {
+        const markerType = (type === 'circle' && Circle)
+            || (type === 'cross' && Cross)
+            || (type === 'diamond' && Diamond)
+            || (type === 'plus' && Plus)
+            || (type === 'square' && Square)
+            || (type === 'triangle' && Triangle)
+            || Circle;
+        return markerType;
+    }
+
     static initLegend(legend: Legend, options: LegendOptions) {
         this.setValueIfExists(legend, 'enabled', options.enabled);
         this.setValueIfExists(legend, 'position', options.position);
@@ -552,6 +572,7 @@ export class ChartBuilder {
             }
 
             if (marker) {
+                this.setValueIfExists(legend, 'markerType', ChartBuilder.getMarkerFromType(marker.type));
                 this.setValueIfExists(legend, 'markerStrokeWidth', marker.strokeWidth);
                 this.setValueIfExists(legend, 'markerSize', marker.size);
                 this.setValueIfExists(legend, 'markerPadding', marker.padding);
@@ -563,7 +584,7 @@ export class ChartBuilder {
     }
 
     static initMarker(marker: SeriesMarker, options: MarkerOptions) {
-        marker.type = Circle;
+        marker.type = ChartBuilder.getMarkerFromType(options.type);
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);

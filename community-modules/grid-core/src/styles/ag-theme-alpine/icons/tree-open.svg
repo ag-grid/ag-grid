@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>tree-open</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="tree-open" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(7.000000, 10.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M17.708,2.355 L9,11.061 L0.292,2.355 L1.708,0.939 L9,8.233 L16.292,0.939 C16.764,1.411 17.236,1.883 17.708,2.355 Z"></path>
+        </g>
+    </g>
+</svg>

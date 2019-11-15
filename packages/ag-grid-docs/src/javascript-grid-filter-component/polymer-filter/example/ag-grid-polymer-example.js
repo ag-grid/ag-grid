@@ -1,13 +1,13 @@
 import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
-import "../node_modules/ag-grid-polymer/index.js";
+import "../node_modules/@ag-grid-community/polymer/index.js";
 
 import PartialMatchFilter from "./partial-match-filter.js";
 
 class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
-            <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/polymer/dist/styles/ag-theme-balham.css">
 
             <button style="margin-bottom: 10px" on-click="onClicked">Filter Instance Method</button>
             <ag-grid-polymer style="width: 100%; height: 300px; "

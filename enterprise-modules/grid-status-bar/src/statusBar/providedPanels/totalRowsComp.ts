@@ -1,4 +1,4 @@
-import { Autowired, Events, EventService, GridApi, IStatusPanelComp, PostConstruct } from '@ag-community/grid-core';
+import { Autowired, Events, EventService, GridApi, IStatusPanelComp, PostConstruct, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
@@ -26,13 +26,13 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(this.getRowCountValue());
+        this.setValue(_.formatNumberCommas(this.getRowCountValue()));
     }
 
-    private getRowCountValue(): string {
+    private getRowCountValue(): number {
         let totalRowCount = 0;
         this.gridApi.forEachLeafNode((node) => totalRowCount += 1);
-        return `${totalRowCount}`;
+        return totalRowCount;
     }
 
     public init() {

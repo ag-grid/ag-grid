@@ -1,1 +1,0 @@
-import  {RichSelectModule} from "@ag-enterprise/rich-select/src/richSelectModule"

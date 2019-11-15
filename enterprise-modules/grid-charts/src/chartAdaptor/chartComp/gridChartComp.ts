@@ -13,11 +13,12 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService
-} from "@ag-community/grid-core";
+    ResizeObserverService,
+    ChartModel
+} from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
-import { ChartModel, ChartModelParams } from "./chartModel";
+import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
 import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
@@ -25,13 +26,14 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { Palette, palettes } from "../../charts/chart/palettes";
+import { ChartPaletteName } from "../../charts/chart/palettes";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
+    chartPaletteName: ChartPaletteName;
     insideDialog: boolean;
     suppressChartRanges: boolean;
     aggFunc?: string | IAggFunc;
@@ -63,13 +65,12 @@ export class GridChartComp extends Component {
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
 
-    private model: ChartModel;
+    private model: ChartDataModel;
     private chartController: ChartController;
 
-    private currentChartType: ChartType;
-    private currentChartGroupingActive: boolean;
-    private currentPalette: number;
     private chartProxy: ChartProxy<any, any>;
+    private chartType: ChartType;
+    private chartGroupingActive: boolean;
 
     private readonly params: GridChartParams;
 
@@ -84,14 +85,12 @@ export class GridChartComp extends Component {
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
             aggFunc: this.params.aggFunc,
-            cellRanges: [this.params.cellRange],
+            cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
-            palettes: palettes,
-            activePalette: 0
         };
 
-        this.model = this.wireBean(new ChartModel(modelParams));
-        this.chartController = this.wireBean(new ChartController(this.model));
+        this.model = this.wireBean(new ChartDataModel(modelParams));
+        this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 
         this.createChart();
 
@@ -103,7 +102,7 @@ export class GridChartComp extends Component {
         this.addMenu();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATED, this.refresh.bind(this));
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
@@ -118,6 +117,7 @@ export class GridChartComp extends Component {
             // preserve existing width/height
             width = chart.width;
             height = chart.height;
+
             this.chartProxy.destroy();
 
             const canvas = this.eChart.querySelector('canvas');
@@ -130,33 +130,34 @@ export class GridChartComp extends Component {
         const processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
 
-        const categorySelected = this.model.getSelectedDimension().colId !== ChartModel.DEFAULT_CATEGORY;
+        const categorySelected = this.model.getSelectedDimension().colId !== ChartDataModel.DEFAULT_CATEGORY;
+        const chartType = this.model.getChartType();
+        const isGrouping = this.model.isGrouping();
 
         const chartProxyParams: ChartProxyParams = {
-            chartType: this.model.getChartType(),
+            chartType,
             processChartOptions: processChartOptionsFunc,
-            getSelectedPalette: this.getSelectedPalette.bind(this),
+            getChartPaletteName: this.getChartPaletteName.bind(this),
+            allowPaletteOverride: !this.params.chartPaletteName,
             isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             parentElement: this.eChart,
             width,
             height,
             eventService: this.eventService,
             categorySelected,
-            grouping: this.model.isGrouping(),
+            grouping: isGrouping,
             document: this.gridOptionsWrapper.getDocument()
         };
 
-        // local state used to detect when chart type changes
-        this.currentChartType = this.model.getChartType();
-        this.currentChartGroupingActive = this.model.isGrouping();
-        this.currentPalette = this.model.getActivePalette();
+        // set local state used to detect when chart type changes
+        this.chartType = chartType;
+        this.chartGroupingActive = isGrouping;
         this.chartProxy = this.createChartProxy(chartProxyParams);
 
-        // update chart proxy ref (used by format panel)
-        this.model.setChartProxy(this.chartProxy);
+        this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getSelectedPalette = (): Palette => this.model.getPalettes()[this.model.getActivePalette()];
+    private getChartPaletteName = (): ChartPaletteName => this.chartController.getPaletteName();
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
@@ -218,11 +219,10 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        const chartTypeChanged = this.currentChartType !== this.model.getChartType();
-        const groupingChanged = this.currentChartGroupingActive !== this.model.isGrouping();
-        const paletteChanged = this.currentPalette !== this.model.getActivePalette();
+        const chartTypeChanged = this.chartType !== this.model.getChartType();
+        const groupingChanged = this.chartGroupingActive !== this.model.isGrouping();
 
-        return chartTypeChanged || groupingChanged || paletteChanged;
+        return chartTypeChanged || groupingChanged;
     }
 
     public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;
@@ -237,7 +237,11 @@ export class GridChartComp extends Component {
         this.eDockedContainer.style.minWidth = '0';
     }
 
-    public getCurrentChartType = (): ChartType => this.currentChartType;
+    public getCurrentChartType = (): ChartType => this.chartType;
+
+    public getChartModel(): ChartModel {
+        return this.chartController.getChartModel();
+    }
 
     public updateChart() {
         const { model, chartProxy } = this;
@@ -247,7 +251,9 @@ export class GridChartComp extends Component {
         const data = model.getData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
-        if (chartEmpty) { return; }
+        if (chartEmpty) {
+            return;
+        }
 
         const selectedDimension = model.getSelectedDimension();
         const chartUpdateParams: UpdateChartParams = {
@@ -337,9 +343,11 @@ export class GridChartComp extends Component {
         if (this.chartController) {
             this.chartController.destroy();
         }
+
         if (this.chartProxy) {
             this.chartProxy.destroy();
         }
+
         if (this.chartMenu) {
             this.chartMenu.destroy();
         }

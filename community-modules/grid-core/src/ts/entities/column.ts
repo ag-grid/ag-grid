@@ -104,6 +104,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private rowGroupActive = false;
     private pivotActive = false;
     private aggregationActive = false;
+    private flex: number;
 
     private readonly primary: boolean;
 
@@ -164,6 +165,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.maxWidth = this.colDef.maxWidth;
         } else {
             this.maxWidth = maxColWidth;
+        }
+
+        if (this.colDef.flex) {
+            this.flex = this.colDef.flex;
         }
 
         this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
@@ -641,14 +646,22 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
+        if (this.minWidth != null) {
+            actualWidth = Math.max(actualWidth, this.minWidth);
+        }
+        if (this.maxWidth != null) {
+            actualWidth = Math.min(actualWidth, this.maxWidth);
+        }
         if (this.actualWidth !== actualWidth) {
+            // disable flex for this column if it was manually resized.
+            if (this.flex && source !== 'flex') { this.flex = 0; }
             this.actualWidth = actualWidth;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
     }
 
     public isGreaterThanMax(width: number): boolean {
-        if (this.maxWidth) {
+        if (this.maxWidth != null) {
             return width > this.maxWidth;
         }
         return false;
@@ -660,6 +673,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getMaxWidth(): number {
         return this.maxWidth;
+    }
+
+    public getFlex(): number {
+        return this.flex || 0;
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {

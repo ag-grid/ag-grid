@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>data</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="data" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M16,10 C22.151228,10 27,8.13508769 27,7 C27,5.86491231 22.151228,4 16,4 C9.848772,4 5,5.86491231 5,7 C5,8.13508769 9.848772,10 16,10 Z M16,12 C8.82029825,12 3,9.76142375 3,7 C3,4.23857625 8.82029825,2 16,2 C23.1797017,2 29,4.23857625 29,7 C29,9.76142375 23.1797017,12 16,12 Z" id="Oval-3" fill="#000000" fill-rule="nonzero"></path>
+        <path d="M5,29 C5,27.8649123 9.848772,26 16,26 C22.151228,26 27,27.8649123 27,29 L29,29 C29,26.2385763 23.1797017,24 16,24 C8.82029825,24 3,26.2385763 3,29 L5,29 Z" id="Oval-3-Copy" fill="#000000" fill-rule="nonzero" transform="translate(16.000000, 26.500000) scale(1, -1) translate(-16.000000, -26.500000) "></path>
+        <path d="M5,23 C5,21.8649123 9.848772,20 16,20 C22.151228,20 27,21.8649123 27,23 L29,23 C29,20.2385763 23.1797017,18 16,18 C8.82029825,18 3,20.2385763 3,23 L5,23 Z" id="Oval-3-Copy-2" fill="#000000" fill-rule="nonzero" transform="translate(16.000000, 20.500000) scale(1, -1) translate(-16.000000, -20.500000) "></path>
+        <path d="M5,18 C5,16.8649123 9.848772,15 16,15 C22.151228,15 27,16.8649123 27,18 L29,18 C29,15.2385763 23.1797017,13 16,13 C8.82029825,13 3,15.2385763 3,18 L5,18 Z" id="Oval-3-Copy-3" fill="#000000" fill-rule="nonzero" transform="translate(16.000000, 15.500000) scale(1, -1) translate(-16.000000, -15.500000) "></path>
+        <polygon id="Line" fill="#000000" fill-rule="nonzero" points="3 7 5 7 5 24 3 24"></polygon>
+        <polygon id="Line-Copy" fill="#000000" fill-rule="nonzero" points="27 7 29 7 29 24 27 24"></polygon>
+    </g>
+</svg>

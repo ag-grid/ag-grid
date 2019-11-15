@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="menu" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(6.000000, 9.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M20,14 L0,14 L0,12 L20,12 L20,14 Z M20,8 L0,8 L0,6 L20,6 L20,8 Z M20,2 L0,2 L0,0 L20,0 L20,2 Z"></path>
+        </g>
+    </g>
+</svg>

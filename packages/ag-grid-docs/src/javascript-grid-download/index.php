@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can download ag-Grid from the <code>dist</code> folder of the ag-Grid
-        <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community/dist">GitHub Repository</a>.
+        <a href="https://github.com/ag-grid/ag-grid/tree/master/community-modules/grid-all-modules/dist">GitHub Repository</a>.
         There are four bundle files in the distribution:
     </p>
 
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can download ag-Grid Enterprise from the <code>dist</code> folder of the ag-Grid Enterprise
-        <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-enterprise/dist">Github Repository</a>.
+        <a href="https://github.com/ag-grid/ag-grid/tree/master/enterprise-modules/grid-all-modules/dist">Github Repository</a>.
         Again there are four bundle files in the distribution:
     </p>
 

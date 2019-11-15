@@ -43,6 +43,7 @@ import {_} from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
 import {ModuleRegistry} from "../modules/moduleRegistry";
 import {ModuleNames} from "../modules/moduleNames";
+import {UndoRedoService} from "../undoRedo/undoRedoService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -128,6 +129,7 @@ export class GridPanel extends Component {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -171,7 +173,6 @@ export class GridPanel extends Component {
 
     private scrollLeft = -1;
     private scrollTop = -1;
-    private nextScrollTop = -1;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
     private readonly resetLastHorizontalScrollElementDebounce: () => void;
@@ -282,7 +283,6 @@ export class GridPanel extends Component {
         this.paginationAutoPageSizeService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
-        this.animationFrameService.registerGridComp(this);
 
         if (this.rangeController) {
             this.rangeController.registerGridComp(this);
@@ -309,6 +309,9 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (_.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
+            this.columnController.refreshFlexedColumns(
+                this.getCenterWidth()
+            );
         } else {
             this.bodyHeight = 0;
         }
@@ -518,7 +521,8 @@ export class GridPanel extends Component {
                         cellComp.onKeyDown(keyboardEvent);
                     }
 
-                    this.doClipboardOperations(keyboardEvent, cellComp);
+                    // perform clipboard and undo / redo operations
+                    this.doGridOperations(keyboardEvent, cellComp);
 
                     break;
                 case 'keypress':
@@ -538,7 +542,7 @@ export class GridPanel extends Component {
         }
     }
 
-    private doClipboardOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
+    private doGridOperations(keyboardEvent: KeyboardEvent, cellComp: CellComp): void {
         // check if ctrl or meta key pressed
         if (!keyboardEvent.ctrlKey && !keyboardEvent.metaKey) { return; }
 
@@ -560,6 +564,10 @@ export class GridPanel extends Component {
                 return this.onCtrlAndV();
             case Constants.KEY_D:
                 return this.onCtrlAndD(keyboardEvent);
+            case Constants.KEY_Z:
+                return keyboardEvent.shiftKey ? this.undoRedoService.redo() : this.undoRedoService.undo();
+            case Constants.KEY_Y:
+                return this.undoRedoService.redo();
         }
     }
 
@@ -595,7 +603,7 @@ export class GridPanel extends Component {
 
     private mockContextMenuForIPad(): void {
         // we do NOT want this when not in iPad, otherwise we will be doing
-        if (!_.isUserAgentIPad()) { return; }
+        if (!_.isIOSUserAgent()) { return; }
 
         this.eAllCellContainers.forEach(container => {
             const touchListener = new TouchListener(container);
@@ -904,6 +912,12 @@ export class GridPanel extends Component {
         this.getGui().setAttribute('aria-rowcount', total);
     }
 
+    private updateColumnCount(): void {
+        const columns = this.beans.columnController.getAllDisplayedColumns();
+
+        this.getGui().setAttribute('aria-colcount', columns.length.toString());
+    }
+
     public ensureColumnVisible(key: any): void {
         const column = this.columnController.getGridColumn(key);
 
@@ -1109,6 +1123,7 @@ export class GridPanel extends Component {
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
+        this.updateColumnCount();
     }
 
     private onDisplayedColumnsWidthChanged(): void {
@@ -1333,22 +1348,8 @@ export class GridPanel extends Component {
         const scrollTop: number = this.eBodyViewport.scrollTop;
         this.animationFrameService.setScrollTop(scrollTop);
 
-        this.nextScrollTop = scrollTop;
-
-        if (this.gridOptionsWrapper.isSuppressAnimationFrame()) {
-            this.redrawRowsAfterScroll();
-        } else {
-            this.animationFrameService.schedule();
-        }
-    }
-
-    public executeFrame(): boolean {
-        const frameNeeded = this.scrollTop !== this.nextScrollTop;
-        if (frameNeeded) {
-            this.scrollTop = this.nextScrollTop;
-            this.redrawRowsAfterScroll();
-        }
-        return frameNeeded;
+        this.scrollTop = scrollTop;
+        this.redrawRowsAfterScroll();
     }
 
     private isControllingScroll(eDiv: HTMLElement): boolean {

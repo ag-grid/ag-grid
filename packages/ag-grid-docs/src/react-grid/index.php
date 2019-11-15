@@ -44,7 +44,10 @@ npm start
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-react">Copy Code</button>
 <snippet language="sh">
-npm install --save ag-grid-community ag-grid-react
+npm install --save @ag-grid-community/all-modules @ag-grid-community/react
+
+# or, if using Enterprise features
+npm install --save @ag-grid-enterprise/all-modules @ag-grid-community/react
 </snippet>
 </section>
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! Open <code>src/App.js</code> in your favorite text editor and change its contents to the following:</p>
@@ -53,9 +56,15 @@ npm install --save ag-grid-community ag-grid-react
 <pre class="language-jsx" ng-non-bindable><code>import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import { AgGridReact } from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+
+// or, if using Enterprise features
+// import '@@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
+// import '@@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';
 
 class App extends Component {
   constructor(props) {
@@ -88,7 +97,8 @@ class App extends Component {
       &gt;
         &lt;AgGridReact
           columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}&gt;
+          rowData={this.state.rowData}
+          modules={AllCommunityModules}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );
@@ -102,33 +112,46 @@ export default App;</code></pre>
 <p>Let's go over the <code>App.jsx</code> changes we made:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';</code></pre>
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+<pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+
+// or, if using Enterprise features
+// import '@@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
+// import '@@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';</code></pre>
+<p>The three lines above import the <code>AgGridReact</code> component, the modules we wish to use, the grid "structure"
+    stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
 </p>
 </section>
-  The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
+    <p><p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
+        modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
+        version of ag-Grid.</p>
+    </p>
+  <p>The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design.
+    You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
   <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
   <snippet language="jsx">
 constructor(props) {
-super(props);
-this.state = {
-  columnDefs: [{
-    headerName: "Make", field: "make"
-  }, {
-    headerName: "Model", field: "model"
-  },{
-    headerName: "Price", field: "price"
-  }],
-  rowData: [{
-    make: "Toyota", model: "Celica", price: 35000
-  },{
-    make: "Ford", model: "Mondeo", price: 32000
-  },{
-    make: "Porsche", model: "Boxter", price: 72000
-  }]
+    super(props);
+    this.state = {
+      columnDefs: [{
+        headerName: "Make", field: "make"
+      }, {
+        headerName: "Model", field: "model"
+      },{
+        headerName: "Price", field: "price"
+      }],
+      rowData: [{
+        make: "Toyota", model: "Celica", price: 35000
+      },{
+        make: "Ford", model: "Mondeo", price: 32000
+      },{
+        make: "Porsche", model: "Boxter", price: 72000
+      }]
+  }
 }
   </snippet>
 </section>
@@ -140,7 +163,8 @@ each column entry specifies the header label and the data field to be displayed 
 <pre class="language-jsx" ng-non-bindable><code>&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
-        rowData={this.state.rowData}&gt;
+        rowData={this.state.rowData}
+        modules={AllCommunityModules}&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;</code></pre>
 </section>
@@ -287,30 +311,6 @@ componentDidMount() {
 .then(rowData =&gt; this.setState({rowData}))
 }
 </snippet>
-</section>
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="sh">
-npm install --save ag-grid-enterprise
-</snippet>
-</section>
-Then, add the import to your file:
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
-<snippet language="diff">
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-+ import 'ag-grid-enterprise';
-</snippet>
-</section>
-<p>
-    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
-    You can ignore the message as we are trialing.
-    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
-    feel free to look around:
-</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -356,17 +356,25 @@ rowData={this.state.rowData}
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
+@import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+
+// or, if using Enterprise features
+// @import "../node_modules/@ag-grid-enterprise/all-modules/src/styles/ag-grid.scss";
+// @import "../node_modules/@ag-grid-enterprise/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
 </section>
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
-import { AgGridReact } from 'ag-grid-react';
--import 'ag-grid-community/dist/styles/ag-grid.css';
--import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import { AgGridReact } from '@ag-grid-community/react';
+-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+
+// or, if using Enterprise features
+-import '@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
+-import '@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';
 </snippet>
 </section>
 <section>

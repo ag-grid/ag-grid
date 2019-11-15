@@ -1,4 +1,3 @@
-import '@ag-enterprise/set-filter';
-import 'ag-grid-enterprise';
+import {SetFilterModule as GridModule} from '@ag-grid-enterprise/set-filter';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

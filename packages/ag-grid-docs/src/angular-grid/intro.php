@@ -14,6 +14,10 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 import { Component } from '@angular/core';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
 @Component({
   selector: 'my-app',
@@ -34,6 +38,7 @@ export class AppComponent  {
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
 
+    modules = AllCommunityModules;
 }
 </snippet>
                 </div>
@@ -41,7 +46,8 @@ export class AppComponent  {
 <snippet>
 &lt;ag-grid-angular
     [rowData]="rowData"
-    [columnDefs]="columnDefs">
+    [columnDefs]="columnDefs"
+    [modules="modules">
 &lt;/ag-grid-angular>
 </snippet>  
                 </div>

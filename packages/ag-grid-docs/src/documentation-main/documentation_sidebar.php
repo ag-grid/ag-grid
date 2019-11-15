@@ -18,39 +18,26 @@
 </div>
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.2">Version 21.2.2</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Sep 27</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Version 22.0.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Nov 11</h6>
         <p class="card-text">
-            Patch release with bug fixes
-        </p>
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.2.2">Change Log</a>
-        </p>
-    </div>
-</div>
-<div class="card card-highlight mb-4">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=21.2.0">Version 21.2.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Aug 30</h6>
-        <p class="card-text">
-            Minor release with new features and bug fixes:
+            Major release with new features and bug fixes:
         </p>
         <ul>
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-pivot-chart/">Pivot Chart</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-overview/">Charts out of Beta!</a></li>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-modules/">Modularisation</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-pagination/#childRows/">Pagination Enhancements</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a></li>
 
             <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-scatter/">Scatter / Bubble Charts</a></li>
-
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-accessibility/">Accessibility Enhancements</a></li>
+                   href="https://www.ag-grid.com/javascript-grid-tool-panel/">Tool Panel Enhancements</a></li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=21.2.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=22.0.0">Change Log</a>
         </p>
     </div>
 </div>

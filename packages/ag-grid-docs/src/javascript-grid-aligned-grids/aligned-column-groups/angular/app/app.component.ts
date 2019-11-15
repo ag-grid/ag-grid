@@ -1,35 +1,42 @@
 import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
 @Component({
     selector: 'my-app',
     template: `
         <ag-grid-angular
-        style="width: 100%; height: 45%"
-        #topGrid
-        class="ag-theme-balham"
-        (firstDataRendered)="onFirstDataRendered($event)"
-        [defaultColDef]="{
+                style="width: 100%; height: 45%"
+                #topGrid
+                class="ag-theme-balham"
+                (firstDataRendered)="onFirstDataRendered($event)"
+                [defaultColDef]="{
             resizable: true
         }"
-        [rowData]="rowData"
-        [gridOptions]="topOptions"
-        [columnDefs]="columnDefs">
+                [rowData]="rowData"
+                [modules]="modules"
+                [gridOptions]="topOptions"
+                [columnDefs]="columnDefs">
         </ag-grid-angular>
 
         <div style="height: 5%"></div>
 
         <ag-grid-angular
-        style="width: 100%; height: 45%"
-        #bottomGrid
-        class="ag-theme-balham"
-        (firstDataRendered)="onFirstDataRendered($event)"
-        [defaultColDef]="{
+                style="width: 100%; height: 45%"
+                #bottomGrid
+                class="ag-theme-balham"
+                (firstDataRendered)="onFirstDataRendered($event)"
+                [defaultColDef]="{
             resizable: true
         }"
-        [rowData]="rowData"
-        [gridOptions]="bottomOptions"
-        [columnDefs]="columnDefs">
+                [rowData]="rowData"
+                [modules]="modules"
+                [gridOptions]="bottomOptions"
+                [columnDefs]="columnDefs">
         </ag-grid-angular>
     `
 })
@@ -38,6 +45,7 @@ export class AppComponent {
     rowData;
     topOptions = {alignedGrids: []};
     bottomOptions = {alignedGrids: []};
+    modules = AllCommunityModules
 
     @ViewChild('topGrid') topGrid;
     @ViewChild('bottomGrid') bottomGrid;

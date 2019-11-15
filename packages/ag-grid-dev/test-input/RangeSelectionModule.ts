@@ -1,4 +1,3 @@
-import '@ag-enterprise/range-selection';
-import 'ag-grid-enterprise';
+import {RangeSelectionModule as GridModule} from '@ag-grid-enterprise/range-selection';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

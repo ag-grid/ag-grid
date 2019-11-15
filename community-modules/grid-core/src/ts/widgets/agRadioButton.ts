@@ -1,7 +1,8 @@
-import { AgCheckbox } from "./agCheckbox";
+import { AgCheckbox } from './agCheckbox';
 
 export class AgRadioButton extends AgCheckbox {
     protected className = 'ag-radio-button';
+    protected nativeInputClassName = 'ag-native-radio-button';
     protected inputType = 'radio';
     protected iconMap = {
         selected: 'radioButtonOn',

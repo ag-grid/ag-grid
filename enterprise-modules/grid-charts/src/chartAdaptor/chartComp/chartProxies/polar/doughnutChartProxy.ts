@@ -1,5 +1,5 @@
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { _, PolarChartOptions, PieSeriesOptions } from "@ag-community/grid-core";
+import { _, PolarChartOptions, PieSeriesOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PieSeries } from "../../../../charts/chart/series/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -32,7 +32,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
         let offset = 0;
 
         params.fields.forEach((f, index) => {
@@ -100,7 +100,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.chartProxyParams.getSelectedPalette();
+        const { strokes } = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
 
         options.seriesDefaults = {
@@ -121,6 +121,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
             },
             shadow: this.getDefaultDropShadowOptions(),
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

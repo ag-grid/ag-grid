@@ -83,6 +83,7 @@ import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
 import {IComponent} from "./interfaces/iComponent";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
+import {UndoRedoService} from "./undoRedo/undoRedoService";
 
 export interface GridParams {
     // used by Web Components
@@ -276,7 +277,7 @@ export class Grid {
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache
+            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache, UndoRedoService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
@@ -354,24 +355,24 @@ export class Grid {
         } else {
             if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
                 console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the `
-                    + `InfiniteRowModelModule is loaded using: import '@ag-community/grid-infinite-row-model';`);
+                    + `InfiniteRowModelModule is loaded using: import '@ag-grid-community/infinite-row-model';`);
             }
             console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
             if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
                 console.error(`ag-Grid: Row Model "Viewport" not found. For this row model to work you must ` +
                     `a) be using ag-Grid Enterprise and ` +
                     `b) ensure ViewportRowModelModule is ` +
-                    `loaded using: import '@ag-enterprise/grid-viewport-row-model;`);
+                    `loaded using: import '@ag-grid-enterprise/viewport-row-model;`);
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
                 console.error(`ag-Grid: Row Model "Server Side" not found. For this row model to work you must ` +
                     `a) be using ag-Grid Enterprise and ` +
                     `b) ensure ServerSideRowModelModule is ` +
-                    `loaded using: import '@ag-enterprise/grid-server-server-side-row-model';`);
+                    `loaded using: import '@ag-grid-enterprise/server-server-side-row-model';`);
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
                 console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the `
-                    + `ClientSideRowModelModule is loaded using: import '@ag-community/grid-client-side-row-model';`);
+                    + `ClientSideRowModelModule is loaded using: import '@ag-grid-community/client-side-row-model';`);
             }
             return undefined;
         }

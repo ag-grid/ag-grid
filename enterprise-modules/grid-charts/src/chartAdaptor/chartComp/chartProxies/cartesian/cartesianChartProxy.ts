@@ -1,7 +1,7 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-community/grid-core";
+import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-grid-community/core";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import { ChartModel } from "../../chartModel";
+import { ChartDataModel } from "../../chartDataModel";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
@@ -31,7 +31,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         let labelRotation = 0;
         const axisKey = isHorizontalChart ? "yAxis" : "xAxis";
 
-        if (categoryId !== ChartModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
+        if (categoryId !== ChartDataModel.DEFAULT_CATEGORY && !this.chartProxyParams.grouping) {
             const { label } = this.chartOptions[axisKey];
 
             if (label && label.rotation) {

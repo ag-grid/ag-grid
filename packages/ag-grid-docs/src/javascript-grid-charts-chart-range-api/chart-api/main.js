@@ -43,11 +43,15 @@ function onChart1() {
             columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedColumn',
+        chartPalette: 'bright',
         processChartOptions: function(params) {
             var opts = params.options;
 
             opts.title = { text: "Top 5 Medal Winners" };
-            opts.xAxis.label.rotation = 30;
+
+            if (opts.xAxis) {
+                opts.xAxis.label.rotation = 30;
+            }
 
             opts.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -69,6 +73,7 @@ function onChart2() {
             columns: ['country', 'bronze']
         },
         chartType: 'groupedBar',
+        chartPalette: 'pastel',
         processChartOptions: function(params) {
             var opts = params.options;
             opts.seriesDefaults.showInLegend = false;

@@ -13,7 +13,7 @@ import {
     RefSelector,
     PostConstruct,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =
@@ -86,7 +86,6 @@ export class ToolPanelFilterComp extends Component {
         if (eParent == null) { return; }
 
         const eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
-        eIcon.innerHTML = '&nbsp';
         eParent.appendChild(eIcon);
     }
 

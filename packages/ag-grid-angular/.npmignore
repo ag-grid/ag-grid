@@ -1,8 +1,11 @@
-# for https://github.com/ceolter/ag-grid-angular/issues/108
-main.ts
-
-!aot/
-!dist/
-
-src/*.module.ngfactory.ts
-src/*.module.ngsummary.json
+src
+agGridPropertiesCheck.js
+github-banner.png
+github-grid-demo.jpg
+gulpfile.js
+tsconfig.json
+tsconfig-gulp.json
+tsconfig-main.json
+tsconfig-precheck.json
+tsconfig-src.json
+updateGridAndColumnProperties.js

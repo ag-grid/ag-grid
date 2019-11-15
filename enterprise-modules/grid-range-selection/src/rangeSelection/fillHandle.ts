@@ -8,8 +8,12 @@ import {
     RowNode,
     RowPosition,
     ValueService,
+    EventService,
+    Events,
+    FillEndEvent,
+    FillStartEvent,
     _
-} from '@ag-community/grid-core';
+} from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
 interface FillValues {
@@ -22,6 +26,7 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';
@@ -107,9 +112,34 @@ export class FillHandle extends AbstractSelectionHandle {
         }
 
         if (finalRange) {
+            // raising fill events for undo / redo
+            this.raiseFillStartEvent();
+
             this.handleValueChanged(initialRange, finalRange, e);
             this.rangeController.setCellRanges([finalRange]);
+
+            this.raiseFillEndEvent(initialRange, finalRange);
         }
+    }
+
+    private raiseFillStartEvent() {
+        const fillStartEvent: FillStartEvent = {
+            type: Events.EVENT_FILL_START,
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi()
+        };
+        this.eventService.dispatchEvent(fillStartEvent);
+    }
+
+    private raiseFillEndEvent(initialRange: CellRange, finalRange: CellRange) {
+        const fillEndEvent: FillEndEvent = {
+            type: Events.EVENT_FILL_END,
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            api: this.gridOptionsWrapper.getApi(),
+            initialRange: initialRange,
+            finalRange: finalRange
+        };
+        this.eventService.dispatchEvent(fillEndEvent);
     }
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
@@ -186,7 +216,9 @@ export class FillHandle extends AbstractSelectionHandle {
                 withinInitialRange = updateInitialSet();
             } else {
                 currentValue = this.processValues(e, values, initialValues, col, rowNode, idx++);
-                this.valueService.setValue(rowNode, col, currentValue);
+                if (col.isCellEditable(rowNode)) {
+                    this.valueService.setValue(rowNode, col, currentValue);
+                }
             }
             
             values.push(currentValue);
@@ -214,7 +246,9 @@ export class FillHandle extends AbstractSelectionHandle {
             if (!rowNode) { break; }
 
             columns.forEach((col: Column) => {
-                this.valueService.setValue(rowNode, col, null);
+                if (col.isCellEditable(rowNode)) {
+                    this.valueService.setValue(rowNode, col, null);
+                }
             });
 
             finished = this.rowPositionUtils.sameRow(currentRow, endRow);

@@ -3,40 +3,41 @@ import { Qualifier, PostConstruct, Bean, Autowired, PreDestroy } from "../contex
 import { Column } from "../entities/column";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
-import { ColumnController } from "../columnController/columnController";
 import { Environment } from "../environment";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
 
-export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
-
 export interface DragItem {
-    // if moving a row, the, this contains the row node
+    /** When dragging a row, this contains the row node being dragged */
     rowNode?: RowNode;
-    // if moving columns, this contains the columns and the visible state
+
+    /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
-    visibleState?: {[key: string]: boolean};
+
+    /** When dragging columns, this contains the visible state of the columns */
+    visibleState?: { [key: string]: boolean };
 }
 
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }
+
 export interface DragSource {
-    /** So the drop target knows what type of event it is, useful for columns,
-     * we we re-ordering or moving dropping from toolPanel */
+    /** The type of the drag source, used by the drop target to know where the drag originated from. */
     type: DragSourceType;
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItemCallback: () => DragItem;
+    getDragItem: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string | null;
-    /** The drop target associated with this dragSource. So when dragging starts, this target does not get
+    /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
-    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    /** After how many pixels of dragging should the drag operation start. Default is 4. */
     dragStartPixels?: number;
     /** Callback for drag started */
-    dragStarted?: () => void;
+    onDragStarted?: () => void;
     /** Callback for drag stopped */
-    dragStopped?: () => void;
+    onDragStopped?: () => void;
 }
 
 export interface DropTarget {
@@ -45,7 +46,7 @@ export interface DropTarget {
     /** If any secondary containers. For example when moving columns in ag-Grid, we listen for drops
      * in the header as well as the body (main rows and pinned rows) of the grid. */
     getSecondaryContainers?(): HTMLElement[];
-    /** Icon to show when drag is over*/
+    /** Icon to show when drag is over */
     getIconName?(): string;
 
     isInterestedIn(type: DragSourceType): boolean;
@@ -60,16 +61,15 @@ export interface DropTarget {
     onDragStop?(params: DraggingEvent): void;
 }
 
-export enum VDirection {Up, Down}
-
-export enum HDirection {Left, Right}
+export enum VerticalDirection { Up, Down }
+export enum HorizontalDirection { Left, Right }
 
 export interface DraggingEvent {
     event: MouseEvent;
     x: number;
     y: number;
-    vDirection: VDirection;
-    hDirection: HDirection;
+    vDirection: VerticalDirection;
+    hDirection: HorizontalDirection;
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
@@ -81,7 +81,6 @@ export class DragAndDropService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
-    @Autowired('columnController') private columnController: ColumnController;
 
     public static ICON_PINNED = 'pinned';
     public static ICON_ADD = 'add';
@@ -102,7 +101,7 @@ export class DragAndDropService {
 
     private logger: Logger;
 
-    private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
+    private dragSourceAndParamsList: { params: DragListenerParams, dragSource: DragSource }[] = [];
 
     private dragItem: DragItem;
     private eventLastTime: MouseEvent;
@@ -145,17 +144,6 @@ export class DragAndDropService {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
-    private getStringType(type: DragSourceType): string {
-        switch (type) {
-            case DragSourceType.RowDrag: return 'row';
-            case DragSourceType.HeaderCell: return 'headerCell';
-            case DragSourceType.ToolPanel: return 'toolPanel';
-            default:
-                console.warn(`ag-Grid: bug - unknown drag type ${type}`);
-                return null;
-        }
-    }
-
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
         const params: DragListenerParams = {
             eElement: dragSource.eElement,
@@ -165,13 +153,14 @@ export class DragAndDropService {
             onDragging: this.onDragging.bind(this)
         };
 
-        this.dragSourceAndParamsList.push({params: params, dragSource: dragSource});
+        this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
 
         this.dragService.addDragSource(params, allowTouch);
     }
 
     public removeDragSource(dragSource: DragSource): void {
         const sourceAndParams = _.find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
+
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
             _.removeFromArray(this.dragSourceAndParamsList, sourceAndParams);
@@ -180,9 +169,7 @@ export class DragAndDropService {
 
     @PreDestroy
     private destroy(): void {
-        this.dragSourceAndParamsList.forEach(sourceAndParams => {
-            this.dragService.removeDragSource(sourceAndParams.params);
-        });
+        this.dragSourceAndParamsList.forEach(sourceAndParams => this.dragService.removeDragSource(sourceAndParams.params));
         this.dragSourceAndParamsList.length = 0;
     }
 
@@ -196,11 +183,11 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragItem = this.dragSource.dragItemCallback();
+        this.dragItem = this.dragSource.getDragItem();
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
 
-        if (this.dragSource.dragStarted) {
-            this.dragSource.dragStarted();
+        if (this.dragSource.onDragStarted) {
+            this.dragSource.onDragStarted();
         }
 
         this.createGhost();
@@ -210,22 +197,23 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        if (this.dragSource.dragStopped) {
-            this.dragSource.dragStopped();
+        if (this.dragSource.onDragStopped) {
+            this.dragSource.onDragStopped();
         }
+
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             const draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
         }
+
         this.lastDropTarget = null;
         this.dragItem = null;
         this.removeGhost();
     }
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
-
-        const hDirection = this.workOutHDirection(mouseEvent);
-        const vDirection = this.workOutVDirection(mouseEvent);
+        const hDirection = this.getHorizontalDirection(mouseEvent);
+        const vDirection = this.getVerticalDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
 
@@ -244,110 +232,112 @@ export class DragAndDropService {
         }
     }
 
-    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
+    private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
-        const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
-        dropTarget.onDragEnter(dragEnterEvent);
+        if (dropTarget.onDragEnter) {
+            const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
+            dropTarget.onDragEnter(dragEnterEvent);
+        }
+
         this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
-    private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): void {
+    private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): void {
         if (!this.lastDropTarget) { return; }
 
-        const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
-        this.lastDropTarget.onDragLeave(dragLeaveEvent);
+        if (this.lastDropTarget.onDragLeave) {
+            const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
+            this.lastDropTarget.onDragLeave(dragLeaveEvent);
+        }
+
         this.setGhostIcon(null);
     }
 
     private getAllContainersFromDropTarget(dropTarget: DropTarget): HTMLElement[] {
         let containers = [dropTarget.getContainer()];
         const secondaryContainers = dropTarget.getSecondaryContainers ? dropTarget.getSecondaryContainers() : null;
+
         if (secondaryContainers) {
             containers = containers.concat(secondaryContainers);
         }
+
         return containers;
     }
 
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
-        const allContainers = this.getAllContainersFromDropTarget(dropTarget);
+        let mouseOverTarget = false;
 
-        let mouseOverTarget: boolean = false;
-        allContainers.forEach((eContainer: HTMLElement) => {
-            if (!eContainer) { return; } // secondary can be missing
-            const rect = eContainer.getBoundingClientRect();
+        this.getAllContainersFromDropTarget(dropTarget)
+            .filter(eContainer => eContainer) // secondary can be missing
+            .forEach(eContainer => {
+                const rect = eContainer.getBoundingClientRect();
 
-            // if element is not visible, then width and height are zero
-            if (rect.width === 0 || rect.height === 0) {
-                return;
-            }
-            const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
-            const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+                // if element is not visible, then width and height are zero
+                if (rect.width === 0 || rect.height === 0) {
+                    return;
+                }
 
-            //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
+                const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
+                const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
 
-            if (horizontalFit && verticalFit) {
-                mouseOverTarget = true;
-            }
-        });
+                if (horizontalFit && verticalFit) {
+                    mouseOverTarget = true;
+                }
+            });
 
-        if (mouseOverTarget) {
-            const mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
-            return mouseOverTargetAndInterested;
-        } else {
-            return false;
-        }
+        return mouseOverTarget && dropTarget.isInterestedIn(this.dragSource.type);
     }
 
     public addDropTarget(dropTarget: DropTarget) {
         this.dropTargets.push(dropTarget);
     }
 
-    public workOutHDirection(event: MouseEvent): HDirection {
+    public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
         if (this.eventLastTime.clientX > event.clientX) {
-            return HDirection.Left;
+            return HorizontalDirection.Left;
         } else if (this.eventLastTime.clientX < event.clientX) {
-            return HDirection.Right;
+            return HorizontalDirection.Right;
         } else {
             return null;
         }
     }
 
-    public workOutVDirection(event: MouseEvent): VDirection {
+    public getVerticalDirection(event: MouseEvent): VerticalDirection {
         if (this.eventLastTime.clientY > event.clientY) {
-            return VDirection.Up;
+            return VerticalDirection.Up;
         } else if (this.eventLastTime.clientY < event.clientY) {
-            return VDirection.Down;
+            return VerticalDirection.Down;
         } else {
             return null;
         }
     }
 
-    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HDirection, vDirection: VDirection, fromNudge: boolean): DraggingEvent {
-
+    public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
         // localise x and y to the target component
         const rect = dropTarget.getContainer().getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        const dropTargetEvent: DraggingEvent = {
-            event: event,
-            x: x,
-            y: y,
-            vDirection: vDirection,
-            hDirection: hDirection,
+        return {
+            event,
+            x,
+            y,
+            vDirection,
+            hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge,
+            fromNudge,
             dragItem: this.dragItem
         };
-
-        return dropTargetEvent;
     }
 
     private positionGhost(event: MouseEvent): void {
         const ghostRect = this.eGhost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
+
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
         // works around it which is good enough for me.
@@ -360,24 +350,22 @@ export class DragAndDropService {
         let left = event.pageX - 30;
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
-
         const windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
         const windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
-        if (browserWidth > 0) {
-            if ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX)) {
-                left = browserWidth + windowScrollX - this.eGhost.clientWidth;
-            }
+        if (browserWidth > 0 && ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX))) {
+            left = browserWidth + windowScrollX - this.eGhost.clientWidth;
         }
+
         if (left < 0) {
             left = 0;
         }
-        if (browserHeight > 0) {
-            if ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY)) {
-                top = browserHeight + windowScrollY - this.eGhost.clientHeight;
-            }
+
+        if (browserHeight > 0 && ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY))) {
+            top = browserHeight + windowScrollY - this.eGhost.clientHeight;
         }
+
         if (top < 0) {
             top = 0;
         }
@@ -390,6 +378,7 @@ export class DragAndDropService {
         if (this.eGhost && this.eGhostParent) {
             this.eGhostParent.removeChild(this.eGhost);
         }
+
         this.eGhost = null;
     }
 
@@ -409,7 +398,6 @@ export class DragAndDropService {
         eText.innerHTML = _.escape(this.dragSource.dragItemName);
 
         this.eGhost.style.height = '25px';
-
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
@@ -421,12 +409,13 @@ export class DragAndDropService {
         } else {
             this.eGhostParent.appendChild(this.eGhost);
         }
-
     }
 
     public setGhostIcon(iconName: string, shake = false): void {
         _.clearElement(this.eGhostIcon);
+
         let eIcon: HTMLElement;
+
         switch (iconName) {
             case DragAndDropService.ICON_ADD: eIcon = this.ePlusIcon; break;
             case DragAndDropService.ICON_PINNED: eIcon = this.ePinnedIcon; break;
@@ -439,8 +428,9 @@ export class DragAndDropService {
             case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
             default: eIcon = this.eHiddenIcon; break;
         }
+
         this.eGhostIcon.appendChild(eIcon);
+
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
     }
-
 }

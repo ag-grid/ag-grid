@@ -1,14 +1,16 @@
 import { CartesianChart } from "../cartesianChart";
 import { Selection } from "../../scene/selection";
 import { Group } from "../../scene/group";
-import { Series, SeriesNodeDatum } from "./series";
+import { Series, SeriesNodeDatum, CartesianTooltipRendererParams } from "./series";
 import { numericExtent } from "../../util/array";
 import { toFixed } from "../../util/number";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import linearScale from "../../scale/linearScale";
-import { ScatterTooltipRendererParams } from "../../chartOptions";
 import { Marker } from "../marker/marker";
+import { SeriesMarker } from "./seriesMarker";
+import { Circle } from "../marker/circle";
+import { reactive } from "../../util/observable";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -17,6 +19,14 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
     fill?: string;
     stroke?: string;
     strokeWidth: number;
+}
+
+export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
+    sizeKey?: string;
+    sizeName?: string;
+
+    labelKey?: string;
+    labelName?: string;
 }
 
 export class ScatterSeries extends Series<CartesianChart> {
@@ -32,11 +42,43 @@ export class ScatterSeries extends Series<CartesianChart> {
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
+    private highlightedNode?: Marker;
+
+    readonly marker = new SeriesMarker();
+
+    highlightStyle: {
+        fill?: string,
+        stroke?: string
+    } = {
+            fill: 'yellow'
+        };
+
+    @reactive(['layout']) title?: string;
+    @reactive(['data']) xKey: string = '';
+    @reactive(['data']) yKey: string = '';
+    @reactive(['data']) sizeKey?: string;
+    @reactive(['data']) labelKey?: string;
+
+    xName: string = 'X';
+    yName: string = 'Y';
+    sizeName?: string = 'Size';
+    labelName?: string = 'Label';
+
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+
     constructor() {
         super();
 
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange.bind(this));
+        this.marker.addEventListener('style', this.update.bind(this));
+        this.marker.addEventListener('legend', () => this.chart && this.chart.updateLegend());
+
+        this.addPropertyListener('xKey', event => event.source.xData = []);
+        this.addPropertyListener('yKey', event => event.source.yData = []);
+        this.addPropertyListener('sizeKey', event => event.source.sizeData = []);
+
+        this.addEventListener('layout', () => this.scheduleLayout.bind(this));
+        this.addEventListener('data', () => this.scheduleData.bind(this));
     }
 
     onMarkerTypeChange() {
@@ -44,79 +86,6 @@ export class ScatterSeries extends Series<CartesianChart> {
         this.groupSelection.exit.remove();
         this.update();
     }
-
-    set chart(chart: CartesianChart | undefined) {
-        if (this._chart !== chart) {
-            this._chart = chart;
-            this.scheduleData();
-        }
-    }
-    get chart(): CartesianChart | undefined {
-        return this._chart;
-    }
-
-    protected _title?: string;
-    set title(value: string | undefined) {
-        if (this._title !== value) {
-            this._title = value;
-            this.scheduleLayout();
-        }
-    }
-    get title(): string | undefined {
-        return this._title;
-    }
-
-    protected _xKey: string = '';
-    set xKey(value: string) {
-        if (this._xKey !== value) {
-            this._xKey = value;
-            this.xData = [];
-            this.scheduleData();
-        }
-    }
-    get xKey(): string {
-        return this._xKey;
-    }
-
-    protected _yKey: string = '';
-    set yKey(value: string) {
-        if (this._yKey !== value) {
-            this._yKey = value;
-            this.yData = [];
-            this.scheduleData();
-        }
-    }
-    get yKey(): string {
-        return this._yKey;
-    }
-
-    private _sizeKey?: string;
-    set sizeKey(value: string | undefined) {
-        if (this._sizeKey !== value) {
-            this._sizeKey = value;
-            this.sizeData = [];
-            this.scheduleData();
-        }
-    }
-    get sizeKey(): string | undefined {
-        return this._sizeKey;
-    }
-
-    private _labelKey?: string;
-    set labelKey(value: string | undefined) {
-        if (this._labelKey !== value) {
-            this._labelKey = value;
-            this.scheduleData();
-        }
-    }
-    get labelKey(): string | undefined {
-        return this._labelKey;
-    }
-
-    xName: string = 'X';
-    yName: string = 'Y';
-    sizeName?: string = 'Size';
-    labelName?: string = 'Label';
 
     processData(): boolean {
         const {
@@ -130,15 +99,13 @@ export class ScatterSeries extends Series<CartesianChart> {
             return false;
         }
 
-        if (!(xKey && yKey)) {
-            this._data = [];
-        }
+        const data = xKey && yKey ? this.data : [];
 
-        this.xData = this.data.map(d => d[xKey]);
-        this.yData = this.data.map(d => d[yKey]);
+        this.xData = data.map(d => d[xKey]);
+        this.yData = data.map(d => d[yKey]);
 
         if (sizeKey) {
-            this.sizeData = this.data.map(d => d[sizeKey]);
+            this.sizeData = data.map(d => d[sizeKey]);
         }
         else {
             this.sizeData = [];
@@ -162,15 +129,6 @@ export class ScatterSeries extends Series<CartesianChart> {
 
         return domain;
     }
-
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
-            fill: 'yellow'
-        };
-
-    private highlightedNode?: Marker;
 
     highlightNode(node: Shape) {
         if (!(node instanceof Marker)) {
@@ -207,10 +165,10 @@ export class ScatterSeries extends Series<CartesianChart> {
             sizeData,
             sizeScale,
             marker,
-            highlightedNode
+            highlightedNode,
         } = this;
 
-        const Marker = marker.type;
+        const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
 
         this.sizeScale.range = [marker.minSize, marker.size];
 
@@ -220,7 +178,7 @@ export class ScatterSeries extends Series<CartesianChart> {
             y: yScale.convert(yData[i]) + yOffset,
             fill: marker.fill,
             stroke: marker.stroke,
-            strokeWidth: marker.strokeWidth,
+            strokeWidth: marker.strokeWidth || 0,
             size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
 
@@ -311,20 +269,23 @@ export class ScatterSeries extends Series<CartesianChart> {
         }
     }
 
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
-
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xKey && this.yKey) {
+        const { id, title, visible, xKey, yKey, marker } = this;
+
+        if (this.data.length && xKey && yKey) {
             data.push({
-                id: this.id,
+                id,
                 itemId: undefined,
-                enabled: this.visible,
+                enabled: visible,
                 label: {
-                    text: this.title || this.yKey
+                    text: title || yKey
                 },
                 marker: {
-                    fill: this.marker.fill || 'gray',
-                    stroke: this.marker.stroke || 'black'
+                    type: marker.type,
+                    fill: marker.fill || 'gray',
+                    stroke: marker.stroke || 'black',
+                    fillOpacity: marker.fillOpacity,
+                    strokeOpacity: marker.strokeOpacity
                 }
             });
         }

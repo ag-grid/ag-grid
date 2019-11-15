@@ -2,7 +2,6 @@ import {
     Autowired,
     ColumnController,
     EventService,
-    Context,
     LoggerFactory,
     DragAndDropService,
     GridOptionsWrapper,
@@ -13,26 +12,26 @@ import {
     ColumnApi,
     GridApi,
     _
-} from "@ag-community/grid-core";
+} from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
-    @Autowired('columnController') private columnController:ColumnController;
-    @Autowired('eventService') private eventService:EventService;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('eventService') private eventService: EventService;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper:GridOptionsWrapper;
-    @Autowired('loggerFactory') private loggerFactory:LoggerFactory;
-    @Autowired('dragAndDropService') private dragAndDropService:DragAndDropService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    constructor(horizontal:boolean) {
+    constructor(horizontal: boolean) {
         super(horizontal, false, 'row-group');
     }
 
     @PostConstruct
-    private passBeansUp():void {
+    private passBeansUp(): void {
         super.setBeans({
             gridOptionsWrapper: this.gridOptionsWrapper,
             eventService: this.eventService,
@@ -56,17 +55,13 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected isColumnDroppable(column: Column): boolean {
-        if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return false; }
-
         // we never allow grouping of secondary columns
-        if (!column.isPrimary()) { return false; }
+        if (this.gridOptionsWrapper.isFunctionsReadOnly() || !column.isPrimary()) { return false; }
 
-        const columnGroupable = column.isAllowRowGroup();
-        const columnNotAlreadyGrouped = !column.isRowGroupActive();
-        return columnGroupable && columnNotAlreadyGrouped;
+        return column.isAllowRowGroup() && !column.isRowGroupActive();
     }
 
-    protected updateColumns(columns:Column[]) {
+    protected updateColumns(columns: Column[]) {
         if (this.gridOptionsWrapper.isFunctionsPassive()) {
             const event: ColumnRowGroupChangeRequestEvent = {
                 type: Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST,
@@ -74,6 +69,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
+
             this.eventService.dispatchEvent(event);
         } else {
             this.columnController.setRowGroupColumns(columns, "toolPanelUi");
@@ -87,5 +83,4 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     protected getExistingColumns(): Column[] {
         return this.columnController.getRowGroupColumns();
     }
-
 }

@@ -1,4 +1,4 @@
-import { _, LineSeriesOptions, CartesianChartOptions } from "@ag-community/grid-core";
+import { _, LineSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/lineSeries";
@@ -22,12 +22,12 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         }
 
         const fieldIds = params.fields.map(f => f.colId);
-        const { fills, strokes } = this.overriddenPalette || this.chartProxyParams.getSelectedPalette();
+        const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series) => {
+        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
             const id = series.yKey;
 
-            if (_.includes(fieldIds, id)) {
+            if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
                 chart.removeSeries(series);
@@ -36,7 +36,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
-        let previousSeries: LineSeries = undefined;
+        let previousSeries: LineSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);
@@ -51,8 +51,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
                 lineSeries.fill = fill;
+                lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
                 lineSeries.marker.fill = fill;
-                lineSeries.stroke = stroke;
                 lineSeries.marker.stroke = stroke;
             } else {
                 const { seriesDefaults } = this.chartOptions;
@@ -73,8 +73,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     },
                     stroke: {
                         ...seriesDefaults.stroke,
-                        color: stroke,
+                        color: fill, // this is deliberate, so that the line colours match the fills of other series
                     },
+                    marker: {
+                        ...seriesDefaults.marker,
+                        fill,
+                        stroke
+                    }
                 };
 
                 lineSeries = ChartBuilder.createSeries(options) as LineSeries;
@@ -100,14 +105,17 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 width: 3,
             },
             marker: {
+                type: 'circle',
                 enabled: true,
-                size: 3,
+                size: 6,
                 strokeWidth: 1,
             },
             tooltip: {
                 enabled: true,
-            },
+            }
         };
+
+        options.legend.item.marker.type = 'square';
 
         return options;
     }

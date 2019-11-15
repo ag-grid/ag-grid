@@ -1,5 +1,8 @@
 import {Component} from '@angular/core';
-import {GridOptions} from "ag-grid-community";
+import {ClientSideRowModelModule, GridOptions} from "@ag-grid-community/all-modules";
+
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
 @Component({
     selector: 'my-app',
@@ -12,6 +15,7 @@ import {GridOptions} from "ag-grid-community";
                         class="ag-theme-balham"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
+                        [modules]="modules"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -42,6 +46,7 @@ import {GridOptions} from "ag-grid-community";
                         class="ag-theme-balham"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
+                        [modules]="modules"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -57,6 +62,8 @@ export class AppComponent {
         {field: "value1"},
         {field: "value2"}
     ];
+
+    modules = [ClientSideRowModelModule];
 
     leftGridOptions: GridOptions = {
         defaultColDef: {
