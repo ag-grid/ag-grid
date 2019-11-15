@@ -308,7 +308,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
         './src/example-runner/vue-boilerplate/systemjs.config.js'];
 
     systemJsFiles.forEach(systemJsFile => {
-        const fileLines = fs.readFileSync(systemJsFile, 'UTF-8').split('\n');
+        const fileLines = fs.readFileSync(systemJsFile, 'UTF-8');
 
         let updateFileLines = updateBetweenStrings(fileLines,
             '/* START OF MODULES - DO NOT DELETE */',
@@ -324,7 +324,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
                 defaultExtension: 'js'
             },`);
 
-        fs.writeFileSync(systemJsFile, updateFileLines.join('\n'), 'UTF-8');
+        fs.writeFileSync(systemJsFile, updateFileLines, 'UTF-8');
     })
 }
 

@@ -223,7 +223,7 @@
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },
-            /* END OF MODULES - DO NOT DELETE */
+/* END OF MODULES - DO NOT DELETE */
             rxjs: {
                 defaultExtension: false
             }
