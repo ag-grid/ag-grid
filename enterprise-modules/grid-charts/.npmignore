@@ -7,3 +7,5 @@ tsconfig.docs.json
 tsconfig.json
 tsconfig.es6.json
 tsconfig.json
+
+dist/**/*.test.*
