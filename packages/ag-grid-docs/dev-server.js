@@ -11,7 +11,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
-const {updateSystemJsMappings, getAllModules} = require("./utils");
+const {updateBetweenStrings, getAllModules} = require("./utils");
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -210,14 +210,14 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
     console.log("updating util.php -> systemjs mapping with modules...");
 
     const utilityFilename = 'src/example-runner/utils.php';
-    const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
+    const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
     const cssFiles = glob.sync(`../../community-modules/grid-all-modules/dist/styles/*.css`)
         .filter(css => !css.includes(".min."))
         .filter(css => !css.includes("Font"))
         .map(css => css.replace('../../community-modules/grid-all-modules/dist/styles/', ''));
 
-    let updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+    let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '/* START OF MODULES DEV - DO NOT DELETE */',
         '/* END OF MODULES DEV - DO NOT DELETE */',
         communityModules,
@@ -225,7 +225,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`,
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
         '/* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
         communityModules,
@@ -233,7 +233,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",`,
         () => {});
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
         '/* END OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
         communityModules,
@@ -241,7 +241,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`,
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`);
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF CSS DEV - DO NOT DELETE */',
         '/* END OF CSS DEV - DO NOT DELETE */',
         cssFiles,
@@ -249,7 +249,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
         () => {});
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         '/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
@@ -257,7 +257,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
         () => {});
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         '/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         communityModules,
@@ -265,7 +265,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
 
-    updatedUtilFileLines = updateSystemJsMappings(updatedUtilFileLines,
+    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF CSS PROD - DO NOT DELETE */',
         '/* END OF CSS PROD - DO NOT DELETE */',
         cssFiles,
@@ -273,7 +273,7 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
         () => {});
 
-    fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
+    fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
 function watchModules(buildSourceModuleOnly) {
@@ -310,7 +310,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     systemJsFiles.forEach(systemJsFile => {
         const fileLines = fs.readFileSync(systemJsFile, 'UTF-8').split('\n');
 
-        let updateFileLines = updateSystemJsMappings(fileLines,
+        let updateFileLines = updateBetweenStrings(fileLines,
             '/* START OF MODULES - DO NOT DELETE */',
             '/* END OF MODULES - DO NOT DELETE */',
             communityModules,

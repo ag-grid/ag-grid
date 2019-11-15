@@ -16,7 +16,7 @@ const merge = require('merge-stream');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
-const {updateSystemJsMappings, getAllModules} = require("./utils");
+const {updateBetweenStrings, getAllModules} = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateExamples = require('./example-generator');
@@ -57,10 +57,8 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`)
     });
 
-
-    const utilityFilename = './dist/example-runner/utils.php';
-    const utilFileLines = fs.readFileSync(utilityFilename, 'UTF-8').split('\n');
-    let updatedUtilFileLines = updateSystemJsMappings(utilFileLines,
+    const utilFileContent = fs.readFileSync('./dist/example-runner/utils.php', 'UTF-8');
+    let updatedUtilFileContent = updateBetweenStrings(utilFileContent,
         '/* START OF MODULES DEV - DO NOT DELETE */',
         '/* END OF MODULES DEV - DO NOT DELETE */',
         [],
@@ -68,7 +66,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         () => {},
         () => {});
 
-    fs.writeFileSync(utilityFilename, updatedUtilFileLines.join('\n'), 'UTF-8');
+    fs.writeFileSync('./dist/example-runner/utils.php', updatedUtilFileContent, 'UTF-8');
 
     done();
 };
