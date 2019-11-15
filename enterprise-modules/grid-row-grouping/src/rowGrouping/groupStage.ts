@@ -36,7 +36,6 @@ interface GroupingDetails {
     groupedColCount: number;
     transaction: RowNodeTransaction;
     rowNodeOrder: { [id: string]: number };
-    afterColumnsChanged: boolean;
 }
 
 @Bean('groupStage')
@@ -100,7 +99,7 @@ export class GroupStage implements IRowNodeStage {
         const isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
         const usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
-        const details = {
+        const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
             // to break is some angular add-on - which i never used. taking the parent out breaks
             // a cyclic dependency, hence this flag got introduced.
@@ -120,7 +119,7 @@ export class GroupStage implements IRowNodeStage {
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath
-        } as GroupingDetails;
+        };
 
         return details;
     }
