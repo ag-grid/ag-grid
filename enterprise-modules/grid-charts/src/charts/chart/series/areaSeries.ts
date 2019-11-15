@@ -320,8 +320,6 @@ export class AreaSeries extends Series<CartesianChart> {
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
         const {
             yKeys,
-            fills,
-            strokes,
             data,
             xData,
             yData,
@@ -356,8 +354,8 @@ export class AreaSeries extends Series<CartesianChart> {
                         yKey,
                         x,
                         y,
-                        fill: marker.fill || fills[j % fills.length],
-                        stroke: marker.stroke || strokes[j % strokes.length],
+                        fill: this.getMarkerFill(j),
+                        stroke: this.getMarkerStroke(j),
                         size: markerSize,
                         text: this.yNames[j]
                     });
@@ -540,14 +538,26 @@ export class AreaSeries extends Series<CartesianChart> {
                         text: this.yNames[index] || this.yKeys[index]
                     },
                     marker: {
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
+                        fill: this.getMarkerFill(index),
+                        stroke: this.getMarkerStroke(index),
                         fillOpacity: this.fillOpacity,
                         strokeOpacity: this.strokeOpacity
                     }
                 });
             });
         }
+    }
+
+    private getMarkerFill(index: number): string {
+        const { fills, marker } = this;
+
+        return marker.fill || fills[index % fills.length];
+    }
+
+    private getMarkerStroke(index: number): string {
+        const { strokes, marker } = this;
+
+        return marker.stroke || strokes[index % strokes.length];
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
