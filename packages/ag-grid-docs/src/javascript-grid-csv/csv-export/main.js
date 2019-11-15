@@ -31,9 +31,13 @@ function setCustomValue(value) {
 }
 
 var sampleExcelCellContent = [
+    [],
     [
-        {data: {value: "my custom", type: "String"}, mergeAcross: 2},
-        {data: {value: "content, containing commas and \"quotes\"", type: "String"}}
+        {data: {value: "custom content, containing commas and \"quotes\"", type: "String"}}
+    ],
+    [
+        {data: {value: "this cell:", type: "String"}, mergeAcross: 1},
+        {data: {value: "is empty because the first cell has mergeAcross=1", type: "String"}}
     ],
     []
   ]

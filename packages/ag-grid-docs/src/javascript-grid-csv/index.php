@@ -38,8 +38,6 @@ include_once '../php-utils/printPropertiesTable.php';
         printPropertiesTable($exportProperties);    
     ?>
 
-    <?= example('CSV Export', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>
-
     <h2>Appending header and footer content</h2>
 
     <p>
@@ -49,15 +47,29 @@ include_once '../php-utils/printPropertiesTable.php';
         header content is correctly escaped, and if your application also exports Excel data you
         can use the same data for both exports.</p>
     <p>
-        For compatibility with earlier version of the Grid you can also pass a string, which will be
+        For compatibility with earlier versions of the Grid you can also pass a string, which will be
         inserted into the CSV file without any processing. When passing a string, note that:
     </p>
 
     <ul>
         <li>You must either avoid using the <code>columnSeparator</code> character within the content, or escape the content yourself</li>
-        <li>If the string passed to <code>customFooter</code> does have a newline at the start, one will be added to ensure that the footer appears on a new line</li>
+        <li>If the string passed to <code>customFooter</code> does not have a newline at the start, one will be added to ensure that the footer appears on a new line</li>
         <li>If the string contains unix-style line breaks (\n) they will be replaced with Windows-style line breaks (\r\n).</li>
     </ul>
+    
+    <h2>Example: CSV Export Options</h2>
+
+    <ul>
+        <li>suppressQuotes and columnSeparator have the effects documented above</li>
+        <li>Use the "<strong>&lt;- ExcelCell[][]</strong>" button to fill the customHeader/customFooter field with sample
+            data in the recommended format, or the "<strong>&lt;- text</strong>" button to try the legacy string format.
+        </li>
+        <li>The sample ExcelCell[][] data contains quotes, commas and mergeAcross cells. Provided that
+            <code>suppressQuotes = false</code>, when the file is downloaded and opened in a spreadsheet program, the
+            commas and quotes will be visible as text content in cells because they have been escaped.</li>
+    </ul>
+
+    <?= example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
