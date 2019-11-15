@@ -37,6 +37,7 @@ export class CellComp extends Component {
     private static CELL_RENDERER_TYPE_PINNED = 'pinnedRowCellRenderer';
 
     private eCellWrapper: HTMLElement;
+    private eCellValue: HTMLElement;
     private eParentOfValue: HTMLElement;
 
     private beans: Beans;
@@ -155,16 +156,23 @@ export class CellComp extends Component {
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
+        const colIdx = this.getAriaColumnIndex();
 
         if (this.usingWrapper) {
-            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper"><span ref="eCellValue" class="ag-cell-value" ${unselectable}>`;
+            wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
+                <span ref="eCellValue" role="gridcell" aria-colindex="${colIdx}" class="ag-cell-value" ${unselectable}>`;
             wrapperEndTemplate = '</span></div>';
         }
 
         templateParts.push(`<div`);
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` ${unselectable}`); // THIS IS FOR IE ONLY so text selection doesn't bubble outside of the grid
-        templateParts.push(` role="gridcell"`);
+        templateParts.push(` role="${this.usingWrapper ? 'presentation' : 'gridcell'}"`);
+
+        if (!this.usingWrapper) {
+            templateParts.push(` aria-colindex=${colIdx}`);
+        }
+
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
@@ -306,6 +314,19 @@ export class CellComp extends Component {
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
         }
+    }
+
+    private getAriaColumnIndex(): string {
+        const allColumns = this.beans.columnController.getAllDisplayedColumns();
+
+        return (allColumns.indexOf(this.column) + 1).toString();
+    }
+
+    private refreshAriaIndex(): void {
+        const colIdx = this.getAriaColumnIndex();
+        const el = this.usingWrapper ? this.eCellValue : this.getGui();
+
+        el.setAttribute('aria-colindex', colIdx);
     }
 
     private getInitialCssClasses(): string[] {
@@ -1598,6 +1619,7 @@ export class CellComp extends Component {
     public onLeftChanged(): void {
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
         this.getGui().style.left = left + 'px';
+        this.refreshAriaIndex();
     }
 
     private modifyLeftForPrintLayout(leftPosition: number): number {
@@ -1896,6 +1918,7 @@ export class CellComp extends Component {
 
             this.eParentOfValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
+            this.eCellValue = this.getRefElement('eCellValue');
 
             if (this.includeRowDraggingComponent) {
                 this.addRowDragging();

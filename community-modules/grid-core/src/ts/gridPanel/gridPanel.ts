@@ -912,6 +912,12 @@ export class GridPanel extends Component {
         this.getGui().setAttribute('aria-rowcount', total);
     }
 
+    private updateColumnCount(): void {
+        const columns = this.beans.columnController.getAllDisplayedColumns();
+
+        this.getGui().setAttribute('aria-colcount', columns.length.toString());
+    }
+
     public ensureColumnVisible(key: any): void {
         const column = this.columnController.getGridColumn(key);
 
@@ -1117,6 +1123,7 @@ export class GridPanel extends Component {
         this.setHeaderAndFloatingHeights();
         this.onHorizontalViewportChanged();
         this.updateScrollVisibleService();
+        this.updateColumnCount();
     }
 
     private onDisplayedColumnsWidthChanged(): void {

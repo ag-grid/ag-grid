@@ -9,6 +9,7 @@ export class SetLeftFeature extends BeanStub {
 
     private readonly columnOrGroup: ColumnGroupChild;
     private eCell: HTMLElement;
+    private ariaEl: HTMLElement;
 
     private actualLeft: number;
 
@@ -24,6 +25,7 @@ export class SetLeftFeature extends BeanStub {
         super();
         this.columnOrGroup = columnOrGroup;
         this.eCell = eCell;
+        this.ariaEl = this.eCell.querySelector('[role=columnheader]') || this.eCell;
         this.colsSpanning = colsSpanning;
         this.beans = beans;
         this.printLayout = beans.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
@@ -37,9 +39,8 @@ export class SetLeftFeature extends BeanStub {
     public getColumnOrGroup(): ColumnGroupChild {
         if (this.beans.gridOptionsWrapper.isEnableRtl() && this.colsSpanning) {
             return _.last(this.colsSpanning);
-        } else {
-            return this.columnOrGroup;
         }
+        return this.columnOrGroup;
     }
 
     public init(): void {
@@ -90,15 +91,16 @@ export class SetLeftFeature extends BeanStub {
 
         if (colOrGroup.getPinned() === Constants.PINNED_LEFT) {
             return leftPosition;
-        } else if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
+        }
+
+        if (colOrGroup.getPinned() === Constants.PINNED_RIGHT) {
             const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
             const bodyWidth = this.beans.columnController.getBodyContainerWidth();
             return leftWidth + bodyWidth + leftPosition;
-        } else {
-            // is in body
-            const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
-            return leftWidth + leftPosition;
         }
+        // is in body
+        const leftWidth = this.beans.columnController.getPinnedLeftContainerWidth();
+        return leftWidth + leftPosition;
     }
 
     private setLeft(value: number): void {
@@ -108,6 +110,12 @@ export class SetLeftFeature extends BeanStub {
         if (_.exists(value)) {
             this.eCell.style.left = `${value}px`;
         }
-    }
 
+        if (this.columnOrGroup instanceof Column) {
+            const colIndex = this.beans.columnController.getAllDisplayedColumns().indexOf(this.columnOrGroup);
+            this.ariaEl.setAttribute('aria-colindex', (colIndex + 1).toString());
+        } else {
+            this.ariaEl.removeAttribute('aria-colindex');
+        }
+    }
 }
