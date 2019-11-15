@@ -59,8 +59,8 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
             this.result += content + LINE_SEPARATOR;
         } else {
-            this.beginNewLine();
             content.forEach(row => {
+                this.beginNewLine();
                 row.forEach((cell, index) => {
                     if (index !== 0) {
                         this.result += this.columnSeparator;
