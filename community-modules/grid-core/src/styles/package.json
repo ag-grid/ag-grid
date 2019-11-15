@@ -1,5 +1,5 @@
 {
-  "name": "ag-grid-alpine-icons",
+  "name": "ag-grid-base-icons",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,7 @@
   "author": "ag-Grid",
   "license": "ISC",
   "devDependencies": {
-    "@vusion/webfonts-generator": "^0.6.0"
+    "@vusion/webfonts-generator": "^0.6.0",
+    "glob": "^7.1.6"
   }
 }
