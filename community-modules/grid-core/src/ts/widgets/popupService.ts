@@ -483,7 +483,8 @@ export class PopupService {
         // and this component has additional popup element, they should have the
         // `ag-custom-component-popup` class to be detected as part of the Custom Component
         let el = event.target as HTMLElement;
-        while (el && el != document.body) {
+        const eDocument = this.getDocument();
+        while (el && el != eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
             el = el.parentElement;
         }
