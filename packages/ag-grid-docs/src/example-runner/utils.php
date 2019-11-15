@@ -23,6 +23,18 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
 
 if (USE_LOCAL) {
     // plain js examples that require old skool umd bundles
+    define('AG_GRID_CSS_PATHS', array(
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css"
+    ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js");
 
@@ -187,20 +199,29 @@ if (USE_LOCAL) {
     );
 }
 
+function getLocalCssIfApplicable()
+{
+    $result = '';
+    if (AG_GRID_CSS_PATHS) {
+        foreach (AG_GRID_CSS_PATHS as $cssLink) {
+            $result = $result."<link rel='stylesheet' href='$cssLink'>";
+        }
+    }
+    return $result;
+}
+
 function globalAgGridScript($enterprise = false, $lazyLoad = false)
 {
+    $localCss = getLocalCssIfApplicable();
+    echo $localCss;
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     if ($lazyLoad) {
-     return <<<SCR
-    <script id="ag-grid-script" src="$path" defer="true" async="true"></script>
-SCR;
-
+        return "<script id='ag-grid-script' src='$path' defer='true' async='true'></script>";//.$localCss;
     } else {
-     return <<<SCR
-    <script src="$path"></script>
-SCR;
+        return "<script src='$path'></script>";//.$localCss;
     }
 }
+
 
 function path_combine(...$parts)
 {
@@ -283,8 +304,8 @@ function example($title, $dir, $type = 'vanilla', $options = array())
 {
     $options['skipDirs'] = $options['skipDirs'] ? $options['skipDirs'] : array();
 
-    $packaged = strrpos($type,"-packaged") !== false;
-    if($packaged) {
+    $packaged = strrpos($type, "-packaged") !== false;
+    if ($packaged) {
         $type = 'as-is';
         array_push($options['skipDirs'], 'prebuilt');
         $options['usePath'] = '/prebuilt/';
@@ -519,7 +540,7 @@ function renderStyles($styles)
 function renderNonGeneratedScripts($scripts, $skip_main = FALSE)
 {
     foreach ($scripts as $script) {
-        if($script === 'main.js' && $skip_main === TRUE) {
+        if ($script === 'main.js' && $skip_main === TRUE) {
             continue;
         }
         echo '    <script src="' . $script . '"></script>' . "\n";
@@ -654,7 +675,7 @@ function renderExampleExtras($config)
         'flatpickr' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.js'),
             'styles' => array(
-                'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.css', 
+                'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.css',
                 'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/material_blue.css'
             )
         ),
