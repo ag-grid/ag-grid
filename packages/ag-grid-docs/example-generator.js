@@ -13,8 +13,6 @@ const fsExtra = require('fs-extra');
 
 const prettier = require('prettier');
 
-const defaultTheme = 'alpine'
-
 function copyFilesSync(files, dest) {
     files.forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
 }
@@ -226,7 +224,7 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
             moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
 
             // allow developers to override the example theme with an environment variable
-            const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE || defaultTheme;
+            const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
             if (themeOverride) {
                 const indexFile = path.join(_gen, 'vanilla', 'index.html');
                 let content = fs.readFileSync(indexFile, {encoding: 'utf8'});
