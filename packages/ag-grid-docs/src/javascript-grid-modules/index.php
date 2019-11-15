@@ -53,18 +53,20 @@ function printFeatures($enterprise, $framework)
     }
 }
 
-function printFeature($item, $indent)
+function printFeature($item)
 {
     $itemTitle = $item['title'];
     $module = $item['module'];
+    $exported = $item['exported'];
 
     echo "<tr>";
-    echo "<td>$itemTitle ";
+    echo "<td style='white-space: nowrap'>$itemTitle ";
     if ($item['enterprise']) {
         echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
     }
     echo "</span></td>";
-    echo "<td><i class=\"\" style=';'></i>$module</td>";
+    echo "<td style='white-space: nowrap'>$module</td>";
+    echo "<td>$exported</td>";
     echo "</tr>";
 }
 ?>
@@ -107,23 +109,26 @@ function printFeature($item, $indent)
     <tr>
         <th></th>
         <th>Community Module</th>
+        <th>Exported</th>
     </tr>
     <?php printFeatures(false, false) ?>
 
     <tr>
         <th></th>
         <th>Framework Module</th>
+        <th>Exported</th>
     </tr>
     <?php printFeatures(false, true) ?>
 
     <tr>
         <th></th>
         <th>Enterprise Module <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/></th>
+        <th>Exported</th>
     </tr>
     <?php printFeatures(true, false) ?>
 </table>
 
-<note>The framework modules are <strong>not</strong> included in either <code>@ag-grid-community/all-modules</code> or
+<note><sup>(!)</sup> The framework modules are <strong>not</strong> included in either <code>@ag-grid-community/all-modules</code> or
     <code style="white-space: nowrap">@ag-grid-enterprise/all-modules</code>. You need to explicitly import the framework module that corresponds to
 your chosen framework, if using a framework.</note>
 

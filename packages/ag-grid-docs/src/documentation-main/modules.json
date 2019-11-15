@@ -1,123 +1,154 @@
 [
   {
-    "title": "All Community Modules",
-    "module": "@ag-grid-community/all-modules"
+    "title": "All Community Modules <sup>(!)</sup>",
+    "module": "@ag-grid-community/all-modules",
+    "exported": "All Community Modules"
   },
   {
     "title": "Grid Core",
-    "module": "@ag-grid-community/core"
+    "module": "@ag-grid-community/core",
+    "exported": "Core Grid Components: GridOptions, ColDef etc"
   },
   {
     "title": "Client Side Row Model",
-    "module": "@ag-grid-community/client-side-row-model"
+    "module": "@ag-grid-community/client-side-row-model",
+    "exported": "ClientSideRowModelModule"
   },
   {
     "title": "Infinite Row Model",
-    "module": "@ag-grid-community/infinite-row-model"
+    "module": "@ag-grid-community/infinite-row-model",
+    "exported": "InfiniteRowModelModule"
   },
   {
     "title": "CSV Export",
-    "module": "@ag-grid-community/csv-export"
+    "module": "@ag-grid-community/csv-export",
+    "exported": "CsvExportModule"
   },
   {
     "title": "Angular Support",
     "module": "@ag-grid-community/angular",
-    "framework": true
+    "framework": true,
+    "exported": "Angular Support"
   },
   {
     "title": "React Support",
     "module": "@ag-grid-community/react",
-    "framework": true
+    "framework": true,
+    "exported": "React Support"
   },
   {
     "title": "Vue Suport",
     "module": "@ag-grid-community/vue",
-    "framework": true
+    "framework": true,
+    "exported": "Vue Support"
   },
   {
     "title": "Polymer Support",
     "module": "@ag-grid-community/polymer",
-    "framework": true
+    "framework": true,
+    "exported": "Polymer Support"
   },
   {
-    "title": "All Community & Enterprise Modules",
+    "title": "All Community &<br/>Enterprise Modules <sup>(!)</sup>",
     "module": "@ag-grid-enterprise/all-modules",
-    "enterprise":  true
+    "enterprise": true,
+    "exported": "All Community & Enterprise Modules"
+  },
+  {
+    "title": "Enterprise Core",
+    "module": "@ag-grid-enterprise/core",
+    "enterprise": true,
+    "exported": "LicenseManager"
   },
   {
     "title": "Charts",
     "module": "@ag-grid-enterprise/charts",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ChartsModule"
   },
   {
     "title": "Clipboard",
     "module": "@ag-grid-enterprise/clipboard",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ClipboardModule"
   },
   {
     "title": "Column Tool Panel",
     "module": "@ag-grid-enterprise/column-tool-panel",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ColumnsToolPanelModule"
   },
   {
     "title": "Excel Export",
     "module": "@ag-grid-enterprise/excel-export",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ExcelExportModule"
   },
   {
     "title": "Filter Tool Panel",
     "module": "@ag-grid-enterprise/filter-tool-panel",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "FiltersToolPanelModule"
   },
   {
     "title": "Master Detail",
     "module": "@ag-grid-enterprise/master-detail",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "MasterDetailModule"
   },
   {
     "title": "Context Menu",
     "module": "@ag-grid-enterprise/menu",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "MenuModule"
   },
   {
     "title": "Range Selection",
     "module": "@ag-grid-enterprise/range-selection",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "RangeSelectionModule"
   },
   {
     "title": "Rich Select",
     "module": "@ag-grid-enterprise/rich-select",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "RichSelectModule"
   },
   {
     "title": "Row Grouping",
     "module": "@ag-grid-enterprise/row-grouping",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "RowGroupingModule"
   },
   {
     "title": "Server Side Row Model",
     "module": "@ag-grid-enterprise/server-side-row-model",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ServerSideRowModule"
   },
   {
     "title": "Set Filter",
     "module": "@ag-grid-enterprise/set-filter",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ServerSideRowModule"
   },
   {
     "title": "Side Bar",
     "module": "@ag-grid-enterprise/side-bar",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "SideBarModule"
   },
   {
     "title": "Status Bar",
     "module": "@ag-grid-enterprise/status-bar",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "StatusBarModule"
   },
   {
     "title": "Viewport Row Model",
     "module": "@ag-grid-enterprise/viewport-row-model",
-    "enterprise": true
+    "enterprise": true,
+    "exported": "ViewportRowModelModule"
   }
 ]
 
