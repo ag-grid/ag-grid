@@ -9,18 +9,22 @@ include_once '../php-utils/printPropertiesTable.php';
 
     <h1>Export</h1>
 
-    <p class="lead">
-        The grid provides APIs to export data to Excel<span class="enterprise-icon">e</span> and CSV.
-        You can download a file to the user's computer or generate a string to be uploaded to a server. 
-        This page covers the export options that are common to both Excel and CSV. For more detail on the specific
-        options for each format, see <a href="../javascript-grid-excel/">Excel Export</a>
-        and <a href="../javascript-grid-csv/">CSV Export</a>.
+    <p class="lead">        
+        This page covers the export options that are common to both CSV and Excel.
     </p>
 
-    <note>
-        If you want to disable export, you can set the properties <code>suppressCsvExport = true</code> and
-        <code>suppressExcelExport = true</code> in your <code>gridOptions</code>.
-    </note>
+    <p>
+        The grid provides APIs to export data to CSV and Excel. You can download a file to the 
+        user's computer or generate a string to be uploaded to a server. For more detail on the specific
+        options for each format see:
+    </p>
+
+    <ul>
+        <li><a href="../javascript-grid-csv/">CSV Export</a></li>      
+        <li><a href="../javascript-grid-excel/">Excel Export</a><span class="enterprise-icon">e</span></li>          
+    </ul>
+
+    <h2>Selecting Data to Export</h2>        
 
     <p>
         Data can be exported using one of the following API methods:
@@ -40,34 +44,6 @@ include_once '../php-utils/printPropertiesTable.php';
     <?php require_once './exportProperties.php'; ?>
 
     <?php printPropertiesTable($exportProperties); ?>
-
-    <h2>
-        What Gets Exported
-    </h2>
-
-    <p>
-        The same data that is in the grid gets exported, but none of the GUI representation of the data will be.
-        What this means is:
-    </p>
-        <ul class="content">
-            <li>The raw values, and not the result of cell renderer, will get used, meaning:
-                <ul class="content">
-                    <li>Cell Renderers will NOT be used.</li>
-                    <li>Value Getters will be used.</li>
-                    <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
-                </ul>
-            </li>
-            <li>Cell styles are not exported by default. CSV does not allow styling. For details on styling the
-                Excel export, see <a href="../javascript-grid-excel/">Excel Export</a>.</li>
-            <li>If row grouping:
-                <ul>
-                    <li>all data will be exported regardless of whether groups are open in the UI.</li>
-                    <li>by default, group names will be in the format "-> Parent Name -> Child Name" (use <code>processRowGroupCallback</code> to change this)</li>
-                    <li>row group footers (groupIncludeFooter=true) will NOT be exported -
-                        this is a GUI addition that happens for displaying the data in the grid.</li>
-                </ul>
-            </li>
-        </ul>
 
     <h2>Example: Selecting Data to Export</h2>
 
@@ -89,6 +65,39 @@ include_once '../php-utils/printPropertiesTable.php';
 
     <?= example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+    <h2>
+        What Gets Exported
+    </h2>
+
+    <p>
+        The same data that is in the grid gets exported, but none of the GUI representation of the data will be.
+        What this means is:
+    </p>
+    <ul class="content">
+        <li>The raw values, and not the result of cell renderer, will get used, meaning:
+            <ul class="content">
+                <li>Cell Renderers will NOT be used.</li>
+                <li>Value Getters will be used.</li>
+                <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
+            </ul>
+        </li>
+        <li>Cell styles are not exported by default. CSV does not allow styling. For details on styling the
+            Excel export, see <a href="../javascript-grid-excel/">Excel Export</a>.</li>
+        <li>If row grouping:
+            <ul>
+                <li>all data will be exported regardless of whether groups are open in the UI.</li>
+                <li>by default, group names will be in the format "-> Parent Name -> Child Name" (use <code>processRowGroupCallback</code> to change this)</li>
+                <li>row group footers (groupIncludeFooter=true) will NOT be exported -
+                    this is a GUI addition that happens for displaying the data in the grid.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <note>
+        If you want to disable export, you can set the properties <code>suppressCsvExport = true</code> and
+        <code>suppressExcelExport = true</code> in your <code>gridOptions</code>.
+    </note>
+            
     <h2>Example: Formatting Exported Data</h2>
 
     <p>
