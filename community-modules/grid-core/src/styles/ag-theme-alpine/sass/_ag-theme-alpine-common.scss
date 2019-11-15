@@ -1167,17 +1167,6 @@
         }
     }
 
-    // use different icons for horizontal and vertical grip
-    .ag-icon-grip:before {
-        content: $ag-icon-reorder-vertical;
-    }
-
-    .ag-column-drop-horizontal {
-        .ag-icon-grip:before {
-            content: $ag-icon-reorder-horizontal;
-        }
-    }
-
     .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-button .ag-icon {
         font-size: $ag-icon-size;
     }

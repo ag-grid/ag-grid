@@ -17,9 +17,11 @@ const themes = glob.sync('ag-theme-*/icons')
         .map(item => item.replace('ag-theme-', '').replace('/icons', ''));
 
 const generate = (theme) => {
-    const fontName = 'agGrid' + theme[0].toUpperCase() + theme.substring(1);
+    const fontName = theme === 'base'
+        ? 'agGridClassic'
+        : ('agGrid' + theme[0].toUpperCase() + theme.substring(1));
     const themeFolder = `ag-theme-${theme}`;
-    const destFolder = `ag-theme-${themeFolder}/vars/`;
+    const destFolder = `${themeFolder}/vars/`;
     console.log(`Generating webFont for ${theme} theme into ${destFolder}`)
     webfontsGenerator(
         {
@@ -51,8 +53,8 @@ const generate = (theme) => {
 
             const scssContents = res.generateCss(urls);
 
-            mkdirp.sync('../vars/');
-            fs.writeFileSync('../vars/_font-vars.scss', scssContents);
+            mkdirp.sync(destFolder);
+            fs.writeFileSync(destFolder + '/_font-vars.scss', scssContents);
         }
     );
 }
