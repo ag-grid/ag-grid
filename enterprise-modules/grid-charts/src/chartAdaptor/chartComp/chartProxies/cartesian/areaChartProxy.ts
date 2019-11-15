@@ -66,10 +66,10 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         const fieldIds = params.fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series) => {
+        const existingSeriesById = (chart.series as AreaSeries[]).reduceRight((map, series, i) => {
             const id = series.yKeys[0];
 
-            if (_.includes(fieldIds, id)) {
+            if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
                 chart.removeSeries(series);
@@ -78,7 +78,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             return map;
         }, new Map<string, AreaSeries>());
 
-        let previousSeries: AreaSeries = undefined;
+        let previousSeries: AreaSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
             let areaSeries = existingSeriesById.get(f.colId);

@@ -18,7 +18,7 @@ export interface DragItem {
     visibleState?: { [key: string]: boolean };
 }
 
-export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }
 
 export interface DragSource {
     /** The type of the drag source, used by the drop target to know where the drag originated from. */
@@ -235,9 +235,11 @@ export class DragAndDropService {
     private enterDragTargetIfExists(dropTarget: DropTarget, mouseEvent: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): void {
         if (!dropTarget) { return; }
 
-        const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+        if (dropTarget.onDragEnter) {
+            const dragEnterEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
 
-        dropTarget.onDragEnter(dragEnterEvent);
+            dropTarget.onDragEnter(dragEnterEvent);
+        }
 
         this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
@@ -245,9 +247,12 @@ export class DragAndDropService {
     private leaveLastTargetIfExists(mouseEvent: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): void {
         if (!this.lastDropTarget) { return; }
 
-        const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+        if (this.lastDropTarget.onDragLeave) {
+            const dragLeaveEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, hDirection, vDirection, fromNudge);
 
-        this.lastDropTarget.onDragLeave(dragLeaveEvent);
+            this.lastDropTarget.onDragLeave(dragLeaveEvent);
+        }
+
         this.setGhostIcon(null);
     }
 

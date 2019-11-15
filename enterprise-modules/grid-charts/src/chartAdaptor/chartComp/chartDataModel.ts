@@ -21,6 +21,7 @@ export interface ColState {
     colId: string;
     displayName: string;
     selected: boolean;
+    order: number;
 }
 
 export interface ChartModelParams {
@@ -356,6 +357,7 @@ export class ChartDataModel extends BeanStub {
         this.valueColState = [];
 
         let hasSelectedDimension = false;
+        let order = 1;
 
         dimensionCols.forEach(column => {
             const selected = !hasSelectedDimension && allCols.has(column);
@@ -364,7 +366,8 @@ export class ChartDataModel extends BeanStub {
                 column,
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
-                selected
+                selected,
+                order: order++
             });
 
             if (selected) {
@@ -375,7 +378,8 @@ export class ChartDataModel extends BeanStub {
         const defaultCategory = {
             colId: ChartDataModel.DEFAULT_CATEGORY,
             displayName: '(None)',
-            selected: !hasSelectedDimension // if no dimensions in range select the default
+            selected: !hasSelectedDimension, // if no dimensions in range select the default
+            order: 0
         };
 
         this.dimensionColState.unshift(defaultCategory);
@@ -385,7 +389,8 @@ export class ChartDataModel extends BeanStub {
                 column,
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
-                selected: allCols.has(column)
+                selected: allCols.has(column),
+                order: order++
             });
         });
     }
@@ -401,6 +406,28 @@ export class ChartDataModel extends BeanStub {
             // just update the selected value on the supplied value column
             valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
         }
+
+        const colIds: string[] = [];
+        const allColumns = [...dimensionColState, ...valueColState];
+
+        allColumns.forEach((col, i) => {
+            if (i === updatedCol.order) {
+                colIds.push(updatedCol.colId);
+            }
+
+            if (col.colId !== updatedCol.colId) {
+                colIds.push(col.colId);
+            }
+        });
+
+        allColumns.forEach(col => {
+            const order = colIds.indexOf(col.colId);
+
+            col.order = order >= 0 ? colIds.indexOf(col.colId) : allColumns.length - 1;
+        });
+
+        dimensionColState.sort((a, b) => a.order - b.order);
+        valueColState.sort((a, b) => a.order - b.order);
     }
 
     private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {

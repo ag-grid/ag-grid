@@ -1,8 +1,8 @@
 @import '../../mixins/ag-theme-mixins';
 
-@if $ag-icon-font-family == 'agGridBalham' or 
-    $ag-icon-font-family == 'agGridMaterial' or 
-    $ag-icon-font-family == 'agGridAlpine' or  
+@if $ag-icon-font-family == 'agGridBalham' or
+    $ag-icon-font-family == 'agGridMaterial' or
+    $ag-icon-font-family == 'agGridAlpine' or
     $ag-icon-font-family == 'agGridClassic' {
     @font-face {
         font-family: '#{$ag-icon-font-family}';
@@ -1387,7 +1387,7 @@
         &.ag-side-bar-left {
             @extend %side-bar-left;
         }
-    
+
         &.ag-side-bar-right {
             @extend %side-bar-right;
         }
@@ -1748,6 +1748,13 @@
                 }
             }
         }
+
+        .ag-chart-data {
+            .ag-data-select-checkbox .ag-column-drag {
+                margin-left: $ag-grid-size;
+            }
+        }
+
         .ag-chart-format {
             .ag-chart-format-wrapper {
                 .ag-group-item {
@@ -1895,7 +1902,7 @@
             &.ag-side-bar-left {
                 @extend %side-bar-right;
             }
-        
+
             &.ag-side-bar-right {
                 @extend %side-bar-left;
             }

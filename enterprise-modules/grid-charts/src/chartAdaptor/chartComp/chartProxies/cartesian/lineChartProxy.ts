@@ -24,10 +24,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const fieldIds = params.fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
 
-        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series) => {
+        const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
             const id = series.yKey;
 
-            if (_.includes(fieldIds, id)) {
+            if (fieldIds.indexOf(id) === i) {
                 map.set(id, series);
             } else {
                 chart.removeSeries(series);
@@ -36,7 +36,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
-        let previousSeries: LineSeries = undefined;
+        let previousSeries: LineSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
             let lineSeries = existingSeriesById.get(f.colId);
