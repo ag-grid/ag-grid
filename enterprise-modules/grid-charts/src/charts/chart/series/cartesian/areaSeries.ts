@@ -311,14 +311,13 @@ export class AreaSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, xAxis, yAxis } = this;
-        this.group.visible = visible;
+        this.group.visible = this.visible;
 
         // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
         //     return;
         // }
 
-        if (!visible || !xAxis || !yAxis) {
+        if (!this.visible || !this.xAxis || !this.yAxis || !this.xData.length || !this.yData.length) {
             return;
         }
 
