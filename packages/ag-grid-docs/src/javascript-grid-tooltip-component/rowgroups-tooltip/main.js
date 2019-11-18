@@ -13,6 +13,7 @@ var columnDefs = [
 
 var gridOptions = {
     autoGroupColumnDef: {
+        headerTooltip: 'Group',
         tooltipValueGetter: function(params) {
             var count = params.node.allChildrenCount;
 
