@@ -177,6 +177,7 @@ export abstract class Chart extends Observable {
                 } else {
                     seriesRoot.append(series.group);
                 }
+                this.initSeries(series);
 
                 allSeries.splice(afterIndex + 1, 0, series);
             } else {
