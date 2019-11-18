@@ -167,7 +167,7 @@ export class Text extends Shape {
         //   generally impossible to do because font size may not be in pixels
         // - so, need to measure the text instead, each line individually -> expensive
         // - or make the user provide the line height manually for multi-line text
-        // - getBBox should use the lineHeight for multi-line text but ignore it otherwise
+        // - computeBBox should use the lineHeight for multi-line text but ignore it otherwise
         // - textBaseline kind of loses its meaning for multi-line text
         if (this._lineHeight !== value) {
             this._lineHeight = value;
@@ -178,7 +178,7 @@ export class Text extends Shape {
         return this._lineHeight;
     }
 
-    getBBox(): BBox | undefined {
+    computeBBox(): BBox | undefined {
         return this.scene
             ? this.scene.canvas.has.textMetrics
                 ? this.getPreciseBBox()
@@ -234,7 +234,7 @@ export class Text extends Shape {
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        const bbox = this.getBBox();
+        const bbox = this.computeBBox();
 
         return bbox ? bbox.containsPoint(point.x, point.y) : false;
     }
@@ -251,7 +251,7 @@ export class Text extends Shape {
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
-        // this.matrix.transformBBox(this.getBBox!()).render(ctx); // debug
+        // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
         const { opacity, fill, stroke, strokeWidth } = this;

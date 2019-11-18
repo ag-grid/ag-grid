@@ -157,7 +157,7 @@ export class Rect extends Path {
         }
     }
 
-    getBBox(): BBox {
+    computeBBox(): BBox {
         return new BBox(
             this.x,
             this.y,
@@ -168,7 +168,7 @@ export class Rect extends Path {
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        const bbox = this.getBBox();
+        const bbox = this.computeBBox();
 
         return bbox.containsPoint(point.x, point.y);
     }

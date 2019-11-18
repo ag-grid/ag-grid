@@ -17,7 +17,7 @@ enum Tags {
     GridLine
 }
 
-export interface IGridStyle {
+export interface GridStyle {
     stroke?: string;
     lineDash?: number[];
 }
@@ -30,7 +30,7 @@ export interface ILinearAxis<S extends Scale<D, number> = Scale<any, number>, D 
     label: AxisLabel;
     tick: AxisTick;
     gridLength: number;
-    getBBox(includeTitle?: boolean): BBox;
+    computeBBox(options?: { excludeTitle: boolean }): BBox;
     update(): void;
 }
 
@@ -162,11 +162,11 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     //     return rect;
     // })();
 
-    readonly scale: S;
-    readonly group = new Group();
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
-    // onLayoutChange?: () => void;
+
+    readonly scale: S;
+    readonly group = new Group();
 
     readonly line: {
         /**
@@ -222,7 +222,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         }
     }
 
-    private _title: Caption | undefined = undefined;
+    protected _title: Caption | undefined = undefined;
     set title(value: Caption | undefined) {
         const oldTitle = this._title;
         if (oldTitle !== value) {
@@ -247,7 +247,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      * In case {@link radialGrid} is `true`, the value is interpreted as an angle
      * (in degrees).
      */
-    private _gridLength: number = 0;
+    protected _gridLength: number = 0;
     set gridLength(value: number) {
         // Was visible and now invisible, or was invisible and now visible.
         if (this._gridLength && !value || !this._gridLength && value) {
@@ -266,16 +266,16 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
-    private _gridStyle: IGridStyle[] = [{
+    protected _gridStyle: GridStyle[] = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    set gridStyle(value: IGridStyle[]) {
+    set gridStyle(value: GridStyle[]) {
         if (value.length) {
             this._gridStyle = value;
         }
     }
-    get gridStyle(): IGridStyle[] {
+    get gridStyle(): GridStyle[] {
         return this._gridStyle;
     }
 
@@ -473,7 +473,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         if (title) {
             const padding = title.padding.bottom;
             const titleNode = title.node;
-            const bbox = this.getBBox(false);
+            const bbox = this.computeBBox({ excludeTitle: true });
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
 
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
@@ -489,7 +489,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         }
 
         // debug (bbox)
-        // const bbox = this.getBBox();
+        // const bbox = this.computeBBox();
         // const bboxRect = this.bboxRect;
         // bboxRect.x = bbox.x;
         // bboxRect.y = bbox.y;
@@ -497,7 +497,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         // bboxRect.height = bbox.height;
     }
 
-    getBBox(includeTitle = true): BBox {
+    computeBBox(options?: { excludeTitle: boolean }): BBox {
         const lineNode = this.lineNode;
         const labels = this.groupSelection.selectByClass(Text);
 
@@ -510,7 +510,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             // The label itself is rotated, but not translated, the group that
             // contains it is. So to capture the group transform in the label bbox
             // calculation we combine the transform matrices of the label and the group.
-            // Depending on the timing of the `axis.getBBox()` method call, we may
+            // Depending on the timing of the `axis.computeBBox()` method call, we may
             // not have the group's and the label's transform matrices updated yet (because
             // the transform matrix is not recalculated whenever a node's transform attributes
             // change, instead it's marked for recalculation on the next frame by setting
@@ -521,7 +521,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             const group = label.parent!;
             group.computeTransformMatrix();
             matrix.preMultiplySelf(group.matrix);
-            const labelBBox = label.getBBox();
+            const labelBBox = label.computeBBox();
 
             if (labelBBox) {
                 const bbox = matrix.transformBBox(labelBBox);
@@ -533,11 +533,11 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             }
         });
 
-        if (includeTitle && this.title) {
+        if (this.title && (!options || !options.excludeTitle)) {
             const label = this.title.node;
             label.computeTransformMatrix();
             const matrix = Matrix.flyweight(label.matrix);
-            const labelBBox = label.getBBox();
+            const labelBBox = label.computeBBox();
 
             if (labelBBox) {
                 const bbox = matrix.transformBBox(labelBBox);

@@ -13,7 +13,7 @@ export class Group extends Node {
         return true;
     }
 
-    getBBox(): BBox {
+    computeBBox(): BBox {
         let left = Infinity;
         let right = -Infinity;
         let top = Infinity;
@@ -27,7 +27,7 @@ export class Group extends Node {
             if (!child.visible) {
                 return;
             }
-            const bbox = child.getBBox();
+            const bbox = child.computeBBox();
             if (!bbox) {
                 return;
             }
@@ -92,7 +92,7 @@ export class Group extends Node {
         }
 
         // debug
-        // this.getBBox().render(ctx, {
+        // this.computeBBox().render(ctx, {
         //     label: this.id,
         //     resetTransform: true,
         //     fillStyle: 'rgba(0, 0, 0, 0.5)'

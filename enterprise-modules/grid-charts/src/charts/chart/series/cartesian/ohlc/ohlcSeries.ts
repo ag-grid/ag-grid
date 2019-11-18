@@ -1,14 +1,16 @@
-import { CartesianChart } from "../../cartesianChart";
-import { Selection } from "../../../scene/selection";
-import { Group } from "../../../scene/group";
-import { Series, SeriesNodeDatum, TooltipRendererParams } from "../series";
-import { numericExtent } from "../../../util/array";
-import { toFixed } from "../../../util/number";
-import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
+import { Selection } from "../../../../scene/selection";
+import { Group } from "../../../../scene/group";
+import { SeriesNodeDatum, TooltipRendererParams } from "../../series";
+import { numericExtent } from "../../../../util/array";
+import { toFixed } from "../../../../util/number";
+import { LegendDatum } from "../../../legend";
+import { Shape } from "../../../../scene/shape/shape";
 import { OHLC } from "./marker/ohlc";
 import { Candlestick } from "./marker/candlestick";
-import { locale } from "../../../util/time/format/defaultLocale";
+import { locale } from "../../../../util/time/format/defaultLocale";
+import { CartesianSeries } from "../cartesianSeries";
+import { reactive, Observable } from "../../../../util/observable";
+import { ChartAxisDirection } from "../../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     date: number;
@@ -39,12 +41,12 @@ export interface OHLCTooltipRendererParams extends TooltipRendererParams {
     closeName?: string;
 }
 
-export class OHLCSeries extends Series<CartesianChart> {
+export class OHLCSeries extends CartesianSeries {
 
     static className = 'OHLCSeries';
 
-    private domainX: number[] = [];
-    private domainY: number[] = [];
+    private xDomain: number[] = [];
+    private yDomain: number[] = [];
 
     // Have data separated by key, so that we can process the minimum amount of data
     // when a key changes.
@@ -68,10 +70,10 @@ export class OHLCSeries extends Series<CartesianChart> {
         super();
 
         this.marker.type = Candlestick;
-        this.marker.onChange = this.update.bind(this);
-        this.marker.onTypeChange = this.onMarkerTypeChange.bind(this);
+        this.marker.addEventListener('styleChange', () => this.update());
+        this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
 
-        this.addPropertyListener('data', () => {
+        this.addEventListener('dataChange', () => {
             this.dirtyDateData = true;
             this.dirtyOpenData = true;
             this.dirtyHighData = true;
@@ -86,16 +88,7 @@ export class OHLCSeries extends Series<CartesianChart> {
         this.update();
     }
 
-    protected _title?: string;
-    set title(value: string | undefined) {
-        if (this._title !== value) {
-            this._title = value;
-            this.scheduleLayout();
-        }
-    }
-    get title(): string | undefined {
-        return this._title;
-    }
+    @reactive(['layoutChange']) title?: string;
 
     protected _dateKey: string = 'date';
     set dateKey(value: string) {
@@ -103,7 +96,7 @@ export class OHLCSeries extends Series<CartesianChart> {
             this._dateKey = value;
             this.dateData = [];
             this.dirtyDateData = true;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get dateKey(): string {
@@ -116,7 +109,7 @@ export class OHLCSeries extends Series<CartesianChart> {
             this._openKey = value;
             this.openData = [];
             this.dirtyOpenData = true;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get openKey(): string {
@@ -129,7 +122,7 @@ export class OHLCSeries extends Series<CartesianChart> {
             this._highKey = value;
             this.highData = [];
             this.dirtyHighData = true;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get highKey(): string {
@@ -142,7 +135,7 @@ export class OHLCSeries extends Series<CartesianChart> {
             this._lowKey = value;
             this.lowData = [];
             this.dirtyLowData = true;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get lowKey(): string {
@@ -155,7 +148,7 @@ export class OHLCSeries extends Series<CartesianChart> {
             this._closeKey = value;
             this.closeData = [];
             this.dirtyCloseData = true;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get closeKey(): string {
@@ -166,7 +159,7 @@ export class OHLCSeries extends Series<CartesianChart> {
     set labelKey(value: string | undefined) {
         if (this._labelKey !== value) {
             this._labelKey = value;
-            this.scheduleData();
+            this.fireEvent({type: 'dataChange'});
         }
     }
     get labelKey(): string | undefined {
@@ -181,19 +174,19 @@ export class OHLCSeries extends Series<CartesianChart> {
     labelName?: string = 'Label';
 
     processData(): boolean {
-        const { chart,
+        const {
             dateKey, openKey, highKey, lowKey, closeKey,
             dirtyDateData, dirtyOpenData, dirtyHighData, dirtyLowData, dirtyCloseData
         } = this;
 
-        if (!(chart && chart.xAxis && chart.yAxis)) {
-            return false;
-        }
+        // if (!(chart && chart.xAxis && chart.yAxis)) {
+        //     return false;
+        // }
 
         const data = dateKey && openKey && highKey && lowKey && closeKey ? this.data : [];
 
         if (dirtyDateData) {
-            this.domainX = this.calculateDomain(this.dateData = data.map(d => d[dateKey]));
+            this.xDomain = this.calculateDomain(this.dateData = data.map(d => d[dateKey]));
             this.dirtyDateData = false;
         }
 
@@ -216,7 +209,7 @@ export class OHLCSeries extends Series<CartesianChart> {
 
         if (dirtyOpenData || dirtyHighData || dirtyLowData || dirtyCloseData) {
             const yDomains = new Array<any>().concat(this.openData, this.highData, this.lowData, this.closeData);
-            this.domainY = this.calculateDomain(yDomains);
+            this.yDomain = this.calculateDomain(yDomains);
         }
 
         return true;
@@ -232,6 +225,14 @@ export class OHLCSeries extends Series<CartesianChart> {
         }
 
         return domain;
+    }
+
+    getDomain(direction: ChartAxisDirection): any[] {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        } else {
+            return this.yDomain;
+        }
     }
 
     highlightStyle: {
@@ -258,14 +259,13 @@ export class OHLCSeries extends Series<CartesianChart> {
     }
 
     update(): void {
-        const chart = this.chart;
         const visible = this.group.visible = this.visible;
 
-        if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-            return;
-        }
+        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
+        //     return;
+        // }
 
-        const { xAxis, yAxis } = chart;
+        const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -330,14 +330,6 @@ export class OHLCSeries extends Series<CartesianChart> {
             });
 
         this.groupSelection = groupSelection;
-    }
-
-    getDomainX(): any[] {
-        return this.domainX;
-    }
-
-    getDomainY(): any[] {
-        return this.domainY;
     }
 
     private dateFormatter = locale.format('%d %b, %Y');
@@ -426,128 +418,22 @@ export class OHLCSeries extends Series<CartesianChart> {
     }
 }
 
-export class OHLCSeriesMarker {
-    onChange?: () => void;
-    onTypeChange?: () => void;
-
+export class OHLCSeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    private _type: new () => OHLC = Candlestick;
-    set type(value: new () => OHLC) {
-        if (this._type !== value) {
-            this._type = value;
-            if (this.onTypeChange) {
-                this.onTypeChange();
-            }
-        }
-    }
-    get type(): new () => OHLC {
-        return this._type;
-    }
+    @reactive() type: new () => OHLC = Candlestick;
 
-    protected _upFill: string | undefined = '#33ae5b';
-    set upFill(value: string | undefined) {
-        if (this._upFill !== value) {
-            this._upFill = value;
-            this.update();
-        }
-    }
-    get upFill(): string | undefined {
-        return this._upFill;
-    }
+    @reactive(['styleChange']) upFill?: string = '#33ae5b';
+    @reactive(['styleChange']) downFill?: string = '#ff4734';
+    @reactive(['styleChange']) noChangeFill?: string = '#b9bdc5';
 
-    protected _downFill: string | undefined = '#ff4734';
-    set downFill(value: string | undefined) {
-        if (this._downFill !== value) {
-            this._downFill = value;
-            this.update();
-        }
-    }
-    get downFill(): string | undefined {
-        return this._downFill;
-    }
+    @reactive(['styleChange']) upStroke?: string = 'black';
+    @reactive(['styleChange']) downStroke?: string = 'black';
+    @reactive(['styleChange']) noChangeStroke?: string = 'black';
 
-    protected _noChangeFill: string | undefined = '#b9bdc5';
-    set noChangeFill(value: string | undefined) {
-        if (this._noChangeFill !== value) {
-            this._noChangeFill = value;
-            this.update();
-        }
-    }
-    get noChangeFill(): string | undefined {
-        return this._noChangeFill;
-    }
 
-    private _upStroke: string | undefined = 'black';
-    set upStroke(value: string | undefined) {
-        if (this._upStroke !== value) {
-            this._upStroke = value;
-            this.update();
-        }
-    }
-    get upStroke(): string | undefined {
-        return this._upStroke;
-    }
-
-    protected _downStroke: string | undefined = 'black';
-    set downStroke(value: string | undefined) {
-        if (this._downStroke !== value) {
-            this._downStroke = value;
-            this.update();
-        }
-    }
-    get downStroke(): string | undefined {
-        return this._downStroke;
-    }
-
-    protected _noChangeStroke: string | undefined = 'black';
-    set noChangeStroke(value: string | undefined) {
-        if (this._noChangeStroke !== value) {
-            this._noChangeStroke = value;
-            this.update();
-        }
-    }
-    get noChangeStroke(): string | undefined {
-        return this._noChangeStroke;
-    }
-
-    private _strokeWidth: number = 1;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.update();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
-    private _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.update();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
-
-    private _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.update();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
-
-    protected update() {
-        if (this.onChange) {
-            this.onChange();
-        }
-    }
+    @reactive(['styleChange']) strokeWidth = 1;
+    @reactive(['styleChange']) fillOpacity = 1;
+    @reactive(['styleChange']) strokeOpacity = 1;
 }

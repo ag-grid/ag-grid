@@ -1,46 +1,16 @@
-import { Chart, ChartOptions } from "./chart";
-import { Padding } from "../util/padding";
+import { Chart } from "./chart";
 import { Node } from "../scene/node";
-import { Series } from "./series/series";
+import { PolarSeries } from "./series/polar/polarSeries";
 
 export class PolarChart extends Chart {
-    /**
-     * The center of the polar series (for example, the center of a pie).
-     * If the polar chart has multiple series, all of them will have their
-     * center set to the same value as a result of the polar chart layout.
-     * The center coordinates are not supposed to be set by the user.
-     */
-    centerX: number = 0;
-    centerY: number = 0;
-
-    /**
-     * The maximum radius the series can use.
-     * This value is set automatically as a result of the polar chart layout
-     * and is not supposed to be set by the user.
-     */
-    radius: number = 0;
-
-    protected _padding = new Padding(50);
-
-    constructor(options: ChartOptions = {}) {
-        super(options);
+    constructor(document = window.document) {
+        super(document);
 
         this.scene.root!.append(this.legend.group);
     }
 
     get seriesRoot(): Node {
         return this.scene.root!;
-    }
-
-    protected _series: Series<PolarChart>[] = [];
-    set series(values: Series<PolarChart>[]) {
-        this.removeAllSeries();
-        values.forEach(series => {
-            this.addSeries(series);
-        });
-    }
-    get series(): Series<PolarChart>[] {
-        return this._series as Series<PolarChart>[];
     }
 
     performLayout(): void {
@@ -87,12 +57,17 @@ export class PolarChart extends Chart {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
 
-        this.centerX = shrinkRect.x + shrinkRect.width / 2;
-        this.centerY = shrinkRect.y + shrinkRect.height / 2;
-        this.radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
+        const centerX = shrinkRect.x + shrinkRect.width / 2;
+        const centerY = shrinkRect.y + shrinkRect.height / 2;
+        const radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
 
         this.series.forEach(series => {
-            series.update();
+            if (series instanceof PolarSeries) {
+                series.centerX = centerX;
+                series.centerY = centerY;
+                series.radius = radius;
+                series.update();
+            }
         });
 
         this.positionCaptions();

@@ -1,11 +1,12 @@
 import { Marker } from "../marker/marker";
 import { Observable, reactive } from "../../util/observable";
+import palette from "../palettes";
 
 export class SeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    @reactive(['legend']) type?: new () => Marker;
+    @reactive(['change', 'legendChange']) type?: new () => Marker;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
@@ -13,19 +14,19 @@ export class SeriesMarker extends Observable {
      * within the `[minSize, size]` range, where the largest values will correspond to the `size`
      * and the lowest to the `minSize`.
      */
-    @reactive(['style']) size = 12;
+    @reactive(['change']) size = 12;
 
-    @reactive(['style']) minSize = 12;
+    @reactive(['change']) minSize = 12;
 
-    @reactive(['style']) enabled = true;
+    @reactive(['change']) enabled = true;
 
-    @reactive(['style']) xOffset = 0;
-    @reactive(['style']) yOffset = 0;
+    @reactive(['change']) xOffset = 0;
+    @reactive(['change']) yOffset = 0;
 
-    @reactive(['style', 'legend']) fill?: string;
-    @reactive(['style', 'legend']) stroke?: string;
+    @reactive(['change', 'legendChange']) fill?: string = palette.fills[0];
+    @reactive(['change', 'legendChange']) stroke?: string = palette.strokes[0]; // Color.fromString(value).darker().toHexString();
 
-    @reactive(['style']) strokeWidth?: number;
-    @reactive(['style', 'legend']) fillOpacity = 1;
-    @reactive(['style', 'legend']) strokeOpacity = 1;
+    @reactive(['change']) strokeWidth?: number;
+    @reactive(['change', 'legendChange']) fillOpacity = 1;
+    @reactive(['change', 'legendChange']) strokeOpacity = 1;
 }

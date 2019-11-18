@@ -1,4 +1,4 @@
-import { Path } from "../../../../scene/shape/path";
+import { Path } from "../../../../../scene/shape/path";
 
 export abstract class OHLC extends Path {
     protected _date: number = 0;

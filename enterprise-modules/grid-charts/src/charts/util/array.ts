@@ -26,7 +26,7 @@ export function extent<T>(values: T[]): [T, T] | undefined {
         }
     }
 
-    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [min, max];
+    return typeof min === "undefined" || typeof max === "undefined" ? undefined : [ min, max ];
 }
 
 // Custom `Array.find` implementation for legacy browsers.
@@ -42,7 +42,7 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
 /**
  * This method will only return `undefined` if there's not a single valid finite number present
  * in the given array of values. Date values will be converted to timestamps.
- * @param values
+ * @param values 
  */
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
     const calculatedExtent = extent(values);
@@ -51,12 +51,12 @@ export function numericExtent<T>(values: T[]): [number, number] | undefined {
         return undefined;
     }
 
-    const [a, b] = calculatedExtent;
+    const [ a, b ] = calculatedExtent;
     const min = a instanceof Date ? a.getTime() : a;
     const max = b instanceof Date ? b.getTime() : b;
 
     if (typeof min === "number" && isFinite(min) && typeof max === "number" && isFinite(max)) {
-        return [min, max];
+        return [ min, max ];
     }
 }
 

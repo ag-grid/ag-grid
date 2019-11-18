@@ -1,11 +1,5 @@
 type Size = { width: number, height: number };
 
-export type HdpiCanvasOptions = {
-    width?: number,
-    height?: number,
-    document?: Document
-};
-
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to
  * provide resolution independent rendering based on `window.devicePixelRatio`.
@@ -23,14 +17,14 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(options: HdpiCanvasOptions = {}) {
-        this.document = options.document || window.document;
-        this.tempCanvas = this.document.createElement('canvas')!;
-        this.element = this.document.createElement('canvas');
+    constructor(document = window.document) {
+        this.document = document;
+        this.tempCanvas = document.createElement('canvas')!;
+        this.element = document.createElement('canvas');
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(this._width = options.width || 300, this._height = options.height || 150);
+        this.resize(this._width = 300, this._height = 150);
     }
 
     private _parent: HTMLElement | undefined = undefined;

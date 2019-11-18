@@ -1,12 +1,14 @@
 import { CartesianChartOptions, AreaSeriesOptions, ChartType, _ } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { AreaSeries } from "../../../../charts/chart/series/areaSeries";
+import { AreaSeries } from "../../../../charts/chart/series/cartesian/areaSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
 import { AreaSeriesOptions as InternalAreaSeriesOptions } from "../../../../charts/chartOptions";
+import { ChartAxisPosition } from "../../../../charts/chart/chartAxis";
+import { BandScale } from "../../../../charts/scale/bandScale";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -26,12 +28,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     private setAxisPadding(chart: CartesianChart | GroupedCategoryChart) {
-        const xAxis = chart.xAxis;
-
-        if (xAxis instanceof CategoryAxis) {
-            xAxis.scale.paddingInner = 1;
-            xAxis.scale.paddingOuter = 0;
-        }
+        chart.axes.forEach(axis => {
+            if (axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis) {
+                (axis.scale as BandScale<any>).paddingInner = 1;
+                (axis.scale as BandScale<any>).paddingOuter = 0;
+            }
+        });
     }
 
     public update(params: UpdateChartParams): void {

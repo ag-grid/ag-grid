@@ -1,10 +1,10 @@
-import { Axis } from "../../axis";
-import linearScale, { LinearScale } from "../../scale/linearScale";
+import { LinearScale } from "../../scale/linearScale";
+import { ChartAxis } from "../chartAxis";
 
-export class NumberAxis extends Axis<LinearScale> {
+export class NumberAxis extends ChartAxis { // Axis<LinearScale> {
     constructor() {
-        super(linearScale());
-        this.scale.clamp = true;
+        super(new LinearScale());
+        (this.scale as LinearScale).clamp = true;
     }
 
     private _nice: boolean = true;

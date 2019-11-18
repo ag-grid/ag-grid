@@ -1,8 +1,8 @@
-import { BarTooltipRendererParams } from "./chart/series/barSeries";
-import { LineTooltipRendererParams } from "./chart/series/lineSeries";
-import { AreaTooltipRendererParams } from "./chart/series/areaSeries";
-import { ScatterTooltipRendererParams } from "./chart/series/scatterSeries";
-import { PieTooltipRendererParams } from "./chart/series/pieSeries";
+import { BarTooltipRendererParams } from "./chart/series/cartesian/barSeries";
+import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
+import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
+import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
+import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
 
 export {
     BarTooltipRendererParams,
@@ -13,8 +13,8 @@ export {
 };
 
 export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
-export type CartesianSeriesType = "line" | "scatter" | "bar" | "area";
-export type PolarSeriesType = "pie";
+export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export type PolarSeriesType = 'pie';
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
 
 export interface SeriesOptions {
@@ -57,8 +57,8 @@ export interface FontOptions {
     color?: string;
 }
 
-export declare type FontStyle = "normal" | "italic" | "oblique";
-export declare type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+export declare type FontStyle = 'normal' | 'italic' | 'oblique';
+export declare type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 export interface CaptionOptions extends FontOptions {
     enabled?: boolean;
@@ -72,7 +72,7 @@ export interface LegendOptions {
     item?: LegendItemOptions;
 }
 
-export declare type LegendPosition = "top" | "right" | "bottom" | "left";
+export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface LegendItemOptions {
     label?: LegendLabelOptions;
@@ -104,7 +104,7 @@ export interface AxisOptions {
     line?: AxisLineOptions;
     tick?: AxisTickOptions;
     label?: AxisLabelOptions;
-    gridStyle?: GridStyle[];
+    gridStyle?: GridStyleOptions[];
 }
 
 export interface AxisLineOptions {
@@ -126,7 +126,7 @@ export interface AxisLabelOptions extends FontOptions {
     parallel?: boolean;
 }
 
-export interface GridStyle {
+export interface GridStyleOptions {
     stroke?: string;
     lineDash?: number[];
 }

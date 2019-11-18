@@ -1,7 +1,7 @@
 import { _, LineSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { LineSeries } from "../../../../charts/chart/series/lineSeries";
+import { LineSeries } from "../../../../charts/chart/series/cartesian/lineSeries";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../charts/chartOptions";
 

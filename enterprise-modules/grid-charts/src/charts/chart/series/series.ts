@@ -1,8 +1,8 @@
 import { Group } from "../../scene/group";
-import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Observable, reactive } from "../../util/observable";
+import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -40,7 +40,7 @@ export interface HighlightStyle {
     stroke?: string;
 }
 
-export abstract class Series<C extends Chart> extends Observable {
+export abstract class Series extends Observable {
 
     readonly id: string = this.createId();
 
@@ -49,18 +49,42 @@ export abstract class Series<C extends Chart> extends Observable {
      */
     readonly group: Group = new Group();
 
+    xAxis: ChartAxis;
+    yAxis: ChartAxis;
+
+    directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
+    directionKeys: { [key in ChartAxisDirection]?: string[] };
+
     tooltipEnabled: boolean = false;
 
-    @reactive(['data']) data: any[] = [];
-    @reactive(['data']) chart?: C;
-    @reactive(['data']) visible = true;
-    @reactive(['layout']) showInLegend = true;
+    @reactive(['dataChange']) data: any[] = [];
+    // @reactive(['dataChange']) chart?: C;
+    @reactive(['dataChange']) visible = true;
+    @reactive(['layoutChange']) showInLegend = true;
 
-    protected constructor() {
-        super();
+    /**
+     * Returns the actual keys used (to fetch the values from `data` items) for the given direction.
+     */
+    getKeys(direction: ChartAxisDirection): string[] {
+        const { directionKeys } = this;
+        const keys = directionKeys && directionKeys[direction];
+        const values: string[] = [];
 
-        this.addEventListener('layout', () => this.scheduleLayout.bind(this));
-        this.addEventListener('data', () => this.scheduleData.bind(this));
+        if (keys) {
+            keys.forEach(key => {
+                const value = (this as any)[key];
+
+                if (value) {
+                    if (Array.isArray(value)) {
+                        values.push(...value);
+                    } else {
+                        values.push(value);
+                    }
+                }
+            });
+        }
+
+        return values;
     }
 
     private createId(): string {
@@ -72,8 +96,7 @@ export abstract class Series<C extends Chart> extends Observable {
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
-    abstract getDomainX(): any[];
-    abstract getDomainY(): any[];
+    abstract getDomain(direction: ChartAxisDirection): any[];
 
     abstract processData(): boolean;
     abstract update(): void;
@@ -91,22 +114,17 @@ export abstract class Series<C extends Chart> extends Observable {
     abstract listSeriesItems(data: LegendDatum[]): void;
 
     toggleSeriesItem(itemId: any, enabled: boolean): void {
-        // some descendants use the itemId
         this.visible = enabled;
     }
 
     abstract highlightNode(node: Shape): void;
     abstract dehighlightNode(): void;
 
-    scheduleLayout() {
-        if (this.chart) {
-            this.chart.layoutPending = true;
-        }
+    readonly scheduleLayout = () => {
+        this.fireEvent({type: 'layoutChange'});
     }
 
-    scheduleData() {
-        if (this.chart) {
-            this.chart.dataPending = true;
-        }
+    readonly scheduleData = () => {
+        this.fireEvent({type: 'dataChange'});
     }
 }

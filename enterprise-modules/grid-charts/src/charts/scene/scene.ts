@@ -2,12 +2,6 @@ import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
 import { Path2D } from "./path2D";
 
-export type SceneOptions = {
-    width?: number,
-    height?: number,
-    document?: Document
-};
-
 export class Scene {
 
     private static id = 1;
@@ -19,12 +13,8 @@ export class Scene {
     readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
-    constructor(options: SceneOptions = {}) {
-        this.canvas = new HdpiCanvas({
-            width: options.width || 300,
-            height: options.height || 150,
-            document: options.document || window.document
-        });
+    constructor(document = window.document) {
+        this.canvas = new HdpiCanvas(document);
         this.ctx = this.canvas.context;
     }
 

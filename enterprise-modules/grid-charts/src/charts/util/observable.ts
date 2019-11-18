@@ -38,7 +38,7 @@ export class Observable {
         }
     }
 
-    removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>) {
+    removePropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>) {
         const propertyListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
         let listeners = propertyListeners.get(name);
 
@@ -84,7 +84,7 @@ export class Observable {
         }
     }
 
-    removeEventListener(type: string, listener?: TypedEventListener) {
+    removeEventListener(type: string, listener: TypedEventListener) {
         const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
         let listeners = eventListeners.get(type);
 
@@ -97,10 +97,6 @@ export class Observable {
         }
     }
 
-    fireEvent<E extends TypedEvent>(event: E) {
-
-    }
-
     protected notifyEventListeners(types: string[]) {
         const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
 
@@ -110,6 +106,14 @@ export class Observable {
                 listeners.forEach(listener => listener({type}));
             }
         });
+    }
+
+    fireEvent<E extends TypedEvent>(event: E) {
+        const listeners = (this.eventListeners as Map<string, Set<TypedEventListener>>).get(event.type);
+
+        if (listeners) {
+            listeners.forEach(listener => listener(event));
+        }
     }
 }
 
@@ -137,7 +141,7 @@ export function reactive(events?: string[], property?: string) {
                         oldValue = this[privateKey];
                     }
 
-                    if (oldValue !== value) {
+                    if (oldValue !== value || (typeof value === 'object' && value !== null)) {
                         if (backingProperty) {
                             let i = 0, last = backingProperty.length - 1, obj = this;
                             while (i < last) {

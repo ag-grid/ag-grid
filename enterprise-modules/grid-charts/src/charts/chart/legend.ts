@@ -39,27 +39,27 @@ export class Legend extends Observable {
 
     private oldSize: [number, number] = [0, 0];
 
-    @reactive(['layout']) data: LegendDatum[] = [];
-    @reactive(['layout']) enabled = true;
-    @reactive(['layout']) orientation: Orientation = Orientation.Vertical;
-    @reactive() position: LegendPosition = 'right';
+    @reactive(['layoutChange']) data: LegendDatum[] = [];
+    @reactive(['layoutChange']) enabled = true;
+    @reactive(['layoutChange']) orientation: Orientation = Orientation.Vertical;
+    @reactive(['layoutChange']) position: LegendPosition = 'right';
 
-    @reactive(['layout']) padding = 20;
-    @reactive(['layout']) itemPaddingX = 16;
-    @reactive(['layout']) itemPaddingY = 8;
+    @reactive(['layoutChange']) padding = 20;
+    @reactive(['layoutChange']) itemPaddingX = 16;
+    @reactive(['layoutChange']) itemPaddingY = 8;
 
     // If the marker type is set, the legend will always use that marker type for all its items,
     // regardless of the type that comes from the `data`.
-    @reactive(['layout']) markerType?: new () => Marker;
-    @reactive(['layout']) markerPadding = MarkerLabel.defaults.padding;
-    @reactive(['layout']) markerSize = MarkerLabel.defaults.markerSize;
-    @reactive(['style']) markerStrokeWidth = 1;
+    @reactive(['layoutChange']) markerType?: new () => Marker;
+    @reactive(['layoutChange']) markerPadding = MarkerLabel.defaults.padding;
+    @reactive(['layoutChange']) markerSize = MarkerLabel.defaults.markerSize;
+    @reactive(['change']) markerStrokeWidth = 1;
 
-    @reactive(['style']) labelColor = MarkerLabel.defaults.labelColor;
-    @reactive(['layout']) labelFontStyle?: FontStyle = MarkerLabel.defaults.labelFontStyle;
-    @reactive(['layout']) labelFontWeight?: FontWeight = MarkerLabel.defaults.labelFontWeight;
-    @reactive(['layout']) labelFontSize = MarkerLabel.defaults.labelFontSize;
-    @reactive(['layout']) labelFontFamily = MarkerLabel.defaults.labelFontFamily;
+    @reactive(['change']) labelColor = MarkerLabel.defaults.labelColor;
+    @reactive(['layoutChange']) labelFontStyle?: FontStyle = MarkerLabel.defaults.labelFontStyle;
+    @reactive(['layoutChange']) labelFontWeight?: FontWeight = MarkerLabel.defaults.labelFontWeight;
+    @reactive(['layoutChange']) labelFontSize = MarkerLabel.defaults.labelFontSize;
+    @reactive(['layoutChange']) labelFontFamily = MarkerLabel.defaults.labelFontFamily;
 
     constructor() {
         super();
@@ -88,19 +88,12 @@ export class Legend extends Observable {
             }
         });
 
-        this.addEventListener('layout', this.requestLayout.bind(this));
-        this.addEventListener('style', this.update.bind(this));
+        this.addEventListener('change', () => this.update());
     }
 
     private _size: [number, number] = [0, 0];
     get size(): Readonly<[number, number]> {
         return this._size;
-    }
-
-    private requestLayout() {
-        if (this.onLayoutChange) {
-            this.onLayoutChange();
-        }
     }
 
     /**
@@ -146,7 +139,7 @@ export class Legend extends Observable {
             markerLabel.labelText = datum.label.text;
             markerLabel.padding = this.markerPadding;
 
-            bboxes.push(markerLabel.getBBox());
+            bboxes.push(markerLabel.computeBBox());
         });
 
         const itemHeight = bboxes.length && bboxes[0].height;
@@ -282,7 +275,7 @@ export class Legend extends Observable {
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
-            this.requestLayout();
+            this.fireEvent({type: 'layoutChange'});
         }
     }
 

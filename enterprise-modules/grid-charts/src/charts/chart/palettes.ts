@@ -1,11 +1,9 @@
-import { _ } from "@ag-grid-community/core";
-
 export interface ChartPalette {
     fills: string[];
     strokes: string[];
 }
 
-export const borneo: ChartPalette = _.deepFreeze({
+export const borneo: ChartPalette = {
     fills: [
         '#f3622d',
         '#fba71b',
@@ -26,9 +24,9 @@ export const borneo: ChartPalette = _.deepFreeze({
         '#8c2d46',
         '#5f5f5f'
     ]
-});
+};
 
-export const material: ChartPalette = _.deepFreeze({
+export const material: ChartPalette = {
     fills: [
         '#f44336',
         '#e91e63',
@@ -65,9 +63,9 @@ export const material: ChartPalette = _.deepFreeze({
         '#b36a00',
         '#b33d18'
     ]
-});
+};
 
-export const pastel: ChartPalette = _.deepFreeze({
+export const pastel: ChartPalette = {
     fills: [
         '#c16068',
         '#a2bf8a',
@@ -84,9 +82,9 @@ export const pastel: ChartPalette = _.deepFreeze({
         '#7f637a',
         '#5d8692'
     ]
-});
+};
 
-export const bright: ChartPalette = _.deepFreeze({
+export const bright: ChartPalette = {
     fills: [
         '#5BC0EB',
         '#FDE74C',
@@ -103,9 +101,9 @@ export const bright: ChartPalette = _.deepFreeze({
         '#af5517',
         '#af225a'
     ]
-});
+};
 
-export const flat: ChartPalette = _.deepFreeze({
+export const flat: ChartPalette = {
     fills: [
         '#febe76',
         '#ff7979',
@@ -130,7 +128,7 @@ export const flat: ChartPalette = _.deepFreeze({
         '#9d3cb1',
         '#494c9d'
     ]
-});
+};
 
 export default borneo;
 
