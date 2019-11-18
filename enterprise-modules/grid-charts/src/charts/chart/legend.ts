@@ -88,13 +88,8 @@ export class Legend extends Observable {
             }
         });
 
-        this.addEventListener('layout', event => {
-        });
-
         this.addEventListener('layout', this.requestLayout.bind(this));
         this.addEventListener('style', this.update.bind(this));
-        this.addEventListener('style', event => {
-        });
     }
 
     private _size: [number, number] = [0, 0];
@@ -122,7 +117,7 @@ export class Legend extends Observable {
      */
     performLayout(width: number, height: number) {
         const { markerType } = this;
-        const updateSelection = this.itemSelection.setData(this.data, (node, datum) => {
+        const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
             const itemMarkerType = markerType || datum.marker.type;
             const itemMarkerName = itemMarkerType ? itemMarkerType.name : 'Square';
             return datum.id + '-' + datum.itemId + '-' + itemMarkerName;

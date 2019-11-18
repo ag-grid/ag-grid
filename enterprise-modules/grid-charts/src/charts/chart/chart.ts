@@ -255,11 +255,7 @@ export abstract class Chart extends Observable {
     processData(): void {
         this.layoutPending = false;
 
-        this.series.forEach(series => {
-            if (series.visible) {
-                series.processData();
-            }
-        });
+        this.series.filter(s => s.visible).forEach(series => series.processData());
         this.updateLegend();
 
         this.layoutPending = true;
@@ -268,11 +264,7 @@ export abstract class Chart extends Observable {
     updateLegend(): void {
         const legendData: LegendDatum[] = [];
 
-        this.series.forEach(series => {
-            if (series.showInLegend) {
-                series.listSeriesItems(legendData);
-            }
-        });
+        this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));
 
         this.legend.data = legendData;
     }
@@ -455,7 +447,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private readonly onMouseOut = (event: MouseEvent) => {
+    private readonly onMouseOut = (_: MouseEvent) => {
         this.toggleTooltip(false);
     }
 

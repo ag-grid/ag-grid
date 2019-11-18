@@ -3,7 +3,6 @@ import { Chart } from "../chart";
 import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Observable, reactive } from "../../util/observable";
-import { CartesianChart } from "../cartesianChart";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -92,6 +91,7 @@ export abstract class Series<C extends Chart> extends Observable {
     abstract listSeriesItems(data: LegendDatum[]): void;
 
     toggleSeriesItem(itemId: any, enabled: boolean): void {
+        // some descendants use the itemId
         this.visible = enabled;
     }
 

@@ -390,9 +390,11 @@ export class ChartDataModel extends BeanStub {
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
                 selected: allCols.has(column),
-                order: order++
+                order: this.valueCellRange.columns.indexOf(column)
             });
         });
+
+        this.reorderColState();
     }
 
     private updateColumnState(updatedCol: ColState) {
@@ -407,24 +409,32 @@ export class ChartDataModel extends BeanStub {
             valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
         }
 
-        const colIds: string[] = [];
         const allColumns = [...dimensionColState, ...valueColState];
+        const orderedColIds: string[] = [];
 
+        // calculate new order
         allColumns.forEach((col, i) => {
             if (i === updatedCol.order) {
-                colIds.push(updatedCol.colId);
+                orderedColIds.push(updatedCol.colId);
             }
 
             if (col.colId !== updatedCol.colId) {
-                colIds.push(col.colId);
+                orderedColIds.push(col.colId);
             }
         });
 
+        // update col state with new order
         allColumns.forEach(col => {
-            const order = colIds.indexOf(col.colId);
+            const order = orderedColIds.indexOf(col.colId);
 
-            col.order = order >= 0 ? colIds.indexOf(col.colId) : allColumns.length - 1;
+            col.order = order >= 0 ? orderedColIds.indexOf(col.colId) : allColumns.length - 1;
         });
+
+        this.reorderColState();
+    }
+
+    private reorderColState(): void {
+        const { dimensionColState, valueColState } = this;
 
         dimensionColState.sort((a, b) => a.order - b.order);
         valueColState.sort((a, b) => a.order - b.order);
@@ -475,6 +485,16 @@ export class ChartDataModel extends BeanStub {
         });
 
         if (selectedValueCols.length > 0) {
+            let orderedColIds: string[] = [];
+
+            if (this.valueColState.length > 0) {
+                orderedColIds = this.valueColState.map(c => c.colId);
+            } else {
+                colsInRange.forEach(c => orderedColIds.push(c.getColId()));
+            }
+
+            selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
+
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
     }
