@@ -53,11 +53,15 @@ function saveChart() {
 
     if (chartModels.length > 0) {
         chartModel = chartModels[0];
+    }
 
-        if (currentChartRef) {
-            currentChartRef.destroyChart();
-            currentChartRef = null;
-        }
+    alert("Chart saved!");
+}
+
+function clearChart() {
+    if (currentChartRef) {
+        currentChartRef.destroyChart();
+        currentChartRef = null;
     }
 }
 
@@ -66,12 +70,15 @@ function restoreChart() {
         return;
     }
 
+    this.clearChart();
+
+    var options = chartModel.chartOptions;
     var createRangeChartParams = {
         chartContainer: document.querySelector('#myChart'),
         cellRange: chartModel.cellRange,
         chartType: chartModel.chartType,
         chartPalette: chartModel.chartPalette,
-        processChartOptions: function() { return chartModel.chartOptions; }
+        processChartOptions: function() { return options; }
     };
 
     currentChartRef = gridOptions.api.createRangeChart(createRangeChartParams);

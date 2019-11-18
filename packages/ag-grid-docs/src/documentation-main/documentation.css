@@ -5,16 +5,15 @@
     -webkit-font-smoothing: antialiased;
 }
 
-#documentation h1 { 
+#documentation h1 {
     font-size: 2.5rem;
     font-weight: 400;
     margin-bottom: 1rem;
 }
 #documentation h1 section { position: absolute;}
-#documentation #content h2 { 
+#documentation #content h2 {
 	font-size: 1.7rem;
     font-weight: 300;
-    margin-top: 0;
 	margin-bottom: 1rem;
 }
 
@@ -39,12 +38,12 @@
     display: none;
 }
 
-#documentation .top-toolbar { 
+#documentation .top-toolbar {
 	display: flex;
     justify-content: flex-end;
     padding: 30px 100px 0 0;
 }
-#documentation .top-toolbar .search-wrapper { 
+#documentation .top-toolbar .search-wrapper {
 	margin: 0;
 }
 
@@ -164,7 +163,7 @@
 	}
 }
 
-@media (max-width: 991px) {	
+@media (max-width: 991px) {
 	#documentation > div #side-nav {
 		padding-bottom: 1rem;
 	}

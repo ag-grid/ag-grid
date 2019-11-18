@@ -160,12 +160,4 @@ interface CellRangeParams {
 
     <?= example('Saving User Preferences', 'saving-user-preferences', 'generated', array("exampleHeight" => 660,"enterprise" => true)) ?>
 
-    <h3>Example: Saving and restoring charts</h3>
-
-    <p>
-        The example below demonstrates how you can save and then later restore a chart.
-    </p>
-
-    <?= example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', array("exampleHeight" => 800,"enterprise" => true)) ?>
-
 <?php include '../documentation-main/documentation_footer.php'; ?>
