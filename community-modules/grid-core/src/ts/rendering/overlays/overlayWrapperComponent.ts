@@ -4,7 +4,8 @@ import {Component} from "../../widgets/component";
 import {UserComponentFactory} from "../../components/framework/userComponentFactory";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {ILoadingOverlayComp} from "./loadingOverlayComponent";
-import {_} from '../../utils';
+import {_, Promise} from '../../utils';
+import {INoRowsOverlayComp} from "./noRowsOverlayComponent";
 
 enum LoadingType {Loading, NoRows}
 
@@ -44,21 +45,21 @@ export class OverlayWrapperComponent extends Component {
     }
 
     public showLoadingOverlay(): void {
-        this.setWrapperTypeClass(LoadingType.Loading);
-        this.destroyActiveOverlay();
-
-        const params = {api: this.gridOptionsWrapper.getApi()};
-
-        this.userComponentFactory.newLoadingOverlayComponent(params).then(comp => {
-            this.eOverlayWrapper.appendChild(comp.getGui());
-            this.activeOverlay = comp;
+        const workItem: Promise<ILoadingOverlayComp> = this.userComponentFactory.newLoadingOverlayComponent({
+            api: this.gridOptionsWrapper.getApi()
         });
-
-        this.setDisplayed(true);
+        this.showOverlay<ILoadingOverlayComp>(workItem);
     }
 
     public showNoRowsOverlay(): void {
-        if(this.inProgress) {
+        const workItem: Promise<INoRowsOverlayComp> = this.userComponentFactory.newNoRowsOverlayComponent({
+            api: this.gridOptionsWrapper.getApi()
+        });
+        this.showOverlay<INoRowsOverlayComp>(workItem);
+    }
+
+    private showOverlay<T>(workItem: Promise<T>) {
+        if (this.inProgress) {
             return;
         }
         this.setWrapperTypeClass(LoadingType.NoRows);
@@ -66,14 +67,13 @@ export class OverlayWrapperComponent extends Component {
 
         this.inProgress = true;
 
-        const params = {api: this.gridOptionsWrapper.getApi()};
-        this.userComponentFactory.newNoRowsOverlayComponent(params).then(comp => {
+        workItem.then(comp => {
             this.inProgress = false;
 
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
 
-            if(this.destroyRequested) {
+            if (this.destroyRequested) {
                 this.destroyRequested = false;
                 this.destroyActiveOverlay();
             }
@@ -83,7 +83,7 @@ export class OverlayWrapperComponent extends Component {
     }
 
     private destroyActiveOverlay(): void {
-        if(this.inProgress) {
+        if (this.inProgress) {
             this.destroyRequested = true;
             return;
         }
