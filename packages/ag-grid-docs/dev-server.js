@@ -302,6 +302,39 @@ function buildModules() {
     });
 }
 
+function watchModulesBeta() {
+    console.log("Watching modules [BETA]...");
+    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
+    const tscBuild = cp.spawn(tsc, ["--build", "--preserveWatchOutput", "--watch"], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    process.on('exit', () => {
+        tscBuild.kill();
+    });
+
+    console.log("Watching CSS only...");
+    const cssScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
+    const node = 'node';
+    const cssWatch = cp.spawn(node, [cssScript, " --watchBeta"], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    process.on('exit', () => {
+        cssWatch.kill();
+    });
+}
+function buildModulesBeta() {
+    console.log("Building all modules [BETA]...");
+    const lernaScript = WINDOWS ? `node .\\scripts\\modules\\lernaWatch.js --buildBeta` : `node ./scripts/modules/lernaWatch.js --buildBeta`;
+    require('child_process').execSync(lernaScript, {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+}
+
 function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules) {
     console.log("updating fw systemjs boilerplate config with modules...");
 
@@ -332,7 +365,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
-module.exports = (buildSourceModuleOnly = false, done) => {
+module.exports = (buildSourceModuleOnly = false, beta = false) => {
     const {communityModules, enterpriseModules} = getAllModules();
 
     const app = express();
@@ -344,6 +377,15 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     });
 
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
+
+    if(beta) {
+        console.log("BUILD AND WATCHING IN BETA MODE");
+        buildModulesBeta();
+        watchModulesBeta();
+    } else {
+        buildModules();
+        watchModules(buildSourceModuleOnly);
+    }
 
     // serve community, enterprise and react
 
@@ -377,14 +419,13 @@ module.exports = (buildSourceModuleOnly = false, done) => {
     // regenerate examples
     watchAndGenerateExamples(communityModules, enterpriseModules);
 
-    buildModules();
-    watchModules(buildSourceModuleOnly);
-
     // PHP
     launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just error reporting
-    launchTSCCheck(communityModules, enterpriseModules);
+    if(!beta) {
+        launchTSCCheck(communityModules, enterpriseModules);
+    }
 
     app.listen(EXPRESS_PORT, function () {
         console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);

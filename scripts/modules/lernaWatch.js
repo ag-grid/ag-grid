@@ -1,8 +1,12 @@
 const path = require("path");
+const cp = require('child_process');
+const os = require('os');
 const fs = require("fs");
 const commandLineOptions = require("commander");
 const execa = require("execa");
 const chokidar = require("chokidar");
+
+const WINDOWS = /^win/.test(os.platform());
 
 commandLineOptions
     .option(
@@ -13,6 +17,12 @@ commandLineOptions
     )
     .option(
         "-b, --build"
+    )
+    .option(
+        "--buildBeta"
+    )
+    .option(
+        "--watchBeta"
     )
     .parse(process.argv);
 
@@ -261,9 +271,33 @@ const watch = async (singleModule = false) => {
     spawnCssWatcher(cssBuildChain);
 };
 
-const build = async () => {
+const watchBeta = async () => {
+    console.log("Watching css...");
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+
+        const buildChains = {};
+        for (let packageName of orderedPackageNames) {
+            buildChains[packageName] = await generateBuildChain(packageName, orderedPackageNames);
+        }
+
+        buildChainInfo = {
+            paths,
+            buildChains
+        };
+
+        fs.writeFileSync(cacheFilePath, JSON.stringify(buildChainInfo), 'UTF-8');
+    } else {
+        buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
+    }
+    const cssBuildChain = extractCssBuildChain(buildChainInfo);
+    spawnCssWatcher(cssBuildChain);
+};
+
+const getBuildChainInfo = async () => {
+    const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
+    if (!fs.existsSync(cacheFilePath)) {
         const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
@@ -280,6 +314,10 @@ const build = async () => {
     } else {
         buildChainInfo = JSON.parse(fs.readFileSync(cacheFilePath, 'UTF-8'));
     }
+    return buildChainInfo;
+};
+const build = async () => {
+    const buildChainInfo = await getBuildChainInfo();
 
     const packagePath = path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts');
     const packageName = manifest(findParentPackageManifest(packagePath)).name;
@@ -290,7 +328,17 @@ const build = async () => {
     await buildDependencyChain(packageName, cssBuildChain.buildChains, false,'build-css');
 };
 
+const buildBeta = async () => {
+    await execa("tsc", ["--build", "--preserveWatchOutput"], { stdio: "inherit" });
+
+    const buildChainInfo = await getBuildChainInfo();
+    const cssBuildChain = extractCssBuildChain(buildChainInfo);
+    await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains, false,'build-css');
+};
+
 if (commandLineOptions.watch) watch(false);
 if (commandLineOptions.single) watch(true);
 if (commandLineOptions.build) build();
+if (commandLineOptions.buildBeta) buildBeta();
+if (commandLineOptions.watchBeta) watchBeta();
 
