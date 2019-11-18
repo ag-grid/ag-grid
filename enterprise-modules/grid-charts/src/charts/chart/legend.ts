@@ -102,9 +102,9 @@ export class Legend extends Observable {
      * respect the height constraints, and the horizontal legend will take as much vertical
      * space as needed in an attempt not to exceed the given width.
      * After the layout is done, the {@link size} will contain the actual size of the legend.
-     * If the actual size is not the same as the previous actual size, the legend will notify
-     * the parent component via the {@link onLayoutChange} callback that another layout is needed,
-     * and the above process should be repeated.
+     * If the actual size is not the same as the previous actual size, the legend will fire
+     * the 'layoutChange' event to communicate that another layout is needed, and the above
+     * process should be repeated.
      * @param width
      * @param height
      */

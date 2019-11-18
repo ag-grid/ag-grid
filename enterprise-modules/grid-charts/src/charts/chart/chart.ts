@@ -47,8 +47,10 @@ export abstract class Chart extends Observable {
         const scene = new Scene(document);
         this.scene = scene;
         scene.root = root;
-        this.legend.onLayoutChange = this.onLayoutChange;
-        this.legend.addPropertyListener('position', this.onLegendPositionChange);
+
+        const { legend } = this;
+        legend.addEventListener('layoutChange', this.onLayoutChange);
+        legend.addPropertyListener('position', this.onLegendPositionChange);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -80,7 +82,7 @@ export abstract class Chart extends Observable {
             tooltipParent.removeChild(this.tooltipElement);
         }
 
-        this.legend.onLayoutChange = undefined;
+        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
         this.cleanupListeners(this.scene.canvas.element);
         this.scene.parent = undefined;
     }
