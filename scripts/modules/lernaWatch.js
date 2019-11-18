@@ -214,6 +214,27 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
     return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
 
+const extractCssBuildChain = (buildChainInfo) => {
+    return {
+        paths: buildChainInfo.paths
+            .filter(path => path.includes('community-modules/grid-core'))
+            .map(path => `${path}/src/styles`),
+        buildChains: {
+            "@ag-grid-community/core": {
+                "0": [
+                    "@ag-grid-community/core"
+                ],
+                "1": [
+                    "@ag-grid-community/all-modules"
+                ],
+                "2": [
+                    "@ag-grid-enterprise/all-modules"
+                ]
+            }
+        }
+    };
+};
+
 const watch = async (singleModule = false) => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
@@ -236,24 +257,7 @@ const watch = async (singleModule = false) => {
 
     spawnWatcher(buildChainInfo, singleModule);
 
-    const cssBuildChain = {
-        paths: buildChainInfo.paths
-            .filter(path => path.includes('community-modules/grid-core'))
-            .map(path => `${path}/src/styles`),
-        buildChains: {
-            "@ag-grid-community/core": {
-                "0": [
-                    "@ag-grid-community/core"
-                ],
-                "1": [
-                    "@ag-grid-community/all-modules"
-                ],
-                "2": [
-                    "@ag-grid-enterprise/all-modules"
-                ]
-            }
-        }
-    };
+    const cssBuildChain = extractCssBuildChain(buildChainInfo);
     spawnCssWatcher(cssBuildChain);
 };
 
@@ -281,7 +285,9 @@ const build = async () => {
     const packageName = manifest(findParentPackageManifest(packagePath)).name;
 
     await buildDependencyChain(packageName, buildChainInfo.buildChains);
-    await buildDependencyChain(packageName, buildChainInfo.buildChains, 'build-css');
+
+    const cssBuildChain = extractCssBuildChain(buildChainInfo);
+    await buildDependencyChain(packageName, cssBuildChain.buildChains, false,'build-css');
 };
 
 if (commandLineOptions.watch) watch(false);
