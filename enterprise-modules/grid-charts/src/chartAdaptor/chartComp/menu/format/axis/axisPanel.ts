@@ -16,6 +16,8 @@ import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { find } from "../../../../../charts/util/array";
+import { ChartAxisPosition } from "../../../../../charts/chart/chartAxis";
 
 export class AxisPanel extends Component {
 
@@ -127,7 +129,10 @@ export class AxisPanel extends Component {
 
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
         const xUpdateFunc = (newValue: number) => {
-            this.chartProxy.setChartOption("xAxis.label.rotation", newValue);
+            const xAxis = find(this.chartProxy.getChart().axes, axis => axis.position === ChartAxisPosition.Bottom);
+            if (xAxis) {
+                xAxis.label.rotation = newValue;
+            }
             this.chartProxy.getChart().performLayout();
         };
 
@@ -135,7 +140,10 @@ export class AxisPanel extends Component {
 
         const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
         const yUpdateFunc = (newValue: number) => {
-            this.chartProxy.setChartOption("yAxis.label.rotation", newValue);
+            const yAxis = find(this.chartProxy.getChart().axes, axis => axis.position === ChartAxisPosition.Left);
+            if (yAxis) {
+                yAxis.label.rotation = newValue;
+            }
             this.chartProxy.getChart().performLayout();
         };
 
