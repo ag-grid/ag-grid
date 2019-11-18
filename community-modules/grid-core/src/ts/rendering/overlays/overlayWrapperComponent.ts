@@ -1,10 +1,10 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Component } from "../../widgets/component";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { ILoadingOverlayComp } from "./loadingOverlayComponent";
-import { _ } from '../../utils';
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {Autowired, PostConstruct} from "../../context/context";
+import {Component} from "../../widgets/component";
+import {UserComponentFactory} from "../../components/framework/userComponentFactory";
+import {RefSelector} from "../../widgets/componentAnnotations";
+import {ILoadingOverlayComp} from "./loadingOverlayComponent";
+import {_} from '../../utils';
 
 enum LoadingType {Loading, NoRows}
 
@@ -25,6 +25,8 @@ export class OverlayWrapperComponent extends Component {
     @RefSelector('eOverlayWrapper') eOverlayWrapper: HTMLElement;
 
     private activeOverlay: ILoadingOverlayComp;
+    private inProgress = false;
+    private destroyRequested = false;
 
     constructor() {
         super(OverlayWrapperComponent.TEMPLATE);
@@ -45,7 +47,7 @@ export class OverlayWrapperComponent extends Component {
         this.setWrapperTypeClass(LoadingType.Loading);
         this.destroyActiveOverlay();
 
-        const params = {api: this.gridOptionsWrapper.getApi() };
+        const params = {api: this.gridOptionsWrapper.getApi()};
 
         this.userComponentFactory.newLoadingOverlayComponent(params).then(comp => {
             this.eOverlayWrapper.appendChild(comp.getGui());
@@ -56,21 +58,39 @@ export class OverlayWrapperComponent extends Component {
     }
 
     public showNoRowsOverlay(): void {
+        if(this.inProgress) {
+            return;
+        }
         this.setWrapperTypeClass(LoadingType.NoRows);
         this.destroyActiveOverlay();
 
-        const params = {api: this.gridOptionsWrapper.getApi() };
+        this.inProgress = true;
 
+        const params = {api: this.gridOptionsWrapper.getApi()};
         this.userComponentFactory.newNoRowsOverlayComponent(params).then(comp => {
+            this.inProgress = false;
+
             this.eOverlayWrapper.appendChild(comp.getGui());
             this.activeOverlay = comp;
+
+            if(this.destroyRequested) {
+                this.destroyRequested = false;
+                this.destroyActiveOverlay();
+            }
         });
 
         this.setDisplayed(true);
     }
 
     private destroyActiveOverlay(): void {
-        if (!this.activeOverlay) { return; }
+        if(this.inProgress) {
+            this.destroyRequested = true;
+            return;
+        }
+
+        if (!this.activeOverlay) {
+            return;
+        }
 
         if (this.activeOverlay.destroy) {
             this.activeOverlay.destroy();
