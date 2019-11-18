@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1>Internationalisation</h1>
 
     <p class="lead">
@@ -157,6 +155,7 @@ localeText = {
         format: 'laFormat',
         categories: 'laCategories',
         series: 'laSeries',
+        xyValues: 'laX Y Values',
         axis: 'laAxis',
         color: 'laColor',
         thickness: 'laThickness',
@@ -168,6 +167,7 @@ localeText = {
         padding: 'laPadding',
         chart: 'laChart',
         title: 'laTitle',
+        background: 'laBackground',
         font: 'laFont',
         top: 'laTop',
         right: 'laRight',
@@ -175,6 +175,8 @@ localeText = {
         left: 'laLeft',
         labels: 'laLabels',
         size: 'laSize',
+        minSize: 'laMinimum Size',
+        maxSize: 'laMaximum Size',
         legend: 'laLegend',
         position: 'laPosition',
         markerSize: 'laMarker Size',
@@ -184,8 +186,8 @@ localeText = {
         itemPaddingY: 'laItem Padding Y',
         strokeWidth: 'laStroke Width',
         offset: 'laOffset',
-        tooltips: 'laTooltips',
         offsets: 'laOffsets',
+        tooltips: 'laTooltips',
         callout: 'laCallout',
         markers: 'laMarkers',
         shadow: 'laShadow',
@@ -197,14 +199,15 @@ localeText = {
         bold: 'laBold',
         italic: 'laItalic',
         boldItalic: 'laBold Italic',
+        predefined: 'laPredefined',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
-        columnGroup: 'Column',
-        barGroup: 'Bar',
-        pieGroup: 'Pie',
-        lineGroup: 'Line',
-        scatterGroup: 'Scatter',
-        areaGroup: 'Area',
+        columnGroup: 'laColumn',
+        barGroup: 'laBar',
+        pieGroup: 'laPie',
+        lineGroup: 'laLine',
+        scatterGroup: 'laScatter',
+        areaGroup: 'laArea',
         groupedColumnTooltip: 'laGrouped',
         stackedColumnTooltip: 'laStacked',
         normalizedColumnTooltip: 'la100% Stacked',
