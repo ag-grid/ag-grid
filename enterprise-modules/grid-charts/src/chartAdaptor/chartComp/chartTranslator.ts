@@ -16,7 +16,6 @@ export class ChartTranslator {
         xyValues: 'X Y Values',
         axis: 'Axis',
         color: 'Color',
-        opacity: 'Opacity',
         thickness: 'Thickness',
         xRotation: 'X Rotation',
         yRotation: 'Y Rotation',

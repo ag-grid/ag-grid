@@ -1,4 +1,4 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, PaddingOptions, AgToggleButton, AgColorPicker } from "@ag-grid-community/core";
+import { AgGroupComponent, Autowired, Component, PostConstruct, RefSelector, AgColorPicker } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartProxy } from "../../../chartProxies/chartProxy";
@@ -8,13 +8,11 @@ export class BackgroundPanel extends Component {
         `<div>
             <ag-group-component ref="chartBackgroundGroup">
                 <ag-color-picker ref="colorPicker"></ag-color-picker>
-                <ag-slider ref="opacitySlider"></ag-slider>
             </ag-group-component>
         <div>`;
 
     @RefSelector('chartBackgroundGroup') private group: AgGroupComponent;
     @RefSelector('colorPicker') private colorPicker: AgColorPicker;
-    @RefSelector('opacitySlider') private opacitySlider: AgSlider;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -31,7 +29,6 @@ export class BackgroundPanel extends Component {
 
         this.initGroup();
         this.initColorPicker();
-        this.initBackgroundItems();
     }
 
     private initGroup(): void {
@@ -46,19 +43,9 @@ export class BackgroundPanel extends Component {
     private initColorPicker(): void {
         this.colorPicker
             .setLabel(this.chartTranslator.translate('color'))
-            .setLabelWidth("flex")
+            .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue(this.chartProxy.getChartOption('background.fill'))
             .onValueChange(newColor => this.chartProxy.setChartOption('background.fill', newColor));
-    }
-
-    private initBackgroundItems(): void {
-        this.opacitySlider
-            .setLabel(this.chartTranslator.translate('opacity'))
-            .setStep(0.05)
-            .setMaxValue(1)
-            .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getChartOption('background.opacity'))
-            .onValueChange(newValue => this.chartProxy.setChartOption('background.opacity', newValue));
     }
 }

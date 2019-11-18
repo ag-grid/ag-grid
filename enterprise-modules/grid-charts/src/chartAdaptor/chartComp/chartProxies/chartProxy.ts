@@ -294,7 +294,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return {
             background: {
                 fill: this.getBackgroundColor(),
-                opacity: 1,
                 visible: true,
             },
             width: 800,

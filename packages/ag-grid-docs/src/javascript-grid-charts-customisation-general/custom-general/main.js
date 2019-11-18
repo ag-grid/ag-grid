@@ -57,7 +57,6 @@ function processChartOptions(params) {
 
     options.background = {
         fill: '#B0E0E6',
-        opacity: 0.7
     }
 
     options.title = {
