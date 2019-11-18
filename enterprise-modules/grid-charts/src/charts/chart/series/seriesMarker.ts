@@ -23,8 +23,8 @@ export class SeriesMarker extends Observable {
     @reactive(['change']) xOffset = 0;
     @reactive(['change']) yOffset = 0;
 
-    @reactive(['change', 'legendChange']) fill?: string = palette.fills[0];
-    @reactive(['change', 'legendChange']) stroke?: string = palette.strokes[0]; // Color.fromString(value).darker().toHexString();
+    @reactive(['change', 'legendChange']) fill?: string;
+    @reactive(['change', 'legendChange']) stroke?: string;
 
     @reactive(['change']) strokeWidth?: number;
     @reactive(['change', 'legendChange']) fillOpacity = 1;
