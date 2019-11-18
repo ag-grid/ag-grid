@@ -129,7 +129,9 @@ export class ChartDatasource extends BeanStub {
                 }
 
                 // add data value to value column
-                data[col.getId()] = this.valueService.getValue(col, rowNode);
+                const value = this.valueService.getValue(col, rowNode);
+
+                data[col.getId()] = typeof value.toNumber === 'function' ? value.toNumber() : value;
             });
 
             // add data to results
@@ -139,7 +141,7 @@ export class ChartDatasource extends BeanStub {
         if (params.grouping) {
             const groupIndexesToRemove = _.values(groupsToRemove);
 
-            extractedRowData = extractedRowData.filter((value, index: number) => !_.includes(groupIndexesToRemove, index));
+            extractedRowData = extractedRowData.filter((_1, index) => !_.includes(groupIndexesToRemove, index));
         }
 
         return { data: extractedRowData, columnNames };
@@ -192,6 +194,7 @@ export class ChartDatasource extends BeanStub {
         dataAggregated.forEach(groupItem => params.valueCols.forEach(col => {
             const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
             let aggResult: any = 0;
+
             if (ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
                 aggResult = this.aggregationStage.aggregateValues(dataToAgg, params.aggFunc!);
             }

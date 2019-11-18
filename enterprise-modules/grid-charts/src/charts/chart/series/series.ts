@@ -58,7 +58,6 @@ export abstract class Series extends Observable {
     tooltipEnabled: boolean = false;
 
     @reactive(['dataChange']) data: any[] = [];
-    // @reactive(['dataChange']) chart?: C;
     @reactive(['dataChange']) visible = true;
     @reactive(['layoutChange']) showInLegend = true;
 
@@ -90,9 +89,11 @@ export abstract class Series extends Observable {
     private createId(): string {
         const constructor = this.constructor as any;
         const className = constructor.className;
+
         if (!className) {
             throw new Error(`The ${constructor} is missing the 'className' property.`);
         }
+
         return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
@@ -121,10 +122,10 @@ export abstract class Series extends Observable {
     abstract dehighlightNode(): void;
 
     readonly scheduleLayout = () => {
-        this.fireEvent({type: 'layoutChange'});
+        this.fireEvent({ type: 'layoutChange' });
     }
 
     readonly scheduleData = () => {
-        this.fireEvent({type: 'dataChange'});
+        this.fireEvent({ type: 'dataChange' });
     }
 }
