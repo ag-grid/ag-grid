@@ -139,7 +139,7 @@ export class Legend extends Observable {
             markerLabel.labelText = datum.label.text;
             markerLabel.padding = this.markerPadding;
 
-            bboxes.push(markerLabel.getBBox());
+            bboxes.push(markerLabel.computeBBox());
         });
 
         const itemHeight = bboxes.length && bboxes[0].height;

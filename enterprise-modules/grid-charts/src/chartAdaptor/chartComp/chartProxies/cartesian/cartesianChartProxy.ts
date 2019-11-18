@@ -3,7 +3,6 @@ import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-grid-c
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartDataModel } from "../../chartDataModel";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
-import { ChartAxisDirection } from "../../../../charts/chart/chartAxis";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
     protected constructor(params: ChartProxyParams) {

@@ -1,5 +1,4 @@
 import { LinearScale } from "../../scale/linearScale";
-import { Axis } from "../../axis";
 import { ChartAxis } from "../chartAxis";
 
 export class NumberAxis extends ChartAxis { // Axis<LinearScale> {

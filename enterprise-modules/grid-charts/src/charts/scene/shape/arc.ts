@@ -151,7 +151,7 @@ export class Arc extends Path {
         }
     }
 
-    getBBox(): BBox {
+    computeBBox(): BBox {
         // Only works with full arcs (circles) and untransformed ellipses.
         return new BBox(
             this.centerX - this.radiusX,
@@ -163,7 +163,7 @@ export class Arc extends Path {
 
     isPointInPath(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
-        const bbox = this.getBBox();
+        const bbox = this.computeBBox();
 
         return this.type !== ArcType.Open
             && bbox.containsPoint(point.x, point.y)

@@ -1,5 +1,4 @@
 import { BandScale } from "../../scale/bandScale";
-import { Axis } from "../../axis";
 import { ChartAxis } from "../chartAxis";
 
 export class CategoryAxis extends ChartAxis {

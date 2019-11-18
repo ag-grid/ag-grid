@@ -155,7 +155,7 @@ export class CartesianChart extends Chart {
             const domain = new Array<any>().concat(...domains);
             axis.domain = numericExtent(domain) || domain;
 
-            const axisThickness = Math.floor(axis.getBBox().width);
+            const axisThickness = Math.floor(axis.computeBBox().width);
             switch (position) {
                 case ChartAxisPosition.Left:
                     if (this.axisAutoPadding.left !== axisThickness) {

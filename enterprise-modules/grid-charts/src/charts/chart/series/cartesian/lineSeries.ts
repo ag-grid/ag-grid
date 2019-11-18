@@ -1,4 +1,3 @@
-import { CartesianChart } from "../../cartesianChart";
 import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";

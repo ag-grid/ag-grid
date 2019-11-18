@@ -1,7 +1,6 @@
-import { CartesianChart } from "../../cartesianChart";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { Series, SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
@@ -11,8 +10,6 @@ import { Marker } from "../../marker/marker";
 import { SeriesMarker } from "../seriesMarker";
 import { Circle } from "../../marker/circle";
 import { reactive } from "../../../util/observable";
-import { Axis } from "../../../axis";
-import Scale from "../../../scale/scale";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 

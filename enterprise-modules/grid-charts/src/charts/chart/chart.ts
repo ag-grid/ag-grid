@@ -397,7 +397,7 @@ export abstract class Chart extends Observable {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
             titleVisible = true;
-            const titleBBox = title.node.getBBox(); // make sure to set node's x/y, then getBBox
+            const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
             if (titleBBox) {
                 paddingTop = titleBBox.y + titleBBox.height;
             }
@@ -406,7 +406,7 @@ export abstract class Chart extends Observable {
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop + spacing;
                 subtitleVisible = true;
-                const subtitleBBox = subtitle.node.getBBox();
+                const subtitleBBox = subtitle.node.computeBBox();
                 if (subtitleBBox) {
                     paddingTop = subtitleBBox.y + subtitleBBox.height;
                 }
@@ -446,7 +446,7 @@ export abstract class Chart extends Observable {
         switch (this.legend.position) {
             case 'bottom':
                 legend.performLayout(width - legendPadding * 2, 0);
-                legendBBox = legendGroup.getBBox();
+                legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
@@ -459,7 +459,7 @@ export abstract class Chart extends Observable {
 
             case 'top':
                 legend.performLayout(width - legendPadding * 2, 0);
-                legendBBox = legendGroup.getBBox();
+                legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
@@ -472,7 +472,7 @@ export abstract class Chart extends Observable {
 
             case 'left':
                 legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legendGroup.getBBox();
+                legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = legendPadding - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
@@ -485,7 +485,7 @@ export abstract class Chart extends Observable {
 
             default: // case 'right':
                 legend.performLayout(0, height - legendPadding * 2);
-                legendBBox = legendGroup.getBBox();
+                legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;

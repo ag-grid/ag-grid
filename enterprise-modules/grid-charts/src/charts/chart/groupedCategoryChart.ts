@@ -1,6 +1,4 @@
-import { CartesianChartLayout, CartesianChart } from "./cartesianChart";
-import { Axis } from "../axis";
-import Scale from "../scale/scale";
+import { CartesianChart } from "./cartesianChart";
 import { numericExtent } from "../util/array";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxis, ChartAxisDirection, ChartAxisPosition } from "./chartAxis";
@@ -48,8 +46,8 @@ export class GroupedCategoryChart extends CartesianChart {
 
     //     // The `xAxis` and `yAxis` have `.this` prefix on purpose here,
     //     // because the local `xAxis` and `yAxis` variables may be swapped.
-    //     const xAxisBBox = this.xAxis.getBBox();
-    //     const yAxisBBox = this.yAxis.getBBox();
+    //     const xAxisBBox = this.xAxis.computeBBox();
+    //     const yAxisBBox = this.yAxis.computeBBox();
 
     //     {
     //         const axisThickness = Math.floor(yAxisBBox.width);
@@ -92,7 +90,8 @@ export class GroupedCategoryChart extends CartesianChart {
             const domain = new Array<any>().concat(...domains);
             axis.domain = numericExtent(domain) || domain;
 
-            const axisThickness = Math.floor(axis.getBBox().width);
+            const axisBBox = axis.computeBBox();
+            const axisThickness = Math.floor(axis.computeBBox().width);
             switch (position) {
                 case ChartAxisPosition.Left:
                     if (this.axisAutoPadding.left !== axisThickness) {
@@ -107,8 +106,9 @@ export class GroupedCategoryChart extends CartesianChart {
                     }
                     break;
                 case ChartAxisPosition.Bottom:
-                    if (this.axisAutoPadding.bottom !== axisThickness) {
-                        this.axisAutoPadding.bottom = axisThickness;
+                    const hhh = axis.computeBBox().height;
+                    if (this.axisAutoPadding.bottom !== hhh) {
+                        this.axisAutoPadding.bottom = hhh;
                         this.layoutPending = true;
                     }
                     break;

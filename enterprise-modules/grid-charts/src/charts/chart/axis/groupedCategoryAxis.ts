@@ -8,7 +8,7 @@ import { Matrix } from "../../scene/matrix";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { ILinearAxis, AxisLabel, AxisTick } from "../../axis";
+import { ILinearAxis, AxisLabel } from "../../axis";
 import { ChartAxis } from "../chartAxis";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
@@ -280,7 +280,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
                 node.textAlign = 'center';
                 node.translationX = datum.screenY - label.fontSize * 0.25;
                 node.translationY = datum.screenX;
-                const bbox = node.getBBox();
+                const bbox = node.computeBBox();
                 if (bbox && bbox.width > maxLeafLabelWidth) {
                     maxLeafLabelWidth = bbox.width;
                 }
@@ -410,7 +410,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
         }
 
         // debug (bbox)
-        // const bbox = this.getBBox();
+        // const bbox = this.computeBBox();
         // const bboxRect = this.bboxRect;
         // bboxRect.x = bbox.x;
         // bboxRect.y = bbox.y;
@@ -418,7 +418,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
         // bboxRect.height = bbox.height;
     }
 
-    getBBox(options?: { excludeTitle: boolean }): BBox {
+    computeBBox(options?: { excludeTitle: boolean }): BBox {
         const includeTitle = !options || !options.excludeTitle;
         let left = Infinity;
         let right = -Infinity;
@@ -429,7 +429,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
             // The label itself is rotated, but not translated, the group that
             // contains it is. So to capture the group transform in the label bbox
             // calculation we combine the transform matrices of the label and the group.
-            // Depending on the timing of the `axis.getBBox()` method call, we may
+            // Depending on the timing of the `axis.computeBBox()` method call, we may
             // not have the group's and the label's transform matrices updated yet (because
             // the transform matrix is not recalculated whenever a node's transform attributes
             // change, instead it's marked for recalculation on the next frame by setting
@@ -441,9 +441,11 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
                 const group = label.parent!;
                 group.computeTransformMatrix();
                 matrix.preMultiplySelf(group.matrix);
-                const labelBBox = label.getBBox();
+                const labelBBox = label.computeBBox();
+
                 if (labelBBox) {
                     const bbox = matrix.transformBBox(labelBBox);
+
                     left = Math.min(left, bbox.x);
                     right = Math.max(right, bbox.x + bbox.width);
                     top = Math.min(top, bbox.y);

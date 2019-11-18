@@ -444,10 +444,10 @@ export abstract class Node { // Don't confuse with `window.Node`.
         }
     }
 
-    getBBox(): BBox | undefined { return; }
+    computeBBox(): BBox | undefined { return; }
 
-    getBBoxCenter(): [number, number] {
-        const bbox = this.getBBox && this.getBBox();
+    computeBBoxCenter(): [number, number] {
+        const bbox = this.computeBBox && this.computeBBox();
         if (bbox) {
             return [
                 bbox.x + bbox.width * 0.5,
@@ -465,7 +465,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         //       groups. We shouldn't even need `scale(1, -1)` (invert vertically), since this
         //       can be done using D3-like scales already by inverting the output range.
         //       So for now, just assume that centers of scaling and rotation are at the origin.
-        // const [bbcx, bbcy] = this.getBBoxCenter();
+        // const [bbcx, bbcy] = this.computeBBoxCenter();
         const [bbcx, bbcy] = [0, 0];
 
         const sx = this.scalingX;

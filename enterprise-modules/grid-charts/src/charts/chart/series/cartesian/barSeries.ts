@@ -5,7 +5,7 @@ import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
 import palette from "../../palettes";
-import { HighlightStyle, Series, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "../series";
+import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as BarTooltipRendererParams } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { sumPositiveValues } from "../../../util/array";

@@ -1,7 +1,6 @@
-import { CartesianChart } from "../../../cartesianChart";
 import { Selection } from "../../../../scene/selection";
 import { Group } from "../../../../scene/group";
-import { Series, SeriesNodeDatum, TooltipRendererParams } from "../../series";
+import { SeriesNodeDatum, TooltipRendererParams } from "../../series";
 import { numericExtent } from "../../../../util/array";
 import { toFixed } from "../../../../util/number";
 import { LegendDatum } from "../../../legend";
