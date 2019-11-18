@@ -69,7 +69,7 @@ export class GroupedCategoryChart extends CartesianChart {
         const { axes } = this;
 
         axes.forEach(axis => {
-            const { direction, position, boundSeries } = axis;
+            const { direction, boundSeries } = axis;
             const domains: any[][] = [];
             let isNumericX: boolean | undefined = undefined;
             boundSeries.filter(s => s.visible).forEach(series => {
@@ -90,36 +90,47 @@ export class GroupedCategoryChart extends CartesianChart {
             const domain = new Array<any>().concat(...domains);
             axis.domain = numericExtent(domain) || domain;
 
-            const axisBBox = axis.computeBBox();
-            const axisThickness = Math.floor(axis.computeBBox().width);
-            switch (position) {
-                case ChartAxisPosition.Left:
-                    if (this.axisAutoPadding.left !== axisThickness) {
-                        this.axisAutoPadding.left = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Right:
-                    if (this.axisAutoPadding.right !== axisThickness) {
-                        this.axisAutoPadding.right = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Bottom:
-                    const hhh = axis.computeBBox().height;
-                    if (this.axisAutoPadding.bottom !== hhh) {
-                        this.axisAutoPadding.bottom = hhh;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Top:
-                    if (this.axisAutoPadding.top !== axisThickness) {
-                        this.axisAutoPadding.top = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-            }
+            this.computeAxisAutopadding(axis);
             axis.update();
         });
+    }
+
+    computeAxisAutopadding(axis: ChartAxis) {
+        const { position } = axis;
+        const axisBBox = axis.computeBBox();
+
+        // The bbox may not be valid if the axis has had zero updates so far.
+        if (!axisBBox.isValid()) {
+            return;
+        }
+
+        const axisThickness = Math.floor(axisBBox.width);
+
+        switch (position) {
+            case ChartAxisPosition.Left:
+                if (this.axisAutoPadding.left !== axisThickness) {
+                    this.axisAutoPadding.left = axisThickness;
+                    this.layoutPending = true;
+                }
+                break;
+            case ChartAxisPosition.Right:
+                if (this.axisAutoPadding.right !== axisThickness) {
+                    this.axisAutoPadding.right = axisThickness;
+                    this.layoutPending = true;
+                }
+                break;
+            case ChartAxisPosition.Bottom:
+                if (this.axisAutoPadding.bottom !== axisThickness) {
+                    this.axisAutoPadding.bottom = axisThickness;
+                    this.layoutPending = true;
+                }
+                break;
+            case ChartAxisPosition.Top:
+                if (this.axisAutoPadding.top !== axisThickness) {
+                    this.axisAutoPadding.top = axisThickness;
+                    this.layoutPending = true;
+                }
+                break;
+        }
     }
 }

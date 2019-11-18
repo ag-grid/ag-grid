@@ -359,10 +359,9 @@ export class BarSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, xAxis, yAxis } = this;
-        this.group.visible = visible;
+        this.group.visible = this.visible;
 
-        if (!visible || !xAxis || !yAxis) {
+        if (!this.visible || !this.xAxis || !this.yAxis || !this.xData.length || !this.yData.length) {
             return;
         }
 

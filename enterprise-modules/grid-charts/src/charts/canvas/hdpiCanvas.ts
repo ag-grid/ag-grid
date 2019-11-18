@@ -303,11 +303,11 @@ export class HdpiCanvas {
         svgText.style.font = font;
         svgText.textContent = text;
 
-        // `computeBBox` returns an instance of `SVGRect` with the same `width` and `height`
+        // `getBBox` returns an instance of `SVGRect` with the same `width` and `height`
         // measurements as `DOMRect` instance returned by the `getBoundingClientRect`.
         // But the `SVGRect` instance has half the properties of the `DOMRect`,
-        // so we use the `computeBBox` method.
-        const bbox = svgText.computeBBox();
+        // so we use the `getBBox` method.
+        const bbox = svgText.getBBox();
         const size: Size = {
             width: bbox.width,
             height: bbox.height

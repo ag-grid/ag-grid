@@ -13,11 +13,17 @@ export class BBox {
     width: number;
     height: number;
 
+    private static noParams = {};
+
     constructor(x: number, y: number, width: number, height: number) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+
+    isValid(): boolean {
+        return isFinite(this.x) && isFinite(this.y) && isFinite(this.width) && isFinite(this.height);
     }
 
     dilate(value: number) {
@@ -31,8 +37,6 @@ export class BBox {
         return x >= this.x && x <= (this.x + this.width)
             && y >= this.y && y <= (this.y + this.height);
     }
-
-    private static noParams = {};
 
     render(ctx: CanvasRenderingContext2D, params: {
         resetTransform?: boolean,

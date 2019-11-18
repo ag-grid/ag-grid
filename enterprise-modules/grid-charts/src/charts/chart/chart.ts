@@ -145,7 +145,6 @@ export abstract class Chart extends Observable {
             }
             this.initSeries(series);
             this.seriesChanged = true;
-            this.dataPending = true;
 
             return true;
         }
@@ -192,7 +191,6 @@ export abstract class Chart extends Observable {
             }
 
             this.seriesChanged = true;
-            this.dataPending = true;
         }
 
         return false;
@@ -206,7 +204,6 @@ export abstract class Chart extends Observable {
             this.freeSeries(series);
             this.seriesRoot.removeChild(series.group);
             this.seriesChanged = true;
-            this.dataPending = true;
             return true;
         }
 
@@ -220,7 +217,6 @@ export abstract class Chart extends Observable {
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
         this.seriesChanged = true;
-        this.dataPending = true;
     }
 
     /**
@@ -240,7 +236,7 @@ export abstract class Chart extends Observable {
             axis.boundSeries = boundSeries;
         });
 
-        this.dataPending = true;
+        this.seriesChanged = false;
     }
 
     // Has to run before onSeriesChange
@@ -274,6 +270,8 @@ export abstract class Chart extends Observable {
                 }
             });
         });
+
+        this.axesChanged = false;
     }
 
     private findMatchingAxis(directionAxes: ChartAxis[], directionKeys?: string[]): ChartAxis | undefined {
@@ -302,8 +300,24 @@ export abstract class Chart extends Observable {
         return this._data;
     }
 
-    protected axesChanged = false;
-    protected seriesChanged = false;
+    protected _axesChanged = false;
+    protected set axesChanged(value: boolean) {
+        this._axesChanged = value;
+    }
+    protected get axesChanged(): boolean {
+        return this._axesChanged;
+    }
+
+    protected _seriesChanged = false;
+    protected set seriesChanged(value: boolean) {
+        this._seriesChanged = value;
+        if (value) {
+            this.dataPending = true;
+        }
+    }
+    protected get seriesChanged(): boolean {
+        return this._seriesChanged;
+    }
 
     protected layoutCallbackId: number = 0;
     set layoutPending(value: boolean) {
@@ -330,12 +344,11 @@ export abstract class Chart extends Observable {
         this.background.height = this.height;
 
         if (this.axesChanged) {
-            this.axesChanged = false;
+
             this.onAxesChange();
         }
 
         if (this.seriesChanged) {
-            this.seriesChanged = false;
             this.onSeriesChange();
         }
 
@@ -353,16 +366,14 @@ export abstract class Chart extends Observable {
             // We don't want to render before the data is processed and then again after,
             // so we cancel the auto-scheduled render, if any.
             this.scene.cancelRender();
-            this.dataCallbackId = window.setTimeout(this._processData, 0); // run on next tick
+            this.dataCallbackId = window.setTimeout(() => {
+                this.dataPending = false;
+                this.processData();
+            }, 0);
         }
     }
     get dataPending(): boolean {
         return !!this.dataCallbackId;
-    }
-
-    private readonly _processData = () => {
-        this.dataCallbackId = 0;
-        this.processData();
     }
 
     processData(): void {

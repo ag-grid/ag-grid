@@ -438,9 +438,6 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
             if (index > 0 || includeTitle) { // first node is the root (title)
                 label.computeTransformMatrix();
                 const matrix = Matrix.flyweight(label.matrix);
-                const group = label.parent!;
-                group.computeTransformMatrix();
-                matrix.preMultiplySelf(group.matrix);
                 const labelBBox = label.computeBBox();
 
                 if (labelBBox) {
