@@ -145,7 +145,6 @@ export abstract class Chart extends Observable {
                 allSeries.push(series);
                 seriesRoot.append(series.group);
             }
-
             this.initSeries(series);
             this.seriesChanged = true;
 
@@ -156,10 +155,6 @@ export abstract class Chart extends Observable {
     }
 
     private initSeries(series: Series) {
-        const directionToAxesMap = this.getDirectionsToAxesMap();
-
-        this.assignAxesToSeries(series, directionToAxesMap);
-
         series.addEventListener('layoutChange', this.scheduleLayout);
         series.addEventListener('dataChange', this.scheduleData);
         series.addEventListener('legendChange', this.updateLegend);
@@ -184,6 +179,7 @@ export abstract class Chart extends Observable {
                 } else {
                     seriesRoot.append(series.group);
                 }
+                this.initSeries(series);
 
                 allSeries.splice(afterIndex + 1, 0, series);
             } else {
@@ -192,14 +188,12 @@ export abstract class Chart extends Observable {
                 } else {
                     seriesRoot.append(series.group);
                 }
+                this.initSeries(series);
 
                 allSeries.unshift(series);
             }
 
-            this.initSeries(series);
             this.seriesChanged = true;
-
-            return true;
         }
 
         return false;
@@ -234,50 +228,53 @@ export abstract class Chart extends Observable {
     protected onSeriesChange() { // inside Axis
         this.axes.forEach(axis => {
             const axisName = axis.direction + 'Axis';
+            const boundSeries: Series[] = [];
 
-            axis.boundSeries = this.series.filter(s => (s as any)[axisName] === axis);
+            this.series.forEach(series => {
+                if ((series as any)[axisName] === axis) {
+                    boundSeries.push(series);
+                }
+            });
+
+            axis.boundSeries = boundSeries;
         });
 
         this.seriesChanged = false;
     }
 
     // Has to run before onSeriesChange
-    protected onAxesChange() { // inside Series
-        const directionToAxesMap = this.getDirectionsToAxesMap();
+    protected onAxesChange(force: boolean = false) { // inside Series
+        const directionToKeysMap: { [key in ChartAxisDirection]?: string[] } = {};
+        const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
+        const { axes } = this;
 
-        this.series.forEach(series => this.assignAxesToSeries(series, directionToAxesMap));
+        this.series.forEach(series => {
+            const directions = series.directions;
+            directions.forEach(direction => {
+                directionToKeysMap[direction] = series.getKeys(direction);
+            });
 
-        this.axesChanged = false;
-    }
+            axes.forEach(axis => {
+                const direction = axis.direction;
+                const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+                directionAxes.push(axis);
+            });
 
-    private assignAxesToSeries(series: Series, directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] }) {
-        series.directions.forEach(direction => {
-            const axisName = direction + 'Axis';
-
-            if (!(series as any)[axisName]) {
-                const directionAxes = directionToAxesMap[direction];
-
-                if (directionAxes) {
-                    const axis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
-
-                    if (axis) {
-                        (series as any)[axisName] = axis;
+            directions.forEach(direction => {
+                const axisName = direction + 'Axis';
+                if (!(series as any)[axisName] || force) {
+                    const directionAxes = directionToAxesMap[direction];
+                    if (directionAxes) {
+                        const axis = this.findMatchingAxis(directionAxes, directionToKeysMap[direction]);
+                        if (axis) {
+                            (series as any)[axisName] = axis;
+                        }
                     }
                 }
-            }
-        });
-    }
-
-    private getDirectionsToAxesMap(): { [key in ChartAxisDirection]?: ChartAxis[] } {
-        const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
-
-        this.axes.forEach(axis => {
-            const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
-            directionAxes.push(axis);
+            });
         });
 
-        return directionToAxesMap;
+        this.axesChanged = false;
     }
 
     private findMatchingAxis(directionAxes: ChartAxis[], directionKeys?: string[]): ChartAxis | undefined {
@@ -289,7 +286,7 @@ export abstract class Chart extends Observable {
                 return axis;
             } else if (directionKeys) {
                 for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
+                    if (axisKeys.indexOf(directionKeys[j]) >= 0 ) {
                         return axis;
                     }
                 }
@@ -350,6 +347,7 @@ export abstract class Chart extends Observable {
         this.background.height = this.height;
 
         if (this.axesChanged) {
+
             this.onAxesChange();
         }
 
@@ -413,9 +411,7 @@ export abstract class Chart extends Observable {
             title.node.x = this.width / 2;
             title.node.y = paddingTop;
             titleVisible = true;
-
             const titleBBox = title.node.computeBBox(); // make sure to set node's x/y, then computeBBox
-
             if (titleBBox) {
                 paddingTop = titleBBox.y + titleBBox.height;
             }
@@ -424,9 +420,7 @@ export abstract class Chart extends Observable {
                 subtitle.node.x = this.width / 2;
                 subtitle.node.y = paddingTop + spacing;
                 subtitleVisible = true;
-
                 const subtitleBBox = subtitle.node.computeBBox();
-
                 if (subtitleBBox) {
                     paddingTop = subtitleBBox.y + subtitleBBox.height;
                 }
