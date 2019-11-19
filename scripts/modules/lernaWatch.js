@@ -110,6 +110,10 @@ const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
 };
 
 const spawnCssWatcher = async ({ paths, buildChains }) => {
+    if (process.env.AG_NO_CSS) {
+        return;
+    }
+
     console.log(`Watching the following css paths:\n-> ${paths.join('\n-> ')}`);
 
     // Initialize the watcher
