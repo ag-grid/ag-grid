@@ -384,17 +384,22 @@ export class ChartDataModel extends BeanStub {
 
         this.dimensionColState.unshift(defaultCategory);
 
+        const valueColumnsFromRange = this.valueCellRange.columns.slice();
+
         valueCols.forEach(column => {
+            if (_.includes(this.valueCellRange.columns, column)) {
+                // ensure that columns included in the specified cell range are added in the order they were specified
+                column = valueColumnsFromRange.shift();
+            }
+
             this.valueColState.push({
                 column,
                 colId: column.getColId(),
                 displayName: this.getColDisplayName(column),
                 selected: allCols.has(column),
-                order: this.valueCellRange.columns.indexOf(column)
+                order: order++
             });
         });
-
-        this.reorderColState();
     }
 
     private updateColumnState(updatedCol: ColState) {
