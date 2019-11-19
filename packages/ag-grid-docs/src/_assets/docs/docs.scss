@@ -314,7 +314,7 @@ body > div {
 
             @media (min-width: 1920px) {
                 display: block;
-                left: calc(50% + #{$max-width / 2});
+                left: calc(50% + #{$max-width / 2 - 10});
                 max-width: unset;
                 padding-left: 3rem;
                 position: absolute;
