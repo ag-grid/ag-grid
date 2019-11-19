@@ -2,6 +2,7 @@
 /* CSS Document */
 
 #documentation {
+	position: relative;
     -webkit-font-smoothing: antialiased;
 }
 

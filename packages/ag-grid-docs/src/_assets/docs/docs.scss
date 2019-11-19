@@ -317,7 +317,7 @@ body > div {
                 left: calc(50% + #{$max-width / 2});
                 max-width: unset;
                 padding-left: 3rem;
-                position: fixed;
+                position: absolute;
                 top: auto;
                 width: calc((100vw - #{$max-width}) / 2);
             }
