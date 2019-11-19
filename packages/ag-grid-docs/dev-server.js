@@ -302,18 +302,7 @@ function buildModules() {
     });
 }
 
-function watchModulesBeta() {
-    console.log("Watching modules [BETA]...");
-    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
-    const tscBuild = cp.spawn(tsc, ["--build", "--preserveWatchOutput", "--watch"], {
-        stdio: 'inherit',
-        cwd: WINDOWS ? '..\\..\\' : '../../'
-    });
-
-    process.on('exit', () => {
-        tscBuild.kill();
-    });
-
+function watchCssModulesBeta() {
     console.log("Watching CSS only...");
     const cssScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
     const node = 'node';
@@ -379,22 +368,33 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
     buildModulesBeta();
-    // buildModules();
+
     if(beta) {
-        watchModulesBeta();
+        watchCssModulesBeta();
+
+        // serve community, enterprise and react
+
+        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist');
+
+        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist');
+
     } else {
         watchModules(buildSourceModuleOnly);
+
+        // serve community, enterprise and react
+
+        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist');
+
+        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist');
     }
-
-    // serve community, enterprise and react
-
-    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-    addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist');
-
-    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist');
 
     // for the actual site - php, css etc
     addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
