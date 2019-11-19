@@ -220,6 +220,7 @@ export interface ScatterSeriesOptions extends SeriesOptions {
     highlightStyle?: HighlightOptions;
     marker?: ScatterMarkerOptions;
     tooltip?: TooltipOptions<ScatterTooltipRendererParams>;
+    paired: boolean;
 }
 
 export interface ScatterMarkerOptions extends MarkerOptions {

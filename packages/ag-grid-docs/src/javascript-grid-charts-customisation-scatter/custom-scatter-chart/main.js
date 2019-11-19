@@ -1,12 +1,9 @@
 var columnDefs = [
     { field: "country", width: 150, chartDataType: 'category' },
+    { field: "total", chartDataType: 'series' },
     { field: "gold", chartDataType: 'series' },
     { field: "silver", chartDataType: 'series' },
     { field: "bronze", chartDataType: 'series' },
-    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
@@ -17,12 +14,16 @@ function createRowData() {
     ];
 
     return countries.map(function(country, index) {
-        return {
+        var datum = {
             country: country,
             gold: Math.floor(((index + 1 / 7) * 333) % 100),
             silver: Math.floor(((index + 1 / 3) * 555) % 100),
             bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         };
+
+        datum.total = datum.gold + datum.silver + datum.bronze;
+
+        return datum;
     });
 }
 
@@ -137,6 +138,8 @@ function processChartOptions(params) {
             '<b>' + params.yName.toUpperCase() + ':</b> ' + y;
     };
 
+    seriesDefaults.paired = true;
+
     return options;
 }
 
@@ -144,7 +147,7 @@ function onFirstDataRendered(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
-        columns: ['country', 'gold', 'silver', 'bronze']
+        columns: ['country', 'total', 'gold', 'silver', 'bronze']
     };
 
     var createRangeChartParams = {

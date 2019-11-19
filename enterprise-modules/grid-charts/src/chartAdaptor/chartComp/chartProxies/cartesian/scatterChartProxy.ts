@@ -1,10 +1,16 @@
 import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateChartParams, FieldDefinition } from "../chartProxy";
 import { ScatterSeries } from "../../../../charts/chart/series/cartesian/scatterSeries";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { SeriesOptions } from "../../../../charts/chartOptions";
+
+interface SeriesDefinition {
+    xField: FieldDefinition;
+    yField: FieldDefinition;
+    sizeField?: FieldDefinition;
+}
 
 export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -22,21 +28,21 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return;
         }
 
-        const isBubbleChart = this.chartType === ChartType.Bubble;
         const { fields } = params;
-        const yFields = fields.slice(1, fields.length).filter((_, i) => !isBubbleChart || i % 2 === 0);
-        const fieldIds = yFields.map(f => f.colId);
+        const seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
         const defaultCategorySelected = params.category.id === ChartDataModel.DEFAULT_CATEGORY;
         const { fills, strokes } = this.getPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
-        const xFieldDefinition = fields[0];
         const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
-            const id = series.yKey;
+            const matchingIndex = _.findIndex(seriesDefinitions, s =>
+                s.xField.colId === series.xKey &&
+                s.yField.colId === series.yKey &&
+                ((!s.sizeField && !series.sizeKey) || (s.sizeField && s.sizeField.colId === series.sizeKey)));
 
-            if (series.xKey === xFieldDefinition.colId && fieldIds.indexOf(id) === i) {
-                map.set(id, series);
+            if (matchingIndex === i) {
+                map.set(series.yKey, series);
             } else {
                 chart.removeSeries(series);
             }
@@ -46,11 +52,15 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         let previousSeries: ScatterSeries | undefined = undefined;
 
-        yFields.forEach((yFieldDefinition, index) => {
-            const existingSeries = existingSeriesById.get(yFieldDefinition.colId);
+        seriesDefinitions.forEach((seriesDefinition, index) => {
+            const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
             const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
 
-            if (!series) { return; }
+            if (!series) {
+                return;
+            }
+
+            const { xField: xFieldDefinition, yField: yFieldDefinition, sizeField: sizeFieldDefinition } = seriesDefinition;
 
             series.title = `${xFieldDefinition.displayName} vs ${yFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;
@@ -61,20 +71,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.marker.fill = fills[index % fills.length];
             series.marker.stroke = strokes[index % strokes.length];
 
-            if (isBubbleChart) {
-                const radiusFieldDefinition = fields[index * 2 + 2];
-
-                if (radiusFieldDefinition) {
-                    series.sizeKey = radiusFieldDefinition.colId;
-                    series.sizeName = radiusFieldDefinition.displayName;
-                } else {
-                    // not enough information to render this series, so ensure it is removed
-                    if (existingSeries) {
-                        chart.removeSeries(series);
-                    }
-
-                    return;
-                }
+            if (sizeFieldDefinition) {
+                series.sizeKey = sizeFieldDefinition.colId;
+                series.sizeName = sizeFieldDefinition.displayName;
             } else {
                 series.sizeKey = series.sizeName = undefined;
             }
@@ -124,10 +123,48 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             tooltip: {
                 enabled: true,
             },
+            paired: false,
         };
 
         options.legend.item.marker.type = 'square';
 
         return options;
+    }
+
+    private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): SeriesDefinition[] {
+        if (fields.length < 2) {
+            return [];
+        }
+
+        const isBubbleChart = this.chartType === ChartType.Bubble;
+
+        if (paired) {
+            if (isBubbleChart) {
+                return fields.map((xField, i) => i % 3 === 0 ? ({
+                    xField,
+                    yField: fields[i + 1],
+                    sizeField: fields[i + 2],
+                }) : null).filter(x => x && x.yField && x.sizeField);
+            } else {
+                return fields.map((xField, i) => i % 2 === 0 ? ({
+                    xField,
+                    yField: fields[i + 1],
+                }) : null).filter(x => x && x.yField);
+            }
+        } else {
+            const xField = fields[0];
+
+            if (isBubbleChart) {
+                return fields
+                    .map((yField, i) => i % 2 === 1 ? ({
+                        xField,
+                        yField,
+                        sizeField: fields[i + 1],
+                    }) : null)
+                    .filter(x => x && x.sizeField);
+            } else {
+                return fields.filter((_, i) => i > 0).map(yField => ({ xField, yField }));
+            }
+        }
     }
 }

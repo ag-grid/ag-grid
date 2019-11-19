@@ -180,7 +180,13 @@ export class ChartDataPanel extends Component {
         }
 
         const isBubble = this.chartType === ChartType.Bubble;
-        let activeSeriesCount = 0;
+        const isInPairedMode = this.isInPairedMode();
+        let selectedValuesCount = 0;
+
+        const indexToAxisLabel = new Map<number, string>();
+        indexToAxisLabel.set(0, 'X');
+        indexToAxisLabel.set(1, 'Y');
+        indexToAxisLabel.set(2, 'size');
 
         return (col: ColState): string => {
             const escapedLabel = _.escape(col.displayName)!;
@@ -189,17 +195,19 @@ export class ChartDataPanel extends Component {
                 return escapedLabel;
             }
 
-            activeSeriesCount++;
-
             let axisLabel;
 
-            if (activeSeriesCount === 1) {
-                axisLabel = 'X';
-            } else if (isBubble) {
-                axisLabel = (activeSeriesCount - 1) % 2 === 1 ? 'Y' : 'size';
+            if (isInPairedMode) {
+                axisLabel = indexToAxisLabel.get(selectedValuesCount % (isBubble ? 3 : 2));
             } else {
-                axisLabel = 'Y';
+                if (selectedValuesCount === 0) {
+                    axisLabel = 'X';
+                } else {
+                    axisLabel = isBubble && selectedValuesCount % 2 === 0 ? 'size' : 'Y';
+                }
             }
+
+            selectedValuesCount++;
 
             return `${escapedLabel} (${axisLabel})`;
         };
@@ -211,6 +219,10 @@ export class ChartDataPanel extends Component {
 
     private getSeriesGroupTitle() {
         return this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
+    }
+
+    private isInPairedMode() {
+        return this.chartController.isActiveXYChart() && this.chartController.getChartProxy().getSeriesOption('paired');
     }
 
     private clearComponents() {
