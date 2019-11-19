@@ -122,7 +122,6 @@ export class Grid {
             return;
         }
 
-        console.log("yoyoyoto");
         const debug = !!gridOptions.debug;
 
         this.gridOptions = gridOptions;

@@ -378,12 +378,11 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
 
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
+    buildModulesBeta();
+    // buildModules();
     if(beta) {
-        console.log("BUILD AND WATCHING IN BETA MODE");
-        buildModulesBeta();
         watchModulesBeta();
     } else {
-        buildModules();
         watchModules(buildSourceModuleOnly);
     }
 
