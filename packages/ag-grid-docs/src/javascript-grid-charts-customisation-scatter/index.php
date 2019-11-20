@@ -35,9 +35,10 @@ interface ScatterChartOptions {
         // Configures the tooltip for bars when they are hovered over or tapped
         tooltip: TooltipOptions;
 
-        // Whether the scatter plot should operate in paired mode (where columns alternate
-        // between being X and Y) or standard mode, where the first column is used for X
-        // and every other column is treated as Y
+        // Whether the scatter/bubble chart should operate in paired mode, where columns
+        // alternate between being X and Y (and size for bubble), or standard mode, where
+        // the first column is used for X and every other column is treated as Y
+        // (or alternates between Y and size for bubble)
         paired: boolean;
     };
 }

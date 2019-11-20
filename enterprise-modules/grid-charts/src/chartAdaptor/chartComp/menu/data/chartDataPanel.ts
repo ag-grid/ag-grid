@@ -14,7 +14,8 @@ import {
     DragAndDropService,
     DraggingEvent,
     VerticalDirection,
-    DropTarget
+    DropTarget,
+    AgToggleButton
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
@@ -42,8 +43,8 @@ export class ChartDataPanel extends Component {
 
     @PostConstruct
     public init() {
-        this.addPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.addPanels.bind(this));
+        this.updatePanels();
+        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
     }
 
     public destroy(): void {
@@ -51,7 +52,7 @@ export class ChartDataPanel extends Component {
         super.destroy();
     }
 
-    private addPanels() {
+    private updatePanels() {
         const currentChartType = this.chartType;
         const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
         const colIds = dimensionCols.map(c => c.colId).concat(valueCols.map(c => c.colId));
@@ -111,7 +112,7 @@ export class ChartDataPanel extends Component {
             comp.setInputName(inputName);
 
             this.addChangeListener(comp, col);
-            this.categoriesGroupComp!.addItem(comp);
+            this.categoriesGroupComp.addItem(comp);
             this.columnComps.set(col.colId, comp);
         });
 
@@ -126,10 +127,28 @@ export class ChartDataPanel extends Component {
             suppressOpenCloseIcons: false
         }));
 
+        if (this.chartController.isActiveXYChart()) {
+            const pairedModeToggle = this.seriesGroupComp.wireDependentBean(new AgToggleButton());
+            const chartProxy = this.chartController.getChartProxy();
+
+            pairedModeToggle
+                .setLabel(this.chartTranslator.translate('paired'))
+                .setLabelAlignment('left')
+                .setLabelWidth('flex')
+                .setInputWidth(40)
+                .setValue(chartProxy.getSeriesOption('paired') || false)
+                .onValueChange(newValue => {
+                    chartProxy.setSeriesOption('paired', newValue);
+                    this.chartController.updateForGridChange();
+                });
+
+            this.seriesGroupComp.addItem(pairedModeToggle);
+        }
+
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         columns.forEach(col => {
-            const comp = this.seriesGroupComp!.wireDependentBean(new AgCheckbox());
+            const comp = this.seriesGroupComp.wireDependentBean(new AgCheckbox());
             comp.addCssClass('ag-data-select-checkbox');
 
             const label = getSeriesLabel(col);
@@ -138,7 +157,7 @@ export class ChartDataPanel extends Component {
             comp.setValue(col.selected);
 
             this.addChangeListener(comp, col);
-            this.seriesGroupComp!.addItem(comp);
+            this.seriesGroupComp.addItem(comp);
             this.columnComps.set(col.colId, comp);
 
             this.addDragHandle(comp, col);
@@ -228,8 +247,6 @@ export class ChartDataPanel extends Component {
     private clearComponents() {
         _.clearElement(this.getGui());
 
-        this.columnComps.clear();
-
         if (this.categoriesGroupComp) {
             this.categoriesGroupComp.destroy();
             this.categoriesGroupComp = undefined;
@@ -239,6 +256,8 @@ export class ChartDataPanel extends Component {
             this.seriesGroupComp.destroy();
             this.seriesGroupComp = undefined;
         }
+
+        this.columnComps.clear();
     }
 
     private onDragging(draggingEvent: DraggingEvent): void {

@@ -1753,6 +1753,12 @@
             .ag-data-select-checkbox .ag-column-drag {
                 margin-left: $ag-grid-size;
             }
+
+            .ag-chart-data-wrapper {
+                .ag-toggle-button.ag-group-item {
+                    margin: $ag-grid-size * 1.2 0;
+                }
+            }
         }
 
         .ag-chart-format {

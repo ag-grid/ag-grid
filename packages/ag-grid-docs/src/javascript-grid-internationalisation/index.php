@@ -156,6 +156,7 @@ localeText = {
         categories: 'laCategories',
         series: 'laSeries',
         xyValues: 'laX Y Values',
+        paired: 'laPaired Mode'
         axis: 'laAxis',
         color: 'laColor',
         thickness: 'laThickness',

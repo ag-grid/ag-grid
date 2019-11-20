@@ -37,7 +37,7 @@
 
     .ag-row.ag-full-width-row {
       border-top: 1px solid $ag-color-border-secondary;
-      
+
       &.ag-row-hover {
           background: none;
       }
@@ -831,8 +831,15 @@
             margin-right: 2px;
         }
 
+        input.ag-native-toggle-button {
+            flex: none;
+            width: unset;
+            min-width: unset;
+            @include toggle-button;
+        }
+
         // Format tab
-        .ag-chart-format {
+        .ag-chart-format, .ag-chart-data {
             // the overflow hidden hides the halo effect - so we overwrite it here
             .ag-input-wrapper {
                 overflow: visible;
@@ -859,13 +866,6 @@
 
             input[type='range'] {
                 @extend %range;
-            }
-
-            input.ag-native-toggle-button {
-                flex: none;
-                width: unset;
-                min-width: unset;
-                @include toggle-button;
             }
         }
     }

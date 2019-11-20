@@ -14,6 +14,7 @@ export class ChartTranslator {
         categories: 'Categories',
         series: 'Series',
         xyValues: 'X Y Values',
+        paired: 'Paired Mode',
         axis: 'Axis',
         color: 'Color',
         thickness: 'Thickness',
@@ -82,7 +83,6 @@ export class ChartTranslator {
         bubbleTooltip: 'Bubble',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
-
     };
 
     public translate(toTranslate: string): string {

@@ -23,7 +23,7 @@ export class PieSeriesPanel extends Component {
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="seriesGroup">
-               <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
+                <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
                 <ag-slider ref="seriesStrokeWidthSlider"></ag-slider>
                 <ag-slider ref="seriesLineOpacitySlider"></ag-slider>
                 <ag-slider ref="seriesFillOpacitySlider"></ag-slider>
