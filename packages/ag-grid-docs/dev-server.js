@@ -34,7 +34,25 @@ function addWebpackMiddleware(app, configFile, prefix) {
         prefix,
         webpackMiddleware(compiler, {
             noInfo: true,
-            logLevel: 'trace',
+            quiet: true,
+            stats: 'errors-only',
+            // stats: {
+            //     colors: true,
+            //     hash: false,
+            //     version: false,
+            //     timings: false,
+            //     assets: false,
+            //     chunks: false,
+            //     modules: false,
+            //     reasons: false,
+            //     children: false,
+            //     source: false,
+            //     errors: false,
+            //     errorDetails: false,
+            //     warnings: false,
+            //     publicPath: false
+            // },
+            // logLevel: 'trace',
             publicPath: '/'
         })
     );
@@ -114,7 +132,6 @@ function symlinkModules(communityModules, enterpriseModules) {
 
     communityModules
         .forEach(module => {
-            console.log(module.moduleDirName);
             lnk(module.rootDir, '_dev/@ag-grid-community', {
                 force: true,
                 type: linkType,
@@ -294,13 +311,6 @@ function watchModules(buildSourceModuleOnly) {
         lernaWatch.kill();
     });
 }
-function buildModules() {
-    console.log("Building all modules...");
-    const lernaScript = WINDOWS ? `node ..\\..\\scripts\\modules\\lernaWatch.js -b` : `node ../../scripts/modules/lernaWatch.js -b`;
-    require('child_process').execSync(lernaScript, {
-        stdio: 'inherit'
-    });
-}
 
 function watchCssModulesBeta() {
     console.log("Watching CSS only...");
@@ -315,7 +325,22 @@ function watchCssModulesBeta() {
         cssWatch.kill();
     });
 }
-function buildModulesBeta() {
+
+function watchModulesBeta() {
+    console.log("Watching TS files only...");
+    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
+    const node = 'node';
+    const tsWatch = cp.spawn(node, [tsc, "--build", "--preserveWatchOutput", '--watch'], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    process.on('exit', () => {
+        tsWatch.kill();
+    });
+}
+
+function buildCssBeta() {
     console.log("Building all modules [BETA]...");
     const lernaScript = WINDOWS ? `node .\\scripts\\modules\\lernaWatch.js --buildBeta` : `node ./scripts/modules/lernaWatch.js --buildBeta`;
     require('child_process').execSync(lernaScript, {
@@ -367,10 +392,11 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
 
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
-    buildModulesBeta();
+    buildCssBeta();
 
     if(beta) {
         watchCssModulesBeta();
+        watchModulesBeta();
 
         // serve community, enterprise and react
 

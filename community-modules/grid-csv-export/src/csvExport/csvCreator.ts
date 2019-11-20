@@ -41,6 +41,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     constructor(config: CsvSerializingParams) {
         super(config);
 
+        console.log("well hello");
         const {suppressQuotes, columnSeparator} = config;
 
         this.suppressQuotes = suppressQuotes;

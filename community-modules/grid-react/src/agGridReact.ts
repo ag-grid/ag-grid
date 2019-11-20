@@ -37,12 +37,16 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     destroyed = false;
 
+    doThing: any;
+
     protected eGridDiv!: HTMLElement;
 
     private static MAX_COMPONENT_CREATION_TIME: number = 1000; // a second should be more than enough to instantiate a component
 
     constructor(public props: any, public state: any) {
         super(props, state);
+
+        this.doThing = this.debounce(() => this.batchUpdate(), 0, true);
     }
 
     render() {
@@ -117,13 +121,15 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
      */
     mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
         this.portals = [...this.portals, portal];
-        this.batchUpdate(this.waitForInstance(reactComponent, resolve));
+        this.waitForInstance(reactComponent, resolve)
+        this.doThing();
     }
 
     batchUpdate(callback?: any) {
         if (this.hasPendingPortalUpdate) {
             return callback && callback();
         }
+        console.log("batchUpdate");
         setTimeout(() => {
             if (this.api) { // destroyed?
                 this.forceUpdate(() => {
@@ -135,10 +141,24 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         this.hasPendingPortalUpdate = true;
     }
 
+    debounce(func: any, wait: any, immediate: any) {
+        let timeout: any = null;
+        return () => {
+            const context = this;
+            const later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context);
+            };
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context);
+        };
+    };
 
     destroyPortal(portal: ReactPortal) {
         this.portals = this.portals.filter(curPortal => curPortal !== portal);
-        this.batchUpdate();
+        this.doThing();
     }
 
     private getStrategyTypeForProp(propKey: string) {

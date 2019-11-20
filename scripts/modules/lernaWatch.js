@@ -332,9 +332,7 @@ const build = async () => {
     await buildDependencyChain(packageName, cssBuildChain.buildChains, false,'build-css');
 };
 
-const buildBeta = async () => {
-    await execa("tsc", ["--build", "--preserveWatchOutput"], { stdio: "inherit" });
-
+const buildCssBeta = async () => {
     const buildChainInfo = await getBuildChainInfo();
     const cssBuildChain = extractCssBuildChain(buildChainInfo);
     await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains, false,'build-css');
@@ -343,6 +341,6 @@ const buildBeta = async () => {
 if (commandLineOptions.watch) watch(false);
 if (commandLineOptions.single) watch(true);
 if (commandLineOptions.build) build();
-if (commandLineOptions.buildBeta) buildBeta();
+if (commandLineOptions.buildBeta) buildCssBeta();
 if (commandLineOptions.watchBeta) watchBeta();
 
