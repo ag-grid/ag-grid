@@ -292,7 +292,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        const { id, title, visible, xKey, yKey, marker } = this;
+        const { id, title, visible, xKey, yKey, yName, marker } = this;
 
         if (this.data.length && xKey && yKey) {
             data.push({
@@ -300,7 +300,7 @@ export class ScatterSeries extends CartesianSeries {
                 itemId: undefined,
                 enabled: visible,
                 label: {
-                    text: title || yKey
+                    text: title || yName || yKey
                 },
                 marker: {
                     type: marker.type,

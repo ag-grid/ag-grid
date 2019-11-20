@@ -77,7 +77,7 @@ export class AreaSeries extends CartesianSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = ['#202020'];
+    private _strokes: string[] = palette.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
         this.scheduleData();
@@ -583,6 +583,7 @@ export class AreaSeries extends CartesianSeries {
                         text: yNames[index] || yKeys[index]
                     },
                     marker: {
+                        type: marker.type,
                         fill: this.getMarkerFill(index),
                         stroke: this.getMarkerStroke(index),
                         fillOpacity: markerEnabled && markerFillOpacity !== undefined ? markerFillOpacity : fillOpacity,

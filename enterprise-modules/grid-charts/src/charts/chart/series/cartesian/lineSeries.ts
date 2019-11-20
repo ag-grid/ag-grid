@@ -379,14 +379,15 @@ export class LineSeries extends CartesianSeries {
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xKey && this.yKey) {
-            const { marker } = this;
+        const { id, xKey, yKey, yName, title, visible, marker } = this;
+
+        if (this.data.length && xKey && yKey) {
             data.push({
-                id: this.id,
+                id: id,
                 itemId: undefined,
-                enabled: this.visible,
+                enabled: visible,
                 label: {
-                    text: this.title || this.yKey
+                    text: title || yName || yKey
                 },
                 marker: {
                     type: marker.type,

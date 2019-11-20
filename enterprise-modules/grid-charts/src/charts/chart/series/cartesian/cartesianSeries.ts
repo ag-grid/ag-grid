@@ -13,8 +13,8 @@ export class CartesianSeriesMarker extends SeriesMarker {
     formatter?: (params: CartesianSeriesMarkerFormatterParams) => {
         fill?: string,
         stroke?: string,
-        strokeWidth: number,
-        size: number
+        strokeWidth?: number,
+        size?: number
     };
 }
 
