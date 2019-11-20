@@ -25,36 +25,40 @@ if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 }
 
-function addWebpackMiddleware(app, configFile, prefix) {
+function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
     const compiler = realWebpack(webpackConfig);
+    const instance = webpackMiddleware(compiler, {
+        noInfo: true,
+        quiet: true,
+        stats: 'errors-only',
+        // stats: {
+        //     colors: true,
+        //     hash: false,
+        //     version: false,
+        //     timings: false,
+        //     assets: false,
+        //     chunks: false,
+        //     modules: false,
+        //     reasons: false,
+        //     children: false,
+        //     source: false,
+        //     errors: false,
+        //     errorDetails: false,
+        //     warnings: false,
+        //     publicPath: false
+        // },
+        // logLevel: 'trace',
+        publicPath: '/'
+    });
+    instance.waitUntilValid(() => {
+        console.log(`${bundleDescriptor} is now ready`);
+    });
 
     app.use(
         prefix,
-        webpackMiddleware(compiler, {
-            noInfo: true,
-            quiet: true,
-            stats: 'errors-only',
-            // stats: {
-            //     colors: true,
-            //     hash: false,
-            //     version: false,
-            //     timings: false,
-            //     assets: false,
-            //     chunks: false,
-            //     modules: false,
-            //     reasons: false,
-            //     children: false,
-            //     source: false,
-            //     errors: false,
-            //     errorDetails: false,
-            //     warnings: false,
-            //     publicPath: false
-            // },
-            // logLevel: 'trace',
-            publicPath: '/'
-        })
+        instance
     );
 }
 
@@ -127,8 +131,16 @@ function symlinkModules(communityModules, enterpriseModules) {
     }
 
     lnk('../../community-modules/grid-vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
-    lnk('../../community-modules/grid-angular/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'angular'});
-    lnk('../../community-modules/grid-react/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'react'});
+    lnk('../../community-modules/grid-angular/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'angular'
+    });
+    lnk('../../community-modules/grid-react/', '_dev/@ag-grid-community', {
+        force: true,
+        type: linkType,
+        rename: 'react'
+    });
 
     communityModules
         .forEach(module => {
@@ -252,7 +264,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         communityModules,
         [],
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",`,
-        () => {});
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
@@ -268,7 +281,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         cssFiles,
         [],
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
-        () => {});
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
@@ -276,7 +290,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         communityModules,
         [],
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
-        () => {});
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '/* START OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
@@ -292,7 +307,8 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
         cssFiles,
         [],
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
-        () => {});
+        () => {
+        });
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
@@ -394,7 +410,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
 
     buildCssBeta();
 
-    if(beta) {
+    if (beta) {
         watchCssModulesBeta();
         watchModulesBeta();
 
@@ -402,11 +418,11 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
 
         // for js examples that just require community functionality (landing pages, vanilla community examples etc)
         // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist');
+        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
         // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
         // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist');
+        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 
     } else {
         watchModules(buildSourceModuleOnly);
@@ -423,7 +439,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
     }
 
     // for the actual site - php, css etc
-    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist');
+    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');
 
     // add community & enterprise modules to express (for importing in the fw examples)
     symlinkModules(communityModules, enterpriseModules);
@@ -448,7 +464,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
     launchPhpCP(app);
 
     // Watch TS for errors. No actual transpiling happens here, just error reporting
-    if(!beta) {
+    if (!beta) {
         launchTSCCheck(communityModules, enterpriseModules);
     }
 
