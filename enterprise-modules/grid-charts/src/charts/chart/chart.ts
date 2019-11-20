@@ -147,6 +147,7 @@ export abstract class Chart extends Observable {
             }
             this.initSeries(series);
             this.seriesChanged = true;
+            this.axesChanged = true;
 
             return true;
         }
@@ -194,6 +195,7 @@ export abstract class Chart extends Observable {
             }
 
             this.seriesChanged = true;
+            this.axesChanged = true;
         }
 
         return false;
@@ -225,7 +227,7 @@ export abstract class Chart extends Observable {
     /**
      * Finds all the series that use any given axis.
      */
-    protected onSeriesChange() { // inside Axis
+    protected onSeriesChange() {
         this.axes.forEach(axis => {
             const axisName = axis.direction + 'Axis';
             const boundSeries: Series[] = [];
@@ -243,7 +245,7 @@ export abstract class Chart extends Observable {
     }
 
     // Has to run before onSeriesChange
-    protected onAxesChange(force: boolean = false) { // inside Series
+    protected onAxesChange(force: boolean = false) {
         const directionToKeysMap: { [key in ChartAxisDirection]?: string[] } = {};
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
         const { axes } = this;
@@ -346,15 +348,6 @@ export abstract class Chart extends Observable {
         this.background.width = this.width;
         this.background.height = this.height;
 
-        if (this.axesChanged) {
-
-            this.onAxesChange();
-        }
-
-        if (this.seriesChanged) {
-            this.onSeriesChange();
-        }
-
         this.performLayout();
         this.fireEvent({ type: 'layoutDone' });
     }
@@ -381,6 +374,14 @@ export abstract class Chart extends Observable {
 
     processData(): void {
         this.layoutPending = false;
+
+        if (this.axesChanged) {
+            this.onAxesChange();
+        }
+
+        if (this.seriesChanged) {
+            this.onSeriesChange();
+        }
 
         this.series.filter(s => s.visible).forEach(series => series.processData());
         this.updateLegend();

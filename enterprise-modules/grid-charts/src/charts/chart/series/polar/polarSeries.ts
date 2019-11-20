@@ -1,5 +1,6 @@
 import { Series } from "../series";
-import { ChartAxis, ChartAxisDirection } from "../../chartAxis";
+import { ChartAxisDirection } from "../../chartAxis";
+import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
 
 export abstract class PolarSeries extends Series {
     directionKeys = {
@@ -22,4 +23,18 @@ export abstract class PolarSeries extends Series {
      * and is not supposed to be set by the user.
      */
     radius: number = 0;
+}
+
+export class PolarSeriesMarker extends SeriesMarker {
+    formatter?: (params: PolarSeriesMarkerFormatterParams) => {
+        fill?: string,
+        stroke?: string,
+        strokeWidth: number,
+        size: number
+    };
+}
+
+export interface PolarSeriesMarkerFormatterParams extends SeriesMarkerFormatterParams {
+    angleKey: string;
+    radiusKey: string;
 }

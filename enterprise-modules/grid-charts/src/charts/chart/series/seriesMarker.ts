@@ -23,10 +23,23 @@ export class SeriesMarker extends Observable {
     @reactive(['change']) xOffset = 0;
     @reactive(['change']) yOffset = 0;
 
-    @reactive(['change', 'legendChange']) fill?: string;
-    @reactive(['change', 'legendChange']) stroke?: string;
+    @reactive(['change', 'legendChange']) fill?: string = 'red';
+    @reactive(['change', 'legendChange']) stroke?: string = '#202020';
 
-    @reactive(['change']) strokeWidth?: number;
-    @reactive(['change', 'legendChange']) fillOpacity = 1;
-    @reactive(['change', 'legendChange']) strokeOpacity = 1;
+    /**
+     * If the `strokeWidth` is not defined, the marker will use the stroke width of the series.
+     * If the series also doesn't have the `strokeWidth` config, the effective marker stroke width will be zero.
+     */
+    @reactive(['change']) strokeWidth?: number = 2;
+    @reactive(['change', 'legendChange']) fillOpacity?: number = 1;
+    @reactive(['change', 'legendChange']) strokeOpacity?: number = 1;
+}
+
+export interface SeriesMarkerFormatterParams {
+    datum: any;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
+    size: number;
+    highlighted: boolean;
 }

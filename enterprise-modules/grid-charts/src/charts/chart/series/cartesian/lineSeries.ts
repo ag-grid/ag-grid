@@ -10,8 +10,7 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
 import { Marker } from "../../marker/marker";
-import { SeriesMarker } from "../seriesMarker";
-import { CartesianSeries } from "./cartesianSeries";
+import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
@@ -36,9 +35,9 @@ export class LineSeries extends CartesianSeries {
 
     private lineNode = new Path();
 
-    private groupSelection: Selection<Group, Group, any, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
-    readonly marker = new SeriesMarker();
+    readonly marker = new CartesianSeriesMarker();
 
     constructor() {
         super();
@@ -172,7 +171,7 @@ export class LineSeries extends CartesianSeries {
         return this._fill;
     }
 
-    private _stroke: string = palette.strokes[0];
+    private _stroke: string = '#202020';
     set stroke(value: string) {
         if (this._stroke !== value) {
             this._stroke = value;
@@ -183,7 +182,7 @@ export class LineSeries extends CartesianSeries {
         return this._stroke;
     }
 
-    private _strokeWidth: number = 3;
+    private _strokeWidth: number = 2;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -197,9 +196,7 @@ export class LineSeries extends CartesianSeries {
     highlightStyle: {
         fill?: string,
         stroke?: string
-    } = {
-            fill: 'yellow'
-        };
+    } = { fill: 'yellow' };
 
     private highlightedNode?: Marker;
 
@@ -240,14 +237,15 @@ export class LineSeries extends CartesianSeries {
             yData,
             stroke,
             marker,
-            lineNode
+            lineNode,
+            strokeWidth
         } = this;
 
         const linePath = lineNode.path;
         const markerSize = marker.size;
         const markerFill = this.getMarkerFill();
         const markerStroke = this.getMarkerStroke();
-        const markerStrokeWidth = marker.strokeWidth || 1;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
         linePath.clear();
 
@@ -284,7 +282,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
-        const { marker } = this;
+        const { marker, xKey, yKey, highlightedNode } = this;
         const Marker = marker.type;
         let { groupSelection } = this;
 
@@ -302,21 +300,45 @@ export class LineSeries extends CartesianSeries {
         const enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Marker);
 
-        const highlightedNode = this.highlightedNode;
-        groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
+        const markerFormatter = marker.formatter;
 
+        groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
                 node.translationX = datum.x;
                 node.translationY = datum.y;
-                node.size = datum.size;
-                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 node.fillOpacity = marker.fillOpacity;
                 node.strokeOpacity = marker.strokeOpacity;
-                node.strokeWidth = datum.strokeWidth;
-                node.visible = marker.enabled && datum.size > 0;
+
+                const isHighlightedNode = node === highlightedNode;
+                const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
+                const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
+                const { strokeWidth, size } = datum;
+
+                if (markerFormatter) {
+                    const style = markerFormatter({
+                        datum: datum.seriesDatum,
+                        xKey,
+                        yKey,
+                        fill,
+                        stroke,
+                        strokeWidth,
+                        size,
+                        highlighted: isHighlightedNode
+                    });
+                    node.fill = style.fill;
+                    node.stroke = style.stroke;
+                    node.strokeWidth = style.strokeWidth;
+                    node.size = style.size;
+                } else {
+                    node.fill = fill;
+                    node.stroke = stroke;
+                    node.strokeWidth = strokeWidth;
+                    node.size = size;
+                }
+
+                node.visible = marker.enabled && node.size > 0;
             });
 
         this.groupSelection = groupSelection;

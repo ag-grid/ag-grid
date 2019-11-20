@@ -12,8 +12,7 @@ import { Path } from "../../../scene/shape/path";
 import palette from "../../palettes";
 import { numericExtent } from "../../../util/array";
 import { Marker } from "../../marker/marker";
-import { SeriesMarker } from "../seriesMarker";
-import { CartesianSeries } from "./cartesianSeries";
+import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 
 interface AreaSelectionDatum {
@@ -22,14 +21,15 @@ interface AreaSelectionDatum {
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    yKey: string;
-    yValue: number;
     x: number;
     y: number;
-    size: number;
     fill?: string;
     stroke?: string;
+    strokeWidth: number;
+    size: number;
     text?: string;
+    yKey: string;
+    yValue: number;
 }
 
 export { AreaTooltipRendererParams };
@@ -53,7 +53,7 @@ export class AreaSeries extends CartesianSeries {
      */
     private readonly yKeyEnabled = new Map<string, boolean>();
 
-    readonly marker = new SeriesMarker();
+    readonly marker = new CartesianSeriesMarker();
 
     constructor() {
         super();
@@ -77,7 +77,7 @@ export class AreaSeries extends CartesianSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = ['white'];
+    private _strokes: string[] = ['#202020'];
     set strokes(values: string[]) {
         this._strokes = values;
         this.scheduleData();
@@ -175,7 +175,7 @@ export class AreaSeries extends CartesianSeries {
         return this._normalizedTo;
     }
 
-    private _strokeWidth: number = 3;
+    private _strokeWidth: number = 2;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -331,19 +331,22 @@ export class AreaSeries extends CartesianSeries {
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
         const {
             yKeys,
+            yNames,
             data,
             xData,
             yData,
             marker,
+            strokeWidth,
+            xAxis: { scale: xScale }, yAxis: { scale: yScale }
         } = this;
 
-        const { xAxis: { scale: xScale }, yAxis: { scale: yScale } } = this;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
         const last = xData.length * 2 - 1;
-        const markerSize = this.marker.size;
+        const markerSize = marker.size;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
@@ -366,8 +369,9 @@ export class AreaSeries extends CartesianSeries {
                         y,
                         fill: this.getMarkerFill(j),
                         stroke: this.getMarkerStroke(j),
+                        strokeWidth: markerStrokeWidth,
                         size: markerSize,
-                        text: this.yNames[j]
+                        text: yNames[j]
                     });
                 }
 
@@ -468,14 +472,16 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
-        const { marker } = this;
+        const { marker, xKey } = this;
         const Marker = marker.type;
 
         if (!Marker) {
             return;
         }
 
-        const { yKeyEnabled, highlightedNode, highlightStyle: { fill, stroke } } = this;
+        const markerFormatter = marker.formatter;
+        const { yKeyEnabled, highlightedNode } = this;
+        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
 
         updateMarkers.exit.remove();
@@ -486,13 +492,38 @@ export class AreaSeries extends CartesianSeries {
         markerSelection.each((node, datum) => {
             node.translationX = datum.x;
             node.translationY = datum.y;
-            node.size = datum.size;
-            node.fill = node === highlightedNode && fill !== undefined ? fill : datum.fill;
-            node.stroke = node === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
+            node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
+
+            const isHighlightedNode = node === highlightedNode;
+            const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
+            const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
+            const { strokeWidth, size } = datum;
+
+            if (markerFormatter) {
+                const style = markerFormatter({
+                    datum: datum.seriesDatum,
+                    xKey,
+                    yKey: datum.yKey,
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    size,
+                    highlighted: isHighlightedNode
+                });
+                node.fill = style.fill;
+                node.stroke = style.stroke;
+                node.strokeWidth = style.strokeWidth;
+                node.size = style.size;
+            } else {
+                node.fill = fill;
+                node.stroke = stroke;
+                node.strokeWidth = strokeWidth;
+                node.size = size;
+            }
+
             node.strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
-            node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
         });
 
         this.markerSelection = markerSelection;
@@ -536,22 +567,26 @@ export class AreaSeries extends CartesianSeries {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xKey && this.yKeys.length) {
-            const { fills, strokes, id } = this;
+        const { id, xKey, yKeys, yNames, yKeyEnabled, marker, fillOpacity, strokeOpacity } = this;
 
-            this.yKeys.forEach((yKey, index) => {
+        if (this.data.length && xKey && yKeys.length) {
+            const markerFillOpacity = marker.fillOpacity;
+            const markerStrokeOpacity = marker.strokeOpacity;
+            const markerEnabled = marker.enabled;
+
+            yKeys.forEach((yKey, index) => {
                 data.push({
                     id,
                     itemId: yKey,
-                    enabled: this.yKeyEnabled.get(yKey) || false,
+                    enabled: yKeyEnabled.get(yKey) || false,
                     label: {
-                        text: this.yNames[index] || this.yKeys[index]
+                        text: yNames[index] || yKeys[index]
                     },
                     marker: {
                         fill: this.getMarkerFill(index),
                         stroke: this.getMarkerStroke(index),
-                        fillOpacity: this.fillOpacity,
-                        strokeOpacity: this.strokeOpacity
+                        fillOpacity: markerEnabled && markerFillOpacity !== undefined ? markerFillOpacity : fillOpacity,
+                        strokeOpacity: markerEnabled && markerStrokeOpacity !== undefined ? markerStrokeOpacity : strokeOpacity
                     }
                 });
             });
