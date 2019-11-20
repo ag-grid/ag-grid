@@ -123,7 +123,6 @@ export { TabbedItem } from "./layout/tabbedLayout";
 export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
-export { AnimationFrameService } from "./misc/animationFrameService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
