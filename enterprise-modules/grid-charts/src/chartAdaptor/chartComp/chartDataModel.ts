@@ -190,6 +190,8 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getAllColumnsFromRanges(): Set<Column> {
+
+
         let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
         if (this.dimensionCellRange) {
@@ -326,7 +328,7 @@ export class ChartDataModel extends BeanStub {
         return 'id-' + Math.random().toString(36).substr(2, 16);
     }
 
-    private updateData(): void {
+    public updateData(): void {
         const { startRow, endRow } = this.getRowIndexes();
         const selectedDimension = this.getSelectedDimension();
         const selectedValueCols = this.getSelectedValueCols();
@@ -353,6 +355,9 @@ export class ChartDataModel extends BeanStub {
     private resetColumnState(): void {
         const { dimensionCols, valueCols } = this.getAllChartColumns();
         const allCols = this.pivotChart ? _.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+
+        const isInitialising = this.valueColState.length < 1;
+
         this.dimensionColState = [];
         this.valueColState = [];
 
@@ -384,12 +389,12 @@ export class ChartDataModel extends BeanStub {
 
         this.dimensionColState.unshift(defaultCategory);
 
-        const valueColumnsFromRange = this.valueCellRange.columns.slice();
+        const valueColumnsFromReferenceRange = this.referenceCellRange.columns.filter(c => valueCols.has(c));
 
         valueCols.forEach(column => {
-            if (_.includes(this.valueCellRange.columns, column)) {
-                // ensure that columns included in the specified cell range are added in the order they were specified
-                column = valueColumnsFromRange.shift();
+            // first time the value cell range is set, preserve the column order from the supplied range
+            if (isInitialising && _.includes(this.referenceCellRange.columns, column)) {
+                column = valueColumnsFromReferenceRange.shift();
             }
 
             this.valueColState.push({

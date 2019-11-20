@@ -41,7 +41,7 @@ export class ChartController extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.updateForGridChange();
+        this.setChartRange();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
             if (event.id && event.id === this.model.getChartId()) {
@@ -52,30 +52,33 @@ export class ChartController extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForGridChange.bind(this));
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForDataChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
 
     public updateForGridChange() {
-        // don't update chart if chart is detached from grid data
         if (this.model.isDetached()) { return; }
 
         this.model.updateCellRanges();
-
         this.setChartRange();
+    }
+
+    public updateForDataChange() {
+        if (this.model.isDetached()) { return; }
+
+        this.model.updateData();
+        this.raiseChartUpdatedEvent();
     }
 
     public updateForRangeChange() {
         this.updateForGridChange();
-
         this.raiseChartRangeSelectionChangedEvent();
     }
 
     public updateForPanelChange(updatedCol: ColState): void {
         this.model.updateCellRanges(updatedCol);
-
         this.setChartRange();
-
         this.raiseChartRangeSelectionChangedEvent();
     }
 
