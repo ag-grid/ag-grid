@@ -216,7 +216,7 @@ var gridOptions = {
     // suppressDragLeaveHidesColumns: true,
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
-    // enableRtl: true,
+    enableRtl: /[?&]rtl=true/.test(window.location.search),
     enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,

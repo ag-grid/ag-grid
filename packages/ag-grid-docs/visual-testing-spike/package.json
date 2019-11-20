@@ -1,0 +1,17 @@
+{
+  "name": "vr-testing",
+  "private": true,
+  "scripts": {
+    "start": "ts-node start.ts",
+    "update": "webdriver-manager update"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^2.0.0",
+    "es6-promise-pool": "^2.5.0",
+    "glob": "^7.1.6",
+    "glob-promise": "^3.4.0",
+    "puppeteer": "^2.0.0",
+    "ts-node": "^8.5.2",
+    "typescript": "^3.7.2"
+  }
+}
