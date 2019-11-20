@@ -1,6 +1,5 @@
 import { Marker } from "../marker/marker";
 import { Observable, reactive } from "../../util/observable";
-import palette from "../palettes";
 
 export class SeriesMarker extends Observable {
     /**
@@ -23,8 +22,8 @@ export class SeriesMarker extends Observable {
     @reactive(['change']) xOffset = 0;
     @reactive(['change']) yOffset = 0;
 
-    @reactive(['change', 'legendChange']) fill?: string = 'red';
-    @reactive(['change', 'legendChange']) stroke?: string = '#202020';
+    @reactive(['change', 'legendChange']) fill?: string;
+    @reactive(['change', 'legendChange']) stroke?: string;
 
     /**
      * If the `strokeWidth` is not defined, the marker will use the stroke width of the series.

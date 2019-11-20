@@ -194,7 +194,3 @@ export class TimeScale extends ContinuousScale {
         return domain;
     }
 }
-
-export default function scaleTime() {
-    return new TimeScale();
-}

@@ -1,7 +1,7 @@
 import { LinearScale } from "../../scale/linearScale";
 import { ChartAxis } from "../chartAxis";
 
-export class NumberAxis extends ChartAxis { // Axis<LinearScale> {
+export class NumberAxis extends ChartAxis {
     constructor() {
         super(new LinearScale());
         (this.scale as LinearScale).clamp = true;

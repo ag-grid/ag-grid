@@ -1,10 +1,10 @@
-import { Axis } from "../../axis";
-import timeScale, { TimeScale } from "../../scale/timeScale";
+import { TimeScale } from "../../scale/timeScale";
+import { ChartAxis } from "../chartAxis";
 
-export class TimeAxis extends Axis<TimeScale> {
+export class TimeAxis extends ChartAxis {
     constructor() {
-        super(timeScale());
-        this.scale.clamp = true;
+        super(new TimeScale());
+        (this.scale as TimeScale).clamp = true;
     }
 
     private _nice: boolean = true;
