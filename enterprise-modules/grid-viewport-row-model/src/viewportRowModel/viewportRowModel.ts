@@ -264,7 +264,7 @@ export class ViewportRowModel implements IRowModel {
         return rowNode;
     }
 
-    public setRowCount(rowCount: number): void {
+    public setRowCount(rowCount: number, keepRenderedRows = false): void {
         if (rowCount !== this.rowCount) {
             this.rowCount = rowCount;
             const event: ModelUpdatedEvent = {
@@ -273,9 +273,10 @@ export class ViewportRowModel implements IRowModel {
                 columnApi: this.columnApi,
                 newData: false,
                 newPage: false,
-                keepRenderedRows: false,
+                keepRenderedRows: keepRenderedRows,
                 animate: false
             };
+    
             this.eventService.dispatchEvent(event);
         }
     }

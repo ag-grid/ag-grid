@@ -76,10 +76,12 @@ interface IViewportDatasource {
     // Passes methods to be used to tell viewPort of data loads / changes.
     init(params: IViewportDatasourceParams): void;
 
-    // Tell the viewport what the scroll position of the grid is, so it knows what rows it has to get
+    // Tell the viewport what the scroll position of the grid is, so it knows what 
+    // rows it has to get
     setViewportRange(firstRow: number, lastRow: number): void;
 
-    // Gets called once when viewPort is no longer used. If you need to do any cleanup, do it here.
+    // Gets called once when viewPort is no longer used. If you need to do any 
+    // cleanup, do it here.
     destroy?(): void;
 }
         
@@ -87,7 +89,8 @@ interface IViewportDatasourceParams {
 
     // datasource calls this method when the total row count changes. 
     // This in turn sets the height of the grids vertical scroll.
-    setRowCount: (count:number) =&gt; void;
+    // Set 'keepRenderedRows = true' to prevent unwanted row redraws.
+    setRowCount: (count:number, keepRenderedRows?: boolean) =&gt; void;
 
     // datasource calls this when new data arrives. The grid then updates 
     // the provided rows. The rows are mapped [rowIndex]=&gt;rowData].
@@ -138,6 +141,11 @@ interface IViewportDatasourceParams {
             the datasource asynchronously responds with <code>params.setRowData(map)</code>.
         </li>
     </ol>
+
+    <note>
+        It is possible to prevent unwanted row redraws when <code>setRowCount: (count:number, keepRenderedRows?: boolean) => void</code> is invoked
+        by supplying <code>keepRenderedRows = true</code>.
+    </note>
 
     <h2>Updating Data</h2>
 
