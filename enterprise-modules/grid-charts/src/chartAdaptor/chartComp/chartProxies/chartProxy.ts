@@ -14,7 +14,7 @@ import {
 } from "@ag-grid-community/core";
 import { Chart } from "../../../charts/chart/chart";
 import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
-import { BarSeries } from "../../../charts/chart/series/cartesian/barSeries";
+import { ColumnSeries as BarSeries } from "../../../charts/chart/series/cartesian/columnSeries";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { AreaSeries } from "../../../charts/chart/series/cartesian/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/polar/pieSeries";

@@ -1,11 +1,12 @@
-import { BarTooltipRendererParams } from "./chart/series/cartesian/barSeries";
+import { ColumnTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
+import { BarTooltipRendererParams } from "@ag-grid-community/core";
 
 export {
-    BarTooltipRendererParams,
+    ColumnTooltipRendererParams,
     LineTooltipRendererParams,
     AreaTooltipRendererParams,
     ScatterTooltipRendererParams,

@@ -1,6 +1,6 @@
 import { ChartType, _, BarSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { BarSeries } from "../../../../charts/chart/series/cartesian/barSeries";
+import { ColumnSeries as BarSeries } from "../../../../charts/chart/series/cartesian/columnSeries";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { BarSeriesOptions as InternalBarSeriesOptions } from "../../../../charts/chartOptions";
