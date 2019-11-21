@@ -60,19 +60,21 @@ function processChartOptions(params) {
     }
 
     options.title = {
+        enabled: true,
         text: 'Precious Metals Production',
         fontStyle: 'italic',
         fontWeight: '600',
         fontSize: 18,
         fontFamily: 'Impact, sans-serif',
-        color: '#414182'
+        color: '#414182',
     };
 
     options.subtitle = {
+        enabled: true,
         text: 'by country',
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
-        color: 'rgb(100, 100, 100)'
+        color: 'rgb(100, 100, 100)',
     };
 
     var legend = options.legend;

@@ -43,6 +43,7 @@ import { Square } from "./chart/marker/square";
 import { Triangle } from "./chart/marker/triangle";
 import { Marker } from "./chart/marker/marker";
 import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
+import { convertToMap } from "./util/map";
 
 export class ChartBuilder {
     private static createCartesianChart(parent: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
@@ -536,15 +537,17 @@ export class ChartBuilder {
         return series;
     }
 
+    private static markerTypes: Map<MarkerType, new () => Marker> = convertToMap([
+        ['circle', Circle],
+        ['cross', Cross],
+        ['diamond', Diamond],
+        ['plus', Plus],
+        ['square', Square],
+        ['triangle', Triangle]
+    ]);
+
     private static getMarkerFromType(type?: MarkerType): new () => Marker {
-        const markerType = (type === 'circle' && Circle)
-            || (type === 'cross' && Cross)
-            || (type === 'diamond' && Diamond)
-            || (type === 'plus' && Plus)
-            || (type === 'square' && Square)
-            || (type === 'triangle' && Triangle)
-            || Circle;
-        return markerType;
+        return this.markerTypes.get(type) || Circle;
     }
 
     static initLegend(legend: Legend, options: LegendOptions) {
