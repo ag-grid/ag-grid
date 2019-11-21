@@ -1,6 +1,6 @@
-import { Module } from "../interfaces/iModule";
-import { ModuleNames } from "./moduleNames";
-import { _ } from "../utils";
+import {Module} from "../interfaces/iModule";
+import {ModuleNames} from "./moduleNames";
+import {_} from "../utils";
 
 export class ModuleRegistry {
 
@@ -8,7 +8,14 @@ export class ModuleRegistry {
     private static modulesMap: { [name: string]: Module } = {};
 
     public static register(module: Module): void {
-        this.modulesMap[module.moduleName] = module;
+        ModuleRegistry.modulesMap[module.moduleName] = module;
+    }
+
+    public static registerModules(modules: Module[]): void {
+        if(!modules) {
+            return;
+        }
+        modules.forEach(ModuleRegistry.register);
     }
 
     public static assertRegistered(moduleName: ModuleNames, reason: string): boolean {
@@ -20,16 +27,18 @@ export class ModuleRegistry {
         const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
             + `You need to load the module with: import "${moduleName}"`;
 
-        _.doOnce(() => { console.warn(warningMessage); }, warningKey);
+        _.doOnce(() => {
+            console.warn(warningMessage);
+        }, warningKey);
 
         return false;
     }
 
     public static isRegistered(moduleName: ModuleNames): boolean {
-        return !!this.modulesMap[moduleName];
+        return !!ModuleRegistry.modulesMap[moduleName];
     }
 
     public static getRegisteredModules(): Module[] {
-        return _.values(this.modulesMap);
+        return _.values(ModuleRegistry.modulesMap);
     }
 }
