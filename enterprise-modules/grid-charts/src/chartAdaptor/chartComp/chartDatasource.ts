@@ -32,7 +32,6 @@ interface IData {
 }
 
 export class ChartDatasource extends BeanStub {
-
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('valueService') valueService: ValueService;
     @Optional('aggregationStage') aggregationStage: IAggregationStage;
@@ -131,7 +130,7 @@ export class ChartDatasource extends BeanStub {
                 // add data value to value column
                 const value = this.valueService.getValue(col, rowNode);
 
-                data[col.getId()] = typeof value.toNumber === 'function' ? value.toNumber() : value;
+                data[col.getId()] = value && typeof value.toNumber === 'function' ? value.toNumber() : value;
             });
 
             // add data to results

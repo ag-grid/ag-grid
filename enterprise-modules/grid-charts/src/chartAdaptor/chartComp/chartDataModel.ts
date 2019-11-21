@@ -12,7 +12,8 @@ import {
     PostConstruct,
     RowNode,
     RowRenderer,
-    IRangeController
+    IRangeController,
+    ValueService
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
 
@@ -38,6 +39,7 @@ export class ChartDataModel extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('valueService') private valueService: ValueService;
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
@@ -190,8 +192,6 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getAllColumnsFromRanges(): Set<Column> {
-
-
         let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
         if (this.dimensionCellRange) {
@@ -257,14 +257,14 @@ export class ChartDataModel extends BeanStub {
             }
 
             // if 'chartDataType' is not provided then infer type based data contained in first row
-            (this.isNumberCol(col.getColId()) ? valueCols : dimensionCols).add(col);
+            (this.isNumberCol(col) ? valueCols : dimensionCols).add(col);
         });
 
         return { dimensionCols, valueCols };
     }
 
-    private isNumberCol(colId: any) {
-        if (colId === 'ag-Grid-AutoColumn') {
+    private isNumberCol(col: Column) {
+        if (col.getColId() === 'ag-Grid-AutoColumn') {
             return false;
         }
 
@@ -274,38 +274,24 @@ export class ChartDataModel extends BeanStub {
             return false;
         }
 
-        let cellData;
+        let cellValue = this.valueService.getValue(col, row);
 
-        if (row.group) {
-            cellData = this.extractAggregateValue(row, colId) || this.extractLeafData(row, colId);
-        } else {
-            const rowData = row.data;
-            cellData = rowData ? rowData[colId] : null;
+        if (cellValue == null) {
+            cellValue = this.extractLeafData(row, col);
         }
 
-        return typeof cellData === 'number';
+        return typeof cellValue === 'number';
     }
 
-    private extractAggregateValue(row: RowNode, colId: any) {
-        if (!row.aggData) {
-            return null;
-        }
+    private extractLeafData(row: RowNode, col: Column) {
+        if (!row.allLeafChildren) { return null; }
 
-        const aggDatum = row.aggData[colId];
+        for (let i = 0; i < row.allLeafChildren.length; i++) {
+            const childRow = row.allLeafChildren[i];
+            const value = this.valueService.getValue(col, childRow);
 
-        if (!aggDatum) {
-            return null;
-        }
-
-        return typeof aggDatum.toNumber === 'function' ? aggDatum.toNumber() : aggDatum;
-    }
-
-    private extractLeafData(row: RowNode, colId: any) {
-        const cellData = row.allLeafChildren.map(child => child.data).map(data => data[colId]);
-
-        for (let i = 0; i < cellData.length; i++) {
-            if (cellData[i] !== null) {
-                return cellData[i];
+            if (value != null) {
+                return value;
             }
         }
 
