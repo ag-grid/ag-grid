@@ -1,16 +1,24 @@
-import { ColumnTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
+import { TooltipRendererParams } from "./chart/series/series";
+import { ColumnTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
-import { BarTooltipRendererParams } from "@ag-grid-community/core";
+import { LegendPosition } from "./chart/chart";
+import { FontStyle, FontWeight } from "./scene/shape/text";
+import { GridStyle as GridStyleOptions } from "./axis";
 
 export {
-    ColumnTooltipRendererParams,
+    TooltipRendererParams,
+    BarTooltipRendererParams,
     LineTooltipRendererParams,
     AreaTooltipRendererParams,
     ScatterTooltipRendererParams,
-    PieTooltipRendererParams
+    PieTooltipRendererParams,
+    LegendPosition,
+    FontStyle,
+    FontWeight,
+    GridStyleOptions,
 };
 
 export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
@@ -58,9 +66,6 @@ export interface FontOptions {
     color?: string;
 }
 
-export declare type FontStyle = 'normal' | 'italic' | 'oblique';
-export declare type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-
 export interface CaptionOptions extends FontOptions {
     enabled?: boolean;
     text?: string;
@@ -72,8 +77,6 @@ export interface LegendOptions {
     padding?: number;
     item?: LegendItemOptions;
 }
-
-export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface LegendItemOptions {
     label?: LegendLabelOptions;
@@ -127,11 +130,6 @@ export interface AxisLabelOptions extends FontOptions {
     parallel?: boolean;
 }
 
-export interface GridStyleOptions {
-    stroke?: string;
-    lineDash?: number[];
-}
-
 export interface HighlightOptions {
     fill?: SingleFillOptions;
     stroke?: SingleStrokeOptions;
@@ -174,12 +172,6 @@ export interface SeriesLabelOptions extends FontOptions {
 export interface TooltipOptions<TParams extends TooltipRendererParams> {
     enabled?: boolean;
     renderer?: (params: TParams) => string;
-}
-
-export interface TooltipRendererParams {
-    datum: any;
-    title?: string;
-    color?: string;
 }
 
 export interface BarSeriesOptions extends SeriesOptions {
