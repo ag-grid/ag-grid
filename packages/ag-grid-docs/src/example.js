@@ -1107,8 +1107,12 @@ function onThemeChanged() {
     }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
-
-    document.body.classList.toggle('dark', isDark);
+    if (isDark) {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
+    
 }
 
 var filterCount = 0;
