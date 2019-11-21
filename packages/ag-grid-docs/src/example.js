@@ -167,7 +167,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    popupParent: document.body,
+    popupParent: document.querySelector('#example-wrapper'),
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
@@ -1107,8 +1107,12 @@ function onThemeChanged() {
     }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
-
-    document.body.classList.toggle('dark', isDark);
+    if (isDark) {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
+    
 }
 
 var filterCount = 0;

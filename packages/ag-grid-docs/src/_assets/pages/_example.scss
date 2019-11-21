@@ -7,13 +7,15 @@
 }
 
 #example-wrapper {
+    position: absolute;
+    top: 4rem;
+    height: calc(100% - 4rem);
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
 
     max-width: 100%;
     width: 100%;
-    height: calc(100% - 4rem);
 
     #grid-wrapper {
         flex: 1;
