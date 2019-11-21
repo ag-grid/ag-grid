@@ -130,7 +130,7 @@ export class ChartDatasource extends BeanStub {
                 // add data value to value column
                 const value = this.valueService.getValue(col, rowNode);
 
-                data[col.getId()] = value && typeof value.toNumber === 'function' ? value.toNumber() : value;
+                data[col.getId()] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
             });
 
             // add data to results

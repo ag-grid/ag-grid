@@ -117,6 +117,7 @@ export class BarSeriesPanel extends Component {
         };
 
         const params: FontPanelParams = {
+            name: this.chartTranslator.translate('labels'),
             enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
             setEnabled: (enabled: boolean) => this.chartProxy.setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,
