@@ -167,7 +167,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    popupParent: document.body,
+    popupParent: document.querySelector('#example-wrapper'),
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
