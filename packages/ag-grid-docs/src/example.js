@@ -654,7 +654,7 @@ var desktopDefaultCols = [
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 }
             },
             {
@@ -705,7 +705,7 @@ var desktopDefaultCols = [
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
-                    clearButton: true,
+                    resetButton: true,
                     // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
@@ -728,7 +728,7 @@ var desktopDefaultCols = [
                 },
                 filterParams: {
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -752,7 +752,7 @@ var desktopDefaultCols = [
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 }
             }
         ]
@@ -919,7 +919,7 @@ months.forEach(function(month) {
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams: {
-            clearButton: true
+            resetButton: true
         }
     });
 });

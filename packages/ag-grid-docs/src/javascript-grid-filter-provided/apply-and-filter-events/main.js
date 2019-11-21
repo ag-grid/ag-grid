@@ -1,11 +1,11 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150,
         filter: 'agTextColumnFilter',
-        filterParams: { applyButton: true, clearButton:true }
+        filterParams: { applyButton: true, resetButton:true }
     },
     {headerName: "Age", field: "age", width: 90,
         filter: 'agNumberColumnFilter',
-        filterParams: { applyButton: true, clearButton:true }
+        filterParams: { applyButton: true, resetButton:true }
     },
     {headerName: "Country", field: "country", width: 120,
         filter: 'agSetColumnFilter',

@@ -57,8 +57,9 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
-        // if no model provided by the parent filter, we continue to use the last type used
+        // if no model provided by the parent filter use default
         if (!model) {
+            this.lastType = this.optionsFactory.getDefaultOption();
             return;
         }
 

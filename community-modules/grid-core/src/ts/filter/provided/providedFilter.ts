@@ -9,6 +9,7 @@ import { Constants } from "../../constants";
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
+    resetButton?: boolean;
     applyButton?: boolean;
     newRowsAction?: string;
     debounceMs?: number;
@@ -29,7 +30,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 
-    private clearActive: boolean;
     private applyActive: boolean;
 
     @RefSelector('eButtonsPanel')
@@ -38,11 +38,14 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     @RefSelector('eFilterBodyWrapper')
     protected eFilterBodyWrapper: HTMLElement;
 
-    @RefSelector('eApplyButton')
-    private eApplyButton: HTMLElement;
-
     @RefSelector('eClearButton')
     private eClearButton: HTMLElement;
+
+    @RefSelector('eResetButton')
+    private eResetButton: HTMLElement;
+
+    @RefSelector('eApplyButton')
+    private eApplyButton: HTMLElement;
 
     @Autowired('gridOptionsWrapper')
     protected gridOptionsWrapper: GridOptionsWrapper;
@@ -103,7 +106,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected setParams(params: IProvidedFilterParams): void {
         this.providedFilterParams = params;
 
-        this.clearActive = params.clearButton === true;
+
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
         if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
@@ -122,10 +125,15 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         // just applied, the event would get passed as the second parameter, which we do not want.
         this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply());
 
-        _.setDisplayed(this.eClearButton, this.clearActive);
-        this.addDestroyableEventListener(this.eClearButton, "click", this.onBtClear.bind(this));
+        const clearActive = params.clearButton === true;
+        _.setDisplayed(this.eClearButton, clearActive);
+        this.addDestroyableEventListener(this.eClearButton, "click", () => this.onBtClear());
 
-        const anyButtonVisible: boolean = this.applyActive || this.clearActive;
+        const resetActive = params.resetButton === true;
+        _.setDisplayed(this.eResetButton, resetActive);
+        this.addDestroyableEventListener(this.eResetButton, "click", () => this.onBtReset());
+
+        const anyButtonVisible: boolean = this.applyActive || clearActive || resetActive;
         _.setDisplayed(this.eButtonsPanel, anyButtonVisible);
     }
 
@@ -161,6 +169,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.resetUiToDefaults();
         this.updateUiVisibility();
         this.onUiChanged();
+    }
+
+    private onBtReset() {
+        this.onBtClear();
+        this.onBtApply();
     }
 
     // returns true if the new model is different to the old model
@@ -218,6 +231,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
                     <div class='ag-filter-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
                     <div class="ag-filter-apply-panel" ref="eButtonsPanel">
                         <button type="button" ref="eClearButton">${translate('clearFilter', 'Clear Filter')}</button>
+                        <button type="button" ref="eResetButton">${translate('resetFilter', 'Reset Filter')}</button>
                         <button type="button" ref="eApplyButton">${translate('applyFilter', 'Apply Filter')}</button>
                     </div>
                 </div>`;
