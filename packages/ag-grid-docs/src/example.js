@@ -416,7 +416,7 @@ var gridOptions = {
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = formatThousands(Math.round(params.datum[params.angleKey]));
                 return title + '<div class="content">' + '$' + value + '</div>';
             };
         } else {
@@ -450,7 +450,7 @@ var gridOptions = {
 
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var formatCurrency = function(value) {
-                        return '$' + String(value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                        return '$' + formatThousands(value);
                     }
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -468,7 +468,7 @@ var gridOptions = {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var value = formatThousands(Math.round(params.datum[params.yKey]));
                     return title + '<div class="content">' + '$' + value + '</div>';
                 };
             }
@@ -1384,6 +1384,10 @@ function ratingRendererGeneral(value, forFilter) {
     return result;
 }
 
+var formatThousands = function(value) {
+    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
 function currencyRenderer(params) {
     if (params.value === null || params.value === undefined) {
         return null;
@@ -1394,7 +1398,7 @@ function currencyRenderer(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            return '&pound;' + formatThousands(Math.floor(params.value));
         }
     }
 }
@@ -1409,7 +1413,7 @@ function currencyFormatter(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '$' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            return '$' + formatThousands(Math.floor(params.value));
         }
     }
 }
