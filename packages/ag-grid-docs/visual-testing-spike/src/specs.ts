@@ -4,7 +4,7 @@ import { Spec } from "./types";
 export const specs: Spec[] = [
     {
         name: 'demo',
-        // autoRtl: true,
+        autoRtl: true,
         defaultViewport: { width: 1000, height: 800 },
         steps: [
             {
