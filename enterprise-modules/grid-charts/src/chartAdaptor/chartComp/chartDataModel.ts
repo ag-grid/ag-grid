@@ -280,6 +280,10 @@ export class ChartDataModel extends BeanStub {
             cellValue = this.extractLeafData(row, col);
         }
 
+        if (cellValue != null && typeof cellValue.toNumber === 'function') {
+            cellValue = cellValue.toNumber();
+        }
+
         return typeof cellValue === 'number';
     }
 
