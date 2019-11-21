@@ -171,7 +171,7 @@ export class LineSeries extends CartesianSeries {
         return this._fill;
     }
 
-    private _stroke: string = '#202020';
+    private _stroke: string = palette.strokes[0];
     set stroke(value: string) {
         if (this._stroke !== value) {
             this._stroke = value;
