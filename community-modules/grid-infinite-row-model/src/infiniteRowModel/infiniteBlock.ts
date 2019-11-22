@@ -91,13 +91,6 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
             return;
         }
 
-        // check if old version of datasource used
-        const getRowsParams = _.getFunctionParameters(this.cacheParams.datasource.getRows);
-        if (getRowsParams.length > 1) {
-            console.warn('ag-grid: It looks like your paging datasource is of the old type, taking more than one parameter.');
-            console.warn('ag-grid: From ag-grid 1.9.0, now the getRows takes one parameter. See the documentation for details.');
-        }
-
         // put in timeout, to force result to be async
         window.setTimeout(() => {
             this.cacheParams.datasource.getRows(params);
