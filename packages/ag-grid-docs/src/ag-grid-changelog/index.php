@@ -1,5 +1,6 @@
 <?php
 ini_set('memory_limit', '1024M');
+error_reporting(E_ERROR | E_PARSE);
 
 $navKey = "changelog";
 include_once '../includes/html-helpers.php';
@@ -174,6 +175,7 @@ include '../jira_reports/jira_utilities.php';
                             <span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span> Deprecation
                         </span>
                         <span class='aui-lozenge-error' style='padding: 1px; border-radius: 2px'>B</span> Breaking Changes
+                        <span class='aui-lozenge-current' style='padding: 1px; border-radius: 2px'>R</span> Rejected Changes
                     </div>
                     <div>
                         <?php include_once 'versionReleaseNotes.php' ?>
@@ -212,6 +214,7 @@ include '../jira_reports/jira_utilities.php';
                                 }
 
                                 $key = filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING);
+                                $resolution = filter_var($json_decoded->{'issues'}[$i]->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING);
                                 if (empty($key)) {
                                     continue;
                                 }
@@ -265,6 +268,17 @@ include '../jira_reports/jira_utilities.php';
                                         <?php
                                         if (array_key_exists($key, $keyToDeprecations)) {
                                             echo "<span class='aui-lozenge-complete' style='padding: 1px; border-radius: 2px'>D</span>";
+                                        } else {
+                                            echo "";
+                                        }
+                                        ?>
+                                    </td>
+
+                                    <!-- rejected changes -->
+                                    <td class="jira-macro-table-underline-pdfexport">
+                                        <?php
+                                        if (filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING) == 'Rejected') {
+                                            echo "<span class='aui-lozenge-current' style='padding: 1px; border-radius: 2px'>R</span>";
                                         } else {
                                             echo "";
                                         }
