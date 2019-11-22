@@ -9,7 +9,7 @@ export class MarkerLabel extends Group {
 
     static defaults = Object.freeze({
         padding: 8,
-        markerSize: 12,
+        markerSize: 15,
         labelFont: '12px Verdana, sans-serif',
         labelFontStyle: undefined,
         labelFontWeight: undefined,
