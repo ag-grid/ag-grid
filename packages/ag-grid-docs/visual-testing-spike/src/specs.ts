@@ -1,5 +1,5 @@
 import { SpecDefinition } from './types';
-import { wait } from './utils';
+import { wait, dragFromTo } from './utils';
 
 export const specs: SpecDefinition[] = [
     {
@@ -75,12 +75,12 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'drag-column',
                 prepare: async page => {
-                    const example = (await page.$('.ag-header-cell:nth-child(3)'))!;
-                    const box = (await example.boundingBox())!;
-
-                    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-                    await page.mouse.down();
-                    await page.mouse.move(350, 70);
+                    await dragFromTo({
+                        page,
+                        from: '.ag-header-cell:nth-child(3)',
+                        to: '.ag-header-cell:nth-child(4)',
+                        leaveMouseDown: true
+                    });
                 }
             }
         ]
@@ -134,7 +134,7 @@ export const specs: SpecDefinition[] = [
         exampleSection: 'for-print',
         exampleId: 'for-print-complex',
         community: true,
-        defaultViewport: {width: 800, height: 1000},
+        defaultViewport: { width: 800, height: 1000 },
         steps: [
             {
                 name: 'default',
@@ -153,10 +153,35 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'default',
                 prepare: async page => {
+                    // support either native checkboxes or old-style ones
                     await page.click('.ag-row:nth-child(1) .ag-icon-checkbox-unchecked, .ag-row:nth-child(1) input[type="checkbox"]');
                     await page.click('.ag-row:nth-child(3) .ag-icon-checkbox-unchecked, .ag-row:nth-child(3) input[type="checkbox"]');
                 }
             }
         ]
     },
+    {
+        exampleSection: 'range-selection',
+        exampleId: 'range-selection-advanced',
+        defaultViewport: { width: 1200, height: 800 },
+        steps: [
+            {
+                name: 'default',
+                prepare: async page => {
+                    await dragFromTo({
+                        page,
+                        from: '.ag-row:nth-child(3) .ag-cell:nth-child(1)',
+                        to: '.ag-row:nth-child(6) .ag-cell:nth-child(8)'
+                    });
+                    await page.keyboard.down('Meta');
+                    await dragFromTo({
+                        page,
+                        from: '.ag-row:nth-child(1) .ag-cell:nth-child(3)',
+                        to: '.ag-row:nth-child(8) .ag-cell:nth-child(6)'
+                    });
+                    await page.keyboard.up('Meta');
+                }
+            }
+        ]
+    }
 ];

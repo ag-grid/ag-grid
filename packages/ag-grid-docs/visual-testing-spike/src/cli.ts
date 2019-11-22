@@ -37,7 +37,8 @@ const args: any = yargs
                     type: 'boolean'
                 })
                 .option('clean', {
-                    describe: "Delete all pre-existing images when updating. The default is to delete images only if there is no filter set.",
+                    describe:
+                        'Delete all pre-existing images when updating. The default is to delete images only if there is no filter set.',
                     type: 'boolean'
                 })
     ).argv;
@@ -58,11 +59,10 @@ export const runCli = async (baseFolder: string) => {
             {
                 name: 'overwrite',
                 type: 'confirm',
-                message: `😰  ${chalk.bold.rgb(
-                    255,
-                    128,
-                    0
-                )`DELETE ALL IMAGES`} in "${path.relative('.', folder)}" and generate new ones?`
+                message: `😰  ${chalk.bold.rgb(255, 128, 0)`DELETE ALL IMAGES`} in "${path.relative(
+                    '.',
+                    folder
+                )}" and generate new ones?`
             }
         ]);
         if (!result.overwrite) {
@@ -81,6 +81,7 @@ export const runCli = async (baseFolder: string) => {
             filter: args.filter || ''
         });
     } catch (e) {
-        console.error('ERROR:', e.stack);
+        const message = e.specName ? `Error in spec ${e.specName}: ${e.stack}` : e.stack;
+        console.error('ERROR:', message);
     }
 };

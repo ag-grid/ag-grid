@@ -3,14 +3,13 @@ import url from 'url';
 import glob from 'glob-promise';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
-import { launch } from 'puppeteer';
+import { launch, Browser } from 'puppeteer';
 import PromisePool from 'es6-promise-pool';
 import resemble from 'resemblejs';
 import { Spec, SpecResults, SpecDefinition } from './types';
 import { getReportHtml } from './reporting';
-import { wait } from './utils';
+import { wait, getError, getElement } from './utils';
 
-const errorFile = 'error.html';
 const defaultSpecPath = '/example.php';
 const defaultSelector = '.ag-root-wrapper';
 const exampleBasePath = '/example-runner/vanilla.php';
@@ -50,6 +49,7 @@ const createSpecFromDefinition = (spec: SpecDefinition): Spec => {
 };
 
 interface RunContext {
+    browser: Browser;
     filter: string;
     server: string;
     handler: (screenshot: Buffer, specName: string) => Promise<void>;
@@ -72,90 +72,79 @@ const setThemeInBrowser = (theme: string) => {
 };
 
 export const runSpec = async (spec: Spec, context: RunContext) => {
-    const browser = await launch({
-        defaultViewport: spec.defaultViewport
-    });
-
-    let path = spec.path;
-    if (spec.exampleSection || spec.exampleId) {
-        if (path) {
-            throw new Error(`Spec ${spec.name} provides both a path and an example.`);
-        }
-        const type = spec.exampleType || 'generated';
-        path = buildUrlQuery(exampleBasePath, {
-            section: `javascript-grid-${spec.exampleSection}`,
-            example: spec.exampleId,
-            generated: type === 'generated' ? 1 : undefined,
-            enterprise: !spec.community,
-            grid: JSON.stringify({
-                height: '100%',
-                width: '100%',
-                enterprise: spec.community ? undefined : 1
-            })
-        });
-    }
-    if (!path) {
-        path = defaultSpecPath;
-    }
-    if (spec.urlParams) {
-        path = buildUrlQuery(path, spec.urlParams);
-    }
-
-    const page = await browser.newPage();
-    if (spec.urlParams.theme) {
-        await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
-    }
-    const pageUrl = url.resolve(context.server, path);
-    await page.goto(pageUrl);
-    const setThemeError = await page.evaluate(() => (window as any).setThemeError);
-    if (setThemeError) {
-        throw new Error('Error setting theme: ' + setThemeError);
-    }
-    await wait(500); // let the page stabilise
-    const selector = spec.selector || defaultSelector;
-    const wrapper = await page.$(selector);
-    if (!wrapper) {
-        let html = await page.evaluate(() => document.body.innerHTML);
-        html = `<!--\n${pageUrl}\n-->${html}`;
-        await fs.writeFile(errorFile, html);
-        throw new Error(
-            `Spec ${spec.name}: could not find selector "${selector}", page HTML saved to ${errorFile}`
-        );
-    }
-
-    for (let step of spec.steps) {
-        const viewport = step.viewport || spec.defaultViewport;
-        await page.setViewport(viewport);
-        if (step.prepare) {
-            await step.prepare(page);
-        }
-        const testCaseName = `${spec.name}-${step.name}`;
-        if (testCaseName.includes(context.filter)) {
-            // let CSS animations stabilise before taking screenshot
-            await wait(500);
-            const screenshot = await wrapper.screenshot({
-                encoding: 'binary',
-                clip: { x: 0, y: 0, width: viewport.width, height: viewport.height }
+    try {
+        let path = spec.path;
+        if (spec.exampleSection || spec.exampleId) {
+            if (path) {
+                throw new Error(`Spec ${spec.name} provides both a path and an example.`);
+            }
+            const type = spec.exampleType || 'generated';
+            path = buildUrlQuery(exampleBasePath, {
+                section: `javascript-grid-${spec.exampleSection}`,
+                example: spec.exampleId,
+                generated: type === 'generated' ? 1 : undefined,
+                enterprise: !spec.community,
+                grid: JSON.stringify({
+                    height: '100%',
+                    width: '100%',
+                    enterprise: spec.community ? undefined : 1
+                })
             });
-            await context.handler(screenshot, testCaseName);
         }
-    }
+        if (!path) {
+            path = defaultSpecPath;
+        }
+        if (spec.urlParams) {
+            path = buildUrlQuery(path, spec.urlParams);
+        }
 
-    await browser.close();
+        const page = await context.browser.newPage();
+        if (spec.urlParams.theme) {
+            await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
+        }
+        const pageUrl = url.resolve(context.server, path);
+        await page.goto(pageUrl);
+        const setThemeError = await page.evaluate(() => (window as any).setThemeError);
+        if (setThemeError) {
+            throw new Error('Error setting theme: ' + setThemeError);
+        }
+        await wait(500); // let the page stabilise
+        const selector = spec.selector || defaultSelector;
+        const wrapper = await getElement(page, selector);
+
+        for (let step of spec.steps) {
+            const viewport = step.viewport || spec.defaultViewport;
+            await page.setViewport(viewport);
+            if (step.prepare) {
+                await step.prepare(page);
+            }
+            const testCaseName = `${spec.name}-${step.name}`;
+            if (testCaseName.includes(context.filter)) {
+                // let CSS animations stabilise before taking screenshot
+                await wait(500);
+                const screenshot = await wrapper.screenshot({
+                    encoding: 'binary',
+                    clip: { x: 0, y: 0, width: viewport.width, height: viewport.height }
+                });
+                await context.handler(screenshot, testCaseName);
+            }
+        }
+    } catch (e) {
+        e.specName = spec.name;
+        throw e;
+    }
 };
 
 export const runSpecs = async (specs: Spec[], context: RunContext) => {
     let i = 0;
-    const generatePromises = () => {
+    const generateNextPromise = () => {
         const spec = specs[i++];
         if (!spec) {
             return;
         }
-        return (async () => {
-            await runSpec(spec, context);
-        })();
+        return runSpec(spec, context);
     };
-    await new PromisePool(generatePromises, maxParallelPageLoads).start();
+    await new PromisePool(generateNextPromise, maxParallelPageLoads).start();
 };
 
 const ensureEmptyFolder = async (folder: string, deleteImages: boolean) => {
@@ -252,7 +241,11 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     log('Running suite...');
     const results: SpecResults[] = [];
+
+    const browser = await launch();
+
     await runSpecs(specs, {
+        browser,
         server: params.server,
         filter: params.filter,
         handler: async (screenshot, specName) => {
@@ -270,13 +263,16 @@ export const runSuite = async (params: RunSuiteParams) => {
                     original: pngBufferToDataUri(oldData)
                 });
                 if (difference) {
-                    log(`${chalk.red.bold`✘ ${specName}`} - found difference, see report.html`);
+                    log(`${chalk.red.bold(`✘ ${specName}`)} - found difference, see report.html`);
                 } else {
-                    log(`${chalk.green.bold`✔ ${specName}`} - OK`);
+                    log(`${chalk.green.bold(`✔ ${specName}`)} - OK`);
                 }
             }
         }
     });
+
+    await browser.close();
+
     if (params.mode === 'compare') {
         const html = getReportHtml(results);
         await fs.writeFile(params.reportFile, html);
