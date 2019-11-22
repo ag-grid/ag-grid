@@ -384,6 +384,22 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
+<p>In order to be able to use the Enterprise features we need to switch from using the <code>@ag-grid-community/all-modules</code> package
+    and instead use the <code>@ag-grid-enterprise/all-modules</code> package instead:</p>
+
+<snippet language="sh">
+    npm install @ag-grid-enterprise/all-modules
+</snippet>
+
+<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
+<snippet language="diff">
+    -       import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    +       import {AllModules} from '@ag-grid-enterprise/all-modules';
+
+    -       modules=AllCommunityModules
+    +       modules=AllModules
+</snippet>
+
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another
     effective way for the user to make sense out of large amounts of data. In our case, the data is not that much.
     Let's switch to a slightly larger data set:</p>
@@ -430,7 +446,7 @@ beforeMount() {
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
-    import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    import {AllModules} from '@ag-grid-enterprise/all-modules';
 
     export default {
         name: 'App',
@@ -440,7 +456,8 @@ beforeMount() {
                 rowData: null,
                 gridApi: null,
                 columnApi: null,
-                autoGroupColumnDef: null
+                autoGroupColumnDef: null,
+                modules: AllModules
             }
         },
         components: {

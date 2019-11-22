@@ -496,7 +496,6 @@ npm install @ag-grid-enterprise/all-modules
     +       modules = AllModules;
 </snippet>
 
-
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
