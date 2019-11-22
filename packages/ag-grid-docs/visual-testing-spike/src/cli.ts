@@ -15,18 +15,30 @@ const args: any = yargs
         y =>
             y
                 .positional('images', {
-                    describe: 'name of image set folder within ./compare'
+                    describe: 'Name of image set folder within ./compare'
                 })
                 .option('update', {
-                    describe: 'save generated images instead of comparing'
+                    describe: 'Save generated images instead of comparing'
                 })
                 .option('server', {
-                    describe: 'ag-grid docs server to run against',
+                    describe: 'ag-grid-docs server to run against',
                     default: 'http://localhost:8080'
                 })
                 .option('report-file', {
-                    describe: 'where to save the HTML report',
+                    describe: 'Where to save the HTML report',
                     default: 'report.html'
+                })
+                .option('filter', {
+                    describe: 'Only generate/compare images with names containing this string',
+                    type: 'string'
+                })
+                .option('force', {
+                    describe: "Don't prompt for confirmation before overwriting images",
+                    type: 'boolean'
+                })
+                .option('clean', {
+                    describe: "Delete all pre-existing images when updating. The default is to delete images only if there is no filter set.",
+                    type: 'boolean'
                 })
     ).argv;
 
@@ -35,18 +47,22 @@ TODO
 
 Specs:
 Community menu
-No toolbar open
+Complex header examples
 
 */
 
 export const runCli = async (baseFolder: string) => {
     const folder = path.join(baseFolder, screenshotFolder, args.images);
-    if (args.update) {
+    if (args.update && !args.force) {
         const result = await inquirer.prompt([
             {
                 name: 'overwrite',
                 type: 'confirm',
-                message: `😰  ${chalk.bold.rgb(255, 128, 0)`overwrite`} the contents of "${path.relative('.', folder)}"?`
+                message: `😰  ${chalk.bold.rgb(
+                    255,
+                    128,
+                    0
+                )`DELETE ALL IMAGES`} in "${path.relative('.', folder)}" and generate new ones?`
             }
         ]);
         if (!result.overwrite) {
@@ -60,7 +76,9 @@ export const runCli = async (baseFolder: string) => {
             specs,
             themes: ['alpine', 'balham', 'material', 'fresh'],
             server: args.server,
-            reportFile: args.reportFile
+            reportFile: args.reportFile,
+            clean: !!args.clean,
+            filter: args.filter || ''
         });
     } catch (e) {
         console.error('ERROR:', e.stack);

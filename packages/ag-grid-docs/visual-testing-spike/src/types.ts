@@ -3,19 +3,34 @@ import { Page } from "puppeteer";
 export interface Viewport {
     width: number;
     height: number;
-}
-
-export interface Spec {
-    name: string;
-    steps: SpecStep[];
+  }
+  
+  export interface SpecBase {
     defaultViewport?: Viewport;
     exampleSection?: string;
     exampleId?: string;
     path?: string;
-    urlParams?: object;
     selector?: string;
     autoRtl?: boolean;
-}
+    community?: boolean;
+    exampleType?: 'generated' | 'multi' | 'vanilla';
+  }
+  
+  export type UrlParams = {[key: string]: string | number | boolean};
+  
+  export interface SpecDefinition extends SpecBase {
+    name?: string;
+    steps?: SpecStep[];
+    urlParams?: UrlParams;
+    defaultViewport?: Viewport;
+  }
+  
+  export interface Spec extends SpecDefinition {
+    name: string;
+    steps: SpecStep[];
+    urlParams: UrlParams;
+    defaultViewport: Viewport;
+  }
 
 export type SpecStep = {
     name: string;

@@ -6,33 +6,72 @@ import { promises as fs } from 'fs';
 import { launch } from 'puppeteer';
 import PromisePool from 'es6-promise-pool';
 import resemble from 'resemblejs';
-import { Spec, SpecResults } from './types';
+import { Spec, SpecResults, SpecDefinition } from './types';
 import { getReportHtml } from './reporting';
+import { wait } from './utils';
 
-const DEFAULT_PATH = '/example.php';
-const DEFAULT_SELECTOR = '.ag-root-wrapper';
-const EXAMPLE_PATH_BASE =
-    '/example-runner/vanilla.php?enterprise=1&generated=1' +
-    '&grid={"noStyle"%3A0%2C"height"%3A"100%25"%2C"width"%3A"100%25"%2C"enterprise"%3A1}';
-const MAX_PARALLEL_PAGE_LOADS = 4;
+const errorFile = 'error.html';
+const defaultSpecPath = '/example.php';
+const defaultSelector = '.ag-root-wrapper';
+const exampleBasePath = '/example-runner/vanilla.php';
+const maxParallelPageLoads = 8;
 
 const buildUrlQuery = (base: string, params: object) => {
     Object.entries(params).forEach(([key, value]) => {
-        const separator = base.includes('?') ? '&' : '?';
-        base += separator + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        if (typeof value !== 'undefined') {
+            const separator = base.includes('?') ? '&' : '?';
+            base += separator + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        }
     });
     return base;
 };
 
-const wait = async (ms: number) => new Promise(resolve => {
-    setTimeout(resolve, ms);
-})
+const createSpecFromDefinition = (spec: SpecDefinition): Spec => {
+    let name: string;
+    if (spec.name) {
+        name = spec.name;
+    } else if (spec.exampleSection) {
+        name = `${spec.exampleSection}-${spec.exampleId}`;
+    } else {
+        throw new Error(`Specs require a name or an example section: ${JSON.stringify(spec)}`);
+    }
 
-export const runSpec = async (
-    spec: Spec,
-    server: string,
-    handler: (screenshot: Buffer, specName: string) => Promise<void>
-) => {
+    return {
+        ...spec,
+        name,
+        steps: spec.steps || [
+            {
+                name: 'default'
+            }
+        ],
+        urlParams: spec.urlParams || {},
+        defaultViewport: spec.defaultViewport || { width: 800, height: 600 }
+    };
+};
+
+interface RunContext {
+    filter: string;
+    server: string;
+    handler: (screenshot: Buffer, specName: string) => Promise<void>;
+}
+
+const setThemeInBrowser = (theme: string) => {
+    const setTheme = () => {
+        if (document.readyState === 'complete') {
+            (window as any).setThemeError = 'This code is supposed to be run before ag-grid loads';
+        }
+        const themeElements = document.querySelectorAll(
+            '[class^="ag-theme-"], [class*=" ag-theme-"]'
+        );
+        themeElements.forEach(el => {
+            el.className = el.className.replace(/ag-theme-\w+/g, theme);
+        });
+    };
+    setTheme();
+    document.addEventListener('DOMContentLoaded', setTheme);
+};
+
+export const runSpec = async (spec: Spec, context: RunContext) => {
     const browser = await launch({
         defaultViewport: spec.defaultViewport
     });
@@ -42,52 +81,70 @@ export const runSpec = async (
         if (path) {
             throw new Error(`Spec ${spec.name} provides both a path and an example.`);
         }
-        path = buildUrlQuery(EXAMPLE_PATH_BASE, {
-            section: spec.exampleSection,
-            example: spec.exampleId
+        const type = spec.exampleType || 'generated';
+        path = buildUrlQuery(exampleBasePath, {
+            section: `javascript-grid-${spec.exampleSection}`,
+            example: spec.exampleId,
+            generated: type === 'generated' ? 1 : undefined,
+            enterprise: !spec.community,
+            grid: JSON.stringify({
+                height: '100%',
+                width: '100%',
+                enterprise: spec.community ? undefined : 1
+            })
         });
     }
     if (!path) {
-        path = DEFAULT_PATH;
+        path = defaultSpecPath;
     }
     if (spec.urlParams) {
         path = buildUrlQuery(path, spec.urlParams);
     }
 
     const page = await browser.newPage();
-    await page.goto(url.resolve(server, path));
+    if (spec.urlParams.theme) {
+        await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
+    }
+    const pageUrl = url.resolve(context.server, path);
+    await page.goto(pageUrl);
+    const setThemeError = await page.evaluate(() => (window as any).setThemeError);
+    if (setThemeError) {
+        throw new Error('Error setting theme: ' + setThemeError);
+    }
     await wait(500); // let the page stabilise
-    const selector = spec.selector || DEFAULT_SELECTOR;
+    const selector = spec.selector || defaultSelector;
     const wrapper = await page.$(selector);
     if (!wrapper) {
-        throw new Error(`Spec ${spec.name}: could not find selector "${selector}"`);
+        let html = await page.evaluate(() => document.body.innerHTML);
+        html = `<!--\n${pageUrl}\n-->${html}`;
+        await fs.writeFile(errorFile, html);
+        throw new Error(
+            `Spec ${spec.name}: could not find selector "${selector}", page HTML saved to ${errorFile}`
+        );
     }
 
     for (let step of spec.steps) {
-        if (step.viewport) {
-            page.setViewport(step.viewport);
-        } else if (spec.defaultViewport) {
-            page.setViewport(spec.defaultViewport);
-        }
+        const viewport = step.viewport || spec.defaultViewport;
+        await page.setViewport(viewport);
         if (step.prepare) {
             await step.prepare(page);
         }
-        // let CSS animations stabilise before taking screenshot
-        await wait(500);
-        const screenshot = await wrapper.screenshot({
-            encoding: 'binary'
-        });
-        await handler(screenshot, `${spec.name}-${step.name}`);
+        const testCaseName = `${spec.name}-${step.name}`;
+        if (testCaseName.includes(context.filter)) {
+            // let CSS animations stabilise before taking screenshot
+            await wait(500);
+            const screenshot = await wrapper.screenshot({
+                encoding: 'binary',
+                clip: { x: 0, y: 0, width: viewport.width, height: viewport.height }
+            });
+            await context.handler(screenshot, testCaseName);
+        }
     }
 
     await browser.close();
 };
 
-export const runSpecs = async (
-    specs: Spec[],
-    server: string,
-    handler: (screenshot: Buffer, specName: string) => Promise<void>
-) => {
+export const runSpecs = async (specs: Spec[], context: RunContext) => {
     let i = 0;
     const generatePromises = () => {
         const spec = specs[i++];
@@ -95,16 +152,18 @@ export const runSpecs = async (
             return;
         }
         return (async () => {
-            await runSpec(spec, server, handler);
+            await runSpec(spec, context);
         })();
     };
-    await new PromisePool(generatePromises, MAX_PARALLEL_PAGE_LOADS).start();
+    await new PromisePool(generatePromises, maxParallelPageLoads).start();
 };
 
-const ensureEmptyFolder = async (folder: string) => {
+const ensureEmptyFolder = async (folder: string, deleteImages: boolean) => {
     await fs.mkdir(folder, { recursive: true });
-    const existing = await glob(path.join(folder, '*.png'));
-    await Promise.all(existing.map(file => fs.unlink(file)));
+    if (deleteImages) {
+        const existing = await glob(path.join(folder, '*.png'));
+        await Promise.all(existing.map(file => fs.unlink(file)));
+    }
 };
 
 interface ImageAnalysisResult {
@@ -145,25 +204,21 @@ const pngBufferToDataUri = (image: Buffer): string =>
     'data:image/png;base64,' + image.toString('base64');
 
 export interface RunSuiteParams {
-    specs: Spec[];
+    specs: SpecDefinition[];
     mode: 'compare' | 'update';
     folder: string;
     server: string;
     reportFile: string;
+    filter: string;
     themes: string[];
+    clean: boolean;
 }
 
-export const runSuite = async ({
-    specs,
-    mode,
-    folder,
-    themes,
-    server,
-    reportFile
-}: RunSuiteParams) => {
+export const runSuite = async (params: RunSuiteParams) => {
     const log = console.error.bind(console);
 
-    specs = specs
+    const specs: Spec[] = params.specs
+        .map(createSpecFromDefinition)
         .flatMap(spec =>
             spec.autoRtl
                 ? [
@@ -177,42 +232,54 @@ export const runSuite = async ({
                 : spec
         )
         .flatMap(spec =>
-            themes.map(theme => ({
+            params.themes.map(theme => ({
                 ...spec,
                 name: `${spec.name}-${theme}`,
                 urlParams: { ...spec.urlParams, theme: `ag-theme-${theme}` }
             }))
-        );
-    if (mode === 'update') {
-        await ensureEmptyFolder(folder);
+        )
+        .filter(spec => {
+            return (
+                spec.name.includes(params.filter) ||
+                (spec.steps &&
+                    spec.steps.find(step => `${spec.name}-${step.name}`.includes(params.filter)))
+            );
+        });
+    if (params.mode === 'update') {
+        const deleteExisting = params.clean || !params.filter;
+        await ensureEmptyFolder(params.folder, deleteExisting);
     }
 
     log('Running suite...');
     const results: SpecResults[] = [];
-    await runSpecs(specs, server, async (screenshot, specName) => {
-        const file = path.join(folder, `${specName}.png`);
-        if (mode === 'update') {
-            await fs.writeFile(file, screenshot);
-            log(`${chalk.blue(specName)} - written to ${path.relative('.', file)}`);
-        } else {
-            const oldData = await fs.readFile(file);
-            const difference = await getImageDifferencesAsDataUri(oldData, screenshot);
-            results.push({
-                name: specName,
-                difference,
-                new: pngBufferToDataUri(screenshot),
-                original: pngBufferToDataUri(oldData)
-            });
-            if (difference) {
-                log(`❌  ${chalk.red.bold(specName)} - found difference, see report.html`);
+    await runSpecs(specs, {
+        server: params.server,
+        filter: params.filter,
+        handler: async (screenshot, specName) => {
+            const file = path.join(params.folder, `${specName}.png`);
+            if (params.mode === 'update') {
+                await fs.writeFile(file, screenshot);
+                log(`${chalk.blue(specName)} - written to ${path.relative('.', file)}`);
             } else {
-                log(`✅  ${chalk.green.bold(specName)} - OK`);
+                const oldData = await fs.readFile(file);
+                const difference = await getImageDifferencesAsDataUri(oldData, screenshot);
+                results.push({
+                    name: specName,
+                    difference,
+                    new: pngBufferToDataUri(screenshot),
+                    original: pngBufferToDataUri(oldData)
+                });
+                if (difference) {
+                    log(`${chalk.red.bold`✘ ${specName}`} - found difference, see report.html`);
+                } else {
+                    log(`${chalk.green.bold`✔ ${specName}`} - OK`);
+                }
             }
         }
     });
-    if (mode === 'compare') {
+    if (params.mode === 'compare') {
         const html = getReportHtml(results);
-        await fs.writeFile(reportFile, html);
-        log(`✨  report written to ${chalk.bold(path.relative('.', reportFile))}`);
+        await fs.writeFile(params.reportFile, html);
+        log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
     }
 };

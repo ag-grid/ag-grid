@@ -19,6 +19,7 @@
     "puppeteer": "^2.0.0",
     "resemblejs": "^3.2.3",
     "ts-node": "^8.5.2",
+    "tslint": "^5.20.1",
     "typescript": "^3.7.2",
     "yargs": "^15.0.2"
   }
