@@ -155,13 +155,13 @@ export abstract class Chart extends Observable {
         return false;
     }
 
-    private initSeries(series: Series) {
+    protected initSeries(series: Series) {
         series.addEventListener('layoutChange', this.scheduleLayout);
         series.addEventListener('dataChange', this.scheduleData);
         series.addEventListener('legendChange', this.updateLegend);
     }
 
-    private freeSeries(series: Series) {
+    protected freeSeries(series: Series) {
         series.removeEventListener('layoutChange', this.scheduleLayout);
         series.removeEventListener('dataChange', this.scheduleData);
         series.removeEventListener('legendChange', this.updateLegend);

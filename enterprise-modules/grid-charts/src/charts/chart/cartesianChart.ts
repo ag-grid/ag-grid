@@ -6,6 +6,7 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { reactive } from "../util/observable";
 import { ChartAxisPosition } from "./chartAxis";
+import { Series } from "./series/series";
 
 /** Defines the orientation used when rendering data series */
 export enum CartesianChartLayout {
@@ -141,6 +142,18 @@ export class CartesianChart extends Chart {
     }
     get layout(): CartesianChartLayout {
         return this._layout;
+    }
+
+    private _updateAxes = this.updateAxes.bind(this);
+
+    protected initSeries(series: Series) {
+        super.initSeries(series);
+        series.addEventListener('dataProcessed', this._updateAxes);
+    }
+
+    protected freeSeries(series: Series) {
+        super.freeSeries(series);
+        series.removeEventListener('dataProcessed', this._updateAxes);
     }
 
     updateAxes() {
