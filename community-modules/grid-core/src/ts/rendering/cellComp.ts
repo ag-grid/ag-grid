@@ -683,8 +683,7 @@ export class CellComp extends Component {
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             if (hasNewTooltip) {
-                const tooltipSanitised = _.escape(this.tooltip);
-                this.eParentOfValue.setAttribute('title', tooltipSanitised!);
+                this.eParentOfValue.setAttribute('title', this.tooltip);
             } else {
                 this.eParentOfValue.removeAttribute('title');
             }
