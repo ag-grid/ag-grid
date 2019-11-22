@@ -2,69 +2,11 @@ import { CartesianChart } from "./cartesianChart";
 import { numericExtent } from "../util/array";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxis, ChartAxisDirection, ChartAxisPosition } from "./chartAxis";
+import { Series } from "./series/series";
 
 export type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 
 export class GroupedCategoryChart extends CartesianChart {
-    // updateAxes_() {
-    //     const isHorizontal = this.layout === CartesianChartLayout.Horizontal;
-    //     const xAxis = isHorizontal ? this.yAxis : this.xAxis;
-    //     const yAxis = isHorizontal ? this.xAxis : this.yAxis;
-
-    //     if (!(xAxis && yAxis)) {
-    //         return;
-    //     }
-
-    //     const xDomains: any[][] = [];
-    //     const yDomains: any[][] = [];
-
-    //     let isNumericXAxis: boolean | undefined = undefined;
-
-    //     this.series.filter(s => s.visible).forEach(series => {
-    //         const xDomain = series.xDomain;
-
-    //         if (isNumericXAxis === undefined) {
-    //             // always add first X domain
-    //             xDomains.push(xDomain);
-    //             isNumericXAxis = typeof xDomain[0] === 'number';
-    //         } else if (isNumericXAxis) {
-    //             // only add further X domains if the axis is numeric
-    //             xDomains.push(xDomain);
-    //         }
-
-    //         yDomains.push(series.yDomain);
-    //     });
-
-    //     const xDomain = new Array<any>().concat(...xDomains);
-    //     const yDomain = new Array<any>().concat(...yDomains);
-
-    //     xAxis.domain = numericExtent(xDomain) || xDomain;
-    //     yAxis.domain = numericExtent(yDomain) || yDomain;
-
-    //     xAxis.update();
-    //     yAxis.update();
-
-    //     // The `xAxis` and `yAxis` have `.this` prefix on purpose here,
-    //     // because the local `xAxis` and `yAxis` variables may be swapped.
-    //     const xAxisBBox = this.xAxis.computeBBox();
-    //     const yAxisBBox = this.yAxis.computeBBox();
-
-    //     {
-    //         const axisThickness = Math.floor(yAxisBBox.width);
-    //         if (this.axisAutoPadding.left !== axisThickness) {
-    //             this.axisAutoPadding.left = axisThickness;
-    //             this.layoutPending = true;
-    //         }
-    //     }
-    //     {
-    //         const axisThickness = Math.floor(isHorizontal ? xAxisBBox.width : xAxisBBox.height);
-    //         if (this.axisAutoPadding.bottom !== axisThickness) {
-    //             this.axisAutoPadding.bottom = axisThickness;
-    //             this.layoutPending = true;
-    //         }
-    //     }
-    // }
-
     updateAxes() {
         const { axes } = this;
 
