@@ -21,14 +21,16 @@ interface LineChartOptions {
     yAxis: AxisOptions;
 
     seriesDefaults: {
-        // The fill colours used by the series' markers and the line itself
+        // The fill colours are used by the lines in the series
+        // Will be used for markers as well, unless overridden in the marker options
         fill: FillOptions;
 
-        // The stroke colours to be used by the series' markers
+        // The stroke colours to be used by the series' markers, unless overridden in
+        // the marker options
         stroke: StrokeOptions;
 
         // The style to apply to a marker when it is hovered over or tapped
-        highlightStyle?: HighlightOptions;
+        highlightStyle: HighlightOptions;
 
         marker: MarkerOptions;
 
@@ -38,7 +40,7 @@ interface LineChartOptions {
 }
 
 interface AxisOptions {
-    title?: CaptionOptions;
+    title: CaptionOptions;
     line: AxisLineOptions;
     tick: AxisTickOptions;
     label: AxisLabelOptions;
@@ -50,13 +52,13 @@ interface AxisOptions {
 }
 
 interface CaptionOptions {
-    enabled?: boolean;
+    enabled: boolean; // default: false
     text?: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number;
-    fontFamily?: string;
-    color?: string;
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 14
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
 }
 
 type FontStyle = 'normal' | 'italic' | 'oblique';
@@ -75,13 +77,13 @@ interface AxisTickOptions {
 }
 
 interface AxisLabelOptions {
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number; // default: 12
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: 'black'
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 12
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
     padding: number; // default: 5
-    rotation?: number; // default: dependent on chart type. Overridden for default category
+    rotation: number; // default: &lt;dependent on chart type. Overridden for default category&gt;
 
     // A custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number
@@ -90,7 +92,7 @@ interface AxisLabelOptions {
 }
 
 interface GridStyle {
-    stroke: string; // default: dependent on light/dark mode
+    stroke: string; // default: &lt;dependent on light/dark mode&gt;
 
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
@@ -99,31 +101,34 @@ interface GridStyle {
 }
 
 interface FillOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1
 }
 
 interface StrokeOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1
 
-    width: number; // default: 1
+    width: number; // default: 3
 }
 
 interface HighlightOptions {
-    fill?: string;
+    fill: string; // default: 'yellow'
     stroke?: string;
 }
 
 interface MarkerOptions {
     enabled: boolean; // default: true
+    type: MarkerType; // default: 'circle'
     size: number; // default: 6
     strokeWidth: number; // default: 1
 }
+
+type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 
 interface TooltipOptions {
     enabled: boolean; // default: true

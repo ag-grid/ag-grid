@@ -67,7 +67,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public getChart = (): TChart => this.chart;
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    protected getLabelColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
     protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
     protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
@@ -264,9 +264,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected getDefaultFontOptions(): FontOptions {
         return {
+            fontStyle: 'normal',
+            fontWeight: 'normal',
             fontSize: 12,
             fontFamily: 'Verdana, sans-serif',
-            color: this.getLabelColor()
+            color: this.getFontColor()
         };
     }
 
@@ -290,6 +292,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
         const { fills, strokes } = this.getPredefinedPalette();
+        const fontOptions = this.getDefaultFontOptions();
 
         return {
             background: {
@@ -305,30 +308,27 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 left: 20,
             },
             title: {
+                ...fontOptions,
                 enabled: false,
-                fontFamily: 'Verdana, sans-serif',
                 fontWeight: 'bold',
                 fontSize: 16,
-                color: 'black',
             },
             subtitle: {
+                ...fontOptions,
                 enabled: false,
-                fontFamily: 'Verdana, sans-serif',
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: 'black',
             },
             legend: {
                 enabled: true,
-                padding: 20,
                 position: 'right',
+                padding: 20,
                 item: {
                     label: {
-                        ...this.getDefaultFontOptions(),
+                        ...fontOptions,
                     },
                     marker: {
-                        padding: 8,
+                        type: 'square',
                         size: 15,
+                        padding: 8,
                         strokeWidth: 1,
                     },
                     paddingX: 16,
@@ -345,6 +345,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     opacity: 1,
                     width: 1,
                 },
+                highlightStyle: {
+                    fill: 'yellow',
+                }
             }
         };
     }

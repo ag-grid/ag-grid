@@ -41,7 +41,7 @@ export class PieChartProxy extends PolarChartProxy {
                 },
                 title: {
                     ...seriesDefaults.title,
-                    text: params.fields[0].displayName,
+                    text: seriesDefaults.title.text || params.fields[0].displayName,
                 }
             };
 
@@ -65,16 +65,23 @@ export class PieChartProxy extends PolarChartProxy {
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
         const { strokes } = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
+        const fontOptions = this.getDefaultFontOptions();
 
         options.seriesDefaults = {
             ...options.seriesDefaults,
+            title: {
+                ...fontOptions,
+                enabled: false,
+                fontSize: 12,
+                fontWeight: 'bold',
+            },
             callout: {
                 colors: strokes,
                 length: 10,
                 strokeWidth: 2,
             },
             label: {
-                ...this.getDefaultFontOptions(),
+                ...fontOptions,
                 enabled: false,
                 offset: 3,
                 minRequiredAngle: 0,
@@ -84,8 +91,6 @@ export class PieChartProxy extends PolarChartProxy {
             },
             shadow: this.getDefaultDropShadowOptions(),
         };
-
-        options.legend.item.marker.type = 'square';
 
         return options;
     }

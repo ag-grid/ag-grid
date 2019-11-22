@@ -16,6 +16,7 @@ import {
     SeriesLabelOptions,
     MarkerOptions,
     MarkerType,
+    HighlightOptions,
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -25,7 +26,7 @@ import { ColumnSeries as BarSeries } from "./chart/series/cartesian/columnSeries
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { Chart } from "./chart/chart";
-import { Series } from "./chart/series/series";
+import { Series, HighlightStyle } from "./chart/series/series";
 import { SeriesMarker } from "./chart/series/seriesMarker";
 import { DropShadow } from "./scene/dropShadow";
 import { CategoryAxis } from "./chart/axis/categoryAxis";
@@ -293,7 +294,9 @@ export class ChartBuilder {
 
         if (field) {
             this.setValueIfExists(series, 'xKey', field.xKey);
+            this.setValueIfExists(series, 'xName', field.xName);
             this.setValueIfExists(series, 'yKey', field.yKey);
+            this.setValueIfExists(series, 'yName', field.yName);
         }
 
         if (fill) {
@@ -315,8 +318,7 @@ export class ChartBuilder {
         }
 
         if (highlightStyle) {
-            this.setValueIfExists(series.highlightStyle, 'fill', highlightStyle.fill && highlightStyle.fill.color);
-            this.setValueIfExists(series.highlightStyle, 'stroke', highlightStyle.stroke && highlightStyle.stroke.color);
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
         }
 
         if (marker) {
@@ -363,8 +365,7 @@ export class ChartBuilder {
         }
 
         if (highlightStyle) {
-            this.setValueIfExists(series.highlightStyle, 'fill', highlightStyle.fill && highlightStyle.fill.color);
-            this.setValueIfExists(series.highlightStyle, 'stroke', highlightStyle.stroke && highlightStyle.stroke.color);
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
         }
 
         if (marker) {
@@ -414,8 +415,7 @@ export class ChartBuilder {
         }
 
         if (highlightStyle) {
-            this.setValueIfExists(series.highlightStyle, 'fill', highlightStyle.fill && highlightStyle.fill.color);
-            this.setValueIfExists(series.highlightStyle, 'stroke', highlightStyle.stroke && highlightStyle.stroke.color);
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
         }
 
         if (label) {
@@ -460,8 +460,7 @@ export class ChartBuilder {
         }
 
         if (highlightStyle) {
-            this.setValueIfExists(series.highlightStyle, 'fill', highlightStyle.fill && highlightStyle.fill.color);
-            this.setValueIfExists(series.highlightStyle, 'stroke', highlightStyle.stroke && highlightStyle.stroke.color);
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
         }
 
         if (marker) {
@@ -509,8 +508,7 @@ export class ChartBuilder {
         }
 
         if (highlightStyle) {
-            this.setValueIfExists(series.highlightStyle, 'fill', highlightStyle.fill && highlightStyle.fill.color);
-            this.setValueIfExists(series.highlightStyle, 'stroke', highlightStyle.stroke && highlightStyle.stroke.color);
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
         }
 
         if (callout) {
@@ -589,6 +587,11 @@ export class ChartBuilder {
         this.setValueIfExists(marker, 'stroke', options.stroke);
         this.setValueIfExists(marker, 'strokeWidth', options.strokeWidth);
         this.setValueIfExists(marker, 'strokeOpacity', options.strokeOpacity);
+    }
+
+    static initHighlightStyle(highlightStyle: HighlightStyle, options: HighlightOptions) {
+        this.setValueIfExists(highlightStyle, 'fill', options.fill);
+        this.setValueIfExists(highlightStyle, 'stroke', options.stroke);
     }
 
     static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = 'bold', fontFamily = 'Verdana, sans-serif') {

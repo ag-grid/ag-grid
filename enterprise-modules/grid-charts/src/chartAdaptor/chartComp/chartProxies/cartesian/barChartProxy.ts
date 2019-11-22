@@ -65,8 +65,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             shadow: this.getDefaultDropShadowOptions(),
         };
 
-        options.legend.item.marker.type = 'square';
-
         return options;
     }
 

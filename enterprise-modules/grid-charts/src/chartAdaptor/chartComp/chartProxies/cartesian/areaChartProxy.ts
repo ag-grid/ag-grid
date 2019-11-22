@@ -152,8 +152,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             shadow: this.getDefaultDropShadowOptions(),
         };
 
-        options.legend.item.marker.type = 'square';
-
         return options;
     }
 

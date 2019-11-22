@@ -48,50 +48,44 @@ function processChartOptions(params) {
     options.width = 700;
     options.height = 400;
 
-    options.padding = {
-        top: 20,
-        right: 30,
-        bottom: 10,
-        left: 20
-    };
+    options.padding.top = 20;
+    options.padding.right = 30;
+    options.padding.bottom = 10;
+    options.padding.left = 2;
 
-    options.background = {
-        fill: '#B0E0E6',
-    }
+    options.background.fill = '#B0E0E6';
 
-    options.title = {
-        enabled: true,
-        text: 'Precious Metals Production',
-        fontStyle: 'italic',
-        fontWeight: '600',
-        fontSize: 18,
-        fontFamily: 'Impact, sans-serif',
-        color: '#414182',
-    };
+    options.title.enabled = true;
+    options.title.text = 'Precious Metals Production';
+    options.title.fontStyle = 'italic';
+    options.title.fontWeight = '600';
+    options.title.fontSize = 18;
+    options.title.fontFamily = 'Impact, sans-serif';
+    options.title.color = '#414182';
 
-    options.subtitle = {
-        enabled: true,
-        text: 'by country',
-        fontSize: 14,
-        fontFamily: 'Monaco, monospace',
-        color: 'rgb(100, 100, 100)',
-    };
+    options.subtitle.enabled = true;
+    options.subtitle.text = 'by country';
+    options.subtitle.fontSize = 14;
+    options.subtitle.fontFamily = 'Monaco, monospace';
+    options.subtitle.color = 'rgb(100, 100, 100)';
 
-    var legend = options.legend;
+    options.legend.enabled = true;
+    options.legend.position = 'bottom';
+    options.legend.padding = 20;
 
-    legend.enabled = true;
-    legend.item.marker.strokeWidth = 2;
-    legend.item.marker.size = 25;
-    legend.item.marker.padding = 10;
-    legend.item.paddingX = 120;
-    legend.item.paddingY = 20;
-    legend.item.label.fontStyle = 'italic';
-    legend.item.label.fontWeight = 'bold';
-    legend.item.label.fontSize = 18;
-    legend.item.label.fontFamily = 'Palatino, serif';
-    legend.item.label.color = '#555';
-    legend.position = 'bottom';
-    legend.padding = 20;
+    options.legend.item.label.fontStyle = 'italic';
+    options.legend.item.label.fontWeight = 'bold';
+    options.legend.item.label.fontSize = 18;
+    options.legend.item.label.fontFamily = 'Palatino, serif';
+    options.legend.item.label.color = '#555';
+
+    options.legend.item.marker.type = 'diamond';
+    options.legend.item.marker.size = 25;
+    options.legend.item.marker.padding = 10;
+    options.legend.item.marker.strokeWidth = 2;
+
+    options.legend.item.paddingX = 120;
+    options.legend.item.paddingY = 20;
 
     options.tooltipClass = 'my-tooltip-class';
 

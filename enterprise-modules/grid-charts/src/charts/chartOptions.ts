@@ -131,8 +131,8 @@ export interface AxisLabelOptions extends FontOptions {
 }
 
 export interface HighlightOptions {
-    fill?: SingleFillOptions;
-    stroke?: SingleStrokeOptions;
+    fill?: string;
+    stroke?: string;
 }
 
 export interface SingleFillOptions {

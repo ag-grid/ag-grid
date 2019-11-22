@@ -53,18 +53,24 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         const axisColor = "rgba(195, 195, 195, 1)";
 
         return {
-            label: {
+            title: {
                 ...fontOptions,
-                padding: 5,
+                enabled: false,
+                fontSize: 14,
+            },
+            line: {
+                color: axisColor,
+                width: 1,
             },
             tick: {
                 color: axisColor,
                 size: 6,
                 width: 1,
             },
-            line: {
-                color: axisColor,
-                width: 1,
+            label: {
+                ...fontOptions,
+                padding: 5,
+                rotation: 0,
             },
             gridStyle: [{
                 stroke,

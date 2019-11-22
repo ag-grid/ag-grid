@@ -32,6 +32,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
+        const { seriesDefaults } = this.chartOptions;
         const { fills, strokes } = this.getPalette();
         let offset = 0;
 
@@ -39,15 +40,15 @@ export class DoughnutChartProxy extends PolarChartProxy {
             const existingSeries = seriesMap[f.colId];
 
             const seriesOptions: PieSeriesInternalOptions = {
-                ...this.chartOptions.seriesDefaults,
+                ...seriesDefaults,
                 type: "pie",
                 field: {
                     angleKey: f.colId,
                 },
                 showInLegend: index === 0, // show legend items for the first series only
                 title: {
-                    ...this.chartOptions.seriesDefaults.title,
-                    text: f.displayName,
+                    ...seriesDefaults.title,
+                    text: seriesDefaults.title.text || f.displayName,
                 }
             };
 
@@ -100,16 +101,23 @@ export class DoughnutChartProxy extends PolarChartProxy {
     protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
         const { strokes } = this.getPredefinedPalette();
         const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
+        const fontOptions = this.getDefaultFontOptions();
 
         options.seriesDefaults = {
             ...options.seriesDefaults,
+            title: {
+                ...fontOptions,
+                enabled: true,
+                fontSize: 12,
+                fontWeight: 'bold',
+            },
             callout: {
                 colors: strokes,
                 length: 10,
-                strokeWidth: 1,
+                strokeWidth: 2,
             },
             label: {
-                ...this.getDefaultFontOptions(),
+                ...fontOptions,
                 enabled: false,
                 offset: 3,
                 minRequiredAngle: 0,
@@ -119,8 +127,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
             },
             shadow: this.getDefaultDropShadowOptions(),
         };
-
-        options.legend.item.marker.type = 'square';
 
         return options;
     }

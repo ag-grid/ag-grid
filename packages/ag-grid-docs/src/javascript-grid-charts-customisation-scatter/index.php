@@ -28,7 +28,7 @@ interface ScatterChartOptions {
         stroke: StrokeOptions;
 
         // The style to apply to a marker when it is hovered over or tapped
-        highlightStyle?: HighlightOptions;
+        highlightStyle: HighlightOptions;
 
         marker: MarkerOptions;
 
@@ -44,7 +44,7 @@ interface ScatterChartOptions {
 }
 
 interface AxisOptions {
-    title?: CaptionOptions;
+    title: CaptionOptions;
     line: AxisLineOptions;
     tick: AxisTickOptions;
     label: AxisLabelOptions;
@@ -56,13 +56,13 @@ interface AxisOptions {
 }
 
 interface CaptionOptions {
-    enabled?: boolean;
+    enabled: boolean; // default: false
     text?: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number;
-    fontFamily?: string;
-    color?: string;
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 14
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
 }
 
 type FontStyle = 'normal' | 'italic' | 'oblique';
@@ -81,13 +81,13 @@ interface AxisTickOptions {
 }
 
 interface AxisLabelOptions {
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number; // default: 12
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: 'black'
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 12
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
     padding: number; // default: 5
-    rotation?: number; // default: dependent on chart type. Overridden for default category
+    rotation: number; // default: &lt;dependent on chart type. Overridden for default category&gt;
 
     // A custom formatter function for the axis labels.
     // The value is either a category name or a number. If it's the latter, the number
@@ -96,7 +96,7 @@ interface AxisLabelOptions {
 }
 
 interface GridStyle {
-    stroke: string; // default: dependent on light/dark mode
+    stroke: string; // default: &lt;dependent on light/dark mode&gt;
 
     // The line dash array. Every number in the array specifies the length of alternating
     // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
@@ -105,14 +105,14 @@ interface GridStyle {
 }
 
 interface FillOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1 (scatter), 0.7 (bubble)
 }
 
 interface StrokeOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1
@@ -121,12 +121,13 @@ interface StrokeOptions {
 }
 
 interface HighlightOptions {
-    fill?: string;
+    fill: string; // default: 'yellow'
     stroke?: string;
 }
 
 interface MarkerOptions {
     enabled: boolean; // default: true
+    type: MarkerType; // default: 'circle'
 
     // In bubble charts the marker size is determined by data. In this case, `size`
     // is the maximum size a marker can be and `minSize` is the minimum. For scatter
@@ -136,6 +137,8 @@ interface MarkerOptions {
 
     strokeWidth: number; // default: 1
 }
+
+type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 
 interface TooltipOptions {
     enabled: boolean; // default: true
@@ -153,10 +156,10 @@ interface ScatterTooltipRendererParams {
     yKey: string;
     // The name of the column that the Y value is from
     yName: string;
-    // The key of the datum object that contains the radius value
-    radiusKey?: string;
-    // The name of the column that the radius value is from
-    radiusName?: string;
+    // The key of the datum object that contains the size value
+    sizeKey?: string;
+    // The name of the column that the size value is from
+    sizeName?: string;
     // The key of the datum object that contains the label
     labelKey?: string;
     // The name of the column that the label is from

@@ -42,6 +42,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
     console.log('chart options:', options);
 
     // We are only interested in processing area type,
@@ -52,55 +53,58 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    var xAxis = options.xAxis;
-    xAxis.title = {
-        enabled: true,
-        text: 'Country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        fontFamily: 'Impact, sans-serif',
-        color: 'gray'
-    };
-    xAxis.line.width = 2;
-    xAxis.line.color = 'gray';
-    xAxis.tick.width = 2;
-    xAxis.tick.size = 10;
-    xAxis.tick.color = 'gray';
-    xAxis.label.fontStyle = 'italic';
-    xAxis.label.fontWeight = 'bold';
-    xAxis.label.fontSize = 15;
-    xAxis.label.fontFamily = 'Arial, sans-serif';
-    xAxis.label.padding = 10;
-    xAxis.label.color = '#de7b73';
-    xAxis.label.rotation = 20;
-    xAxis.label.formatter = function(params) {
+    options.xAxis.title.enabled = true;
+    options.xAxis.title.text = 'Country';
+    options.xAxis.title.fontStyle = 'italic';
+    options.xAxis.title.fontWeight = 'bold';
+    options.xAxis.title.fontSize = 14;
+    options.xAxis.title.fontFamily = 'Impact, sans-serif';
+    options.xAxis.title.color = 'gray';
+
+    options.xAxis.line.width = 2;
+    options.xAxis.line.color = 'gray';
+
+    options.xAxis.tick.width = 2;
+    options.xAxis.tick.size = 10;
+    options.xAxis.tick.color = 'gray';
+
+    options.xAxis.label.fontStyle = 'italic';
+    options.xAxis.label.fontWeight = 'bold';
+    options.xAxis.label.fontSize = 15;
+    options.xAxis.label.fontFamily = 'Arial, sans-serif';
+    options.xAxis.label.color = '#de7b73';
+    options.xAxis.label.padding = 10;
+    options.xAxis.label.rotation = 20;
+    options.xAxis.label.formatter = function(params) {
         var value = String(params.value);
         return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
     };
-    xAxis.gridStyle = [
+
+    options.xAxis.gridStyle = [
         {
             stroke: 'rgba(94,100,178,0.5)'
         }
     ];
 
-    var yAxis = options.yAxis;
-    yAxis.line.width = 2;
-    yAxis.line.color = 'blue';
-    yAxis.tick.width = 2;
-    yAxis.tick.size = 10;
-    yAxis.tick.color = 'blue';
-    yAxis.label.fontStyle = 'italic';
-    yAxis.label.fontWeight = 'bold';
-    yAxis.label.fontSize = 15;
-    yAxis.label.fontFamily = 'Arial, sans-serif';
-    yAxis.label.padding = 10;
-    yAxis.label.color = '#de7b73';
-    yAxis.label.rotation = -20;
-    yAxis.label.formatter = function(params) {
+    options.yAxis.line.width = 2;
+    options.yAxis.line.color = 'blue';
+
+    options.yAxis.tick.width = 2;
+    options.yAxis.tick.size = 10;
+    options.yAxis.tick.color = 'blue';
+
+    options.yAxis.label.fontStyle = 'italic';
+    options.yAxis.label.fontWeight = 'bold';
+    options.yAxis.label.fontSize = 15;
+    options.yAxis.label.fontFamily = 'Arial, sans-serif';
+    options.yAxis.label.color = '#de7b73';
+    options.yAxis.label.padding = 10;
+    options.yAxis.label.rotation = -20;
+    options.yAxis.label.formatter = function(params) {
         return params.value.toString().toUpperCase();
     };
-    yAxis.gridStyle = [
+
+    options.yAxis.gridStyle = [
         {
             stroke: '#80808044',
             lineDash: undefined
@@ -111,29 +115,26 @@ function processChartOptions(params) {
         }
     ];
 
-    var seriesDefaults = options.seriesDefaults;
+    options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
+    options.seriesDefaults.fill.opacity = 0.8;
 
-    seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
-    seriesDefaults.fill.opacity = 0.8;
-    seriesDefaults.stroke.colors = ['black', '#ff0000'];
-    seriesDefaults.stroke.opacity = 0.8;
-    seriesDefaults.stroke.width = 2;
-    seriesDefaults.highlightStyle = {
-        fill: 'red',
-        stroke: 'yellow'
-    };
+    options.seriesDefaults.stroke.colors = ['black', '#ff0000'];
+    options.seriesDefaults.stroke.opacity = 0.7;
+    options.seriesDefaults.stroke.width = 2;
 
-    seriesDefaults.marker.enabled = true;
-    seriesDefaults.marker.size = 12;
-    seriesDefaults.marker.strokeWidth = 4;
+    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
-    seriesDefaults.shadow = {
-        color: 'rgba(0, 0, 0, 0.3)',
-        offset: [5, 5],
-        blur: 8
-    };
+    options.seriesDefaults.marker.enabled = true;
+    options.seriesDefaults.marker.type = 'triangle';
+    options.seriesDefaults.marker.size = 12;
+    options.seriesDefaults.marker.strokeWidth = 4;
 
-    seriesDefaults.tooltip.renderer = function(params) {
+    options.seriesDefaults.shadow.color = 'rgba(0, 0, 0, 0.3)';
+    options.seriesDefaults.shadow.offset = [5, 5];
+    options.seriesDefaults.shadow.blur = 8;
+
+    options.seriesDefaults.tooltip.renderer = function(params) {
         var x = params.datum[params.xKey];
         var y = params.datum[params.yKey];
         return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;

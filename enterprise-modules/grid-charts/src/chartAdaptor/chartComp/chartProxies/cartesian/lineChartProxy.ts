@@ -105,8 +105,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 width: 3,
             },
             marker: {
-                type: 'circle',
                 enabled: true,
+                type: 'circle',
                 size: 6,
                 strokeWidth: 1,
             },
@@ -114,8 +114,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 enabled: true,
             }
         };
-
-        options.legend.item.marker.type = 'square';
 
         return options;
     }
