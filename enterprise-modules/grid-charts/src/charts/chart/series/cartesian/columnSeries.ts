@@ -331,17 +331,8 @@ export class ColumnSeries extends CartesianSeries {
             }
         }
 
-        if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {
-            yMin = 0;
-            yMax = 1;
-            // console.warn('Zero or infinite y-range.');
-        }
+        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
-        this.yDomain = [yMin, yMax];
-
-        // if (chart) {
-        //     chart.updateAxes();
-        // }
         this.fireEvent({type: 'dataProcessed'});
 
         return true;
@@ -359,15 +350,13 @@ export class ColumnSeries extends CartesianSeries {
     }
 
     update(): void {
-        this.group.visible = this.visible;
+        const { visible, xAxis, yAxis, xData, yData } = this;
 
-        if (!this.visible || !this.xAxis || !this.yAxis || !this.xData.length || !this.yData.length) {
+        this.group.visible = visible;
+
+        if (!visible || !xAxis || !yAxis || !xData.length || !yData.length) {
             return;
         }
-
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-        //     return;
-        // }
 
         const selectionData = this.generateSelectionData();
 

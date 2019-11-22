@@ -104,22 +104,10 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         this.sizeScale.domain = numericExtent(this.sizeData) || [1, 1];
-        this.xDomain = this.calculateDomain(this.xData);
-        this.yDomain = this.calculateDomain(this.yData);
+        this.xDomain = this.fixNumericExtent(numericExtent(this.xData), 'x');
+        this.yDomain = this.fixNumericExtent(numericExtent(this.yData), 'y');
 
         return true;
-    }
-
-    private calculateDomain(data: any[]): [number, number] {
-        const domain = numericExtent(data) || [0, 1];
-        const [min, max] = domain;
-
-        if (min === max) {
-            domain[0] = min - 1;
-            domain[1] = max + 1;
-        }
-
-        return domain;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

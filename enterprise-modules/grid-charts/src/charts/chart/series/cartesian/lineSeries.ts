@@ -116,38 +116,20 @@ export class LineSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKey } = this;
+        const { xAxis, xKey, yKey } = this;
         const data = xKey && yKey ? this.data : [];
 
-        // if (!(chart && chart.xAxis && chart.yAxis)) {
-        //     return false;
-        // }
+        if (!xAxis) {
+            return false;
+        }
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
 
         this.xData = data.map(datum => datum[xKey]);
         this.yData = data.map(datum => datum[yKey]);
 
-        const isContinuousX = this.xAxis.scale instanceof ContinuousScale;
-        const xDomain = isContinuousX ? (numericExtent(this.xData) || [0, 1]) : this.xData;
-        const yDomain = numericExtent(this.yData) || [0, 1];
-
-        if (isContinuousX) {
-            const [min, max] = xDomain as number[];
-
-            if (min === max) {
-                xDomain[0] = min - 1;
-                xDomain[1] = max + 1;
-            }
-        }
-
-        const [min, max] = yDomain;
-
-        if (min === max) {
-            yDomain[0] = min - 1;
-            yDomain[1] = max + 1;
-        }
-
-        this.xDomain = xDomain;
-        this.yDomain = yDomain;
+        this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(this.xData), 'x') : this.xData;
+        this.yDomain = this.fixNumericExtent(numericExtent(this.yData), 'y');
 
         return true;
     }
@@ -216,15 +198,12 @@ export class LineSeries extends CartesianSeries {
 
     update(): void {
         const { xAxis, yAxis } = this;
+
         this.group.visible = this.visible;
 
         if (!xAxis || !yAxis) {
             return;
         }
-
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-        //     return;
-        // }
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;

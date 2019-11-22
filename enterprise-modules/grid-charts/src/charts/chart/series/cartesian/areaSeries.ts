@@ -2,7 +2,6 @@ import { Group } from "../../../scene/group";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "../series";
-import ContinuousScale from "../../../scale/continuousScale";
 import { PointerEvents } from "../../../scene/node";
 import { sumPositiveValues } from "../../../util/array";
 import { toFixed } from "../../../util/number";
@@ -10,7 +9,6 @@ import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
 import { Path } from "../../../scene/shape/path";
 import palette from "../../palettes";
-import { numericExtent } from "../../../util/array";
 import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -257,22 +255,12 @@ export class AreaSeries extends CartesianSeries {
         //   [10, -15, 20]
         // ]
 
-        const ySums = this.yData.map(values => sumPositiveValues(values)); // used for normalization
-        const { xData, yData, normalizedTo } = this;
-        const isContinuousX = this.xAxis.scale instanceof ContinuousScale;
-        const xDomain = isContinuousX ? (numericExtent(xData) || [0, 1]) : xData;
+        const { yData, normalizedTo } = this;
 
-        if (isContinuousX) {
-            const [min, max] = xDomain as number[];
+        const ySums = yData.map(values => sumPositiveValues(values)); // used for normalization
 
-            if (min === max) {
-                xDomain[0] = min - 1;
-                xDomain[1] = max + 1;
-            }
-        }
-
-        let yMin: number = Infinity;
-        let yMax: number = -Infinity;
+        let yMin: number;
+        let yMax: number;
 
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = 0;
@@ -285,17 +273,7 @@ export class AreaSeries extends CartesianSeries {
             yMax = Math.max(...yData.map(values => values.reduce((max, value) => value > 0 ? max + value : max, 0)));
         }
 
-        if (yMin === yMax || !isFinite(yMin) || !isFinite(yMax)) {
-            yMin = 0;
-            yMax = 1;
-            // console.warn('Zero or infinite y-range.');
-        }
-
-        this.yDomain = [yMin, yMax];
-
-        // if (chart) {
-        //     chart.updateAxes();
-        // }
+        this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
         this.fireEvent({type: 'dataProcessed'});
 
@@ -311,13 +289,11 @@ export class AreaSeries extends CartesianSeries {
     }
 
     update(): void {
-        this.group.visible = this.visible;
+        const { visible, xAxis, yAxis, xData, yData } = this;
 
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-        //     return;
-        // }
+        this.group.visible = visible;
 
-        if (!this.visible || !this.xAxis || !this.yAxis || !this.xData.length || !this.yData.length) {
+        if (!visible || !xAxis || !yAxis || !xData.length || !yData.length) {
             return;
         }
 
