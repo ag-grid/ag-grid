@@ -799,7 +799,9 @@ export class CellComp extends Component {
         this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag === true;
         this.includeDndSourceComponent = dndSourceIsFunc || colDef.dndSource === true;
 
-        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
+        const enableTextSelection = this.beans.gridOptionsWrapper.isEnableCellTextSelection();
+
+        this.usingWrapper = enableTextSelection || this.includeRowDraggingComponent || this.includeSelectionComponent || this.includeDndSourceComponent;
     }
 
     private chooseCellRenderer(): void {
