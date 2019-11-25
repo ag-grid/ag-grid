@@ -517,7 +517,11 @@ export class PieSeries extends PolarSeries {
     update(): void {
         const visible = this.group.visible = this.visible && this.dataEnabled.indexOf(true) >= 0;
 
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending) {
+        if (!visible) {
+            return;
+        }
+
+        // if (chart.dataPending || chart.layoutPending) {
         //     return;
         // }
 

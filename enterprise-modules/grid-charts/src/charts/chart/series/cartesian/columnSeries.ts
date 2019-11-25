@@ -354,7 +354,15 @@ export class ColumnSeries extends CartesianSeries {
 
         this.group.visible = visible;
 
-        if (!visible || !xAxis || !yAxis || !xData.length || !yData.length) {
+        if (!xAxis) {
+            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
+            return;
+        }
+        if (!yAxis) {
+            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
+            return;
+        }
+        if (!visible || !xData.length || !yData.length) {
             return;
         }
 
@@ -364,7 +372,7 @@ export class ColumnSeries extends CartesianSeries {
         this.updateTextSelection(selectionData);
     }
 
-    private generateSelectionData() {
+    private generateSelectionData(): SelectionDatum[] {
         const { xAxis, yAxis, flipXY } = this;
         const xScale = (flipXY ? yAxis : xAxis).scale;
         const yScale = (flipXY ? xAxis : yAxis).scale;

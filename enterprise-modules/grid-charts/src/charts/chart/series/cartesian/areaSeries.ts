@@ -293,7 +293,15 @@ export class AreaSeries extends CartesianSeries {
 
         this.group.visible = visible;
 
-        if (!visible || !xAxis || !yAxis || !xData.length || !yData.length) {
+        if (!xAxis) {
+            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
+            return;
+        }
+        if (!yAxis) {
+            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
+            return;
+        }
+        if (!visible || !xData.length || !yData.length) {
             return;
         }
 

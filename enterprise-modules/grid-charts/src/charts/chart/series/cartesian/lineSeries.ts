@@ -201,7 +201,12 @@ export class LineSeries extends CartesianSeries {
 
         this.group.visible = this.visible;
 
-        if (!xAxis || !yAxis) {
+        if (!xAxis) {
+            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
+            return;
+        }
+        if (!yAxis) {
+            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
             return;
         }
 
