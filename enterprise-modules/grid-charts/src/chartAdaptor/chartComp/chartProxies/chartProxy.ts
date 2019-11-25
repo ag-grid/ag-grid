@@ -136,6 +136,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'legend.item.marker.size': 'legend.markerSize',
             'legend.item.marker.padding': 'legend.markerPadding',
             'legend.item.label.fontFamily': 'legend.labelFontFamily',
+            'legend.item.label.fontStyle': 'legend.labelFontStyle',
             'legend.item.label.fontWeight': 'legend.labelFontWeight',
             'legend.item.label.fontSize': 'legend.labelFontSize',
             'legend.item.label.color': 'legend.labelColor',
