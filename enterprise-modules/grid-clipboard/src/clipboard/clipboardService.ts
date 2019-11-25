@@ -356,9 +356,13 @@ export class ClipboardService implements IClipboardService {
     }
 
     private updateCellValue(rowNode: RowNode | null, column: Column, value: string, currentRow: RowPosition | null, cellsToFlash: any, type: string, changedPath: ChangedPath | undefined) {
-        if (!rowNode || !currentRow) { return; }
-        if (!column.isCellEditable(rowNode)) { return; }
-        if (column.isSuppressPaste(rowNode)) { return; }
+        if (
+            !rowNode ||
+            !currentRow ||
+            !column ||
+            !column.isCellEditable ||
+            column.isSuppressPaste(rowNode)
+        ) { return; }
 
         const processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
         this.valueService.setValue(rowNode, column, processedValue, Constants.SOURCE_PASTE);
