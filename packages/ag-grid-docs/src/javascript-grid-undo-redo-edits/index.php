@@ -56,8 +56,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul class="content">
-        <li><b>Ctrl+Z / CMD+Z</b>: will undo the last cell edit(s)</li>
-        <li><b>Ctrl+Y / CMD+SHIFT+Z</b>: will redo the last undo</li>
+        <li><b>Ctrl+Z / CMD+Z</b>: will undo the last cell edit(s).</li>
+        <li><b>Ctrl+Y / CMD+SHIFT+Z</b>: will redo the last undo.</li>
     </ul>
 
     <p>

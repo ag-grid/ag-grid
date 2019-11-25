@@ -1,17 +1,17 @@
 import {CellRange} from "../interfaces/iRangeController";
 
-export type CellValueChange = {
-    rowPinned?: string,
-    rowIndex: number,
-    columnId: string,
-    oldValue: any
-    newValue: any
+export interface CellValueChange {
+    rowPinned?: string;
+    rowIndex: number;
+    columnId: string;
+    oldValue: any;
+    newValue: any;
 }
 
-export type LastFocusedCell = {
-    rowPinned?: string,
-    rowIndex: number,
-    columnId: string
+export interface LastFocusedCell {
+    rowPinned?: string;
+    rowIndex: number;
+    columnId: string;
 }
 
 export class UndoRedoAction {
@@ -41,7 +41,7 @@ export class UndoRedoStack {
     private actionStack: UndoRedoAction[] = [];
 
     constructor(maxStackSize?: number) {
-        this.maxStackSize = maxStackSize? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
+        this.maxStackSize = !!maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
         this.actionStack = new Array<UndoRedoAction>(this.maxStackSize);
     }
 

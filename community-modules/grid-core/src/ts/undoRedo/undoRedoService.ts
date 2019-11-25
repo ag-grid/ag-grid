@@ -43,6 +43,10 @@ export class UndoRedoService {
         }
 
         const undoRedoLimit = this.gridOptionsWrapper.getUndoRedoCellEditingLimit();
+        if (undoRedoLimit <= 0) {
+            return;
+        }
+
         this.undoStack = new UndoRedoStack(undoRedoLimit);
         this.redoStack = new UndoRedoStack(undoRedoLimit);
 
@@ -71,11 +75,17 @@ export class UndoRedoService {
         };
 
         this.cellValueChanges.push(cellValueChange);
-    };
+    }
 
     public undo() {
+        if (!this.undoStack) {
+            return;
+        }
+
         const undoAction: UndoRedoAction = this.undoStack.pop();
-        if (!undoAction || !undoAction.cellValueChanges) return;
+        if (!undoAction || !undoAction.cellValueChanges) {
+            return;
+        }
 
         this.processAction(undoAction, (cellValueChange: CellValueChange) => cellValueChange.oldValue);
 
@@ -89,6 +99,10 @@ export class UndoRedoService {
     }
 
     public redo() {
+        if (!this.redoStack) {
+            return;
+        }
+
         const redoAction: UndoRedoAction = this.redoStack.pop();
         if (!redoAction || !redoAction.cellValueChanges) {
             return;
