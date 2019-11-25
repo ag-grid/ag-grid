@@ -391,19 +391,23 @@ export class ColumnController {
         });
     }
 
-    public autoSizeColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean, source: ColumnEventType = "api"): void {
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
         // getting narrowed, which in turn introduces more rendered columns on the RHS which
         // did not get autosized in the original run, leaving the visible grid with columns on
-        // the LHS sized, but RHS no. so we keep looping through teh visible columns until
+        // the LHS sized, but RHS no. so we keep looping through the visible columns until
         // no more cols are available (rendered) to be resized
 
         // keep track of which cols we have resized in here
         const columnsAutosized: Column[] = [];
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
+
+        if (skipHeader == null) {
+            skipHeader = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+        }
 
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
@@ -413,7 +417,7 @@ export class ColumnController {
                     return false;
                 }
                 // get how wide this col should be
-                const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column);
+                const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column, skipHeader);
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
                     const newWidth = this.normaliseColumnWidth(column, preferredWidth);
@@ -439,15 +443,15 @@ export class ColumnController {
         }
     }
 
-    public autoSizeColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
+    public autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source: ColumnEventType = "api"): void {
         if (key) {
-            this.autoSizeColumns([key], source);
+            this.autoSizeColumns([key], skipHeader, source);
         }
     }
 
-    public autoSizeAllColumns(source: ColumnEventType = "api"): void {
+    public autoSizeAllColumns(skipHeader?: boolean, source: ColumnEventType = "api"): void {
         const allDisplayedColumns = this.getAllDisplayedColumns();
-        this.autoSizeColumns(allDisplayedColumns, source);
+        this.autoSizeColumns(allDisplayedColumns, skipHeader, source);
     }
 
     private getColumnsFromTree(rootColumns: OriginalColumnGroupChild[]): Column[] {

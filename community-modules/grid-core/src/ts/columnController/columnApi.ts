@@ -96,9 +96,9 @@ export class ColumnApi {
     public getCenterDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getCenterDisplayedColumnGroups(); }
     public getRightDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getRightDisplayedColumnGroups(); }
     public getAllDisplayedColumnGroups(): ColumnGroupChild[] { return this.columnController.getAllDisplayedColumnGroups(); }
-    public autoSizeColumn(key: string | Column): void {return this.columnController.autoSizeColumn(key, 'api'); }
-    public autoSizeColumns(keys: (string | Column)[]): void {return this.columnController.autoSizeColumns(keys, 'api'); }
-    public autoSizeAllColumns(): void { this.columnController.autoSizeAllColumns('api'); }
+    public autoSizeColumn(key: string | Column, skipHeader?: boolean): void {return this.columnController.autoSizeColumn(key, skipHeader, 'api'); }
+    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {return this.columnController.autoSizeColumns(keys, skipHeader, 'api'); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnController.autoSizeAllColumns(skipHeader, 'api'); }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnController.setSecondaryColumns(colDefs, 'api'); }
 

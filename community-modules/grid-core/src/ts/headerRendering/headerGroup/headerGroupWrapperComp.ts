@@ -314,6 +314,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.addDestroyFunc(finishedWithResizeFunc);
 
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
+            const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+
             this.eHeaderCellResize.addEventListener('dblclick', (event: MouseEvent) => {
                 // get list of all the column keys we are responsible for
                 const keys: string[] = [];
@@ -325,7 +327,7 @@ export class HeaderGroupWrapperComp extends Component {
                 });
 
                 if (keys.length > 0) {
-                    this.columnController.autoSizeColumns(keys, "uiColumnResized");
+                    this.columnController.autoSizeColumns(keys, skipHeaderOnAutoSize, "uiColumnResized");
                 }
             });
         }

@@ -28,12 +28,10 @@ export class AutoWidthCalculator {
     // into the dummy, then check the dummy's width. then destroy the dummy
     // as we don't need it any more.
     // drawback: only the cells visible on the screen are considered
-    public getPreferredWidthForColumn(column: Column): number {
+    public getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number {
         const eHeaderCell = this.getHeaderCellForColumn(column);
         // cell isn't visible
-        if (!eHeaderCell) {
-            return -1;
-        }
+        if (!eHeaderCell) { return -1; }
 
         const eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
@@ -48,11 +46,12 @@ export class AutoWidthCalculator {
         // rendered cells, rows not rendered due to row visualisation will not be here)
         this.putRowCellsIntoDummyContainer(column, eDummyContainer);
 
-        // also put header cell in
-        // we only consider the lowest level cell, not the group cell. in 99% of the time, this
-        // will be enough. if we consider groups, then it gets to complicated for what it's worth,
-        // as the groups can span columns and this class only considers one column at a time.
-        this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
+        if (!skipHeader) {
+            // we only consider the lowest level cell, not the group cell. in 99% of the time, this
+            // will be enough. if we consider groups, then it gets too complicated for what it's worth,
+            // as the groups can span columns and this class only considers one column at a time.
+            this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
+        }
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.

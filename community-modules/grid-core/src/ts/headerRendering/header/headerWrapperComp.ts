@@ -209,9 +209,7 @@ export class HeaderWrapperComp extends Component {
         const colDef = this.getComponentHolder();
 
         // if no eResize in template, do nothing
-        if (!this.eResize) {
-            return;
-        }
+        if (!this.eResize) { return; }
 
         if (!this.column.isResizable()) {
             _.removeFromParent(this.eResize);
@@ -228,16 +226,17 @@ export class HeaderWrapperComp extends Component {
         this.addDestroyFunc(finishedWithResizeFunc);
 
         const weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
+        const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
-                this.columnController.autoSizeColumn(this.column, "uiColumnResized");
+                this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
             const touchListener: TouchListener = new TouchListener(this.eResize);
 
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
-                this.columnController.autoSizeColumn(this.column, "uiColumnResized");
+                this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
             this.addDestroyFunc(touchListener.destroy.bind(touchListener));

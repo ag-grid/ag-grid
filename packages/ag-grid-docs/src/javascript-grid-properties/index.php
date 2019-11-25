@@ -51,6 +51,12 @@ include '../documentation-main/documentation_header.php';
                 (for example) sort icons, or some other dynamic nature of the header.</td>
         </tr>
         <tr>
+            <th>skipHeaderOnAutoSize</th>
+            <td>Set this to true to skip the headerName when autoSize is called by default. For more info see the 
+                <a href="../javascript-grid-resizing/#resizing-example">Resing Example</a>.
+            </td>
+        </tr>
+        <tr>
             <th>suppressColumnMoveAnimation</th>
             <td>If true, the <code>ag-column-moving</code> class is not added to the grid while columns are moving.
                 In the default <a href="../javascript-grid-styling/">themes</a>, this transpires to no animation for

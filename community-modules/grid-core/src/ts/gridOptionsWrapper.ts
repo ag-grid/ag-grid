@@ -1177,6 +1177,10 @@ export class GridOptionsWrapper {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
+    public isSkipHeaderOnAutoSize(): boolean {
+        return !!this.gridOptions.skipHeaderOnAutoSize;
+    }
+
     public getAutoSizePadding(): number {
         return this.gridOptions.autoSizePadding && this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 20;
     }

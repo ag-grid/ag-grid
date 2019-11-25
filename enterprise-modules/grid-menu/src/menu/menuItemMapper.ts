@@ -61,6 +61,7 @@ export class MenuItemMapper {
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
 
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
         switch (key) {
             case 'pinSubMenu':
@@ -100,12 +101,12 @@ export class MenuItemMapper {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                    action: () => this.columnController.autoSizeColumn(column, "contextMenu")
+                    action: () => this.columnController.autoSizeColumn(column, skipHeaderOnAutoSize, "contextMenu")
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnController.autoSizeAllColumns("contextMenu")
+                    action: () => this.columnController.autoSizeAllColumns(skipHeaderOnAutoSize, "contextMenu")
                 };
             case 'rowGroup':
                 return {

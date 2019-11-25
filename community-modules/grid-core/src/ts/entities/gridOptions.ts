@@ -171,6 +171,7 @@ export interface GridOptions {
     suppressNoRowsOverlay?: boolean;
     suppressAutoSize?: boolean;
     autoSizePadding?: number;
+    skipHeaderOnAutoSize?: boolean;
     animateRows?: boolean;
     suppressColumnMoveAnimation?: boolean;
     suppressMovableColumns?: boolean;

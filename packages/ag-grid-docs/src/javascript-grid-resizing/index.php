@@ -51,37 +51,6 @@ gridOptions: {
 }
 </snippet>
 
-    <h2>Column Flex</h1>
-
-    <p>
-        It's often required that one or more columns fill the entire available space in
-        the grid. For this scenario, it is possible to use the <code>flex</code> config.
-        Some columns could be set with a regular <code>width</code> config, while other 
-        columns would have a flex config.
-    </p>
-
-    <p>
-        Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
-        their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
-        the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
-        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
-        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
-    </p>
-
-    <note>
-        The flex config does <strong>not</strong> work with the <code>width</code> config
-        in same column. If you need to provide a minimum width for a column. 
-        You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
-        into account.
-    </note>
-
-    <note>
-        If you manually resize a column with flex either via API or dragging the resize handle, 
-        flex will be automatically disabled for that column.
-    </note>
-
-    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
-
     <h2>Size Columns to Fit</h2>
 
     <p>
@@ -130,6 +99,12 @@ gridOptions: {
         </p>
     </note>
 
+    <note>
+        It's important to point out that <code>autoSizeColumns(skipHeaders)</code> can receive <code>true</code> as parameter to indicate that
+        the header content (headerName) should not be considered when calculating the width of the column. You can also set this behavior to be
+        the default by setting <code>skipHeaderOnAutoSize: true</code> in the <code>gridOptions</code>.
+    </note>
+
     <h2>Resizing Example</h2>
 
     <p>
@@ -139,7 +114,8 @@ gridOptions: {
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
             right side of its header.</li>
         <li>The button 'Size to Fit' calls <code>api.sizeColumnsToFit()</code></li>
-        <li>The button 'Auto-Size All' calls <code>columnApi.autoSizeColumns()</code></li>
+        <li>The button 'Auto-Size All' calls <code>columnApi.autoSizeColumns([columnIds])</code></li>
+        <li>The button 'Auto-Size All (Skip Header)' calls <code>columnApi.autoSizeColumns([columnIds], true)</code></li>
         <li>The first column is fixed with (ie <code>suppressSizeToFit = true</code>),
             which means its size does not change when <code>sizeColumnsToFit</code> is called.</li>
         <li>The 'age' column has both a min and max size set, so resizing the column
@@ -171,6 +147,51 @@ gridOptions: {
     </p>
 
     <?= example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
+
+    <h2>Column Flex</h1>
+
+    <p>
+        It's often required that one or more columns fill the entire available space in
+        the grid. For this scenario, it is possible to use the <code>flex</code> config.
+        Some columns could be set with a regular <code>width</code> config, while other 
+        columns would have a flex config.
+    </p>
+
+    <p>
+        Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
+        their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
+        the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
+        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
+        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
+    </p>
+
+    <note>
+        The flex config does <strong>not</strong> work with the <code>width</code> config
+        in same column. If you need to provide a minimum width for a column. 
+        You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
+        into account.
+    </note>
+
+    <note>
+        If you manually resize a column with flex either via API or dragging the resize handle, 
+        flex will be automatically disabled for that column.
+    </note>
+
+    <p>
+        The example below shows flex in action. Things to note are as follows:
+    </p>
+    <ul class="content">
+        <li>
+            The 'link' column has <code>flex: 1</code> and <code>minWidth: 200</code>. That means the 'link'
+            column sets the default size of any flexed column because it has the lowest flex value. And if you
+            resize the grid, this column will never have a size less than 200px;
+        <li>
+            The 'title' column has <code>flex: 2</code> and <code>minWidth: 250</code>. That means the 'title'
+            column will be double the base flex value and even if you resize the grid, it's size will never be less than 250px.
+        </li>
+    </ul>
+
+    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
