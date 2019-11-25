@@ -210,7 +210,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { chart, xAxis, yAxis } = this;
+        const { xAxis, yAxis } = this;
 
         this.group.visible = this.visible;
 
@@ -223,9 +223,9 @@ export class LineSeries extends CartesianSeries {
             return;
         }
 
-        if (!chart || chart.layoutPending || chart.dataPending) {
-            return;
-        }
+        // if (!chart || chart.layoutPending || chart.dataPending) {
+        //     return;
+        // }
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
