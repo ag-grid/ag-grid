@@ -421,7 +421,6 @@ export class ClipboardService implements IClipboardService {
     }
 
     private iterateActiveRange(range: CellRange, rowCallback: RowCallback, columnCallback?: ColumnCallback, isLastRange?: boolean): void {
-
         if (!this.rangeController) { return; }
 
         let currentRow : RowPosition | null = this.rangeController.getRangeStartRow(range);
@@ -438,7 +437,7 @@ export class ClipboardService implements IClipboardService {
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && !_.missing(currentRow) && currentRow) {
             const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-            isLastRow = currentRow.rowIndex === lastRow.rowIndex && currentRow.rowIndex === lastRow.rowIndex;
+            isLastRow = this.rowPositionUtils.sameRow(currentRow, lastRow);
 
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
@@ -570,13 +569,12 @@ export class ClipboardService implements IClipboardService {
                 context: this.gridOptionsWrapper.getContext()
             };
             return func(params);
-        } else {
-            return value;
         }
+
+        return value;
     }
 
     public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string | Column)[]): void {
-
         const skipHeader = !includeHeaders;
         const deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
 
