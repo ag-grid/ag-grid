@@ -7,7 +7,7 @@
     "build": "gulp && npm run rollup",
     "rollup": "node build.js"
   },
-  "typings": "./main.d.ts",
+  "types": "./main.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"

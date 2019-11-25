@@ -300,7 +300,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
@@ -384,7 +384,7 @@ import {AllCommunityModules} from '@ag-grid-community/all-modules';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridAngular;
+    @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
 
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
@@ -439,7 +439,7 @@ import {AllCommunityModules} from '@ag-grid-community/all-modules';
     styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridAngular;
+    @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
 
     columnDefs = [
         {headerName: 'Make', field: 'make', sortable: true, filter: true, checkboxSelection: true },
@@ -514,7 +514,7 @@ ngOnInit() {
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 export class AppComponent implements OnInit {
-    @ViewChild('agGrid') agGrid: AgGridAngular;
+    @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
 
     import {AllModules} from '@ag-grid-enterprise/all-modules';
 
