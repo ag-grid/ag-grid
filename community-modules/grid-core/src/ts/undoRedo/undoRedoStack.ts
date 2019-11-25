@@ -41,7 +41,7 @@ export class UndoRedoStack {
     private actionStack: UndoRedoAction[] = [];
 
     constructor(maxStackSize?: number) {
-        this.maxStackSize = !!maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
+        this.maxStackSize = maxStackSize ? maxStackSize : UndoRedoStack.DEFAULT_STACK_SIZE;
         this.actionStack = new Array<UndoRedoAction>(this.maxStackSize);
     }
 
