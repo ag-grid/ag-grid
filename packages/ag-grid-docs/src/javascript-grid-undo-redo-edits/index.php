@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Cell Editing: A Core Feature of our Datagrid";
-$pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Cell Editing. Users can update data with Cell Editing. Version 20 is available for download now, take it for a free two month trial.";
+$pageTitle = "Undo / Redo Edits";
+$pageDescription = "Allows the user to undo and redo edits made to cells.";
 $pageKeyboards = "ag-Grid Undo / Redo";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -61,13 +61,13 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        Note that the grid needs focus for these shortcuts to have affect.
+        Note that the grid needs focus for these shortcuts to have an effect.
     </p>
 
     <h2>Undo / Redo API</h2>
 
     <p>
-        It is also possible to control undo / redo using the following grid api methods:
+        It is also possible to control undo / redo using the following grid API methods:
     </p>
 
 <snippet>
@@ -109,7 +109,7 @@ enableCellChangeFlash: true,
 
     <ul class="content">
         <li><b>Cell Editing</b>: click and edit some cell values.</li>
-        <li><b>Fill Handle</b>: drag the fill handle to change a range of cell.</li>
+        <li><b>Fill Handle</b>: drag the fill handle to change a range of cells.</li>
         <li><b>Copy / Paste</b>: use CTRL+C / CTRL+V to copy and paste a range of cells.</li>
         <li><b>Undo Shortcut</b>: use CTRL+Z to undo the cell edits.</li>
         <li><b>Redo Shortcut</b>: use CTRL+Y to redo the undone cell edits.</li>
