@@ -3,12 +3,12 @@ import url from 'url';
 import glob from 'glob-promise';
 import chalk from 'chalk';
 import { promises as fs } from 'fs';
-import { launch, Browser } from 'puppeteer';
+import { launch, Browser, Page } from 'puppeteer';
 import PromisePool from 'es6-promise-pool';
 import resemble from 'resemblejs';
 import { Spec, SpecResults, SpecDefinition } from './types';
 import { getReportHtml } from './reporting';
-import { wait, getError, getElement } from './utils';
+import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
 const defaultSpecPath = '/example.php';
 const defaultSelector = '.ag-root-wrapper';
@@ -72,6 +72,7 @@ const setThemeInBrowser = (theme: string) => {
 };
 
 export const runSpec = async (spec: Spec, context: RunContext) => {
+    let page: Page | null = null;
     try {
         let path = spec.path;
         if (spec.exampleSection || spec.exampleId) {
@@ -98,7 +99,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
             path = buildUrlQuery(path, spec.urlParams);
         }
 
-        const page = await context.browser.newPage();
+        page = await context.browser.newPage();
         if (spec.urlParams.theme) {
             await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
         }
@@ -122,15 +123,21 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
             if (testCaseName.includes(context.filter)) {
                 // let CSS animations stabilise before taking screenshot
                 await wait(500);
-                const screenshot = await wrapper.screenshot({
-                    encoding: 'binary',
-                    clip: { x: 0, y: 0, width: viewport.width, height: viewport.height }
+                const screenshotElement = step.selector
+                    ? await getElement(page, step.selector)
+                    : wrapper;
+                const screenshot = await screenshotElement.screenshot({
+                    encoding: 'binary'
                 });
                 await context.handler(screenshot, testCaseName);
             }
         }
     } catch (e) {
-        e.specName = spec.name;
+        addErrorMessage(e, `Error in spec ${spec.name}`);
+        if (page) {
+            const message = await saveErrorFile(page);
+            addErrorMessage(e, message);
+        }
         throw e;
     }
 };
@@ -199,7 +206,7 @@ export interface RunSuiteParams {
     server: string;
     reportFile: string;
     filter: string;
-    themes: string[];
+    defaultThemes: string[];
     clean: boolean;
 }
 
@@ -221,7 +228,7 @@ export const runSuite = async (params: RunSuiteParams) => {
                 : spec
         )
         .flatMap(spec =>
-            params.themes.map(theme => ({
+            (spec.themes || params.defaultThemes).map(theme => ({
                 ...spec,
                 name: `${spec.name}-${theme}`,
                 urlParams: { ...spec.urlParams, theme: `ag-theme-${theme}` }

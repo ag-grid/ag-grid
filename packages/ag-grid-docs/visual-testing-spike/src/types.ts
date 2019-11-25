@@ -13,28 +13,30 @@ export interface Viewport {
     selector?: string;
     autoRtl?: boolean;
     community?: boolean;
+    themes?: string[];
     exampleType?: 'generated' | 'multi' | 'vanilla';
-  }
-  
-  export type UrlParams = {[key: string]: string | number | boolean};
-  
-  export interface SpecDefinition extends SpecBase {
+}
+
+export type UrlParams = {[key: string]: string | number | boolean};
+
+export interface SpecDefinition extends SpecBase {
     name?: string;
     steps?: SpecStep[];
     urlParams?: UrlParams;
     defaultViewport?: Viewport;
-  }
-  
-  export interface Spec extends SpecDefinition {
+}
+
+export interface Spec extends SpecDefinition {
     name: string;
     steps: SpecStep[];
     urlParams: UrlParams;
     defaultViewport: Viewport;
-  }
+}
 
 export type SpecStep = {
     name: string;
     viewport?: Viewport;
+    selector?: string;
     prepare?: (page: Page) => Promise<void>;
 };
 

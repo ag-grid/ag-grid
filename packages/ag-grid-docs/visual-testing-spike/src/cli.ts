@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import { runSuite } from './runner';
 import { specs } from './specs';
 import yargs from 'yargs';
+import { getErrorMessage as getErrorStack } from './utils';
 
 const screenshotFolder = 'compare';
 
@@ -43,14 +44,6 @@ const args: any = yargs
                 })
     ).argv;
 
-/*
-TODO
-
-Specs:
-Community menu
-Complex header examples
-
-*/
 
 export const runCli = async (baseFolder: string) => {
     const folder = path.join(baseFolder, screenshotFolder, args.images);
@@ -74,14 +67,13 @@ export const runCli = async (baseFolder: string) => {
             folder,
             mode: args.update ? 'update' : 'compare',
             specs,
-            themes: ['alpine', 'balham', 'material', 'fresh'],
+            defaultThemes: ['alpine', 'balham', 'material', 'fresh'],
             server: args.server,
             reportFile: args.reportFile,
             clean: !!args.clean,
             filter: args.filter || ''
         });
     } catch (e) {
-        const message = e.specName ? `Error in spec ${e.specName}: ${e.stack}` : e.stack;
-        console.error('ERROR:', message);
+        console.error('ERROR:', getErrorStack(e));
     }
 };
