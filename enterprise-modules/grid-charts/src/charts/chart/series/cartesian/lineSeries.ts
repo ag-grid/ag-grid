@@ -116,7 +116,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xAxis, xKey, yKey } = this;
+        const { xAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey ? this.data : [];
 
         if (!xAxis) {
@@ -125,11 +125,24 @@ export class LineSeries extends CartesianSeries {
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
 
-        this.xData = data.map(datum => datum[xKey]);
-        this.yData = data.map(datum => datum[yKey]);
+        xData.length = 0;
+        yData.length = 0;
 
-        this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(this.xData), 'x') : this.xData;
-        this.yDomain = this.fixNumericExtent(numericExtent(this.yData), 'y');
+        for (let i = 0, n = data.length; i < n; i++) {
+            const datum = data[i];
+            const x = datum[xKey];
+            const y = datum[yKey];
+
+            if (x == null || isNaN(x) || y == null || isNaN(y)) {
+                continue;
+            }
+
+            xData.push(x);
+            yData.push(y);
+        }
+
+        this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
+        this.yDomain = this.fixNumericExtent(numericExtent(yData), 'y');
 
         return true;
     }
@@ -197,7 +210,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { xAxis, yAxis } = this;
+        const { chart, xAxis, yAxis } = this;
 
         this.group.visible = this.visible;
 
@@ -207,6 +220,10 @@ export class LineSeries extends CartesianSeries {
         }
         if (!yAxis) {
             console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
+            return;
+        }
+
+        if (!chart || chart.layoutPending || chart.dataPending) {
             return;
         }
 
