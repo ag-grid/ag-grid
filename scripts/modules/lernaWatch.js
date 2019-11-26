@@ -6,8 +6,6 @@ const commandLineOptions = require("commander");
 const execa = require("execa");
 const chokidar = require("chokidar");
 
-const WINDOWS = /^win/.test(os.platform());
-
 commandLineOptions
     .option(
         "-w, --watch",
@@ -40,7 +38,7 @@ const buildDependencies = async (dependencies, command = 'build-cjs') => {
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies}`.split(" ");
-    await execa("lerna", lernaArgs, { stdio: "inherit" });
+    await execa("./node_modules/.bin/lerna", lernaArgs, { stdio: "inherit" });
 };
 
 const findParentPackageManifest = changedFile => {
@@ -204,7 +202,7 @@ const filterExcludedRoots = dependencyTree => {
 
 const getOrderedDependencies = async packageName => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
-    const { stdout } = await execa("lerna", lernaArgs);
+    const { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs);
     let dependenciesOrdered = JSON.parse(stdout);
     dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name));
 
@@ -219,7 +217,7 @@ const getOrderedDependencies = async packageName => {
 
 const generateBuildChain = async (packageName, allPackagesOrdered) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
-    let { stdout } = await execa("lerna", lernaArgs);
+    let { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs);
     let dependencyTree = JSON.parse(stdout);
 
     dependencyTree = filterAgGridOnly(dependencyTree);
