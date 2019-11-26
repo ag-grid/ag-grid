@@ -192,7 +192,7 @@ function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName}; 
+const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
         `);
 
     const communityRegisterModuleLines = communityModules
@@ -204,7 +204,7 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
         .filter(module => module.moduleDirName !== 'grid-core')
         .filter(module => module.moduleDirName !== 'grid-all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
-const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName}; 
+const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
@@ -397,11 +397,11 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
             '/* END OF MODULES - DO NOT DELETE */',
             communityModules,
             enterpriseModules,
-            module => `           '${module.publishedName}': { 
+            module => `           '${module.publishedName}': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`,
-            module => `           '${module.publishedName}': { 
+            module => `           '${module.publishedName}': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             },`);
@@ -410,7 +410,34 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
+const MultiInstanceLock = {
+    lockFile: __dirname + '/../../docs_are_running',
+    add: function () {
+        if (fs.existsSync(this.lockFile)) {
+            console.error('One `gulp serve` task is already running.');
+            return false;
+        }
+        fs.writeFileSync(this.lockFile);
+        return true;
+    },
+    remove: function () {
+        if (fs.existsSync(this.lockFile)) {
+            fs.unlinkSync(this.lockFile);
+        }
+    }
+};
+
 module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
+    if (!MultiInstanceLock.add()) {
+        return;
+    }
+    process.on('exit', () => {
+        MultiInstanceLock.remove();
+    });
+    process.on('SIGINT', () => {
+        MultiInstanceLock.remove();
+    });
+
     const {communityModules, enterpriseModules} = getAllModules();
 
     const app = express();
