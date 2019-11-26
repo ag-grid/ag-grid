@@ -358,7 +358,7 @@ function watchModulesBeta() {
 
 function buildModules() {
     console.log("Building Modules...");
-    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
+    const tsc = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : './node_modules/.bin/tsc';
     const result = cp.spawnSync(tsc, ['--build'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
