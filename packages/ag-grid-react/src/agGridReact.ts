@@ -142,7 +142,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     private getStrategyTypeForProp(propKey: string) {
-        if (propKey === 'rowData') {
+        if (propKey === 'rowData' || propKey === 'pinnedTopRowData' || propKey === 'pinnedBottomRowData') {
             // for row data we either return the supplied strategy, or:
             // if deltaRowDataMode we default to IdentityChecks,
             // if not we default to DeepValueChecks (with the rest of the properties)
