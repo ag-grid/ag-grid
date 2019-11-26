@@ -9,6 +9,7 @@ const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
+const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
 const {updateBetweenStrings, getAllModules} = require("./utils");
@@ -79,6 +80,9 @@ function launchPhpCP(app) {
     );
 
     process.on('exit', () => {
+        php.kill();
+    });
+    process.on('SIGINT', () => {
         php.kill();
     });
 }
@@ -326,6 +330,9 @@ function watchModules(buildSourceModuleOnly) {
     process.on('exit', () => {
         lernaWatch.kill();
     });
+    process.on('SIGINT', () => {
+        lernaWatch.kill();
+    });
 }
 
 function watchCssModulesBeta() {
@@ -338,6 +345,9 @@ function watchCssModulesBeta() {
     });
 
     process.on('exit', () => {
+        cssWatch.kill();
+    });
+    process.on('SIGINT', () => {
         cssWatch.kill();
     });
 }
@@ -354,6 +364,9 @@ function watchModulesBeta() {
     process.on('exit', () => {
         tsWatch.kill();
     });
+    process.on('SIGINT', () => {
+        tsWatch.kill();
+    });
 }
 
 function buildModules() {
@@ -364,7 +377,7 @@ function buildModules() {
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 
-    if(result && result.status !== 0) {
+    if (result && result.status !== 0) {
         console.log('ERROR Building Modules');
         return result.status;
     }
@@ -428,99 +441,116 @@ const MultiInstanceLock = {
 };
 
 module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
-    if (!MultiInstanceLock.add()) {
-        return;
-    }
-    process.on('exit', () => {
-        MultiInstanceLock.remove();
-    });
-    process.on('SIGINT', () => {
-        MultiInstanceLock.remove();
-    });
+    tcpPortUsed.check(EXPRESS_PORT)
+        .then(inUse => {
+            if (inUse) {
+                console.log(`Port ${EXPRESS_PORT} is already in use - please ensure previous instances of docs has shutdown/completed.`);
+                console.log(`If you run using npm run docs-xxx and kill it the gulp process will continue until it's finished.`);
+                console.log(`Wait a few seconds for a message that will let you know you can retry.`);
+                done();
+                return;
+            }
 
-    const {communityModules, enterpriseModules} = getAllModules();
+            if (!MultiInstanceLock.add()) {
+                return;
+            }
+            process.on('exit', () => {
+                MultiInstanceLock.remove();
+            });
+            process.on('SIGINT', () => {
+                MultiInstanceLock.remove();
+            });
 
-    const app = express();
+            process.on('SIGINT', () => {
+                console.log("Docs process killed. Safe to restart.");
+                process.exit(1);
+            });
 
-    // necessary for plunkers
-    app.use(function (req, res, next) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        return next();
-    });
+            const {communityModules, enterpriseModules} = getAllModules();
 
-    updateWebpackConfigWithBundles(communityModules, enterpriseModules);
+            const app = express();
 
-    // if we encounter a build failure on startup (in beta) we exit
-    // prevents the need to have to CTRL+C several times for certain types of error
-    const exitCode = buildModules(beta, done);
-    if(beta && exitCode === 1) {
-        done();
-        return;
-    }
+            // necessary for plunkers
+            app.use(function (req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                return next();
+            });
 
-    buildCssBeta();
+            updateWebpackConfigWithBundles(communityModules, enterpriseModules);
 
-    if (beta) {
-        watchCssModulesBeta();
-        watchModulesBeta();
+            // if we encounter a build failure on startup (in beta) we exit
+            // prevents the need to have to CTRL+C several times for certain types of error
+            const exitCode = buildModules(beta, done);
+            if (beta && exitCode === 1) {
+                done();
+                return;
+            }
 
-        // serve community, enterprise and react
+            buildCssBeta();
 
-        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+            if (beta) {
+                watchCssModulesBeta();
+                watchModulesBeta();
 
-        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
+                // serve community, enterprise and react
 
-    } else {
-        watchModules(buildSourceModuleOnly);
+                // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+                addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
-        // serve community, enterprise and react
+                // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+                addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 
-        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-        addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+            } else {
+                watchModules(buildSourceModuleOnly);
 
-        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-        addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
-    }
+                // serve community, enterprise and react
 
-    // for the actual site - php, css etc
-    addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');
+                // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+                addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
-    // add community & enterprise modules to express (for importing in the fw examples)
-    symlinkModules(communityModules, enterpriseModules);
+                // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+                addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
+            }
 
-    updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
-    updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
-    serveModules(app, communityModules, enterpriseModules);
+            // for the actual site - php, css etc
+            addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');
 
-    serveFramework(app, '@ag-grid-community/angular');
-    serveFramework(app, '@ag-grid-community/vue');
-    serveFramework(app, '@ag-grid-community/react');
+            // add community & enterprise modules to express (for importing in the fw examples)
+            symlinkModules(communityModules, enterpriseModules);
 
-    // build "packaged" landing page examples (for performance reasons)
-    // these aren't watched and regenerated like the other examples
-    // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
-    // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
+            updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseModules);
+            updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterpriseModules);
+            serveModules(app, communityModules, enterpriseModules);
 
-    // regenerate examples
-    watchAndGenerateExamples(communityModules, enterpriseModules);
+            serveFramework(app, '@ag-grid-community/angular');
+            serveFramework(app, '@ag-grid-community/vue');
+            serveFramework(app, '@ag-grid-community/react');
 
-    // PHP
-    launchPhpCP(app);
+            // build "packaged" landing page examples (for performance reasons)
+            // these aren't watched and regenerated like the other examples
+            // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
+            // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
 
-    // Watch TS for errors. No actual transpiling happens here, just error reporting
-    if (!beta) {
-        launchTSCCheck(communityModules, enterpriseModules);
-    }
+            // regenerate examples
+            watchAndGenerateExamples(communityModules, enterpriseModules);
 
-    app.listen(EXPRESS_PORT, function () {
-        console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
-    });
+            // PHP
+            launchPhpCP(app);
+
+            // Watch TS for errors. No actual transpiling happens here, just error reporting
+            if (!beta) {
+                launchTSCCheck(communityModules, enterpriseModules);
+            }
+
+            app.listen(EXPRESS_PORT, function () {
+                console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
+            });
+            done();
+        })
 };
 
 //     node dev-server.js generate-examples [src directory]

@@ -55,6 +55,7 @@
     "moment": "2.22.2",
     "prettier": "~1.18.2",
     "puppeteer": "1.7.0",
+    "tcp-port-used": "^1.0.1",
     "ts-node": "7.0.1",
     "typescript-require": "0.2.10",
     "webpack-dev-middleware": "3.3.0",

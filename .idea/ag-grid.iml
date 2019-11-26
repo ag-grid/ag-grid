@@ -12,7 +12,6 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-client-side-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-csv-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-infinite-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-react/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-react/umd" />
@@ -58,10 +57,12 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/docs" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist_orig" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundle-size-tests" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
