@@ -273,6 +273,10 @@ export class AreaSeries extends CartesianSeries {
             yMax = Math.max(...yData.map(values => values.reduce((max, value) => value > 0 ? max + value : max, 0)));
         }
 
+        if (yMin === 0 && yMax === 0) {
+            yMax = 1;
+        }
+
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
         this.fireEvent({type: 'dataProcessed'});
