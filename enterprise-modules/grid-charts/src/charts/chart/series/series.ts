@@ -3,6 +3,7 @@ import { LegendDatum } from "../legend";
 import { Shape } from "../../scene/shape/shape";
 import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
+import { Chart } from "../chart";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -49,6 +50,7 @@ export abstract class Series extends Observable {
      */
     readonly group: Group = new Group();
 
+    chart?: Chart;
     xAxis: ChartAxis;
     yAxis: ChartAxis;
 
