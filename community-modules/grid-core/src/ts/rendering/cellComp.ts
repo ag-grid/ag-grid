@@ -59,6 +59,8 @@ export class CellComp extends Component {
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function | null;
 
+    private createCellRendererFunc: () => void;
+
     private lastIPadMouseClickEvent: number;
 
     // true if we are using a cell renderer
@@ -850,7 +852,8 @@ export class CellComp extends Component {
 
         const cellRendererTypeNormal = this.cellRendererType === CellComp.CELL_RENDERER_TYPE_NORMAL;
 
-        const task = () => {
+        this.createCellRendererFunc = () => {
+            this.createCellRendererFunc = null;
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
             let componentPromise: Promise<ICellRendererComp>;
@@ -867,9 +870,9 @@ export class CellComp extends Component {
         };
 
         if (useTaskService) {
-            this.beans.taskQueue.createTask(task, this.rowNode.rowIndex, 'createTasksP2');
+            this.beans.taskQueue.createTask(this.createCellRendererFunc, this.rowNode.rowIndex, 'createTasksP2');
         } else {
-            task();
+            this.createCellRendererFunc();
         }
     }
 
@@ -1604,6 +1607,10 @@ export class CellComp extends Component {
     // the top part)
     public destroy(): void {
         super.destroy();
+
+        if (this.createCellRendererFunc) {
+            this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
+        }
 
         this.stopEditing();
 

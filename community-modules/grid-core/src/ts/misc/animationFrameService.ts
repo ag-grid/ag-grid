@@ -8,6 +8,7 @@ import { EventService } from "../eventService";
 interface TaskItem {
     task: () => void;
     index: number;
+    createOrder: number;
 }
 
 interface TaskList {
@@ -38,6 +39,9 @@ export class AnimationFrameService {
     private scrollGoingDown = true;
     private lastScrollTop = 0;
 
+    private taskCount = 0;
+    private cancelledTasks = new Set();
+
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
         this.lastScrollTop = scrollTop;
@@ -60,9 +64,13 @@ export class AnimationFrameService {
 
     public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
         this.verifyAnimationFrameOn(list);
-        const taskItem: TaskItem = { task, index };
+        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
         this.addTaskToList(this[list], taskItem);
         this.schedule();
+    }
+
+    public cancelTask(task: () => void) {
+        this.cancelledTasks.add(task);
     }
 
     private addTaskToList(taskList: TaskList, task: TaskItem): void {
@@ -73,10 +81,11 @@ export class AnimationFrameService {
     private sortTaskList(taskList: TaskList) {
         if (taskList.sorted) { return; }
 
-        const ascSortFunc = (a: TaskItem, b: TaskItem) => b.index - a.index;
-        const descSortFunc = (a: TaskItem, b: TaskItem) => a.index - b.index;
+        const sortDirection = this.scrollGoingDown ? 1 : -1;
 
-        taskList.list.sort(this.scrollGoingDown ? ascSortFunc : descSortFunc);
+        // sort first by row index (taking into account scroll direction), then by
+        // order of task creation (always ascending, so cells will render left-to-right)
+        taskList.list.sort((a, b) => a.index !== b.index ? sortDirection * (b.index - a.index) : b.createOrder - a.createOrder);
         taskList.sorted = true;
     }
 
@@ -103,19 +112,23 @@ export class AnimationFrameService {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
         while (noMaxMillis || duration < millis) {
+            let task: () => void;
+
             if (p1Tasks.length) {
                 this.sortTaskList(p1TaskList);
-                const taskItem = p1Tasks.pop();
-                taskItem.task();
+                task = p1Tasks.pop().task;
             } else if (p2Tasks.length) {
                 this.sortTaskList(p2TaskList);
-                const taskItem = p2Tasks.pop();
-                taskItem.task();
+                task = p2Tasks.pop().task;
             } else if (destroyTasks.length) {
-                const task = destroyTasks.pop();
-                task();
+                task = destroyTasks.pop();
             } else {
+                this.cancelledTasks.clear();
                 break;
+            }
+
+            if (!this.cancelledTasks.has(task)) {
+                task();
             }
 
             duration = (new Date().getTime()) - frameStart;
