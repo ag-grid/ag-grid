@@ -178,7 +178,7 @@ export class AnimationFrameService {
     }
 
     public isQueueEmpty(): boolean {
-        return this.ticking;
+        return !this.ticking;
     }
 
 }
