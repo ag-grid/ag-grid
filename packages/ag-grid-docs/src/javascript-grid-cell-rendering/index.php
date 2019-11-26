@@ -136,7 +136,7 @@ var colDef3 = function(params) {
         on any row to select it while cells are still rendering.</li>
     <li>In initial rendering and when scrolling down, rows render top to bottom</li>
     <li>When scrolling up, rows render bottom to top</li>
-    <li>Cells within a row render right to lovereft regardless of scroll direction</li>
+    <li>Cells within a row render right to left regardless of scroll direction</li>
     <li>Only visible cells are rendered. The grid contains 1000 rows and 10,000 cells. If you
         take about 10 seconds to scroll from the top to the bottom, only a few hundred cells
         will actually be rendered. Any cells that are scrolled into view and then back out
