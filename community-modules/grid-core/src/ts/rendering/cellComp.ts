@@ -433,15 +433,20 @@ export class CellComp extends Component {
         const forceRefresh = params && params.forceRefresh;
 
         const oldValue = this.value;
-        this.getValueAndFormat();
 
-        // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
+        // get latest value without invoking the value formatter as we may not be updating the cell
+        this.value = this.getValue();
+
+        // for simple values only (not objects), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
         const valuesDifferent = !this.valuesAreEqual(oldValue, this.value);
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
 
         if (dataNeedsUpdating) {
+            // now invoke the value formatter as we are going to update cell
+            this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
+
             // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
             // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
             // then we are not showing a movement in the stock price, rather we are showing different stock.
