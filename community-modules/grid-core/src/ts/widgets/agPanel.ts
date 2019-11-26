@@ -339,6 +339,14 @@ export class AgPanel extends Component {
     public center() {
         const eGui = this.getGui();
 
+        // workaround for an alpha plunker issue with charts
+        if (!eGui || !eGui.offsetParent) {
+            const x = this.getWidth() / 2;
+            const y = this.getHeight() / 2;
+            this.offsetElement(x, y);
+            return;
+        }
+
         const x = (eGui.offsetParent.clientWidth / 2) - (this.getWidth() / 2);
         const y = (eGui.offsetParent.clientHeight / 2) - (this.getHeight() / 2);
 
