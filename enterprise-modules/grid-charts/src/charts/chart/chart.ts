@@ -11,6 +11,7 @@ import { find } from "../util/array";
 import { Caption } from "../caption";
 import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
+import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
@@ -156,12 +157,14 @@ export abstract class Chart extends Observable {
     }
 
     protected initSeries(series: Series) {
+        series.chart = this;
         series.addEventListener('layoutChange', this.scheduleLayout);
         series.addEventListener('dataChange', this.scheduleData);
         series.addEventListener('legendChange', this.updateLegend);
     }
 
     protected freeSeries(series: Series) {
+        series.chart = undefined;
         series.removeEventListener('layoutChange', this.scheduleLayout);
         series.removeEventListener('dataChange', this.scheduleData);
         series.removeEventListener('legendChange', this.updateLegend);
@@ -274,6 +277,17 @@ export abstract class Chart extends Observable {
                     }
                 }
             });
+
+            if (series instanceof CartesianSeries) {
+                if (!series.xAxis) {
+                    console.warn(`Could not find a matching xAxis for the ${series.id} series.`);
+                    return;
+                }
+                if (!series.yAxis) {
+                    console.warn(`Could not find a matching yAxis for the ${series.id} series.`);
+                    return;
+                }
+            }
         });
 
         this.axesChanged = false;
@@ -349,7 +363,10 @@ export abstract class Chart extends Observable {
         this.background.height = this.height;
 
         this.performLayout();
-        this.fireEvent({ type: 'layoutDone' });
+
+        if (!this.layoutPending) {
+            this.fireEvent({ type: 'layoutDone' });
+        }
     }
 
     private dataCallbackId: number = 0;
@@ -446,19 +463,17 @@ export abstract class Chart extends Observable {
             return;
         }
 
-        const captionAutoPadding = this.captionAutoPadding;
+        const { legend, captionAutoPadding, legendAutoPadding } = this;
         const width = this.width;
         const height = this.height - captionAutoPadding;
-        const legend = this.legend;
         const legendGroup = legend.group;
-        const legendPadding = this.legend.padding;
-        const legendAutoPadding = this.legendAutoPadding;
+        const legendPadding = legend.padding;
 
         legendGroup.translationX = 0;
         legendGroup.translationY = 0;
 
         let legendBBox: BBox;
-        switch (this.legend.position) {
+        switch (legend.position) {
             case 'bottom':
                 legend.performLayout(width - legendPadding * 2, 0);
                 legendBBox = legendGroup.computeBBox();

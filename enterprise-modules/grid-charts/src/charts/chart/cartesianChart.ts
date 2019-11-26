@@ -123,6 +123,14 @@ export class CartesianChart extends Chart {
 
         this.updateAxes();
 
+        // The calls above may schedule another layout, if the chart doesn't have enough padding
+        // to render axis labels, chart captions or the legend.
+        // In this case, we can skip updating the series on this layout run,
+        // since they will be updated later anyway.
+        if (this.layoutPending) {
+            return;
+        }
+
         this.series.forEach(series => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
@@ -161,14 +169,17 @@ export class CartesianChart extends Chart {
 
         axes.forEach(axis => {
             const { direction, position, boundSeries } = axis;
+
             const domains: any[][] = [];
             boundSeries.filter(s => s.visible).forEach(series => {
                 domains.push(series.getDomain(direction));
             });
+
             const domain = new Array<any>().concat(...domains);
-            axis.domain = numericExtent(domain) || domain;
+            axis.domain = numericExtent(domain) || domain; // if extent can't be found, it's categories
 
             const axisThickness = Math.floor(axis.computeBBox().width);
+
             switch (position) {
                 case ChartAxisPosition.Left:
                     if (this.axisAutoPadding.left !== axisThickness) {
@@ -195,7 +206,10 @@ export class CartesianChart extends Chart {
                     }
                     break;
             }
-            axis.update();
+
+            if (!this.layoutPending) {
+                axis.update();
+            }
         });
     }
 }

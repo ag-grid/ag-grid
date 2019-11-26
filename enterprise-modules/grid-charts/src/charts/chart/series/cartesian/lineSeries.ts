@@ -133,7 +133,7 @@ export class LineSeries extends CartesianSeries {
             const x = datum[xKey];
             const y = datum[yKey];
 
-            if (x == null || isNaN(x) || y == null || isNaN(y)) {
+            if (x == null || (isContinuousX && isNaN(x)) || y == null || isNaN(y)) {
                 continue;
             }
 
@@ -210,22 +210,13 @@ export class LineSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { xAxis, yAxis } = this;
+        const { chart, xAxis, yAxis } = this;
 
         this.group.visible = this.visible;
 
-        if (!xAxis) {
-            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
+        if (!xAxis || !yAxis || !chart || chart.layoutPending || chart.dataPending) {
             return;
         }
-        if (!yAxis) {
-            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
-            return;
-        }
-
-        // if (!chart || chart.layoutPending || chart.dataPending) {
-        //     return;
-        // }
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;

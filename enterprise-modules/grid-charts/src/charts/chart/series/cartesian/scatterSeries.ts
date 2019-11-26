@@ -133,24 +133,11 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, xAxis, yAxis } = this;
+        const { visible, chart, xAxis, yAxis } = this;
 
         this.group.visible = visible;
 
-        if (!xAxis) {
-            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
-            return;
-        }
-        if (!yAxis) {
-            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
-            return;
-        }
-
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending) {
-        //     return;
-        // }
-
-        if (!visible) {
+        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
             return;
         }
 

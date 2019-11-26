@@ -289,19 +289,11 @@ export class AreaSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, xAxis, yAxis, xData, yData } = this;
+        const { visible, chart, xAxis, yAxis, xData, yData } = this;
 
         this.group.visible = visible;
 
-        if (!xAxis) {
-            console.warn(`Could not find a matching xAxis for the ${this.id} series.`);
-            return;
-        }
-        if (!yAxis) {
-            console.warn(`Could not find a matching yAxis for the ${this.id} series.`);
-            return;
-        }
-        if (!visible || !xData.length || !yData.length) {
+        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
             return;
         }
 
