@@ -57,7 +57,6 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/docs" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
