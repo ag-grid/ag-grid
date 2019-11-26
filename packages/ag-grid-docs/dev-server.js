@@ -356,6 +356,21 @@ function watchModulesBeta() {
     });
 }
 
+function buildModules() {
+    console.log("Building Modules...");
+    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
+    const result = cp.spawnSync(tsc, ['--build'], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    if(result && result.status !== 0) {
+        console.log('ERROR Building Modules');
+        return result.status;
+    }
+    return 0;
+}
+
 function buildCssBeta() {
     console.log("Building all modules [BETA]...");
     const lernaScript = WINDOWS ? `node .\\scripts\\modules\\lernaWatch.js --buildBeta` : `node ./scripts/modules/lernaWatch.js --buildBeta`;
@@ -395,7 +410,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
-module.exports = (buildSourceModuleOnly = false, beta = false) => {
+module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
     const {communityModules, enterpriseModules} = getAllModules();
 
     const app = express();
@@ -407,6 +422,14 @@ module.exports = (buildSourceModuleOnly = false, beta = false) => {
     });
 
     updateWebpackConfigWithBundles(communityModules, enterpriseModules);
+
+    // if we encounter a build failure on startup (in beta) we exit
+    // prevents the need to have to CTRL+C several times for certain types of error
+    const exitCode = buildModules(beta, done);
+    if(beta && exitCode === 1) {
+        done();
+        return;
+    }
 
     buildCssBeta();
 
