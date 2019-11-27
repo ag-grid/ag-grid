@@ -13,6 +13,7 @@ npm-debug.log
 node_modules
 
 package-lock.json
+docs_are_running
 
 # latest only
 dist
