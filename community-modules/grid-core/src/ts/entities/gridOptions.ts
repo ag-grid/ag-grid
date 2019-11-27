@@ -84,6 +84,8 @@ import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
 import { ChartOptions, ChartType, ChartMenuOptions } from "../interfaces/iChartOptions";
 
+export type DomLayout = 'normal' | 'autoHeight' | 'print';
+
 export interface GridOptions {
     /*******************************************************************************************************
      * If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
@@ -214,7 +216,7 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     purgeClosedRowNodes?: boolean;
     gridAutoHeight?: boolean;
-    domLayout?: string;
+    domLayout?: DomLayout;
     suppressChangeDetection?: boolean;
     aggregateOnlyChangedColumns?: boolean;
     valueCache?: boolean;
