@@ -20,6 +20,7 @@ import { AreaSeries } from "../../../charts/chart/series/cartesian/areaSeries";
 import { PieSeries } from "../../../charts/chart/series/polar/pieSeries";
 import { Padding } from "../../../charts/util/padding";
 import { Caption } from "../../../charts/caption";
+import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -351,6 +352,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 }
             }
         };
+    }
+
+    protected transformData(data: any[], categoryKey: string): any[] {
+        if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {
+            return data;
+        }
+
+        // replace the values for the selected category with a complex object to allow for duplicated categories
+        return data.map((d, index) => {
+            const value = d[categoryKey];
+            const valueString = value && value.toString ? value.toString() : '';
+
+            d[categoryKey] = { id: index, value: d[categoryKey], toString: () => valueString };
+
+            return d;
+        });
     }
 
     public destroy(): void {

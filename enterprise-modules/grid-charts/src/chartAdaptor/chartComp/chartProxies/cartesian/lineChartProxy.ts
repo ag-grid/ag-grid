@@ -4,6 +4,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/cartesian/lineSeries";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../charts/chartOptions";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -36,6 +37,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return map;
         }, new Map<string, LineSeries>());
 
+        const data = this.transformData(params.data, params.category.id);
         let previousSeries: LineSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
@@ -45,7 +47,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
-                lineSeries.data = params.data;
+                lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
@@ -60,7 +62,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
-                    data: params.data,
+                    data,
                     field: {
                         xKey: params.category.id,
                         xName: params.category.name,

@@ -162,4 +162,12 @@ interface LineTooltipRendererParams {
 
 <?= example('Line Chart Customisations', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
 
+<h3>Example: Time Chart</h3>
+
+<p>
+    You can elect to represent time data along a continuous scale, rather than as individual categories.
+</p>
+
+<?= example('Time Chart', 'time-chart', 'generated', array("enterprise" => true)) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

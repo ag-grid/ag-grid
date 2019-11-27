@@ -45,7 +45,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const areaSeries = this.chart.series[0] as AreaSeries;
             const { fills, strokes } = this.getPalette();
 
-            areaSeries.data = params.data;
+            areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
             areaSeries.xName = params.category.name;
             areaSeries.yKeys = params.fields.map(f => f.colId);
@@ -80,6 +80,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             return map;
         }, new Map<string, AreaSeries>());
 
+        const data = this.transformData(params.data, params.category.id);
         let previousSeries: AreaSeries | undefined = undefined;
 
         params.fields.forEach((f, index) => {
@@ -88,7 +89,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             const stroke = strokes[index % strokes.length];
 
             if (areaSeries) {
-                areaSeries.data = params.data;
+                areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
@@ -99,7 +100,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 const seriesDefaults = this.getSeriesDefaults();
                 const options: InternalAreaSeriesOptions = {
                     ...seriesDefaults,
-                    data: params.data,
+                    data,
                     field: {
                         xKey: params.category.id,
                         xName: params.category.name,

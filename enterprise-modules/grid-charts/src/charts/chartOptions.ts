@@ -104,12 +104,15 @@ export interface PolarChartOptions<T> extends ChartOptions<T> {
 }
 
 export interface AxisOptions {
+    type?: AxisType;
     title?: CaptionOptions;
     line?: AxisLineOptions;
     tick?: AxisTickOptions;
     label?: AxisLabelOptions;
     gridStyle?: GridStyleOptions[];
 }
+
+export type AxisType = 'category' | 'groupedCategory' | 'number' | 'time';
 
 export interface AxisLineOptions {
     width?: number;

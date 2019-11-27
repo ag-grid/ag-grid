@@ -106,22 +106,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public getData(): any[] {
-        // grouped data contains label fields rather than objects with toString
-        if (this.grouping && this.isMultiCategoryChart()) {
-            return this.chartData;
-        }
-
-        const colId = this.getSelectedDimension().colId;
-
-        // replacing the selected dimension with a complex object to facilitate duplicated categories
-        return this.chartData.map((d, index) => {
-            const value = d[colId];
-            const valueString = value && value.toString ? value.toString() : '';
-
-            d[colId] = { id: index, value: d[colId], toString: () => valueString };
-
-            return d;
-        });
+        return this.chartData;
     }
 
     public setChartType(chartType: ChartType) {
