@@ -210,9 +210,7 @@ export class CartesianChart extends Chart {
                     break;
             }
 
-            if (!this.layoutPending) {
-                axis.update();
-            }
+            axis.update();
         });
 
         this.axes.forEach(axis => {
