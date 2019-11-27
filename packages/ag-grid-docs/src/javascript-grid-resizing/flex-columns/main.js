@@ -44,7 +44,7 @@ ShowWidthCellRenderer.prototype.init = function(params) {
 
 ShowWidthCellRenderer.prototype.refresh = function() {
     if (this.eGui.parentElement) {
-        const width = this.eGui.parentElement.offsetWidth;
+        var width = this.eGui.parentElement.offsetWidth;
         this.eGui.textContent = width + "px";
         if (this.isTotalWidthRow) {
             this.eGui.textContent =  "Total width: " + this.eGui.textContent;
