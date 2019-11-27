@@ -266,18 +266,10 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      * Contains only one {@link GridStyle} object by default, meaning all grid lines
      * have the same style.
      */
-    protected _gridStyle: GridStyle[] = [{
+    gridStyle: GridStyle[] = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]
     }];
-    set gridStyle(value: GridStyle[]) {
-        if (value.length) {
-            this._gridStyle = value;
-        }
-    }
-    get gridStyle(): GridStyle[] {
-        return this._gridStyle;
-    }
 
     /**
      * `false` - render grid as lines of {@link gridLength} that extend the ticks
@@ -309,7 +301,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, tick, label } = this;
+        const { group, scale, tick, label, gridStyle } = this;
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
@@ -374,9 +366,8 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             .attr('y1', 0)
             .attr('y2', 0);
 
-        if (this.gridLength) {
-            const styles = this.gridStyle;
-            const styleCount = styles.length;
+        if (this.gridLength && gridStyle.length) {
+            const styleCount = gridStyle.length;
             let gridLines: Selection<Shape, Group, D, D>;
 
             if (this.radialGrid) {
@@ -404,7 +395,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             }
 
             gridLines.each((gridLine, _, index) => {
-                const style = styles[index % styleCount];
+                const style = gridStyle[index % styleCount];
 
                 gridLine.stroke = style.stroke;
                 gridLine.strokeWidth = tick.width;
