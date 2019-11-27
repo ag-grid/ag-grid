@@ -159,11 +159,11 @@ export class Grid {
     }
 
     private getRegisteredModules(params: GridParams): Module[] {
-        let passedViaConstructor: Module[] = params ? params.modules : null;
-        let registered = ModuleRegistry.getRegisteredModules();
+        const passedViaConstructor: Module[] = params ? params.modules : null;
+        const registered = ModuleRegistry.getRegisteredModules();
 
-        let allModules: Module[] = [];
-        let mapNames: { [name: string]: boolean } = {};
+        const allModules: Module[] = [];
+        const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
         function addModule(module: Module) {
@@ -171,13 +171,13 @@ export class Grid {
                 if (!mapNames[module.moduleName]) {
                     mapNames[module.moduleName] = true;
                     allModules.push(module);
-                    ModuleRegistry.register(module); // Niall / Sean - my addition
+                    ModuleRegistry.register(module);
                 }
             }
 
             addIndividualModule(module);
             if (module.dependantModules) {
-                module.dependantModules.forEach(addModule); // Niall / Sean - my addition
+                module.dependantModules.forEach(addModule);
             }
         }
 

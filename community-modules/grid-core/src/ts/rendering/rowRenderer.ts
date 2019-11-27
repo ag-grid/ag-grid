@@ -1007,7 +1007,10 @@ export class RowRenderer extends BeanStub {
                 columnApi: this.columnApi
             };
 
-            this.eventService.dispatchEventOnce(event);
+            // added a small delay here because in some scenarios this can be fired
+            // before the grid is actually rendered, causing component creation
+            // on EVENT_FIRST_DATA_RENDERED to fail.
+            window.setTimeout(() => this.eventService.dispatchEventOnce(event), 50);
         }
     }
 
