@@ -249,28 +249,21 @@ export abstract class Chart extends Observable {
 
     // Has to run before onSeriesChange
     protected onAxesChange(force: boolean = false) {
-        const directionToKeysMap: { [key in ChartAxisDirection]?: string[] } = {};
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
-        const { axes } = this;
+
+        this.axes.forEach(axis => {
+            const direction = axis.direction;
+            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            directionAxes.push(axis);
+        });
 
         this.series.forEach(series => {
-            const directions = series.directions;
-            directions.forEach(direction => {
-                directionToKeysMap[direction] = series.getKeys(direction);
-            });
-
-            axes.forEach(axis => {
-                const direction = axis.direction;
-                const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
-                directionAxes.push(axis);
-            });
-
-            directions.forEach(direction => {
+            series.directions.forEach(direction => {
                 const axisName = direction + 'Axis';
                 if (!(series as any)[axisName] || force) {
                     const directionAxes = directionToAxesMap[direction];
                     if (directionAxes) {
-                        const axis = this.findMatchingAxis(directionAxes, directionToKeysMap[direction]);
+                        const axis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
                         if (axis) {
                             (series as any)[axisName] = axis;
                         }
