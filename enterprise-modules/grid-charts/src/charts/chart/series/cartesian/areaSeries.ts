@@ -240,9 +240,21 @@ export class AreaSeries extends CartesianSeries {
         //   yKey3: 20
         // }]
         //
-        this.xData = data.map(datum => datum[xKey]);
+
+        let keysFound = true; // only warn once
+        this.xData = data.map(datum => {
+            if (keysFound && !(xKey in datum)) {
+                keysFound = false;
+                console.warn(`The key '${xKey}' was not found in the data: `, datum);
+            }
+            return datum[xKey];
+        });
 
         this.yData = data.map(datum => yKeys.map(yKey => {
+            if (keysFound && !(yKey in datum)) {
+                keysFound = false;
+                console.warn(`The key '${yKey}' was not found in the data: `, datum);
+            }
             const value = datum[yKey];
 
             return isFinite(value) && yKeyEnabled.get(yKey) ? Math.abs(value) : 0;

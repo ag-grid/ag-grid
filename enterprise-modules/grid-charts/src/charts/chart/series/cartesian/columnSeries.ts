@@ -287,14 +287,14 @@ export class ColumnSeries extends CartesianSeries {
             return datum[xKey];
         });
 
-        this.yData = data.map(datum => yKeys.map(key => {
-            if (keysFound && !(key in datum)) {
+        this.yData = data.map(datum => yKeys.map(yKey => {
+            if (keysFound && !(yKey in datum)) {
                 keysFound = false;
-                console.warn(`The key '${key}' was not found in the data: `, datum);
+                console.warn(`The key '${yKey}' was not found in the data: `, datum);
             }
-            const value = datum[key];
+            const value = datum[yKey];
 
-            return isFinite(value) && yKeyEnabled.get(key) ? value : 0;
+            return isFinite(value) && yKeyEnabled.get(yKey) ? value : 0;
         }));
 
         // xData: ['Jan', 'Feb']
