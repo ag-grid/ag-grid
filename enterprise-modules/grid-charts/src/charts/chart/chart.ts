@@ -369,9 +369,6 @@ export abstract class Chart extends Observable {
             this.dataCallbackId = 0;
         }
         if (value) {
-            // We don't want to render before the data is processed and then again after,
-            // so we cancel the auto-scheduled render, if any.
-            this.scene.cancelRender();
             this.dataCallbackId = window.setTimeout(() => {
                 this.dataPending = false;
                 this.processData();
