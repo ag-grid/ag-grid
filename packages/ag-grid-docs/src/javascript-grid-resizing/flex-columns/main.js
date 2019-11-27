@@ -38,11 +38,11 @@ function ShowWidthCellRenderer() {}
 ShowWidthCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement("div");
     this.isTotalWidthRow = params.data === 2;
-    this.interval = setInterval(this.refresh.bind(this), 50);
-    this.refresh();
+    this.interval = setInterval(this.refreshValue.bind(this), 50);
+    this.refreshValue();
 };
 
-ShowWidthCellRenderer.prototype.refresh = function() {
+ShowWidthCellRenderer.prototype.refreshValue = function() {
     if (this.eGui.parentElement) {
         var width = this.eGui.parentElement.offsetWidth;
         this.eGui.textContent = width + "px";

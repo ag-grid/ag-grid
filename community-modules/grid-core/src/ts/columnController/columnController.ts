@@ -2885,6 +2885,7 @@ export class ColumnController {
     private filterOutColumnsWithinViewport(): Column[] {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
+
     public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex'): void {
         if (!this.flexActive) { return; }
 
