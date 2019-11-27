@@ -5,7 +5,7 @@ import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { reactive } from "../util/observable";
-import { ChartAxisPosition } from "./chartAxis";
+import { ChartAxis, ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
 
 /** Defines the orientation used when rendering data series */
@@ -81,9 +81,7 @@ export class CartesianChart extends Chart {
         shrinkRect.height -= padding.top + padding.bottom + axisAutoPadding.top + axisAutoPadding.bottom + captionAutoPadding;
 
         axes.forEach(axis => {
-            const { position } = axis;
-
-            switch (position) {
+            switch (axis.position) {
                 case ChartAxisPosition.Top:
                     axis.scale.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
@@ -165,9 +163,10 @@ export class CartesianChart extends Chart {
     }
 
     updateAxes() {
-        const { axes } = this;
+        const axes = this.axes.filter(a => !a.linkedTo);
+        const linkedAxes = this.axes.filter(a => a.linkedTo);
 
-        axes.forEach(axis => {
+        axes.concat(linkedAxes).forEach(axis => {
             const { direction, position, boundSeries } = axis;
 
             const domains: any[][] = [];
@@ -179,6 +178,10 @@ export class CartesianChart extends Chart {
             axis.domain = numericExtent(domain) || domain; // if extent can't be found, it's categories
 
             const axisThickness = Math.floor(axis.computeBBox().width);
+
+            if (axis.linkedTo) {
+                axis.domain = axis.linkedTo.domain;
+            }
 
             switch (position) {
                 case ChartAxisPosition.Left:
@@ -209,6 +212,12 @@ export class CartesianChart extends Chart {
 
             if (!this.layoutPending) {
                 axis.update();
+            }
+        });
+
+        this.axes.forEach(axis => {
+            if (axis.linkedTo) {
+                axis.domain = axis.linkedTo.domain;
             }
         });
     }

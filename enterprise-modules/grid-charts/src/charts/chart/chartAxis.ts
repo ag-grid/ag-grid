@@ -29,6 +29,7 @@ export class ChartAxis extends Axis<Scale<any, number>> {
     direction: ChartAxisDirection;
     boundSeries: Series[] = [];
     thickness: number = 0;
+    linkedTo?: ChartAxis;
 
     protected _position: ChartAxisPosition;
     set position(value: ChartAxisPosition) {
