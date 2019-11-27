@@ -13,6 +13,7 @@ const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator');
 const buildPackagedExamples = require('./packaged-example-builder');
 const {updateBetweenStrings, getAllModules} = require("./utils");
+const docsLock = require('./../../scripts/docsLock');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -423,23 +424,6 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
-const MultiInstanceLock = {
-    lockFile: __dirname + '/../../docs_are_running',
-    add: function () {
-        if (fs.existsSync(this.lockFile)) {
-            console.error('One `gulp serve` task is already running.');
-            return false;
-        }
-        fs.writeFileSync(this.lockFile);
-        return true;
-    },
-    remove: function () {
-        if (fs.existsSync(this.lockFile)) {
-            fs.unlinkSync(this.lockFile);
-        }
-    }
-};
-
 module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(inUse => {
@@ -451,14 +435,15 @@ module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
                 return;
             }
 
-            if (!MultiInstanceLock.add()) {
-                return;
+            if (!docsLock.add('One `gulp serve` task is already running.')) {
+                 return;
             }
+
             process.on('exit', () => {
-                MultiInstanceLock.remove();
+                docsLock.remove();
             });
             process.on('SIGINT', () => {
-                MultiInstanceLock.remove();
+                docsLock.remove();
             });
 
             process.on('SIGINT', () => {

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {spawn} = require('child_process');
+const docsLock = require('./../docsLock');
 
 const getModuleDirNames = (type) => {
     return fs.readdirSync(path.resolve(__dirname, `../../${type}-modules`));
@@ -13,6 +14,11 @@ const mapToScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.
 const getScopeForModules = types => flattenArray(types.map(type => mapToScopes(type, getModuleDirNames(type))));
 
 const executeLernaCommand = (arguments) => {
+    if (docsLock.isLocked()) {
+        console.error("Cannot execute a lerna command when the docs server is running.");
+        return;
+    }
+
     const flattenedArguments = flattenArray(arguments);
     console.log('----------------------------------------------------------------');
     console.log(`Executing [../../node_modules/.bin/lerna ${flattenedArguments.join(' ')}`);
