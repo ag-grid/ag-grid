@@ -165,7 +165,7 @@ export class ColumnController {
 
     private viewportLeft: number;
     private viewportRight: number;
-    private lastCenterViewportWidth: number;
+    private flexViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
     private flexActive: boolean = true;
@@ -235,6 +235,8 @@ export class ColumnController {
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+
+        this.flexActive = !!this.getDisplayedCenterColumns().find(col => col.getFlex());
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -2883,83 +2885,55 @@ export class ColumnController {
     private filterOutColumnsWithinViewport(): Column[] {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
-    public refreshFlexedColumns(centerViewportWidth?: number, source: ColumnEventType = 'flex'): void {
+    public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex'): void {
         if (!this.flexActive) { return; }
 
-        if (!centerViewportWidth) {
-            if (!this.lastCenterViewportWidth) { return; }
-            centerViewportWidth = this.lastCenterViewportWidth;
-        }
+        this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
+        if (!this.flexViewportWidth) { return; }
 
-        this.lastCenterViewportWidth = centerViewportWidth;
+        // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
+        // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
+        // minWidth or maxWidth rules.
 
-        const displayedCenterColumns = this.getDisplayedCenterColumns();
-        const globalMinWidth = this.gridOptionsWrapper.getMinColWidth();
-        const flexedColumns: Column[] = [];
-        const normalColumns: Column[] = [];
+        const knownWidthColumns = this.displayedCenterColumns.filter(col => !col.getFlex());
+        const flexingColumns = this.displayedCenterColumns.filter(col => col.getFlex());
+        const flexingColumnSizes: number[] = [];
+        let spaceForFlexingColumns: number;
 
-        let flexedMinWidthTotal: number = 0;
-
-        displayedCenterColumns.forEach(col => {
-            if (col.getFlex() === 0) {
-                normalColumns.push(col);
-            } else {
-                flexedColumns.push(col);
-                if (col.getMinWidth() > globalMinWidth) {
-                    flexedMinWidthTotal += col.getMinWidth();
+        outer: while (true) {
+            const totalFlex = flexingColumns.reduce((count, col) => count + col.getFlex(), 0);
+            spaceForFlexingColumns = this.flexViewportWidth - this.getWidthOfColsInList(knownWidthColumns);
+            for (let i = 0; i < flexingColumns.length; i++) {
+                const col = flexingColumns[i];
+                const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
+                let constrainedWidth: number;
+                if (widthByFlexRule < col.getMinWidth()) {
+                    constrainedWidth = col.getMinWidth();
+                } else if (col.getMaxWidth() != null && widthByFlexRule > col.getMaxWidth()) {
+                    constrainedWidth = col.getMaxWidth();
                 }
+                if (constrainedWidth) {
+                    // This column is not in fact flexing as it is being constrained to a specific size
+                    // so remove it from the list of flexing columns and start again
+                    col.setActualWidth(constrainedWidth, source);
+                    _.removeFromArray(flexingColumns, col);
+                    knownWidthColumns.push(col);
+                    continue outer;
+                }
+                flexingColumnSizes[i] = Math.round(widthByFlexRule);
             }
-        });
-
-        if (!flexedColumns.length) {
-            this.flexActive = false;
-            return;
+            break;
         }
 
-        const flexTotal = flexedColumns.reduce((count, col) => count + col.getFlex(), 0);
-        const normalColumnsWidth = this.getWidthOfColsInList(normalColumns);
-
-        const availableSpace = centerViewportWidth - normalColumnsWidth;
-        const availableWithoutMins = availableSpace - flexedMinWidthTotal;
-
-        let remainingSpace = availableSpace;
-
-        if (availableSpace <= 0) { return; }
-
-        const sizes: number[] = [];
-
-        flexedColumns.forEach(col => {
-            const flex = col.getFlex();
-            const percent = Math.round((flex * 100 / flexTotal) * 10) / 10;
-            const newWidth = (availableWithoutMins * percent) / 100;
-            const minWidth = col.getMinWidth() || globalMinWidth;
-            const maxWidth = col.getMaxWidth() || _.getMaxSafeInteger();
-
-            if (minWidth && (newWidth < minWidth)) {
-                sizes.push(minWidth);
-                remainingSpace -= minWidth;
-            } else if (newWidth > maxWidth) {
-                sizes.push(maxWidth);
-                remainingSpace -= maxWidth;
-            } else {
-                sizes.push(newWidth);
-                remainingSpace -= newWidth;
-            }
-        });
-
-        let valueToAdd = 0;
-
-        if (remainingSpace > 0) {
-            valueToAdd = Math.floor(remainingSpace / flexedColumns.length);
-        }
-
-        flexedColumns.forEach((col, idx) => {
-            col.setActualWidth(sizes[idx] + valueToAdd, source);
+        let remainingSpace = spaceForFlexingColumns;
+        flexingColumns.forEach((col, i) => {
+            col.setActualWidth(Math.min(flexingColumnSizes[i], remainingSpace), source);
+            remainingSpace -= flexingColumnSizes[i];
         });
 
         this.setLeftValues(source);
         this.updateBodyWidths();
-        this.fireResizedEventForColumns(flexedColumns, source);
+        this.fireResizedEventForColumns(flexingColumns, source);
     }
 
     // called from api
