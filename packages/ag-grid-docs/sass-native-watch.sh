@@ -5,12 +5,12 @@
 
 command="./node_modules/.bin/sass --watch "
 
-for themeDir in ../../community-modules/grid-core/src/styles/ag-theme-*
+for themeDir in ../../community-modules/core/src/styles/ag-theme-*
 do
     themeName=`basename "$themeDir"`
 
-    source="../../community-modules/grid-core/src/styles/$themeName/sass/$themeName.scss"
-    dest="../../community-modules/grid-all-modules/dist/styles/$themeName.css"
+    source="../../community-modules/core/src/styles/$themeName/sass/$themeName.scss"
+    dest="../../community-modules/all-modules/dist/styles/$themeName.css"
     if [ -f "$source" ]
     then
         command="$command $source:$dest"

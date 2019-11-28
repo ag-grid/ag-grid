@@ -180,18 +180,16 @@ gridOptions: {
     <p>
         The example below shows flex in action. Things to note are as follows:
     </p>
-    <ul class="content">
-        <li>
-            The 'link' column has <code>flex: 1</code> and <code>minWidth: 200</code>. That means the 'link'
-            column sets the default size of any flexed column because it has the lowest flex value. And if you
-            resize the grid, this column will never have a size less than 200px;
-        <li>
-            The 'title' column has <code>flex: 2</code> and <code>minWidth: 250</code>. That means the 'title'
-            column will be double the base flex value and even if you resize the grid, it's size will never be less than 250px.
-        </li>
+    <ul>
+        <li>Column A is fixed size. You can resize it with the drag handle and the other two columns will adjust to fill
+            the available space</li>
+        <li>Columns B has <code>flex: 2</code>, <code>minWidth: 200</code> and <code>maxWidth: 350</code>, so it should
+            be constrained to this max/min width.</li>
+        <li>Column C has <code>flex: 1</code> so should be half the size of column B, unless column B is being constrained
+            by its minWidth/maxWidth rules, in which case it should take up the remaining available space.</li>
     </ul>
 
-    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
+    <?= example('Column Flex', 'flex-columns', 'vanilla', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 

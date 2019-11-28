@@ -8,11 +8,11 @@ module.exports = merge(common, {
     mode: 'development',
 
     entry: {
-        '@ag-grid-community/grid-all-modules':
-            glob.sync("../../community-modules/grid-core/src/ts/**/*.ts")
-                .concat(glob.sync("../../community-modules/grid-client-side-row-model/src/**/*.ts"))
-                .concat(glob.sync("../../community-modules/grid-csv-export/src/**/*.ts"))
-                .concat(glob.sync("../../community-modules/grid-infinite-row-model/src/**/*.ts"))
+        '@ag-grid-community/all-modules':
+            glob.sync("../../community-modules/core/src/ts/**/*.ts")
+                .concat(glob.sync("../../community-modules/client-side-row-model/src/**/*.ts"))
+                .concat(glob.sync("../../community-modules/csv-export/src/**/*.ts"))
+                .concat(glob.sync("../../community-modules/infinite-row-model/src/**/*.ts"))
                 .concat(['./src/_assets/ts/community-grid-all-modules-umd-beta.js'])
     },
 

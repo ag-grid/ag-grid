@@ -9,7 +9,7 @@ const getModuleDirNames = (type) => {
 
 const flattenArray = array => [].concat.apply([], array);
 
-const mapToScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-grid-${barrelName}/${moduleDirName.replace('grid-', '')}`]));
+const mapToScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-grid-${barrelName}/${moduleDirName}`]));
 
 const getScopeForModules = types => flattenArray(types.map(type => mapToScopes(type, getModuleDirNames(type))));
 

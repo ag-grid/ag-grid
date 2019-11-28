@@ -1,27 +1,67 @@
 var columnDefs = [
-    {headerName: 'Author', field: 'author', width: 100},
-    {headerName: 'Details', children: [
-        {headerName: 'Title', field: 'title', minWidth: 250, flex: 2 },
-        {headerName: 'Link', field: 'link', minWidth: 200, flex: 1 },
-        {headerName: 'Date', field: 'date', width: 170 }
-    ]}
+    {
+        headerName: "A",
+        field: "author",
+        width: 300,
+        colSpan: function(params) {
+            return params.data === 2 ? 3 : 1
+        }
+    },
+    {
+        headerName: "Flexed Columns",
+        children: [
+            {
+                headerName: "B",
+                minWidth: 200,
+                maxWidth: 350,
+                flex: 2
+            },
+            {
+                headerName: "C",
+                flex: 1
+            }
+        ]
+    }
 ];
 
 var gridOptions = {
     defaultColDef: {
-        resizable: true
+        resizable: true,
+        cellRenderer: ShowWidthCellRenderer
     },
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowData: [1, 2]
+};
+
+function ShowWidthCellRenderer() {}
+
+ShowWidthCellRenderer.prototype.init = function(params) {
+    this.eGui = document.createElement("div");
+    this.isTotalWidthRow = params.data === 2;
+    this.interval = setInterval(this.refreshValue.bind(this), 50);
+    this.refreshValue();
+};
+
+ShowWidthCellRenderer.prototype.refreshValue = function() {
+    if (this.eGui.parentElement) {
+        var width = this.eGui.parentElement.offsetWidth;
+        this.eGui.textContent = width + "px";
+        if (this.isTotalWidthRow) {
+            this.eGui.textContent =  "Total width: " + this.eGui.textContent;
+        }
+    }
+};
+
+ShowWidthCellRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+
+ShowWidthCellRenderer.prototype.destroy = function() {
+    clearInterval(this.interval);
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener("DOMContentLoaded", function() {
+    var gridDiv = document.querySelector("#myGrid");
     new agGrid.Grid(gridDiv, gridOptions);
-
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/blogs.json'}).then(function(data) {
-        gridOptions.api.setRowData(data);
-    });
 });

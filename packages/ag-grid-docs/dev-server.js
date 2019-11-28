@@ -135,13 +135,13 @@ function symlinkModules(communityModules, enterpriseModules) {
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/grid-vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
-    lnk('../../community-modules/grid-angular/', '_dev/@ag-grid-community', {
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'angular'
     });
-    lnk('../../community-modules/grid-react/', '_dev/@ag-grid-community', {
+    lnk('../../community-modules/react/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
         rename: 'react'
@@ -152,7 +152,7 @@ function symlinkModules(communityModules, enterpriseModules) {
             lnk(module.rootDir, '_dev/@ag-grid-community', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName.replace('grid-', '')
+                rename: module.moduleDirName
             });
         });
 
@@ -161,7 +161,7 @@ function symlinkModules(communityModules, enterpriseModules) {
             lnk(module.rootDir, '_dev/@ag-grid-enterprise', {
                 force: true,
                 type: linkType,
-                rename: module.moduleDirName.replace('grid-', '')
+                rename: module.moduleDirName
             });
         });
 }
@@ -194,27 +194,27 @@ function updateWebpackConfigWithBundles(communityModules, enterpriseModules) {
     console.log("updating webpack config with modules...");
 
     const communityModulesEntries = communityModules
-        .filter(module => module.moduleDirName !== 'grid-core')
-        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
 const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
         `);
 
     const communityRegisterModuleLines = communityModules
-        .filter(module => module.moduleDirName !== 'grid-core')
-        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseModulesEntries = enterpriseModules
-        .filter(module => module.moduleDirName !== 'grid-core')
-        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `require("../../../${module.fullJsPath.replace('.ts', '')}");
 const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};
         `);
 
     const enterpriseRegisterModuleLines = enterpriseModules
-        .filter(module => module.moduleDirName !== 'grid-core')
-        .filter(module => module.moduleDirName !== 'grid-all-modules')
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
         .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
 
     const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.js';
@@ -250,10 +250,10 @@ function updateUtilsSystemJsMappingsForFrameworks(communityModules, enterpriseMo
     const utilityFilename = 'src/example-runner/utils.php';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
-    const cssFiles = glob.sync(`../../community-modules/grid-all-modules/dist/styles/*.css`)
+    const cssFiles = glob.sync(`../../community-modules/all-modules/dist/styles/*.css`)
         .filter(css => !css.includes(".min."))
         .filter(css => !css.includes("Font"))
-        .map(css => css.replace('../../community-modules/grid-all-modules/dist/styles/', ''));
+        .map(css => css.replace('../../community-modules/all-modules/dist/styles/', ''));
 
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '/* START OF MODULES DEV - DO NOT DELETE */',
@@ -445,10 +445,9 @@ module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
             process.on('SIGINT', () => {
                 docsLock.remove();
             });
-
             process.on('SIGINT', () => {
                 console.log("Docs process killed. Safe to restart.");
-                process.exit(1);
+                process.exit(0);
             });
 
             const {communityModules, enterpriseModules} = getAllModules();

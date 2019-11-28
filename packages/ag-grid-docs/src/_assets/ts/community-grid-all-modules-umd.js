@@ -1,17 +1,17 @@
 // for js examples that just require community functionality (landing pages, vanilla community examples etc)
 
-const  ModuleRegistry = require("../../../../../community-modules/grid-core/dist/cjs/main");
-export * from "../../../../../community-modules/grid-core/dist/cjs/main";
+const  ModuleRegistry = require("../../../../../community-modules/core/dist/cjs/main");
+export * from "../../../../../community-modules/core/dist/cjs/main";
 
 /* MODULES - Don't delete this line */
-require("../../../../../community-modules/grid-client-side-row-model/dist/cjs/clientSideRowModelModule");
-const ClientSideRowModelModule = require("../../../../../community-modules/grid-client-side-row-model/dist/cjs/clientSideRowModelModule").ClientSideRowModelModule; 
+require("../../../../../community-modules/client-side-row-model/dist/cjs/clientSideRowModelModule");
+const ClientSideRowModelModule = require("../../../../../community-modules/client-side-row-model/dist/cjs/clientSideRowModelModule").ClientSideRowModelModule;
         
-require("../../../../../community-modules/grid-csv-export/dist/cjs/csvExportModule");
-const CsvExportModule = require("../../../../../community-modules/grid-csv-export/dist/cjs/csvExportModule").CsvExportModule; 
+require("../../../../../community-modules/csv-export/dist/cjs/csvExportModule");
+const CsvExportModule = require("../../../../../community-modules/csv-export/dist/cjs/csvExportModule").CsvExportModule;
         
-require("../../../../../community-modules/grid-infinite-row-model/dist/cjs/infiniteRowModelModule");
-const InfiniteRowModelModule = require("../../../../../community-modules/grid-infinite-row-model/dist/cjs/infiniteRowModelModule").InfiniteRowModelModule; 
+require("../../../../../community-modules/infinite-row-model/dist/cjs/infiniteRowModelModule");
+const InfiniteRowModelModule = require("../../../../../community-modules/infinite-row-model/dist/cjs/infiniteRowModelModule").InfiniteRowModelModule;
         
 ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.ModuleRegistry.register(CsvExportModule);

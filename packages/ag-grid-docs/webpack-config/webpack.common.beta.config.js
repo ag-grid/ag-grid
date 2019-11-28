@@ -20,7 +20,7 @@ module.exports = {
     // ],
     resolve: {
         alias: {
-            "@ag-grid-community/core": path.resolve(__dirname, "../../../community-modules/grid-core/src/ts/main.ts")
+            "@ag-grid-community/core": path.resolve(__dirname, "../../../community-modules/core/src/ts/main.ts")
         },
         extensions: [".ts", ".tsx", ".js"]
     },
