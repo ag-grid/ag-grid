@@ -19,6 +19,9 @@
     "files.exclude": {
         "packages/ag-grid-community": true,
         "packages/ag-grid-enterprise": true,
+        "packages/ag-grid-angular": true,
+        "packages/ag-grid-react": true,
+        "packages/ag-grid-vue": true,
         "**/.git": true,
         "**/.DS_Store": true
     }
