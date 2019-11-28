@@ -76,7 +76,12 @@ const tscSrcEs6Task = () => {
 const scssTask = () => {
     var f = filter(["**/*.css", '*Font*.css'], {restore: true});
 
-    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss', '!**/node_modules/**'])
+    return gulp.src([
+        'src/styles/**/*.scss',
+        '!src/styles/*alpine*/**', // spl alpine exclusion
+        '!src/styles/**/*Alpine**',
+        '!src/styles/**/_*.scss',
+        '!**/node_modules/**'])
         .pipe(named())
         .pipe(webpackStream({
             mode: 'none',
