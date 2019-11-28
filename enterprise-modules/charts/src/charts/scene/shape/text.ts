@@ -244,7 +244,7 @@ export class Text extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene || !this.lines.length) {
+        if (!this.lines.length) {
             return;
         }
 
