@@ -106,7 +106,7 @@ export class ChartBuilder {
         const chart = this.createCartesianChart(
             parent,
             ChartBuilder.createAxis(options.xAxis, 'category'),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
         ChartBuilder.initChart(chart, options);
@@ -122,7 +122,7 @@ export class ChartBuilder {
         const chart = this.createCartesianChart(
             parent,
             ChartBuilder.createAxis(options.xAxis, 'number'),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
         ChartBuilder.initChart(chart, options);
@@ -137,7 +137,7 @@ export class ChartBuilder {
     static createAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createAxis(options.xAxis, 'category'),
+            ChartBuilder.createCategoryAxis(options.xAxis),
             ChartBuilder.createNumberAxis(options.yAxis),
             options.document);
 
@@ -729,15 +729,12 @@ export class ChartBuilder {
         return axis;
     }
 
-    static createAxis(options: AxisOptions, defaultType: AxisType): NumberAxis | CategoryAxis | GroupedCategoryAxis | TimeAxis {
+    static createAxis(options: AxisOptions, defaultType: AxisType): CategoryAxis | NumberAxis | TimeAxis {
         let axis;
 
         switch (options.type || defaultType) {
             case 'category':
                 axis = new CategoryAxis();
-                break;
-            case 'groupedCategory':
-                axis = new GroupedCategoryAxis();
                 break;
             case 'number':
                 axis = new NumberAxis();

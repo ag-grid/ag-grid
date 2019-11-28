@@ -109,7 +109,7 @@ export interface AxisOptions {
     gridStyle: GridStyle[];
 }
 
-export type AxisType = 'category' | 'groupedCategory' | 'number' | 'time';
+export type AxisType = 'category' | 'number' | 'time';
 
 export interface AxisLineOptions {
     width: number;

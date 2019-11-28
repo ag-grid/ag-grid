@@ -363,10 +363,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return data.map((d, index) => {
             const value = d[categoryKey];
             const valueString = value && value.toString ? value.toString() : '';
+            const datum = { ...d };
 
-            d[categoryKey] = { id: index, value: d[categoryKey], toString: () => valueString };
+            datum[categoryKey] = { id: index, value, toString: () => valueString };
 
-            return d;
+            return datum;
         });
     }
 

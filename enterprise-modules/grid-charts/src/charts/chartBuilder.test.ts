@@ -8,7 +8,6 @@ import { AxisType } from "@ag-grid-community/core";
 import { CartesianChartLayout } from "./chart/cartesianChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
-import { BarSeries } from "./chart/series/cartesian/barSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { ColumnSeries } from "./chart/series/cartesian/columnSeries";
@@ -46,20 +45,6 @@ describe('createAxis', () => {
         const axis = ChartBuilder.createAxis(options, 'category');
 
         expect(axis).toBeInstanceOf(CategoryAxis);
-    });
-
-    it('returns groupedCategory axis when specified in options', () => {
-        const options: AxisOptions = { type: 'groupedCategory' };
-        const axis = ChartBuilder.createAxis(options, 'number');
-
-        expect(axis).toBeInstanceOf(GroupedCategoryAxis);
-    });
-
-    it('returns groupedCategory axis when specified in default type', () => {
-        const options: AxisOptions = {};
-        const axis = ChartBuilder.createAxis(options, 'groupedCategory');
-
-        expect(axis).toBeInstanceOf(GroupedCategoryAxis);
     });
 
     it('returns number axis when specified in options', () => {
