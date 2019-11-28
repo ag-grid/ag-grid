@@ -294,8 +294,8 @@ var columnB = {
 
     <note>
         Using <code>colDef.aggFunc</code> is the preferred way of doing aggregations, only use <code>groupRowAggNodes</code>
-        if you cannot achieve what you want as it will make your code more complex and be less likely to work with
-        other grid features eg pivoting.
+        if you cannot achieve what you want as it will make your code more complex. Also note that <code>groupRowAggNodes</code>
+        will not work when pivoting.
     </note>
 
     <p>
