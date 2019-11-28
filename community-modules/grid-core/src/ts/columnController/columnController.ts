@@ -2887,7 +2887,7 @@ export class ColumnController {
     }
 
     public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex'): void {
-        if (!this.flexActive) { return; }
+        if (!this.flexActive || !this.primaryColumns) { return; }
 
         this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
         if (!this.flexViewportWidth) { return; }
