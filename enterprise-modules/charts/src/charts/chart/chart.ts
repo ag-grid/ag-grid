@@ -16,6 +16,7 @@ import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart extends Observable {
+    readonly id: string = this.createId();
     readonly scene: Scene;
     readonly background: Rect = new Rect();
 
@@ -75,6 +76,17 @@ export abstract class Chart extends Observable {
         this.addPropertyListener('title', captionListener);
         this.addPropertyListener('subtitle', captionListener);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
+    }
+
+    private createId(): string {
+        const constructor = this.constructor as any;
+        const className = constructor.className;
+
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
+        }
+
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
     destroy() {

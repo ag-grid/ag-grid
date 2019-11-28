@@ -15,6 +15,7 @@ export enum CartesianChartLayout {
 }
 
 export class CartesianChart extends Chart {
+    static className = 'CartesianChart';
     protected axisAutoPadding = new Padding();
 
     @reactive(['layoutChange']) flipXY = false;
@@ -126,6 +127,7 @@ export class CartesianChart extends Chart {
         // In this case, we can skip updating the series on this layout run,
         // since they will be updated later anyway.
         if (this.layoutPending) {
+            this.scene.computeTransform();
             return;
         }
 

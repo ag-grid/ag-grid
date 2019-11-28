@@ -3,6 +3,8 @@ import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
 
 export class PolarChart extends Chart {
+    static className = 'PolarChart';
+
     constructor(document = window.document) {
         super(document);
 
