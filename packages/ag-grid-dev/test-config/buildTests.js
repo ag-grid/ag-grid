@@ -8,8 +8,8 @@ const uppercaseFirstChar = word => word.charAt(0).toUpperCase() + word.slice(1)
 let getModuleInformation = function (moduleDir, enterprise) {
     return glob.sync(`../../../${moduleDir}/*`)
         .filter(directory =>
-            !directory.includes('grid-all-modules') &&
-            !directory.includes('grid-core'))
+            !directory.includes('all-modules') &&
+            !directory.includes('core'))
         .map(directory => {
             const moduleFiles = glob.sync(`${directory}/src/*Module.ts`);
             if (moduleFiles.length === 0) {

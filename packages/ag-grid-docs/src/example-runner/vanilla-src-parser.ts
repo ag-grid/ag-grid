@@ -1,7 +1,7 @@
 import {generate} from 'escodegen';
 import * as esprima from 'esprima';
-import {Events} from '../../../../community-modules/grid-core/src/ts/eventKeys';
-import {PropertyKeys} from '../../../../community-modules/grid-core/src/ts/propertyKeys';
+import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
+import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
 
 const EVENTS = (<any>Object).values(Events);

@@ -1,10 +1,10 @@
 const glob = require('glob');
 
 const frameworkModules = [
-    'grid-react',
-    'grid-angular',
-    'grid-vue',
-    'grid-polymer'
+    'react',
+    'angular',
+    'vue',
+    'polymer'
 ];
 
 const getAllModules = () => {
@@ -26,7 +26,7 @@ const getAllModules = () => {
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
 
             const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-grid-community' : '@ag-grid-enterprise';
-            const publishedName = `${barrelNamePrefix}/${moduleDirName.replace('grid-', '')}`;
+            const publishedName = `${barrelNamePrefix}/${moduleDirName}`;
 
             return {
                 publishedName,

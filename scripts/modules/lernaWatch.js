@@ -229,7 +229,7 @@ const generateBuildChain = async (packageName, allPackagesOrdered) => {
 const extractCssBuildChain = (buildChainInfo) => {
     return {
         paths: buildChainInfo.paths
-            .filter(path => path.includes('community-modules/grid-core'))
+            .filter(path => path.includes('community-modules/core'))
             .map(path => `${path}/src/styles`),
         buildChains: {
             "@ag-grid-community/core": {
@@ -250,7 +250,7 @@ const extractCssBuildChain = (buildChainInfo) => {
 const watch = async (singleModule = false) => {
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -277,7 +277,7 @@ const watchBeta = async () => {
     console.log("Watching css...");
     const cacheFilePath = path.resolve(__dirname, '../../.lernaBuildChain.cache.json');
     if(!fs.existsSync(cacheFilePath)) {
-        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/grid-core");
+        const {paths, orderedPackageNames} = await getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -321,7 +321,7 @@ const getBuildChainInfo = async () => {
 const build = async () => {
     const buildChainInfo = await getBuildChainInfo();
 
-    const packagePath = path.resolve(__dirname, '../../community-modules/grid-core/src/gridCoreModule.ts');
+    const packagePath = path.resolve(__dirname, '../../community-modules/core/src/gridCoreModule.ts');
     const packageName = manifest(findParentPackageManifest(packagePath)).name;
 
     await buildDependencyChain(packageName, buildChainInfo.buildChains);

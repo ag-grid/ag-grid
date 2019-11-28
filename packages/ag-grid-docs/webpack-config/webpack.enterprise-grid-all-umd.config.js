@@ -8,7 +8,7 @@ const webpack = require('webpack');
 module.exports = merge(common, {
     mode: 'development',
     entry: {
-        '@ag-grid-enterprise/grid-all-modules': './src/_assets/ts/enterprise-grid-all-modules-umd.js'
+        '@ag-grid-enterprise/all-modules': './src/_assets/ts/enterprise-grid-all-modules-umd.js'
     },
 
     output: {
