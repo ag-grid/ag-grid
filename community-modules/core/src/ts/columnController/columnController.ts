@@ -168,7 +168,7 @@ export class ColumnController {
     private flexViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
-    private flexActive: boolean = true;
+    private flexActive = false;
 
     @PostConstruct
     public init(): void {
@@ -2887,7 +2887,7 @@ export class ColumnController {
     }
 
     public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex'): void {
-        if (!this.flexActive || !this.primaryColumns) { return; }
+        if (!this.flexActive) { return; }
 
         this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
         if (!this.flexViewportWidth) { return; }
