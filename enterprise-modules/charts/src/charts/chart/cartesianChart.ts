@@ -137,6 +137,8 @@ export class CartesianChart extends Chart {
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
+
+        this.axes.forEach(axis => axis.update());
     }
 
     private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
