@@ -48,6 +48,7 @@ export interface UpdateChartParams {
         id: string;
         name: string;
     };
+
     fields: FieldDefinition[];
 }
 
@@ -61,6 +62,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected constructor(chartProxyParams: ChartProxyParams) {
         this.chartProxyParams = chartProxyParams;
         this.chartType = chartProxyParams.chartType;
+    }
+
+    protected abstract createChart(options: TOptions): TChart;
+
+    public recreateChart(options?: TOptions): void {
+        if (this.chart) {
+            this.destroyChart();
+        }
+
+        this.chart = this.createChart(options || this.chartOptions);
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -372,6 +383,22 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public destroy(): void {
+        this.destroyChart();
+    }
+
+    protected destroyChart(): void {
+        const { parentElement } = this.chartProxyParams;
+        const canvas = parentElement.querySelector('canvas');
+
+        if (canvas) {
+            parentElement.removeChild(canvas);
+        }
+
+        // store current width and height so any charts created in the future maintain the size
+        this.chartOptions.width = this.chart.width;
+        this.chartOptions.height = this.chart.height;
+
         this.chart.destroy();
+        this.chart = null;
     }
 }

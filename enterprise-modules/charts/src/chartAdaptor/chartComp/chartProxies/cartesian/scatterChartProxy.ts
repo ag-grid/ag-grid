@@ -5,6 +5,7 @@ import { ScatterSeries } from "../../../../charts/chart/series/cartesian/scatter
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { SeriesOptions } from "../../../../charts/chartOptions";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -17,7 +18,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createScatterChart(params.parentElement, this.chartOptions);
+        this.recreateChart();
+    }
+
+    protected createChart(options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
+        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
     }
 
     public update(params: UpdateChartParams): void {

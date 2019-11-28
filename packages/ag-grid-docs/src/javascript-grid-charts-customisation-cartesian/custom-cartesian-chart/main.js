@@ -73,7 +73,6 @@ function processChartOptions(params) {
         }
     } else {
         var dateFormatter = function(params) {
-            console.log(params);
             var value = params.value.value;
 
             if (value && value.toLocaleDateString) {
