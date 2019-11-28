@@ -454,10 +454,7 @@ export abstract class Chart extends Observable {
             subtitle.node.visible = subtitleVisible;
         }
 
-        if (this.captionAutoPadding !== paddingTop) {
-            this.captionAutoPadding = paddingTop;
-            this.layoutPending = true;
-        }
+        this.captionAutoPadding = paddingTop;
     }
 
     protected positionLegend() {

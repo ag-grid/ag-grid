@@ -146,9 +146,27 @@ export class Scene {
         return this._renderFrameIndex;
     }
 
-    readonly render = () => {
-        const ctx = this.ctx;
+    /**
+     * Recursively computes transformation matrices of a subtree, starting at the given node.
+     * @param node
+     */
+    computeTransform(node: Node = this.root) {
+        if (node) {
+            if (node.dirtyTransform) {
+                node.computeTransformMatrix();
+            }
 
+            const { children } = node;
+            const n = children.length;
+
+            for (let i = 0; i < n; i++) {
+                const child = children[i];
+                this.computeTransform(child);
+            }
+        }
+    }
+
+    readonly render = () => {
         const { ctx, root } = this;
 
         // start with a blank canvas, clear previous drawing
