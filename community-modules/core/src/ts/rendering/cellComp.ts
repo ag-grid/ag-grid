@@ -215,12 +215,7 @@ export class CellComp extends Component {
         this.populateTemplate();
         this.createCellRendererInstance(true);
         this.angular1Compile();
-
-        // if not doing enterprise, then range selection service would be missing
-        // so need to check before trying to use it
-        if (this.rangeSelectionEnabled && this.shouldHaveSelectionHandle()) {
-            this.addSelectionHandle();
-        }
+        this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.beans.tooltipManager.registerTooltip(this);
@@ -480,6 +475,7 @@ export class CellComp extends Component {
         this.updateAngular1ScopeAndCompile();
 
         this.refreshToolTip();
+        this.refreshHandle();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -527,7 +523,6 @@ export class CellComp extends Component {
         // populate
         this.putDataIntoCellAfterRefresh();
         this.updateAngular1ScopeAndCompile();
-        this.refreshHandle();
     }
 
     private updateAngular1ScopeAndCompile() {
@@ -1322,7 +1317,6 @@ export class CellComp extends Component {
 
     public focusCell(forceBrowserFocus = false): void {
         this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
-        this.refreshHandle();
     }
 
     public setFocusInOnEditor(): void {
@@ -1804,8 +1798,6 @@ export class CellComp extends Component {
         _.addOrRemoveCssClass(element, 'ag-cell-range-single-cell', this.isSingleCell());
 
         this.refreshHandle();
-
-        _.addOrRemoveCssClass(element, 'ag-cell-range-handle', !!this.selectionHandle);
     }
 
     private getHasChartRange(): boolean {
@@ -1890,6 +1882,8 @@ export class CellComp extends Component {
         if (shouldHaveSelectionHandle) {
             this.addSelectionHandle();
         }
+
+        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-range-handle', !!this.selectionHandle);
     }
 
     private updateRangeBorders(): void {
@@ -2048,6 +2042,8 @@ export class CellComp extends Component {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
+
+        this.refreshHandle();
     }
 
     // pass in 'true' to cancel the editing.
