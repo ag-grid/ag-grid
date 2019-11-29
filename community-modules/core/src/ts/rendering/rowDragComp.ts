@@ -91,6 +91,7 @@ class VisibilityStrategy extends BeanStub {
             // so we use setVisible to keep the handles horizontally aligned (as setVisible
             // keeps the empty space, whereas setDisplayed looses the space)
             if (isShownSometimes) {
+                this.parent.setDisplayed(true);
                 this.parent.setVisible(shown);
             } else {
                 this.parent.setDisplayed(shown);
