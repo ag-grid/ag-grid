@@ -157,7 +157,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
 
                 if (headerGroupShow === ColumnGroup.HEADER_GROUP_PADDING) {
                     const column = abstractColumn as OriginalColumnGroup;
-                    atLeastOneChangeable = column.children.some(child => child.getColumnGroupShow() !== undefined);
+                    atLeastOneChangeable = atLeastOneChangeable || column.children.some(child => child.getColumnGroupShow() !== undefined);
                 }
             }
         }
