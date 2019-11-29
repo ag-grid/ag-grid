@@ -55,9 +55,10 @@ export class UndoRedoService {
         this.addPasteListeners();
         this.addFillListeners();
 
+        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
+
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
         // performed that change the order of the row / cols.
-        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, this.clearStacks);
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
