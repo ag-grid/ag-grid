@@ -3,6 +3,9 @@
   "version": "22.0.0",
   "description": "ag-Grid Polymer 3 Web Component",
   "main": "index.js",
+  "scripts": {
+    "build": "npx gulp copy-from-module-source"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ag-grid/ag-grid-polymer.git"
@@ -25,5 +28,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-replace": "^1.0.0"
   }
 }
