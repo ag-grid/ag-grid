@@ -158,11 +158,11 @@ export class CellComp extends Component {
         const cssClasses = this.getInitialCssClasses();
 
         const stylesForRowSpanning = this.getStylesForRowSpanning();
-        const colIdx = this.getAriaColumnIndex();
+        const colIdxSanitised = _.escape(this.getAriaColumnIndex());
 
         if (this.usingWrapper) {
             wrapperStartTemplate = `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" role="gridcell" aria-colindex="${colIdx}" class="ag-cell-value" ${unselectable}>`;
+                <span ref="eCellValue" role="gridcell" aria-colindex="${colIdxSanitised}" class="ag-cell-value" ${unselectable}>`;
             wrapperEndTemplate = '</span></div>';
         }
 
@@ -172,18 +172,18 @@ export class CellComp extends Component {
         templateParts.push(` role="${this.usingWrapper ? 'presentation' : 'gridcell'}"`);
 
         if (!this.usingWrapper) {
-            templateParts.push(` aria-colindex=${colIdx}`);
+            templateParts.push(` aria-colindex=${colIdxSanitised}`);
         }
 
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${colIdSanitised}"`);
-        templateParts.push(` class="${cssClasses.join(' ')}"`);
+        templateParts.push(` class="${_.escape(cssClasses.join(' '))}"`);
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
             templateParts.push(`title="${tooltipSanitised}"`);
         }
 
-        templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef} ${stylesForRowSpanning}" >`);
+        templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${_.escape(stylesFromColDef)} ${_.escape(stylesForRowSpanning)}" >`);
         templateParts.push(wrapperStartTemplate);
 
         if (_.exists(valueSanitised, true)) {
