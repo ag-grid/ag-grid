@@ -27,7 +27,9 @@ include '../documentation-main/documentation_header.php';
         <li><a href="../javascript-grid-range-selection-fill-handle/">Fill Handle</a></li>
     </ul>
 
-    <note>This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes.</note>
+    <note>This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid
+    operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the undo
+     / redo stacks.</note>
 
     <h2>Enabling Undo / Redo</h2>
 
