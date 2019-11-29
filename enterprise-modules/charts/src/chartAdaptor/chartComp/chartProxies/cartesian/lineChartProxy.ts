@@ -52,8 +52,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.yName = f.displayName;
                 lineSeries.fill = fill;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
-                lineSeries.marker.fill = fill;
-                lineSeries.marker.stroke = stroke;
+                lineSeries.fill = fill;
+                lineSeries.stroke = stroke;
             } else {
                 const { seriesDefaults } = this.chartOptions;
                 const options: InternalLineSeriesOptions = {
@@ -76,9 +76,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                         color: fill, // this is deliberate, so that the line colours match the fills of other series
                     },
                     marker: {
-                        ...seriesDefaults.marker,
-                        fill,
-                        stroke
+                        ...seriesDefaults.marker
                     }
                 };
 

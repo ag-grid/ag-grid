@@ -303,8 +303,8 @@ export class ChartBuilder {
             this.setValueIfExists(series, 'fill', fill.color);
 
             // default marker to same fill as series
-            this.setValueIfExists(series.marker, 'fill', fill.color);
-            this.setValueIfExists(series.marker, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
         }
 
         if (stroke) {
@@ -312,9 +312,9 @@ export class ChartBuilder {
             this.setValueIfExists(series, 'strokeWidth', stroke.width);
 
             // default marker to same stroke as series
-            this.setValueIfExists(series.marker, 'stroke', stroke.color);
-            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series.marker, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
         }
 
         if (highlightStyle) {
@@ -353,15 +353,15 @@ export class ChartBuilder {
 
         if (fill) {
             // default marker to same fill as series
-            this.setValueIfExists(series.marker, 'fill', fill.color);
-            this.setValueIfExists(series.marker, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
         }
 
         if (stroke) {
             // default marker to same stroke as series
-            this.setValueIfExists(series.marker, 'stroke', stroke.color);
-            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series.marker, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
         }
 
         if (highlightStyle) {
@@ -582,11 +582,6 @@ export class ChartBuilder {
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);
-        this.setValueIfExists(marker, 'fill', options.fill);
-        this.setValueIfExists(marker, 'fillOpacity', options.fillOpacity);
-        this.setValueIfExists(marker, 'stroke', options.stroke);
-        this.setValueIfExists(marker, 'strokeWidth', options.strokeWidth);
-        this.setValueIfExists(marker, 'strokeOpacity', options.strokeOpacity);
     }
 
     static initHighlightStyle(highlightStyle: HighlightStyle, options: HighlightOptions) {

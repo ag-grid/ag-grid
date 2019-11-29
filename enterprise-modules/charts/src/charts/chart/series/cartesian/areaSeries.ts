@@ -64,6 +64,8 @@ export class AreaSeries extends CartesianSeries {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
         this.update();
+
+        this.fireEvent({type: 'legendChange'});
     }
 
     private _fills: string[] = palette.fills;
@@ -329,6 +331,8 @@ export class AreaSeries extends CartesianSeries {
             yData,
             marker,
             strokeWidth,
+            fills,
+            strokes,
             xAxis: { scale: xScale }, yAxis: { scale: yScale }
         } = this;
 
@@ -338,7 +342,6 @@ export class AreaSeries extends CartesianSeries {
         const markerSelectionData: MarkerSelectionDatum[] = [];
         const last = xData.length * 2 - 1;
         const markerSize = marker.size;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
@@ -359,9 +362,9 @@ export class AreaSeries extends CartesianSeries {
                         yKey,
                         x,
                         y,
-                        fill: this.getMarkerFill(j),
-                        stroke: this.getMarkerStroke(j),
-                        strokeWidth: markerStrokeWidth,
+                        fill: fills[j % fills.length],
+                        stroke: strokes[j % strokes.length],
+                        strokeWidth,
                         size: markerSize,
                         text: yNames[j]
                     });
@@ -482,12 +485,6 @@ export class AreaSeries extends CartesianSeries {
         const markerSelection = updateMarkers.merge(enterMarkers);
 
         markerSelection.each((node, datum) => {
-            node.translationX = datum.x;
-            node.translationY = datum.y;
-            node.visible = marker.enabled && datum.size > 0 && !!yKeyEnabled.get(datum.yKey);
-            node.fillOpacity = marker.fillOpacity;
-            node.strokeOpacity = marker.strokeOpacity;
-
             const isHighlightedNode = node === highlightedNode;
             const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
             const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
@@ -515,7 +512,9 @@ export class AreaSeries extends CartesianSeries {
                 node.size = size;
             }
 
-            node.strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+            node.translationX = datum.x;
+            node.translationY = datum.y;
+            node.visible = marker.enabled && node.size > 0 && !!yKeyEnabled.get(datum.yKey);
         });
 
         this.markerSelection = markerSelection;
@@ -559,13 +558,9 @@ export class AreaSeries extends CartesianSeries {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        const { id, xKey, yKeys, yNames, yKeyEnabled, marker, fillOpacity, strokeOpacity } = this;
+        const { id, xKey, yKeys, yNames, yKeyEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } = this;
 
         if (this.data.length && xKey && yKeys.length) {
-            const markerFillOpacity = marker.fillOpacity;
-            const markerStrokeOpacity = marker.strokeOpacity;
-            const markerEnabled = marker.enabled;
-
             yKeys.forEach((yKey, index) => {
                 data.push({
                     id,
@@ -576,26 +571,14 @@ export class AreaSeries extends CartesianSeries {
                     },
                     marker: {
                         type: marker.type,
-                        fill: this.getMarkerFill(index),
-                        stroke: this.getMarkerStroke(index),
-                        fillOpacity: markerEnabled && markerFillOpacity !== undefined ? markerFillOpacity : fillOpacity,
-                        strokeOpacity: markerEnabled && markerStrokeOpacity !== undefined ? markerStrokeOpacity : strokeOpacity
+                        fill: fills[index % fills.length],
+                        stroke: strokes[index % strokes.length],
+                        fillOpacity,
+                        strokeOpacity
                     }
                 });
             });
         }
-    }
-
-    private getMarkerFill(index: number): string {
-        const { fills, marker } = this;
-
-        return marker.fill || fills[index % fills.length];
-    }
-
-    private getMarkerStroke(index: number): string {
-        const { strokes, marker } = this;
-
-        return marker.stroke || strokes[index % strokes.length];
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {

@@ -11,13 +11,11 @@ import { Circle } from "../../marker/circle";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import palette from "../../palettes";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
     y: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
     size: number;
 }
 
@@ -46,6 +44,61 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
+    private _fill: string = palette.fills[0];
+    set fill(value: string) {
+        if (this._fill !== value) {
+            this._fill = value;
+            this.scheduleData();
+        }
+    }
+    get fill(): string {
+        return this._fill;
+    }
+
+    private _stroke: string = palette.strokes[0];
+    set stroke(value: string) {
+        if (this._stroke !== value) {
+            this._stroke = value;
+            this.scheduleData();
+        }
+    }
+    get stroke(): string {
+        return this._stroke;
+    }
+
+    private _strokeWidth: number = 2;
+    set strokeWidth(value: number) {
+        if (this._strokeWidth !== value) {
+            this._strokeWidth = value;
+            this.update();
+        }
+    }
+    get strokeWidth(): number {
+        return this._strokeWidth;
+    }
+
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -72,7 +125,6 @@ export class ScatterSeries extends CartesianSeries {
         const { marker } = this;
         marker.addPropertyListener('type', () => this.onMarkerTypeChange());
         marker.addEventListener('change', () => this.update());
-        marker.addEventListener('legendChange', event => this.fireEvent(event));
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
@@ -83,6 +135,8 @@ export class ScatterSeries extends CartesianSeries {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
+
+        this.fireEvent({type: 'legendChange'});
     }
 
     processData(): boolean {
@@ -155,10 +209,16 @@ export class ScatterSeries extends CartesianSeries {
             yKey,
             sizeScale,
             marker,
+            fill,
+            stroke,
+            strokeWidth,
+            fillOpacity,
+            strokeOpacity,
             highlightedNode
         } = this;
 
         const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
+        const markerFormatter = marker.formatter;
 
         this.sizeScale.range = [marker.minSize, marker.size];
 
@@ -166,9 +226,6 @@ export class ScatterSeries extends CartesianSeries {
             seriesDatum: data[i],
             x: xScale.convert(xDatum) + xOffset,
             y: yScale.convert(yData[i]) + yOffset,
-            fill: marker.fill,
-            stroke: marker.stroke,
-            strokeWidth: marker.strokeWidth || 0,
             size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
 
@@ -180,29 +237,22 @@ export class ScatterSeries extends CartesianSeries {
 
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
-        const markerFormatter = marker.formatter;
 
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
-                node.translationX = datum.x;
-                node.translationY = datum.y;
-                node.fillOpacity = marker.fillOpacity;
-                node.strokeOpacity = marker.strokeOpacity;
-
                 const isHighlightedNode = node === highlightedNode;
-                const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-                const { strokeWidth, size } = datum;
+                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : fill;
+                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : stroke;
 
                 if (markerFormatter) {
                     const style = markerFormatter({
                         datum: datum.seriesDatum,
                         xKey,
                         yKey,
-                        fill,
-                        stroke,
+                        fill: markerFill,
+                        stroke: markerStroke,
                         strokeWidth,
-                        size,
+                        size: datum.size,
                         highlighted: isHighlightedNode
                     });
                     node.fill = style.fill;
@@ -210,12 +260,16 @@ export class ScatterSeries extends CartesianSeries {
                     node.strokeWidth = style.strokeWidth;
                     node.size = style.size;
                 } else {
-                    node.fill = fill;
-                    node.stroke = stroke;
+                    node.fill = markerFill;
+                    node.stroke = markerStroke;
                     node.strokeWidth = strokeWidth;
-                    node.size = size;
+                    node.size = datum.size;
                 }
 
+                node.fillOpacity = fillOpacity;
+                node.strokeOpacity = strokeOpacity;
+                node.translationX = datum.x;
+                node.translationY = datum.y;
                 node.visible = marker.enabled && node.size > 0;
             });
 
@@ -237,10 +291,11 @@ export class ScatterSeries extends CartesianSeries {
             sizeKey,
             sizeName,
             labelKey,
-            labelName
+            labelName,
+            fill
         } = this;
 
-        const color = this.marker.fill || 'gray';
+        const color = fill || 'gray';
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -277,7 +332,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     listSeriesItems(data: LegendDatum[]): void {
-        const { id, title, visible, xKey, yKey, yName, marker } = this;
+        const { id, title, visible, xKey, yKey, yName, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (this.data.length && xKey && yKey) {
             data.push({
@@ -289,10 +344,10 @@ export class ScatterSeries extends CartesianSeries {
                 },
                 marker: {
                     type: marker.type,
-                    fill: marker.fill || 'gray',
-                    stroke: marker.stroke || 'black',
-                    fillOpacity: marker.fillOpacity,
-                    strokeOpacity: marker.strokeOpacity
+                    fill,
+                    stroke,
+                    fillOpacity,
+                    strokeOpacity
                 }
             });
         }
