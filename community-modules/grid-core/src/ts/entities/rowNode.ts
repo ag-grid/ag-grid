@@ -465,6 +465,18 @@ export class RowNode implements IEventEmitter {
         }
     }
 
+    public getColumnApi(): ColumnApi {
+        return this.columnApi;
+    }
+
+    public getGridApi(): GridApi {
+        return this.gridApi;
+    }
+
+    public getRowModel(): IRowModel {
+        return this.rowModel;
+    }
+
     // we also allow editing the value via the editors. when it is done via
     // the editors, no 'cell changed' event gets fired, as it's assumed that
     // the cell knows about the change given it's in charge of the editing.
