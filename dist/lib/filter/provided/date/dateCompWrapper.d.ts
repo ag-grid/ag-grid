@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDateParams } from "../../../rendering/dateComponent";
 import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates

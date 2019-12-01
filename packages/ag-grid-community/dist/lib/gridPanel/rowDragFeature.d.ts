@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { GridPanel } from "./gridPanel";
 export declare class RowDragFeature implements DropTarget {

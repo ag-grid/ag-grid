@@ -1,0 +1,14 @@
+// Type definitions for @ag-grid-community/core v22.0.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { AgCheckbox } from "./agCheckbox";
+export declare class AgRadioButton extends AgCheckbox {
+    protected className: string;
+    protected inputType: string;
+    protected iconMap: {
+        selected: string;
+        unselected: string;
+    };
+    toggle(): void;
+    protected getIconName(): string;
+}

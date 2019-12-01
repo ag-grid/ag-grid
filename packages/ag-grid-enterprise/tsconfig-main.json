@@ -6,8 +6,6 @@
     "declaration": true,
     "target": "es5",
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
     "lib": [
       "es2015",
       "dom"

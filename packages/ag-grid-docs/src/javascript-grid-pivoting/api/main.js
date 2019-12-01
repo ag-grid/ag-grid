@@ -39,7 +39,9 @@ function emptyPivotColumns() {
     gridOptions.columnApi.setPivotColumns([]);
 }
 function exportToCsv() {
-    gridOptions.api.exportDataAsCsv({});
+    gridOptions.api.exportDataAsCsv({
+        columnGroups: true
+    });
 }
 
 // setup the grid after the page has finished loading

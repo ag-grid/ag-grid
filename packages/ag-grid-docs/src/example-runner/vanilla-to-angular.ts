@@ -54,7 +54,7 @@ function isInstanceMethod(instance: any, property: any) {
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function appComponentTemplate(bindings, componentFileNames, isDev) {
+function appComponentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const diParams = [];
     const imports = [];
     const additional = [];
@@ -65,13 +65,16 @@ function appComponentTemplate(bindings, componentFileNames, isDev) {
     }
 
     if (bindings.gridSettings.enterprise) {
-        imports.push('import "ag-grid-enterprise";');
+        imports.push('import {AllModules} from "@ag-grid-enterprise/all-modules";');
+    } else {
+        imports.push('import {AllCommunityModules} from "@ag-grid-community/all-modules";');
     }
 
-    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if(chartsEnabled && !isDev) {
-        imports.push('import "ag-grid-enterprise/chartsModule";');
-    }
+    imports.push('import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";');
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -85,7 +88,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev) {
         });
     }
 
-    const propertyAttributes = [];
+    const propertyAttributes = ['[modules]="modules"'];
     const propertyVars = [];
     const propertyAssignments = [];
 
@@ -163,6 +166,7 @@ ${imports.join('\n')}
 export class AppComponent {
     private gridApi;
     private gridColumnApi;
+    public modules: Module[] = ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'};
 
     ${propertyVars.join('\n')}
 
@@ -182,9 +186,9 @@ ${bindings.utils.join('\n')}
 `;
 }
 
-export function vanillaToAngular(js, html, exampleSettings, componentFileNames, isDev) {
+export function vanillaToAngular(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return appComponentTemplate(bindings, componentFileNames, isDev);
+    return appComponentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

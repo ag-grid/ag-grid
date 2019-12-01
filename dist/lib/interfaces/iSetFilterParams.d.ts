@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef } from "../entities/colDef";
 import { IProvidedFilterParams } from "../filter/provided/providedFilter";
@@ -20,9 +17,12 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     } | ICellRendererFunc | string;
     suppressMiniFilter: boolean;
     suppressSelectAll: boolean;
-    selectAllOnMiniFilter: boolean;
-    syncValuesLikeExcel: boolean;
+    suppressSyncValuesAfterDataChange: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
+    /** @deprecated */
+    selectAllOnMiniFilter: boolean;
+    /** @deprecated */
+    syncValuesLikeExcel?: boolean;
 }

@@ -1,0 +1,60 @@
+{
+  "name": "@ag-grid-community/angular",
+  "version": "22.0.0",
+  "description": "ag-Grid Angular Component",
+  "main": "main.js",
+  "typings": "main.d.ts",
+  "scripts": {
+    "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
+    "verify-properties": "node agGridPropertiesCheck.js",
+    "precheck": "tsc -p tsconfig-precheck.json",
+    "build": "npm run precheck && npm run clean && npm run build-no-verify && npm run verify-properties",
+    "build-no-verify": "ngc -p tsconfig-src.json && npm run clean-src && gulp",
+    "clean-src": "rimraf src/*.d.ts src/*.js*",
+    "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
+    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main",
+    "clean-build": "npm run clean && npm run build",
+    "release": "npm run update-properties && npm run clean-build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid-angular.git"
+  },
+  "keywords": [
+    "grid",
+    "data",
+    "table",
+    "angular"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid-angular/issues"
+  },
+  "homepage": "https://angular-grid.ag-grid.com",
+  "devDependencies": {
+    "@ag-grid-community/core": "~22.0.0",
+    "@angular/compiler": "^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
+    "@angular/core": "^4.0.0",
+    "core-js": "^2.5.0",
+    "del": "^5.1.0",
+    "gulp": "^4.0.0",
+    "gulp-ngc": "~0.3.3",
+    "gulp-rename": "^1.4.0",
+    "gulp-typescript": "^5.0.0",
+    "replace-in-file": "^4.1.0",
+    "rimraf": "^3.0.0",
+    "rxjs": "^5.5.0",
+    "typescript": "^2.9.0",
+    "typescript-simple": "8.0.6"
+  },
+  "peerDependencies": {
+    "@ag-grid-community/core": "~22.0.0",
+    "@angular/compiler": ">=2.1.x",
+    "@angular/core": ">=2.1.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

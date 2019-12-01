@@ -1,7 +1,7 @@
 // for cell height & width
-const CELL_DIMENSION_SIZE = 90;
+var CELL_DIMENSION_SIZE = 90;
 
-let columnDefs = [
+var columnDefs = [
     {headerName: 'Symbol', field: 'Symbol', width: 85},
     {headerName: 'Date', field: 'Date', width: 82},
     {headerName: 'Open', field: 'Open', width: 72},
@@ -56,7 +56,7 @@ let columnDefs = [
     }
 ];
 
-let gridOptions = {
+var gridOptions = {
     defaultColDef: {
         sortable: true,
         resizable: true
@@ -64,13 +64,13 @@ let gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'single',
     rowHeight: 95,
-    onCellClicked: (params) => {
+    onCellClicked: function(params) {
         if (params.colDef.field !== "CloseTrends") {
             return;
         }
         renderLineGraph(params.data.Symbol);
     },
-    components:{
+    components: {
         lineChartLineRenderer: LineChartLineRenderer,
         barChartLineRenderer: BarChartLineRenderer,
         pieChartLineEditor: PieChartLineEditor,
@@ -89,10 +89,10 @@ LineChartLineRenderer.prototype.init = function (params) {
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout( () => {
-        let values = params.value
-            .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
-            .map((datum) => datum.Close);
+    setTimeout(function() {
+        var values = params.value
+            .sort(function(a, b) { return new Date(a.Date).getTime() - new Date(b.Date).getTime(); })
+            .map(function(datum) { return datum.Close; });
         $(eGui).sparkline(values, {height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE});
     }, 0);
 };
@@ -111,9 +111,9 @@ BarChartLineRenderer.prototype.init = function (params) {
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
     setTimeout(function(){
-        let values = params.value
-            .sort((a, b) => a.Year - b.Year)
-            .map((datum) => datum.AverageVolume.toFixed());
+        var values = params.value
+            .sort(function(a, b) { return a.Year - b.Year; })
+            .map(function(datum) { return datum.AverageVolume.toFixed(); });
         $(eGui).sparkline(values, {
             type: 'bar',
             barColor: 'green',
@@ -141,23 +141,21 @@ PieChartLineRenderer.prototype.init = function (params) {
     // the grid to complete it's job of placing the cell into the browser.
     setTimeout( function() {
 
-        let segments = params.segments;
-        // let segments = params.segments; alberto - used to be this
+        var segments = params.segments;
 
-        let colourToNames = _.invert(segments);
-        let values = Object.keys(segments).map((segment) => {
+        var colourToNames = _.invert(segments);
+        var values = Object.keys(segments).map(function(segment) {
             return params.value[segment];
         });
-        let sliceColours = Object.values(segments);
+        var sliceColours = Object.values(segments);
         $(eGui).sparkline(values,
             {
                 type: 'pie',
                 height: CELL_DIMENSION_SIZE,
                 width: CELL_DIMENSION_SIZE,
                 sliceColors: sliceColours,
-                tooltipFormatter: (sparklines, options, segment) => {
-                    return `<div class="jqsfield"><span style="color: ${segment.color}"</span>${colourToNames[segment.color]}: ${Math.round(segment.percent)}%</div>`;
-
+                tooltipFormatter: function(sparklines, options, segment) {
+                    return '<div class="jqsfield"><span style="color: ' + segment.color + '"</span>' + colourToNames[segment.color] + ': ' + Math.round(segment.percent) + '%</div>';
                 }
             }
         );
@@ -195,29 +193,28 @@ PieChartLineEditor.prototype.getGui = function () {
 // editors have afterGuiAttached callback to know when the dom
 // element is attached. so we can use this instead of using timeouts.
 PieChartLineEditor.prototype.afterGuiAttached = function () {
-    let segments = this.params.segments;
-    let colourToNames = _.invert(segments);
-    let values = Object.keys(segments).map((segment) => {
+    var segments = this.params.segments;
+    var colourToNames = _.invert(segments);
+    var values = Object.keys(segments).map(function(segment) {
         return this.params.node.data[this.params.colToUseForRendering][segment];
     });
-    let sliceColours = Object.values(segments);
+    var sliceColours = Object.values(segments);
 
-    let thisSparkline = $(this.eGui);
+    var thisSparkline = $(this.eGui);
     thisSparkline.sparkline(values,
         {
             type: 'pie',
             height: CELL_DIMENSION_SIZE,
             width: CELL_DIMENSION_SIZE,
             sliceColors: sliceColours,
-            tooltipFormatter: (sparklines, options, segment) => {
-                return `<div class="jqsfield"><span style="color: ${segment.color}"</span>${colourToNames[segment.color]}: ${Math.round(segment.percent)}%</div>`;
-
+            tooltipFormatter: function(sparklines, options, segment) {
+                return '<div class="jqsfield"><span style="color: ' + segment.color + '"</span>' + colourToNames[segment.color] + ': ' + Math.round(segment.percent) + '%</div>';
             }
         }
     );
 
-    thisSparkline.bind('sparklineClick', (ev) => {
-        let segmentClicked = ev.sparklines[0].getCurrentRegionFields();
+    thisSparkline.bind('sparklineClick', function(ev) {
+        var segmentClicked = ev.sparklines[0].getCurrentRegionFields();
         this.value = colourToNames[segmentClicked.color];
         this.params.api.stopEditing();
     });
@@ -236,17 +233,17 @@ PieChartLineEditor.prototype.destroy = function () {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    let gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    let httpRequest = new XMLHttpRequest();
+    var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            let httpResult = JSON.parse(httpRequest.responseText);
+            var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
     };
@@ -254,30 +251,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function renderLineGraph(symbol) {
-    let httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', `https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/${symbol}-close-trend.json`);
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            let noRowsMessage = document.querySelector('.centerInline');
+            var noRowsMessage = document.querySelector('.centerInline');
             noRowsMessage.style.display = "None";
 
-            let svg = d3.select("#detailInline");
+            var svg = d3.select("#detailInline");
             svg.selectAll("*").remove();
 
-            let parseTime = d3.timeParse("%d-%b-%y");
-            let margin = {top: 20, right: 20, bottom: 30, left: 50},
+            var parseTime = d3.timeParse("%d-%b-%y");
+            var margin = {top: 20, right: 20, bottom: 30, left: 50},
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
                 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            let x = d3.scaleTime()
+            var x = d3.scaleTime()
                 .rangeRound([0, width]);
 
-            let y = d3.scaleLinear()
+            var y = d3.scaleLinear()
                 .rangeRound([height, 0]);
 
-            let line = d3.line()
+            var line = d3.line()
                 .x(function (d) {
                     return x(d.Date);
                 })
@@ -285,8 +282,8 @@ function renderLineGraph(symbol) {
                     return y(d.Close);
                 });
 
-            let data = JSON.parse(httpRequest.responseText)
-                .map((datum) => {
+            var data = JSON.parse(httpRequest.responseText)
+                .map(function(datum) {
                     return {
                         Date: parseTime(datum.Date),
                         Close: +datum.Close

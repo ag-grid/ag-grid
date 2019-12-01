@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charting: Charting Grid Data";
+$pageTitle = "Charts: Chart Toolbar";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Chart Toolbar</h1>
 
     <p class="lead">
-        This section covers the functionality that is available via the chart toolbar along with configuration details.
+        The chart toolbar appears when the mouse hovers over the top right area of the chart, and provides access to
+        additional functionality and the chart configuration sidebar.
     </p>
 
     <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 40px;">
@@ -19,14 +20,14 @@ include '../documentation-main/documentation_header.php';
         <div style="flex-grow: 1;">
             <ul>
             <p>
-                The chart toolbar appears when the mouse hovers over the top right area of the chart. It allows
-                users to perform the following:</p>
+                From the toolbar, users can:</p>
             <p>
                 <ul>
                     <li style="padding-bottom: 5px">Change the chart type</li>
                     <li style="padding-bottom: 5px">Change the colour palette</li>
-                    <li style="padding-bottom: 5px">Select categories and series columns</li>
-                    <li style="padding-bottom: 5px">Format the chart</li>
+                    <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
+                    <li style="padding-bottom: 5px">Format different aspects of the chart</li>
+                    <li style="padding-bottom: 5px">Unlink the chart from the grid</li>
                     <li>Download the chart</li>
                 </ul>
             </p>
@@ -34,17 +35,20 @@ include '../documentation-main/documentation_header.php';
         </div>
     </div>
 
+    <h2>Configuration Sidebar</h2>
+
     <p>
-        The following sections discuss these toolbar features along with details on how to configure toolbar items.
+        Clicking on the 'hamburger' icon will open up the configuration sidebar, which provides access to a number of
+        panels that allow the user to configure different aspects of the chart.
     </p>
 
-    <h2>Chart Settings</h2>
+    <h3>Chart Settings</h3>
 
     <p>
         The chart settings panel allows users to change the chart type as well as the colour palette used in the
         chart as demonstrated below:
     </p>
-        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%; border: grey solid 1px">
+        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%">
     <p>
        <br>
        Notice that charts are organised into different groups and the current chart can be changed by selecting the icon
@@ -56,12 +60,12 @@ include '../documentation-main/documentation_header.php';
         setting panel.
     </p>
 
-    <h2>Chart Data</h2>
+    <h3>Chart Data</h3>
 
     <p>
         The chart data panel is used to dynamically change the data being charted as shown below:
     </p>
-    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%">
 
     <p>
         <br>
@@ -79,12 +83,12 @@ include '../documentation-main/documentation_header.php';
         section on <a href="../javascript-grid-charts-chart-ranges/#defining-categories-and-series">Defining Categories and Series</a>.
     </p>
 
-    <h2>Chart Format</h2>
+    <h3>Chart Format</h3>
 
     <p>
         The chart format panel allows users to change the appearance of the chart as shown below:
     </p>
-    <img alt="Chart Format" src="chart-format.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Chart Format" src="chart-format.gif" style="max-width: 100%">
 
     <p>
         <br>
@@ -93,25 +97,26 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h2>Unlinking Charts</h2>
+
     <p>
-        Charts are linked to the data in the grid by default. However it is sometimes desirable to unlink a chart for the
-        grid data after it has been created. For instance, users may want to prevent a chart from being updated when
-        subsequent sorts and filters are applied in the grid.
+        Charts are linked to the data in the grid by default, so that if the data changes, the chart will also update.
+        However, it is sometimes desirable to unlink a chart from the grid data. For instance, users may want to prevent
+        a chart from being updated when subsequent sorts and filters are applied in the grid.
     </p>
 
     <p>
         Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
     </p>
 
-    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%; border: grey solid 1px">
+    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%">
 
     <p>
         <br>
-        Notice that the chart range disappears from the grid when the chart has been unlinked and grid sorting doesn't
-        impact the chart.
+        Notice that the chart range disappears from the grid when the chart has been unlinked, and subsequent changes
+        to the grid sorting do not impact the chart.
     </p>
 
-    <h2>Chart Download</h2>
+    <h2>Downloading Charts</h2>
 
     <p>
         The 'Download Chart' toolbar item will download the chart as a PNG file. Note that the chart is drawn
@@ -119,16 +124,12 @@ include '../documentation-main/documentation_header.php';
         any other image on a web page.
     </p>
 
-
-    <h2>Configuring Toolbar Items</h2>
-
-    <p>
-        By default all available toolbar items are included by default. However items can be removed and reordered via
-        the <code>gridOptions.getChartToolbarItems()</code> callback function.
-    </p>
+    <h2>Configuring Toolbar Items and Menu Panels</h2>
 
     <p>
-        The interface for the <code>gridOptions.getChartToolbarItems()</code> callback function is shown below:
+        By default all available toolbar items and menu panels can be accessed. However, items can be removed and
+        reordered via the <code>gridOptions.getChartToolbarItems()</code> callback function, which has the following
+        interface:
     </p>
 
 <snippet>
@@ -137,15 +138,17 @@ interface GridOptions {
 }
 
 interface GetChartToolbarItemsParams {
-    defaultItems: string[];
+    defaultItems: ChartMenuOptions[];
     api: GridApi;
     columnApi: ColumnApi;
 }
+
+type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
 </snippet>
 
 <p>
-    This function receives the <code>GetChartToolbarItemsParams</code> object which contains the list of items that are
-    shown by default in <code>defaultItems</code> along with the grid APIs.
+    This function receives the <code>GetChartToolbarItemsParams</code> object which contains the list of elements that are
+    included by default in <code>defaultItems</code>, along with the grid APIs.
 </p>
 
 <p>
@@ -154,13 +157,13 @@ interface GetChartToolbarItemsParams {
 </p>
 
 <p>
-    The list of available toolbar items are as follows:  <code>'chartSettings', 'chartData', 'chartFormat', 'downloadChart'</code>.
+    The available elements are <code>'chartSettings', 'chartData', 'chartFormat', 'chartUnlink', 'chartDownload'</code>.
 </p>
 
-<h2>Example - Custom Toolbar Layout</h2>
+<h3>Example: Custom Toolbar Layout</h3>
 
 <p>
-    The example below shows how the toolbar layout can be customised. Notice the following:
+    The example below shows how the toolbar can be customised. Notice the following:
 </p>
 
 <ul class="content">

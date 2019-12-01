@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IAggFunc } from "../entities/colDef";
 import { Column } from "../entities/column";
 export interface IAggFuncService {
@@ -10,4 +7,5 @@ export interface IAggFuncService {
     addAggFunc(key: string, aggFunc: IAggFunc): void;
     clear(): void;
     getDefaultAggFunc(column: Column): string | null;
+    getFuncNames(column: Column): string[];
 }

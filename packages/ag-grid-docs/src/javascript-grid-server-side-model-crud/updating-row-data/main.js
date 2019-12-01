@@ -25,8 +25,7 @@ function purgeCache() {
 }
 
 function updateSelectedRows() {
-  var idsToUpdate = gridOptions.api.getSelectedNodes().map(node => node.data.id);
-
+  var idsToUpdate = gridOptions.api.getSelectedNodes().map(function(node) { return node.data.id; });
   var updatedRows = [];
 
   gridOptions.api.forEachNode( function(rowNode) {
@@ -95,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Note this a stripped down mock server implementation which only supports grouping
 function getMockServerResponse(request) {
   var groupKeys = request.groupKeys;
-  var rowGroupColIds = request.rowGroupCols.map(x => x.id);
+  var rowGroupColIds = request.rowGroupCols.map(function(x) { return x.id; });
   var parentId = groupKeys.length > 0 ? groupKeys.join("") : "";
 
   var rows = group(allData, rowGroupColIds, groupKeys, parentId);
@@ -105,17 +104,17 @@ function getMockServerResponse(request) {
 
   var lastRow = rows.length <= request.endRow ? rows.length : -1;
 
-  return {rowsThisBlock, lastRow};
+  return { rowsThisBlock: rowsThisBlock, lastRow: lastRow };
 }
 
 function group(data, rowGroupColIds, groupKeys, parentId) {
   var groupColId = rowGroupColIds.shift();
   if (!groupColId) return data;
 
-  var groupedData = _(data).groupBy(x => x[groupColId]).value();
+  var groupedData = _(data).groupBy(function(x) { return x[groupColId]; }).value();
 
   if (groupKeys.length === 0) {
-    return Object.keys(groupedData).map(key => {
+    return Object.keys(groupedData).map(function(key) {
       var res = {};
 
       // Note: the server provides group id's using a simple heuristic based on group keys:
@@ -131,7 +130,7 @@ function group(data, rowGroupColIds, groupKeys, parentId) {
 }
 
 function updateServerRows(rowsToUpdate) {
-  var updatedDataIds = rowsToUpdate.map(data => data.id);
+  var updatedDataIds = rowsToUpdate.map(function(data) { return data.id; });
   for (var i=0; i<allData.length; i++) {
     var updatedDataIndex = updatedDataIds.indexOf(allData[i].id);
     if (updatedDataIndex >= 0) {

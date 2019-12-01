@@ -300,7 +300,7 @@ cellDefs.forEach( function(cellDef) {
 
     <p>
         It is also possible to use different editors for different rows in the same column.
-        Typically an application might check the rows contents and choose and editor accordingly.
+        Typically an application might check the rows contents and choose an editor accordingly.
         To configure this set <code>colDef.cellEditorSelector</code>
         to a function that returns the name of the component to be used as an editor
         and optionally the custom params to be passed into it
@@ -378,7 +378,7 @@ cellEditorParams: function(params) {
                 If the selection doesn't match the city, the city cell is cleared.</li>
             <li>Column <b>City</b> uses dynamic parameters to display values for the selected country, and uses <code>formatValue</code>
                 to add the selected city's country as a suffix.</li>
-            <li>Column <b>Address</b> uses the rich text area editor.</li>
+            <li>Column <b>Address</b> uses the large text area editor.</li>
         </ul>
     </p>
 

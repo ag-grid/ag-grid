@@ -1,20 +1,3 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "declaration": true,
-    "target": "es5",
-    "noImplicitAny": true,
-    "outDir": "dist/lib",
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "lib": [
-      "es2015",
-      "dom"
-    ]
-  },
-  "include": [
-    "src/**/*"
-  ]
+  "extends": "tsconfig-main.json"
 }

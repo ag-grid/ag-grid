@@ -462,7 +462,6 @@ include '../documentation-main/documentation_header.php';
             <th>copySelectedRangeDown()</th>
             <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
         </tr>
-
     </table>
 <h2>Pagination</h2>
     <table class="table reference">
@@ -488,8 +487,12 @@ include '../documentation-main/documentation_header.php';
 <h2>Charts</h2>
 <table class="table reference">
     <tr>
-        <th>chartRange(params)</th>
-        <td>Used to programmatically create charts from a range. See <a href="../javascript-grid-charts-chart-range-api/#charting-range-api">Chart Range API</a>.</td>
+        <th>createRangeChart(params)</th>
+        <td>Used to programmatically create charts from a range. See <a href="../javascript-grid-charts-chart-range-api/#range-charts">Range Chart API</a>.</td>
+    </tr>
+    <tr>
+        <th>createPivotChart(params)</th>
+        <td>Used to programmatically create pivot charts from a grid. See <a href="../javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a>.</td>
     </tr>
 </table>
 <h2>Miscellaneous</h2>
@@ -517,6 +520,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>isToolPanelShowing()</th>
             <td>Returns true if the tool panel is showing, otherwise false.</td>
+        </tr>
+        <tr>
+            <th>getToolPanelInstance(id)</th>
+            <td>
+                Gets the tool panel instance corresponding to the supplied id. See
+                <a href="../javascript-grid-tool-panel-columns/#expand-collapse-column-groups">Expand / Collpase Column Groups</a>.
+            </td>
         </tr>
         <tr>
             <th>doLayout()</th>

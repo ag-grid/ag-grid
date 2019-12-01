@@ -9,7 +9,8 @@ function getFunctionName(code) {
     return matches && matches.length === 2 ? matches[1] : null;
 }
 
-function onGridReadyTemplate(readyCode: string,
+function onGridReadyTemplate(gridSettings: any,
+                             readyCode: string,
                              resizeToFit: boolean,
                              propertyAttributes: string[],
                              propertyVars: string[],
@@ -23,6 +24,9 @@ function onGridReadyTemplate(readyCode: string,
     if (resizeToFit) {
         resize = `params.api.sizeColumnsToFit();`;
     }
+
+    propertyAttributes.push(':modules="modules"');
+    propertyVars.push(`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
 
     if (data) {
         let setRowDataBlock = data.callback;
@@ -78,17 +82,20 @@ const toAssignment = (property) => {
     return `this.${property.name} = ${value}`;
 };
 
-function createComponentImports(bindings, componentFileNames: any, isDev) {
+function createComponentImports(bindings, componentFileNames: any, isDev, communityModules, enterpriseModules) {
     const imports = [];
 
     if (bindings.gridSettings.enterprise) {
-        imports.push('import "ag-grid-enterprise";');
+        imports.push('import {AllModules} from "@ag-grid-enterprise/all-modules";');
+    } else {
+        imports.push('import {AllCommunityModules} from "@ag-grid-community/all-modules";');
     }
 
-    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if(chartsEnabled  && !isDev) {
-        imports.push('import "ag-grid-enterprise/chartsModule";');
-    }
+    imports.push('import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";');
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
         let titleCase = (s) => {
@@ -172,10 +179,10 @@ function parseAllMethods(bindings) {
     return [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions];
 }
 
-function componentTemplate(bindings, componentFileNames, isDev) {
-    const imports = createComponentImports(bindings, componentFileNames, isDev);
+function componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
+    const imports = createComponentImports(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
-    const gridReadyTemplate = onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
+    const gridReadyTemplate = onGridReadyTemplate(bindings.gridSettings, bindings.onGridReady, bindings.resizeToFit, propertyAttributes, propertyVars, bindings.data);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceFunctions, utilFunctions] = parseAllMethods(bindings);
 
@@ -190,7 +197,7 @@ function componentTemplate(bindings, componentFileNames, isDev) {
     const template = bindings.template ? parseTemplateFromBinding(bindings, agGridTag) : agGridTag;
     return `
 import Vue from "vue";
-import {AgGridVue} from "ag-grid-vue";
+import {AgGridVue} from "@ag-grid-community/vue";
 
 ${imports.join('\n')}
 
@@ -240,9 +247,9 @@ new Vue({
 `;
 }
 
-export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev) {
+export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return componentTemplate(bindings, componentFileNames, isDev);
+    return componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

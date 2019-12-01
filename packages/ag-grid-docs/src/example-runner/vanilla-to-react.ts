@@ -11,10 +11,10 @@ function isInstanceMethod(instance: any, property: any) {
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function indexTemplate(bindings, componentFilenames, isDev) {
+function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const imports = [];
-    const propertyAssignments = [];
-    const componentAttributes = [];
+    const propertyAssignments = [`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
+    const componentAttributes = ["modules={this.state.modules}"];
 
     const instanceBindings = [];
     bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
@@ -44,16 +44,17 @@ function indexTemplate(bindings, componentFilenames, isDev) {
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    const additional = [];
-
     if (bindings.gridSettings.enterprise) {
-        imports.push('import "ag-grid-enterprise";');
+        imports.push('import {AllModules} from "@ag-grid-enterprise/all-modules";');
+    } else {
+        imports.push('import {AllCommunityModules} from "@ag-grid-community/all-modules";');
     }
 
-    const chartsEnabled = bindings.properties.filter(property => property.name === 'enableCharts' && property.value === 'true').length >= 1;
-    if (chartsEnabled && !isDev) {
-        imports.push('import "ag-grid-enterprise/chartsModule";');
-    }
+    imports.push('import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";');
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFilenames) {
         let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -154,7 +155,7 @@ function indexTemplate(bindings, componentFilenames, isDev) {
 
 import React, {Component} from "react"
 import {render} from "react-dom"
-import {AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from '@ag-grid-community/react'
 ${imports.join('\n')}
 
 class GridExample extends Component {
@@ -174,7 +175,7 @@ class GridExample extends Component {
         ${additionalInReady.join('\n')}
     }
 
-${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
+${[].concat(eventHandlers, externalEventHandlers).join('\n    ')}
     render() {
         return (
             <div ${style}>
@@ -195,9 +196,9 @@ render(
 `;
 }
 
-export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev) {
+export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev, communityModules, enterpriseModules) {
     const bindings = parser(js, html, exampleSettings);
-    return indexTemplate(bindings, componentFilenames, isDev);
+    return indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules);
 }
 
 if (typeof window !== 'undefined') {

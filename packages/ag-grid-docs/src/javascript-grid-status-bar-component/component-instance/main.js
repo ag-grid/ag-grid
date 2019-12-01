@@ -29,11 +29,12 @@ function createRowData() {
 }
 
 function toggleStatusBarComp() {
-    let statusBarComponent = gridOptions.api.getStatusPanel('statusBarCompKey');
+    var statusBarComponent = gridOptions.api.getStatusPanel('statusBarCompKey');
 
     // if using a framework component, you need to get the underlying framework component instance
-    let componentInstance = statusBarComponent;
-    if(statusBarComponent.getFrameworkComponentInstance) {
+    var componentInstance = statusBarComponent;
+
+    if (statusBarComponent.getFrameworkComponentInstance) {
         componentInstance = statusBarComponent.getFrameworkComponentInstance();
     }
 

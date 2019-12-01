@@ -1,7 +1,30 @@
-.div-percent-bar {
-    display: inline-block;
+.div-outer-div {
+    display: flex;
+    align-items: center;
     height: 100%;
-    position: absolute;
+    width: 100%;
+}
+
+.small .div-outer-div {
+    padding-bottom: 5px;
+}
+
+.div-percent-bar-wrapper {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    height: 100%;
+}
+
+.small .div-percent-bar-wrapper {
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    height: 10px;
+}
+
+.div-percent-bar {
+    display: flex;
+    height: 100%;
 }
 
 .div-percent-value {
@@ -9,12 +32,13 @@
     padding-left: 4px;
     font-weight: bold;
     font-size: 13px;
+    left: 5px;
+    top: 0;
 }
 
-.div-outer-div {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
+.small .div-percent-value {
+    font-weight: 400;
+    top: 10px;
 }
 
 [class^='ag-theme'][class*='dark'] {

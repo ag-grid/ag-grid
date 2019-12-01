@@ -1,7 +1,7 @@
 /*************************************************************************************************************
  * ag-Grid Logic
  *************************************************************************************************************/
-let columnDefs = [
+var columnDefs = [
     {headerName: 'Symbol', field: 'Symbol'},
     {headerName: 'Date', field: 'Date'},
     {headerName: 'Open', field: 'Open'},
@@ -11,33 +11,33 @@ let columnDefs = [
     {headerName: 'Volume', field: 'Volume'}
 ];
 
-let gridOptions = {
+var gridOptions = {
     defaultColDef: {
         sortable: true,
         resizable: true
     },
     columnDefs: columnDefs,
     rowSelection: 'multiple',
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     },
     onSelectionChanged: function (params) {
         "use strict";
         publishSelectedSymbols();
     },
-    onModelUpdated: () => {
+    onModelUpdated: function() {
         "use strict";
         // automatically select these symbols at load time
-        let preselectedSymbols = ["aapl","adbe","intc","msft"];
-        gridOptions.api.forEachNode((node) => {
-            if(preselectedSymbols.indexOf(node.data.Symbol) !== -1) {
+        var preselectedSymbols = ["aapl","adbe","intc","msft"];
+        gridOptions.api.forEachNode(function(node) {
+            if (preselectedSymbols.indexOf(node.data.Symbol) !== -1) {
                 node.setSelected(true);
             }
         })
     }
 };
 
-let selectedMetric = 'Close';
+var selectedMetric = 'Close';
 function metricChanged(metric) {
     "use strict";
     selectedMetric = metric;
@@ -46,7 +46,7 @@ function metricChanged(metric) {
 }
 
 
-let selectedGraphType = 'Multi-Line Time Series';
+var selectedGraphType = 'Multi-Line Time Series';
 function graphTypeChanged(graph) {
     "use strict";
     selectedGraphType = graph;
@@ -62,7 +62,7 @@ function graphTypeChanged(graph) {
     publishSelectedSymbols();
 }
 
-let selectedYear = 2015;
+var selectedYear = 2015;
 function yearChanged(year) {
     "use strict";
     selectedYear = parseInt(year);
@@ -70,7 +70,7 @@ function yearChanged(year) {
     publishSelectedSymbols();
 }
 
-let selectedMonth = 0;
+var selectedMonth = 0;
 function monthChanged(month) {
     "use strict";
     selectedMonth = parseInt(month);
@@ -79,18 +79,18 @@ function monthChanged(month) {
 }
 
 function showDateFields(show) {
-    let dateFields = document.querySelector('#date');
+    var dateFields = document.querySelector('#date');
     dateFields.style.display = show ? 'inline-block' : "None";
 }
 
-let getSelectedSymbols = function () {
-    return gridOptions.api.getSelectedRows().map((row) => {
+var getSelectedSymbols = function () {
+    return gridOptions.api.getSelectedRows().map(function(row) {
         return row.Symbol;
     });
 };
 
-let publishSelectedSymbols = function () {
-    let selectedSymbols = getSelectedSymbols();
+var publishSelectedSymbols = function () {
+    var selectedSymbols = getSelectedSymbols();
     loadStockDetail(selectedMetric, selectedGraphType, selectedSymbols, selectedYear, selectedMonth);
 };
 
@@ -99,17 +99,17 @@ let publishSelectedSymbols = function () {
 
     //event listeners.
     document.addEventListener('DOMContentLoaded', function () {
-        let gridDiv = document.querySelector('#myGrid');
+        var gridDiv = document.querySelector('#myGrid');
         new agGrid.Grid(gridDiv, gridOptions);
 
         // do http request to get our sample data - not using any framework to keep the example self contained.
         // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-        let httpRequest = new XMLHttpRequest();
+        var httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', '../javascript-grid-graphing/stocks-master-detail/stocks/summary.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                let httpResult = JSON.parse(httpRequest.responseText);
+                var httpResult = JSON.parse(httpRequest.responseText);
                 gridOptions.api.setRowData(httpResult);
             }
         };
@@ -121,7 +121,7 @@ let publishSelectedSymbols = function () {
  *************************************************************************************************************/
 function makeRequest(url) {
     return new Promise(function (resolve, reject) {
-        let xhr = new XMLHttpRequest();
+        var xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         xhr.onload = function () {
             if (this.status >= 200 && this.status < 300) {
@@ -143,18 +143,18 @@ function makeRequest(url) {
     });
 }
 
-let requestStockDataLoad = function (stockSymbols) {
-    let promises = [];
-    stockSymbols.forEach((stockSymbol) => {
+var requestStockDataLoad = function (stockSymbols) {
+    var promises = [];
+    stockSymbols.forEach(function(stockSymbol) {
         "use strict";
-        promises.push(makeRequest(`../javascript-grid-graphing/stocks-master-detail/stocks/${stockSymbol}.json`))
+        promises.push(makeRequest('../javascript-grid-graphing/stocks-master-detail/stocks/' + stockSymbol + '.json'));
     });
     return promises;
 };
 
-let loadStockDetail = function (metric, graphType, stockSymbols) {
+var loadStockDetail = function (metric, graphType, stockSymbols) {
     Promise.all(requestStockDataLoad(stockSymbols))
-        .then(values => {
+        .then(function(values) {
             "use strict";
 
             switch (graphType) {
@@ -169,21 +169,21 @@ let loadStockDetail = function (metric, graphType, stockSymbols) {
 };
 
 function renderMultiLineGraph(metric, values) {
-    let svg = d3.select("#detail");
+    var svg = d3.select("#detail");
     svg.selectAll("*").remove();
 
-    let margin = {top: 20, right: 80, bottom: 30, left: 50},
+    var margin = {top: 20, right: 80, bottom: 30, left: 50},
         width = svg.attr("width") - margin.left - margin.right,
         height = svg.attr("height") - margin.top - margin.bottom,
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    let parseTime = d3.timeParse("%d-%b-%y");
+    var parseTime = d3.timeParse("%d-%b-%y");
 
-    let x = d3.scaleTime().range([0, width]),
+    var x = d3.scaleTime().range([0, width]),
         y = d3.scaleLinear().range([height, 0]),
         z = d3.scaleOrdinal(d3.schemeCategory10);
 
-    let line = d3.line()
+    var line = d3.line()
         .curve(d3.curveBasis)
         .x(function (d) {
             return x(d.Date);
@@ -192,12 +192,12 @@ function renderMultiLineGraph(metric, values) {
             return y(d[metric]);
         });
 
-    let stocks = values.map(function (value) {
-        let symbol = Object.keys(value)[0];
+    var stocks = values.map(function (value) {
+        var symbol = Object.keys(value)[0];
         return {
             id: symbol,
             values: value[symbol].map(function (datum) {
-                let result = {
+                var result = {
                     Date: parseTime(datum.Date)
                 };
                 result[metric] = +datum[metric];
@@ -206,18 +206,19 @@ function renderMultiLineGraph(metric, values) {
         };
     });
 
-    let data = values.map(function (value) {
-        let symbol = Object.keys(value)[0];
+    var data = values.map(function(value) {
+        var symbol = Object.keys(value)[0];
 
         return value[symbol].map(function (stockValue) {
-            let result = {
+            var result = {
                 Date: parseTime(stockValue.Date)
             };
             result[symbol] = +stockValue[metric];
             return result;
         });
     });
-    data = _.merge(...data);
+
+    data = _.merge.apply(_, data);
 
     x.domain(d3.extent(data, function (d) {
         return d.Date;
@@ -255,7 +256,7 @@ function renderMultiLineGraph(metric, values) {
         .attr("fill", "#000")
         .text(metric);
 
-    let stock = g.selectAll(".stock")
+    var stock = g.selectAll(".stock")
         .data(stocks)
         .enter().append("g")
         .attr("class", "stock");
@@ -287,23 +288,23 @@ function renderMultiLineGraph(metric, values) {
 function renderBarGraph(metric, selectedYear, selectedMonth, values) {
     d3.select("#detail").selectAll("*").remove();
 
-    let parseTime = d3.timeParse("%d-%b-%y");
+    var parseTime = d3.timeParse("%d-%b-%y");
 
-    let data = values.map(function (stock) {
+    var data = values.map(function (stock) {
         "use strict";
-        let symbol = Object.keys(stock)[0];
-        let stockValues = stock[symbol];
-        let filtered = stockValues.filter(function (datum) {
-            let date = parseTime(datum.Date);
+        var symbol = Object.keys(stock)[0];
+        var stockValues = stock[symbol];
+        var filtered = stockValues.filter(function (datum) {
+            var date = parseTime(datum.Date);
             return date.getFullYear() === selectedYear &&
                 date.getMonth() === selectedMonth;
         });
 
-        let total = filtered.reduce((total, value) => {
+        var total = filtered.reduce(function(total, value) {
             return total + value[metric];
         }, 0);
 
-        let result = {
+        var result = {
             stock: symbol
         };
         result[metric] = filtered.length ? parseInt(total / filtered.length) : 0;
@@ -379,5 +380,5 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text(`${metric} (avg)  ${selectedMonth+1}/${selectedYear}`);
+        .text(metric + ' (avg)  ' + (selectedMonth + 1) + '/' + selectedYear);
 }

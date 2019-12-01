@@ -1,7 +1,7 @@
 import {generate} from 'escodegen';
 import * as esprima from 'esprima';
-import {Events} from '../../../ag-grid-community/src/ts/eventKeys';
-import {PropertyKeys} from '../../../ag-grid-community/src/ts/propertyKeys';
+import {Events} from '../../../../community-modules/grid-core/src/ts/eventKeys';
+import {PropertyKeys} from '../../../../community-modules/grid-core/src/ts/propertyKeys';
 import * as $ from 'jquery';
 
 const EVENTS = (<any>Object).values(Events);
@@ -342,7 +342,8 @@ export default function parser(js, html, exampleSettings) {
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
     if (inlineClass) {
-        exampleSettings.theme = inlineClass;
+        const theme = inlineClass.split(' ').filter(clazz => clazz.indexOf('ag-theme') !== -1);
+        exampleSettings.theme = (theme && theme.length > 0) ? theme[0] : 'ag-theme-balham';
     }
 
     if (parseInt(inlineHeight)) {

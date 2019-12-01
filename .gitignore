@@ -5,6 +5,8 @@
 .idea/encodings.xml
 /.idea/atlassian-ide-plugin.xml
 
+.lernaBuildChain.cache.json
+
 .DS_Store
 lerna-debug.log
 npm-debug.log

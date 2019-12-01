@@ -52,9 +52,9 @@ Check out [developers documentation](https://www.ag-grid.com/documentation-main/
 
 Looking for a framework specific solution?
 --------------
-* [Get Started with AngularJS](https://www.ag-grid.com/best-angularjs-data-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Angular](https://www.ag-grid.com/angular-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/react-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with AngularJS](https://www.ag-grid.com/angular-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with Vue](https://www.ag-grid.com/vue-getting-started?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with WebComponents](https://www.ag-grid.com/best-web-component-data-grid?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 

@@ -1,10 +1,14 @@
-import { AfterViewInit, Component } from "@angular/core";
+import {AfterViewInit, Component} from "@angular/core";
 
-import { GridOptions } from "ag-grid-community";
-import { MatSliderComponent } from "./mat-slider.component";
-import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
-import { ColumnAlignmentService } from "./columnAlignmentService";
-import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
+import {AllModules, GridOptions} from "@ag-grid-enterprise/all-modules";
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+
+import {MatSliderComponent} from "./mat-slider.component";
+import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";
+import {ColumnAlignmentService} from "./columnAlignmentService";
+import {MatProgressSpinnerComponent} from "./mat-progress-spinner.component";
 
 @Component({
     selector: "my-app",
@@ -13,6 +17,8 @@ import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
 export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
     public onOffColumnAlignment: string = "left";
+
+    modules = AllModules;
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
         this.gridOptions = <GridOptions>{
@@ -77,7 +83,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
                 field: "on_off",
                 headerComponent: "toggleHeaderRenderer",
                 cellStyle: params => {
-                    return { "text-align": this.onOffColumnAlignment };
+                    return {"text-align": this.onOffColumnAlignment};
                 }
             },
             {
@@ -85,7 +91,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
                 field: "random_col",
                 cellRenderer: "progressRenderer",
                 cellStyle: () => {
-                    return { padding: "0px" };
+                    return {padding: "0px"};
                 }
             }
         ];

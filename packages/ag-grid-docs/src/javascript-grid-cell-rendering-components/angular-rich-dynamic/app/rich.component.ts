@@ -1,5 +1,8 @@
 import {Component} from "@angular/core";
-import {GridOptions} from "ag-grid-community";
+import {GridOptions, Module, AllModules} from "@ag-grid-enterprise/all-modules";
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";
@@ -10,6 +13,7 @@ import {ClickableParentComponent} from "./clickable.parent.component";
 })
 export class RichComponent {
     public gridOptions: GridOptions;
+    public modules: Module[] = AllModules;
 
     constructor() {
         this.gridOptions = <GridOptions>{

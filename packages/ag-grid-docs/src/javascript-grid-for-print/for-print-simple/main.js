@@ -36,7 +36,7 @@ var gridOptions = {
 };
 
 function onBtPrinterFriendly() {
-    var eGridDiv = document.querySelector('.my-grid');
+    var eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width  = '';
     eGridDiv.style.height = '';
 
@@ -45,7 +45,7 @@ function onBtPrinterFriendly() {
 
 function onBtNormal() {
 
-    var eGridDiv = document.querySelector('.my-grid');
+    var eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width = '400px';
     eGridDiv.style.height = '200px';
 

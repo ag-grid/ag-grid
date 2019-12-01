@@ -3,64 +3,68 @@ $pageTitle = "ag-Grid Getting Started: Choose Your Framework";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We support all the najor JavaScript frameworks, this page is the jumping off point for all the individual guides.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
-define('skipInPageNav', true);
-define('skipLeftNav', true);
-include '../getting-started/header.php';
+include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Choose Your Framework</h1>
+<h1>Getting Started</h1>
+
+<p class="lead">
+    Select a framework to see getting started instructions for that framework. If you do not want to
+    use ag-Grid with any framework, follow the instructions for
+    <a href="../javascript-grid">Plain JavaScript</a>.
+</p>
 
 <div id="get-started-frameworks">
 
 <div class="row no-gutters">
 
 <div><div class="get-started-framework card-javascript">
-    <a href="../javascript-getting-started/">JavaScript</a>
+    <a href="../javascript-grid/">JavaScript</a>
     <div>
-        <h2>JavaScript</h2>
-        <p class="card-text">Start with the vanilla JavaScript flavor of the ag-Grid API.</p>
-        <p><a href="../javascript-getting-started/">Start With JavaScript</a></p>
+        <p><a href="../javascript-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 
 <div><div class="get-started-framework card-angular">
-    <a href="../angular-getting-started/">Angular</a>
+    <a href="../angular-grid/">Angular</a>
     <div>
-        <h2>Angular</h2>
-        <p class="card-text">See how ag-Grid works in the Angular context.</p>
-        <p><a href="../angular-getting-started/">Start With Angular</a></p>
+        <p><a href="../angular-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 <div><div class="get-started-framework card-react">
-    <a href="../react-getting-started/">React</a>
+    <a href="../react-grid/">React</a>
     <div>
-        <h2>React</h2>
-        <p class="card-text">Integrate ag-Grid in your React project.</p>
-        <p><a href="../react-getting-started/">Start With React</a></p>
+        <p><a href="../react-grid/">Get Started</a></p>
     </div>
 </div></div>
 
-<div><div class="get-started-framework card-vue">
-    <a href="../vue-getting-started/">Vue.js</a>
+<div><div class="get-started-framework card-vue-inverted">
+    <a href="../vuejs-grid/">Vue.js</a>
     <div>
-        <h2>Vue.js</h2>
-        <p class="card-text">Get started with the Vue.js ag-Grid component wrapper.</p>
-        <p><a href="../vue-getting-started/">Start With Vue.js</a></p>
+        <p><a href="../vuejs-grid/">Get Started</a></p>
     </div>
 </div></div>
 
 </div></div>
 
-<p>Using something else? Check the additional guides we have:</p>
+<p>Or maybe your are doing something a little less common...</p>
 
 <ul>
-<li><a href="../best-angularjs-data-grid/">Use ag-Grid in AngularJS 1.x Project</a></li>
-<li><a href="../polymer-getting-started/">Use ag-Grid with Polymer</a></li>
-<li><a href="../best-web-component-data-grid/">Use ag-Grid as a Web Component</a></li>
+    <li><a href="../angular-grid/">Start with AngularJS</a></li>
+    <li><a href="../polymer-getting-started/">Start with Polymer</a></li>
+    <li><a href="../best-web-component-data-grid/">Start with Web Components</a></li>
 </ul>
 
-<p>After you are done with the above, you can check <a href="../ag-grid-tutorials/">the 6 part intermediate tutorial</a> which guides you through implementing a complex use case with ag-Grid.</p>
 
-<?php include '../getting-started/footer.php'; ?>
+<h2>Framework Agnostic ag-Grid</h2>
+
+<p>
+    The "ag" part of ag-Grid stands for "agnostic". The internal ag-Grid engine is implemented in TypeScript with
+    zero dependencies. It is possible to use no framework with ag-Grid and use the fully featured JavaScript only
+    version. ag-Grid also supports all major frameworks by providing ag-Grid Components for
+    each popular framework and allowing customization of the grid using the framework of your choice.
+</p>
+
+<?php include '../documentation-main/documentation_footer.php'; ?>

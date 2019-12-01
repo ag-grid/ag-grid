@@ -84,6 +84,12 @@ function onBtExport() {
         };
     }
 
+    if (getBooleanValue('#processGroupHeaders')) {
+        params.processGroupHeaderCallback  = function(params) {
+            return params.columnGroup.getColGroupDef().headerName.toUpperCase();
+        };
+    }
+
     if (getBooleanValue('#appendHeader')) {
         params.customHeader  = [
             [],

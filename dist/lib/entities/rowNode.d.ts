@@ -1,12 +1,9 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
 import { Column } from "./column";
-import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
-import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
+import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNodeCache";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { DetailGridInfo } from "../gridApi";
+import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
@@ -129,7 +126,7 @@ export declare class RowNode implements IEventEmitter {
         [key: string]: any;
     } | null;
     /** Server Side Row Model Only - the children are in an infinite cache */
-    childrenCache: RowNodeCache<RowNodeBlock, RowNodeCacheParams> | null;
+    childrenCache: RowNodeCache<IRowNodeBlock, RowNodeCacheParams> | null;
     /** Groups only - True if group is expanded, otherwise false */
     expanded: boolean;
     /** Groups only - If doing footers, reference to the footer node for this group */
@@ -214,4 +211,5 @@ export declare class RowNode implements IEventEmitter {
     onMouseEnter(): void;
     onMouseLeave(): void;
     getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode;
+    isFullWidthCell(): boolean;
 }

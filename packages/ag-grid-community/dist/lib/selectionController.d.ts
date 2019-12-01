@@ -1,8 +1,5 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
-import { ChangedPath } from "./rowModels/clientSide/changedPath";
+import { ChangedPath } from "./utils/changedPath";
 export declare class SelectionController {
     private eventService;
     private rowModel;

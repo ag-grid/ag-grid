@@ -86,7 +86,8 @@ export declare class AgGridColumn {
     cellRendererSelector: any;
     cellEditorSelector: any;
     suppressCellFlash: any;
-    suppressToolPanel: any;
+    suppressColumnsToolPanel: any;
+    suppressFiltersToolPanel: any;
     openByDefault: any;
     marryChildren: any;
     hide: any;

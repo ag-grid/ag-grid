@@ -1,0 +1,63 @@
+$foreground-opacity: 1 !default;
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-foreground-color-opacity: 0.5 !default;
+
+// Colors
+$icon-color: #333 !default;
+$alt-icon-color: white !default;
+$foreground-color: rgba(#222, $foreground-opacity) !default;
+$secondary-foreground-color: rgba($foreground-color, $secondary-foreground-color-opacity) !default;
+$disabled-foreground-color: rgba(#222, $disabled-foreground-color-opacity) !default;
+$menu-option-active-color: #c7c7c7 !default;
+$input-disabled-background-color: #dedede !default;
+
+$card-background-color: #f6f6f6 !default;
+$border-color: #9bc2e6 !default;
+$primary-color: $icon-color !default;
+$accent-color: $icon-color !default;
+
+$background-color: white !default;
+$odd-row-background-color: #deebf7 !default;
+
+$editor-background-color: #f6f6f6 !default;
+
+$header-background-color: #5e9cd3 !default;
+$header-cell-hover-background-color: $header-background-color !default;
+$header-foreground-color: rgba(white, $secondary-foreground-color-opacity) !default;
+$header-background-image: none !default;
+$panel-background-color: #f6f6f6 !default;
+
+$tool-panel-background-color: #f6f6f6 !default;
+
+$chip-background-color: #ddebf7 !default;
+
+$range-selection-background-color: rgba(100, 160, 160, 0.4) !default;
+$range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
+
+$hover-color: inherit !default;
+
+$selected-color: $menu-option-active-color !default;
+
+$cell-data-changed-color: white !default;
+
+$focused-cell-border-color: darkgreen !default;
+
+$tab-background-color: #5e9cd3;
+
+$cell-highlight-border: 2px solid lightgreen !default;
+$cell-horizontal-border: 1px dotted #9bc2e6 !default;
+
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
+$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
+$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+
+// delta changes
+$value-change-delta-up-color: darkgreen !default;
+$value-change-delta-down-color: darkred !default;
+$value-change-value-highlight-background-color: #cec !default;
+
+$row-floating-background-color: #f0f0f0 !default;
+$row-stub-background-color: #f0f0f0 !default;
+
+@import "../../ag-theme-classic/vars/ag-theme-classic-vars";

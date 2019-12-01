@@ -15,8 +15,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'multiple',
     animateRows: true,
-    cacheBlockSize: 100,
-    maxBlocksInCache: 2,
+    cacheBlockSize: 10,
     isServerSideGroup: function (dataItem) {
         // indicate if node is a group
         return dataItem.group;
@@ -62,7 +61,7 @@ function createFakeServer(data) {
     FakeServer.prototype.getData = function (request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
-                return data.map(d => {
+                return data.map(function(d) {
                     return {
                         group: !!d.underlings,
                         employeeId: d.employeeId + "",
@@ -94,12 +93,12 @@ function createServerSideDatasource(fakeServer) {
 
     ServerSideDatasource.prototype.getRows = function (params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
-
-        var rows = this.fakeServer.getData(params.request);
-
+        var request = params.request;
+        var allRows = this.fakeServer.getData(request);
+        var resultsForBlock = allRows.slice(request.startRow, request.endRow);
         setTimeout(function () {
-            params.successCallback(rows, rows.length);
-        }, 200);
+            params.successCallback(resultsForBlock, allRows.length);
+        }, 500);
     };
 
     return new ServerSideDatasource(fakeServer);

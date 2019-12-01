@@ -111,6 +111,17 @@ include '../documentation-main/documentation_header.php';
             The callback params has the following attributes: column, api, columnApi, context.
         </p>
 
+        <h3><code>processGroupHeaderCallback()</code></h3>
+
+        <p>This function will be called for each column group in the grid. It should return a string that will be used
+            in place of the group name in the export. Note that column groups are not exported by default, you need to
+            pass <code>columnGroups: true</code> in the export params.
+        </p>
+
+        <p>
+            The callback params has the following attributes: columnGroup, api, columnApi, context.
+        </p>
+
         <p>
             You can assign default export parameters to your Excel export by setting the property <code>defaultExportParams</code>
             in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.
@@ -245,7 +256,7 @@ include '../documentation-main/documentation_header.php';
 
         <ul class="content">
             <li><code>id</code> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-            <li><code>alignment</code> (optional): Vertical and horizontal alignmen:
+            <li><code>alignment</code> (optional): Vertical and horizontal alignment:
                 <ul class="content">
                     <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                     <li>indent: Number of indents</li>
@@ -292,7 +303,9 @@ include '../documentation-main/documentation_header.php';
                 <ul class="content">
                     <li><code>protected</code>: Boolean. This attribute indicates whether or not this cell is protected.
                         When the worksheet is unprotected, cell-level protection has no effect. When a cell is protected,
-                        it will not allow the user to enter information into it.
+                        it will not allow the user to enter information into it. Note that in Excel, the default for cells
+                        with no protection style is to be protected, so you must explicitly disable protection if it is
+                        not desired.
                     </li>
                     <li><code>hideFormula</code>: Boolean. This attribute indicates whether or not this cell's formula should be hidden
                     when worksheet protection is enabled.

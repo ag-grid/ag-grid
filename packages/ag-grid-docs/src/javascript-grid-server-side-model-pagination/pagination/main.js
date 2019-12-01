@@ -19,22 +19,6 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowModelType: 'serverSide',
-    rowGroupPanelShow: 'never',
-    functionsReadOnly: true,
-    sideBar: {
-        toolPanels: [{
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-            toolPanelParams: {
-                suppressPivots: true,
-                suppressPivotMode: true,
-                suppressValues: true
-            }
-        }]
-    },
     animateRows: true,
     debug: true,
     pagination: true,

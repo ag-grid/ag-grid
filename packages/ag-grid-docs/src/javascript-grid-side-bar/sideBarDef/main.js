@@ -39,6 +39,7 @@ var gridOptions = {
                 toolPanel: 'agFiltersToolPanel',
             }
         ],
+        position: 'left',
         defaultToolPanel: 'filters'
     }
 };

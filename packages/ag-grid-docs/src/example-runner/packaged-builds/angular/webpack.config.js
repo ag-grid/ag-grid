@@ -12,7 +12,7 @@ module.exports = {
             path.resolve(__dirname, '../../../../node_modules')
         ],
     },
-    // entry: "./src/best-angular-2-data-grid/rich-grid-example/src/app.ts",
+    // entry: "./src/angular-grid/rich-grid-example/src/app.ts",
     // output: {
     //     path: path.resolve(__dirname, 'test'), // output directory
     //     filename: "[name].js"    // name of the generated bundle

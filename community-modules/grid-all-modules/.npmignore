@@ -1,0 +1,17 @@
+e2e
+node_modules
+rollup
+src/
+.npmignore
+github-banner.png
+github-grid-demo.jpg
+gulpfile.js
+protractor.conf.js
+tsconfig.docs.json
+tsconfig.es5.json
+tsconfig.es6.json
+tsconfig.json
+webpack-base.config.js
+webpack-no-styles.js
+webpack-with-styles.js
+webpackUpdater.js

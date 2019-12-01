@@ -31,6 +31,7 @@ var gridOptions = {
             }
         }
     },
+    debug: true,
     rowBuffer: 0,
     rowSelection: 'multiple',
     rowDeselection: true,

@@ -57,9 +57,9 @@ function createRowData() {
 }
 
 function refreshEvenRowsCurrencyData() {
-    gridOptions.api.forEachNode(rowNode => {
+    gridOptions.api.forEachNode(function(rowNode) {
         if (rowNode.data.value % 2 === 0) {
-            rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)))
+            rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
         }
     });
 

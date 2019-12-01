@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function ServerSideDatasource(server) {
   return {
-    getRows(params) {
+    getRows: function(params) {
       // adding delay to simulate real sever call
       setTimeout(function () {
 
@@ -71,7 +71,7 @@ function ServerSideDatasource(server) {
 
 function FakeServer(allData) {
   return {
-    getResponse(request) {
+    getResponse: function(request) {
       console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
       // take a slice of the total rows

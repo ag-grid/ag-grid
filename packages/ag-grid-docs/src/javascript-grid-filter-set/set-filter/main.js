@@ -27,8 +27,7 @@ var columnDefs = [
         width: 140,
         cellRenderer: 'countryCellRenderer',
         keyCreator: countryKeyCreator,
-        filter: 'agSetColumnFilter',
-        filterParams: {selectAllOnMiniFilter: true}
+        filter: 'agSetColumnFilter'
     },
     {headerName: 'Year', field: 'year', width: 90},
     {headerName: 'Date', field: 'date', width: 110},

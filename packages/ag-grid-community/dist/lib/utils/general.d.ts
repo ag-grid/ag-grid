@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -21,25 +18,19 @@ export declare class Utils {
     private static isEdge;
     private static isChrome;
     private static isFirefox;
-    private static isIPad;
+    private static isIOS;
     private static PRINTABLE_CHARACTERS;
     private static NUMPAD_DEL_NUMLOCK_ON_KEY;
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
     private static doOnceFlags;
-    /**
-     * When in IE or Edge, when you are editing a cell, then click on another cell,
-     * the other cell doesn't keep focus, so navigation keys, type to start edit etc
-     * don't work. appears that when you update the dom in IE it looses focus
-     * https://ag-grid.com/forum/showthread.php?tid=4362
-     * @param {HTMLElement} el
-     */
-    static doIeFocusHack(el: HTMLElement): void;
+    private static supports;
     /**
      * If the key was passed before, then doesn't execute the func
      * @param {Function} func
      * @param {string} key
      */
     static doOnce(func: () => void, key: string): void;
+    static isEventSupported: (eventName: any) => boolean;
     /**
      * Checks if event was issued by a left click
      * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
@@ -58,10 +49,13 @@ export declare class Utils {
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static jsonEquals(val1: any, val2: any): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
-    static getNameOfClass(TheClass: any): string;
-    static values<T>(object: {
+    static getNameOfClass(theClass: any): string;
+    static areEqual: <T>(a: T[], b: T[]) => boolean;
+    static keys: <T>(map: Map<T, any>) => T[];
+    static values: <T>(object: {
         [key: string]: T;
-    }): T[];
+    }) => T[];
+    static includes: <T>(array: T[], value: T) => boolean;
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
     static getElementSize(el: HTMLElement): {
         height: number;
@@ -97,18 +91,26 @@ export declare class Utils {
         [p: string]: T;
     } | T[] | undefined, callback: (key: string, value: T) => void): void;
     static cloneObject<T>(object: T): T;
-    static deepCloneObject<T>(object: T): T;
-    static map<TItem, TResult>(array: TItem[], callback: (item: TItem, idx?: number) => TResult): TResult[];
-    static mapObject<TResult>(object: any, callback: (item: any) => TResult): TResult[];
-    static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
-    static filter<T>(array: T[], callback: (item: T) => boolean): T[];
+    static deepCloneObject: <T>(object: T) => T;
+    static getProperty: <T, K extends keyof T>(object: T, key: K) => any;
+    static setProperty: <T, K extends keyof T>(object: T, key: K, value: any) => void;
+    /**
+     * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
+     * a value of `undefined`.
+     */
+    static copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]): void;
+    /**
+     * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
+     * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
+     */
+    static copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any): void;
     static getAllKeysInObjects(objects: any[]): string[];
     static mergeDeep(dest: any, source: any): void;
     static assign(object: any, ...sources: any[]): any;
     static flatten(arrayOfArrays: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null;
-    static pad(num: number, totalStringSize: number): string;
+    static padStart(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static createArrayOfNumbers(first: number, last: number): number[];
     static getFunctionParameters(func: any): any;
@@ -116,7 +118,6 @@ export declare class Utils {
         [id: string]: T;
     }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null;
     static toStrings<T>(array: T[]): (string | null)[];
-    static iterateArray<T>(array: T[], callback: (item: T, index: number) => void): void;
     static findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number;
     /**
      * Returns true if it is a DOM node
@@ -210,12 +211,13 @@ export declare class Utils {
     static last<T>(arr: T[]): T | undefined;
     static compareArrays(array1: any[] | undefined, array2: any[]): boolean;
     static ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
-    static insertWithDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore: HTMLElement): void;
+    static setDomChildOrder(eContainer: HTMLElement, orderedChildren: HTMLElement[]): void;
     static insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement): HTMLElement;
     static every<T>(items: T[], callback: (item: T) => boolean): boolean;
     static toStringOrNull(value: any): string | null;
     static formatSize(size: number | string): string;
     static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string;
+    static findLineByLeastSquares(values: number[]): any[];
     /**
      * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
      * puts in decimal places in IE, so we use this method instead
@@ -257,7 +259,7 @@ export declare class Utils {
     static isBrowserSafari(): boolean;
     static isBrowserChrome(): boolean;
     static isBrowserFirefox(): boolean;
-    static isUserAgentIPad(): boolean;
+    static isIOSUserAgent(): boolean;
     /**
      * srcElement is only available in IE. In all other browsers it is target
      * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
@@ -456,9 +458,8 @@ export declare class Utils {
     static executeNextVMTurn(funcs: Function[]): void;
     static executeAfter(funcs: Function[], millis: number): void;
     static referenceCompare(left: any, right: any): boolean;
-    static get(source: {
-        [p: string]: any;
-    }, expression: string, defaultValue: any): any;
+    static get(source: any, expression: string, defaultValue: any): any;
+    static set(target: any, expression: string, value: any): void;
     static addSafePassiveEventListener(frameworkOverrides: IFrameworkOverrides, eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
     /**
      * Converts a camelCase string into regular text

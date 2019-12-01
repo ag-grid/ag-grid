@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "declaration": true,
+    "target": "es5",
+    "noImplicitAny": true,
+    "outDir": "dist/es6",
+    "moduleResolution": "node",
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@ag-*": [
+        "node_modules/@ag-*/dist/es6/main"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

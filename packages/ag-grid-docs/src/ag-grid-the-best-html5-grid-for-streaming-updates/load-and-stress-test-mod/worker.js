@@ -38,13 +38,14 @@ function createRowData() {
     globalRowData = [];
     var thisBatch = nextBatchId++;
     for (var i = 0; i<PRODUCTS.length; i++) {
-        var product = PRODUCTS[i];
         for (var j = 0; j<PORTFOLIOS.length; j++) {
-            var portfolio = PORTFOLIOS[j];
 
             for (var k = 0; k<BOOK_COUNT; k++) {
-                var book = createBookName();
                 for (var l = 0; l < TRADE_COUNT; l++) {
+                    var product = PRODUCTS[ Math.floor(PRODUCTS.length * Math.random()) ];
+                    var portfolio = PORTFOLIOS[ Math.floor(PORTFOLIOS.length * Math.random()) ];
+                    var book = createBookName();
+
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
                     globalRowData.push(trade);
                 }

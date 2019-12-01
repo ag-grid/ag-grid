@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.2
+// ag-grid-react v22.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChangeDetectionStrategyType;
@@ -68,6 +68,13 @@ var DeepValueStrategy = /** @class */ (function () {
             return r;
         }, {});
     };
+    DeepValueStrategy.isNaN = function (value) {
+        if (Number.isNaN) {
+            return Number.isNaN(value);
+        }
+        // for ie11...
+        return typeof (value) === 'number' && isNaN(value);
+    };
     /*
      * slightly modified, but taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
      *
@@ -83,6 +90,9 @@ var DeepValueStrategy = /** @class */ (function () {
             return true; //e.g. a and b both null
         if (a === null || b === null || typeof a !== typeof b)
             return false;
+        if (DeepValueStrategy.isNaN(a) && DeepValueStrategy.isNaN(b)) {
+            return true;
+        }
         if (a instanceof Date) {
             return b instanceof Date && a.valueOf() === b.valueOf();
         }

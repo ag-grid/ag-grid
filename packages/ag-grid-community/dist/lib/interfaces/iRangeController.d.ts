@@ -1,12 +1,10 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { CellPosition } from "../entities/cellPosition";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { RowPosition } from "../entities/rowPosition";
 import { CellComp } from "../rendering/cellComp";
 export interface IRangeController {
+    isEmpty(): boolean;
     removeAllCellRanges(): void;
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
@@ -16,7 +14,7 @@ export interface IRangeController {
     onDragStart(mouseEvent: MouseEvent): void;
     onDragStop(): void;
     onDragging(mouseEvent: MouseEvent): void;
-    getCellRanges(): CellRange[] | null;
+    getCellRanges(): CellRange[];
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): void;
@@ -25,6 +23,8 @@ export interface IRangeController {
     registerGridComp(gridPanel: GridPanel): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
+    createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined;
+    setCellRanges(cellRanges: CellRange[]): void;
 }
 export interface ISelectionHandle {
     getGui(): HTMLElement;

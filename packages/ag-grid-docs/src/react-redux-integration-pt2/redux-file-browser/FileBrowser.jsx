@@ -2,10 +2,13 @@ import React, {Component} from 'react';
 import * as PropTypes from "prop-types";
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
-import {AgGridReact} from "ag-grid-react";
+import {AgGridReact} from "@ag-grid-community/react";
 import {actions} from './actions/fileActions.jsx'
 
-import "ag-grid-enterprise";
+import {AllModules} from "@ag-grid-enterprise/all-modules";
+
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
@@ -24,6 +27,8 @@ class FileBrowser extends Component {
     }
   };
 
+  modules = AllModules;
+
   frameworkComponents = {
     fileCellRenderer: FileCellRenderer
   };
@@ -41,10 +46,10 @@ class FileBrowser extends Component {
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
           deltaRowDataMode={true}
+          modules={this.modules}
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}
           frameworkComponents={this.frameworkComponents}
-          reactNext={true}
         >
         </AgGridReact>
       </div>
@@ -79,7 +84,7 @@ class FileBrowser extends Component {
 }
 
 FileBrowser.contextTypes = {
-    store: PropTypes.object                         // must be supplied when using redux with reactNext
+    store: PropTypes.object                         // must be supplied when using redux with AgGridReact
 };
 
 const mapStateToProps = (state) => ({files: state.files});

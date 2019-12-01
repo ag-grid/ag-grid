@@ -1,23 +1,24 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, minWidth: 50, filter: 'number'},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},
-    {headerName: "Total", field: "total", width: 100, enableValue: true}
+    { headerName: "Athlete", field: "athlete", width: 150 },
+    { headerName: "Age", field: "age", width: 90, minWidth: 50, filter: 'number' },
+    { headerName: "Country", field: "country", width: 120, enableRowGroup: true },
+    { headerName: "Year", field: "year", width: 90, enableRowGroup: true },
+    { headerName: "Date", field: "date", width: 110 },
+    { headerName: "Sport", field: "sport", width: 110 },
+    { headerName: "Gold", field: "gold", width: 100, enableValue: true },
+    { headerName: "Silver", field: "silver", width: 100, enableValue: true },
+    { headerName: "Bronze", field: "bronze", width: 100, enableValue: true },
+    { headerName: "Total", field: "total", width: 100, enableValue: true }
 ];
 
 var gridOptions = {
     defaultColDef: {
-      filter: true
+        filter: true
     },
     columnDefs: columnDefs,
     rowData: null,
     enableRangeSelection: true,
+    rowSelection: "multiple",
     statusBar: {
         statusPanels: [
             { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },

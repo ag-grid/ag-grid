@@ -7,12 +7,16 @@ if [ "$#" -lt 1 ]
     exit 1
 fi
 
-ZIP_PREFIX=`date +%Y%m%d`
+TIMESTAMP=`date +%Y%m%d`
 
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-FILENAME=release_"$ZIP_PREFIX"_v"$VERSION".zip
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 ./scripts/createDocsReleaseBundle.sh $RAW_VERSION
+
+BACKUP_DIR=/home/ceolter/release_bak_"$TIMESTAMP"
+./scripts/prepareAgGridForRelease.sh $BACKUP_DIR
 ./scripts/uploadAndUnzipRelease.sh $FILENAME
+./scripts/restoreNonVersionedAgGrid.sh $BACKUP_DIR

@@ -55,7 +55,7 @@ function onBtPrint() {
 }
 
 function setPrinterFriendly(api) {
-    var eGridDiv = document.querySelector('.my-grid');
+    var eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width = '';
     eGridDiv.style.height = '';
 
@@ -63,7 +63,7 @@ function setPrinterFriendly(api) {
 }
 
 function setNormal(api) {
-    var eGridDiv = document.querySelector('.my-grid');
+    var eGridDiv = document.querySelector('#myGrid');
     eGridDiv.style.width = '600px';
     eGridDiv.style.height = '200px';
 

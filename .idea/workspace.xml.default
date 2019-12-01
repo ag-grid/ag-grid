@@ -206,19 +206,19 @@
       <dir>$PROJECT_DIR$/packages/ag-grid-react-example/src-trader-dashboard</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-react-example/src-trader-dashboard/components</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-react-example/src-examples</dir>
-      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/best-angularjs-data-grid</dir>
+      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/angular-grid</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-polymer-example</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-polymer</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-angular-cli-example/src/app/dynamic-component-example</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-angular-cli-example/node_modules/@angular/core/src</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-angular-cli-example/node_modules/zone.js/dist</dir>
-      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-getting-started</dir>
+      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-community</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-community/src/styles</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/dist</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-docs</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-rendering-components/polymer-dynamic/example</dir>
-      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/best-vuejs-grid</dir>
+      <dir>$PROJECT_DIR$/packages/ag-grid-docs/src/vuejs-grid</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-community/src/ts</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-enterprise</dir>
       <dir>$PROJECT_DIR$/packages/ag-grid-docs/src</dir>
@@ -432,8 +432,8 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/scripts" />
       <recent name="$PROJECT_DIR$/packages/ag-grid-enterprise" />
-      <recent name="$PROJECT_DIR$/packages/ag-grid-docs/src/best-vuejs-grid" />
-      <recent name="$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-getting-started" />
+      <recent name="$PROJECT_DIR$/packages/ag-grid-docs/src/vuejs-grid" />
+      <recent name="$PROJECT_DIR$/packages/ag-grid-docs/src/javascript-grid" />
       <recent name="$PROJECT_DIR$/packages/ag-grid-docs/src/memory_leak" />
     </key>
     <key name="MoveFile.RECENT_KEYS">

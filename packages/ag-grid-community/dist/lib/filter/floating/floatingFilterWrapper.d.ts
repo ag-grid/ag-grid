@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
 import { Component } from "../../widgets/component";
 export declare class FloatingFilterWrapper extends Component {

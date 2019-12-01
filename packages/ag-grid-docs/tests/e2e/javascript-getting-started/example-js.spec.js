@@ -1,11 +1,11 @@
 let ag_grid_utils = require("ag-grid-testing");
 
-describe('best-javascript-data-grid/example-js.spec.js', function () {
+describe('javascript-grid/example-js.spec.js', function () {
     // not an angular application
     browser.ignoreSynchronization = true;
 
     beforeEach(() => {
-        browser.get(browser.baseUrl + "/javascript-getting-started/example-js.html");
+        browser.get(browser.baseUrl + "/javascript-grid/example-js.html");
     });
 
     it('should have expected column headers', () => {

@@ -1,20 +1,15 @@
 const gulp = require('gulp');
-const path = require('path');
+const {series, parallel} = gulp;
+
+const fs = require('fs');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
-const autoprefixer = require('autoprefixer');
 const gulpTypescript = require('gulp-typescript');
 const typescript = require('typescript');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
-const webpackStream = require('webpack-stream');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const filter = require('gulp-filter');
-const named = require('vinyl-named');
 const replace = require('gulp-replace');
-
-const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -29,204 +24,75 @@ const dtsHeaderTemplate =
     '// Project: <%= pkg.homepage %>\n' +
     '// Definitions by: Niall Crosby <https://github.com/ag-grid/>\n';
 
-gulp.task('default', ['webpack-all']);
-gulp.task('release', ['webpack-all']);
-
-gulp.task('webpack-all', ['webpack', 'webpack-minify', 'webpack-noStyle', 'webpack-minify-noStyle'], tscSrcTask);
-
-gulp.task('webpack-minify-noStyle', ['tsc', 'scss'], webpackTask.bind(null, true, false));
-gulp.task('webpack-noStyle', ['tsc', 'scss'], webpackTask.bind(null, false, false));
-gulp.task('webpack-minify', ['tsc', 'scss'], webpackTask.bind(null, true, true));
-gulp.task('webpack', ['tsc', 'scss'], webpackTask.bind(null, false, true));
-
-gulp.task('scss-watch', ['scss-no-clean'], scssWatch);
-gulp.task('scss-no-clean', scssTask);
-
-gulp.task('tsc-no-clean', tscSrcTask);
-gulp.task('tsc', ['tsc-src'], tscMainTask);
-gulp.task('tsc-src', ['cleanDist'], tscSrcTask);
-gulp.task('tsc-main', ['cleanMain'], tscMainTask);
-gulp.task('scss', ['cleanDist'], scssTask);
-
-gulp.task('cleanDist', cleanDist);
-gulp.task('cleanMain', cleanMain);
-
-gulp.task('tsc-watch', ['tsc-no-clean'], tscWatch);
-gulp.task('watch', ['webpack'], watch);
-
-function watch() {
-    gulp.watch('./src/ts/**/*', ['webpack']);
-}
-
-function scssWatch() {
-    gulp.watch('./src/styles/!**/!*', ['scss-no-clean']);
-}
-
-function tscWatch() {
-    gulp.watch('./src/ts/**/*', ['tsc-no-clean']);
-}
-
-function cleanDist() {
-    return gulp
-        .src('dist', {read: false})
-        .pipe(clean());
-}
-
-function cleanMain() {
-    return gulp
-        .src(['./main.d.ts', 'main.js'], {read: false})
-        .pipe(clean());
-}
-
-function tscSrcTask() {
-    const tsProject = gulpTypescript.createProject('./tsconfig.json', {typescript: typescript});
-
-    const tsResult = gulp
-        .src('src/ts/**/*.ts')
-        .pipe(tsProject());
-
-    return merge([
-        tsResult.dts
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/lib')),
-        tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/lib'))
-    ]);
-}
-
-function tscMainTask() {
+// Start of Typescript related tasks
+const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
 
     const tsResult = gulp
-        .src('./src/ts/main.ts')
+        .src('./src/main.ts')
         .pipe(tsProject());
 
     return merge([
         tsResult.dts
-            .pipe(replace("\"./", "\"./dist/lib/"))
+            .pipe(replace("\"@ag-grid-community/core", "\"./dist/lib/main"))
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
             .pipe(rename("main.d.ts"))
             .pipe(gulp.dest('./')),
-        tsResult.js
-            .pipe(replace("require(\"./", "require(\"./dist/lib/"))
-            .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(rename("main.js"))
-            .pipe(gulp.dest('./'))
     ]);
-}
+};
 
-function webpackTask(minify, styles) {
-    const mainFile = styles ? './main-with-styles.js' : './main.js';
+const cleanDist = () => {
+    return gulp
+        .src('dist', {read: false, allowEmpty: true})
+        .pipe(clean());
+};
 
-    let fileName = 'ag-grid-community';
-    fileName += minify ? '.min' : '';
-    fileName += styles ? '' : '.noStyle';
-    fileName += '.js';
+// End of Typescript related tasks
 
-    return gulp.src('src/entry.js')
-        .pipe(webpackStream({
-            mode: minify ? 'production' : 'none',
-            entry: {
-                main: mainFile
-            },
-            output: {
-                path: path.join(__dirname, "dist"),
-                filename: fileName,
-                library: ["agGrid"],
-                libraryTarget: "umd"
-            },
-            //devtool: 'inline-source-map',
-            module: {
-                rules: [
-                    {
-                        test: /\.css$/, 
-                        use: ['style-loader', {
-                            loader:'css-loader',
-                            options: {
-                                minimize: !!minify
-                            }
-                        }]
-                    }
-                ]
-            }
-        }))
-        .pipe(header(bundleTemplate, {pkg: pkg}))
-        .pipe(gulp.dest('./dist/'));
-}
+const copyGridCoreStyles = (done) => {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/core/dist/styles')) {
+        done("node_modules/@ag-grid-community/core/dist/styles doesn't exist - exiting")
+    }
 
-function scssTask() {
-    var f = filter(["**/*.css", '!*Font*.css'], { restore: true });
+    return merge([
+            gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
+            gulp.src('./node_modules/@ag-grid-community/core/src/styles/**/*').pipe(gulp.dest('./src/styles')),
+        ]
+    );
+};
 
-    return gulp.src(['src/styles/**/*.scss', '!src/styles/**/_*.scss'])
-        .pipe(named())
-        .pipe(webpackStream({
-            mode: 'none',
-            module: {
-                rules: [
-                    {
-                        test: /\.scss$/,
-                        use: [
-                            MiniCssExtractPlugin.loader,
-                            {
-                                loader: "css-loader",
-                                options: {
-                                    minimize: false
-                                }
-                            },
-                            "sass-loader",
-                            {
-                                loader: 'postcss-loader',
-                                options: {
-                                    syntax: 'postcss-scss', 
-                                    plugins: [autoprefixer({
-                                        overrideBrowserslist: ["last 2 version"],
-                                        flexbox: true
-                                    })]
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        test: /\.(svg)$/,
-                        use: [
-                            'cache-loader',
-                            {
-                                loader: 'url-loader',
-                                options: {
-                                    limit: 8192
-                                }
-                            },
-                            {
-                                loader: 'image-webpack-loader',
-                                options: {
-                                    svgo: {
-                                        cleanupAttrs: true,
-                                        removeDoctype: true,
-                                        removeComments: true,
-                                        removeMetadata: true,
-                                        removeTitle: true,
-                                        removeDesc: true,
-                                        removeEditorsNSData: true,
-                                        removeUselessStrokeAndFill: true,
-                                        cleanupIDs: true,
-                                        collapseGroups: true,
-                                        convertShapeToPath: true
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            plugins: [
-                new MiniCssExtractPlugin('[name].css')
-            ]
-        }))
-        .pipe(f)
-        .pipe(gulp.dest('dist/styles/'))
-        .pipe(f.restore)
-        .pipe(filter('*Font*.css'))
-        .pipe(gulp.dest('dist/styles/webfont/'));
-}
+const copyGridCoreTypings = (done) => {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/core/typings')) {
+        done("node_modules/@ag-grid-community/core/typings doesn't exist - exiting")
+    }
+
+    return gulp.src('./node_modules/@ag-grid-community/core/typings/**/*').pipe(gulp.dest('./dist/lib'));
+};
+
+const copyGridAllUmdFiles = (done) => {
+    if (!fs.existsSync('./node_modules/@ag-grid-community/all-modules/dist')) {
+        done("./node_modules/@ag-grid-community/all-modules/dist doesn't exist - exiting")
+    }
+
+    return gulp.src([
+        './node_modules/@ag-grid-community/all-modules/dist/ag-grid-community*.js',
+        '!./node_modules/@ag-grid-community/all-modules/dist/**/*.cjs*.js']).pipe(gulp.dest('./dist/'));
+};
+
+// copy from grid-core tasks
+gulp.task('copy-grid-core-styles', copyGridCoreStyles);
+gulp.task('copy-umd-files', copyGridAllUmdFiles);
+gulp.task('copy-core-typings', copyGridCoreTypings);
+
+// Typescript related tasks
+gulp.task('clean', cleanDist);
+gulp.task('tsc-no-clean', tscMainTask);
+gulp.task('tsc', series('clean', 'tsc-no-clean'));
+
+// webpack related tasks
+gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings'));
+
+// default/release task
+gulp.task('default', series('package'));
+
 

@@ -7,7 +7,7 @@ exports.config = {
     seleniumServerJar: "../../node_modules/webdriver-manager/selenium/selenium-server-standalone-3.5.3.jar",
 
     specs: [
-        '../e2e/javascript-getting-started/example-js.spec.js',
+        '../e2e/javascript-grid/example-js.spec.js',
         '../e2e/javascript-grid-tool-panel/toolPanelExample.spec.js'
     ]
 };

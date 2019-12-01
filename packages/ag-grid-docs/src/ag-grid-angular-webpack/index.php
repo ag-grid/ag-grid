@@ -27,13 +27,15 @@ npm init --yes
     <p>Next, we install the dependencies:</p>
 
 <snippet language="sh">
-npm i --save ag-grid-community ag-grid-angular
+npm i --save @ag-grid-community/all-modules @ag-grid-community/angular
+
+// or, if using Enterprise features
+npm i --save @ag-grid-enterprise/all-modules @ag-grid-community/angular
+
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack@1.14.x webpack-dev-server@1.16.x angular2-template-loader@0.6.x awesome-typescript-loader@3.1.x extract-text-webpack-plugin@1.0.x file-loader canonical-path @types/node
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
-
-# optional - only necessary if you're using any of the Enterprise features
-npm i --save ag-grid-enterprise</snippet>
+</snippet>
 
     <h2>Create Application</h2>
 
@@ -63,7 +65,7 @@ npm i --save ag-grid-enterprise</snippet>
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
-import {AgGridModule} from "ag-grid-angular";
+import {AgGridModule} from "@ag-grid-community/angular";
 // application
 import {AppComponent} from "./app.component";
 
@@ -84,7 +86,10 @@ export class AppModule {
 // app/app.component.ts 
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid-community";
+import {GridOptions} from "@ag-grid-community/all-modules";
+
+// or, if using Enterprise features
+// import {GridOptions} from "@ag-grid-enterprise/all-modules";
 
 @Component({
     selector: 'my-app',
@@ -126,7 +131,7 @@ import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
 // for enterprise customers
-// import {LicenseManager} from "ag-grid-enterprise";
+// import {LicenseManager} from "@ag-grid-enterprise/all-modules";
 // LicenseManager.setLicenseKey("your license key");
 
 platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
@@ -154,15 +159,16 @@ import '@angular/common';
 import 'rxjs';
 
 // ag-grid
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
-import 'ag-grid-angular'</snippet>
-<snippet>
-// for ag-grid-enterprise users only 
-import 'ag-grid-enterprise';</snippet>
+// or, if using Enterprise features
+// import '@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
+// import '@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';
 
-<h2>tsconfig.json</h2>
+import '@ag-grid-community/angular'</snippet>
+
+    <h2>tsconfig.json</h2>
 
 <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>
 
@@ -473,23 +479,5 @@ import '../css/app.css';</snippet>
     background-color: green;
 }</snippet>
 </div>
-
-<h2>
-    Angular Grid Resources
-</h2>
-<br/>
-<ul>
-    <li>
-        Get started with Angular Grid in 5 minutes in our <a href="../angular-getting-started/" target="_blank">guide</a>.
-    </li>
-    <br/>
-    <li>
-        Browse our <a href="../best-angular-2-data-grid/" target="_blank">Angular Grid</a> page to discover all major benefits in using ag-Grid Angular. 
-    </li>
-    <br/>
-    <li>
-        Please take a look at the <a href="../angular-more-details">more details</a> section next for more detailed information on using Angular with ag-Grid. 
-    </li>
-</ul>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

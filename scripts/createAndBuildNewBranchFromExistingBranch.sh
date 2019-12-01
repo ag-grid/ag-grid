@@ -39,8 +39,12 @@ echo "################# Installing Package Dependencies ########################
 ./node_modules/.bin/lerna bootstrap
 
 echo "########################################################################"
-echo "###################### Installing Packages #############################"
-./node_modules/.bin/lerna run build
+echo "###################### Building Packages #############################"
+./node_modules/.bin/lerna run build --ignore ag-grid-charts-example
+
+echo "########################################################################"
+echo "###################### Packaging Packages #############################"
+./node_modules/.bin/lerna run package --ignore ag-grid-charts-example
 
 echo "########################################################################"
 echo "##################### Updating .gitignore #############################"

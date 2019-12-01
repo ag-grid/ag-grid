@@ -536,20 +536,20 @@ function getRowNodeId(data) {
 }
 
 function onRowDragMove(event) {
-    let movingNode = event.node;
-    let overNode = event.overNode;
+    var movingNode = event.node;
+    var overNode = event.overNode;
 
-    let rowNeedsToMove = movingNode !== overNode;
+    var rowNeedsToMove = movingNode !== overNode;
 
     if (rowNeedsToMove) {
         // the list of rows we have is data, not row nodes, so extract the data
-        let movingData = movingNode.data;
-        let overData = overNode.data;
+        var movingData = movingNode.data;
+        var overData = overNode.data;
 
-        let fromIndex = immutableStore.indexOf(movingData);
-        let toIndex = immutableStore.indexOf(overData);
+        var fromIndex = immutableStore.indexOf(movingData);
+        var toIndex = immutableStore.indexOf(overData);
 
-        let newStore = immutableStore.slice();
+        var newStore = immutableStore.slice();
         moveInArray(newStore, fromIndex, toIndex);
 
         immutableStore = newStore;

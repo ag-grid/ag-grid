@@ -41,7 +41,7 @@ var gridOptions = {
     cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
-    onFirstDataRendered(params) {
+    onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     }
 };
@@ -75,7 +75,7 @@ function createServerSideDatasource(fakeServer, gridOptions) {
             function successCallback(resultForGrid, lastRow, secondaryCols) {
                 params.successCallback(resultForGrid, lastRow);
 
-                let secondaryColumnDefinitions = that.buildSecondaryColumnDefinitions(secondaryCols);
+                var secondaryColumnDefinitions = that.buildSecondaryColumnDefinitions(secondaryCols);
                 that.gridOptions.columnApi.setSecondaryColumns(secondaryColumnDefinitions);
             });
     };
@@ -247,10 +247,12 @@ function createFakeServer(allData) {
         if (!object) {
             return;
         }
-        let keys = Object.keys(object);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            let value = object[key];
+
+        var keys = Object.keys(object);
+        
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var value = object[key];
             callback(key, value);
         }
     };

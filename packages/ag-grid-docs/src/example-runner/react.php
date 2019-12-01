@@ -11,7 +11,7 @@ if ($generated) {
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
+    <style media="only screen">
         html, body, #root {
         height: 100%;
         width: 100%;
@@ -41,10 +41,23 @@ if ($generated) {
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
-        var systemJsMap = <?= json_encode($systemJsMap); ?>
+        var systemJsMap = <?= json_encode($systemJsMap); ?>;
+        <?php
+        // only used in archives/production
+        if ($example['gridSettings']['enterprise']) {
+        ?>
+        var systemJsPaths = <?= json_encode($systemJsEnterprisePaths) ?>;
+        <?php
+        } else {
+        ?>
+        var systemJsPaths = <?= json_encode($systemJsCommunityPaths) ?>;
+        <?php
+        }
+        ?>
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
+    <!-- leave the next line as is - is replaced when deploying to archives or production -->
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
     <script>

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Tool Panels</h1>
 
     <p class="lead">
-        This section covers Tool Panels, available via the grids Side Bar, which allows for easy access to powerful grid
+        This section covers Tool Panels, available via the grid's Side Bar, which allow for easy access to powerful grid
         operations such as grouping, pivoting, and filtering. Custom Tool Panels can also be provided to the grid.
     </p>
 
@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Tool Panels are panels that sit in the Side Bar to the right of the grid. The Side Bar allows access to the tool
-        panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screen shot below.
+        panels via buttons that work like tabs. The Side Bar and a Tool Panel are highlighted in the screenshot below.
     </p>
 
     <p><img src="sideBar.png" alt="sidebar" style="width: 600px;" /></p>
@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             Version 19 of ag-Grid received a major overhaul of the tool panels. It did not make sense to keep
-            with the older configuration options. The old property <code>showToolPanel</code> is no longer
+            the older configuration options. The old property <code>showToolPanel</code> is no longer
             used. The tool panel is also not included by default - if the tool panel is not configured, no
             tool panel is shown.
         </p>

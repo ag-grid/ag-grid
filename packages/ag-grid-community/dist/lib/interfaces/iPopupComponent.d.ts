@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "./iComponent";
 export interface IPopupComponent<T> extends IComponent<T> {
     /** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be

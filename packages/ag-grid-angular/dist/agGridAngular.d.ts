@@ -1,5 +1,5 @@
 import { AfterViewInit, ComponentFactoryResolver, ElementRef, EventEmitter, QueryList, ViewContainerRef } from "@angular/core";
-import { ColumnApi, GridApi, GridOptions } from "ag-grid-community";
+import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
 import { AgGridColumn } from "./agGridColumn";
 import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
@@ -23,6 +23,7 @@ export declare class AgGridAngular implements AfterViewInit {
     private checkForDeprecatedEvents;
     private globalEventListener;
     gridOptions: GridOptions;
+    modules: Module[];
     slaveGrids: any;
     alignedGrids: any;
     rowData: any;
@@ -146,7 +147,6 @@ export declare class AgGridAngular implements AfterViewInit {
     noRowsOverlayComponentFramework: any;
     detailCellRenderer: any;
     detailCellRendererFramework: any;
-    onGridReady: any;
     defaultGroupSortComparator: any;
     isRowMaster: any;
     isRowSelectable: any;
@@ -160,6 +160,7 @@ export declare class AgGridAngular implements AfterViewInit {
     createChartContainer: any;
     processChartOptions: any;
     getChartToolbarItems: any;
+    fillOperation: any;
     toolPanelSuppressRowGroups: any;
     toolPanelSuppressValues: any;
     toolPanelSuppressPivots: any;
@@ -208,6 +209,7 @@ export declare class AgGridAngular implements AfterViewInit {
     enableRangeSelection: any;
     enableRangeHandle: any;
     enableFillHandle: any;
+    suppressClearOnFillReduction: any;
     deltaSort: any;
     suppressTouch: any;
     suppressAsyncEvents: any;
@@ -361,6 +363,7 @@ export declare class AgGridAngular implements AfterViewInit {
     rowDragMove: EventEmitter<any>;
     rowDragLeave: EventEmitter<any>;
     rowDragEnd: EventEmitter<any>;
+    popupToFront: EventEmitter<any>;
     columnRowGroupChangeRequest: EventEmitter<any>;
     columnPivotChangeRequest: EventEmitter<any>;
     columnValueChangeRequest: EventEmitter<any>;

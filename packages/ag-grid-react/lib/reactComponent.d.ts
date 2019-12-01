@@ -1,4 +1,4 @@
-// ag-grid-react v21.2.2
+// ag-grid-react v22.0.0
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
@@ -10,8 +10,6 @@ export declare class ReactComponent extends BaseReactComponent {
     private portal;
     private componentWrappingElement;
     private statelessComponent;
-    private orphans;
-    private unwrapComponent;
     constructor(reactComponent: any, parentComponent: AgGridReact);
     getFrameworkComponentInstance(): any;
     isStatelessComponent(): boolean;

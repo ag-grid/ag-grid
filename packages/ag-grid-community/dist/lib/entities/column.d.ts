@@ -1,6 +1,3 @@
-// Type definitions for ag-grid-community v21.2.2
-// Project: http://www.ag-grid.com/
-// Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
@@ -23,14 +20,11 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     static EVENT_ROW_GROUP_CHANGED: string;
     static EVENT_PIVOT_CHANGED: string;
     static EVENT_VALUE_CHANGED: string;
-    static PINNED_RIGHT: string;
-    static PINNED_LEFT: string;
-    static SORT_ASC: string;
-    static SORT_DESC: string;
     private gridOptionsWrapper;
     private columnUtils;
     private columnApi;
     private gridApi;
+    private context;
     private readonly colId;
     private colDef;
     private userProvidedColDef;
