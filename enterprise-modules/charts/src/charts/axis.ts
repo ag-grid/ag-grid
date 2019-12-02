@@ -192,6 +192,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
         this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
+        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -216,7 +217,11 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
                 this.tickFormatter = this.scale.tickFormat(10, format);
             }
         } else {
-            this.tickFormatter = undefined;
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, undefined);
+            } else {
+                this.tickFormatter = undefined;
+            }
         }
     }
 
