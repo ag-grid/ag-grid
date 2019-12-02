@@ -54,10 +54,11 @@ npm install --save @ag-grid-enterprise/all-modules @ag-grid-community/react
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <pre class="language-jsx" ng-non-bindable><code>import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -97,8 +98,7 @@ class App extends Component {
       &gt;
         &lt;AgGridReact
           columnDefs={this.state.columnDefs}
-          rowData={this.state.rowData}
-          modules={AllCommunityModules}&gt;
+          rowData={this.state.rowData}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );
@@ -113,7 +113,9 @@ export default App;</code></pre>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <pre class="language-jsx" ng-non-bindable><code>import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -163,8 +165,7 @@ each column entry specifies the header label and the data field to be displayed 
 <pre class="language-jsx" ng-non-bindable><code>&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
-        rowData={this.state.rowData}
-        modules={AllCommunityModules}&gt;
+        rowData={this.state.rowData}&gt;
     &lt;/AgGridReact&gt;
 &lt;/div&gt;</code></pre>
 </section>
@@ -309,11 +310,11 @@ npm install @ag-grid-enterprise/all-modules
 
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
-    -       import {AllCommunityModules} from '@ag-grid-community/all-modules';
-    +       import {AllModules} from '@ag-grid-enterprise/all-modules';
+    -       import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+    +       import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
 
-    -       modules={AllCommunityModules}
-    +       modules={AllModules}
+    -       ModuleRegistry.registerModules(AllCommunityModules);
+    +       ModuleRegistry.registerModules(AllModules);
 </snippet>
 
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>

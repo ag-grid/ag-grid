@@ -14,7 +14,9 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 import { AgGridReact } from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -39,8 +41,7 @@ class App extends Component {
       &lt;div className="ag-theme-balham" style={ {height: '200px', width: '600px'} }&gt;
         &lt;AgGridReact
             columnDefs={this.state.columnDefs}
-            rowData={this.state.rowData}
-            modules={AllCommunityModules}&gt;
+            rowData={this.state.rowData}&gt;
         &lt;/AgGridReact&gt;
       &lt;/div&gt;
     );
