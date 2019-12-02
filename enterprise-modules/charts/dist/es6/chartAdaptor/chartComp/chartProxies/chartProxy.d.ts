@@ -50,7 +50,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     getSeriesOption<T = string>(expression: string): T;
     setSeriesOption(expression: string, value: any): void;
     setTitleOption(property: keyof CaptionOptions, value: any): void;
-    getChartPaddingOption: (property: import("@ag-grid-community/core/dist/es6/main").LegendPosition) => string;
+    getChartPaddingOption: (property: import("@ag-grid-community/core").LegendPosition) => string;
     setChartPaddingOption(property: keyof PaddingOptions, value: number): void;
     getShadowEnabled: () => boolean;
     getShadowProperty(property: keyof DropShadowOptions): any;
