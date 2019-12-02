@@ -147,15 +147,20 @@ export class Scene {
     }
 
     readonly render = () => {
-        const ctx = this.ctx;
+        const { ctx, root } = this;
+
+        if (root && !root.visible) {
+            this.dirty = false;
+            return;
+        }
 
         // start with a blank canvas, clear previous drawing
         ctx.clearRect(0, 0, this.width, this.height);
 
-        if (this.root) {
+        if (root) {
             ctx.save();
-            if (this.root.visible) {
-                this.root.render(ctx);
+            if (root.visible) {
+                root.render(ctx);
             }
             ctx.restore();
         }

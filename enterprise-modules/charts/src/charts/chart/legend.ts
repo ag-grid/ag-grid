@@ -275,7 +275,6 @@ export class Legend extends Observable {
         if (size[0] !== oldSize[0] || size[1] !== oldSize[1]) {
             oldSize[0] = size[0];
             oldSize[1] = size[1];
-            this.fireEvent({type: 'layoutChange'});
         }
     }
 

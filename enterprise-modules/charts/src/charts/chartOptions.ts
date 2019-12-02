@@ -216,11 +216,7 @@ export interface MarkerOptions {
     enabled?: boolean;
     size?: number;
     minSize?: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth?: number;
-    fillOpacity?: number;
-    strokeOpacity?: number;
+    strokeWidth?: number; // deprecated, use `series.strokeWidth` instead
 }
 
 export interface LineSeriesFieldOptions {

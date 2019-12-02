@@ -5,7 +5,7 @@ export class SeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    @reactive(['change', 'legendChange']) type?: new () => Marker;
+    @reactive(['change']) type?: new () => Marker;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
@@ -18,20 +18,6 @@ export class SeriesMarker extends Observable {
     @reactive(['change']) minSize = 12;
 
     @reactive(['change']) enabled = true;
-
-    @reactive(['change']) xOffset = 0;
-    @reactive(['change']) yOffset = 0;
-
-    @reactive(['change', 'legendChange']) fill?: string;
-    @reactive(['change', 'legendChange']) stroke?: string;
-
-    /**
-     * If the `strokeWidth` is not defined, the marker will use the stroke width of the series.
-     * If the series also doesn't have the `strokeWidth` config, the effective marker stroke width will be zero.
-     */
-    @reactive(['change']) strokeWidth?: number = 2;
-    @reactive(['change', 'legendChange']) fillOpacity?: number = 1;
-    @reactive(['change', 'legendChange']) strokeOpacity?: number = 1;
 }
 
 export interface SeriesMarkerFormatterParams {

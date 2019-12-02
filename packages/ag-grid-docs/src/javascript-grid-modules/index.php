@@ -78,10 +78,6 @@ function printFeature($item)
     pick and choose which features you require, resulting in a smaller application size overall.
 </p>
 
-<note><p>The <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages have now been deprecated (but still supported
-        for the time being).</p>
-    The documentation on this page should be read, but for a quick how-to migration please see the <a href="#migrating-to-modules">Migration</a>
-    section for more information.</note>
 <h2>Introduction</h2>
 
 <p>
@@ -90,11 +86,11 @@ function printFeature($item)
 </p>
 
 <p>
-    Since version 22.0.0, ag-Grid can be consumed by just including the feature modules required, which should result in smaller overall application sizes.    
+    Since version 22.0.0, ag-Grid can be consumed by just including the feature modules required, which should result in smaller overall application sizes.
 </p>
 
 <note>
-    The introduction of modules in version 22.0.0 is a significant first step towards reducing the size of ag-Grid inside applications. As most of the new modules 
+    The introduction of modules in version 22.0.0 is a significant first step towards reducing the size of ag-Grid inside applications. As most of the new modules
     cover enterprise features, community users should not expect to see a size reduction right away. However, in the coming releases, we will strive to reduce
     the size of the community-core module by splitting it out into separate community modules.
 </note>
@@ -140,6 +136,38 @@ will contain all Community modules.</note>
 
 <p>If you wish to pull in all Community or all Enterprise modules as you did before you can specify the corresponding
     packages (<code>@ag-grid-community/all-modules</code> and <code>@ag-grid-enterprise/all-modules</code>) and reference them later.</p>
+
+<p>There are two ways to supply modules to the grid - either globally or by individual grid:</p>
+
+<h3>Providing Modules Globally</h3>
+
+<p>You can import and provide all modules to the Grid globally if you so desire, but you need to ensure that this is done
+before <span style="font-style: italic"><strong>any</strong></span> Grids are instantiated.</p>
+
+<p>First, import the modules you require:</p>
+<snippet>
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+// or if using ag-Grid Enterprise
+import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
+
+// or if choosing individual modules
+import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+</snippet>
+
+<p>Then provide these modules to the Grid:</p>
+
+<snippet>
+ModuleRegistry.registerModules(AllCommunityModules);
+
+// or if using ag-Grid Enterprise
+ModuleRegistry.registerModules(AllModules);
+
+// or if choosing individual modules
+ModuleRegistry.register(ClientSideRowModelModule);
+</snippet>
+
+<h3>Providing Modules To Individual Grids</h3>
 
 <p>If you choose to select modules based on requirements then at a minimum the a
     <a href="../javascript-grid-row-models/">Row Model</a> need to be specified. After that all other modules are optional
@@ -241,7 +269,7 @@ data() {
 </ol>
 
 <h2 id="migrating-to-modules">Migrating</h2>
-<p>This section documents how to quickly migrate from the deprecated <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
+<p>This section documents how to migrate from the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
     to the new modular based one.</p>
 
 <p>In versions 21.x and before you would have needed to referenced the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>

@@ -110,8 +110,7 @@ The grid ships several different themes; pick one that matches your project desi
     &lt;ag-grid-vue style="width: 500px; height: 500px;"
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
-                 :rowData="rowData"
-                 :modules="modules"&gt;
+                 :rowData="rowData"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 </snippet>
@@ -122,15 +121,16 @@ The grid ships several different themes; pick one that matches your project desi
 <snippet>
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
-    import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+    ModuleRegistry.registerModules(AllCommunityModules);
 
     export default {
         name: 'App',
         data() {
             return {
                 columnDefs: null,
-                rowData: null,
-                modules: AllCommunityModules
+                rowData: null
             }
         },
         components: {
@@ -153,8 +153,8 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/script&gt;
 </snippet>
 </section>
-<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
-        <strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the <a href="../javascript-grid-modules">modules</a>
+<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+        <strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>), as well as the <a href="../javascript-grid-modules">modules</a>
     we wish to use.</p>
 <p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
     modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
@@ -249,14 +249,15 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                  class="ag-theme-balham"
                  :columnDefs="columnDefs"
                  :rowData="rowData"
-                 :modules="modules"
                  rowSelection="multiple"&gt;
     &lt;/ag-grid-vue&gt;
 &lt;/template&gt;
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
-    import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+    ModuleRegistry.registerModules(AllCommunityModules);
 
     export default {
         name: 'App',
@@ -295,7 +296,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
              class="ag-theme-balham"
              :columnDefs="columnDefs"
              :rowData="rowData"
-             :modules="modules"
 
              rowSelection="multiple"&gt;
 &lt;/ag-grid-vue&gt;
@@ -320,7 +320,6 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -330,7 +329,9 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
-    import {AllCommunityModules} from '@ag-grid-community/all-modules';
+    import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+    ModuleRegistry.registerModules(AllCommunityModules);
 
     export default {
         name: 'App',
@@ -393,11 +394,11 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
-    -       import {AllCommunityModules} from '@ag-grid-community/all-modules';
-    +       import {AllModules} from '@ag-grid-enterprise/all-modules';
+    -       import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+    +       import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
 
-    -       modules=AllCommunityModules
-    +       modules=AllModules
+    -       ModuleRegistry.registerModules(AllCommunityModules);
+    +       ModuleRegistry.registerModules(AllModules);
 </snippet>
 
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another
@@ -436,7 +437,6 @@ beforeMount() {
                      class="ag-theme-balham"
                      :columnDefs="columnDefs"
                      :rowData="rowData"
-                     :modules="modules"
                      rowSelection="multiple"
 
                      @grid-ready="onGridReady"&gt;
@@ -446,7 +446,9 @@ beforeMount() {
 
 &lt;script&gt;
     import {AgGridVue} from "@ag-grid-community/vue";
-    import {AllModules} from '@ag-grid-enterprise/all-modules';
+    import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+    ModuleRegistry.registerModules(AllModules);
 
     export default {
         name: 'App',
@@ -456,8 +458,7 @@ beforeMount() {
                 rowData: null,
                 gridApi: null,
                 columnApi: null,
-                autoGroupColumnDef: null,
-                modules: AllModules
+                autoGroupColumnDef: null
             }
         },
         components: {

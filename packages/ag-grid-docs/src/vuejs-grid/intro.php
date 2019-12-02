@@ -21,15 +21,16 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 // import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
 import { AgGridVue } from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 export const App = {
     name: 'App',
     data() {
         return {
             columnDefs: null,
-            rowData: null,
-            modules: AllCommunityModules
+            rowData: null
         }
     },
     components: {
@@ -52,8 +53,7 @@ export const App = {
     &lt;ag-grid-vue style="width: 500px; height: 300px;"
         class="ag-theme-balham"
         :columnDefs="columnDefs"
-        :rowData="rowData"
-        :modules="modules"&gt;
+        :rowData="rowData"&gt;
     &lt;/ag-grid-vue&gt;
     `
 }

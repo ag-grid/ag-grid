@@ -78,8 +78,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             series.yKey = yFieldDefinition.colId;
             series.yName = yFieldDefinition.displayName;
             series.data = params.data;
-            series.marker.fill = fills[index % fills.length];
-            series.marker.stroke = strokes[index % strokes.length];
+            series.fill = fills[index % fills.length];
+            series.stroke = strokes[index % strokes.length];
 
             if (sizeFieldDefinition) {
                 series.sizeKey = sizeFieldDefinition.colId;

@@ -163,10 +163,6 @@ export class Arc extends Shape {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (!this.scene) {
-            return;
-        }
-
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }

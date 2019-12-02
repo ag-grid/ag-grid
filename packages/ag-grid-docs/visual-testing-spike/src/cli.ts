@@ -44,7 +44,6 @@ const args: any = yargs
                 })
     ).argv;
 
-
 export const runCli = async (baseFolder: string) => {
     const folder = path.join(baseFolder, screenshotFolder, args.images);
     if (args.update && !args.force) {
@@ -52,10 +51,10 @@ export const runCli = async (baseFolder: string) => {
             {
                 name: 'overwrite',
                 type: 'confirm',
-                message: `😰  ${chalk.bold.rgb(255, 128, 0)`DELETE ALL IMAGES`} in "${path.relative(
+                message: `😰  ${chalk.bold.rgb(255, 128, 0)`OVERWRITE IMAGES`} in "${path.relative(
                     '.',
                     folder
-                )}" and generate new ones?`
+                )}"?`
             }
         ]);
         if (!result.overwrite) {
@@ -67,7 +66,7 @@ export const runCli = async (baseFolder: string) => {
             folder,
             mode: args.update ? 'update' : 'compare',
             specs,
-            defaultThemes: ['alpine', 'balham', 'material', 'fresh'],
+            defaultThemes: [/*'alpine', */ 'balham', 'material', 'fresh'],
             server: args.server,
             reportFile: args.reportFile,
             clean: !!args.clean,

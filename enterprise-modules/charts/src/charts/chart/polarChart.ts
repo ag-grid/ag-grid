@@ -3,6 +3,8 @@ import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
 
 export class PolarChart extends Chart {
+    static className = 'PolarChart';
+
     constructor(document = window.document) {
         super(document);
 
@@ -20,6 +22,9 @@ export class PolarChart extends Chart {
             width: this.width,
             height: this.height
         };
+
+        this.positionCaptions();
+        this.positionLegend();
 
         const captionAutoPadding = this.captionAutoPadding;
         shrinkRect.y += captionAutoPadding;
@@ -69,8 +74,5 @@ export class PolarChart extends Chart {
                 series.update();
             }
         });
-
-        this.positionCaptions();
-        this.positionLegend();
     }
 }

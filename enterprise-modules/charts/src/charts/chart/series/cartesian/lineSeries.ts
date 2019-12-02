@@ -56,6 +56,8 @@ export class LineSeries extends CartesianSeries {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
+
+        this.fireEvent({type: 'legendChange'});
     }
 
     protected _title?: string;
@@ -188,6 +190,28 @@ export class LineSeries extends CartesianSeries {
         return this._strokeWidth;
     }
 
+    private _fillOpacity: number = 1;
+    set fillOpacity(value: number) {
+        if (this._fillOpacity !== value) {
+            this._fillOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get fillOpacity(): number {
+        return this._fillOpacity;
+    }
+
+    private _strokeOpacity: number = 1;
+    set strokeOpacity(value: number) {
+        if (this._strokeOpacity !== value) {
+            this._strokeOpacity = value;
+            this.scheduleLayout();
+        }
+    }
+    get strokeOpacity(): number {
+        return this._strokeOpacity;
+    }
+
     highlightStyle: {
         fill?: string,
         stroke?: string
@@ -227,22 +251,18 @@ export class LineSeries extends CartesianSeries {
             data,
             xData,
             yData,
-            stroke,
             marker,
             lineNode,
+            fill,
+            stroke,
             strokeWidth
         } = this;
 
-        const linePath = lineNode.path;
         const markerSize = marker.size;
-        const markerFill = this.getMarkerFill();
-        const markerStroke = this.getMarkerStroke();
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
+        const groupSelectionData: GroupSelectionDatum[] = [];
+        const linePath = lineNode.path;
 
         linePath.clear();
-
-        const groupSelectionData: GroupSelectionDatum[] = [];
-
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
             const x = xScale.convert(xDatum) + xOffset;
@@ -259,9 +279,9 @@ export class LineSeries extends CartesianSeries {
                     seriesDatum: data[i],
                     x,
                     y,
-                    fill: markerFill,
-                    stroke: markerStroke,
-                    strokeWidth: markerStrokeWidth,
+                    fill,
+                    stroke,
+                    strokeWidth,
                     size: markerSize
                 });
             }
@@ -298,11 +318,6 @@ export class LineSeries extends CartesianSeries {
         groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
-                node.translationX = datum.x;
-                node.translationY = datum.y;
-                node.fillOpacity = marker.fillOpacity;
-                node.strokeOpacity = marker.strokeOpacity;
-
                 const isHighlightedNode = node === highlightedNode;
                 const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
                 const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
@@ -330,6 +345,8 @@ export class LineSeries extends CartesianSeries {
                     node.size = size;
                 }
 
+                node.translationX = datum.x;
+                node.translationY = datum.y;
                 node.visible = marker.enabled && node.size > 0;
             });
 
@@ -371,7 +388,7 @@ export class LineSeries extends CartesianSeries {
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
     listSeriesItems(data: LegendDatum[]): void {
-        const { id, xKey, yKey, yName, title, visible, marker } = this;
+        const { id, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (this.data.length && xKey && yKey) {
             data.push({
@@ -383,20 +400,12 @@ export class LineSeries extends CartesianSeries {
                 },
                 marker: {
                     type: marker.type,
-                    fill: this.getMarkerFill(),
-                    stroke: this.getMarkerStroke(),
-                    fillOpacity: marker.fillOpacity,
-                    strokeOpacity: marker.strokeOpacity
+                    fill,
+                    stroke,
+                    fillOpacity,
+                    strokeOpacity
                 }
             });
         }
-    }
-
-    private getMarkerFill(): string {
-        return this.marker.fill || this.fill;
-    }
-
-    private getMarkerStroke(): string {
-        return this.marker.stroke || this.stroke;
     }
 }

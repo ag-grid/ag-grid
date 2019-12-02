@@ -127,7 +127,7 @@ export class GroupStage implements IRowNodeStage {
     private handleTransaction(details: GroupingDetails): void {
         const tran = details.transaction;
         if (tran.add) {
-            this.insertNodes(tran.add, details);
+            this.insertNodes(tran.add, details, false);
         }
         if (tran.update) {
             this.moveNodesInWrongPath(tran.update, details);
@@ -213,7 +213,7 @@ export class GroupStage implements IRowNodeStage {
     private moveNode(childNode: RowNode, details: GroupingDetails): void {
 
         this.removeNodesInStages([childNode], details);
-        this.insertOneNode(childNode, details);
+        this.insertOneNode(childNode, details, true);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -397,19 +397,19 @@ export class GroupStage implements IRowNodeStage {
         details.rootNode.childrenAfterGroup = [];
         details.rootNode.childrenMapped = {};
 
-        this.insertNodes(details.rootNode.allLeafChildren, details);
+        this.insertNodes(details.rootNode.allLeafChildren, details, false);
     }
 
-    private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
+    private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
         newRowNodes.forEach(rowNode => {
-            this.insertOneNode(rowNode, details);
+            this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
             }
         });
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
+    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean): void {
 
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
@@ -420,7 +420,7 @@ export class GroupStage implements IRowNodeStage {
         }
 
         if (this.usingTreeData) {
-            this.swapGroupWithUserNode(parentGroup, childNode);
+            this.swapGroupWithUserNode(parentGroup, childNode, isMove);
         } else {
             childNode.parent = parentGroup;
             childNode.level = path.length;
@@ -441,13 +441,17 @@ export class GroupStage implements IRowNodeStage {
         return nextNode;
     }
 
-    private swapGroupWithUserNode(fillerGroup: RowNode, userGroup: RowNode) {
+    private swapGroupWithUserNode(fillerGroup: RowNode, userGroup: RowNode, isMove: boolean) {
         userGroup.parent = fillerGroup.parent;
         userGroup.key = fillerGroup.key;
         userGroup.field = fillerGroup.field;
         userGroup.groupData = fillerGroup.groupData;
         userGroup.level = fillerGroup.level;
-        userGroup.expanded = fillerGroup.expanded;
+        // AG-3441 - preserve the existing expanded status of the node if we're moving it, so that
+        // you can drag a sub tree from one parent to another without changing its expansion
+        if (!isMove) {
+            userGroup.expanded = fillerGroup.expanded;
+        }
 
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.

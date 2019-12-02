@@ -118,7 +118,9 @@ The grid ships several different themes; pick one that matches your project desi
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">
 import { Component } from '@angular/core';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 @Component({
     selector: 'app-root',
@@ -137,15 +139,13 @@ export class AppComponent {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
-
-    modules = AllCommunityModules;
 }
 </snippet>
 </section>
 
-<p>The code above presents three essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
-<strong>the column definitions</strong></a> (<code>columnDefs</code>), the data (<code>rowData</code>) and the modules we
-    wish to use (<code>modules</code>). </p>
+<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/">
+<strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>), as well and the modules we
+    wish to use (<code>ModuleRegistry.registerModules(AllCommunityModules)</code>). </p>
 
 <p>You can find out more about modules <a href="../javascript-grid-modules">here</a>, but for now all you need to know is that
 modules make up the parts of the grid that you wish to use. In this case we're going to use all the functionality in the Community
@@ -162,8 +162,7 @@ version of ag-Grid.</p>
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [rowData]="rowData" 
-    [columnDefs]="columnDefs"
-    [modules]="modules"&gt;
+    [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -243,7 +242,9 @@ export class AppModule {}
 <snippet language="ts">
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 @Component({
     selector: 'app-root',
@@ -259,10 +260,7 @@ export class AppComponent implements OnInit {
 
     rowData: any;
 
-    modules = AllCommunityModules;
-
     constructor(private http: HttpClient) {
-
     }
 
     ngOnInit() {
@@ -280,9 +278,7 @@ export class AppComponent implements OnInit {
     style="width: 500px; height: 500px;" 
     class="ag-theme-balham"
     [rowData]="rowData | async"
-    [columnDefs]="columnDefs"
-    [modules]="modules"
-    &gt;
+    [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -302,7 +298,9 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 <snippet language="ts">
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 @Component({
     selector: 'app-root',
@@ -318,10 +316,7 @@ export class AppComponent implements OnInit {
 
     rowData: any;
 
-    modules = AllCommunityModules;
-
     constructor(private http: HttpClient) {
-
     }
 
     ngOnInit() {
@@ -341,9 +336,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
-    [modules]="modules"
-    rowSelection="multiple"
-    &gt;
+    rowSelection="multiple"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -362,9 +355,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
-    [modules]="modules"
-    rowSelection="multiple"
-    &gt;
+    rowSelection="multiple"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -376,7 +367,9 @@ export class AppComponent implements OnInit {
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from '@ag-grid-community/angular';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 @Component({
     selector: 'app-root',
@@ -394,10 +387,7 @@ export class AppComponent implements OnInit {
 
     rowData: any;
 
-    modules = AllCommunityModules;
-
     constructor(private http: HttpClient) {
-
     }
 
     ngOnInit() {
@@ -418,9 +408,7 @@ export class AppComponent implements OnInit {
     class="ag-theme-balham"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
-    [modules]="modules"
-    rowSelection="multiple"
-    &gt;
+    rowSelection="multiple"&gt;
 &lt;/ag-grid-angular&gt;
 </snippet>
 </section>
@@ -431,7 +419,9 @@ export class AppComponent implements OnInit {
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from '@ag-grid-community/angular';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+ModuleRegistry.registerModules(AllCommunityModules);
 
 @Component({
     selector: 'app-root',
@@ -449,10 +439,7 @@ export class AppComponent implements OnInit {
 
     rowData: any;
 
-    modules = AllCommunityModules;
-
     constructor(private http: HttpClient) {
-
     }
 
     ngOnInit() {
@@ -489,11 +476,11 @@ npm install @ag-grid-enterprise/all-modules
 
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
-    -       import {AllCommunityModules} from '@ag-grid-community/all-modules';
-    +       import {AllModules} from '@ag-grid-enterprise/all-modules';
+    -       import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+    +       import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
 
-    -       modules = AllCommunityModules;
-    +       modules = AllModules;
+    -       ModuleRegistry.registerModules(AllCommunityModules);
+    +       ModuleRegistry.registerModules(AllModules);
 </snippet>
 
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
@@ -516,7 +503,9 @@ ngOnInit() {
 export class AppComponent implements OnInit {
     @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
 
-    import {AllModules} from '@ag-grid-enterprise/all-modules';
+    import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
+
+    ModuleRegistry.registerModules(AllModules);
 
     columnDefs = [
         {headerName: 'Make', field: 'make', rowGroup: true },
@@ -533,8 +522,6 @@ export class AppComponent implements OnInit {
     };
 
     rowData: any;
-
-    modules = AllModules;
 
     constructor(private http: HttpClient) {
 

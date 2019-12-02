@@ -16,6 +16,7 @@ import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export abstract class Chart extends Observable {
+    readonly id: string = this.createId();
     readonly scene: Scene;
     readonly background: Rect = new Rect();
 
@@ -75,6 +76,17 @@ export abstract class Chart extends Observable {
         this.addPropertyListener('title', captionListener);
         this.addPropertyListener('subtitle', captionListener);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
+    }
+
+    private createId(): string {
+        const constructor = this.constructor as any;
+        const className = constructor.className;
+
+        if (!className) {
+            throw new Error(`The ${constructor} is missing the 'className' property.`);
+        }
+
+        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
     destroy() {
@@ -442,10 +454,7 @@ export abstract class Chart extends Observable {
             subtitle.node.visible = subtitleVisible;
         }
 
-        if (this.captionAutoPadding !== paddingTop) {
-            this.captionAutoPadding = paddingTop;
-            this.layoutPending = true;
-        }
+        this.captionAutoPadding = paddingTop;
     }
 
     protected positionLegend() {
@@ -471,10 +480,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
 
-                if (legendAutoPadding.bottom !== legendBBox.height) {
-                    legendAutoPadding.bottom = legendBBox.height;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.bottom = legendBBox.height;
                 break;
 
             case 'top':
@@ -484,10 +490,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
 
-                if (legendAutoPadding.top !== legendBBox.height) {
-                    legendAutoPadding.top = legendBBox.height;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.top = legendBBox.height;
                 break;
 
             case 'left':
@@ -497,10 +500,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = legendPadding - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (legendAutoPadding.left !== legendBBox.width) {
-                    legendAutoPadding.left = legendBBox.width;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.left = legendBBox.width;
                 break;
 
             default: // case 'right':
@@ -510,10 +510,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (legendAutoPadding.right !== legendBBox.width) {
-                    legendAutoPadding.right = legendBBox.width;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.right = legendBBox.width;
                 break;
         }
 

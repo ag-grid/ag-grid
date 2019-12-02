@@ -5,7 +5,7 @@ import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { reactive } from "../util/observable";
-import { ChartAxis, ChartAxisPosition } from "./chartAxis";
+import { ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
 
 /** Defines the orientation used when rendering data series */
@@ -15,12 +15,17 @@ export enum CartesianChartLayout {
 }
 
 export class CartesianChart extends Chart {
+    static className = 'CartesianChart';
     protected axisAutoPadding = new Padding();
 
     @reactive(['layoutChange']) flipXY = false;
 
     constructor(document = window.document) {
         super(document);
+
+        // Prevent the scene from rendering chart components in an invalid state
+        // (before first layout is performed).
+        this.scene.root.visible = false;
 
         const root = this.scene.root!;
         root.append(this._seriesRoot);
@@ -37,6 +42,8 @@ export class CartesianChart extends Chart {
             return;
         }
 
+        this.scene.root.visible = true;
+
         const { width, height, axes, legend } = this;
 
         const shrinkRect = {
@@ -45,6 +52,9 @@ export class CartesianChart extends Chart {
             width,
             height
         };
+
+        this.positionCaptions();
+        this.positionLegend();
 
         if (legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
@@ -75,12 +85,15 @@ export class CartesianChart extends Chart {
 
         const { captionAutoPadding, padding, axisAutoPadding } = this;
 
+        this.updateAxes();
+
         shrinkRect.x += padding.left + axisAutoPadding.left;
         shrinkRect.y += padding.top + axisAutoPadding.top + captionAutoPadding;
         shrinkRect.width -= padding.left + padding.right + axisAutoPadding.left + axisAutoPadding.right;
         shrinkRect.height -= padding.top + padding.bottom + axisAutoPadding.top + axisAutoPadding.bottom + captionAutoPadding;
 
         axes.forEach(axis => {
+            axis.group.visible = true;
             switch (axis.position) {
                 case ChartAxisPosition.Top:
                     axis.scale.range = [0, shrinkRect.width];
@@ -119,24 +132,13 @@ export class CartesianChart extends Chart {
             }
         });
 
-        this.updateAxes();
-
-        // The calls above may schedule another layout, if the chart doesn't have enough padding
-        // to render axis labels, chart captions or the legend.
-        // In this case, we can skip updating the series on this layout run,
-        // since they will be updated later anyway.
-        if (this.layoutPending) {
-            return;
-        }
-
         this.series.forEach(series => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
 
-        this.positionCaptions();
-        this.positionLegend();
+        this.axes.forEach(axis => axis.update());
     }
 
     private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
@@ -169,53 +171,35 @@ export class CartesianChart extends Chart {
         axes.concat(linkedAxes).forEach(axis => {
             const { direction, position, boundSeries } = axis;
 
-            const domains: any[][] = [];
-            boundSeries.filter(s => s.visible).forEach(series => {
-                domains.push(series.getDomain(direction));
-            });
-
-            const domain = new Array<any>().concat(...domains);
-            axis.domain = numericExtent(domain) || domain; // if extent can't be found, it's categories
-
-            const axisThickness = Math.floor(axis.computeBBox().width);
-
             if (axis.linkedTo) {
                 axis.domain = axis.linkedTo.domain;
-            }
+            } else {
+                const domains: any[][] = [];
+                boundSeries.filter(s => s.visible).forEach(series => {
+                    domains.push(series.getDomain(direction));
+                });
 
-            switch (position) {
-                case ChartAxisPosition.Left:
-                    if (this.axisAutoPadding.left !== axisThickness) {
-                        this.axisAutoPadding.left = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Right:
-                    if (this.axisAutoPadding.right !== axisThickness) {
-                        this.axisAutoPadding.right = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Bottom:
-                    if (this.axisAutoPadding.bottom !== axisThickness) {
-                        this.axisAutoPadding.bottom = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
-                case ChartAxisPosition.Top:
-                    if (this.axisAutoPadding.top !== axisThickness) {
-                        this.axisAutoPadding.top = axisThickness;
-                        this.layoutPending = true;
-                    }
-                    break;
+                const domain = new Array<any>().concat(...domains);
+                axis.domain = numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
             }
 
             axis.update();
-        });
 
-        this.axes.forEach(axis => {
-            if (axis.linkedTo) {
-                axis.domain = axis.linkedTo.domain;
+            let axisThickness = Math.floor(axis.computeBBox().width);
+
+            switch (position) {
+                case ChartAxisPosition.Left:
+                    this.axisAutoPadding.left = axisThickness;
+                    break;
+                case ChartAxisPosition.Right:
+                    this.axisAutoPadding.right = axisThickness;
+                    break;
+                case ChartAxisPosition.Bottom:
+                    this.axisAutoPadding.bottom = axisThickness;
+                    break;
+                case ChartAxisPosition.Top:
+                    this.axisAutoPadding.top = axisThickness;
+                    break;
             }
         });
     }
