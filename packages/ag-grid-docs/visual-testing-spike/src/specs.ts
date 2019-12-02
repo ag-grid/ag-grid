@@ -121,8 +121,8 @@ export const specs: SpecDefinition[] = [
                 prepare: async page => {
                     await dragFromTo({
                         page,
-                        from: '.ag-header-cell:nth-child(3)',
-                        to: '.ag-header-cell:nth-child(4)',
+                        from: '.ag-header-cell[col-id="age"]',
+                        to: '.ag-header-cell[col-id="year"]',
                         leaveMouseDown: true
                     });
                 }
@@ -215,14 +215,14 @@ export const specs: SpecDefinition[] = [
                 prepare: async page => {
                     await dragFromTo({
                         page,
-                        from: '.ag-row:nth-child(3) .ag-cell:nth-child(1)',
-                        to: '.ag-row:nth-child(6) .ag-cell:nth-child(8)'
+                        from: cellSelector(1, 3),
+                        to: cellSelector(8, 6)
                     });
                     await page.keyboard.down('Meta');
                     await dragFromTo({
                         page,
-                        from: '.ag-row:nth-child(1) .ag-cell:nth-child(3)',
-                        to: '.ag-row:nth-child(8) .ag-cell:nth-child(6)'
+                        from: cellSelector(3, 1),
+                        to: cellSelector(6, 8)
                     });
                     await page.keyboard.up('Meta');
                 }
@@ -236,7 +236,7 @@ export const specs: SpecDefinition[] = [
             width: 500,
             height: 1200
         },
-        themes: ['alpine', 'balham', 'material'], // fresh doesn't support charts
+        withoutThemes: ['fresh'], // fresh doesn't support charts
         selector: '.ag-chart',
         steps: [
             {

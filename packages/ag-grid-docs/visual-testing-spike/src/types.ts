@@ -13,7 +13,6 @@ export interface Viewport {
     selector?: string;
     autoRtl?: boolean;
     community?: boolean;
-    themes?: string[];
     exampleType?: 'generated' | 'multi' | 'vanilla';
 }
 
@@ -24,6 +23,7 @@ export interface SpecDefinition extends SpecBase {
     steps?: SpecStep[];
     urlParams?: UrlParams;
     defaultViewport?: Viewport;
+    withoutThemes?: string[];
 }
 
 export interface Spec extends SpecDefinition {
@@ -31,6 +31,7 @@ export interface Spec extends SpecDefinition {
     steps: SpecStep[];
     urlParams: UrlParams;
     defaultViewport: Viewport;
+    withoutThemes: string[];
 }
 
 export type SpecStep = {

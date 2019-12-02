@@ -42,8 +42,15 @@ export const untickCheckBoxWithin = async (page: Page, parentSelector: string) =
     );
 };
 
-export const cellSelector = (colId: string, rowIndex: number) =>
-    `[row-index="${rowIndex}"] [col-id="${colId}"]`;
+export const cellSelector = (colIdOrIndex: string | number, rowIndex: number): string => {
+    let colAttr = 'col-id';
+    let colValue = colIdOrIndex;
+    if (typeof colIdOrIndex === 'number') {
+        colAttr = 'aria-colindex';
+        colValue = colIdOrIndex + 1; // aria-colindex starts from 1
+    }
+    return `[row-index="${rowIndex}"] [${colAttr}="${colValue}"]`;
+}
 
 export const getElement = async (page: Page, selector: string) => {
     const el = await page.$(selector);

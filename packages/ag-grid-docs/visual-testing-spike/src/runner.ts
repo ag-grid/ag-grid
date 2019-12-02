@@ -2,11 +2,11 @@ import path from 'path';
 import url from 'url';
 import glob from 'glob-promise';
 import chalk from 'chalk';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync } from 'fs';
 import { launch, Browser, Page } from 'puppeteer';
 import PromisePool from 'es6-promise-pool';
 import resemble from 'resemblejs';
-import { Spec, SpecResults, SpecDefinition } from './types';
+import { Spec, SpecResults, SpecDefinition, SpecStep } from './types';
 import { getReportHtml } from './reporting';
 import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
@@ -25,26 +25,29 @@ const buildUrlQuery = (base: string, params: object) => {
     return base;
 };
 
-const createSpecFromDefinition = (spec: SpecDefinition): Spec => {
+const createSpecFromDefinition = (definition: SpecDefinition): Spec => {
     let name: string;
-    if (spec.name) {
-        name = spec.name;
-    } else if (spec.exampleSection) {
-        name = `${spec.exampleSection}-${spec.exampleId}`;
+    if (definition.name) {
+        name = definition.name;
+    } else if (definition.exampleSection) {
+        name = `${definition.exampleSection}-${definition.exampleId}`;
     } else {
-        throw new Error(`Specs require a name or an example section: ${JSON.stringify(spec)}`);
+        throw new Error(
+            `Spec definitions require a name or an example section: ${JSON.stringify(definition)}`
+        );
     }
 
     return {
-        ...spec,
+        ...definition,
         name,
-        steps: spec.steps || [
+        steps: definition.steps || [
             {
                 name: 'default'
             }
         ],
-        urlParams: spec.urlParams || {},
-        defaultViewport: spec.defaultViewport || { width: 800, height: 600 }
+        urlParams: definition.urlParams || {},
+        defaultViewport: definition.defaultViewport || { width: 800, height: 600 },
+        withoutThemes: definition.withoutThemes || []
     };
 };
 
@@ -70,6 +73,11 @@ const setThemeInBrowser = (theme: string) => {
     setTheme();
     document.addEventListener('DOMContentLoaded', setTheme);
 };
+
+const getTestCaseName = (spec: Spec, step: SpecStep) => `${spec.name}-${step.name}`;
+
+const getTestCaseImagePath = (params: RunSuiteParams, testCaseName: string) =>
+    path.join(params.folder, `${testCaseName}.png`);
 
 export const runSpec = async (spec: Spec, context: RunContext) => {
     let page: Page | null = null;
@@ -119,7 +127,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
             if (step.prepare) {
                 await step.prepare(page);
             }
-            const testCaseName = `${spec.name}-${step.name}`;
+            const testCaseName = getTestCaseName(spec, step);
             if (testCaseName.includes(context.filter)) {
                 // let CSS animations stabilise before taking screenshot
                 await wait(500);
@@ -212,9 +220,17 @@ export interface RunSuiteParams {
 
 export const runSuite = async (params: RunSuiteParams) => {
     const log = console.error.bind(console);
+    log('Running suite...');
 
-    const specs: Spec[] = params.specs
+    if (params.mode === 'update') {
+        await ensureEmptyFolder(params.folder, params.clean);
+    }
+
+    let specsAlreadyCreated = 0;
+
+    let specs: Spec[] = params.specs
         .map(createSpecFromDefinition)
+        // generate rtl versions of provided specs
         .flatMap(spec =>
             spec.autoRtl
                 ? [
@@ -227,52 +243,79 @@ export const runSuite = async (params: RunSuiteParams) => {
                   ]
                 : spec
         )
+        // generate alternate theme versions of provided specs
         .flatMap(spec =>
-            (spec.themes || params.defaultThemes).map(theme => ({
-                ...spec,
-                name: `${spec.name}-${theme}`,
-                urlParams: { ...spec.urlParams, theme: `ag-theme-${theme}` }
-            }))
+            params.defaultThemes
+                .filter(theme => !spec.withoutThemes.includes(theme))
+                .map(theme => ({
+                    ...spec,
+                    name: `${spec.name}-${theme}`,
+                    urlParams: { ...spec.urlParams, theme: `ag-theme-${theme}` }
+                }))
         )
+        // apply provided filter
         .filter(spec => {
             return (
                 spec.name.includes(params.filter) ||
-                (spec.steps &&
-                    spec.steps.find(step => `${spec.name}-${step.name}`.includes(params.filter)))
+                spec.steps.find(step => getTestCaseName(spec, step).includes(params.filter))
             );
         });
+
+    const totalImageCount = specs.reduce((acc, spec) => acc + spec.steps.length, 0);
+
     if (params.mode === 'update') {
-        const deleteExisting = params.clean || !params.filter;
-        await ensureEmptyFolder(params.folder, deleteExisting);
+        // skip specs where the images are already present
+        specs = specs.filter(spec => {
+            const testCaseNames = spec.steps.map(step => getTestCaseName(spec, step));
+            const imagePaths = testCaseNames.map(name => getTestCaseImagePath(params, name));
+            const anyStepsMissingImage = !!imagePaths.find(path => !existsSync(path));
+            if (!anyStepsMissingImage) {
+                ++specsAlreadyCreated;
+            }
+            return anyStepsMissingImage;
+        });
     }
 
-    log('Running suite...');
-    const results: SpecResults[] = [];
+    if (specsAlreadyCreated > 0) {
+        log(
+            chalk.rgb(255, 128, 0)(
+                `${chalk.bold(
+                    'NOTE:'
+                )} skipping ${specsAlreadyCreated} specs that have already been generated. Pass --clean to generate all specs from scratch.`
+            )
+        );
+    }
 
+    const results: SpecResults[] = [];
     const browser = await launch();
+
+    let generatedCount = 0;
 
     await runSpecs(specs, {
         browser,
         server: params.server,
         filter: params.filter,
-        handler: async (screenshot, specName) => {
-            const file = path.join(params.folder, `${specName}.png`);
+        handler: async (screenshot, testCaseName) => {
+            const file = getTestCaseImagePath(params, testCaseName);
             if (params.mode === 'update') {
                 await fs.writeFile(file, screenshot);
-                log(`${chalk.blue(specName)} - written to ${path.relative('.', file)}`);
+                log(`🙌  ${chalk.blue(path.relative('.', file))}`);
+                ++generatedCount;
             } else {
                 const oldData = await fs.readFile(file);
                 const difference = await getImageDifferencesAsDataUri(oldData, screenshot);
                 results.push({
-                    name: specName,
+                    name: testCaseName,
                     difference,
                     new: pngBufferToDataUri(screenshot),
                     original: pngBufferToDataUri(oldData)
                 });
                 if (difference) {
-                    log(`${chalk.red.bold(`✘ ${specName}`)} - found difference, see report.html`);
+                    log(
+                        `${chalk.red.bold(`✘ ${testCaseName}`)} - found difference, see report.html`
+                    );
                 } else {
-                    log(`${chalk.green.bold(`✔ ${specName}`)} - OK`);
+                    log(`${chalk.green.bold(`✔ ${testCaseName}`)} - OK`);
                 }
             }
         }
@@ -284,5 +327,7 @@ export const runSuite = async (params: RunSuiteParams) => {
         const html = getReportHtml(results);
         await fs.writeFile(params.reportFile, html);
         log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
+    } else {
+        log(`✨  generated ${generatedCount} images, total image count is ${totalImageCount}`);
     }
 };
