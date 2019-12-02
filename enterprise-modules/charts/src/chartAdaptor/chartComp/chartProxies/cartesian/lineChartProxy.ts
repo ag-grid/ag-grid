@@ -7,6 +7,7 @@ import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../char
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
 import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { isDate } from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -23,14 +24,14 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        this.updateAxes(params.data[0], params.category.id);
-
         const { chart } = this;
 
         if (params.fields.length === 0) {
             chart.removeAllSeries();
             return;
         }
+
+        this.updateAxes(params.data[0], params.category.id);
 
         const fieldIds = params.fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
@@ -119,7 +120,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
         if (!xAxis) { return; }
 
-        const categoryIsDate = value instanceof Date;
+        const categoryIsDate = isDate(value);
 
         if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
             const options: CartesianChartOptions<LineSeriesOptions> = {
