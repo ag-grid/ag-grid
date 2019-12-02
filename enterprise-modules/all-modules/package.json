@@ -15,7 +15,7 @@
     "watchWebpack": "webpack --watch",
     "precheck": "tsc -p tsconfig-precheck.json",
     "webpack-updater": "node webpackUpdater.js",
-    "rollup": "node rollup/build.js",
+    "rollup": "node ../../module-build/rollup/build.js ag-grid-enterprise",
     "lint": "tsc -p tsconfig-lint.json && tslint --project tsconfig.json",
     "test:e2ex": "start-server-and-test start-server http://localhost:8080 e2e",
     "start-server": "http-server .",
