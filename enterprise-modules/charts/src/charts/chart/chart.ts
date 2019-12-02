@@ -480,10 +480,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
 
-                if (legendAutoPadding.bottom !== legendBBox.height) {
-                    legendAutoPadding.bottom = legendBBox.height;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.bottom = legendBBox.height;
                 break;
 
             case 'top':
@@ -493,10 +490,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
 
-                if (legendAutoPadding.top !== legendBBox.height) {
-                    legendAutoPadding.top = legendBBox.height;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.top = legendBBox.height;
                 break;
 
             case 'left':
@@ -506,10 +500,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = legendPadding - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (legendAutoPadding.left !== legendBBox.width) {
-                    legendAutoPadding.left = legendBBox.width;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.left = legendBBox.width;
                 break;
 
             default: // case 'right':
@@ -519,10 +510,7 @@ export abstract class Chart extends Observable {
                 legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                if (legendAutoPadding.right !== legendBBox.width) {
-                    legendAutoPadding.right = legendBBox.width;
-                    this.layoutPending = true;
-                }
+                legendAutoPadding.right = legendBBox.width;
                 break;
         }
 
