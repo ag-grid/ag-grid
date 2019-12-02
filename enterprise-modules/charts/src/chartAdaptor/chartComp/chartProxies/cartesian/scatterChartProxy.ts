@@ -62,7 +62,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
             const { xField: xFieldDefinition, yField: yFieldDefinition, sizeField: sizeFieldDefinition } = seriesDefinition;
 
-            series.title = `${xFieldDefinition.displayName} vs ${yFieldDefinition.displayName}`;
+            series.title = `${yFieldDefinition.displayName} vs ${xFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;
             series.xName = xFieldDefinition.displayName;
             series.yKey = yFieldDefinition.colId;
