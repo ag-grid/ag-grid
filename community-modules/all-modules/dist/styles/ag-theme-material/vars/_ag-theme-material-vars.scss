@@ -1,0 +1,194 @@
+@import "./ag-theme-material-import-legacy-vars";
+
+// Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
+$ag-mat-grey-0: #fff;
+$ag-mat-grey-50: #fafafa;
+$ag-mat-grey-100: #f5f5f5;
+$ag-mat-grey-200: #eee;
+$ag-mat-grey-300: #e2e2e2;
+
+// Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
+$ag-mat-indigo-500: #3f51b5;
+$ag-mat-pink-A200: #ff4081;
+$ag-mat-pink-50: #fce4ec;
+$ag-mat-indigo-50: #e8eaf6;
+
+// opacity values used for black values, taken from material spec
+$ag-foreground-opacity: 0.87 !default;
+$ag-secondary-foreground-color-opacity: 0.54 !default;
+$ag-disabled-foreground-color-opacity: 0.38 !default;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// The variables below can be overriden to adjust the look up to the app color scheme
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Sizing
+$ag-grid-size: 8px !default;
+$ag-icon-size: 18px !default;
+$ag-header-height: $ag-grid-size * 7 !default;
+$ag-row-height: $ag-grid-size * 6 !default;
+$ag-row-border-width: 1px !default;
+$ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-virtual-item-height: $ag-grid-size * 5;
+$ag-header-icon-size: 14px !default;
+
+// Fonts
+$ag-font-family: "Roboto", sans-serif !default; // legacy: font
+$ag-font-size: 13px !default;
+$ag-font-weight: 400 !default;
+
+$ag-secondary-font-family: "Roboto", sans-serif !default; //font-secondary
+$ag-secondary-font-size: 12px !default; // font-secondary-size
+$ag-secondary-font-weight: 700 !default; // font-secondary-weight
+
+// Misc
+$ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
+$ag-card-radius: 2px;
+
+// Colors
+$ag-background-color: $ag-mat-grey-0 !default;
+$ag-foreground-color: rgba(#000, $ag-foreground-opacity) !default; // foreground
+$ag-secondary-foreground-color: rgba(#000, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+$ag-disabled-foreground-color: rgba(#000, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-header-background-color: $ag-background-color !default;
+$ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
+$ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
+$ag-header-foreground-color: $ag-secondary-foreground-color !default;
+
+$ag-border-color: $ag-mat-grey-300 !default;
+$ag-primary-color: $ag-mat-indigo-500 !default;
+$ag-accent-color: $ag-mat-pink-A200 !default;
+$ag-icon-color: #333 !default;
+$ag-alt-icon-color: transparent !default;
+
+$ag-editor-background-color: $ag-mat-grey-50 !default;
+$ag-panel-background-color: $ag-mat-grey-200 !default;
+$ag-tool-panel-background-color: $ag-mat-grey-50 !default;
+$ag-chip-background-color: $ag-mat-grey-300 !default;
+
+$ag-range-selection-background-color: transparentize(darken($ag-mat-indigo-50, 30%), 0.9) !default;
+$ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
+$ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
+$ag-range-selection-highlight-color: $ag-mat-pink-50 !default;
+$ag-range-selected-color-1: opacify($ag-range-selection-background-color, 0.1) !default;
+$ag-range-selected-color-2: opacify($ag-range-selection-background-color, 0.2) !default;
+$ag-range-selected-color-3: opacify($ag-range-selection-background-color, 0.3) !default;
+$ag-range-selected-color-4: opacify($ag-range-selection-background-color, 0.4) !default;
+
+$ag-hover-color: $ag-mat-grey-50 !default;
+$ag-selected-color: $ag-mat-grey-200 !default;
+$ag-cell-data-changed-color: $ag-mat-pink-50 !default;
+
+// delta changes
+$ag-value-change-delta-up-color: #43a047 !default;
+$ag-value-change-delta-down-color: #e53935 !default;
+$ag-value-change-value-highlight-background-color: #00acc1 !default;
+
+// Icons
+@import "./font-vars";
+
+@import "../../ag-theme-base/vars/ag-theme-base-vars";
+
+$ag-params: (
+    font-family: $ag-font-family,
+    font-size: $ag-font-size,
+    font-weight: $ag-font-weight,
+    secondary-font-family: $ag-secondary-font-family,
+    secondary-font-size: $ag-secondary-font-size,
+    secondary-font-weight: $ag-secondary-font-weight,
+
+    accent-color: $ag-accent-color,
+    primary-color: $ag-primary-color,
+    hover-color: $ag-hover-color,
+    selected-color: $ag-selected-color,
+
+    background-color: $ag-background-color,
+
+    foreground-color: $ag-foreground-color,
+    foreground-opacity: $ag-foreground-opacity,
+    secondary-foreground-color-opacity: $ag-secondary-foreground-color-opacity,
+    secondary-foreground-color: $ag-secondary-foreground-color,
+    disabled-foreground-color-opacity: $ag-disabled-foreground-color-opacity,
+    disabled-foreground-color: $ag-disabled-foreground-color,
+
+    border-color: $ag-border-color,
+    scroll-spacer-border: $ag-scroll-spacer-border,
+
+    panel-background-color: $ag-panel-background-color,
+    tool-panel-background-color: $ag-tool-panel-background-color,
+    header-background-color: $ag-header-background-color,
+    header-cell-hover-background-color: $ag-header-cell-hover-background-color,
+    header-cell-moving-background-color: $ag-header-cell-moving-background-color,
+    header-foreground-color: $ag-header-foreground-color,
+
+    focused-textbox-border: 2px solid $ag-primary-color,
+    input-bottom-border: 2px solid $ag-border-color,
+    input-bottom-border-disabled: 1px solid $ag-border-color,
+    value-change-delta-up-color: $ag-value-change-delta-up-color,
+    value-change-delta-down-color: $ag-value-change-delta-down-color,
+    value-change-value-highlight-background-color: $ag-value-change-value-highlight-background-color,
+
+    button-background-color: transparent,
+    icon-color: $ag-icon-color,
+    cell-data-changed-color: $ag-cell-data-changed-color,
+    chip-background-color: $ag-chip-background-color,
+    card-background-color: $ag-background-color,
+    editor-background-color: $ag-editor-background-color,
+    
+    range-selection-background-color: $ag-range-selection-background-color,
+    range-selection-chart-background-color: $ag-range-selection-chart-background-color,
+    range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
+    range-selection-highlight-color: $ag-range-selection-highlight-color,
+    ag-range-selected-color-1: $ag-range-selected-color-1,
+    ag-range-selected-color-2: $ag-range-selected-color-2,
+    ag-range-selected-color-3: $ag-range-selected-color-3,
+    ag-range-selected-color-4: $ag-range-selected-color-4,
+    icon-opacity: $ag-foreground-opacity,
+
+    grid-size: $ag-grid-size,
+    input-height: $ag-grid-size * 5,
+    input-border-width: 0,
+
+    icon-size: $ag-icon-size,
+    header-icon-size: $ag-header-icon-size,
+    row-height: $ag-row-height,
+    row-border-width: $ag-row-border-width,
+    header-height: $ag-header-height,
+    virtual-item-height: $ag-virtual-item-height,
+    cell-horizontal-padding: $ag-cell-horizontal-padding,
+    cell-horizontal-border: $ag-cell-horizontal-border,
+    toolpanel-indent-size: $ag-toolpanel-indent-size,
+    row-group-indent-size: $ag-row-group-indent-size,
+
+    button-text-transform: uppercase,
+    card-radius: $ag-card-radius,
+    card-shadow: $ag-card-shadow,
+    use-icons-for-pager-buttons: true,
+    customize-inputs: true,
+    customize-buttons: true,
+    full-width-tabs: true,
+
+    tooltip-background-color: $ag-tooltip-background-color,
+    tooltip-foreground-color: $ag-tooltip-foreground-color,
+    tooltip-padding: $ag-tooltip-padding,
+    tooltip-border-radius: $ag-tooltip-border-radius,
+    tooltip-border-color: $ag-tooltip-border-color,
+    tooltip-border-width: $ag-tooltip-border-width,
+    tooltip-border-style: $ag-tooltip-border-style,
+
+    dialog-background-color: $ag-dialog-background-color,
+    dialog-border-size: $ag-dialog-border-size,
+    dialog-border-style: $ag-dialog-border-style,
+    dialog-border-color: $ag-dialog-border-color,
+
+    dialog-title-background-color: $ag-dialog-title-background-color,
+    dialog-title-foreground-color: $ag-dialog-title-foreground-color,
+    dialog-title-height: $ag-dialog-title-height,
+    dialog-title-font-family: $ag-dialog-title-font-family,
+    dialog-title-font-size: $ag-dialog-title-font-size,
+    dialog-title-font-weight: $ag-dialog-title-font-weight,
+    dialog-title-padding: $ag-dialog-title-padding,
+    dialog-title-icon-size: $ag-dialog-title-icon-size
+);

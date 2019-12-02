@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/ts/interfaces/iServerSideRowModel.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iServerSideRowModel.js","sourcesContent":["import { IRowModel } from \"./iRowModel\";\n\nexport interface IServerSideRowModel extends IRowModel {\n    purgeCache(route?: string[]): void;\n    getBlockState(): any;\n    isLoading(): boolean;\n}"]}

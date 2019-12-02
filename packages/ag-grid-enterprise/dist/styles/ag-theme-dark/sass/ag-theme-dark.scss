@@ -1,0 +1,16 @@
+@import "../vars/ag-theme-dark-vars";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
+
+.ag-theme-dark {
+    @include ag-theme-classic($params);
+
+    input,
+    select {
+        background-color: $card-background-color;
+        color: $ag-foreground-color;
+    }
+
+    .ag-floating-filter-body input[readonly] {
+        background: rgba(48, 46, 46, 0.3);
+    }
+}

@@ -1,15 +1,15 @@
 #!/bin/bash
 
-SOURCE_DIR="grid-core"
+SOURCE_DIR="core"
 
 COMMUNITY_ROOT=./community-modules
-SOURCE_COMMUNITY_LICENSE=$COMMUNITY_ROOT/grid-core/LICENSE.txt
+SOURCE_COMMUNITY_LICENSE=$COMMUNITY_ROOT/core/LICENSE.txt
 LEGACY_ROOT=./packages
 LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-polymer" "ag-grid-react" "ag-grid-vue")
 LEGACY_ENTERPRISE_DIRS=(ag-grid-enterprise)
 
 ENTERPRISE_ROOT=./enterprise-modules
-SOURCE_ENTERPRISE_LICENSE=$ENTERPRISE_ROOT/grid-core/LICENSE.html
+SOURCE_ENTERPRISE_LICENSE=$ENTERPRISE_ROOT/core/LICENSE.html
 
 function copyLicenses {
   local directory_root="$1"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>aggregation</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="aggregation" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M5.5,6.5 L5.5,11.5 L11.5,11.5 L11.5,6.5 L5.5,6.5 Z M3.5,4.5 L11.5,4.5 C12.6045695,4.5 13.5,5.3954305 13.5,6.5 L13.5,11.5 C13.5,12.6045695 12.6045695,13.5 11.5,13.5 L3.5,13.5 L3.5,4.5 Z" id="Rectangle-5-Copy" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(8.500000, 9.000000) rotate(90.000000) translate(-8.500000, -9.000000) "></path>
+        <path d="M17.5,11.5 L17.5,16.5 L23.5,16.5 L23.5,11.5 L17.5,11.5 Z M15.5,9.5 L23.5,9.5 C24.6045695,9.5 25.5,10.3954305 25.5,11.5 L25.5,16.5 C25.5,17.6045695 24.6045695,18.5 23.5,18.5 L15.5,18.5 L15.5,9.5 Z" id="Rectangle-5-Copy-2" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(20.500000, 14.000000) rotate(90.000000) translate(-20.500000, -14.000000) "></path>
+        <path d="M5.5,20.5 L5.5,25.5 L11.5,25.5 L11.5,20.5 L5.5,20.5 Z M3.5,18.5 L11.5,18.5 C12.6045695,18.5 13.5,19.3954305 13.5,20.5 L13.5,25.5 C13.5,26.6045695 12.6045695,27.5 11.5,27.5 L3.5,27.5 L3.5,18.5 Z" id="Rectangle-5-Copy-3" fill="#000000" fill-rule="nonzero" opacity="0.900000036" transform="translate(8.500000, 23.000000) rotate(90.000000) translate(-8.500000, -23.000000) "></path>
+        <path d="M18,6 L18,4 L26,4 C27.6568542,4 29,5.34314575 29,7 L29,8 L27,8 L27,7 C27,6.44771525 26.5522847,6 26,6 L18,6 Z" id="Path-5" fill="#000000" fill-rule="nonzero"></path>
+        <path d="M20,8.5 L20,14.5 L18,14.5 L18,6.5 L26,6.5 C27.6568542,6.5 29,7.84314575 29,9.5 L29,30 L27,30 L27,9.5 C27,8.94771525 26.5522847,8.5 26,8.5 L20,8.5 Z" id="Path-5-Copy" fill="#000000" fill-rule="nonzero" transform="translate(23.500000, 18.250000) scale(1, -1) translate(-23.500000, -18.250000) "></path>
+    </g>
+</svg>

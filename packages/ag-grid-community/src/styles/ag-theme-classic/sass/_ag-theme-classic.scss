@@ -1,0 +1,187 @@
+@import '../../ag-theme-base/sass/ag-theme-base';
+
+@mixin ag-theme-classic($params) {
+    $ag-border-color: map-get($params, "border-color");
+    $editor-background-color: map-get($params, "editor-background-color");
+    $tab-background-color: map-get($params, "tab-background-color");
+    $ag-grid-size: map-get($params, "grid-size");
+    $header-background-image: map-get($params, "header-background-image");
+    $ag-header-height: map-get($params, "header-height");
+    $ag-cell-horizontal-border: map-get($params, "cell-horizontal-border");
+    $focused-cell-border-color: map-get($params, "focused-cell-border-color");
+    $menu-option-active-color: map-get($params, "menu-option-active-color");
+    $chip-background-color: map-get($params, "chip-background-color");
+    $ag-input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
+    $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
+    $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
+    $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
+    $cell-highlight-border: map-get($params, "cell-highlight-border");
+    $ag-row-height: map-get($params, "row-height");
+    $ag-row-border-width: map-get($params, "row-border-width");
+    $ag-icon-size: map-get($params, "icon-size");
+
+    .ag-body-viewport {
+        background-color: map-get($params, "panel-background-color");
+    }
+
+    %card {
+        background-color: $editor-background-color;
+        border: 1px solid $ag-border-color;
+    }
+
+    %tab {
+        border: 1px solid transparent;
+        border-bottom-width: 0;
+        margin: $ag-grid-size;
+        margin-bottom: 0;
+        padding: $ag-grid-size $ag-grid-size * 2;
+    }
+
+    %selected-tab {
+        background-color: $editor-background-color;
+        border-bottom: 2px solid $editor-background-color !important;
+        border-color: $ag-border-color;
+    }
+
+    @include ag-grid-theme($params);
+
+    .ag-tab-header {
+        background-color: $tab-background-color;
+    }
+
+    .ag-faded {
+        opacity: 0.3;
+    }
+
+    .ag-column-drop-horizontal.ag-column-drop {
+        border: 1px solid $ag-border-color;
+        border-bottom: 0;
+    }
+
+    .ag-column-drop-horizontal.ag-column-drop:last-child {
+        border-left: 0;
+    }
+
+    .ag-header-cell-resize::after {
+        height: $ag-header-height;
+        margin-top: 0;
+    }
+
+    .ag-header-cell {
+        border-right: 1px solid $ag-border-color;
+    }
+
+    .ag-header-group-cell {
+        border-right: 1px solid $ag-border-color;
+    }
+
+    .ag-root {
+        border: 1px solid $ag-border-color;
+    }
+
+    .ag-tool-panel-wrapper {
+        border-right: 1px solid $ag-border-color;
+    }
+
+    .ag-floating-filter-button {
+        margin-top: $ag-grid-size * 2;
+    }
+
+    .ag-filter .ag-filter-apply-panel {
+        border-top: 1px solid $ag-border-color;
+        justify-content: flex-start;
+    }
+
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected) {
+        border: 1px solid $focused-cell-border-color;
+    }
+
+    @if $menu-option-active-color {
+        .ag-menu .ag-menu-option-active {
+            background-color: $menu-option-active-color;
+        }
+    }
+
+    .ag-menu .ag-menu-option {
+        line-height: $ag-grid-size * 6;
+    }
+
+    .ag-column-drop-cell {
+        background: $chip-background-color;
+        @if $header-background-image {
+            background-image: $header-background-image;
+        }
+        border: 1px solid $ag-border-color;
+        border-radius: 0;
+        min-height: $ag-grid-size * 4.5;
+
+        .ag-column-drop-cell-button {
+            margin-bottom: $ag-grid-size / 2;
+            margin-top: $ag-grid-size / 2;
+        }
+
+        .ag-column-drop-cell-button:hover {
+            border: 1px solid $ag-border-color;
+        }
+    }
+
+    .ag-cell-highlight {
+        background-color: $ag-range-selected-color-1;
+        border-bottom: $cell-highlight-border;
+    }
+
+    .ag-cell-highlight-animation {
+        transition: all 1s;
+    }
+
+    .ag-cell.ag-cell-inline-editing {
+        height: $ag-row-height;
+        padding: 0;
+    }
+
+    .ag-column-select-panel {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
+            height: $ag-grid-size * 5;
+        }
+    }
+
+    // bootstrap overrides
+    .ag-tab {
+        box-sizing: initial;
+    }
+
+    .ag-selection-checkbox span {
+        position: relative;
+        top: 0;
+    }
+
+    .ag-rich-select-value {
+        border-bottom: 1px solid $ag-border-color;
+    }
+
+    .ag-header-cell-moving .ag-header-cell-label {
+        opacity: 0.5;
+    }
+
+    .ag-header-cell-moving {
+        background-color: map-get($params, "header-cell-moving-background-color");
+    }
+
+    .ag-overlay-loading-wrapper {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ag-overlay-loading-center {
+        background-color: #fff;
+        border: 1px solid $ag-border-color;
+        border-radius: 10px;
+        color: black;
+        padding: 10px;
+    }
+
+    .ag-column-name-filter {
+        height: $ag-grid-size * 4;
+    }
+}

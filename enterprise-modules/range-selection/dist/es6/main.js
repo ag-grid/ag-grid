@@ -1,0 +1,1 @@
+export { RangeSelectionModule } from "./rangeSelectionModule";

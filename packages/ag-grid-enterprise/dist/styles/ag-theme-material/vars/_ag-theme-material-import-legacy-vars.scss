@@ -1,0 +1,156 @@
+// We prefixed all global vars with "ag-" to avoid clashes with other libraries
+// Import old-style var names to avoid breaking 3rd party themes that use them
+
+@if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
+
+  @if (variable-exists("cell-data-changed-color") and not variable-exists("ag-cell-data-changed-color")) {
+    $ag-cell-data-changed-color: $cell-data-changed-color;
+  }
+
+  @if (variable-exists("chip-background-color") and not variable-exists("ag-chip-background-color")) {
+    $ag-chip-background-color: $chip-background-color;
+  }
+
+  @if (variable-exists("disabled-foreground-color") and not variable-exists("ag-disabled-foreground-color")) {
+    $ag-disabled-foreground-color: $disabled-foreground-color;
+  }
+
+  @if (variable-exists("editor-background-color") and not variable-exists("ag-editor-background-color")) {
+    $ag-editor-background-color: $editor-background-color;
+  }
+
+  @if (variable-exists("header-cell-hover-background-color") and not variable-exists("ag-header-cell-hover-background-color")) {
+    $ag-header-cell-hover-background-color: $header-cell-hover-background-color;
+  }
+
+  @if (variable-exists("hover-color") and not variable-exists("ag-hover-color")) {
+    $ag-hover-color: $hover-color;
+  }
+
+  @if (variable-exists("mat-grey-0") and not variable-exists("ag-mat-grey-0")) {
+    $ag-mat-grey-0: $mat-grey-0;
+  }
+
+  @if (variable-exists("mat-grey-100") and not variable-exists("ag-mat-grey-100")) {
+    $ag-mat-grey-100: $mat-grey-100;
+  }
+
+  @if (variable-exists("mat-grey-200") and not variable-exists("ag-mat-grey-200")) {
+    $ag-mat-grey-200: $mat-grey-200;
+  }
+
+  @if (variable-exists("mat-grey-300") and not variable-exists("ag-mat-grey-300")) {
+    $ag-mat-grey-300: $mat-grey-300;
+  }
+
+  @if (variable-exists("mat-grey-50") and not variable-exists("ag-mat-grey-50")) {
+    $ag-mat-grey-50: $mat-grey-50;
+  }
+
+  @if (variable-exists("mat-indigo-50") and not variable-exists("ag-mat-indigo-50")) {
+    $ag-mat-indigo-50: $mat-indigo-50;
+  }
+
+  @if (variable-exists("mat-indigo-500") and not variable-exists("ag-mat-indigo-500")) {
+    $ag-mat-indigo-500: $mat-indigo-500;
+  }
+
+  @if (variable-exists("mat-pink-50") and not variable-exists("ag-mat-pink-50")) {
+    $ag-mat-pink-50: $mat-pink-50;
+  }
+
+  @if (variable-exists("mat-pink-A200") and not variable-exists("ag-mat-pink-A200")) {
+    $ag-mat-pink-A200: $mat-pink-A200;
+  }
+
+  @if (variable-exists("panel-background-color") and not variable-exists("ag-panel-background-color")) {
+    $ag-panel-background-color: $panel-background-color;
+  }
+
+  @if (variable-exists("params") and not variable-exists("ag-params")) {
+    $ag-params: $params;
+  }
+
+  @if (variable-exists("primary-color") and not variable-exists("ag-primary-color")) {
+    $ag-primary-color: $primary-color;
+  }
+
+  @if (variable-exists("range-selection-highlight-color") and not variable-exists("ag-range-selection-highlight-color")) {
+    $ag-range-selection-highlight-color: $range-selection-highlight-color;
+  }
+
+  @if (variable-exists("secondary-foreground-color") and not variable-exists("ag-secondary-foreground-color")) {
+    $ag-secondary-foreground-color: $secondary-foreground-color;
+  }
+
+  @if (variable-exists("selected-color") and not variable-exists("ag-selected-color")) {
+    $ag-selected-color: $selected-color;
+  }
+
+  @if (variable-exists("value-change-delta-down-color") and not variable-exists("ag-value-change-delta-down-color")) {
+    $ag-value-change-delta-down-color: $value-change-delta-down-color;
+  }
+
+  @if (variable-exists("value-change-delta-up-color") and not variable-exists("ag-value-change-delta-up-color")) {
+    $ag-value-change-delta-up-color: $value-change-delta-up-color;
+  }
+
+  @if (variable-exists("value-change-value-highlight-background-color") and not variable-exists("ag-value-change-value-highlight-background-color")) {
+    $ag-value-change-value-highlight-background-color: $value-change-value-highlight-background-color;
+  }
+
+  // additional support for variables prefixed `ag-mat-` which was the original format for the material theme and is still supported
+  @if variable-exists(ag-mat-foreground-opacity) { $ag-foreground-opacity: $ag-mat-foreground-opacity };
+  @if variable-exists(ag-mat-secondary-foreground-color-opacity) { $ag-secondary-foreground-color-opacity: $ag-mat-secondary-foreground-color-opacity };
+  @if variable-exists(ag-mat-disabled-foreground-color-opacity) { $ag-disabled-foreground-color-opacity: $ag-mat-disabled-foreground-color-opacity };
+  @if variable-exists(ag-mat-grid-size) { $ag-grid-size: $ag-mat-grid-size };
+  @if variable-exists(ag-mat-icon-size) { $ag-icon-size: $ag-mat-icon-size };
+  @if variable-exists(ag-mat-header-height) { $ag-header-height: $ag-mat-header-height };
+  @if variable-exists(ag-mat-row-height) { $ag-row-height: $ag-mat-row-height };
+  @if variable-exists(ag-mat-cell-horizontal-padding) { $ag-cell-horizontal-padding: $ag-mat-cell-horizontal-padding };
+  @if variable-exists(ag-mat-virtual-item-height) { $ag-virtual-item-height: $ag-mat-virtual-item-height };
+  @if variable-exists(ag-mat-header-icon-size) { $ag-header-icon-size: $ag-mat-header-icon-size };
+  @if variable-exists(ag-mat-font-family) { $ag-font-family: $ag-mat-font-family };
+  @if variable-exists(ag-mat-font-size) { $ag-font-size: $ag-mat-font-size };
+  @if variable-exists(ag-mat-font-weight) { $ag-font-weight: $ag-mat-font-weight };
+  @if variable-exists(ag-mat-secondary-font-family) { $ag-secondary-font-family: $ag-mat-secondary-font-family };
+  @if variable-exists(ag-mat-secondary-font-size) { $ag-secondary-font-size: $ag-mat-secondary-font-size };
+  @if variable-exists(ag-mat-secondary-font-weight) { $ag-secondary-font-weight: $ag-mat-secondary-font-weight };
+  @if variable-exists(ag-mat-foreground-color) { $ag-foreground-color: $ag-mat-foreground-color };
+  @if variable-exists(ag-mat-secondary-foreground-color) { $ag-secondary-foreground-color: $ag-mat-secondary-foreground-color };
+  @if variable-exists(ag-mat-disabled-foreground-color) { $ag-disabled-foreground-color: $ag-mat-disabled-foreground-color };
+  @if variable-exists(ag-mat-border-color) { $ag-border-color: $ag-mat-border-color };
+  @if variable-exists(ag-mat-primary-color) { $ag-primary-color: $ag-mat-primary-color };
+  @if variable-exists(ag-mat-accent-color) { $ag-accent-color: $ag-mat-accent-color };
+  @if variable-exists(ag-mat-icon-color) { $ag-icon-color: $ag-mat-icon-color };
+  @if variable-exists(ag-mat-background-color) { $ag-background-color: $ag-mat-background-color };
+  @if variable-exists(ag-mat-editor-background-color) { $ag-editor-background-color: $ag-mat-editor-background-color };
+  @if variable-exists(ag-mat-panel-background-color) { $ag-panel-background-color: $ag-mat-panel-background-color };
+  @if variable-exists(ag-mat-tool-panel-background-color) { $ag-tool-panel-background-color: $ag-mat-tool-panel-background-color };
+  @if variable-exists(ag-mat-chip-background-color) { $ag-chip-background-color: $ag-mat-chip-background-color };
+  @if variable-exists(ag-mat-range-selection-background-color) { $ag-range-selection-background-color: $ag-mat-range-selection-background-color };
+  @if variable-exists(ag-mat-range-selection-highlight-color) { $ag-range-selection-highlight-color: $ag-mat-range-selection-highlight-color };
+  @if variable-exists(ag-mat-hover-color) { $ag-hover-color: $ag-mat-hover-color };
+  @if variable-exists(ag-mat-selected-color) { $ag-selected-color: $ag-mat-selected-color };
+  @if variable-exists(ag-mat-cell-data-changed-color) { $ag-cell-data-changed-color: $ag-mat-cell-data-changed-color };
+  @if variable-exists(ag-mat-font) { $ag-font-family: $ag-mat-font; }
+  @if variable-exists(ag-mat-font-secondary) { $ag-secondary-font-family: $ag-mat-font-secondary; }
+  @if variable-exists(ag-mat-font-secondary-size) { $ag-secondary-font-size: $ag-mat-font-secondary-size; }
+  @if variable-exists(ag-mat-font-secondary-weight) { $ag-secondary-font-weight: $ag-mat-font-secondary-weight; }
+  @if variable-exists(ag-mat-primary) { $ag-primary-color: $ag-mat-primary; }
+  @if variable-exists(ag-mat-secondary) { $secondary-color: $ag-mat-secondary; }
+  @if variable-exists(ag-mat-foreground) { $ag-foreground-color: $ag-mat-foreground; }
+  @if variable-exists(ag-mat-foreground-secondary) { $ag-secondary-foreground-color: $ag-mat-foreground-secondary; }
+  @if variable-exists(ag-mat-foreground-disabled) { $ag-disabled-foreground-color: $ag-mat-foreground-disabled; }
+  @if variable-exists(ag-mat-background) { $ag-background-color: $ag-mat-background; }
+  @if variable-exists(ag-mat-background-editor) { $ag-editor-background-color: $ag-mat-background-editor; }
+  @if variable-exists(ag-mat-panel-background) { $ag-panel-background-color: $ag-mat-panel-background; }
+  @if variable-exists(ag-mat-tool-panel-background) { $ag-tool-panel-background-color: $ag-mat-tool-panel-background; }
+  @if variable-exists(ag-mat-chip-background) { $ag-chip-background-color: $ag-mat-chip-background; }
+  @if variable-exists(ag-mat-range-selection-background) { $ag-range-selection-background-color: $ag-mat-range-selection-background; }
+  @if variable-exists(ag-mat-range-selection-highlight) { $ag-range-selection-highlight-color: $ag-mat-range-selection-highlight; }
+  @if variable-exists(ag-mat-cell-data-changed) { $ag-cell-data-changed-color: $ag-mat-cell-data-changed; }
+  @if variable-exists(ag-mat-hover) { $ag-hover-color: $ag-mat-hover; }
+  @if variable-exists(ag-mat-selected) { $ag-selected-color: $ag-mat-selected; }
+
+}

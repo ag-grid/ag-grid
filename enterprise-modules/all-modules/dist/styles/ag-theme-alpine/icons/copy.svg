@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(9.000000, 8.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M5.101,19.999 C2.295,19.999 0.015,17.721 0.015,14.913 L0.015,5.101 C0.015,2.293 2.293,0.015 5.101,0.015 L12.929,0.015 C15.735,0.015 18.015,2.293 18.015,5.101 L18.015,14.913 C18.015,17.721 15.737,19.999 12.929,19.999 L5.101,19.999 Z M13.089,2.015 L5.001,2.015 C3.379,2.015 2.063,3.331 2.063,4.953 L2.063,15.085 C2.063,16.707 3.379,18.023 5.001,18.023 L13.089,18.023 C14.709,18.023 16.025,16.707 16.025,15.085 L16.025,4.953 C16.025,3.331 14.709,2.015 13.089,2.015 Z"></path>
+        </g>
+        <path d="M21,4 L21,6 L10,6 C8.34314575,6 7,7.34314575 7,9 L7,23 L5,23 L5,9 C5,6.23857625 7.23857625,4 10,4 L21,4 Z" id="Path-3" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+</svg>

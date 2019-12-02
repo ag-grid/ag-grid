@@ -1,0 +1,28 @@
+@import "../vars/ag-theme-balham-dark-vars";
+@import "../../ag-theme-balham/sass/ag-theme-balham-common";
+
+.ag-theme-balham-dark {
+    @include ag-theme-balham($ag-params);
+
+    input,
+    select {
+        background-color: $ag-odd-row-background-color;
+        color: $ag-foreground-color;
+    }
+
+    .ag-filter-toolpanel-body {
+        background-color: $ag-background-color;
+    }
+
+    .ag-angle-select {
+        .ag-angle-select-field {
+            .ag-parent-circle {
+                background-color: #ffffff;
+            }
+            .ag-child-circle {
+                background-color: #4c4c4c;
+            }
+        }
+    }
+}
+

@@ -1,0 +1,94 @@
+// We prefixed all global vars with "ag-" to avoid clashes with other libraries
+// Import old-style var names to avoid breaking 3rd party themes that use them
+
+@if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
+
+  @if (variable-exists("active") and not variable-exists("ag-active")) {
+    $ag-active: $active;
+  }
+  
+  @if (variable-exists("alt-background") and not variable-exists("ag-alt-background")) {
+    $ag-alt-background: $alt-background;
+  }
+  
+  @if (variable-exists("border-radius") and not variable-exists("ag-border-radius")) {
+    $ag-border-radius: $border-radius;
+  }
+  
+  @if (variable-exists("cell-data-changed-color") and not variable-exists("ag-cell-data-changed-color")) {
+    $ag-cell-data-changed-color: $cell-data-changed-color;
+  }
+  
+  @if (variable-exists("chip-background-color") and not variable-exists("ag-chip-background-color")) {
+    $ag-chip-background-color: $chip-background-color;
+  }
+  
+  @if (variable-exists("chrome-background") and not variable-exists("ag-chrome-background")) {
+    $ag-chrome-background: $chrome-background;
+  }
+  
+  @if (variable-exists("default-background") and not variable-exists("ag-default-background")) {
+    $ag-default-background: $default-background;
+  }
+  
+  @if (variable-exists("disabled-foreground-color") and not variable-exists("ag-disabled-foreground-color")) {
+    $ag-disabled-foreground-color: $disabled-foreground-color;
+  }
+  
+  @if (variable-exists("editor-background-color") and not variable-exists("ag-editor-background-color")) {
+    $ag-editor-background-color: $editor-background-color;
+  }
+  
+  @if (variable-exists("header-cell-hover-background-color") and not variable-exists("ag-header-cell-hover-background-color")) {
+    $ag-header-cell-hover-background-color: $header-cell-hover-background-color;
+  }
+  
+  @if (variable-exists("hover-color") and not variable-exists("ag-hover-color")) {
+    $ag-hover-color: $hover-color;
+  }
+  
+  @if (variable-exists("odd-row-background-color") and not variable-exists("ag-odd-row-background-color")) {
+    $ag-odd-row-background-color: $odd-row-background-color;
+  }
+  
+  @if (variable-exists("panel-background-color") and not variable-exists("ag-panel-background-color")) {
+    $ag-panel-background-color: $panel-background-color;
+  }
+  
+  @if (variable-exists("primary-color") and not variable-exists("ag-primary-color")) {
+    $ag-primary-color: $primary-color;
+  }
+  
+  @if (variable-exists("range-selection-highlight-color") and not variable-exists("ag-range-selection-highlight-color")) {
+    $ag-range-selection-highlight-color: $range-selection-highlight-color;
+  }
+  
+  @if (variable-exists("row-floating-background-color") and not variable-exists("ag-row-floating-background-color")) {
+    $ag-row-floating-background-color: $row-floating-background-color;
+  }
+  
+  @if (variable-exists("row-stub-background-color") and not variable-exists("ag-row-stub-background-color")) {
+    $ag-row-stub-background-color: $row-stub-background-color;
+  }
+  
+  @if (variable-exists("secondary-foreground-color") and not variable-exists("ag-secondary-foreground-color")) {
+    $ag-secondary-foreground-color: $secondary-foreground-color;
+  }
+  
+  @if (variable-exists("selected-color") and not variable-exists("ag-selected-color")) {
+    $ag-selected-color: $selected-color;
+  }
+  
+  @if (variable-exists("value-change-delta-down-color") and not variable-exists("ag-value-change-delta-down-color")) {
+    $ag-value-change-delta-down-color: $value-change-delta-down-color;
+  }
+  
+  @if (variable-exists("value-change-delta-up-color") and not variable-exists("ag-value-change-delta-up-color")) {
+    $ag-value-change-delta-up-color: $value-change-delta-up-color;
+  }
+  
+  @if (variable-exists("value-change-value-highlight-background-color") and not variable-exists("ag-value-change-value-highlight-background-color")) {
+    $ag-value-change-value-highlight-background-color: $value-change-value-highlight-background-color;
+  }  
+
+}

@@ -1,0 +1,38 @@
+import { Component, OriginalColumnGroupChild } from "@ag-grid-community/core";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+export declare type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
+export declare class ToolPanelFilterGroupComp extends Component {
+    private static TEMPLATE;
+    private filterGroupComp;
+    private gridApi;
+    private filterManager;
+    private eventService;
+    private gridOptionsWrapper;
+    private columnController;
+    private readonly depth;
+    private readonly columnGroup;
+    private childFilterComps;
+    private expandedCallback;
+    private filterGroupName;
+    constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[], expandedCallback: () => void, depth: number);
+    private preConstruct;
+    init(): void;
+    refreshFilters(): void;
+    isColumnGroup(): boolean;
+    isExpanded(): boolean;
+    getChildren(): ToolPanelFilterItem[];
+    getFilterGroupName(): string;
+    getFilterGroupId(): string;
+    hideGroupItem(hide: boolean, index: number): void;
+    hideGroup(hide: boolean): void;
+    private addTopLevelColumnGroupExpandListener;
+    private addFilterChangedListeners;
+    private onFilterOpened;
+    expand(): void;
+    collapse(): void;
+    private setGroupTitle;
+    private getColumnGroupName;
+    private getColumnName;
+    private destroyFilters;
+    destroy(): void;
+}

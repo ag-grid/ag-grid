@@ -1,0 +1,55 @@
+$ag-foreground-opacity: 0.87 !default;
+$ag-secondary-foreground-color-opacity: 0.64 !default;
+$ag-disabled-foreground-color-opacity: 0.38 !default;
+
+// theme shortcuts
+$ag-default-background: #2d3436 !default;
+$ag-foreground-color: #F5F5F5 !default;
+
+$ag-chrome-background: darken(#636e72, 30) !default;
+$ag-active: #00B0FF !default;
+$ag-border-color: #424242 !default;
+$ag-icon-color: #ecf0f1 !default;
+$ag-alt-background: darken(#2d3436, 3) !default;
+$ag-odd-row-background-color: $ag-alt-background !default;
+
+// Derived from above
+$ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
+$ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
+$ag-disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-input-border-color: #ecf0f1 !default;
+$ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
+
+$ag-primary-color: $ag-active !default;
+$ag-accent-color: $ag-active !default;
+$ag-range-selection-background-color: transparentize($ag-active, 0.8) !default;
+$ag-range-selection-highlight-color: $ag-active !default;
+$ag-selected-color: darken($ag-active, 25) !default;
+
+$ag-background-color: $ag-default-background !default;
+
+$ag-editor-background-color: $ag-chrome-background !default;
+$ag-panel-background-color: $ag-chrome-background !default;
+$ag-tool-panel-background-color: $ag-chrome-background !default;
+$ag-header-background-color: $ag-chrome-background !default;
+$ag-header-foreground-color: $ag-secondary-foreground-color !default;
+
+$ag-hover-color: lighten($ag-alt-background, 10) !default;
+$ag-chip-background-color: lighten($ag-alt-background, 5) !default;
+
+// delta changes
+$ag-cell-data-changed-color: #fce4ec !default;
+$ag-value-change-delta-up-color: #43a047 !default;
+$ag-value-change-delta-down-color: #e53935 !default;
+$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+
+$ag-tooltip-background-color: $ag-header-background-color !default;
+$ag-tooltip-border-color: lighten($ag-header-background-color, 10%) !default;
+
+$ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
+$ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
+
+$ag-group-component-background-color: $ag-background-color !default;
+$ag-group-component-title-background-color: $ag-header-background-color !default;
+
+@import '../../ag-theme-balham/vars/ag-theme-balham-vars';

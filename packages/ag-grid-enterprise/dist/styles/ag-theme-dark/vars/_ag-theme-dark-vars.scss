@@ -1,0 +1,65 @@
+$ag-foreground-opacity: 1 !default;
+$ag-secondary-foreground-color-opacity: 1 !default;
+$ag-disabled-foreground-color-opacity: 0.5 !default;
+
+// Colors
+$ag-icon-color: #d6d5d5 !default;
+$ag-alt-icon-color: #000 !default;
+$ag-foreground-color: #ccc !default;
+$secondary-foreground-color: rgba(#ccc, $ag-secondary-foreground-color-opacity) !default;
+$disabled-foreground-color: rgba(#e4e4e4, $ag-disabled-foreground-color-opacity) !default;
+$ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
+$menu-option-active-color: #4a708b !default;
+
+$card-background-color: #302e2e !default;
+$ag-border-color: darkgrey !default;
+$primary-color: $ag-icon-color !default;
+$ag-accent-color: $ag-icon-color !default;
+
+$ag-background-color: #302e2e !default;
+$odd-row-background-color: #403e3e !default;
+
+$editor-background-color: #302e2e !default;
+
+$ag-header-foreground-color: $secondary-foreground-color !default;
+$ag-header-background-color: #626262 !default;
+$header-background-image: none !default;
+$header-cell-hover-background-color: $ag-header-background-color !default;
+$panel-background-color: #302e2e !default;
+
+$ag-tool-panel-background-color: #302e2e !default;
+
+$chip-background-color: rgb(64, 62, 62) !default;
+
+$ag-range-selection-background-color: rgba(100, 160, 160, 0.4) !default;
+$range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
+
+$hover-color: inherit !default;
+
+$selected-color: $menu-option-active-color !default;
+
+$cell-data-changed-color: white !default;
+
+$focused-cell-border-color: darkgrey !default;
+
+$tab-background-color: #626262 !default;
+
+$cell-highlight-border: 2px solid lightgreen !default;
+$ag-cell-horizontal-border: 1px dotted grey !default;
+
+$rect-selection-background-color: rgb(100, 160, 160) !default;
+
+$ag-range-selected-color-1: transparentize($rect-selection-background-color, 0.6) !default;
+$ag-range-selected-color-2: transparentize($rect-selection-background-color, 0.4) !default;
+$ag-range-selected-color-3: transparentize($rect-selection-background-color, 0.3) !default;
+$ag-range-selected-color-4: transparentize($rect-selection-background-color, 0.2) !default;
+
+$row-floating-background-color: #333 !default;
+$row-stub-background-color: #333 !default;
+
+// delta changes
+$value-change-delta-up-color: greenyellow !default;
+$value-change-delta-down-color: red !default;
+$value-change-value-highlight-background-color: chocolate !default;
+
+@import "../../ag-theme-classic/vars/ag-theme-classic-vars";
