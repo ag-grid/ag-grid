@@ -131,6 +131,8 @@ include '../documentation-main/documentation_header.php';
         &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
     </snippet>
 
+    <?php /*
+
   <h1>Alpine Themes</h1>
     <p>
         The Alpine theme comes in two versions: 1) light and 2) dark. Below shows examples of each type.
@@ -265,6 +267,8 @@ $ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
 $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 </snippet>
 
+        */ ?>
+
     <h1>Balham Themes</h1>
 
     <p>
@@ -363,32 +367,27 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
 
 
-    <h1>Fresh, Dark and Blue Themes</h1>
+    <h1>Deprecated Themes</h1>
 
-    <p>
-        The fresh, dark and blue themes were the original themes provided by the grid. You should consider using the
-        Balham themes instead of these. However they are kept for backwards compatibility.
-    </p>
+    <note>
+        The fresh, dark, blue and bootstrap themes were the original themes provided by the grid. They are deprecated
+        and will be removed in the next major release (v23).
+    </note>
 
-    <p>Example Fresh (ag-theme-fresh)</p>
+    <h2>Fresh Theme (ag-theme-fresh)</h2>
 
-<?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
+    <?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
 
-    <p>Example Dark (ag-theme-dark)</p>
+    <h2>Dark Theme (ag-theme-dark)</h2>
 
-<?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
-    <p>Example Blue (ag-theme-blue)</p>
-
-<?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
-
-
-
-
-    <h2>Bootstrap Theme</h2>
-
-    <p>The following is an example of the bootstrap theme:</p>
-
+    <h2>Blue Theme (ag-theme-blue)</h2>
+    
+    <?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
+    
+    <h2>Bootstrap Theme (ag-theme-bootstrap)</h2>
+    
     <?= example('Bootstrap Theme', 'theme-bootstrap', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
 
@@ -397,7 +396,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
     <h1 id="customizing-sass-variables">Customizing Themes</h1>
 
     <p>
-        The provided themes are build using <a href="http://sass-lang.com">Sass</a>.
+        The provided themes are built using <a href="http://sass-lang.com">Sass</a>.
         This means that you can change the looks of the theme you use using Sass,
         by overriding the theme variables value and referencing the Sass source files afterwards.
     </p>

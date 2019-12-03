@@ -23,6 +23,7 @@ import {_} from "./utils";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {ModuleNames} from "./modules/moduleNames";
 import {ModuleRegistry} from "./modules/moduleRegistry";
+import { Environment } from "./environment";
 
 export class GridCore extends Component {
 
@@ -45,6 +46,7 @@ export class GridCore extends Component {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('environment') private environment: Environment;
 
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
@@ -111,6 +113,11 @@ export class GridCore extends Component {
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
+
+        const { theme } = this.environment.getTheme();
+        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
+            console.warn(`ag-Grid: "${theme}" theme is deprecated and will be removed in the next major release (v23)`);
+        }
     }
 
     private createTemplate(): string {
