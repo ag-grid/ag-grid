@@ -40,6 +40,8 @@ include '../documentation-main/documentation_header.php';
             <th>Theme Name</th>
             <th>Description</th>
         </tr>
+        <?php/*
+        spl alpine exclusion
         <tr>
             <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
             <td>
@@ -53,6 +55,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </td>
         </tr>
+        */?>
         <tr>
             <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
             <td>
@@ -132,6 +135,7 @@ include '../documentation-main/documentation_header.php';
     </snippet>
 
     <?php /*
+    spl alpine exclusion
 
   <h1>Alpine Themes</h1>
     <p>
