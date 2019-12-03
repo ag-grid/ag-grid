@@ -10,7 +10,7 @@ import { Shape } from "../../../scene/shape/shape";
 import { Path } from "../../../scene/shape/path";
 import palette from "../../palettes";
 import { Marker } from "../../marker/marker";
-import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 
 interface AreaSelectionDatum {
@@ -23,8 +23,6 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     y: number;
     fill?: string;
     stroke?: string;
-    strokeWidth: number;
-    size: number;
     text?: string;
     yKey: string;
     yValue: number;
@@ -330,7 +328,6 @@ export class AreaSeries extends CartesianSeries {
             xData,
             yData,
             marker,
-            strokeWidth,
             fills,
             strokes,
             xAxis: { scale: xScale }, yAxis: { scale: yScale }
@@ -341,7 +338,6 @@ export class AreaSeries extends CartesianSeries {
         const areaSelectionData: AreaSelectionDatum[] = [];
         const markerSelectionData: MarkerSelectionDatum[] = [];
         const last = xData.length * 2 - 1;
-        const markerSize = marker.size;
 
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
@@ -364,8 +360,6 @@ export class AreaSeries extends CartesianSeries {
                         y,
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length],
-                        strokeWidth,
-                        size: markerSize,
                         text: yNames[j]
                     });
                 }
@@ -475,6 +469,8 @@ export class AreaSeries extends CartesianSeries {
         }
 
         const markerFormatter = marker.formatter;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        const markerSize = marker.size;
         const { yKeyEnabled, highlightedNode } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
@@ -486,31 +482,31 @@ export class AreaSeries extends CartesianSeries {
 
         markerSelection.each((node, datum) => {
             const isHighlightedNode = node === highlightedNode;
-            const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-            const { strokeWidth, size } = datum;
+            const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+            let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
             if (markerFormatter) {
-                const style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey,
                     yKey: datum.yKey,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    size,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
-            } else {
-                node.fill = fill;
-                node.stroke = stroke;
-                node.strokeWidth = strokeWidth;
-                node.size = size;
             }
+
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : markerSize;
 
             node.translationX = datum.x;
             node.translationY = datum.y;
@@ -571,8 +567,8 @@ export class AreaSeries extends CartesianSeries {
                     },
                     marker: {
                         type: marker.type,
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
+                        fill: marker.fill || fills[index % fills.length],
+                        stroke: marker.stroke || strokes[index % strokes.length],
                         fillOpacity,
                         strokeOpacity
                     }

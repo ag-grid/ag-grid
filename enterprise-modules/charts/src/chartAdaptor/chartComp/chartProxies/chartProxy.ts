@@ -175,7 +175,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'marker.enabled': 'marker.enabled',
             'marker.size': 'marker.size',
             'marker.minSize': 'marker.minSize',
-            'marker.strokeWidth': 'strokeWidth',
+            'marker.strokeWidth': 'marker.strokeWidth',
             'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors',
             'callout.strokeWidth': 'calloutStrokeWidth',

@@ -10,16 +10,12 @@ import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
 import { Marker } from "../../marker/marker";
-import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
     y: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    size: number;
 }
 
 export { LineTooltipRendererParams };
@@ -252,13 +248,9 @@ export class LineSeries extends CartesianSeries {
             xData,
             yData,
             marker,
-            lineNode,
-            fill,
-            stroke,
-            strokeWidth
+            lineNode
         } = this;
 
-        const markerSize = marker.size;
         const groupSelectionData: GroupSelectionDatum[] = [];
         const linePath = lineNode.path;
 
@@ -278,23 +270,19 @@ export class LineSeries extends CartesianSeries {
                 groupSelectionData.push({
                     seriesDatum: data[i],
                     x,
-                    y,
-                    fill,
-                    stroke,
-                    strokeWidth,
-                    size: markerSize
+                    y
                 });
             }
         });
 
-        lineNode.stroke = stroke;
+        lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
 
         this.updateGroupSelection(groupSelectionData);
     }
 
     private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
-        const { marker, xKey, yKey, highlightedNode } = this;
+        const { marker, xKey, yKey, highlightedNode, fill, stroke, strokeWidth } = this;
         const Marker = marker.type;
         let { groupSelection } = this;
 
@@ -314,36 +302,38 @@ export class LineSeries extends CartesianSeries {
 
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const markerFormatter = marker.formatter;
+        const markerSize = marker.size;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
         groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
                 const isHighlightedNode = node === highlightedNode;
-                const fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                const stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-                const { strokeWidth, size } = datum;
+                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
-                    const style = markerFormatter({
+                    markerFormat = markerFormatter({
                         datum: datum.seriesDatum,
                         xKey,
                         yKey,
-                        fill,
-                        stroke,
-                        strokeWidth,
-                        size,
+                        fill: markerFill,
+                        stroke: markerStroke,
+                        strokeWidth: markerStrokeWidth,
+                        size: markerSize,
                         highlighted: isHighlightedNode
                     });
-                    node.fill = style.fill;
-                    node.stroke = style.stroke;
-                    node.strokeWidth = style.strokeWidth;
-                    node.size = style.size;
-                } else {
-                    node.fill = fill;
-                    node.stroke = stroke;
-                    node.strokeWidth = strokeWidth;
-                    node.size = size;
                 }
+
+                node.fill = markerFormat && markerFormat.fill || markerFill;
+                node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+                node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                    ? markerFormat.strokeWidth
+                    : markerStrokeWidth;
+                node.size = markerFormat && markerFormat.size !== undefined
+                    ? markerFormat.size
+                    : markerSize;
 
                 node.translationX = datum.x;
                 node.translationY = datum.y;
@@ -400,8 +390,8 @@ export class LineSeries extends CartesianSeries {
                 },
                 marker: {
                     type: marker.type,
-                    fill,
-                    stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity,
                     strokeOpacity
                 }
