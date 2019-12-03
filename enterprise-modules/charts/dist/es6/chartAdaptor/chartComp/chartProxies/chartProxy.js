@@ -13,6 +13,7 @@ import { _, Events, } from "@ag-grid-community/core";
 import { palettes } from "../../../charts/chart/palettes";
 import { DropShadow } from "../../../charts/scene/dropShadow";
 import { Padding } from "../../../charts/util/padding";
+import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
         var _this = this;
@@ -26,6 +27,12 @@ var ChartProxy = /** @class */ (function () {
         this.chartProxyParams = chartProxyParams;
         this.chartType = chartProxyParams.chartType;
     }
+    ChartProxy.prototype.recreateChart = function (options) {
+        if (this.chart) {
+            this.destroyChart();
+        }
+        this.chart = this.createChart(options || this.chartOptions);
+    };
     ChartProxy.prototype.initChartOptions = function () {
         var processChartOptions = this.chartProxyParams.processChartOptions;
         // allow users to override options before they are applied
@@ -246,8 +253,33 @@ var ChartProxy = /** @class */ (function () {
             }
         };
     };
+    ChartProxy.prototype.transformData = function (data, categoryKey) {
+        if (this.chart.axes.filter(function (a) { return a instanceof CategoryAxis; }).length < 1) {
+            return data;
+        }
+        // replace the values for the selected category with a complex object to allow for duplicated categories
+        return data.map(function (d, index) {
+            var value = d[categoryKey];
+            var valueString = value && value.toString ? value.toString() : '';
+            var datum = __assign({}, d);
+            datum[categoryKey] = { id: index, value: value, toString: function () { return valueString; } };
+            return datum;
+        });
+    };
     ChartProxy.prototype.destroy = function () {
+        this.destroyChart();
+    };
+    ChartProxy.prototype.destroyChart = function () {
+        var parentElement = this.chartProxyParams.parentElement;
+        var canvas = parentElement.querySelector('canvas');
+        if (canvas) {
+            parentElement.removeChild(canvas);
+        }
+        // store current width and height so any charts created in the future maintain the size
+        this.chartOptions.width = this.chart.width;
+        this.chartOptions.height = this.chart.height;
         this.chart.destroy();
+        this.chart = null;
     };
     return ChartProxy;
 }());

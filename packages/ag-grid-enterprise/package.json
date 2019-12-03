@@ -13,9 +13,22 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
     "grid",
-    "data",
     "table",
+    "react",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs",
     "enterprise"
   ],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",

@@ -939,6 +939,11 @@
                 "enterprise": true
               },
               {
+                "title": "Cartesian",
+                "url": "javascript-grid-charts-customisation-cartesian/",
+                "enterprise": true
+              },
+              {
                 "title": "Bar/Column",
                 "url": "javascript-grid-charts-customisation-bar/",
                 "enterprise": true

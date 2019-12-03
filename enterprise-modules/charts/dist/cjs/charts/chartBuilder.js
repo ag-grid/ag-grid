@@ -22,6 +22,7 @@ var square_1 = require("./chart/marker/square");
 var triangle_1 = require("./chart/marker/triangle");
 var chartAxis_1 = require("./chart/chartAxis");
 var map_1 = require("./util/map");
+var timeAxis_1 = require("./chart/axis/timeAxis");
 var ChartBuilder = /** @class */ (function () {
     function ChartBuilder() {
     }
@@ -59,7 +60,7 @@ var ChartBuilder = /** @class */ (function () {
         return chart;
     };
     ChartBuilder.createLineChart = function (parent, options) {
-        var chart = this.createCartesianChart(parent, ChartBuilder.createCategoryAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        var chart = this.createCartesianChart(parent, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new lineSeries_1.LineSeries(), s); });
@@ -67,7 +68,7 @@ var ChartBuilder = /** @class */ (function () {
         return chart;
     };
     ChartBuilder.createScatterChart = function (parent, options) {
-        var chart = this.createCartesianChart(parent, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        var chart = this.createCartesianChart(parent, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initScatterSeries(new scatterSeries_1.ScatterSeries(), s); });
@@ -442,7 +443,7 @@ var ChartBuilder = /** @class */ (function () {
         this.setValueIfExists(caption, 'color', options.color);
         return caption;
     };
-    ChartBuilder.populateAxisProperties = function (axis, options) {
+    ChartBuilder.initAxis = function (axis, options) {
         this.setTransformedValueIfExists(axis, 'title', function (t) { return ChartBuilder.createTitle(t); }, options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
         var line = options.line, tick = options.tick, label = options.label;
@@ -463,22 +464,46 @@ var ChartBuilder = /** @class */ (function () {
             this.setValueIfExists(axis.label, 'color', label.color);
             this.setValueIfExists(axis.label, 'padding', label.padding);
             this.setValueIfExists(axis.label, 'rotation', label.rotation);
+            this.setValueIfExists(axis.label, 'format', label.format);
             this.setValueIfExists(axis.label, 'formatter', label.formatter);
         }
     };
     ChartBuilder.createNumberAxis = function (options) {
         var axis = new numberAxis_1.NumberAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.createCategoryAxis = function (options) {
         var axis = new categoryAxis_1.CategoryAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.createGroupedAxis = function (options) {
         var axis = new groupedCategoryAxis_1.GroupedCategoryAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
+        return axis;
+    };
+    ChartBuilder.createTimeAxis = function (options) {
+        var axis = new timeAxis_1.TimeAxis();
+        this.initAxis(axis, options);
+        return axis;
+    };
+    ChartBuilder.createAxis = function (options, defaultType) {
+        var axis;
+        switch (options.type || defaultType) {
+            case 'category':
+                axis = new categoryAxis_1.CategoryAxis();
+                break;
+            case 'number':
+                axis = new numberAxis_1.NumberAxis();
+                break;
+            case 'time':
+                axis = new timeAxis_1.TimeAxis();
+                break;
+            default:
+                throw new Error('Unknown axis type');
+        }
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.setValueIfExists = function (target, property, value, transform) {

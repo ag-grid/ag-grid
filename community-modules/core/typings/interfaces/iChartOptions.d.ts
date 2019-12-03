@@ -84,12 +84,14 @@ export interface CartesianChartOptions<T extends SeriesOptions> extends ChartOpt
 export interface PolarChartOptions<T extends SeriesOptions> extends ChartOptions<T> {
 }
 export interface AxisOptions {
+    type?: AxisType;
     title: CaptionOptions;
     line: AxisLineOptions;
     tick: AxisTickOptions;
     label: AxisLabelOptions;
     gridStyle: GridStyle[];
 }
+export declare type AxisType = 'category' | 'number' | 'time';
 export interface AxisLineOptions {
     width: number;
     color: string;
@@ -102,6 +104,7 @@ export interface AxisTickOptions {
 export interface AxisLabelOptions extends FontOptions {
     padding: number;
     rotation: number;
+    format?: string;
     formatter?: (value: any, fractionDigits?: number) => string;
 }
 export interface GridStyle {

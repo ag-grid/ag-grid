@@ -29,9 +29,12 @@ var PieChartProxy = /** @class */ (function (_super) {
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder.createPieChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.createChart = function (options) {
+        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+    };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         if (params.fields.length === 0) {

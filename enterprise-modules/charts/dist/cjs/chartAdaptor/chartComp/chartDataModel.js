@@ -80,18 +80,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.updateData();
     };
     ChartDataModel.prototype.getData = function () {
-        // grouped data contains label fields rather than objects with toString
-        if (this.grouping && this.isMultiCategoryChart()) {
-            return this.chartData;
-        }
-        var colId = this.getSelectedDimension().colId;
-        // replacing the selected dimension with a complex object to facilitate duplicated categories
-        return this.chartData.map(function (d, index) {
-            var value = d[colId];
-            var valueString = value && value.toString ? value.toString() : '';
-            d[colId] = { id: index, value: d[colId], toString: function () { return valueString; } };
-            return d;
-        });
+        return this.chartData;
     };
     ChartDataModel.prototype.setChartType = function (chartType) {
         var isCurrentMultiCategory = this.isMultiCategoryChart();

@@ -28277,6 +28277,10 @@ var GridCore = /** @class */ (function (_super) {
         });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+        var theme = this.environment.getTheme().theme;
+        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
+            console.warn("ag-Grid: \"" + theme + "\" theme is deprecated and will be removed in the next major release (v23)");
+        }
     };
     GridCore.prototype.createTemplate = function () {
         var sideBarModuleLoaded = ModuleRegistry.isRegistered(exports.ModuleNames.SideBarModule);
@@ -28459,6 +28463,9 @@ var GridCore = /** @class */ (function (_super) {
     __decorate$10([
         Autowired('gridApi')
     ], GridCore.prototype, "gridApi", void 0);
+    __decorate$10([
+        Autowired('environment')
+    ], GridCore.prototype, "environment", void 0);
     __decorate$10([
         Optional('clipboardService')
     ], GridCore.prototype, "clipboardService", void 0);

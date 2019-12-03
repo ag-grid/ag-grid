@@ -139,10 +139,10 @@ var ChartController = /** @class */ (function (_super) {
         var cellRanges = this.model.getCellRanges();
         var firstCellRange = cellRanges[0];
         return {
-            rowStartIndex: firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow.rowPinned,
+            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
+            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
+            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
+            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
             columns: cellRanges.reduce(function (columns, value) { return columns.concat(value.columns.map(function (c) { return c.getId(); })); }, [])
         };
     };

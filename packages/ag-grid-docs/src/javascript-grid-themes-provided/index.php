@@ -40,6 +40,8 @@ include '../documentation-main/documentation_header.php';
             <th>Theme Name</th>
             <th>Description</th>
         </tr>
+        <?php/*
+        spl alpine exclusion
         <tr>
             <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
             <td>
@@ -53,6 +55,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </td>
         </tr>
+        */?>
         <tr>
             <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
             <td>
@@ -62,7 +65,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    These are great themes to use.
+                    This is the default theme for the grid and a great choice for most applications.
                 </p>
             </td>
         </tr>
@@ -74,38 +77,25 @@ include '../documentation-main/documentation_header.php';
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    This theme looks great for simple grids, however the Google
-                    Material spec doesn't cater for complex parts of a grid such as grouped columns
-                    and tool panels. For grids that use these advanced parts of the grid, the result may
-                    not look great. Google Material is great for simpler customer facing applications
-                    that use a lot of white space, but not as great for business applications where
-                    more functions get included over cleanness of design.
+                    This theme looks great for simple applications with lots of white space. However the Google
+                    Material spec doesn't cater for advanced grid features such as grouped columns
+                    and tool panels. For applications that use these advanced features,
+                    or need to pack a lot of data into a small space, <code>ag-theme-balham</code>
+                    may be a better choice.
                 </p>
             </td>
         </tr>
         <tr>
-            <td class="theme-name-cell"><code>ag-theme-fresh</code><br/><code>ag-theme-dark</code><br/><code>ag-theme-blue</code></td>
+            <td class="theme-name-cell"><code>ag-theme-fresh</code><br/><code>ag-theme-dark</code><br/><code>ag-theme-blue</code><br/><code>ag-theme-bootstrap</code></td>
             <td>
                 <p>
-                    Older flat themes that were part of the grid before we had a proper CSS person join the team.
+                    Older flat themes that were part of the grid before we designed the Balham and Material themes. These themes are deprecated and
+                    will be removed in the next major release.
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    These themes look old. Prefer the <code>ag-theme-balham</code> theme and use
+                    Prefer the <code>ag-theme-balham</code> or <code>ag-theme-material</code> themes and use
                     SASS variables to change the colors if required.
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td class="theme-name-cell"><code>ag-theme-bootstrap</code></td>
-            <td>
-                <p>
-                    Neutral / white theme that fits well in the context of bootstrap components.
-                </p>
-                <p>
-                    <span class="reccommendation">Recommendation:</span>
-                    Bootstrap is not as popular these days, overcome by Material Design. This theme gets little
-                    attention from grid users or the grid team.
                 </p>
             </td>
         </tr>
@@ -130,6 +120,9 @@ include '../documentation-main/documentation_header.php';
     <snippet language="html">
         &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
     </snippet>
+
+    <?php /*
+    spl alpine exclusion
 
   <h1>Alpine Themes</h1>
     <p>
@@ -265,6 +258,8 @@ $ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
 $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 </snippet>
 
+        */ ?>
+
     <h1>Balham Themes</h1>
 
     <p>
@@ -363,32 +358,27 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
 
 
-    <h1>Fresh, Dark and Blue Themes</h1>
+    <h1>Deprecated Themes</h1>
 
-    <p>
-        The fresh, dark and blue themes were the original themes provided by the grid. You should consider using the
-        Balham themes instead of these. However they are kept for backwards compatibility.
-    </p>
+    <note>
+        The fresh, dark, blue and bootstrap themes were the original themes provided by the grid. They are deprecated
+        and will be removed in the next major release (v23).
+    </note>
 
-    <p>Example Fresh (ag-theme-fresh)</p>
+    <h2>Fresh Theme (ag-theme-fresh)</h2>
 
-<?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
+    <?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
 
-    <p>Example Dark (ag-theme-dark)</p>
+    <h2>Dark Theme (ag-theme-dark)</h2>
 
-<?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
-    <p>Example Blue (ag-theme-blue)</p>
-
-<?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
-
-
-
-
-    <h2>Bootstrap Theme</h2>
-
-    <p>The following is an example of the bootstrap theme:</p>
-
+    <h2>Blue Theme (ag-theme-blue)</h2>
+    
+    <?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
+    
+    <h2>Bootstrap Theme (ag-theme-bootstrap)</h2>
+    
     <?= example('Bootstrap Theme', 'theme-bootstrap', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
 
@@ -397,7 +387,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
     <h1 id="customizing-sass-variables">Customizing Themes</h1>
 
     <p>
-        The provided themes are build using <a href="http://sass-lang.com">Sass</a>.
+        The provided themes are built using <a href="http://sass-lang.com">Sass</a>.
         This means that you can change the looks of the theme you use using Sass,
         by overriding the theme variables value and referencing the Sass source files afterwards.
     </p>

@@ -34,8 +34,6 @@ export declare class AxisTick {
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
     color?: string;
-}
-declare class FormattableAxisTick extends AxisTick {
     /**
      * A hint of how many ticks to use (the exact number of ticks might differ),
      * a `TimeInterval` or a `CountableTimeInterval`.
@@ -46,9 +44,6 @@ declare class FormattableAxisTick extends AxisTick {
      *     axis.tick.count = month.every(6);
      */
     count: any;
-    onFormatChange?: (format?: string) => void;
-    private _format?;
-    format: string | undefined;
 }
 export declare class AxisLabel {
     fontStyle?: FontStyle;
@@ -104,6 +99,9 @@ export declare class AxisLabel {
         fractionDigits?: number;
         formatter?: (x: any) => string;
     }) => string;
+    onFormatChange?: (format?: string) => void;
+    private _format?;
+    format: string | undefined;
 }
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -130,7 +128,7 @@ export declare class Axis<S extends Scale<D, number>, D = any> implements ILinea
          */
         color?: string;
     };
-    readonly tick: FormattableAxisTick;
+    readonly tick: AxisTick;
     readonly label: AxisLabel;
     readonly translation: {
         x: number;
@@ -183,4 +181,3 @@ export declare class Axis<S extends Scale<D, number>, D = any> implements ILinea
         excludeTitle: boolean;
     }): BBox;
 }
-export {};

@@ -166,7 +166,7 @@ var TimeScale = /** @class */ (function (_super) {
      * If no specifier is provided, this method returns the default time format function.
      */
     TimeScale.prototype.tickFormat = function (count, specifier) {
-        return specifier == undefined ? this.defaultTickFormat : this.format(specifier);
+        return specifier == undefined ? this.defaultTickFormat.bind(this) : this.format(specifier);
     };
     /**
      * Extends the domain so that it starts and ends on nice round values.

@@ -174,10 +174,10 @@ export class ChartController extends BeanStub {
         const firstCellRange = cellRanges[0];
 
         return {
-            rowStartIndex: firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow.rowPinned,
+            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
+            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
+            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
+            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
             columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
         };
     }

@@ -28,15 +28,21 @@ var core_1 = require("@ag-grid-community/core");
 var chartBuilder_1 = require("../../../../charts/chartBuilder");
 var chartDataModel_1 = require("../../chartDataModel");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
+var timeAxis_1 = require("../../../../charts/chart/axis/timeAxis");
+var numberAxis_1 = require("../../../../charts/chart/axis/numberAxis");
+var typeChecker_1 = require("../../typeChecker");
 var ScatterChartProxy = /** @class */ (function (_super) {
     __extends(ScatterChartProxy, _super);
     function ScatterChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.getMarkersEnabled = function () { return true; }; // markers are always enabled on scatter charts
         _this.initChartOptions();
-        _this.chart = chartBuilder_1.ChartBuilder.createScatterChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    ScatterChartProxy.prototype.createChart = function (options) {
+        return chartBuilder_1.ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
+    };
     ScatterChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         if (params.fields.length < 2) {
@@ -45,10 +51,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var fields = params.fields;
         var seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
-        var defaultCategorySelected = params.category.id === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY;
+        this.updateAxes(params.data[0], seriesDefinitions.map(function (d) { return d.xField.colId; }));
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesOptions = __assign({ type: "scatter" }, this.chartOptions.seriesDefaults);
-        var labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
+        var labelFieldDefinition = params.category.id === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = core_1._.findIndex(seriesDefinitions, function (s) {
                 return s.xField.colId === series.xKey &&
@@ -71,7 +77,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 return;
             }
             var xFieldDefinition = seriesDefinition.xField, yFieldDefinition = seriesDefinition.yField, sizeFieldDefinition = seriesDefinition.sizeField;
-            series.title = xFieldDefinition.displayName + " vs " + yFieldDefinition.displayName;
+            series.title = yFieldDefinition.displayName + " vs " + xFieldDefinition.displayName;
             series.xKey = xFieldDefinition.colId;
             series.xName = xFieldDefinition.displayName;
             series.yKey = yFieldDefinition.colId;
@@ -98,6 +104,24 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             previousSeries = series;
         });
+    };
+    ScatterChartProxy.prototype.updateAxes = function (testDatum, xKeys) {
+        var chartOptions = this.chartOptions;
+        if (chartOptions.xAxis.type) {
+            return;
+        }
+        var xAxis = this.chart.axes.filter(function (a) { return a.position === 'bottom'; })[0];
+        if (!xAxis) {
+            return;
+        }
+        var xValuesAreDates = xKeys.map(function (xKey) { return testDatum && testDatum[xKey]; }).every(function (test) { return typeChecker_1.isDate(test); });
+        if (xValuesAreDates && !(xAxis instanceof timeAxis_1.TimeAxis)) {
+            var options = __assign(__assign({}, this.chartOptions), { xAxis: __assign(__assign({}, this.chartOptions.xAxis), { type: 'time' }) });
+            this.recreateChart(options);
+        }
+        else if (!xValuesAreDates && !(xAxis instanceof numberAxis_1.NumberAxis)) {
+            this.recreateChart();
+        }
     };
     ScatterChartProxy.prototype.getTooltipsEnabled = function () {
         return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;

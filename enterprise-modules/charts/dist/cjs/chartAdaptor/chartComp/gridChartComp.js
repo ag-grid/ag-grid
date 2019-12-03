@@ -70,10 +70,6 @@ var GridChartComp = /** @class */ (function (_super) {
             width = chart.width;
             height = chart.height;
             this.chartProxy.destroy();
-            var canvas = this.eChart.querySelector('canvas');
-            if (canvas) {
-                this.eChart.removeChild(canvas);
-            }
         }
         var processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
@@ -190,12 +186,7 @@ var GridChartComp = /** @class */ (function (_super) {
         var pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
         var minFieldsRequired = 1;
         if (this.chartController.isActiveXYChart()) {
-            if (this.model.getChartType() === core_1.ChartType.Bubble) {
-                minFieldsRequired = 3;
-            }
-            else {
-                minFieldsRequired = 2;
-            }
+            minFieldsRequired = this.model.getChartType() === core_1.ChartType.Bubble ? 3 : 2;
         }
         var isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
         if (parent) {

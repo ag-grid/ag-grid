@@ -17,6 +17,7 @@ import {
     MarkerOptions,
     MarkerType,
     HighlightOptions,
+    AxisType,
 } from "./chartOptions";
 import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -45,6 +46,7 @@ import { Triangle } from "./chart/marker/triangle";
 import { Marker } from "./chart/marker/marker";
 import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
 import { convertToMap } from "./util/map";
+import { TimeAxis } from "./chart/axis/timeAxis";
 
 export class ChartBuilder {
     private static createCartesianChart(parent: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
@@ -56,8 +58,8 @@ export class ChartBuilder {
         return chart;
     }
 
-    private static createGroupedCategoryChart(parent: HTMLElement,
-        xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis, document?: Document): GroupedCategoryChart {
+    private static createGroupedCategoryChart(
+        parent: HTMLElement, xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis, document?: Document): GroupedCategoryChart {
         const chart = new GroupedCategoryChart(document);
         chart.parent = parent;
         xAxis.position = ChartAxisPosition.Bottom;
@@ -103,8 +105,8 @@ export class ChartBuilder {
     static createLineChart(parent: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createCategoryAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis, 'category'),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
         ChartBuilder.initChart(chart, options);
@@ -119,8 +121,8 @@ export class ChartBuilder {
     static createScatterChart(parent: HTMLElement, options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createNumberAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis, 'number'),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
         ChartBuilder.initChart(chart, options);
@@ -661,7 +663,7 @@ export class ChartBuilder {
         return shadow;
     }
 
-    static populateAxisProperties<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
+    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
         this.setTransformedValueIfExists(axis, 'title', t => ChartBuilder.createTitle(t), options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
 
@@ -686,6 +688,7 @@ export class ChartBuilder {
             this.setValueIfExists(axis.label, 'color', label.color);
             this.setValueIfExists(axis.label, 'padding', label.padding);
             this.setValueIfExists(axis.label, 'rotation', label.rotation);
+            this.setValueIfExists(axis.label, 'format', label.format);
             this.setValueIfExists(axis.label, 'formatter', label.formatter);
         }
     }
@@ -693,7 +696,7 @@ export class ChartBuilder {
     static createNumberAxis(options: AxisOptions): NumberAxis {
         const axis = new NumberAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -701,7 +704,7 @@ export class ChartBuilder {
     static createCategoryAxis(options: AxisOptions): CategoryAxis {
         const axis = new CategoryAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -709,7 +712,37 @@ export class ChartBuilder {
     static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis {
         const axis = new GroupedCategoryAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
+
+        return axis;
+    }
+
+    static createTimeAxis(options: AxisOptions): TimeAxis {
+        const axis = new TimeAxis();
+
+        this.initAxis(axis, options);
+
+        return axis;
+    }
+
+    static createAxis(options: AxisOptions, defaultType: AxisType): CategoryAxis | NumberAxis | TimeAxis {
+        let axis;
+
+        switch (options.type || defaultType) {
+            case 'category':
+                axis = new CategoryAxis();
+                break;
+            case 'number':
+                axis = new NumberAxis();
+                break;
+            case 'time':
+                axis = new TimeAxis();
+                break;
+            default:
+                throw new Error('Unknown axis type');
+        }
+
+        this.initAxis(axis, options);
 
         return axis;
     }

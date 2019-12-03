@@ -24,14 +24,21 @@ var __assign = (this && this.__assign) || function () {
 };
 import { ChartBuilder } from "../../../../charts/chartBuilder";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { isDate } from '../../typeChecker';
 var LineChartProxy = /** @class */ (function (_super) {
     __extends(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    LineChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options);
+    };
     LineChartProxy.prototype.update = function (params) {
         var _this = this;
         var chart = this.chart;
@@ -39,8 +46,10 @@ var LineChartProxy = /** @class */ (function (_super) {
             chart.removeAllSeries();
             return;
         }
+        this.updateAxes(params.data[0], params.category.id);
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var data = this.transformData(params.data, params.category.id);
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var id = series.yKey;
             if (fieldIds.indexOf(id) === i) {
@@ -58,30 +67,46 @@ var LineChartProxy = /** @class */ (function (_super) {
             var stroke = strokes[index % strokes.length];
             if (lineSeries) {
                 lineSeries.title = f.displayName;
-                lineSeries.data = params.data;
+                lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
                 lineSeries.fill = fill;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
-                lineSeries.fill = fill;
-                lineSeries.stroke = stroke;
             }
             else {
                 var seriesDefaults = _this.chartOptions.seriesDefaults;
-                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: params.data, field: {
+                var options = __assign(__assign({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKey: f.colId,
                         yName: f.displayName,
-                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: fill }), marker: __assign({}, seriesDefaults.marker) });
+                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: fill }) });
                 lineSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
             previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id);
+    };
+    LineChartProxy.prototype.updateAxes = function (testDatum, categoryKey) {
+        var chartOptions = this.chartOptions;
+        if (chartOptions.xAxis.type) {
+            return;
+        }
+        var xAxis = this.chart.axes.filter(function (a) { return a.position === 'bottom'; })[0];
+        if (!xAxis) {
+            return;
+        }
+        var categoryIsDate = isDate(testDatum && testDatum[categoryKey]);
+        if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
+            var options = __assign(__assign({}, this.chartOptions), { xAxis: __assign(__assign({}, this.chartOptions.xAxis), { type: 'time' }) });
+            this.recreateChart(options);
+        }
+        else if (!categoryIsDate && !(xAxis instanceof CategoryAxis)) {
+            this.recreateChart();
+        }
     };
     LineChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();

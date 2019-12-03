@@ -28278,6 +28278,10 @@ var GridCore = /** @class */ (function (_super) {
         });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+        var theme = this.environment.getTheme().theme;
+        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
+            console.warn("ag-Grid: \"" + theme + "\" theme is deprecated and will be removed in the next major release (v23)");
+        }
     };
     GridCore.prototype.createTemplate = function () {
         var sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
@@ -28460,6 +28464,9 @@ var GridCore = /** @class */ (function (_super) {
     __decorate$10([
         Autowired('gridApi')
     ], GridCore.prototype, "gridApi", void 0);
+    __decorate$10([
+        Autowired('environment')
+    ], GridCore.prototype, "environment", void 0);
     __decorate$10([
         Optional('clipboardService')
     ], GridCore.prototype, "clipboardService", void 0);
@@ -49283,18 +49290,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.updateData();
     };
     ChartDataModel.prototype.getData = function () {
-        // grouped data contains label fields rather than objects with toString
-        if (this.grouping && this.isMultiCategoryChart()) {
-            return this.chartData;
-        }
-        var colId = this.getSelectedDimension().colId;
-        // replacing the selected dimension with a complex object to facilitate duplicated categories
-        return this.chartData.map(function (d, index) {
-            var value = d[colId];
-            var valueString = value && value.toString ? value.toString() : '';
-            d[colId] = { id: index, value: d[colId], toString: function () { return valueString; } };
-            return d;
-        });
+        return this.chartData;
     };
     ChartDataModel.prototype.setChartType = function (chartType) {
         var isCurrentMultiCategory = this.isMultiCategoryChart();
@@ -49873,10 +49869,10 @@ var ChartController = /** @class */ (function (_super) {
         var cellRanges = this.model.getCellRanges();
         var firstCellRange = cellRanges[0];
         return {
-            rowStartIndex: firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow.rowPinned,
+            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
+            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
+            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
+            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
             columns: cellRanges.reduce(function (columns, value) { return columns.concat(value.columns.map(function (c) { return c.getId(); })); }, [])
         };
     };
@@ -54373,19 +54369,6 @@ var Arc = /** @class */ (function (_super) {
     return Arc;
 }(Path));
 
-var __extends$1X = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 var Tags;
 (function (Tags) {
@@ -54407,13 +54390,6 @@ var AxisTick = /** @class */ (function () {
          * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
          */
         this.color = 'rgba(195, 195, 195, 1)';
-    }
-    return AxisTick;
-}());
-var FormattableAxisTick = /** @class */ (function (_super) {
-    __extends$1X(FormattableAxisTick, _super);
-    function FormattableAxisTick() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
          * A hint of how many ticks to use (the exact number of ticks might differ),
          * a `TimeInterval` or a `CountableTimeInterval`.
@@ -54423,27 +54399,10 @@ var FormattableAxisTick = /** @class */ (function (_super) {
          *     axis.tick.count = year;
          *     axis.tick.count = month.every(6);
          */
-        _this.count = 10;
-        return _this;
+        this.count = 10;
     }
-    Object.defineProperty(FormattableAxisTick.prototype, "format", {
-        get: function () {
-            return this._format;
-        },
-        set: function (value) {
-            // See `TimeLocaleObject` docs for the list of supported format directives.
-            if (this._format !== value) {
-                this._format = value;
-                if (this.onFormatChange) {
-                    this.onFormatChange(value);
-                }
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return FormattableAxisTick;
-}(AxisTick));
+    return AxisTick;
+}());
 var AxisLabel = /** @class */ (function () {
     function AxisLabel() {
         this.fontSize = 12;
@@ -54486,6 +54445,22 @@ var AxisLabel = /** @class */ (function () {
          */
         this.parallel = false;
     }
+    Object.defineProperty(AxisLabel.prototype, "format", {
+        get: function () {
+            return this._format;
+        },
+        set: function (value) {
+            // See `TimeLocaleObject` docs for the list of supported format directives.
+            if (this._format !== value) {
+                this._format = value;
+                if (this.onFormatChange) {
+                    this.onFormatChange(value);
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     return AxisLabel;
 }());
 /**
@@ -54505,7 +54480,7 @@ var Axis = /** @class */ (function () {
             width: 1,
             color: 'rgba(195, 195, 195, 1)'
         };
-        this.tick = new FormattableAxisTick();
+        this.tick = new AxisTick();
         this.label = new AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
@@ -54534,8 +54509,9 @@ var Axis = /** @class */ (function () {
         this._radialGrid = false;
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll();
-        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
+        this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
+        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
     Object.defineProperty(Axis.prototype, "range", {
@@ -54565,7 +54541,12 @@ var Axis = /** @class */ (function () {
             }
         }
         else {
-            this.tickFormatter = undefined;
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, undefined);
+            }
+            else {
+                this.tickFormatter = undefined;
+            }
         }
     };
     Object.defineProperty(Axis.prototype, "title", {
@@ -54844,7 +54825,7 @@ var Axis = /** @class */ (function () {
     return Axis;
 }());
 
-var __extends$1Y = (undefined && undefined.__extends) || (function () {
+var __extends$1X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -54880,7 +54861,7 @@ var ChartAxisPosition;
     ChartAxisPosition["Radius"] = "radius";
 })(ChartAxisPosition || (ChartAxisPosition = {}));
 var ChartAxis = /** @class */ (function (_super) {
-    __extends$1Y(ChartAxis, _super);
+    __extends$1X(ChartAxis, _super);
     function ChartAxis() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.keys = [];
@@ -54929,7 +54910,7 @@ var ChartAxis = /** @class */ (function (_super) {
     return ChartAxis;
 }(Axis));
 
-var __extends$1Z = (undefined && undefined.__extends) || (function () {
+var __extends$1Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -54949,7 +54930,7 @@ var __decorate$2F = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AxisPanel = /** @class */ (function (_super) {
-    __extends$1Z(AxisPanel, _super);
+    __extends$1Y(AxisPanel, _super);
     function AxisPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -55130,7 +55111,7 @@ var HdpiCanvas = /** @class */ (function () {
     });
     HdpiCanvas.prototype.remove = function () {
         var parent = this.element.parentNode;
-        if (parent !== null) {
+        if (parent != null) {
             parent.removeChild(this.element);
         }
     };
@@ -55593,7 +55574,7 @@ var Padding = /** @class */ (function () {
     return Padding;
 }());
 
-var __extends$1_ = (undefined && undefined.__extends) || (function () {
+var __extends$1Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -55612,7 +55593,7 @@ var RectSizing;
     RectSizing[RectSizing["Border"] = 1] = "Border";
 })(RectSizing || (RectSizing = {}));
 var Rect = /** @class */ (function (_super) {
-    __extends$1_(Rect, _super);
+    __extends$1Z(Rect, _super);
     function Rect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -55840,7 +55821,7 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 
-var __extends$1$ = (undefined && undefined.__extends) || (function () {
+var __extends$1_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -55854,7 +55835,7 @@ var __extends$1$ = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Marker = /** @class */ (function (_super) {
-    __extends$1$(Marker, _super);
+    __extends$1_(Marker, _super);
     function Marker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -55909,7 +55890,7 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Path));
 
-var __extends$20 = (undefined && undefined.__extends) || (function () {
+var __extends$1$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -55923,7 +55904,7 @@ var __extends$20 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Square = /** @class */ (function (_super) {
-    __extends$20(Square, _super);
+    __extends$1$(Square, _super);
     function Square() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -55941,7 +55922,7 @@ var Square = /** @class */ (function (_super) {
     return Square;
 }(Marker));
 
-var __extends$21 = (undefined && undefined.__extends) || (function () {
+var __extends$20 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -55955,7 +55936,7 @@ var __extends$21 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MarkerLabel = /** @class */ (function (_super) {
-    __extends$21(MarkerLabel, _super);
+    __extends$20(MarkerLabel, _super);
     function MarkerLabel() {
         var _this = _super.call(this) || this;
         _this.label = new Text();
@@ -56308,7 +56289,7 @@ function reactive(events, property) {
     };
 }
 
-var __extends$22 = (undefined && undefined.__extends) || (function () {
+var __extends$21 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56333,7 +56314,7 @@ var Orientation;
     Orientation[Orientation["Horizontal"] = 1] = "Horizontal";
 })(Orientation || (Orientation = {}));
 var Legend = /** @class */ (function (_super) {
-    __extends$22(Legend, _super);
+    __extends$21(Legend, _super);
     function Legend() {
         var _this = _super.call(this) || this;
         _this.group = new Group();
@@ -56609,7 +56590,7 @@ var Legend = /** @class */ (function (_super) {
     return Legend;
 }(Observable));
 
-var __extends$23 = (undefined && undefined.__extends) || (function () {
+var __extends$22 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56629,7 +56610,7 @@ var __decorate$2H = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Series = /** @class */ (function (_super) {
-    __extends$23(Series, _super);
+    __extends$22(Series, _super);
     function Series() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.id = _this.createId();
@@ -56721,7 +56702,7 @@ var Series = /** @class */ (function (_super) {
     return Series;
 }(Observable));
 
-var __extends$24 = (undefined && undefined.__extends) || (function () {
+var __extends$23 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56741,7 +56722,7 @@ var __decorate$2I = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SeriesMarker = /** @class */ (function (_super) {
-    __extends$24(SeriesMarker, _super);
+    __extends$23(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -56770,7 +56751,7 @@ var SeriesMarker = /** @class */ (function (_super) {
     return SeriesMarker;
 }(Observable));
 
-var __extends$25 = (undefined && undefined.__extends) || (function () {
+var __extends$24 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56784,7 +56765,7 @@ var __extends$25 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianSeries = /** @class */ (function (_super) {
-    __extends$25(CartesianSeries, _super);
+    __extends$24(CartesianSeries, _super);
     function CartesianSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -56797,14 +56778,14 @@ var CartesianSeries = /** @class */ (function (_super) {
     return CartesianSeries;
 }(Series));
 var CartesianSeriesMarker = /** @class */ (function (_super) {
-    __extends$25(CartesianSeriesMarker, _super);
+    __extends$24(CartesianSeriesMarker, _super);
     function CartesianSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CartesianSeriesMarker;
 }(SeriesMarker));
 
-var __extends$26 = (undefined && undefined.__extends) || (function () {
+var __extends$25 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56824,7 +56805,7 @@ var __decorate$2J = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Chart = /** @class */ (function (_super) {
-    __extends$26(Chart, _super);
+    __extends$25(Chart, _super);
     function Chart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this) || this;
@@ -57605,7 +57586,7 @@ var BandScale = /** @class */ (function () {
     return BandScale;
 }());
 
-var __extends$27 = (undefined && undefined.__extends) || (function () {
+var __extends$26 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -57619,7 +57600,7 @@ var __extends$27 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CategoryAxis = /** @class */ (function (_super) {
-    __extends$27(CategoryAxis, _super);
+    __extends$26(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = this;
         var scale = new BandScale();
@@ -57944,7 +57925,7 @@ var TreeLayout = /** @class */ (function () {
     return TreeLayout;
 }());
 
-var __extends$28 = (undefined && undefined.__extends) || (function () {
+var __extends$27 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -57958,7 +57939,7 @@ var __extends$28 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
-    __extends$28(GroupedCategoryAxisLabel, _super);
+    __extends$27(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.grid = false;
@@ -57976,7 +57957,7 @@ var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var GroupedCategoryAxis = /** @class */ (function (_super) {
-    __extends$28(GroupedCategoryAxis, _super);
+    __extends$27(GroupedCategoryAxis, _super);
     function GroupedCategoryAxis() {
         var _this = _super.call(this, new BandScale()) || this;
         _this.id = _this.createId();
@@ -58346,7 +58327,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     return GroupedCategoryAxis;
 }(ChartAxis));
 
-var __extends$29 = (undefined && undefined.__extends) || (function () {
+var __extends$28 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58372,7 +58353,7 @@ var CartesianChartLayout;
     CartesianChartLayout[CartesianChartLayout["Horizontal"] = 1] = "Horizontal";
 })(CartesianChartLayout || (CartesianChartLayout = {}));
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$29(CartesianChart, _super);
+    __extends$28(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -58552,7 +58533,7 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$2a = (undefined && undefined.__extends) || (function () {
+var __extends$29 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58566,7 +58547,7 @@ var __extends$2a = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$2a(PolarSeries, _super);
+    __extends$29(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -58593,14 +58574,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$2a(PolarSeriesMarker, _super);
+    __extends$29(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$2b = (undefined && undefined.__extends) || (function () {
+var __extends$2a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58614,7 +58595,7 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChart = /** @class */ (function (_super) {
-    __extends$2b(PolarChart, _super);
+    __extends$2a(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -58780,6 +58761,26 @@ function bisectRight(list, x, comparator, lo, hi) {
     }
     return lo;
 }
+function complexBisectRight(list, x, map, lo, hi) {
+    if (lo === void 0) { lo = 0; }
+    if (hi === void 0) { hi = list.length; }
+    var comparator = ascendingComparator(map);
+    while (lo < hi) {
+        var mid = (lo + hi) >>> 1;
+        if (comparator(list[mid], x) < 0) {
+            lo = mid + 1;
+        }
+        else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+function ascendingComparator(map) {
+    return function (item, x) {
+        return ascending(map(item), x);
+    };
+}
 
 var constant$1 = function (x) { return function () { return x; }; };
 var identity = function (x) { return x; };
@@ -58934,7 +58935,7 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 
-var __extends$2c = (undefined && undefined.__extends) || (function () {
+var __extends$2b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58948,7 +58949,7 @@ var __extends$2c = (undefined && undefined.__extends) || (function () {
     };
 })();
 var LineSeries = /** @class */ (function (_super) {
-    __extends$2c(LineSeries, _super);
+    __extends$2b(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -59302,7 +59303,7 @@ var LineSeries = /** @class */ (function (_super) {
     return LineSeries;
 }(CartesianSeries));
 
-var __extends$2d = (undefined && undefined.__extends) || (function () {
+var __extends$2c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59319,7 +59320,7 @@ var __extends$2d = (undefined && undefined.__extends) || (function () {
  * Maps continuous domain to a continuous range.
  */
 var LinearScale = /** @class */ (function (_super) {
-    __extends$2d(LinearScale, _super);
+    __extends$2c(LinearScale, _super);
     function LinearScale() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -59379,7 +59380,7 @@ function scaleLinear() {
     return new LinearScale();
 }
 
-var __extends$2e = (undefined && undefined.__extends) || (function () {
+var __extends$2d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59393,7 +59394,7 @@ var __extends$2e = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Circle = /** @class */ (function (_super) {
-    __extends$2e(Circle, _super);
+    __extends$2d(Circle, _super);
     function Circle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -59408,7 +59409,7 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(Marker));
 
-var __extends$2f = (undefined && undefined.__extends) || (function () {
+var __extends$2e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59428,7 +59429,7 @@ var __decorate$2L = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeries = /** @class */ (function (_super) {
-    __extends$2f(ScatterSeries, _super);
+    __extends$2e(ScatterSeries, _super);
     function ScatterSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -59705,7 +59706,7 @@ var ScatterSeries = /** @class */ (function (_super) {
     return ScatterSeries;
 }(CartesianSeries));
 
-var __extends$2g = (undefined && undefined.__extends) || (function () {
+var __extends$2f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59725,7 +59726,7 @@ var __decorate$2M = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Label = /** @class */ (function (_super) {
-    __extends$2g(Label, _super);
+    __extends$2f(Label, _super);
     function Label() {
         var _this = _super.call(this) || this;
         _this.enabled = true;
@@ -59755,7 +59756,7 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 
-var __extends$2h = (undefined && undefined.__extends) || (function () {
+var __extends$2g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59787,7 +59788,7 @@ var ColumnSeriesNodeTag;
     ColumnSeriesNodeTag[ColumnSeriesNodeTag["Label"] = 1] = "Label";
 })(ColumnSeriesNodeTag || (ColumnSeriesNodeTag = {}));
 var ColumnSeriesLabel = /** @class */ (function (_super) {
-    __extends$2h(ColumnSeriesLabel, _super);
+    __extends$2g(ColumnSeriesLabel, _super);
     function ColumnSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -59797,7 +59798,7 @@ var ColumnSeriesLabel = /** @class */ (function (_super) {
     return ColumnSeriesLabel;
 }(Label));
 var ColumnSeries = /** @class */ (function (_super) {
-    __extends$2h(ColumnSeries, _super);
+    __extends$2g(ColumnSeries, _super);
     function ColumnSeries() {
         var _a;
         var _this = _super.call(this) || this;
@@ -60286,7 +60287,7 @@ var ColumnSeries = /** @class */ (function (_super) {
     return ColumnSeries;
 }(CartesianSeries));
 
-var __extends$2i = (undefined && undefined.__extends) || (function () {
+var __extends$2h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -60307,7 +60308,7 @@ var __spreadArrays$8 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var AreaSeries = /** @class */ (function (_super) {
-    __extends$2i(AreaSeries, _super);
+    __extends$2h(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
         _this.areaGroup = _this.group.appendChild(new Group);
@@ -60797,7 +60798,7 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 
-var __extends$2j = (undefined && undefined.__extends) || (function () {
+var __extends$2i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -60811,7 +60812,7 @@ var __extends$2j = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Sector = /** @class */ (function (_super) {
-    __extends$2j(Sector, _super);
+    __extends$2i(Sector, _super);
     function Sector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new Path2D();
@@ -61435,7 +61436,7 @@ var Color$1 = /** @class */ (function () {
     return Color;
 }());
 
-var __extends$2k = (undefined && undefined.__extends) || (function () {
+var __extends$2j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -61461,7 +61462,7 @@ var PieSeriesNodeTag;
     PieSeriesNodeTag[PieSeriesNodeTag["Label"] = 2] = "Label";
 })(PieSeriesNodeTag || (PieSeriesNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
-    __extends$2k(PieSeriesLabel, _super);
+    __extends$2j(PieSeriesLabel, _super);
     function PieSeriesLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.offset = 3; // from the callout line
@@ -61477,7 +61478,7 @@ var PieSeriesLabel = /** @class */ (function (_super) {
     return PieSeriesLabel;
 }(Label));
 var PieSeries = /** @class */ (function (_super) {
-    __extends$2k(PieSeries, _super);
+    __extends$2j(PieSeries, _super);
     function PieSeries() {
         var _this = _super.call(this) || this;
         _this.radiusScale = new LinearScale();
@@ -62194,7 +62195,7 @@ var DropShadow = /** @class */ (function () {
     return DropShadow;
 }());
 
-var __extends$2l = (undefined && undefined.__extends) || (function () {
+var __extends$2k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62208,7 +62209,7 @@ var __extends$2l = (undefined && undefined.__extends) || (function () {
     };
 })();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$2l(NumberAxis, _super);
+    __extends$2k(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -62246,7 +62247,7 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(ChartAxis));
 
-var __extends$2m = (undefined && undefined.__extends) || (function () {
+var __extends$2l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62266,7 +62267,7 @@ var __decorate$2P = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Caption = /** @class */ (function (_super) {
-    __extends$2m(Caption, _super);
+    __extends$2l(Caption, _super);
     function Caption() {
         var _this = _super.call(this) || this;
         _this.node = new Text();
@@ -62305,7 +62306,7 @@ var Caption = /** @class */ (function (_super) {
     return Caption;
 }(Observable));
 
-var __extends$2n = (undefined && undefined.__extends) || (function () {
+var __extends$2m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62319,7 +62320,7 @@ var __extends$2n = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$2n(GroupedCategoryChart, _super);
+    __extends$2m(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62392,7 +62393,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
     return GroupedCategoryChart;
 }(CartesianChart));
 
-var __extends$2o = (undefined && undefined.__extends) || (function () {
+var __extends$2n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62406,7 +62407,7 @@ var __extends$2o = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$2o(Cross, _super);
+    __extends$2n(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62433,7 +62434,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$2p = (undefined && undefined.__extends) || (function () {
+var __extends$2o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62447,7 +62448,7 @@ var __extends$2p = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$2p(Diamond, _super);
+    __extends$2o(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62467,7 +62468,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$2q = (undefined && undefined.__extends) || (function () {
+var __extends$2p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62481,7 +62482,7 @@ var __extends$2q = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$2q(Plus, _super);
+    __extends$2p(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62509,7 +62510,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$2r = (undefined && undefined.__extends) || (function () {
+var __extends$2q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62523,7 +62524,7 @@ var __extends$2r = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$2r(Triangle, _super);
+    __extends$2q(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62549,6 +62550,1218 @@ function convertToMap(list) {
     });
     return map;
 }
+
+var __extends$2r = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var t0 = new Date;
+var t1 = new Date;
+/**
+ * The interval methods don't mutate Date parameters.
+ */
+var TimeInterval = /** @class */ (function () {
+    function TimeInterval(floor, offset) {
+        this._floor = floor;
+        this._offset = offset;
+    }
+    /**
+     * Returns a new date representing the latest interval boundary date before or equal to date.
+     * For example, `day.floor(date)` typically returns 12:00 AM local time on the given date.
+     * @param date
+     */
+    TimeInterval.prototype.floor = function (date) {
+        date = new Date(+date);
+        this._floor(date);
+        return date;
+    };
+    /**
+     * Returns a new date representing the earliest interval boundary date after or equal to date.
+     * @param date
+     */
+    TimeInterval.prototype.ceil = function (date) {
+        date = new Date(+date - 1);
+        this._floor(date);
+        this._offset(date, 1);
+        this._floor(date);
+        return date;
+    };
+    /**
+     * Returns a new date representing the closest interval boundary date to date.
+     * @param date
+     */
+    TimeInterval.prototype.round = function (date) {
+        var d0 = this.floor(date);
+        var d1 = this.ceil(date);
+        var ms = +date;
+        return ms - d0.getTime() < d1.getTime() - ms ? d0 : d1;
+    };
+    /**
+     * Returns a new date equal to date plus step intervals.
+     * @param date
+     * @param step
+     */
+    TimeInterval.prototype.offset = function (date, step) {
+        if (step === void 0) { step = 1; }
+        date = new Date(+date);
+        this._offset(date, Math.floor(step));
+        return date;
+    };
+    /**
+     * Returns an array of dates representing every interval boundary after or equal to start (inclusive) and before stop (exclusive).
+     * @param start
+     * @param stop
+     * @param step
+     */
+    TimeInterval.prototype.range = function (start, stop, step) {
+        if (step === void 0) { step = 1; }
+        var range = [];
+        start = this.ceil(start);
+        step = Math.floor(step);
+        if (start > stop || step <= 0) {
+            return range;
+        }
+        var previous;
+        do {
+            previous = new Date(+start);
+            range.push(previous);
+            this._offset(start, step);
+            this._floor(start);
+        } while (previous < start && start < stop);
+        return range;
+    };
+    // Returns an interval that is a subset of this interval.
+    // For example, to create an interval that return 1st, 11th, 21st and 31st of each month:
+    // day.filter(date => (date.getDate() - 1) % 10 === 0)
+    TimeInterval.prototype.filter = function (test) {
+        var _this = this;
+        var floor = function (date) {
+            if (date >= date) {
+                while (_this._floor(date), !test(date)) {
+                    date.setTime(date.getTime() - 1);
+                }
+            }
+            return date;
+        };
+        var offset = function (date, step) {
+            if (date >= date) {
+                if (step < 0) {
+                    while (++step <= 0) {
+                        do {
+                            _this._offset(date, -1);
+                        } while (!test(date));
+                    }
+                }
+                else {
+                    while (--step >= 0) {
+                        do {
+                            _this._offset(date, 1);
+                        } while (!test(date));
+                    }
+                }
+            }
+            return date;
+        };
+        return new TimeInterval(floor, offset);
+    };
+    return TimeInterval;
+}());
+var CountableTimeInterval = /** @class */ (function (_super) {
+    __extends$2r(CountableTimeInterval, _super);
+    function CountableTimeInterval(floor, offset, count, field) {
+        var _this = _super.call(this, floor, offset) || this;
+        _this._count = count;
+        _this._field = field;
+        return _this;
+    }
+    /**
+     * Returns the number of interval boundaries after start (exclusive) and before or equal to end (inclusive).
+     * @param start
+     * @param end
+     */
+    CountableTimeInterval.prototype.count = function (start, end) {
+        t0.setTime(+start);
+        t1.setTime(+end);
+        this._floor(t0);
+        this._floor(t1);
+        return Math.floor(this._count(t0, t1));
+    };
+    /**
+     * Returns a filtered view of this interval representing every step'th date.
+     * The meaning of step is dependent on this interval’s parent interval as defined by the `field` function.
+     * @param step
+     */
+    CountableTimeInterval.prototype.every = function (step) {
+        var _this = this;
+        var result;
+        step = Math.floor(step);
+        if (isFinite(step) && step > 0) {
+            if (step > 1) {
+                var field_1 = this._field;
+                if (field_1) {
+                    result = this.filter(function (d) { return field_1(d) % step === 0; });
+                }
+                else {
+                    result = this.filter(function (d) { return _this.count(0, d) % step === 0; });
+                }
+            }
+            else {
+                result = this;
+            }
+        }
+        return result;
+    };
+    return CountableTimeInterval;
+}(TimeInterval));
+
+function floor(date) {
+    return date;
+}
+function offset(date, milliseconds) {
+    date.setTime(date.getTime() + milliseconds);
+}
+function count(start, end) {
+    return end.getTime() - start.getTime();
+}
+var millisecond = new CountableTimeInterval(floor, offset, count);
+
+// Common time unit sizes in milliseconds.
+var durationSecond = 1000;
+var durationMinute = durationSecond * 60;
+var durationHour = durationMinute * 60;
+var durationDay = durationHour * 24;
+var durationWeek = durationDay * 7;
+var durationMonth = durationDay * 30;
+var durationYear = durationDay * 365;
+
+function floor$1(date) {
+    date.setTime(date.getTime() - date.getMilliseconds());
+}
+function offset$1(date, seconds) {
+    date.setTime(date.getTime() + seconds * durationSecond);
+}
+function count$1(start, end) {
+    return (end.getTime() - start.getTime()) / durationSecond;
+}
+var second = new CountableTimeInterval(floor$1, offset$1, count$1);
+
+function floor$2(date) {
+    date.setTime(date.getTime() - date.getMilliseconds() - date.getSeconds() * durationSecond);
+}
+function offset$2(date, minutes) {
+    date.setTime(date.getTime() + minutes * durationMinute);
+}
+function count$2(start, end) {
+    return (end.getTime() - start.getTime()) / durationMinute;
+}
+function field(date) {
+    return date.getMinutes();
+}
+var minute = new CountableTimeInterval(floor$2, offset$2, count$2, field);
+
+function floor$3(date) {
+    date.setTime(date.getTime() - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
+}
+function offset$3(date, hours) {
+    date.setTime(date.getTime() + hours * durationHour);
+}
+function count$3(start, end) {
+    return (end.getTime() - start.getTime()) / durationHour;
+}
+function field$1(date) {
+    return date.getHours();
+}
+var hour = new CountableTimeInterval(floor$3, offset$3, count$3, field$1);
+
+function floor$4(date) {
+    date.setHours(0, 0, 0, 0);
+}
+function offset$4(date, days) {
+    date.setDate(date.getDate() + days);
+}
+function count$4(start, end) {
+    var tzMinuteDelta = end.getTimezoneOffset() - start.getTimezoneOffset();
+    return (end.getTime() - start.getTime() - tzMinuteDelta * durationMinute) / durationDay;
+}
+function field$2(date) {
+    return date.getDate() - 1;
+}
+var day = new CountableTimeInterval(floor$4, offset$4, count$4, field$2);
+
+// Set date to n-th day of the week.
+function weekday(n) {
+    // Sets the `date` to the start of the `n`-th day of the current week.
+    // n == 0 is Sunday.
+    function floor(date) {
+        //                  1..31            1..7
+        date.setDate(date.getDate() - (date.getDay() + 7 - n) % 7);
+        date.setHours(0, 0, 0, 0); // h, m, s, ms
+    }
+    // Offset the date by the given number of weeks.
+    function offset(date, weeks) {
+        date.setDate(date.getDate() + weeks * 7);
+    }
+    // Count the number of weeks between teh start and end dates.
+    function count(start, end) {
+        var msDelta = end.getTime() - start.getTime();
+        var tzMinuteDelta = end.getTimezoneOffset() - start.getTimezoneOffset();
+        return (msDelta - tzMinuteDelta * durationMinute) / durationWeek;
+    }
+    return new CountableTimeInterval(floor, offset, count);
+}
+var sunday = weekday(0);
+var monday = weekday(1);
+var tuesday = weekday(2);
+var wednesday = weekday(3);
+var thursday = weekday(4);
+var friday = weekday(5);
+var saturday = weekday(6);
+
+function floor$5(date) {
+    date.setDate(1);
+    date.setHours(0, 0, 0, 0);
+}
+function offset$5(date, months) {
+    date.setMonth(date.getMonth() + months);
+}
+function count$5(start, end) {
+    return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
+}
+function field$3(date) {
+    return date.getMonth();
+}
+var month = new CountableTimeInterval(floor$5, offset$5, count$5, field$3);
+
+function floor$6(date) {
+    date.setMonth(0, 1);
+    date.setHours(0, 0, 0, 0);
+}
+function offset$6(date, years) {
+    date.setFullYear(date.getFullYear() + years);
+}
+function count$6(start, end) {
+    return end.getFullYear() - start.getFullYear();
+}
+function field$4(date) {
+    return date.getFullYear();
+}
+var year = new CountableTimeInterval(floor$6, offset$6, count$6, field$4);
+
+function floor$7(date) {
+    date.setUTCHours(0, 0, 0, 0);
+}
+function offset$7(date, days) {
+    date.setUTCDate(date.getUTCDate() + days);
+}
+function count$7(start, end) {
+    return (end.getTime() - start.getTime()) / durationDay;
+}
+function field$5(date) {
+    return date.getUTCDate() - 1;
+}
+var utcDay = new CountableTimeInterval(floor$7, offset$7, count$7, field$5);
+
+function floor$8(date) {
+    date.setUTCMonth(0, 1);
+    date.setUTCHours(0, 0, 0, 0);
+}
+function offset$8(date, years) {
+    date.setUTCFullYear(date.getUTCFullYear() + years);
+}
+function count$8(start, end) {
+    return end.getUTCFullYear() - start.getUTCFullYear();
+}
+function field$6(date) {
+    return date.getUTCFullYear();
+}
+var utcYear = new CountableTimeInterval(floor$8, offset$8, count$8, field$6);
+
+// Set date to n-th day of the week.
+function weekday$1(n) {
+    // Sets the `date` to the start of the `n`-th day of the current week.
+    // n == 0 is Sunday.
+    function floor(date) {
+        date.setUTCDate(date.getUTCDate() - (date.getUTCDay() + 7 - n) % 7);
+        date.setHours(0, 0, 0, 0); // h, m, s, ms
+    }
+    // Offset the date by the given number of weeks.
+    function offset(date, weeks) {
+        date.setUTCDate(date.getUTCDate() + weeks * 7);
+    }
+    // Count the number of weeks between teh start and end dates.
+    function count(start, end) {
+        return (end.getTime() - start.getTime()) / durationWeek;
+    }
+    return new CountableTimeInterval(floor, offset, count);
+}
+var utcSunday = weekday$1(0);
+var utcMonday = weekday$1(1);
+var utcTuesday = weekday$1(2);
+var utcWednesday = weekday$1(3);
+var utcThursday = weekday$1(4);
+var utcFriday = weekday$1(5);
+var utcSaturday = weekday$1(6);
+
+function localDate(d) {
+    // For JS Dates the [0, 100) interval is a time warp, a fast forward to the 20th century.
+    // For example, -1 is -0001 BC, 0 is already 1900 AD.
+    if (d.y >= 0 && d.y < 100) {
+        var date = new Date(-1, d.m, d.d, d.H, d.M, d.S, d.L);
+        date.setFullYear(d.y);
+        return date;
+    }
+    return new Date(d.y, d.m, d.d, d.H, d.M, d.S, d.L);
+}
+function utcDate(d) {
+    if (d.y >= 0 && d.y < 100) {
+        var date = new Date(Date.UTC(-1, d.m, d.d, d.H, d.M, d.S, d.L));
+        date.setUTCFullYear(d.y);
+        return date;
+    }
+    return new Date(Date.UTC(d.y, d.m, d.d, d.H, d.M, d.S, d.L));
+}
+/**
+ * Creates a lookup map for array of names to go from a name to index.
+ * @param names
+ */
+function formatLookup(names) {
+    var map = {};
+    for (var i = 0, n = names.length; i < n; i++) {
+        map[names[i].toLowerCase()] = i;
+    }
+    return map;
+}
+function newYear(y) {
+    return {
+        y: y,
+        m: 0,
+        d: 1,
+        H: 0,
+        M: 0,
+        S: 0,
+        L: 0
+    };
+}
+var percentCharCode = 37;
+var numberRe = /^\s*\d+/; // ignores next directive
+var percentRe = /^%/;
+var requoteRe = /[\\^$*+?|[\]().{}]/g;
+/**
+ * Prepends any character in the `requoteRe` set with a backslash.
+ * @param s
+ */
+var requote = function (s) { return s.replace(requoteRe, '\\$&'); }; // $& - matched substring
+/**
+ * Returns a RegExp that matches any string that starts with any of the given names (case insensitive).
+ * @param names
+ */
+var formatRe = function (names) { return new RegExp('^(?:' + names.map(requote).join('|') + ')', 'i'); };
+// A map of padding modifiers to padding strings. Default is `0`.
+var pads = {
+    '-': '',
+    '_': ' ',
+    '0': '0'
+};
+function pad(value, fill, width) {
+    var sign = value < 0 ? '-' : '';
+    var string = String(sign ? -value : value);
+    var length = string.length;
+    return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
+}
+/**
+ * Create a new time-locale-based object which exposes time-formatting
+ * methods for the specified locale definition.
+ *
+ * @param timeLocale A time locale definition.
+ */
+function formatLocale(timeLocale) {
+    var lDateTime = timeLocale.dateTime;
+    var lDate = timeLocale.date;
+    var lTime = timeLocale.time;
+    var lPeriods = timeLocale.periods;
+    var lWeekdays = timeLocale.days;
+    var lShortWeekdays = timeLocale.shortDays;
+    var lMonths = timeLocale.months;
+    var lShortMonths = timeLocale.shortMonths;
+    var periodRe = formatRe(lPeriods);
+    var periodLookup = formatLookup(lPeriods);
+    var weekdayRe = formatRe(lWeekdays);
+    var weekdayLookup = formatLookup(lWeekdays);
+    var shortWeekdayRe = formatRe(lShortWeekdays);
+    var shortWeekdayLookup = formatLookup(lShortWeekdays);
+    var monthRe = formatRe(lMonths);
+    var monthLookup = formatLookup(lMonths);
+    var shortMonthRe = formatRe(lShortMonths);
+    var shortMonthLookup = formatLookup(lShortMonths);
+    var formats = {
+        'a': formatShortWeekday,
+        'A': formatWeekday,
+        'b': formatShortMonth,
+        'B': formatMonth,
+        'c': undefined,
+        'd': formatDayOfMonth,
+        'e': formatDayOfMonth,
+        'f': formatMicroseconds,
+        'H': formatHour24,
+        'I': formatHour12,
+        'j': formatDayOfYear,
+        'L': formatMilliseconds,
+        'm': formatMonthNumber,
+        'M': formatMinutes,
+        'p': formatPeriod,
+        'Q': formatUnixTimestamp,
+        's': formatUnixTimestampSeconds,
+        'S': formatSeconds,
+        'u': formatWeekdayNumberMonday,
+        'U': formatWeekNumberSunday,
+        'V': formatWeekNumberISO,
+        'w': formatWeekdayNumberSunday,
+        'W': formatWeekNumberMonday,
+        'x': undefined,
+        'X': undefined,
+        'y': formatYear,
+        'Y': formatFullYear,
+        'Z': formatZone,
+        '%': formatLiteralPercent
+    };
+    var utcFormats = {
+        'a': formatUTCShortWeekday,
+        'A': formatUTCWeekday,
+        'b': formatUTCShortMonth,
+        'B': formatUTCMonth,
+        'c': undefined,
+        'd': formatUTCDayOfMonth,
+        'e': formatUTCDayOfMonth,
+        'f': formatUTCMicroseconds,
+        'H': formatUTCHour24,
+        'I': formatUTCHour12,
+        'j': formatUTCDayOfYear,
+        'L': formatUTCMilliseconds,
+        'm': formatUTCMonthNumber,
+        'M': formatUTCMinutes,
+        'p': formatUTCPeriod,
+        'Q': formatUnixTimestamp,
+        's': formatUnixTimestampSeconds,
+        'S': formatUTCSeconds,
+        'u': formatUTCWeekdayNumberMonday,
+        'U': formatUTCWeekNumberSunday,
+        'V': formatUTCWeekNumberISO,
+        'w': formatUTCWeekdayNumberSunday,
+        'W': formatUTCWeekNumberMonday,
+        'x': undefined,
+        'X': undefined,
+        'y': formatUTCYear,
+        'Y': formatUTCFullYear,
+        'Z': formatUTCZone,
+        '%': formatLiteralPercent
+    };
+    var parses = {
+        'a': parseShortWeekday,
+        'A': parseWeekday,
+        'b': parseShortMonth,
+        'B': parseMonth,
+        'c': parseLocaleDateTime,
+        'd': parseDayOfMonth,
+        'e': parseDayOfMonth,
+        'f': parseMicroseconds,
+        'H': parseHour24,
+        'I': parseHour24,
+        'j': parseDayOfYear,
+        'L': parseMilliseconds,
+        'm': parseMonthNumber,
+        'M': parseMinutes,
+        'p': parsePeriod,
+        'Q': parseUnixTimestamp,
+        's': parseUnixTimestampSeconds,
+        'S': parseSeconds,
+        'u': parseWeekdayNumberMonday,
+        'U': parseWeekNumberSunday,
+        'V': parseWeekNumberISO,
+        'w': parseWeekdayNumberSunday,
+        'W': parseWeekNumberMonday,
+        'x': parseLocaleDate,
+        'X': parseLocaleTime,
+        'y': parseYear,
+        'Y': parseFullYear,
+        'Z': parseZone,
+        '%': parseLiteralPercent
+    };
+    // Recursive definitions.
+    formats.x = newFormat(lDate, formats);
+    formats.X = newFormat(lTime, formats);
+    formats.c = newFormat(lDateTime, formats);
+    utcFormats.x = newFormat(lDate, utcFormats);
+    utcFormats.X = newFormat(lTime, utcFormats);
+    utcFormats.c = newFormat(lDateTime, utcFormats);
+    function newParse(specifier, newDate) {
+        return function (str) {
+            var d = newYear(1900);
+            var i = parseSpecifier(d, specifier, str += '', 0);
+            if (i != str.length) {
+                return undefined;
+            }
+            // If a UNIX timestamp is specified, return it.
+            if ('Q' in d) {
+                return new Date(d.Q);
+            }
+            // The am-pm flag is 0 for AM, and 1 for PM.
+            if ('p' in d) {
+                d.H = d.H % 12 + d.p * 12;
+            }
+            // Convert day-of-week and week-of-year to day-of-year.
+            if ('V' in d) {
+                if (d.V < 1 || d.V > 53) {
+                    return undefined;
+                }
+                if (!('w' in d)) {
+                    d.w = 1;
+                }
+                if ('Z' in d) {
+                    var week = utcDate(newYear(d.y));
+                    var day$1 = week.getUTCDay();
+                    week = day$1 > 4 || day$1 === 0 ? utcMonday.ceil(week) : utcMonday.floor(week);
+                    week = utcDay.offset(week, (d.V - 1) * 7);
+                    d.y = week.getUTCFullYear();
+                    d.m = week.getUTCMonth();
+                    d.d = week.getUTCDate() + (d.w + 6) % 7;
+                }
+                else {
+                    var week = newDate(newYear(d.y));
+                    var day$1 = week.getDay();
+                    week = day$1 > 4 || day$1 === 0 ? monday.ceil(week) : monday.floor(week);
+                    week = day.offset(week, (d.V - 1) * 7);
+                    d.y = week.getFullYear();
+                    d.m = week.getMonth();
+                    d.d = week.getDate() + (d.w + 6) % 7;
+                }
+            }
+            else if ('W' in d || 'U' in d) {
+                if (!('w' in d)) {
+                    d.w = 'u' in d
+                        ? d.u % 7
+                        : 'W' in d ? 1 : 0;
+                }
+                var day$1 = 'Z' in d ? utcDate(newYear(d.y)).getUTCDay() : newDate(newYear(d.y)).getDay();
+                d.m = 0;
+                d.d = 'W' in d ? (d.w + 6) % 7 + d.W * 7 - (day$1 + 5) % 7 : d.w + d.U * 7 - (day$1 + 6) % 7;
+            }
+            // If a time zone is specified, all fields are interpreted as UTC and then
+            // offset according to the specified time zone.
+            if ('Z' in d) {
+                d.H += d.Z / 100 | 0;
+                d.M += d.Z % 100;
+                return utcDate(d);
+            }
+            // Otherwise, all fields are in local time.
+            return newDate(d);
+        };
+    }
+    /**
+     * Creates a new function that formats the given Date or timestamp according to specifier.
+     * @param specifier
+     * @param formats
+     */
+    function newFormat(specifier, formats) {
+        return function (date) {
+            var string = [];
+            var n = specifier.length;
+            var i = -1;
+            var j = 0;
+            if (!(date instanceof Date)) {
+                date = new Date(+date);
+            }
+            while (++i < n) {
+                if (specifier.charCodeAt(i) === percentCharCode) {
+                    string.push(specifier.slice(j, i)); // copy the chunks of specifier with no directives as is
+                    var c = specifier.charAt(++i);
+                    var pad_1 = pads[c];
+                    if (pad_1 != undefined) { // if format directive has a padding modifier in front of it
+                        c = specifier.charAt(++i); // fetch the directive itself
+                    }
+                    else {
+                        pad_1 = c === 'e' ? ' ' : '0'; // use the default padding modifier
+                    }
+                    var format = formats[c];
+                    if (format) { // if the directive has a corresponding formatting function
+                        c = format(date, pad_1); // replace the directive with the formatted date
+                    }
+                    string.push(c);
+                    j = i + 1;
+                }
+            }
+            string.push(specifier.slice(j, i));
+            return string.join('');
+        };
+    }
+    // Simultaneously walks over the specifier and the parsed string, populating the `d` map with parsed values.
+    // The returned number is expected to equal the length of the parsed `string`, if parsing succeeded.
+    function parseSpecifier(d, specifier, string, j) {
+        // i - `specifier` string index
+        // j - parsed `string` index
+        var i = 0;
+        var n = specifier.length;
+        var m = string.length;
+        while (i < n) {
+            if (j >= m) {
+                return -1;
+            }
+            var code = specifier.charCodeAt(i++);
+            if (code === percentCharCode) {
+                var char = specifier.charAt(i++);
+                var parse = parses[(char in pads ? specifier.charAt(i++) : char)];
+                if (!parse || ((j = parse(d, string, j)) < 0)) {
+                    return -1;
+                }
+            }
+            else if (code != string.charCodeAt(j++)) {
+                return -1;
+            }
+        }
+        return j;
+    }
+    // ----------------------------- formats ----------------------------------
+    function formatMicroseconds(date, fill) {
+        return formatMilliseconds(date, fill) + '000';
+    }
+    function formatMilliseconds(date, fill) {
+        return pad(date.getMilliseconds(), fill, 3);
+    }
+    function formatSeconds(date, fill) {
+        return pad(date.getSeconds(), fill, 2);
+    }
+    function formatMinutes(date, fill) {
+        return pad(date.getMinutes(), fill, 2);
+    }
+    function formatHour12(date, fill) {
+        return pad(date.getHours() % 12 || 12, fill, 2);
+    }
+    function formatHour24(date, fill) {
+        return pad(date.getHours(), fill, 2);
+    }
+    function formatPeriod(date) {
+        return lPeriods[date.getHours() >= 12 ? 1 : 0];
+    }
+    function formatShortWeekday(date) {
+        return lShortWeekdays[date.getDay()];
+    }
+    function formatWeekday(date) {
+        return lWeekdays[date.getDay()];
+    }
+    function formatWeekdayNumberMonday(date) {
+        var dayOfWeek = date.getDay();
+        return dayOfWeek === 0 ? 7 : dayOfWeek;
+    }
+    function formatWeekNumberSunday(date, fill) {
+        return pad(sunday.count(year.floor(date), date), fill, 2);
+    }
+    function formatWeekNumberISO(date, fill) {
+        var day = date.getDay();
+        date = (day >= 4 || day === 0) ? thursday.floor(date) : thursday.ceil(date);
+        var yearStart = year.floor(date);
+        return pad(thursday.count(yearStart, date) + (yearStart.getDay() === 4 ? 1 : 0), fill, 2);
+    }
+    function formatWeekdayNumberSunday(date) {
+        return date.getDay();
+    }
+    function formatWeekNumberMonday(date, fill) {
+        return pad(monday.count(year.floor(date), date), fill, 2);
+    }
+    function formatDayOfMonth(date, fill) {
+        return pad(date.getDate(), fill, 2);
+    }
+    function formatDayOfYear(date, fill) {
+        return pad(1 + day.count(year.floor(date), date), fill, 3);
+    }
+    function formatShortMonth(date) {
+        return lShortMonths[date.getMonth()];
+    }
+    function formatMonth(date) {
+        return lMonths[date.getMonth()];
+    }
+    function formatMonthNumber(date, fill) {
+        return pad(date.getMonth() + 1, fill, 2);
+    }
+    function formatYear(date, fill) {
+        return pad(date.getFullYear() % 100, fill, 2);
+    }
+    function formatFullYear(date, fill) {
+        return pad(date.getFullYear() % 10000, fill, 4);
+    }
+    function formatZone(date) {
+        var z = date.getTimezoneOffset();
+        return (z > 0 ? '-' : (z *= -1, '+')) + pad(Math.floor(z / 60), '0', 2) + pad(z % 60, '0', 2);
+    }
+    // -------------------------- UTC formats -----------------------------------
+    function formatUTCMicroseconds(date, fill) {
+        return formatUTCMilliseconds(date, fill) + '000';
+    }
+    function formatUTCMilliseconds(date, fill) {
+        return pad(date.getUTCMilliseconds(), fill, 3);
+    }
+    function formatUTCSeconds(date, fill) {
+        return pad(date.getUTCSeconds(), fill, 2);
+    }
+    function formatUTCMinutes(date, fill) {
+        return pad(date.getUTCMinutes(), fill, 2);
+    }
+    function formatUTCHour12(date, fill) {
+        return pad(date.getUTCHours() % 12 || 12, fill, 2);
+    }
+    function formatUTCHour24(date, fill) {
+        return pad(date.getUTCHours(), fill, 2);
+    }
+    function formatUTCPeriod(date) {
+        return lPeriods[date.getUTCHours() >= 12 ? 1 : 0];
+    }
+    function formatUTCDayOfMonth(date, fill) {
+        return pad(date.getUTCDate(), fill, 2);
+    }
+    function formatUTCDayOfYear(date, fill) {
+        return pad(1 + utcDay.count(utcYear.floor(date), date), fill, 3);
+    }
+    function formatUTCMonthNumber(date, fill) {
+        return pad(date.getUTCMonth() + 1, fill, 2);
+    }
+    function formatUTCShortMonth(date) {
+        return lShortMonths[date.getUTCMonth()];
+    }
+    function formatUTCMonth(date) {
+        return lMonths[date.getUTCMonth()];
+    }
+    function formatUTCShortWeekday(date) {
+        return lShortWeekdays[date.getUTCDay()];
+    }
+    function formatUTCWeekday(date) {
+        return lWeekdays[date.getUTCDay()];
+    }
+    function formatUTCWeekdayNumberMonday(date) {
+        var dayOfWeek = date.getUTCDay();
+        return dayOfWeek === 0 ? 7 : dayOfWeek;
+    }
+    function formatUTCWeekNumberSunday(date, fill) {
+        return pad(utcSunday.count(utcYear.floor(date), date), fill, 2);
+    }
+    function formatUTCWeekNumberISO(date, fill) {
+        var day = date.getUTCDay();
+        date = (day >= 4 || day === 0) ? utcThursday.floor(date) : utcThursday.ceil(date);
+        var yearStart = utcYear.floor(date);
+        return pad(utcThursday.count(yearStart, date) + (yearStart.getUTCDay() === 4 ? 1 : 0), fill, 4);
+    }
+    function formatUTCWeekdayNumberSunday(date) {
+        return date.getUTCDay();
+    }
+    function formatUTCWeekNumberMonday(date, fill) {
+        return pad(utcMonday.count(utcYear.floor(date), date), fill, 2);
+    }
+    function formatUTCYear(date, fill) {
+        return pad(date.getUTCFullYear() % 100, fill, 2);
+    }
+    function formatUTCFullYear(date, fill) {
+        return pad(date.getUTCFullYear() % 10000, fill, 4);
+    }
+    function formatUTCZone() {
+        return '+0000';
+    }
+    function formatLiteralPercent(date) {
+        return '%';
+    }
+    function formatUnixTimestamp(date) {
+        return date.getTime();
+    }
+    function formatUnixTimestampSeconds(date) {
+        return Math.floor(date.getTime() / 1000);
+    }
+    // ------------------------------- parsers ------------------------------------
+    function parseMicroseconds(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 6));
+        return n ? (d.L = Math.floor(parseFloat(n[0]) / 1000), i + n[0].length) : -1;
+    }
+    function parseMilliseconds(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 3));
+        return n ? (d.L = +n[0], i + n[0].length) : -1;
+    }
+    function parseSeconds(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.S = +n[0], i + n[0].length) : -1;
+    }
+    function parseMinutes(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.M = +n[0], i + n[0].length) : -1;
+    }
+    function parseHour24(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.H = +n[0], i + n[0].length) : -1;
+    }
+    function parsePeriod(d, string, i) {
+        var n = periodRe.exec(string.slice(i));
+        return n ? (d.p = periodLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+    }
+    function parseDayOfMonth(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.d = +n[0], i + n[0].length) : -1;
+    }
+    function parseDayOfYear(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 3));
+        return n ? (d.m = 0, d.d = +n[0], i + n[0].length) : -1;
+    }
+    function parseShortWeekday(d, string, i) {
+        var n = shortWeekdayRe.exec(string.slice(i));
+        return n ? (d.w = shortWeekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+    }
+    function parseWeekday(d, string, i) {
+        var n = weekdayRe.exec(string.slice(i));
+        return n ? (d.w = weekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+    }
+    function parseWeekdayNumberMonday(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 1));
+        return n ? (d.u = +n[0], i + n[0].length) : -1;
+    }
+    function parseWeekNumberSunday(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.U = +n[0], i + n[0].length) : -1;
+    }
+    function parseWeekNumberISO(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.V = +n[0], i + n[0].length) : -1;
+    }
+    function parseWeekNumberMonday(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.W = +n[0], i + n[0].length) : -1;
+    }
+    function parseWeekdayNumberSunday(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 1));
+        return n ? (d.w = +n[0], i + n[0].length) : -1;
+    }
+    function parseShortMonth(d, string, i) {
+        var n = shortMonthRe.exec(string.slice(i));
+        return n ? (d.m = shortMonthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+    }
+    function parseMonth(d, string, i) {
+        var n = monthRe.exec(string.slice(i));
+        return n ? (d.m = monthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
+    }
+    function parseMonthNumber(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.m = parseFloat(n[0]) - 1, i + n[0].length) : -1;
+    }
+    function parseLocaleDateTime(d, string, i) {
+        return parseSpecifier(d, lDateTime, string, i);
+    }
+    function parseLocaleDate(d, string, i) {
+        return parseSpecifier(d, lDate, string, i);
+    }
+    function parseLocaleTime(d, string, i) {
+        return parseSpecifier(d, lTime, string, i);
+    }
+    function parseUnixTimestamp(d, string, i) {
+        var n = numberRe.exec(string.slice(i));
+        return n ? (d.Q = +n[0], i + n[0].length) : -1;
+    }
+    function parseUnixTimestampSeconds(d, string, i) {
+        var n = numberRe.exec(string.slice(i));
+        return n ? (d.Q = (+n[0]) * 1000, i + n[0].length) : -1;
+    }
+    function parseYear(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 2));
+        return n ? (d.y = +n[0] + (+n[0] > 68 ? 1900 : 2000), i + n[0].length) : -1;
+    }
+    function parseFullYear(d, string, i) {
+        var n = numberRe.exec(string.slice(i, i + 4));
+        return n ? (d.y = +n[0], i + n[0].length) : -1;
+    }
+    function parseZone(d, string, i) {
+        var n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
+        return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
+    }
+    function parseLiteralPercent(d, string, i) {
+        var n = percentRe.exec(string.slice(i, i + 1));
+        return n ? i + n[0].length : -1;
+    }
+    return {
+        format: function (specifier) {
+            var f = newFormat(specifier, formats);
+            f.toString = function () { return specifier; };
+            return f;
+        },
+        parse: function (specifier) {
+            var p = newParse(specifier, localDate);
+            p.toString = function () { return specifier; };
+            return p;
+        },
+        utcFormat: function (specifier) {
+            var f = newFormat(specifier, utcFormats);
+            f.toString = function () { return specifier; };
+            return f;
+        },
+        utcParse: function (specifier) {
+            var p = newParse(specifier, utcDate);
+            p.toString = function () { return specifier; };
+            return p;
+        }
+    };
+}
+
+var locale;
+setDefaultLocale({
+    dateTime: '%x, %X',
+    date: '%-m/%-d/%Y',
+    time: '%-I:%M:%S %p',
+    periods: ['AM', 'PM'],
+    days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    shortDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+});
+function setDefaultLocale(definition) {
+    return locale = formatLocale(definition);
+}
+
+var __extends$2s = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var TimeScale = /** @class */ (function (_super) {
+    __extends$2s(TimeScale, _super);
+    function TimeScale() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.year = year;
+        _this.month = month;
+        _this.week = sunday;
+        _this.day = day;
+        _this.hour = hour;
+        _this.minute = minute;
+        _this.second = second;
+        _this.millisecond = millisecond;
+        _this.format = locale.format;
+        /**
+         * Array of default tick intervals in the following format:
+         *
+         *     [
+         *         interval (unit of time),
+         *         number of units (step),
+         *         the length of that number of units in milliseconds
+         *     ]
+         */
+        _this.tickIntervals = [
+            [_this.second, 1, durationSecond],
+            [_this.second, 5, 5 * durationSecond],
+            [_this.second, 15, 15 * durationSecond],
+            [_this.second, 30, 30 * durationSecond],
+            [_this.minute, 1, durationMinute],
+            [_this.minute, 5, 5 * durationMinute],
+            [_this.minute, 15, 15 * durationMinute],
+            [_this.minute, 30, 30 * durationMinute],
+            [_this.hour, 1, durationHour],
+            [_this.hour, 3, 3 * durationHour],
+            [_this.hour, 6, 6 * durationHour],
+            [_this.hour, 12, 12 * durationHour],
+            [_this.day, 1, durationDay],
+            [_this.day, 2, 2 * durationDay],
+            [_this.week, 1, durationWeek],
+            [_this.month, 1, durationMonth],
+            [_this.month, 3, 3 * durationMonth],
+            [_this.year, 1, durationYear]
+        ];
+        _this.formatMillisecond = _this.format('.%L');
+        _this.formatSecond = _this.format(':%S');
+        _this.formatMinute = _this.format('%I:%M');
+        _this.formatHour = _this.format('%I %p');
+        _this.formatDay = _this.format('%a %d');
+        _this.formatWeek = _this.format('%b %d');
+        _this.formatMonth = _this.format('%B');
+        _this.formatYear = _this.format('%Y');
+        _this._domain = [new Date(2000, 0, 1), new Date(2000, 0, 2)];
+        return _this;
+    }
+    TimeScale.prototype.defaultTickFormat = function (date) {
+        return (this.second.floor(date) < date
+            ? this.formatMillisecond
+            : this.minute.floor(date) < date
+                ? this.formatSecond
+                : this.hour.floor(date) < date
+                    ? this.formatMinute
+                    : this.day.floor(date) < date
+                        ? this.formatHour
+                        : this.month.floor(date) < date
+                            ? (this.week.floor(date) < date ? this.formatDay : this.formatWeek)
+                            : this.year.floor(date) < date
+                                ? this.formatMonth
+                                : this.formatYear)(date);
+    };
+    /**
+     *
+     * @param interval If the `interval` is a number, it's interpreted as the desired tick count
+     * and the method tries to pick an appropriate interval automatically, based on the extent of the domain.
+     * If the `interval` is `undefined`, it defaults to `10`.
+     * If the `interval` is a time interval, simply use it.
+     * @param start The start time (timestamp).
+     * @param stop The end time (timestamp).
+     * @param step Number of intervals between ticks.
+     */
+    TimeScale.prototype.tickInterval = function (interval, start, stop, step) {
+        var _a;
+        if (interval === void 0) { interval = 10; }
+        if (typeof interval === 'number') {
+            var tickCount = interval;
+            var tickIntervals = this.tickIntervals;
+            var target = Math.abs(stop - start) / tickCount;
+            var i = complexBisectRight(tickIntervals, target, function (interval) { return interval[2]; });
+            if (i === tickIntervals.length) {
+                step = tickStep(start / durationYear, stop / durationYear, tickCount);
+                interval = this.year;
+            }
+            else if (i) {
+                _a = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], interval = _a[0], step = _a[1];
+            }
+            else {
+                step = Math.max(tickStep(start, stop, interval), 1);
+                interval = this.millisecond;
+            }
+        }
+        return step == undefined ? interval : interval.every(step);
+    };
+    Object.defineProperty(TimeScale.prototype, "domain", {
+        get: function () {
+            return _super.prototype.getDomain.call(this).map(function (t) { return new Date(t); });
+        },
+        set: function (values) {
+            _super.prototype.setDomain.call(this, Array.prototype.map.call(values, function (t) { return t instanceof Date ? +t : +new Date(+t); }));
+        },
+        enumerable: true,
+        configurable: true
+    });
+    TimeScale.prototype.invert = function (y) {
+        return new Date(_super.prototype.invert.call(this, y));
+    };
+    /**
+     * Returns uniformly-spaced dates that represent the scale's domain.
+     * @param interval The desired tick count or a time interval object.
+     */
+    TimeScale.prototype.ticks = function (interval) {
+        if (interval === void 0) { interval = 10; }
+        var d = _super.prototype.getDomain.call(this);
+        var t0 = d[0];
+        var t1 = d[d.length - 1];
+        var reverse = t1 < t0;
+        if (reverse) {
+            var _ = t0;
+            t0 = t1;
+            t1 = _;
+        }
+        var t = this.tickInterval(interval, t0, t1);
+        var i = t ? t.range(t0, t1 + 1) : []; // inclusive stop
+        return reverse ? i.reverse() : i;
+    };
+    /**
+     * Returns a time format function suitable for displaying tick values.
+     * @param count Ignored. Used only to satisfy the {@link Scale} interface.
+     * @param specifier If the specifier string is provided, this method is equivalent to
+     * the {@link TimeLocaleObject.format} method.
+     * If no specifier is provided, this method returns the default time format function.
+     */
+    TimeScale.prototype.tickFormat = function (count, specifier) {
+        return specifier == undefined ? this.defaultTickFormat.bind(this) : this.format(specifier);
+    };
+    /**
+     * Extends the domain so that it starts and ends on nice round values.
+     * This method typically modifies the scale’s domain, and may only extend the bounds to the nearest round value.
+     * @param interval
+     */
+    TimeScale.prototype.nice = function (interval) {
+        if (interval === void 0) { interval = 10; }
+        var d = _super.prototype.getDomain.call(this);
+        var i = this.tickInterval(interval, d[0], d[d.length - 1]);
+        if (i) {
+            this.domain = this._nice(d, i);
+        }
+    };
+    TimeScale.prototype._nice = function (domain, interval) {
+        var _a, _b;
+        domain = domain.slice();
+        var i0 = 0;
+        var i1 = domain.length - 1;
+        var x0 = domain[i0];
+        var x1 = domain[i1];
+        if (x1 < x0) {
+            _a = [i1, i0], i0 = _a[0], i1 = _a[1];
+            _b = [x1, x0], x0 = _b[0], x1 = _b[1];
+        }
+        domain[i0] = interval.floor(x0);
+        domain[i1] = interval.ceil(x1);
+        return domain;
+    };
+    return TimeScale;
+}(ContinuousScale));
+
+var __extends$2t = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var TimeAxis = /** @class */ (function (_super) {
+    __extends$2t(TimeAxis, _super);
+    function TimeAxis() {
+        var _this = _super.call(this, new TimeScale()) || this;
+        _this._nice = true;
+        _this.scale.clamp = true;
+        return _this;
+    }
+    Object.defineProperty(TimeAxis.prototype, "nice", {
+        get: function () {
+            return this._nice;
+        },
+        set: function (value) {
+            if (this._nice !== value) {
+                this._nice = value;
+                if (value && this.scale.nice) {
+                    this.scale.nice(10);
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TimeAxis.prototype, "domain", {
+        get: function () {
+            return this.scale.domain;
+        },
+        set: function (value) {
+            this.scale.domain = value;
+            if (this.nice && this.scale.nice) {
+                this.scale.nice(10);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return TimeAxis;
+}(ChartAxis));
 
 var ChartBuilder = /** @class */ (function () {
     function ChartBuilder() {
@@ -62587,7 +63800,7 @@ var ChartBuilder = /** @class */ (function () {
         return chart;
     };
     ChartBuilder.createLineChart = function (parent, options) {
-        var chart = this.createCartesianChart(parent, ChartBuilder.createCategoryAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        var chart = this.createCartesianChart(parent, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new LineSeries(), s); });
@@ -62595,7 +63808,7 @@ var ChartBuilder = /** @class */ (function () {
         return chart;
     };
     ChartBuilder.createScatterChart = function (parent, options) {
-        var chart = this.createCartesianChart(parent, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        var chart = this.createCartesianChart(parent, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initScatterSeries(new ScatterSeries(), s); });
@@ -62970,7 +64183,7 @@ var ChartBuilder = /** @class */ (function () {
         this.setValueIfExists(caption, 'color', options.color);
         return caption;
     };
-    ChartBuilder.populateAxisProperties = function (axis, options) {
+    ChartBuilder.initAxis = function (axis, options) {
         this.setTransformedValueIfExists(axis, 'title', function (t) { return ChartBuilder.createTitle(t); }, options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
         var line = options.line, tick = options.tick, label = options.label;
@@ -62991,22 +64204,46 @@ var ChartBuilder = /** @class */ (function () {
             this.setValueIfExists(axis.label, 'color', label.color);
             this.setValueIfExists(axis.label, 'padding', label.padding);
             this.setValueIfExists(axis.label, 'rotation', label.rotation);
+            this.setValueIfExists(axis.label, 'format', label.format);
             this.setValueIfExists(axis.label, 'formatter', label.formatter);
         }
     };
     ChartBuilder.createNumberAxis = function (options) {
         var axis = new NumberAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.createCategoryAxis = function (options) {
         var axis = new CategoryAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.createGroupedAxis = function (options) {
         var axis = new GroupedCategoryAxis();
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
+        return axis;
+    };
+    ChartBuilder.createTimeAxis = function (options) {
+        var axis = new TimeAxis();
+        this.initAxis(axis, options);
+        return axis;
+    };
+    ChartBuilder.createAxis = function (options, defaultType) {
+        var axis;
+        switch (options.type || defaultType) {
+            case 'category':
+                axis = new CategoryAxis();
+                break;
+            case 'number':
+                axis = new NumberAxis();
+                break;
+            case 'time':
+                axis = new TimeAxis();
+                break;
+            default:
+                throw new Error('Unknown axis type');
+        }
+        this.initAxis(axis, options);
         return axis;
     };
     ChartBuilder.setValueIfExists = function (target, property, value, transform) {
@@ -63066,6 +64303,12 @@ var ChartProxy = /** @class */ (function () {
         this.chartProxyParams = chartProxyParams;
         this.chartType = chartProxyParams.chartType;
     }
+    ChartProxy.prototype.recreateChart = function (options) {
+        if (this.chart) {
+            this.destroyChart();
+        }
+        this.chart = this.createChart(options || this.chartOptions);
+    };
     ChartProxy.prototype.initChartOptions = function () {
         var processChartOptions = this.chartProxyParams.processChartOptions;
         // allow users to override options before they are applied
@@ -63286,13 +64529,38 @@ var ChartProxy = /** @class */ (function () {
             }
         };
     };
+    ChartProxy.prototype.transformData = function (data, categoryKey) {
+        if (this.chart.axes.filter(function (a) { return a instanceof CategoryAxis; }).length < 1) {
+            return data;
+        }
+        // replace the values for the selected category with a complex object to allow for duplicated categories
+        return data.map(function (d, index) {
+            var value = d[categoryKey];
+            var valueString = value && value.toString ? value.toString() : '';
+            var datum = __assign$3({}, d);
+            datum[categoryKey] = { id: index, value: value, toString: function () { return valueString; } };
+            return datum;
+        });
+    };
     ChartProxy.prototype.destroy = function () {
+        this.destroyChart();
+    };
+    ChartProxy.prototype.destroyChart = function () {
+        var parentElement = this.chartProxyParams.parentElement;
+        var canvas = parentElement.querySelector('canvas');
+        if (canvas) {
+            parentElement.removeChild(canvas);
+        }
+        // store current width and height so any charts created in the future maintain the size
+        this.chartOptions.width = this.chart.width;
+        this.chartOptions.height = this.chart.height;
         this.chart.destroy();
+        this.chart = null;
     };
     return ChartProxy;
 }());
 
-var __extends$2s = (undefined && undefined.__extends) || (function () {
+var __extends$2u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63317,7 +64585,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
     return __assign$4.apply(this, arguments);
 };
 var CartesianChartProxy = /** @class */ (function (_super) {
-    __extends$2s(CartesianChartProxy, _super);
+    __extends$2u(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
         return _super.call(this, params) || this;
     }
@@ -63379,7 +64647,11 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     return CartesianChartProxy;
 }(ChartProxy));
 
-var __extends$2t = (undefined && undefined.__extends) || (function () {
+function isDate(value) {
+    return value instanceof Date;
+}
+
+var __extends$2v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63404,14 +64676,17 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
     return __assign$5.apply(this, arguments);
 };
 var ScatterChartProxy = /** @class */ (function (_super) {
-    __extends$2t(ScatterChartProxy, _super);
+    __extends$2v(ScatterChartProxy, _super);
     function ScatterChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.getMarkersEnabled = function () { return true; }; // markers are always enabled on scatter charts
         _this.initChartOptions();
-        _this.chart = ChartBuilder.createScatterChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    ScatterChartProxy.prototype.createChart = function (options) {
+        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
+    };
     ScatterChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         if (params.fields.length < 2) {
@@ -63420,10 +64695,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         }
         var fields = params.fields;
         var seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
-        var defaultCategorySelected = params.category.id === ChartDataModel.DEFAULT_CATEGORY;
+        this.updateAxes(params.data[0], seriesDefinitions.map(function (d) { return d.xField.colId; }));
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesOptions = __assign$5({ type: "scatter" }, this.chartOptions.seriesDefaults);
-        var labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
+        var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
                 return s.xField.colId === series.xKey &&
@@ -63446,7 +64721,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
                 return;
             }
             var xFieldDefinition = seriesDefinition.xField, yFieldDefinition = seriesDefinition.yField, sizeFieldDefinition = seriesDefinition.sizeField;
-            series.title = xFieldDefinition.displayName + " vs " + yFieldDefinition.displayName;
+            series.title = yFieldDefinition.displayName + " vs " + xFieldDefinition.displayName;
             series.xKey = xFieldDefinition.colId;
             series.xName = xFieldDefinition.displayName;
             series.yKey = yFieldDefinition.colId;
@@ -63473,6 +64748,24 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             }
             previousSeries = series;
         });
+    };
+    ScatterChartProxy.prototype.updateAxes = function (testDatum, xKeys) {
+        var chartOptions = this.chartOptions;
+        if (chartOptions.xAxis.type) {
+            return;
+        }
+        var xAxis = this.chart.axes.filter(function (a) { return a.position === 'bottom'; })[0];
+        if (!xAxis) {
+            return;
+        }
+        var xValuesAreDates = xKeys.map(function (xKey) { return testDatum && testDatum[xKey]; }).every(function (test) { return isDate(test); });
+        if (xValuesAreDates && !(xAxis instanceof TimeAxis)) {
+            var options = __assign$5(__assign$5({}, this.chartOptions), { xAxis: __assign$5(__assign$5({}, this.chartOptions.xAxis), { type: 'time' }) });
+            this.recreateChart(options);
+        }
+        else if (!xValuesAreDates && !(xAxis instanceof NumberAxis)) {
+            this.recreateChart();
+        }
     };
     ScatterChartProxy.prototype.getTooltipsEnabled = function () {
         return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
@@ -63530,7 +64823,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     return ScatterChartProxy;
 }(CartesianChartProxy));
 
-var __extends$2u = (undefined && undefined.__extends) || (function () {
+var __extends$2w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63550,7 +64843,7 @@ var __decorate$2Q = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MarkersPanel = /** @class */ (function (_super) {
-    __extends$2u(MarkersPanel, _super);
+    __extends$2w(MarkersPanel, _super);
     function MarkersPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartController = chartController;
@@ -63610,7 +64903,7 @@ var MarkersPanel = /** @class */ (function (_super) {
     return MarkersPanel;
 }(Component));
 
-var __extends$2v = (undefined && undefined.__extends) || (function () {
+var __extends$2x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63630,7 +64923,7 @@ var __decorate$2R = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeriesPanel = /** @class */ (function (_super) {
-    __extends$2v(LineSeriesPanel, _super);
+    __extends$2x(LineSeriesPanel, _super);
     function LineSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -63704,7 +64997,7 @@ var LineSeriesPanel = /** @class */ (function (_super) {
     return LineSeriesPanel;
 }(Component));
 
-var __extends$2w = (undefined && undefined.__extends) || (function () {
+var __extends$2y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63724,7 +65017,7 @@ var __decorate$2S = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var CalloutPanel = /** @class */ (function (_super) {
-    __extends$2w(CalloutPanel, _super);
+    __extends$2y(CalloutPanel, _super);
     function CalloutPanel(chartProxy) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartProxy;
@@ -63774,7 +65067,7 @@ var CalloutPanel = /** @class */ (function (_super) {
     return CalloutPanel;
 }(Component));
 
-var __extends$2x = (undefined && undefined.__extends) || (function () {
+var __extends$2z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63794,7 +65087,7 @@ var __decorate$2T = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PieSeriesPanel = /** @class */ (function (_super) {
-    __extends$2x(PieSeriesPanel, _super);
+    __extends$2z(PieSeriesPanel, _super);
     function PieSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -63933,7 +65226,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
     return PieSeriesPanel;
 }(Component));
 
-var __extends$2y = (undefined && undefined.__extends) || (function () {
+var __extends$2A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63953,7 +65246,7 @@ var __decorate$2U = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PaddingPanel = /** @class */ (function (_super) {
-    __extends$2y(PaddingPanel, _super);
+    __extends$2A(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -64009,7 +65302,7 @@ var PaddingPanel = /** @class */ (function (_super) {
     return PaddingPanel;
 }(Component));
 
-var __extends$2z = (undefined && undefined.__extends) || (function () {
+var __extends$2B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64029,7 +65322,7 @@ var __decorate$2V = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var BackgroundPanel = /** @class */ (function (_super) {
-    __extends$2z(BackgroundPanel, _super);
+    __extends$2B(BackgroundPanel, _super);
     function BackgroundPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -64074,7 +65367,7 @@ var BackgroundPanel = /** @class */ (function (_super) {
     return BackgroundPanel;
 }(Component));
 
-var __extends$2A = (undefined && undefined.__extends) || (function () {
+var __extends$2C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64094,7 +65387,7 @@ var __decorate$2W = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartPanel = /** @class */ (function (_super) {
-    __extends$2A(ChartPanel, _super);
+    __extends$2C(ChartPanel, _super);
     function ChartPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -64204,7 +65497,7 @@ var ChartPanel = /** @class */ (function (_super) {
     return ChartPanel;
 }(Component));
 
-var __extends$2B = (undefined && undefined.__extends) || (function () {
+var __extends$2D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64224,7 +65517,7 @@ var __decorate$2X = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeriesPanel = /** @class */ (function (_super) {
-    __extends$2B(AreaSeriesPanel, _super);
+    __extends$2D(AreaSeriesPanel, _super);
     function AreaSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -64328,7 +65621,7 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
     return AreaSeriesPanel;
 }(Component));
 
-var __extends$2C = (undefined && undefined.__extends) || (function () {
+var __extends$2E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64348,7 +65641,7 @@ var __decorate$2Y = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeriesPanel = /** @class */ (function (_super) {
-    __extends$2C(ScatterSeriesPanel, _super);
+    __extends$2E(ScatterSeriesPanel, _super);
     function ScatterSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -64409,7 +65702,7 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
     return ScatterSeriesPanel;
 }(Component));
 
-var __extends$2D = (undefined && undefined.__extends) || (function () {
+var __extends$2F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64429,7 +65722,7 @@ var __decorate$2Z = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartFormattingPanel = /** @class */ (function (_super) {
-    __extends$2D(ChartFormattingPanel, _super);
+    __extends$2F(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
         var _this = _super.call(this, ChartFormattingPanel.TEMPLATE) || this;
         _this.panels = [];
@@ -64505,7 +65798,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
     return ChartFormattingPanel;
 }(Component));
 
-var __extends$2E = (undefined && undefined.__extends) || (function () {
+var __extends$2G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64525,7 +65818,7 @@ var __decorate$2_ = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChart = /** @class */ (function (_super) {
-    __extends$2E(MiniChart, _super);
+    __extends$2G(MiniChart, _super);
     function MiniChart(parent, tooltipName) {
         var _this = _super.call(this) || this;
         _this.size = 58;
@@ -64552,7 +65845,7 @@ var MiniChart = /** @class */ (function (_super) {
     return MiniChart;
 }(Component));
 
-var __extends$2F = (undefined && undefined.__extends) || (function () {
+var __extends$2H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64572,7 +65865,7 @@ var __decorate$2$ = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartWithAxes = /** @class */ (function (_super) {
-    __extends$2F(MiniChartWithAxes, _super);
+    __extends$2H(MiniChartWithAxes, _super);
     function MiniChartWithAxes(parent, tooltipName) {
         var _this = _super.call(this, parent, tooltipName) || this;
         _this.stroke = 'gray';
@@ -64604,7 +65897,7 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
     return MiniChartWithAxes;
 }(MiniChart));
 
-var __extends$2G = (undefined && undefined.__extends) || (function () {
+var __extends$2I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64618,7 +65911,7 @@ var __extends$2G = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniColumn = /** @class */ (function (_super) {
-    __extends$2G(MiniColumn, _super);
+    __extends$2I(MiniColumn, _super);
     function MiniColumn(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedColumnTooltip") || this;
         var padding = _this.padding;
@@ -64659,7 +65952,7 @@ var MiniColumn = /** @class */ (function (_super) {
     return MiniColumn;
 }(MiniChartWithAxes));
 
-var __extends$2H = (undefined && undefined.__extends) || (function () {
+var __extends$2J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64673,7 +65966,7 @@ var __extends$2H = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedColumn = /** @class */ (function (_super) {
-    __extends$2H(MiniStackedColumn, _super);
+    __extends$2J(MiniStackedColumn, _super);
     function MiniStackedColumn(parent, fills, strokes, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
@@ -64725,7 +66018,7 @@ var MiniStackedColumn = /** @class */ (function (_super) {
     return MiniStackedColumn;
 }(MiniChartWithAxes));
 
-var __extends$2I = (undefined && undefined.__extends) || (function () {
+var __extends$2K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64739,7 +66032,7 @@ var __extends$2I = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedColumn = /** @class */ (function (_super) {
-    __extends$2I(MiniNormalizedColumn, _super);
+    __extends$2K(MiniNormalizedColumn, _super);
     function MiniNormalizedColumn(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
@@ -64752,7 +66045,7 @@ var MiniNormalizedColumn = /** @class */ (function (_super) {
     return MiniNormalizedColumn;
 }(MiniStackedColumn));
 
-var __extends$2J = (undefined && undefined.__extends) || (function () {
+var __extends$2L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64766,7 +66059,7 @@ var __extends$2J = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBar = /** @class */ (function (_super) {
-    __extends$2J(MiniBar, _super);
+    __extends$2L(MiniBar, _super);
     function MiniBar(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedBarTooltip") || this;
         var padding = _this.padding;
@@ -64806,7 +66099,7 @@ var MiniBar = /** @class */ (function (_super) {
     return MiniBar;
 }(MiniChartWithAxes));
 
-var __extends$2K = (undefined && undefined.__extends) || (function () {
+var __extends$2M = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64820,7 +66113,7 @@ var __extends$2K = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedBar = /** @class */ (function (_super) {
-    __extends$2K(MiniStackedBar, _super);
+    __extends$2M(MiniStackedBar, _super);
     function MiniStackedBar(parent, fills, strokes, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
@@ -64871,7 +66164,7 @@ var MiniStackedBar = /** @class */ (function (_super) {
     return MiniStackedBar;
 }(MiniChartWithAxes));
 
-var __extends$2L = (undefined && undefined.__extends) || (function () {
+var __extends$2N = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64885,7 +66178,7 @@ var __extends$2L = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedBar = /** @class */ (function (_super) {
-    __extends$2L(MiniNormalizedBar, _super);
+    __extends$2N(MiniNormalizedBar, _super);
     function MiniNormalizedBar(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
     }
@@ -64898,7 +66191,7 @@ var MiniNormalizedBar = /** @class */ (function (_super) {
     return MiniNormalizedBar;
 }(MiniStackedBar));
 
-var __extends$2M = (undefined && undefined.__extends) || (function () {
+var __extends$2O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64912,7 +66205,7 @@ var __extends$2M = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniDoughnut = /** @class */ (function (_super) {
-    __extends$2M(MiniDoughnut, _super);
+    __extends$2O(MiniDoughnut, _super);
     function MiniDoughnut(parent, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
@@ -64953,7 +66246,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
     return MiniDoughnut;
 }(MiniChart));
 
-var __extends$2N = (undefined && undefined.__extends) || (function () {
+var __extends$2P = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64967,7 +66260,7 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniPie = /** @class */ (function (_super) {
-    __extends$2N(MiniPie, _super);
+    __extends$2P(MiniPie, _super);
     function MiniPie(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
     }
@@ -64975,7 +66268,7 @@ var MiniPie = /** @class */ (function (_super) {
     return MiniPie;
 }(MiniDoughnut));
 
-var __extends$2O = (undefined && undefined.__extends) || (function () {
+var __extends$2Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64994,7 +66287,7 @@ var __extends$2O = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$2O(ClipRect, _super);
+    __extends$2Q(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -65121,7 +66414,7 @@ var ClipRect = /** @class */ (function (_super) {
     return ClipRect;
 }(Node$1));
 
-var __extends$2P = (undefined && undefined.__extends) || (function () {
+var __extends$2R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65135,7 +66428,7 @@ var __extends$2P = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniLine = /** @class */ (function (_super) {
-    __extends$2P(MiniLine, _super);
+    __extends$2R(MiniLine, _super);
     function MiniLine(parent, fills, strokes) {
         var _this = _super.call(this, parent, "lineTooltip") || this;
         var size = _this.size;
@@ -65178,7 +66471,7 @@ var MiniLine = /** @class */ (function (_super) {
     return MiniLine;
 }(MiniChartWithAxes));
 
-var __extends$2Q = (undefined && undefined.__extends) || (function () {
+var __extends$2S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65192,7 +66485,7 @@ var __extends$2Q = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniScatter = /** @class */ (function (_super) {
-    __extends$2Q(MiniScatter, _super);
+    __extends$2S(MiniScatter, _super);
     function MiniScatter(parent, fills, strokes) {
         var _this = _super.call(this, parent, "scatterTooltip") || this;
         var size = _this.size;
@@ -65239,7 +66532,7 @@ var MiniScatter = /** @class */ (function (_super) {
     return MiniScatter;
 }(MiniChartWithAxes));
 
-var __extends$2R = (undefined && undefined.__extends) || (function () {
+var __extends$2T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65253,7 +66546,7 @@ var __extends$2R = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBubble = /** @class */ (function (_super) {
-    __extends$2R(MiniBubble, _super);
+    __extends$2T(MiniBubble, _super);
     function MiniBubble(parent, fills, strokes) {
         var _this = _super.call(this, parent, "bubbleTooltip") || this;
         var size = _this.size;
@@ -65302,7 +66595,7 @@ var MiniBubble = /** @class */ (function (_super) {
     return MiniBubble;
 }(MiniChartWithAxes));
 
-var __extends$2S = (undefined && undefined.__extends) || (function () {
+var __extends$2U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65316,7 +66609,7 @@ var __extends$2S = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniArea = /** @class */ (function (_super) {
-    __extends$2S(MiniArea, _super);
+    __extends$2U(MiniArea, _super);
     function MiniArea(parent, fills, strokes, data) {
         if (data === void 0) { data = MiniArea.data; }
         var _this = _super.call(this, parent, "groupedAreaTooltip") || this;
@@ -65378,7 +66671,7 @@ var MiniArea = /** @class */ (function (_super) {
     return MiniArea;
 }(MiniChartWithAxes));
 
-var __extends$2T = (undefined && undefined.__extends) || (function () {
+var __extends$2V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65392,7 +66685,7 @@ var __extends$2T = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedArea = /** @class */ (function (_super) {
-    __extends$2T(MiniStackedArea, _super);
+    __extends$2V(MiniStackedArea, _super);
     function MiniStackedArea(parent, fills, strokes, data, tooltipName) {
         if (data === void 0) { data = MiniStackedArea.data; }
         if (tooltipName === void 0) { tooltipName = "stackedAreaTooltip"; }
@@ -65455,7 +66748,7 @@ var MiniStackedArea = /** @class */ (function (_super) {
     return MiniStackedArea;
 }(MiniChartWithAxes));
 
-var __extends$2U = (undefined && undefined.__extends) || (function () {
+var __extends$2W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65469,7 +66762,7 @@ var __extends$2U = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedArea = /** @class */ (function (_super) {
-    __extends$2U(MiniNormalizedArea, _super);
+    __extends$2W(MiniNormalizedArea, _super);
     function MiniNormalizedArea(parent, fills, strokes, data) {
         if (data === void 0) { data = MiniNormalizedArea.data; }
         return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
@@ -65482,7 +66775,7 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
     return MiniNormalizedArea;
 }(MiniStackedArea));
 
-var __extends$2V = (undefined && undefined.__extends) || (function () {
+var __extends$2X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65502,7 +66795,7 @@ var __decorate$30 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartsContainer = /** @class */ (function (_super) {
-    __extends$2V(MiniChartsContainer, _super);
+    __extends$2X(MiniChartsContainer, _super);
     function MiniChartsContainer(chartController, fills, strokes) {
         var _this = _super.call(this, MiniChartsContainer.TEMPLATE) || this;
         _this.wrappers = {};
@@ -65581,7 +66874,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
     return MiniChartsContainer;
 }(Component));
 
-var __extends$2W = (undefined && undefined.__extends) || (function () {
+var __extends$2Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65601,7 +66894,7 @@ var __decorate$31 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartSettingsPanel = /** @class */ (function (_super) {
-    __extends$2W(ChartSettingsPanel, _super);
+    __extends$2Y(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
         var _this = _super.call(this, ChartSettingsPanel.TEMPLATE) || this;
         _this.miniCharts = [];
@@ -65763,7 +67056,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     return ChartSettingsPanel;
 }(Component));
 
-var __extends$2X = (undefined && undefined.__extends) || (function () {
+var __extends$2Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65783,7 +67076,7 @@ var __decorate$32 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TabbedChartMenu = /** @class */ (function (_super) {
-    __extends$2X(TabbedChartMenu, _super);
+    __extends$2Z(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
         var _this = _super.call(this) || this;
         _this.tabs = [];
@@ -65868,7 +67161,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     return TabbedChartMenu;
 }(Component));
 
-var __extends$2Y = (undefined && undefined.__extends) || (function () {
+var __extends$2_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65888,7 +67181,7 @@ var __decorate$33 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartMenu = /** @class */ (function (_super) {
-    __extends$2Y(ChartMenu, _super);
+    __extends$2_(ChartMenu, _super);
     function ChartMenu(chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.buttons = {
@@ -66039,7 +67332,7 @@ var ChartMenu = /** @class */ (function (_super) {
     return ChartMenu;
 }(Component));
 
-var __extends$2Z = (undefined && undefined.__extends) || (function () {
+var __extends$2$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66064,30 +67357,34 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
     return __assign$6.apply(this, arguments);
 };
 var BarChartProxy = /** @class */ (function (_super) {
-    __extends$2Z(BarChartProxy, _super);
+    __extends$2$(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        var builderFunction;
-        if (_this.isColumnChart()) {
-            builderFunction = params.grouping ? 'createGroupedColumnChart' : 'createColumnChart';
-        }
-        else {
-            builderFunction = params.grouping ? 'createGroupedBarChart' : 'createBarChart';
-        }
-        _this.chart = ChartBuilder[builderFunction](params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         var barSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
-        barSeries.flipXY = !_this.isColumnChart();
         if (barSeries) {
+            barSeries.flipXY = !_this.isColumnChart();
             _this.chart.addSeries(barSeries);
         }
         return _this;
     }
+    BarChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        var builderFunction;
+        if (this.isColumnChart()) {
+            builderFunction = grouping ? 'createGroupedColumnChart' : 'createColumnChart';
+        }
+        else {
+            builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
+        }
+        return ChartBuilder[builderFunction](parentElement, options);
+    };
     BarChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         var barSeries = chart.series[0];
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        barSeries.data = params.data;
+        barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });
@@ -66119,7 +67416,7 @@ var BarChartProxy = /** @class */ (function (_super) {
     return BarChartProxy;
 }(CartesianChartProxy));
 
-var __extends$2_ = (undefined && undefined.__extends) || (function () {
+var __extends$30 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66144,25 +67441,27 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
     return __assign$7.apply(this, arguments);
 };
 var AreaChartProxy = /** @class */ (function (_super) {
-    __extends$2_(AreaChartProxy, _super);
+    __extends$30(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](params.parentElement, _this.chartOptions);
-        _this.setAxisPadding(_this.chart);
+        _this.recreateChart();
         var areaSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
         if (areaSeries) {
             _this.chart.addSeries(areaSeries);
         }
         return _this;
     }
-    AreaChartProxy.prototype.setAxisPadding = function (chart) {
-        chart.axes.forEach(function (axis) {
-            if (axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis) {
-                axis.scale.paddingInner = 1;
-                axis.scale.paddingOuter = 0;
-            }
+    AreaChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        var chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options);
+        chart.axes
+            .filter(function (axis) { return axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis; })
+            .forEach(function (axis) {
+            axis.scale.paddingInner = 1;
+            axis.scale.paddingOuter = 0;
         });
+        return chart;
     };
     AreaChartProxy.prototype.update = function (params) {
         if (this.chartType === ChartType.Area) {
@@ -66173,7 +67472,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             // stacked and normalized has a single series
             var areaSeries = this.chart.series[0];
             var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-            areaSeries.data = params.data;
+            areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
             areaSeries.xName = params.category.name;
             areaSeries.yKeys = params.fields.map(function (f) { return f.colId; });
@@ -66202,13 +67501,14 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
+        var data = this.transformData(params.data, params.category.id);
         var previousSeries = undefined;
         params.fields.forEach(function (f, index) {
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
             if (areaSeries) {
-                areaSeries.data = params.data;
+                areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
@@ -66218,7 +67518,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.getSeriesDefaults();
-                var options = __assign$7(__assign$7({}, seriesDefaults), { data: params.data, field: {
+                var options = __assign$7(__assign$7({}, seriesDefaults), { data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKeys: [f.colId],
@@ -66249,7 +67549,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     return AreaChartProxy;
 }(CartesianChartProxy));
 
-var __extends$2$ = (undefined && undefined.__extends) || (function () {
+var __extends$31 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66274,13 +67574,17 @@ var __assign$8 = (undefined && undefined.__assign) || function () {
     return __assign$8.apply(this, arguments);
 };
 var LineChartProxy = /** @class */ (function (_super) {
-    __extends$2$(LineChartProxy, _super);
+    __extends$31(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    LineChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options);
+    };
     LineChartProxy.prototype.update = function (params) {
         var _this = this;
         var chart = this.chart;
@@ -66288,8 +67592,10 @@ var LineChartProxy = /** @class */ (function (_super) {
             chart.removeAllSeries();
             return;
         }
+        this.updateAxes(params.data[0], params.category.id);
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        var data = this.transformData(params.data, params.category.id);
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var id = series.yKey;
             if (fieldIds.indexOf(id) === i) {
@@ -66307,30 +67613,46 @@ var LineChartProxy = /** @class */ (function (_super) {
             var stroke = strokes[index % strokes.length];
             if (lineSeries) {
                 lineSeries.title = f.displayName;
-                lineSeries.data = params.data;
+                lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
                 lineSeries.fill = fill;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
-                lineSeries.fill = fill;
-                lineSeries.stroke = stroke;
             }
             else {
                 var seriesDefaults = _this.chartOptions.seriesDefaults;
-                var options = __assign$8(__assign$8({}, seriesDefaults), { type: 'line', title: f.displayName, data: params.data, field: {
+                var options = __assign$8(__assign$8({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKey: f.colId,
                         yName: f.displayName,
-                    }, fill: __assign$8(__assign$8({}, seriesDefaults.fill), { color: fill }), stroke: __assign$8(__assign$8({}, seriesDefaults.stroke), { color: fill }), marker: __assign$8({}, seriesDefaults.marker) });
+                    }, fill: __assign$8(__assign$8({}, seriesDefaults.fill), { color: fill }), stroke: __assign$8(__assign$8({}, seriesDefaults.stroke), { color: fill }) });
                 lineSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
             previousSeries = lineSeries;
         });
         this.updateLabelRotation(params.category.id);
+    };
+    LineChartProxy.prototype.updateAxes = function (testDatum, categoryKey) {
+        var chartOptions = this.chartOptions;
+        if (chartOptions.xAxis.type) {
+            return;
+        }
+        var xAxis = this.chart.axes.filter(function (a) { return a.position === 'bottom'; })[0];
+        if (!xAxis) {
+            return;
+        }
+        var categoryIsDate = isDate(testDatum && testDatum[categoryKey]);
+        if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
+            var options = __assign$8(__assign$8({}, this.chartOptions), { xAxis: __assign$8(__assign$8({}, this.chartOptions.xAxis), { type: 'time' }) });
+            this.recreateChart(options);
+        }
+        else if (!categoryIsDate && !(xAxis instanceof CategoryAxis)) {
+            this.recreateChart();
+        }
     };
     LineChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();
@@ -66348,7 +67670,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     return LineChartProxy;
 }(CartesianChartProxy));
 
-var __extends$30 = (undefined && undefined.__extends) || (function () {
+var __extends$32 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66362,14 +67684,14 @@ var __extends$30 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChartProxy = /** @class */ (function (_super) {
-    __extends$30(PolarChartProxy, _super);
+    __extends$32(PolarChartProxy, _super);
     function PolarChartProxy(params) {
         return _super.call(this, params) || this;
     }
     return PolarChartProxy;
 }(ChartProxy));
 
-var __extends$31 = (undefined && undefined.__extends) || (function () {
+var __extends$33 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66394,13 +67716,16 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
     return __assign$9.apply(this, arguments);
 };
 var PieChartProxy = /** @class */ (function (_super) {
-    __extends$31(PieChartProxy, _super);
+    __extends$33(PieChartProxy, _super);
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder.createPieChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    PieChartProxy.prototype.createChart = function (options) {
+        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+    };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         if (params.fields.length === 0) {
@@ -66448,7 +67773,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     return PieChartProxy;
 }(PolarChartProxy));
 
-var __extends$32 = (undefined && undefined.__extends) || (function () {
+var __extends$34 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66473,13 +67798,16 @@ var __assign$a = (undefined && undefined.__assign) || function () {
     return __assign$a.apply(this, arguments);
 };
 var DoughnutChartProxy = /** @class */ (function (_super) {
-    __extends$32(DoughnutChartProxy, _super);
+    __extends$34(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder.createDoughnutChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    DoughnutChartProxy.prototype.createChart = function (options) {
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+    };
     DoughnutChartProxy.prototype.update = function (params) {
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
@@ -66557,7 +67885,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     return DoughnutChartProxy;
 }(PolarChartProxy));
 
-var __extends$33 = (undefined && undefined.__extends) || (function () {
+var __extends$35 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66577,7 +67905,7 @@ var __decorate$34 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var GridChartComp = /** @class */ (function (_super) {
-    __extends$33(GridChartComp, _super);
+    __extends$35(GridChartComp, _super);
     function GridChartComp(params) {
         var _this = _super.call(this, GridChartComp.TEMPLATE) || this;
         _this.getChartPaletteName = function () { return _this.chartController.getPaletteName(); };
@@ -66617,10 +67945,6 @@ var GridChartComp = /** @class */ (function (_super) {
             width = chart.width;
             height = chart.height;
             this.chartProxy.destroy();
-            var canvas = this.eChart.querySelector('canvas');
-            if (canvas) {
-                this.eChart.removeChild(canvas);
-            }
         }
         var processChartOptionsFunc = this.params.processChartOptions ?
             this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
@@ -66737,12 +68061,7 @@ var GridChartComp = /** @class */ (function (_super) {
         var pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
         var minFieldsRequired = 1;
         if (this.chartController.isActiveXYChart()) {
-            if (this.model.getChartType() === ChartType.Bubble) {
-                minFieldsRequired = 3;
-            }
-            else {
-                minFieldsRequired = 2;
-            }
+            minFieldsRequired = this.model.getChartType() === ChartType.Bubble ? 3 : 2;
         }
         var isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
         if (parent) {
@@ -67691,7 +69010,7 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 
-var __extends$34 = (undefined && undefined.__extends) || (function () {
+var __extends$36 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67711,7 +69030,7 @@ var __decorate$38 = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AbstractSelectionHandle = /** @class */ (function (_super) {
-    __extends$34(AbstractSelectionHandle, _super);
+    __extends$36(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.changedCell = false;
@@ -67874,7 +69193,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     return AbstractSelectionHandle;
 }(Component));
 
-var __extends$35 = (undefined && undefined.__extends) || (function () {
+var __extends$37 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67912,7 +69231,7 @@ var __spreadArrays$a = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FillHandle = /** @class */ (function (_super) {
-    __extends$35(FillHandle, _super);
+    __extends$37(FillHandle, _super);
     function FillHandle() {
         var _this = _super.call(this, FillHandle.TEMPLATE) || this;
         _this.markedCellComps = [];
@@ -68363,7 +69682,7 @@ var FillHandle = /** @class */ (function (_super) {
     return FillHandle;
 }(AbstractSelectionHandle));
 
-var __extends$36 = (undefined && undefined.__extends) || (function () {
+var __extends$38 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68388,7 +69707,7 @@ var __assign$c = (undefined && undefined.__assign) || function () {
     return __assign$c.apply(this, arguments);
 };
 var RangeHandle = /** @class */ (function (_super) {
-    __extends$36(RangeHandle, _super);
+    __extends$38(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
         _this.type = 'range';
@@ -68461,7 +69780,7 @@ var GridChartsModule = {
     ]
 };
 
-var __extends$37 = (undefined && undefined.__extends) || (function () {
+var __extends$39 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68481,7 +69800,7 @@ var __decorate$3a = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DetailCellRenderer = /** @class */ (function (_super) {
-    __extends$37(DetailCellRenderer, _super);
+    __extends$39(DetailCellRenderer, _super);
     function DetailCellRenderer() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.needRefresh = false;
@@ -68645,7 +69964,7 @@ var MasterDetailModule = {
     ]
 };
 
-var __extends$38 = (undefined && undefined.__extends) || (function () {
+var __extends$3a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68665,7 +69984,7 @@ var __decorate$3b = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemComponent = /** @class */ (function (_super) {
-    __extends$38(MenuItemComponent, _super);
+    __extends$3a(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         var _this = _super.call(this, MenuItemComponent.TEMPLATE) || this;
         _this.params = params;
@@ -68785,7 +70104,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
     return MenuItemComponent;
 }(Component));
 
-var __extends$39 = (undefined && undefined.__extends) || (function () {
+var __extends$3b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -68805,7 +70124,7 @@ var __decorate$3c = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuList = /** @class */ (function (_super) {
-    __extends$39(MenuList, _super);
+    __extends$3b(MenuList, _super);
     function MenuList() {
         var _this = _super.call(this, MenuList.TEMPLATE) || this;
         _this.timerCount = 0;
@@ -68933,7 +70252,7 @@ var MenuList = /** @class */ (function (_super) {
     return MenuList;
 }(Component));
 
-var __extends$3a = (undefined && undefined.__extends) || (function () {
+var __extends$3c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69048,7 +70367,7 @@ var EnterpriseMenuFactory = /** @class */ (function () {
     return EnterpriseMenuFactory;
 }());
 var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$3a(EnterpriseMenu, _super);
+    __extends$3c(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
         var _this = _super.call(this) || this;
         _this.tabFactories = {};
@@ -69374,7 +70693,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     return EnterpriseMenu;
 }(BeanStub));
 
-var __extends$3b = (undefined && undefined.__extends) || (function () {
+var __extends$3d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69505,7 +70824,7 @@ var ContextMenuFactory = /** @class */ (function () {
     return ContextMenuFactory;
 }());
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$3b(ContextMenu, _super);
+    __extends$3d(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
         _this.menuItems = menuItems;
@@ -69956,7 +71275,7 @@ var MenuModule = {
     ]
 };
 
-var __extends$3c = (undefined && undefined.__extends) || (function () {
+var __extends$3e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69976,7 +71295,7 @@ var __decorate$3g = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectRow = /** @class */ (function (_super) {
-    __extends$3c(RichSelectRow, _super);
+    __extends$3e(RichSelectRow, _super);
     function RichSelectRow(params) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
         _this.params = params;
@@ -70036,7 +71355,7 @@ var RichSelectRow = /** @class */ (function (_super) {
     return RichSelectRow;
 }(Component));
 
-var __extends$3d = (undefined && undefined.__extends) || (function () {
+var __extends$3f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70056,7 +71375,7 @@ var __decorate$3h = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectCellEditor = /** @class */ (function (_super) {
-    __extends$3d(RichSelectCellEditor, _super);
+    __extends$3f(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
         _this.selectionConfirmed = false;
@@ -70273,7 +71592,7 @@ var RichSelectModule = {
     ]
 };
 
-var __extends$3e = (undefined && undefined.__extends) || (function () {
+var __extends$3g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70296,7 +71615,7 @@ var __param$c = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideBlock = /** @class */ (function (_super) {
-    __extends$3e(ServerSideBlock, _super);
+    __extends$3g(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
         _this.params = params;
@@ -70702,7 +72021,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
     return ServerSideBlock;
 }(RowNodeBlock));
 
-var __extends$3f = (undefined && undefined.__extends) || (function () {
+var __extends$3h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70725,7 +72044,7 @@ var __param$d = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideCache = /** @class */ (function (_super) {
-    __extends$3f(ServerSideCache, _super);
+    __extends$3h(ServerSideCache, _super);
     function ServerSideCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
@@ -71085,7 +72404,7 @@ var ServerSideCache = /** @class */ (function (_super) {
     return ServerSideCache;
 }(RowNodeCache));
 
-var __extends$3g = (undefined && undefined.__extends) || (function () {
+var __extends$3i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71108,7 +72427,7 @@ var __param$e = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$3g(ServerSideRowModel, _super);
+    __extends$3i(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -72089,7 +73408,7 @@ var SetValueModel = /** @class */ (function () {
     return SetValueModel;
 }());
 
-var __extends$3h = (undefined && undefined.__extends) || (function () {
+var __extends$3j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72109,7 +73428,7 @@ var __decorate$3l = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilterListItem = /** @class */ (function (_super) {
-    __extends$3h(SetFilterListItem, _super);
+    __extends$3j(SetFilterListItem, _super);
     function SetFilterListItem(value, column) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.selected = true;
@@ -72217,7 +73536,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
     return SetFilterListItem;
 }(Component));
 
-var __extends$3i = (undefined && undefined.__extends) || (function () {
+var __extends$3k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72243,7 +73562,7 @@ var CheckboxState;
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
 var SetFilter = /** @class */ (function (_super) {
-    __extends$3i(SetFilter, _super);
+    __extends$3k(SetFilter, _super);
     function SetFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -72653,7 +73972,7 @@ var ModelWrapper = /** @class */ (function () {
     return ModelWrapper;
 }());
 
-var __extends$3j = (undefined && undefined.__extends) || (function () {
+var __extends$3l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72673,7 +73992,7 @@ var __decorate$3n = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$3j(SetFloatingFilterComp, _super);
+    __extends$3l(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
         return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
     }
@@ -72746,7 +74065,7 @@ var StatusBarService = /** @class */ (function () {
     return StatusBarService;
 }());
 
-var __extends$3k = (undefined && undefined.__extends) || (function () {
+var __extends$3m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72766,7 +74085,7 @@ var __decorate$3p = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBar = /** @class */ (function (_super) {
-    __extends$3k(StatusBar, _super);
+    __extends$3m(StatusBar, _super);
     function StatusBar() {
         return _super.call(this, StatusBar.TEMPLATE) || this;
     }
@@ -72848,7 +74167,7 @@ var StatusBar = /** @class */ (function (_super) {
     return StatusBar;
 }(Component));
 
-var __extends$3l = (undefined && undefined.__extends) || (function () {
+var __extends$3n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72868,7 +74187,7 @@ var __decorate$3q = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var NameValueComp = /** @class */ (function (_super) {
-    __extends$3l(NameValueComp, _super);
+    __extends$3n(NameValueComp, _super);
     function NameValueComp() {
         return _super.call(this, NameValueComp.TEMPLATE) || this;
     }
@@ -72894,7 +74213,7 @@ var NameValueComp = /** @class */ (function (_super) {
     return NameValueComp;
 }(Component));
 
-var __extends$3m = (undefined && undefined.__extends) || (function () {
+var __extends$3o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72914,7 +74233,7 @@ var __decorate$3r = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
-    __extends$3m(TotalAndFilteredRowsComp, _super);
+    __extends$3o(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -72972,7 +74291,7 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     return TotalAndFilteredRowsComp;
 }(NameValueComp));
 
-var __extends$3n = (undefined && undefined.__extends) || (function () {
+var __extends$3p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72992,7 +74311,7 @@ var __decorate$3s = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilteredRowsComp = /** @class */ (function (_super) {
-    __extends$3n(FilteredRowsComp, _super);
+    __extends$3p(FilteredRowsComp, _super);
     function FilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -73042,7 +74361,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
     return FilteredRowsComp;
 }(NameValueComp));
 
-var __extends$3o = (undefined && undefined.__extends) || (function () {
+var __extends$3q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73062,7 +74381,7 @@ var __decorate$3t = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalRowsComp = /** @class */ (function (_super) {
-    __extends$3o(TotalRowsComp, _super);
+    __extends$3q(TotalRowsComp, _super);
     function TotalRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -73101,7 +74420,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
     return TotalRowsComp;
 }(NameValueComp));
 
-var __extends$3p = (undefined && undefined.__extends) || (function () {
+var __extends$3r = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73121,7 +74440,7 @@ var __decorate$3u = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectedRowsComp = /** @class */ (function (_super) {
-    __extends$3p(SelectedRowsComp, _super);
+    __extends$3r(SelectedRowsComp, _super);
     function SelectedRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -73164,7 +74483,7 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     return SelectedRowsComp;
 }(NameValueComp));
 
-var __extends$3q = (undefined && undefined.__extends) || (function () {
+var __extends$3s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73184,7 +74503,7 @@ var __decorate$3v = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AggregationComp = /** @class */ (function (_super) {
-    __extends$3q(AggregationComp, _super);
+    __extends$3s(AggregationComp, _super);
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }

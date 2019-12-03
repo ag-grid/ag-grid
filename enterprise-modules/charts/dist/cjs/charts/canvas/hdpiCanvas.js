@@ -39,7 +39,7 @@ var HdpiCanvas = /** @class */ (function () {
     });
     HdpiCanvas.prototype.remove = function () {
         var parent = this.element.parentNode;
-        if (parent !== null) {
+        if (parent != null) {
             parent.removeChild(this.element);
         }
     };

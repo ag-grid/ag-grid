@@ -32,21 +32,23 @@ var AreaChartProxy = /** @class */ (function (_super) {
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder[params.grouping ? "createGroupedAreaChart" : "createAreaChart"](params.parentElement, _this.chartOptions);
-        _this.setAxisPadding(_this.chart);
+        _this.recreateChart();
         var areaSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
         if (areaSeries) {
             _this.chart.addSeries(areaSeries);
         }
         return _this;
     }
-    AreaChartProxy.prototype.setAxisPadding = function (chart) {
-        chart.axes.forEach(function (axis) {
-            if (axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis) {
-                axis.scale.paddingInner = 1;
-                axis.scale.paddingOuter = 0;
-            }
+    AreaChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        var chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options);
+        chart.axes
+            .filter(function (axis) { return axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis; })
+            .forEach(function (axis) {
+            axis.scale.paddingInner = 1;
+            axis.scale.paddingOuter = 0;
         });
+        return chart;
     };
     AreaChartProxy.prototype.update = function (params) {
         if (this.chartType === ChartType.Area) {
@@ -57,7 +59,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             // stacked and normalized has a single series
             var areaSeries = this.chart.series[0];
             var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-            areaSeries.data = params.data;
+            areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
             areaSeries.xName = params.category.name;
             areaSeries.yKeys = params.fields.map(function (f) { return f.colId; });
@@ -86,13 +88,14 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             return map;
         }, new Map());
+        var data = this.transformData(params.data, params.category.id);
         var previousSeries = undefined;
         params.fields.forEach(function (f, index) {
             var areaSeries = existingSeriesById.get(f.colId);
             var fill = fills[index % fills.length];
             var stroke = strokes[index % strokes.length];
             if (areaSeries) {
-                areaSeries.data = params.data;
+                areaSeries.data = data;
                 areaSeries.xKey = params.category.id;
                 areaSeries.xName = params.category.name;
                 areaSeries.yKeys = [f.colId];
@@ -102,7 +105,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.getSeriesDefaults();
-                var options = __assign(__assign({}, seriesDefaults), { data: params.data, field: {
+                var options = __assign(__assign({}, seriesDefaults), { data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKeys: [f.colId],

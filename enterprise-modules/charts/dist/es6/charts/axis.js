@@ -1,16 +1,3 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
@@ -41,14 +28,6 @@ var AxisTick = /** @class */ (function () {
          * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
          */
         this.color = 'rgba(195, 195, 195, 1)';
-    }
-    return AxisTick;
-}());
-export { AxisTick };
-var FormattableAxisTick = /** @class */ (function (_super) {
-    __extends(FormattableAxisTick, _super);
-    function FormattableAxisTick() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
          * A hint of how many ticks to use (the exact number of ticks might differ),
          * a `TimeInterval` or a `CountableTimeInterval`.
@@ -58,27 +37,11 @@ var FormattableAxisTick = /** @class */ (function (_super) {
          *     axis.tick.count = year;
          *     axis.tick.count = month.every(6);
          */
-        _this.count = 10;
-        return _this;
+        this.count = 10;
     }
-    Object.defineProperty(FormattableAxisTick.prototype, "format", {
-        get: function () {
-            return this._format;
-        },
-        set: function (value) {
-            // See `TimeLocaleObject` docs for the list of supported format directives.
-            if (this._format !== value) {
-                this._format = value;
-                if (this.onFormatChange) {
-                    this.onFormatChange(value);
-                }
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return FormattableAxisTick;
-}(AxisTick));
+    return AxisTick;
+}());
+export { AxisTick };
 var AxisLabel = /** @class */ (function () {
     function AxisLabel() {
         this.fontSize = 12;
@@ -121,6 +84,22 @@ var AxisLabel = /** @class */ (function () {
          */
         this.parallel = false;
     }
+    Object.defineProperty(AxisLabel.prototype, "format", {
+        get: function () {
+            return this._format;
+        },
+        set: function (value) {
+            // See `TimeLocaleObject` docs for the list of supported format directives.
+            if (this._format !== value) {
+                this._format = value;
+                if (this.onFormatChange) {
+                    this.onFormatChange(value);
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     return AxisLabel;
 }());
 export { AxisLabel };
@@ -141,7 +120,7 @@ var Axis = /** @class */ (function () {
             width: 1,
             color: 'rgba(195, 195, 195, 1)'
         };
-        this.tick = new FormattableAxisTick();
+        this.tick = new AxisTick();
         this.label = new AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
@@ -170,8 +149,9 @@ var Axis = /** @class */ (function () {
         this._radialGrid = false;
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll();
-        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
+        this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
+        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
     Object.defineProperty(Axis.prototype, "range", {
@@ -201,7 +181,12 @@ var Axis = /** @class */ (function () {
             }
         }
         else {
-            this.tickFormatter = undefined;
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, undefined);
+            }
+            else {
+                this.tickFormatter = undefined;
+            }
         }
     };
     Object.defineProperty(Axis.prototype, "title", {

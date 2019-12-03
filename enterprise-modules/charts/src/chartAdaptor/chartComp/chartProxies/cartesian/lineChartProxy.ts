@@ -4,13 +4,23 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { LineSeries } from "../../../../charts/chart/series/cartesian/lineSeries";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../charts/chartOptions";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
+import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { isDate } from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder[params.grouping ? "createGroupedLineChart" : "createLineChart"](params.parentElement, this.chartOptions);
+        this.recreateChart();
+    }
+
+    protected createChart(options: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+        const { grouping, parentElement } = this.chartProxyParams;
+
+        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options);
     }
 
     public update(params: UpdateChartParams): void {
@@ -21,8 +31,12 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             return;
         }
 
+        this.updateAxes(params.data[0], params.category.id);
+
         const fieldIds = params.fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
+
+        const data = this.transformData(params.data, params.category.id);
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
             const id = series.yKey;
@@ -45,22 +59,20 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
 
             if (lineSeries) {
                 lineSeries.title = f.displayName;
-                lineSeries.data = params.data;
+                lineSeries.data = data;
                 lineSeries.xKey = params.category.id;
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
                 lineSeries.fill = fill;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
-                lineSeries.fill = fill;
-                lineSeries.stroke = stroke;
             } else {
                 const { seriesDefaults } = this.chartOptions;
                 const options: InternalLineSeriesOptions = {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
-                    data: params.data,
+                    data,
                     field: {
                         xKey: params.category.id,
                         xName: params.category.name,
@@ -74,9 +86,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     stroke: {
                         ...seriesDefaults.stroke,
                         color: fill, // this is deliberate, so that the line colours match the fills of other series
-                    },
-                    marker: {
-                        ...seriesDefaults.marker
                     }
                 };
 
@@ -89,6 +98,32 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         });
 
         this.updateLabelRotation(params.category.id);
+    }
+
+    private updateAxes(testDatum: any, categoryKey: string): void {
+        const { chartOptions } = this;
+
+        if (chartOptions.xAxis.type) { return; }
+
+        const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
+
+        if (!xAxis) { return; }
+
+        const categoryIsDate = isDate(testDatum && testDatum[categoryKey]);
+
+        if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
+            const options: CartesianChartOptions<LineSeriesOptions> = {
+                ...this.chartOptions,
+                xAxis: {
+                    ...this.chartOptions.xAxis,
+                    type: 'time',
+                }
+            };
+
+            this.recreateChart(options);
+        } else if (!categoryIsDate && !(xAxis instanceof CategoryAxis)) {
+            this.recreateChart();
+        }
     }
 
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {

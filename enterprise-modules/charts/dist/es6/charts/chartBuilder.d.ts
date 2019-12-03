@@ -1,4 +1,4 @@
-import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions } from "./chartOptions";
+import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions, AxisType } from "./chartOptions";
 import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
@@ -16,6 +16,7 @@ import { Legend } from "./chart/legend";
 import { Caption } from "./caption";
 import { GroupedCategoryAxis } from "./chart/axis/groupedCategoryAxis";
 import { GroupedCategoryChart } from "./chart/groupedCategoryChart";
+import { TimeAxis } from "./chart/axis/timeAxis";
 export declare class ChartBuilder {
     private static createCartesianChart;
     private static createGroupedCategoryChart;
@@ -51,10 +52,12 @@ export declare class ChartBuilder {
     static createPieTitle(options: CaptionOptions): Caption;
     static createCaption(options: CaptionOptions): Caption;
     static createDropShadow: (options?: DropShadowOptions) => DropShadow;
-    static populateAxisProperties<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions): void;
+    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions): void;
     static createNumberAxis(options: AxisOptions): NumberAxis;
     static createCategoryAxis(options: AxisOptions): CategoryAxis;
     static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis;
+    static createTimeAxis(options: AxisOptions): TimeAxis;
+    static createAxis(options: AxisOptions, defaultType: AxisType): CategoryAxis | NumberAxis | TimeAxis;
     private static setValueIfExists;
     private static setTransformedValueIfExists;
 }

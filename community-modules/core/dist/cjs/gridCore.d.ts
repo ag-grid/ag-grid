@@ -22,6 +22,7 @@ export declare class GridCore extends Component {
     loggerFactory: LoggerFactory;
     private columnApi;
     private gridApi;
+    private environment;
     private clipboardService;
     private gridPanel;
     private sideBarComp;

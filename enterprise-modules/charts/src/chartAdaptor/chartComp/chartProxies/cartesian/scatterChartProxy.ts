@@ -5,6 +5,10 @@ import { ScatterSeries } from "../../../../charts/chart/series/cartesian/scatter
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { SeriesOptions } from "../../../../charts/chartOptions";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
+import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
+import { NumberAxis } from "../../../../charts/chart/axis/numberAxis";
+import { isDate } from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -17,7 +21,11 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createScatterChart(params.parentElement, this.chartOptions);
+        this.recreateChart();
+    }
+
+    protected createChart(options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
+        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
     }
 
     public update(params: UpdateChartParams): void {
@@ -30,10 +38,12 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const { fields } = params;
         const seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
-        const defaultCategorySelected = params.category.id === ChartDataModel.DEFAULT_CATEGORY;
+
+        this.updateAxes(params.data[0], seriesDefinitions.map(d => d.xField.colId));
+
         const { fills, strokes } = this.getPalette();
         const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
-        const labelFieldDefinition = defaultCategorySelected ? undefined : params.category;
+        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
             const matchingIndex = _.findIndex(seriesDefinitions, s =>
@@ -62,7 +72,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
             const { xField: xFieldDefinition, yField: yFieldDefinition, sizeField: sizeFieldDefinition } = seriesDefinition;
 
-            series.title = `${xFieldDefinition.displayName} vs ${yFieldDefinition.displayName}`;
+            series.title = `${yFieldDefinition.displayName} vs ${xFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;
             series.xName = xFieldDefinition.displayName;
             series.yKey = yFieldDefinition.colId;
@@ -91,6 +101,32 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
             previousSeries = series;
         });
+    }
+
+    private updateAxes(testDatum: any, xKeys: string[]): void {
+        const { chartOptions } = this;
+
+        if (chartOptions.xAxis.type) { return; }
+
+        const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
+
+        if (!xAxis) { return; }
+
+        const xValuesAreDates = xKeys.map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
+
+        if (xValuesAreDates && !(xAxis instanceof TimeAxis)) {
+            const options: CartesianChartOptions<ScatterSeriesOptions> = {
+                ...this.chartOptions,
+                xAxis: {
+                    ...this.chartOptions.xAxis,
+                    type: 'time',
+                }
+            };
+
+            this.recreateChart(options);
+        } else if (!xValuesAreDates && !(xAxis instanceof NumberAxis)) {
+            this.recreateChart();
+        }
     }
 
     public getTooltipsEnabled(): boolean {

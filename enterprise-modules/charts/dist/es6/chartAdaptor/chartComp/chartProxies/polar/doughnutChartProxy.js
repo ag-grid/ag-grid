@@ -30,9 +30,12 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     function DoughnutChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        _this.chart = ChartBuilder.createDoughnutChart(params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         return _this;
     }
+    DoughnutChartProxy.prototype.createChart = function (options) {
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+    };
     DoughnutChartProxy.prototype.update = function (params) {
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();

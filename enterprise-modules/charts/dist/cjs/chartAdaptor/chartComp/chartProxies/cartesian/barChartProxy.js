@@ -32,26 +32,30 @@ var BarChartProxy = /** @class */ (function (_super) {
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
-        var builderFunction;
-        if (_this.isColumnChart()) {
-            builderFunction = params.grouping ? 'createGroupedColumnChart' : 'createColumnChart';
-        }
-        else {
-            builderFunction = params.grouping ? 'createGroupedBarChart' : 'createBarChart';
-        }
-        _this.chart = chartBuilder_1.ChartBuilder[builderFunction](params.parentElement, _this.chartOptions);
+        _this.recreateChart();
         var barSeries = chartBuilder_1.ChartBuilder.createSeries(_this.getSeriesDefaults());
-        barSeries.flipXY = !_this.isColumnChart();
         if (barSeries) {
+            barSeries.flipXY = !_this.isColumnChart();
             _this.chart.addSeries(barSeries);
         }
         return _this;
     }
+    BarChartProxy.prototype.createChart = function (options) {
+        var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
+        var builderFunction;
+        if (this.isColumnChart()) {
+            builderFunction = grouping ? 'createGroupedColumnChart' : 'createColumnChart';
+        }
+        else {
+            builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
+        }
+        return chartBuilder_1.ChartBuilder[builderFunction](parentElement, options);
+    };
     BarChartProxy.prototype.update = function (params) {
         var chart = this.chart;
         var barSeries = chart.series[0];
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        barSeries.data = params.data;
+        barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(function (f) { return f.colId; });

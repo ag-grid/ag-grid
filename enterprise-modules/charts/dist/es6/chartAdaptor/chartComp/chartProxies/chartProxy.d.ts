@@ -34,6 +34,8 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected chartType: ChartType;
     protected chartOptions: TOptions;
     protected constructor(chartProxyParams: ChartProxyParams);
+    protected abstract createChart(options: TOptions): TChart;
+    recreateChart(options?: TOptions): void;
     abstract update(params: UpdateChartParams): void;
     getChart: () => TChart;
     private isDarkTheme;
@@ -61,5 +63,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     protected getPredefinedPalette(): ChartPalette;
     protected getPalette(): ChartPalette;
     protected getDefaultChartOptions(): ChartOptions<SeriesOptions>;
+    protected transformData(data: any[], categoryKey: string): any[];
     destroy(): void;
+    protected destroyChart(): void;
 }

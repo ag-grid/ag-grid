@@ -50,9 +50,7 @@ export class AxisTick {
      * Use `null` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
     color?: string = 'rgba(195, 195, 195, 1)';
-}
 
-class FormattableAxisTick extends AxisTick {
     /**
      * A hint of how many ticks to use (the exact number of ticks might differ),
      * a `TimeInterval` or a `CountableTimeInterval`.
@@ -63,22 +61,6 @@ class FormattableAxisTick extends AxisTick {
      *     axis.tick.count = month.every(6);
      */
     count: any = 10;
-
-    onFormatChange?: (format?: string) => void;
-
-    private _format?: string;
-    set format(value: string | undefined) {
-        // See `TimeLocaleObject` docs for the list of supported format directives.
-        if (this._format !== value) {
-            this._format = value;
-            if (this.onFormatChange) {
-                this.onFormatChange(value);
-            }
-        }
-    }
-    get format(): string | undefined {
-        return this._format;
-    }
 }
 
 export class AxisLabel {
@@ -139,6 +121,22 @@ export class AxisLabel {
      * the `fractionDigits` is 4.
      */
     formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
+
+    onFormatChange?: (format?: string) => void;
+
+    private _format?: string;
+    set format(value: string | undefined) {
+        // See `TimeLocaleObject` docs for the list of supported format directives.
+        if (this._format !== value) {
+            this._format = value;
+            if (this.onFormatChange) {
+                this.onFormatChange(value);
+            }
+        }
+    }
+    get format(): string | undefined {
+        return this._format;
+    }
 }
 
 /**
@@ -183,7 +181,7 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
             color: 'rgba(195, 195, 195, 1)'
         };
 
-    readonly tick = new FormattableAxisTick();
+    readonly tick = new AxisTick();
     readonly label = new AxisLabel();
 
     readonly translation = { x: 0, y: 0 };
@@ -192,8 +190,9 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
     constructor(scale: S) {
         this.scale = scale;
         this.groupSelection = Selection.select(this.group).selectAll<Group>();
-        this.tick.onFormatChange = this.onTickFormatChange.bind(this);
+        this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
+        this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
@@ -218,7 +217,11 @@ export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S>
                 this.tickFormatter = this.scale.tickFormat(10, format);
             }
         } else {
-            this.tickFormatter = undefined;
+            if (this.scale.tickFormat) {
+                this.tickFormatter = this.scale.tickFormat(10, undefined);
+            } else {
+                this.tickFormatter = undefined;
+            }
         }
     }
 
