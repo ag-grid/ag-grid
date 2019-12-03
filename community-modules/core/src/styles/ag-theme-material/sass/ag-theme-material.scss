@@ -6,7 +6,7 @@
         border-bottom: 2px solid $ag-primary-color;
     }
 
-    @include ag-grid-theme($ag-params);
+    @include ag-grid-theme();
 
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-checked-readonly,

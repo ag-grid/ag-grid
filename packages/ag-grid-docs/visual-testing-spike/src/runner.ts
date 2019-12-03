@@ -14,6 +14,7 @@ const defaultSpecPath = '/example.php';
 const defaultSelector = '.ag-root-wrapper';
 const exampleBasePath = '/example-runner/vanilla.php';
 const maxParallelPageLoads = 8;
+const failedTestsFile = 'tmp-failed-tests.txt';
 
 const buildUrlQuery = (base: string, params: object) => {
     Object.entries(params).forEach(([key, value]) => {
@@ -53,7 +54,7 @@ const createSpecFromDefinition = (definition: SpecDefinition): Spec => {
 
 interface RunContext {
     browser: Browser;
-    filter: string;
+    filter: RegExp;
     server: string;
     handler: (screenshot: Buffer, specName: string) => Promise<void>;
 }
@@ -128,7 +129,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
                 await step.prepare(page);
             }
             const testCaseName = getTestCaseName(spec, step);
-            if (testCaseName.includes(context.filter)) {
+            if (context.filter.test(testCaseName)) {
                 // let CSS animations stabilise before taking screenshot
                 await wait(500);
                 const screenshotElement = step.selector
@@ -215,6 +216,7 @@ export interface RunSuiteParams {
     reportFile: string;
     filter: string;
     defaultThemes: string[];
+    onlyFailed: boolean;
     clean: boolean;
 }
 
@@ -227,6 +229,19 @@ export const runSuite = async (params: RunSuiteParams) => {
     }
 
     let specsAlreadyCreated = 0;
+
+    let filterPatterns: string[] = [];
+
+    if (params.filter) {
+        filterPatterns.push(params.filter);
+    }
+    if (params.onlyFailed && existsSync(failedTestsFile)) {
+        const failedLastRun = (await fs.readFile(failedTestsFile, 'utf8')).trim().split('\n');
+        log(chalk.yellow(`Limiting to ${failedLastRun.length} tests that failed last run.`));
+        filterPatterns = filterPatterns.concat(failedLastRun);
+    }
+
+    const filter = new RegExp(filterPatterns.join('|'));
 
     let specs: Spec[] = params.specs
         .map(createSpecFromDefinition)
@@ -256,8 +271,8 @@ export const runSuite = async (params: RunSuiteParams) => {
         // apply provided filter
         .filter(spec => {
             return (
-                spec.name.includes(params.filter) ||
-                spec.steps.find(step => getTestCaseName(spec, step).includes(params.filter))
+                filter.test(spec.name) ||
+                spec.steps.find(step => filter.test(getTestCaseName(spec, step)))
             );
         });
 
@@ -291,10 +306,12 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     let generatedCount = 0;
 
+    let failedTestCases: string[] = [];
+
     await runSpecs(specs, {
         browser,
+        filter,
         server: params.server,
-        filter: params.filter,
         handler: async (screenshot, testCaseName) => {
             const file = getTestCaseImagePath(params, testCaseName);
             if (params.mode === 'update') {
@@ -314,6 +331,7 @@ export const runSuite = async (params: RunSuiteParams) => {
                     log(
                         `${chalk.red.bold(`✘ ${testCaseName}`)} - found difference, see report.html`
                     );
+                    failedTestCases.push(testCaseName);
                 } else {
                     log(`${chalk.green.bold(`✔ ${testCaseName}`)} - OK`);
                 }
@@ -324,6 +342,11 @@ export const runSuite = async (params: RunSuiteParams) => {
     await browser.close();
 
     if (params.mode === 'compare') {
+        if (failedTestCases.length > 0) {
+            await fs.writeFile(failedTestsFile, failedTestCases.join('\n'));
+        } else if (existsSync(failedTestsFile)) {
+            await fs.unlink(failedTestsFile);
+        }
         const html = getReportHtml(results);
         await fs.writeFile(params.reportFile, html);
         log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);

@@ -42,6 +42,10 @@ const args: any = yargs
                         'Delete all pre-existing images when updating. The default is to delete images only if there is no filter set.',
                     type: 'boolean'
                 })
+                .option('only-failed', {
+                    describe: 'Only run test cases that failed in the last run.',
+                    type: 'boolean'
+                })
     ).argv;
 
 export const runCli = async (baseFolder: string) => {
@@ -70,7 +74,8 @@ export const runCli = async (baseFolder: string) => {
             server: args.server,
             reportFile: args.reportFile,
             clean: !!args.clean,
-            filter: args.filter || ''
+            filter: args.filter || '',
+            onlyFailed: !!args.onlyFailed
         });
     } catch (e) {
         console.error('ERROR:', getErrorStack(e));

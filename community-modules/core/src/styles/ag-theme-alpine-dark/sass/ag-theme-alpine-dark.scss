@@ -3,5 +3,5 @@
 @import '../../ag-theme-alpine/sass/ag-theme-alpine-common';
 
 .ag-theme-alpine-dark {
-    @include ag-theme-alpine($ag-params);
+    @include ag-theme-alpine();
 }

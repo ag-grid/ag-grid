@@ -12,108 +12,7 @@
     }
 }
 
-@mixin ag-grid-theme($params) {
-    $ag-grid-size: map-get($params, 'grid-size');
-    $ag-icon-size: map-get($params, 'icon-size');
-    $ag-icon-color: map-get($params, 'icon-color');
-    $ag-alt-icon-color: map-get($params, 'alt-icon-color');
-    $ag-header-icon-size: map-get($params, 'header-icon-size');
-    $ag-row-height: map-get($params, 'row-height');
-    $ag-header-height: map-get($params, 'header-height');
-    $ag-virtual-item-height: map-get($params, 'virtual-item-height');
-    $ag-cell-horizontal-padding: map-get($params, 'cell-horizontal-padding');
-
-    $ag-font-family: map-get($params, 'font-family');
-    $ag-font-size: map-get($params, 'font-size');
-    $ag-font-weight: map-get($params, 'font-weight');
-
-    $ag-secondary-font-family: map-get($params, 'secondary-font-family');
-    $ag-secondary-font-size: map-get($params, 'secondary-font-size');
-    $ag-secondary-font-weight: map-get($params, 'secondary-font-weight');
-
-    $ag-foreground-color: map-get($params, 'foreground-color');
-    $ag-foreground-opacity: map-get($params, 'foreground-opacity');
-
-    $ag-secondary-foreground-color-opacity: map-get($params, 'secondary-foreground-color-opacity');
-    $ag-secondary-foreground-color: map-get($params, 'secondary-foreground-color');
-
-    $ag-disabled-foreground-color-opacity: map-get($params, 'disabled-foreground-color-opacity');
-    $ag-disabled-foreground-color: map-get($params, 'disabled-foreground-color');
-    $ag-input-disabled-background-color: map-get($params, 'input-disabled-background-color');
-
-    $ag-background-color: map-get($params, 'background-color');
-    $ag-border-color: map-get($params, 'border-color');
-    $ag-row-border-width: map-get($params, 'row-border-width');
-    $ag-scroll-spacer-border: map-get($params, 'scroll-spacer-border');
-
-    $ag-button-background-color: map-get($params, 'button-background-color');
-
-    $ag-cell-data-changed-color: map-get($params, 'cell-data-changed-color');
-
-    $ag-chip-background-color: map-get($params, 'chip-background-color');
-
-    $ag-editor-background-color: map-get($params, 'editor-background-color');
-
-    $ag-range-selection-background-color: map-get($params, 'range-selection-background-color');
-    $ag-range-selection-chart-background-color: map-get($params, 'range-selection-chart-background-color');
-    $ag-range-selection-chart-category-background-color: map-get($params, 'range-selection-chart-category-background-color');
-    $ag-range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
-    $ag-range-selected-color-1: map-get($params, 'ag-range-selected-color-1');
-    $ag-range-selected-color-2: map-get($params, 'ag-range-selected-color-2');
-    $ag-range-selected-color-3: map-get($params, 'ag-range-selected-color-3');
-    $ag-range-selected-color-4: map-get($params, 'ag-range-selected-color-4');
-
-    $ag-header-background-color: map-get($params, 'header-background-color');
-    $ag-header-background-image: map-get($params, 'header-background-image');
-    $ag-header-cell-hover-background-color: map-get($params, 'header-cell-hover-background-color');
-    $ag-header-cell-moving-background-color: map-get($params, 'header-cell-moving-background-color');
-    $ag-header-foreground-color: map-get($params, 'header-foreground-color');
-    $ag-panel-background-color: map-get($params, 'panel-background-color');
-    $ag-tool-panel-background-color: map-get($params, 'tool-panel-background-color');
-    $ag-row-stub-background-color: map-get($params, 'row-stub-background-color');
-
-    $ag-accent-color: map-get($params, 'accent-color');
-    $ag-primary-color: map-get($params, 'primary-color');
-    $ag-hover-color: map-get($params, 'hover-color');
-    $ag-selected-color: map-get($params, 'selected-color');
-
-    $ag-button-text-transform: map-get($params, 'button-text-transform');
-    $ag-card-radius: map-get($params, 'card-radius');
-    $ag-card-shadow: map-get($params, 'card-shadow');
-
-    $ag-tooltip-background-color: map-get($params, 'tooltip-background-color');
-    $ag-tooltip-foreground-color: map-get($params, 'tooltip-foreground-color');
-    $ag-tooltip-border-radius: map-get($params, 'tooltip-border-radius');
-    $ag-tooltip-padding: map-get($params, 'tooltip-padding');
-    $ag-tooltip-border-width: map-get($params, 'tooltip-border-width');
-    $ag-tooltip-border-style: map-get($params, 'tooltip-border-style');
-    $ag-tooltip-border-color: map-get($params, 'tooltip-border-color');
-
-    $ag-value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
-    $ag-value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
-    $ag-value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
-    $ag-toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
-    $ag-row-group-indent-size: map-get($params, 'row-group-indent-size');
-    $ag-row-floating-background-color: map-get($params, 'row-floating-background-color');
-
-    $ag-dialog-background-color: map-get($params, 'dialog-background-color');
-    $ag-dialog-border-size: map-get($params, 'dialog-border-size');
-    $ag-dialog-border-style: map-get($params, 'dialog-border-style');
-    $ag-dialog-border-color: map-get($params, 'dialog-border-color');
-
-    $ag-dialog-title-background-color: map-get($params, 'dialog-title-background-color');
-    $ag-dialog-title-foreground-color: map-get($params, 'dialog-title-foreground-color');
-    $ag-dialog-title-height: map-get($params, 'dialog-title-height');
-    $ag-dialog-title-font-family: map-get($params, 'dialog-title-font-family');
-    $ag-dialog-title-font-size: map-get($params, 'dialog-title-font-size');
-    $ag-dialog-title-font-weight: map-get($params, 'dialog-title-font-weight');
-    $ag-dialog-title-padding: map-get($params, 'dialog-title-padding');
-    $ag-dialog-title-icon-size: map-get($params, 'dialog-title-icon-size');
-
-    ////////////////////////////////////////
-    // Chinese wall of inline vars over
-    ////////////////////////////////////////
-
+@mixin ag-grid-theme() {
     -webkit-font-smoothing: antialiased;
     background-color: $ag-background-color;
     color: $ag-foreground-color;
@@ -243,7 +142,7 @@
         input[type='tel'],
         input[type='date'],
         input[type='datetime-local'] {
-            @include textbox($params);
+            @include textbox();
         }
 
         input[type='date'] {
@@ -254,7 +153,7 @@
         }
 
         textarea {
-            @include textbox($params);
+            @include textbox();
         }
     }
 
@@ -298,13 +197,13 @@
         }
     }
 
-    @if map-get($params, 'odd-row-background-color') {
+    @if $ag-odd-row-background-color {
         .ag-row-odd {
-            background-color: map-get($params, 'odd-row-background-color');
+            background-color: $ag-odd-row-background-color;
         }
 
         .ag-row-even {
-            background-color: map-get($params, 'background-color');
+            background-color: $ag-background-color;
         }
     }
 
@@ -434,7 +333,7 @@
     // Context Menu
     ////////////////////////////////////////
     .ag-menu {
-        @include card($params);
+        @include card();
         padding: 0;
 
         .ag-menu-list {
@@ -485,7 +384,7 @@
     // Column Reordering
     ////////////////////////////////////////
     &.ag-dnd-ghost {
-        @include card($params);
+        @include card();
 
         border: 1px solid $ag-border-color;
         color: $ag-secondary-foreground-color;
@@ -511,8 +410,6 @@
         }
     }
 
-    $full-width-tabs: map-get($params, 'full-width-tabs');
-
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
@@ -532,7 +429,7 @@
             align-items: center;
             justify-content: center;
 
-            @if $full-width-tabs {
+            @if $ag-full-width-tabs {
                 flex: 1 1 auto;
             }
 
@@ -624,7 +521,7 @@
             padding-top: $ag-grid-size * 2;
             button {
                 line-height: 1.5;
-                @if map-get($params, 'customize-buttons') {
+                @if $ag-customize-buttons {
                     @include regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
                 }
             }
@@ -1028,14 +925,14 @@
             height: $ag-row-height + $ag-grid-size * 3;
         }
         &.ag-cell-inline-editing {
-            @include card($params);
+            @include card();
 
             background-color: $ag-editor-background-color;
         }
     }
 
     .ag-popup-editor {
-        @include card($params);
+        @include card();
         background-color: $ag-editor-background-color;
         padding: 0;
         .ag-large-textarea textarea {
@@ -1188,7 +1085,7 @@
     }
 
     .ag-select-agg-func-popup {
-        @include card($params);
+        @include card();
 
         background: $ag-background-color;
         height: $ag-grid-size * 5 * 3.5;
@@ -1201,7 +1098,7 @@
         }
 
         .ag-virtual-list-item:hover {
-            background-color: map-get($params, 'menu-option-active-color');
+            background-color: $ag-menu-option-active-color;
         }
     }
 
@@ -1307,7 +1204,7 @@
     }
 
     .ag-overlay-loading-center {
-        @include card($params);
+        @include card();
     }
 
     %side-bar-left {

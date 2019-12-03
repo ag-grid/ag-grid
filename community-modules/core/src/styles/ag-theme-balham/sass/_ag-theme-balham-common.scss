@@ -1,20 +1,6 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-@mixin ag-theme-balham($ag-params) {
-    $ag-border-color: map-get($ag-params, "border-color");
-    $ag-default-background: map-get($ag-params, "default-background");
-    $ag-foreground-color: map-get($ag-params, "foreground-color");
-    $ag-grid-size: map-get($ag-params, "grid-size");
-    $ag-header-background-color: map-get($ag-params, "header-background-color");
-    $ag-header-foreground-color: map-get($ag-params, "header-foreground-color");
-    $ag-header-height: map-get($ag-params, "header-height");
-    $ag-icon-size: map-get($ag-params, "icon-size");
-    $ag-panel-background-color: map-get($ag-params, "panel-background-color");
-    $ag-primary-color: map-get($ag-params, "primary-color");
-    $ag-range-selection-highlight-color: map-get($ag-params, "range-selection-highlight-color");
-    $ag-row-height: map-get($ag-params, "row-height");
-    $ag-row-border-width: map-get($ag-params, "row-border-width");
-    $ag-selected-color: map-get($ag-params, "selected-color");
+@mixin ag-theme-balham() {
 
     %card {
         border: 1px solid $ag-border-color;
@@ -35,7 +21,7 @@
         border-color: $ag-border-color;
     }
 
-    @include ag-grid-theme($ag-params);
+    @include ag-grid-theme();
 
     .ag-cell-highlight {
         background-color: $ag-range-selection-highlight-color !important;

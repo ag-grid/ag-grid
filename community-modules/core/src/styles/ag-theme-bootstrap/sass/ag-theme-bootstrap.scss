@@ -2,7 +2,7 @@
 @import "../../ag-theme-classic/sass/ag-theme-classic";
 
 .ag-theme-bootstrap {
-    @include ag-theme-classic($params);
+    @include ag-theme-classic();
 
     %card {
         border: 1px solid #ccc;

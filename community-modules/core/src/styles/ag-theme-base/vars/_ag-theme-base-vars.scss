@@ -24,6 +24,7 @@ $ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
 $ag-header-icon-size: 14px !default;
+$ag-input-height: null !default;
 
 // Fonts
 $ag-font-family: 'Helvetica Neue', sans-serif !default;
@@ -54,8 +55,8 @@ $ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 
 $ag-header-cell-moving-background-color: rgb(190, 190, 190) !default;
-$ag-input-disabled-background-color: #ebebeb !default;
-$ag-input-border-color: #000000 !default;
+$ag-input-disabled-background-color: null !default;
+$ag-input-border-color: null !default;
 $ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
 $ag-dialog-background-color: $ag-background-color !default;
@@ -80,10 +81,30 @@ $ag-group-component-title-background-color: darken($ag-group-component-backgroun
 $ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
 $ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
 
+// Optionals TODO move elsewhere
+// TODO See if we can default the values here and remove the overrides from derived themes
+$ag-card-background: $ag-background-color !default;
+$ag-header-background-image: null !default;
+$ag-header-background-color: null !default;
+$ag-full-width-tabs: null !default;
+$ag-odd-row-background-color: null !default;
+$ag-value-change-delta-up-color: null !default;
+$ag-value-change-delta-down-color: null !default;
+$ag-menu-option-active-color: null !default;
+$ag-row-stub-background-color: null !default;
+$ag-value-change-value-highlight-background-color: null !default;
+$ag-row-floating-background-color: null !default;
+$ag-primary-color: null !default;
+
+// Flags
+
+$ag-customize-buttons: false !default;
+$ag-customize-inputs: false !default;
+
 // Icons
 @import "./font-vars";
 
-
+// TODO remove
 $ag-icons-font-codes: (
     aggregation: $ag-icon-aggregation,
     arrows: $ag-icon-arrows,

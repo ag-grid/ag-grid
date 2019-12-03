@@ -71,94 +71,30 @@ $ag-tooltip-border-radius: $ag-border-radius !default;
 $ag-tooltip-border-color: $ag-color-background-alt !default;
 $ag-tooltip-font-size: $ag-size-font-tooltip !default;
 
+$ag-font-size: $ag-size-font-default !default;
+$ag-font-weight: $ag-weight-font-default !default;
+$ag-secondary-font-family: $ag-font-family-secondary !default;
+$ag-secondary-font-size: $ag-size-font-secondary !default;
+$ag-secondary-font-weight: $ag-weight-font-secondary !default;
+$ag-accent-color: $ag-color-primary !default;
+$ag-primary-color: $ag-color-primary !default;
+$ag-foreground-color: $ag-color-foreground !default;
+$ag-card-background-color: $ag-background-color !default;
+$ag-cell-data-changed-color: $ag-color-cell-data-changed !default;
+$ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;
+$ag-value-change-delta-down-color: $ag-color-value-change-delta-down !default;
+$ag-value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background !default;
+$ag-icon-color: $ag-color-icon !default;
+$ag-icon-opacity: $ag-foreground-opacity !default;
+$ag-ag-range-selected-color-1: $ag-range-selected-color-1 !default;
+$ag-ag-range-selected-color-2: $ag-range-selected-color-2 !default;
+$ag-ag-range-selected-color-3: $ag-range-selected-color-3 !default;
+$ag-ag-range-selected-color-4: $ag-range-selected-color-4 !default;
+$ag-input-height: $ag-grid-size * 4 !default;
+$ag-button-text-transform: uppercase !default;
+$ag-use-icons-for-pager-buttons: true !default;
+
 // Icons
 @import "./font-vars";
 
 @import '../../ag-theme-base/vars/ag-theme-base-vars';
-
-$ag-params: (
-    font-family: $ag-font-family-default,
-    font-size: $ag-size-font-default,
-    font-weight: $ag-weight-font-default,
-    secondary-font-family: $ag-font-family-secondary,
-    secondary-font-size: $ag-size-font-secondary,
-    secondary-font-weight: $ag-weight-font-secondary,
-    accent-color: $ag-color-primary,
-    primary-color: $ag-color-primary,
-    hover-color: $ag-hover-color,
-    selected-color: $ag-selected-color,
-    default-background: $ag-default-background,
-    background-color: $ag-background-color,
-    foreground-color: $ag-color-foreground,
-    foreground-opacity: $ag-foreground-opacity,
-    secondary-foreground-color-opacity: $ag-secondary-foreground-color-opacity,
-    secondary-foreground-color: $ag-secondary-foreground-color,
-    disabled-foreground-color-opacity: $ag-disabled-foreground-color-opacity,
-    disabled-foreground-color: $ag-disabled-foreground-color,
-    border-color: $ag-border-color,
-    scroll-spacer-border: $ag-scroll-spacer-border,
-    panel-background-color: $ag-panel-background-color,
-    tool-panel-background-color: $ag-tool-panel-background-color,
-    header-foreground-color: $ag-header-foreground-color,
-    header-background-color: $ag-header-background-color,
-    header-cell-hover-background-color: $ag-header-cell-hover-background-color,
-    header-cell-moving-background-color: $ag-header-cell-moving-background-color,
-    odd-row-background-color: $ag-odd-row-background-color,
-    row-stub-background-color: $ag-row-stub-background-color,
-    row-floating-background-color: $ag-row-floating-background-color,
-    chip-background-color: $ag-chip-background-color,
-    card-background-color: $ag-background-color,
-    cell-data-changed-color: $ag-color-cell-data-changed,
-    value-change-delta-up-color: $ag-color-value-change-delta-up,
-    value-change-delta-down-color: $ag-color-value-change-delta-down,
-    value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background,
-    editor-background-color: $ag-editor-background-color,
-    input-border-color: $ag-input-border-color,
-    input-disabled-background-color: $ag-input-disabled-background-color,
-    icon-color: $ag-color-icon,
-    alt-icon-color: $ag-alt-icon-color,
-    icon-opacity: $ag-foreground-opacity,
-    range-selection-background-color: $ag-range-selection-background-color,
-    range-selection-chart-background-color: $ag-range-selection-chart-background-color,
-    range-selection-chart-category-background-color: $ag-range-selection-chart-category-background-color,
-    range-selection-highlight-color: $ag-range-selection-highlight-color,
-    ag-range-selected-color-1: $ag-range-selected-color-1,
-    ag-range-selected-color-2: $ag-range-selected-color-2,
-    ag-range-selected-color-3: $ag-range-selected-color-3,
-    ag-range-selected-color-4: $ag-range-selected-color-4,
-    grid-size: $ag-grid-size,
-    input-height: $ag-grid-size * 4,
-    icon-size: $ag-icon-size,
-    header-icon-size: $ag-header-icon-size,
-    header-height: $ag-header-height,
-    row-height: $ag-row-height,
-    row-border-width: $ag-row-border-width,
-    virtual-item-height: $ag-virtual-item-height,
-    cell-horizontal-padding: $ag-cell-horizontal-padding,
-    cell-horizontal-border: $ag-cell-horizontal-border,
-    toolpanel-indent-size: $ag-toolpanel-indent-size,
-    row-group-indent-size: $ag-row-group-indent-size,
-    button-text-transform: uppercase,
-    card-radius: $ag-card-radius,
-    card-shadow: $ag-card-shadow,
-    use-icons-for-pager-buttons: true,
-    tooltip-background-color: $ag-tooltip-background-color,
-    tooltip-foreground-color: $ag-tooltip-foreground-color,
-    tooltip-padding: $ag-tooltip-padding,
-    tooltip-border-radius: $ag-tooltip-border-radius,
-    tooltip-border-color: $ag-tooltip-border-color,
-    tooltip-border-width: $ag-tooltip-border-width,
-    tooltip-border-style: $ag-tooltip-border-style,
-    dialog-background-color: $ag-dialog-background-color,
-    dialog-border-size: $ag-dialog-border-size,
-    dialog-border-style: $ag-dialog-border-style,
-    dialog-border-color: $ag-dialog-border-color,
-    dialog-title-background-color: $ag-dialog-title-background-color,
-    dialog-title-foreground-color: $ag-dialog-title-foreground-color,
-    dialog-title-height: $ag-dialog-title-height,
-    dialog-title-font-family: $ag-dialog-title-font-family,
-    dialog-title-font-size: $ag-dialog-title-font-size,
-    dialog-title-font-weight: $ag-dialog-title-font-weight,
-    dialog-title-padding: $ag-dialog-title-padding,
-    dialog-title-icon-size: $ag-dialog-title-icon-size
-);

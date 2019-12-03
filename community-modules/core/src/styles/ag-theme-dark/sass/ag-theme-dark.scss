@@ -2,11 +2,11 @@
 @import "../../ag-theme-classic/sass/ag-theme-classic";
 
 .ag-theme-dark {
-    @include ag-theme-classic($params);
+    @include ag-theme-classic();
 
     input,
     select {
-        background-color: $card-background-color;
+        background: $ag-card-background;
         color: $ag-foreground-color;
     }
 

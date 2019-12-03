@@ -108,7 +108,7 @@
   }
 
   @if (variable-exists("grid-size") and not variable-exists("ag-grid-size")) {
-    // $ag-grid-size: $grid-size;
+    $ag-grid-size: $grid-size;
   }
 
   @if (variable-exists("group-component-background-color") and not variable-exists("ag-group-component-background-color")) {
@@ -259,4 +259,11 @@
     $ag-virtual-item-height: $virtual-item-height;
   }
 
+  @if (variable-exists("card-background-color") and not variable-exists("ag-card-background-color")) {
+    $ag-card-background-color: $card-background-color;
+  }
+
+  @if (variable-exists("ag-card-background-color") and not variable-exists("ag-card-background")) {
+    $ag-card-background: $ag-card-background-color;
+  }
 }

@@ -17,4 +17,5 @@ do
     fi
 done
 
+echo "$command"
 $command

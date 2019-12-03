@@ -493,7 +493,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
                 <div class="col p-2">The color of disabled input field</div>
             </div>
             <div class="row">
-                <div class="col p-2">card-background-color</div>
+                <div class="col p-2">card-background</div>
                 <div class="col p-2"><code>&lt;no default&gt;</code></div>
                 <div class="col p-2">The background color for the context menu and the column menu.</div>
             </div>

@@ -67,10 +67,6 @@
     $ag-panel-background-color: $panel-background-color;
   }
 
-  @if (variable-exists("params") and not variable-exists("ag-params")) {
-    $ag-params: $params;
-  }
-
   @if (variable-exists("primary-color") and not variable-exists("ag-primary-color")) {
     $ag-primary-color: $primary-color;
   }
@@ -97,6 +93,14 @@
 
   @if (variable-exists("value-change-value-highlight-background-color") and not variable-exists("ag-value-change-value-highlight-background-color")) {
     $ag-value-change-value-highlight-background-color: $value-change-value-highlight-background-color;
+  }
+
+  @if (variable-exists("ag-focused-textbox-border") and not variable-exists("ag-focused-textbox-border-bottom")) {
+    $ag-focused-textbox-border-bottom: $ag-focused-textbox-border;
+  }
+
+  @if (variable-exists("focused-textbox-border") and not variable-exists("ag-focused-textbox-border-bottom")) {
+    $ag-focused-textbox-border-bottom: $focused-textbox-border;
   }
 
   // additional support for variables prefixed `ag-mat-` which was the original format for the material theme and is still supported

@@ -2,7 +2,7 @@
 @import "../../ag-theme-balham/sass/ag-theme-balham-common";
 
 .ag-theme-balham-dark {
-    @include ag-theme-balham($ag-params);
+    @include ag-theme-balham();
 
     input,
     select {

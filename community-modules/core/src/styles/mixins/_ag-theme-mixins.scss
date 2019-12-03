@@ -27,72 +27,61 @@
     @include grid-header-cell($padding);
 }
 
-@mixin card($params) {
+@mixin card() {
     @extend %card !optional;
 
-    background: map-get($params, "card-background-color");
-    border-radius: map-get($params, "card-radius");
-    box-shadow: map-get($params, "card-shadow");
-    padding: map-get($params, "grid-size");
+    background: $ag-card-background;
+    border-radius: $ag-card-radius;
+    box-shadow: $ag-card-shadow;
+    padding: $ag-grid-size;
 }
 
-@mixin textbox($params) {
-    $border-color: map-get($params, "border-color");
-    $foreground-color: map-get($params, "foreground-color");
-    $grid-size: map-get($params, "grid-size");
-    $primary-color: map-get($params, "primary-color");
-    $placeholder-color: map-get($params, "disabled-foreground-color");
-    $focused-border: map-get($params, "focused-textbox-border");
-    $input-border-color: map-get($params, "input-border-color");
-    $input-border-width: map-get($params, "input-border-width");
-    $input-bottom-border: map-get($params, "input-bottom-border");
-    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
-    $input-bottom-border-disabled: map-get($params, "input-bottom-border-disabled");
+@mixin textbox() {
 
-    @if map-get($params, "customize-inputs") {
+    @if $ag-customize-inputs {
         background: transparent;
-        color: $foreground-color;
+        color: $ag-foreground-color;
         font-family: inherit;
         font-size: inherit;
-        height: map-get($params, "input-height");
-        padding-bottom: $grid-size;
+        height: $ag-input-height;
+        padding-bottom: $ag-grid-size;
 
-        @if $input-border-width {
-            border-width: $input-border-width;
+        @if $ag-input-border-width {
+            border-width: $ag-input-border-width;
         }
 
-        @if $input-bottom-border {
-            border-bottom: $input-bottom-border;
+        @if $ag-input-bottom-border {
+            border-bottom: $ag-input-bottom-border;
         }
 
         &:focus {
-            @if $focused-border {
-                border-bottom: $focused-border;
+            @if $ag-focused-textbox-border-bottom {
+                border-bottom: $ag-focused-textbox-border-bottom;
                 outline: none;
             }
         }
 
         &::placeholder {
-            color: $placeholder-color;
+            color: $ag-disabled-foreground-color;
         }
 
         &:disabled {
-            @if $input-bottom-border-disabled {
-                border-bottom: $input-bottom-border-disabled;
+            @if $ag-input-bottom-border-disabled {
+                border-bottom: $ag-input-bottom-border-disabled;
             }
         }
-    } @else if $input-border-color {
+    } @else if $ag-input-border-color {
         border-width: 1px;
         border-style: solid;
-        border-color: $input-border-color;
+        border-color: $ag-input-border-color;
     }
     &:disabled {
-        color: $placeholder-color;
-        @if $input-disabled-background-color {
-            background-color: $input-disabled-background-color;
+        color: $ag-disabled-foreground-color;
+        @if $ag-input-disabled-background-color {
+            background-color: $ag-input-disabled-background-color;
         }
-        @if $input-border-color {
-            border-color: transparentize($input-border-color, 0.7);
+        @if $ag-input-border-color {
+            border-color: transparentize($ag-input-border-color, 0.7);
         }
     }
 }

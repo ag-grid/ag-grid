@@ -1,8 +1,8 @@
 @import '../../ag-theme-base/sass/ag-theme-base';
 @import './ag-theme-alpine-mixins';
 
-@mixin ag-theme-alpine($ag-params) {
-    @include ag-grid-theme($ag-params);
+@mixin ag-theme-alpine() {
+    @include ag-grid-theme();
 
     color: $ag-color-foreground;
 
