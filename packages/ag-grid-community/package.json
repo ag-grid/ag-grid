@@ -13,9 +13,15 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "keywords": [
-    "web-components",
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
     "grid",
-    "data",
+    "table",
+    "react",
     "table",
     "angular",
     "angular-component",
