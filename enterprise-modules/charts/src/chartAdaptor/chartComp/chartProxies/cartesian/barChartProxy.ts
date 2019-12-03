@@ -4,29 +4,34 @@ import { ColumnSeries as BarSeries } from "../../../../charts/chart/series/carte
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { BarSeriesOptions as InternalBarSeriesOptions } from "../../../../charts/chartOptions";
+import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 
 export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.initChartOptions();
-
-        let builderFunction: keyof typeof ChartBuilder;
-        if (this.isColumnChart()) {
-            builderFunction = params.grouping ? 'createGroupedColumnChart' : 'createColumnChart';
-        } else {
-            builderFunction = params.grouping ? 'createGroupedBarChart' : 'createBarChart';
-        }
-
-        this.chart = ChartBuilder[builderFunction](params.parentElement, this.chartOptions);
+        this.recreateChart();
 
         const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
 
-        (barSeries as BarSeries).flipXY = !this.isColumnChart();
-
         if (barSeries) {
+            (barSeries as BarSeries).flipXY = !this.isColumnChart();
             this.chart.addSeries(barSeries);
         }
+    }
+
+    protected createChart(options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+        const { grouping, parentElement } = this.chartProxyParams;
+        let builderFunction: keyof typeof ChartBuilder;
+
+        if (this.isColumnChart()) {
+            builderFunction = grouping ? 'createGroupedColumnChart' : 'createColumnChart';
+        } else {
+            builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
+        }
+
+        return ChartBuilder[builderFunction](parentElement, options);
     }
 
     public update(params: UpdateChartParams): void {
@@ -34,7 +39,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const barSeries = chart.series[0] as BarSeries;
         const { fills, strokes } = this.getPalette();
 
-        barSeries.data = params.data;
+        barSeries.data = this.transformData(params.data, params.category.id);
         barSeries.xKey = params.category.id;
         barSeries.xName = params.category.name;
         barSeries.yKeys = params.fields.map(f => f.colId);

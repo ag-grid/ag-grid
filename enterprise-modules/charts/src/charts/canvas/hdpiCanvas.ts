@@ -45,7 +45,7 @@ export class HdpiCanvas {
     private remove() {
         const parent = this.element.parentNode;
 
-        if (parent !== null) {
+        if (parent != null) {
             parent.removeChild(this.element);
         }
     }
@@ -82,7 +82,7 @@ export class HdpiCanvas {
             for (let i = 0, n = binary.length; i < n; i++) {
                 array.push(binary.charCodeAt(i));
             }
-            const blob = new Blob([new Uint8Array(array)], {type});
+            const blob = new Blob([new Uint8Array(array)], { type });
 
             navigator.msSaveOrOpenBlob(blob, fileName);
         } else {
@@ -251,8 +251,8 @@ export class HdpiCanvas {
     }
 
     measureText(text: string, font: string,
-                       textBaseline: CanvasTextBaseline,
-                       textAlign: CanvasTextAlign): TextMetrics {
+        textBaseline: CanvasTextBaseline,
+        textAlign: CanvasTextAlign): TextMetrics {
         const ctx = this.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
@@ -280,7 +280,7 @@ export class HdpiCanvas {
         }
     }
 
-    private static textSizeCache: { [font: string]: { [text: string] : Size } } = {};
+    private static textSizeCache: { [font: string]: { [text: string]: Size } } = {};
 
     private measureSvgText(text: string, font: string): Size {
         const cache = HdpiCanvas.textSizeCache;

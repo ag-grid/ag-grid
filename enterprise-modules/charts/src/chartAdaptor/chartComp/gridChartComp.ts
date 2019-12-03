@@ -119,12 +119,6 @@ export class GridChartComp extends Component {
             height = chart.height;
 
             this.chartProxy.destroy();
-
-            const canvas = this.eChart.querySelector('canvas');
-
-            if (canvas) {
-                this.eChart.removeChild(canvas);
-            }
         }
 
         const processChartOptionsFunc = this.params.processChartOptions ?
@@ -274,11 +268,7 @@ export class GridChartComp extends Component {
         let minFieldsRequired = 1;
 
         if (this.chartController.isActiveXYChart()) {
-            if (this.model.getChartType() === ChartType.Bubble) {
-                minFieldsRequired = 3;
-            } else {
-                minFieldsRequired = 2;
-            }
+            minFieldsRequired = this.model.getChartType() === ChartType.Bubble ? 3 : 2;
         }
 
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;

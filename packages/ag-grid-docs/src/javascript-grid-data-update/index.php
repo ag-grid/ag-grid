@@ -433,13 +433,13 @@ interface RowNodeTransaction {
 
     <ul class="content">
         <li>
-            <b>Append Items</b>: Adds five items to the end ((assuming when no sort applied*).
+            <b>Append Items</b>: Adds five items to the end (assuming when no sort applied <b>*</b>).
         </li>
         <li>
-            <b>Prepend Items</b>: Adds five items to the start (assuming when no sort applied*).
+            <b>Prepend Items</b>: Adds five items to the start (assuming when no sort applied <b>*</b>).
         </li>
         <li>
-            <b>Reverse</b>: Reverses the order of the items (assuming when no sort applied*).
+            <b>Reverse</b>: Reverses the order of the items (assuming when no sort applied <b>*</b>).
         </li>
         <li>
             <b>Remove Selected</b>: Removes the selected items. Try selecting multiple rows (ctrl + click
@@ -456,10 +456,10 @@ interface RowNodeTransaction {
         selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
 
-<note>
-        *assuming when no sort applied - because if the grid is sorting, then the grid sort will override any order
-        in the provided data.
-</note>
+    <note>
+        <b>*</b>assuming no sort is applied - because if the grid is sorting, then the grid sort will override
+        any order in the provided data.
+    </note>
 
     <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 

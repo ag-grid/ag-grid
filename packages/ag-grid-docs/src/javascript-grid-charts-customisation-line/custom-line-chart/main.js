@@ -53,68 +53,6 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    options.xAxis.title.enabled = true;
-    options.xAxis.title.text = 'Country';
-    options.xAxis.title.fontStyle = 'italic';
-    options.xAxis.title.fontWeight = 'bold';
-    options.xAxis.title.fontSize = 14;
-    options.xAxis.title.fontFamily = 'Arial, sans-serif';
-    options.xAxis.title.color = 'gray';
-
-    options.xAxis.line.width = 2;
-    options.xAxis.line.color = 'gray';
-
-    options.xAxis.tick.width = 2;
-    options.xAxis.tick.size = 10;
-    options.xAxis.tick.color = 'gray';
-
-    options.xAxis.label.fontStyle = 'italic';
-    options.xAxis.label.fontWeight = 'bold';
-    options.xAxis.label.fontSize = 15;
-    options.xAxis.label.fontFamily = 'Arial, sans-serif';
-    options.xAxis.label.color = '#de7b73';
-    options.xAxis.label.padding = 10;
-    options.xAxis.label.rotation = 20;
-    options.xAxis.label.formatter = function(params) {
-        var value = String(params.value);
-        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
-    };
-
-    options.xAxis.gridStyle = [
-        {
-            stroke: 'rgba(94,100,178,0.5)'
-        }
-    ];
-
-    options.yAxis.line.width = 2;
-    options.yAxis.line.color = 'blue';
-
-    options.yAxis.tick.width = 2;
-    options.yAxis.tick.size = 10;
-    options.yAxis.tick.color = 'blue';
-
-    options.yAxis.label.fontStyle = 'italic';
-    options.yAxis.label.fontWeight = 'bold';
-    options.yAxis.label.fontSize = 15;
-    options.yAxis.label.fontFamily = 'Arial, sans-serif';
-    options.yAxis.label.color = '#de7b73';
-    options.yAxis.label.padding = 10;
-    options.yAxis.label.rotation = -20;
-    options.yAxis.label.formatter = function(params) {
-        return params.value.toString().toUpperCase();
-    };
-
-    options.yAxis.gridStyle = [
-        {
-            stroke: '#80808044',
-            lineDash: undefined
-        },
-        {
-            stroke: '#80808044',
-            lineDash: [6, 3]
-        }
-    ];
-
     options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
     options.seriesDefaults.fill.opacity = 0.7;
 
