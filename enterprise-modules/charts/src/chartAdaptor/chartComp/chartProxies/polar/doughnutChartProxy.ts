@@ -4,13 +4,18 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PieSeries } from "../../../../charts/chart/series/polar/pieSeries";
 import { PolarChartProxy } from "./polarChartProxy";
 import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
+import { PolarChart } from "../../../../charts/chart/polarChart";
 
 export class DoughnutChartProxy extends PolarChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
 
         this.initChartOptions();
-        this.chart = ChartBuilder.createDoughnutChart(params.parentElement, this.chartOptions);
+        this.recreateChart();
+    }
+
+    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
     }
 
     public update(params: UpdateChartParams): void {

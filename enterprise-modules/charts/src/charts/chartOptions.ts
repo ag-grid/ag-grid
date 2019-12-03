@@ -104,12 +104,15 @@ export interface PolarChartOptions<T> extends ChartOptions<T> {
 }
 
 export interface AxisOptions {
+    type?: AxisType;
     title?: CaptionOptions;
     line?: AxisLineOptions;
     tick?: AxisTickOptions;
     label?: AxisLabelOptions;
     gridStyle?: GridStyleOptions[];
 }
+
+export type AxisType = 'category' | 'number' | 'time';
 
 export interface AxisLineOptions {
     width?: number;
@@ -125,6 +128,7 @@ export interface AxisTickOptions {
 export interface AxisLabelOptions extends FontOptions {
     padding?: number;
     rotation?: number;
+    format?: string;
     formatter?: (value: any, fractionDigits?: number) => string;
     mirror?: boolean;
     parallel?: boolean;
