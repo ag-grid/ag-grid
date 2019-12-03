@@ -1,4 +1,4 @@
-import { SpecDefinition } from './types';
+import { SpecDefinition, SpecStep } from './types';
 import { wait, dragFromTo, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin } from './utils';
 import { toUnicode } from 'punycode';
 
@@ -233,7 +233,7 @@ export const specs: SpecDefinition[] = [
         exampleSection: 'charts-range-chart',
         exampleId: 'defining-categories-and-series',
         defaultViewport: {
-            width: 500,
+            width: 800,
             height: 1200
         },
         selector: '.ag-chart',
@@ -241,7 +241,11 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'settings-tab',
                 prepare: async page => {
+                    // wait for chart to initialise
+                    await wait(500);
                     await page.click('.ag-chart-menu .ag-icon-menu');
+                    // wait for menu expand animation to complete
+                    await wait(500);
                 }
             },
             {
@@ -256,16 +260,13 @@ export const specs: SpecDefinition[] = [
                     await page.click('.ag-tab:nth-child(3)');
                 }
             },
-            {
-                name: 'format-tab-all-expanded',
-                selector: '.ag-chart-format-wrapper',
+            ...['chart', 'legend', 'axis', 'series'].map((groupName): SpecStep => ({
+                name: `format-tab-${groupName}-group`,
+                selector: `[ref="${groupName}Group"]`,
                 prepare: async page => {
-                    await page.click('.ag-collapsed');
-                    await page.click('.ag-collapsed');
-                    await page.click('.ag-collapsed');
-                    await page.click('.ag-collapsed');
+                    await page.click(`[ref="${groupName}Group"].ag-collapsed`);
                 }
-            }
+            }))
         ]
     },
     {

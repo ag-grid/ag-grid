@@ -59,10 +59,13 @@ interface RunContext {
     handler: (screenshot: Buffer, specName: string) => Promise<void>;
 }
 
-const setThemeInBrowser = (theme: string) => {
+// this function runs in the browser so can't reference any other functions or vars in this file
+// arguments are passed in by page.evaluateOnNewDocument
+const initInBrowser = (theme: string) => {
     const setTheme = () => {
         if (document.readyState === 'complete') {
-            (window as any).setThemeError = 'This code is supposed to be run before ag-grid loads';
+            (window as any).initInBrowserError =
+                'This code is supposed to be run before ag-grid loads';
         }
         const themeElements = document.querySelectorAll(
             '[class^="ag-theme-"], [class*=" ag-theme-"]'
@@ -73,6 +76,15 @@ const setThemeInBrowser = (theme: string) => {
     };
     setTheme();
     document.addEventListener('DOMContentLoaded', setTheme);
+
+    // override Math.random with a PRNG so that examples that use random data don't
+    // vary between screenshots
+    // Uses the Park-Miller PRNG http://www.firstpr.com.au/dsp/rand31/
+    let seed = 728364;
+    const limit = 2147483647;
+    Math.random = () => {
+        return (seed = (seed * 16807) % limit) / limit;
+    };
 };
 
 const getTestCaseName = (spec: Spec, step: SpecStep) => `${spec.name}-${step.name}`;
@@ -118,22 +130,22 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
             `
         });
         if (spec.urlParams.theme) {
-            await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
+            await page.evaluateOnNewDocument(initInBrowser, spec.urlParams.theme);
         }
         const pageUrl = url.resolve(context.server, path);
         await page.goto(pageUrl);
-        const setThemeError = await page.evaluate(() => (window as any).setThemeError);
-        if (setThemeError) {
-            throw new Error('Error setting theme: ' + setThemeError);
+        const initInBrowserError = await page.evaluate(() => (window as any).initInBrowserError);
+        if (initInBrowserError) {
+            throw new Error('Error setting theme: ' + initInBrowserError);
         }
 
         let exampleHasLoaded = false;
         while (!exampleHasLoaded) {
             await wait(500);
             const content = await page.evaluate(() => document.body.textContent);
-            exampleHasLoaded = content != null && !content.includes("Loading...");
-        };
-        
+            exampleHasLoaded = content != null && !content.includes('Loading...');
+        }
+
         const selector = spec.selector || defaultSelector;
         const wrapper = await getElement(page, selector);
 
@@ -291,8 +303,6 @@ export const runSuite = async (params: RunSuiteParams) => {
             );
         });
 
-    const totalImageCount = specs.reduce((acc, spec) => acc + spec.steps.length, 0);
-
     if (params.mode === 'update') {
         // skip specs where the images are already present
         specs = specs.filter(spec => {
@@ -319,7 +329,8 @@ export const runSuite = async (params: RunSuiteParams) => {
     const results: SpecResults[] = [];
     const browser = await launch();
 
-    let generatedCount = 0;
+    const totalTestCases = specs.reduce((acc, spec) => acc + spec.steps.length, 0);
+    let generatedTestCases = 0;
 
     let failedTestCases: string[] = [];
 
@@ -331,8 +342,10 @@ export const runSuite = async (params: RunSuiteParams) => {
             const file = getTestCaseImagePath(params, testCaseName);
             if (params.mode === 'update') {
                 await fs.writeFile(file, screenshot);
-                log(`🙌  ${chalk.blue(path.relative('.', file))}`);
-                ++generatedCount;
+                process.stdout.clearLine(0);
+                process.stdout.cursorTo(0);
+                process.stdout.write(`🙌  generating: ${generatedTestCases} of ${totalTestCases}`);
+                ++generatedTestCases;
             } else {
                 const oldData = await fs.readFile(file);
                 const difference = await getImageDifferencesAsDataUri(oldData, screenshot);
@@ -366,6 +379,8 @@ export const runSuite = async (params: RunSuiteParams) => {
         await fs.writeFile(params.reportFile, html);
         log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
     } else {
-        log(`✨  generated ${generatedCount} images, total image count is ${totalImageCount}`);
+        process.stdout.clearLine(0);
+        process.stdout.cursorTo(0);
+        log(`✨  generated ${generatedTestCases} images`);
     }
 };

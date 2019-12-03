@@ -55,7 +55,7 @@ export const runCli = async (baseFolder: string) => {
             {
                 name: 'overwrite',
                 type: 'confirm',
-                message: `😰  ${chalk.bold.rgb(255, 128, 0)`OVERWRITE IMAGES`} in "${path.relative(
+                message: `😰  ${chalk.bold.rgb(255, 128, 0)`GENERATE NEW IMAGES`} in "${path.relative(
                     '.',
                     folder
                 )}"?`
