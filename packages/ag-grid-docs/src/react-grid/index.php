@@ -373,12 +373,12 @@ rowData={this.state.rowData}
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
-@import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
-@import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+@import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 
 // or, if using Enterprise features
-// @import "../node_modules/@ag-grid-enterprise/all-modules/src/styles/ag-grid.scss";
-// @import "../node_modules/@ag-grid-enterprise/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+// @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.scss";
+// @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 </snippet>
 </section>
 <p>To avoid importing the stylesheets twice, remove the imports from <code>src/App.js</code>:</p>

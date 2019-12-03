@@ -522,12 +522,12 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
-  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 
 // or, if using Enterprise features
-//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
-//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+//  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.scss";
+//  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
 </snippet>
 </section>
