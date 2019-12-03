@@ -46,6 +46,10 @@ const args: any = yargs
                     describe: 'Only run test cases that failed in the last run.',
                     type: 'boolean'
                 })
+                .option('overwrite', {
+                    describe: 'Overwrite test cases that already exist',
+                    type: 'boolean'
+                })
     ).argv;
 
 export const runCli = async (baseFolder: string) => {
@@ -75,7 +79,8 @@ export const runCli = async (baseFolder: string) => {
             reportFile: args.reportFile,
             clean: !!args.clean,
             filter: args.filter || '',
-            onlyFailed: !!args.onlyFailed
+            onlyFailed: !!args.onlyFailed,
+            overwrite: !!args.overwrite
         });
     } catch (e) {
         console.error('ERROR:', getErrorStack(e));

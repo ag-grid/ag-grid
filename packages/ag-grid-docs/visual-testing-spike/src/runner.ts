@@ -62,29 +62,43 @@ interface RunContext {
 // this function runs in the browser so can't reference any other functions or vars in this file
 // arguments are passed in by page.evaluateOnNewDocument
 const initInBrowser = (theme: string) => {
-    const setTheme = () => {
+    try {
         if (document.readyState === 'complete') {
-            (window as any).initInBrowserError =
-                'This code is supposed to be run before ag-grid loads';
+            throw new Error('This code is supposed to be run before ag-grid loads');
         }
-        const themeElements = document.querySelectorAll(
-            '[class^="ag-theme-"], [class*=" ag-theme-"]'
-        );
-        themeElements.forEach(el => {
-            el.className = el.className.replace(/ag-theme-\w+/g, theme);
-        });
-    };
-    setTheme();
-    document.addEventListener('DOMContentLoaded', setTheme);
+        const setTheme = () => {
+            const themeElements = document.querySelectorAll(
+                '[class^="ag-theme-"], [class*=" ag-theme-"]'
+            );
+            themeElements.forEach(el => {
+                el.className = el.className.replace(/ag-theme-\w+/g, theme);
+            });
 
-    // override Math.random with a PRNG so that examples that use random data don't
-    // vary between screenshots
-    // Uses the Park-Miller PRNG http://www.firstpr.com.au/dsp/rand31/
-    let seed = 728364;
-    const limit = 2147483647;
-    Math.random = () => {
-        return (seed = (seed * 16807) % limit) / limit;
-    };
+            if (document.head) {
+                // hide text cursor because it blinks, so screenshots vary based on timing
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    input, textarea {
+                        caret-color: transparent !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        };
+        setTheme();
+        document.addEventListener('DOMContentLoaded', setTheme);
+
+        // override Math.random with a PRNG so that examples that use random data don't
+        // vary between screenshots
+        // Uses the Park-Miller PRNG http://www.firstpr.com.au/dsp/rand31/
+        let seed = 728364;
+        const limit = 2147483647;
+        Math.random = () => {
+            return (seed = (seed * 16807) % limit) / limit;
+        };
+    } catch (e) {
+        (window as any).initInBrowserError = e.stack || e.message;
+    }
 };
 
 const getTestCaseName = (spec: Spec, step: SpecStep) => `${spec.name}-${step.name}`;
@@ -121,14 +135,6 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
         }
 
         page = await context.browser.newPage();
-        // hide text cursor because it blinks, so screenshots vary based on timing
-        await page.addStyleTag({
-            content: `
-            input[type="text"]{
-                caret-color: transparent !important;
-            }
-            `
-        });
         if (spec.urlParams.theme) {
             await page.evaluateOnNewDocument(initInBrowser, spec.urlParams.theme);
         }
@@ -244,6 +250,7 @@ export interface RunSuiteParams {
     filter: string;
     defaultThemes: string[];
     onlyFailed: boolean;
+    overwrite: boolean;
     clean: boolean;
 }
 
@@ -303,7 +310,7 @@ export const runSuite = async (params: RunSuiteParams) => {
             );
         });
 
-    if (params.mode === 'update') {
+    if (params.mode === 'update' && !params.overwrite) {
         // skip specs where the images are already present
         specs = specs.filter(spec => {
             const testCaseNames = spec.steps.map(step => getTestCaseName(spec, step));
@@ -327,7 +334,9 @@ export const runSuite = async (params: RunSuiteParams) => {
     }
 
     const results: SpecResults[] = [];
-    const browser = await launch();
+    const browser = await launch({
+        args: ['--disable-gpu', '--font-render-hinting=none']
+    });
 
     const totalTestCases = specs.reduce((acc, spec) => acc + spec.steps.length, 0);
     let generatedTestCases = 0;

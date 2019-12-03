@@ -50,7 +50,7 @@ export const cellSelector = (colIdOrIndex: string | number, rowIndex: number): s
         colValue = colIdOrIndex + 1; // aria-colindex starts from 1
     }
     return `[row-index="${rowIndex}"] [${colAttr}="${colValue}"]`;
-}
+};
 
 export const getElement = async (page: Page, selector: string) => {
     const el = await page.$(selector);
@@ -80,16 +80,27 @@ export const getElementCentre = async (page: Page, selector: string): Promise<XY
 interface DragOptions {
     page: Page;
     from: string | XY;
-    to: string | XY;
+    to?: string | XY;
+    by?: XY;
     leaveMouseDown?: boolean;
 }
 
-export const dragFromTo = async ({ page, from, to, leaveMouseDown }: DragOptions) => {
+export const dragFromTo = async ({ page, from, to, by, leaveMouseDown }: DragOptions) => {
     if (typeof from === 'string') {
         from = await getElementCentre(page, from);
     }
     if (typeof to === 'string') {
         to = await getElementCentre(page, to);
+    }
+    if (by) {
+        if (to) {
+            throw new Error(`Both to and by specified`);
+        }
+        to = { x: from.x + by.x, y: from.y + by.y };
+    }
+
+    if (!to) {
+        throw new Error(`Neither to or by specified`);
     }
 
     await page.mouse.move(from.x, from.y);

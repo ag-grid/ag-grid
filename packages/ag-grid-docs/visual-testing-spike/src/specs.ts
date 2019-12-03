@@ -1,5 +1,5 @@
 import { SpecDefinition, SpecStep } from './types';
-import { wait, dragFromTo, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin } from './utils';
+import { wait, dragFromTo as drag, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin } from './utils';
 import { toUnicode } from 'punycode';
 
 export const specs: SpecDefinition[] = [
@@ -119,10 +119,10 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'drag-column',
                 prepare: async page => {
-                    await dragFromTo({
+                    await drag({
                         page,
                         from: '.ag-header-cell[col-id="age"]',
-                        to: '.ag-header-cell[col-id="year"]',
+                        by: {x: 30, y: 0},
                         leaveMouseDown: true
                     });
                 }
@@ -213,13 +213,13 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'default',
                 prepare: async page => {
-                    await dragFromTo({
+                    await drag({
                         page,
                         from: cellSelector(1, 3),
                         to: cellSelector(8, 6)
                     });
                     await page.keyboard.down('Meta');
-                    await dragFromTo({
+                    await drag({
                         page,
                         from: cellSelector(3, 1),
                         to: cellSelector(6, 8)
@@ -287,7 +287,7 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'with-selection',
                 prepare: async page => {
-                    await dragFromTo({
+                    await drag({
                         page,
                         from: cellSelector('athlete', 0),
                         to: cellSelector('year', 3)

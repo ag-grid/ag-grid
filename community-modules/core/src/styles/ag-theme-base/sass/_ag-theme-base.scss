@@ -1823,29 +1823,4 @@
         }
         @include padding-filters(true);
     }
-
-    $exported: (
-        autoSizePadding: $ag-grid-size * 3,
-        headerHeight: $ag-header-height,
-        groupPaddingSize: $ag-grid-size * 3 + $ag-icon-size,
-        footerPaddingAddition: $ag-grid-size * 4,
-        virtualItemHeight: $ag-virtual-item-height,
-        aggFuncPopupHeight: $ag-virtual-item-height * 3.5,
-        checkboxIndentWidth: $ag-grid-size + $ag-icon-size,
-        leafNodePadding: $ag-grid-size * 3,
-        rowHeight: $ag-row-height,
-        gridSize: $ag-grid-size,
-        iconSize: $ag-icon-size
-    );
-
-    $json-list: ();
-
-    @each $name, $value in $exported {
-        $json-list: append($json-list, unquote('"#{$name}": "#{$value}"'), comma);
-    }
-
-    .sass-variables::after {
-        content: '{ #{$json-list} }';
-        display: none;
-    }
 }
