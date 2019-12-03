@@ -68,9 +68,7 @@ function processChartOptions(params) {
 
     if (['line'].indexOf(params.type) >= 0) {
         options.xAxis.type = 'time';
-        options.xAxis.label.formatter = function(params) {
-            return params.value.toLocaleDateString('en-GB');
-        }
+        options.xAxis.label.format = '%d %B';
     } else {
         var dateFormatter = function(params) {
             var value = params.value.value;

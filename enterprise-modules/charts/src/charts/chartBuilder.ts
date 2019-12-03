@@ -663,7 +663,7 @@ export class ChartBuilder {
         return shadow;
     }
 
-    static populateAxisProperties<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
+    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
         this.setTransformedValueIfExists(axis, 'title', t => ChartBuilder.createTitle(t), options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
 
@@ -688,6 +688,7 @@ export class ChartBuilder {
             this.setValueIfExists(axis.label, 'color', label.color);
             this.setValueIfExists(axis.label, 'padding', label.padding);
             this.setValueIfExists(axis.label, 'rotation', label.rotation);
+            this.setValueIfExists(axis.label, 'format', label.format);
             this.setValueIfExists(axis.label, 'formatter', label.formatter);
         }
     }
@@ -695,7 +696,7 @@ export class ChartBuilder {
     static createNumberAxis(options: AxisOptions): NumberAxis {
         const axis = new NumberAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -703,7 +704,7 @@ export class ChartBuilder {
     static createCategoryAxis(options: AxisOptions): CategoryAxis {
         const axis = new CategoryAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -711,7 +712,7 @@ export class ChartBuilder {
     static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis {
         const axis = new GroupedCategoryAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -719,7 +720,7 @@ export class ChartBuilder {
     static createTimeAxis(options: AxisOptions): TimeAxis {
         const axis = new TimeAxis();
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }
@@ -741,7 +742,7 @@ export class ChartBuilder {
                 throw new Error('Unknown axis type');
         }
 
-        this.populateAxisProperties(axis, options);
+        this.initAxis(axis, options);
 
         return axis;
     }

@@ -125,6 +125,7 @@ export interface AxisTickOptions {
 export interface AxisLabelOptions extends FontOptions {
     padding: number;
     rotation: number;
+    format?: string;
     formatter?: (value: any, fractionDigits?: number) => string;
 }
 
