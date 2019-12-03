@@ -1,34 +1,29 @@
 var columnDefs = [
-    { field: "date", width: 150, chartDataType: 'category' },
+    { field: "country", width: 150, chartDataType: 'category' },
     { field: "gold", chartDataType: 'series' },
     { field: "silver", chartDataType: 'series' },
     { field: "bronze", chartDataType: 'series' },
+    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
+    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
-function getRandomInt(min, max) {
-    return min + Math.floor(Math.random() * Math.floor(max - min));
-}
-
 function createRowData() {
-    var date = new Date(2019, 0, 1);
-    var endDate = new Date(2019, 2, 1);
-    var data = [];
+    var countries = [
+        "Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
+        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
+    ];
 
-    while (date < endDate) {
-        // deliberately leave out some data points to show how the time axis handles the gaps
-        if (getRandomInt(0, 10) < 7) {
-            data.push({
-                date: new Date(date),
-                gold: getRandomInt(0, 1000),
-                silver: getRandomInt(1000, 2000),
-                bronze: getRandomInt(2000, 3000),
-            });
-        }
-
-        date.setDate(date.getDate() + 1);
-    }
-
-    return data;
+    return countries.map(function(country, index) {
+        return {
+            country: country,
+            gold: Math.floor(((index + 1 / 7) * 333) % 100),
+            silver: Math.floor(((index + 1 / 3) * 555) % 100),
+            bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
+        };
+    });
 }
 
 var gridOptions = {
@@ -47,6 +42,8 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
+    console.log('chart options:', options);
 
     if ([
         'stackedBar',
@@ -98,6 +95,9 @@ function processChartOptions(params) {
     options.xAxis.label.color = '#de7b73';
     options.xAxis.label.padding = 10;
     options.xAxis.label.rotation = 20;
+    options.xAxis.label.formatter = function(params) {
+        return params.value.toString().toUpperCase();
+    };
 
     options.xAxis.gridStyle = [
         {
@@ -127,6 +127,11 @@ function processChartOptions(params) {
     options.yAxis.label.color = '#de7b73';
     options.yAxis.label.padding = 10;
     options.yAxis.label.rotation = -20;
+    options.yAxis.label.formatter = function(params) {
+        var value = String(params.value);
+        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
+    };
+
     options.yAxis.gridStyle = [
         {
             stroke: '#80808044',
@@ -143,12 +148,14 @@ function processChartOptions(params) {
 
 function onFirstDataRendered(params) {
     var cellRange = {
-        columns: ['date', 'gold', 'silver', 'bronze']
+        rowStartIndex: 0,
+        rowEndIndex: 4,
+        columns: ['country', 'gold', 'silver', 'bronze']
     };
 
     var createRangeChartParams = {
         cellRange: cellRange,
-        chartType: 'line'
+        chartType: 'groupedBar'
     };
 
     params.api.createRangeChart(createRangeChartParams);

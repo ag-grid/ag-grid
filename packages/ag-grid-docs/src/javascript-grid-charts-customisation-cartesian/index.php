@@ -74,6 +74,7 @@ interface AxisLabelOptions {
 
     // For time axes, a format string can be provided, which will be used to format the labels.
     // See below for more information about the format options.
+    // This will be ignored for any other type of axis.
     format?: string;
 
     // A custom formatter function for the axis labels. If the value is a number, the number of
@@ -91,7 +92,46 @@ interface GridStyle {
 }
 </snippet>
 
-<h3>Format String for Time Axes</h3>
+<h3>Example: Cartesian Chart Customisations</h3>
+
+<p>
+    The example below changes all available styling options. The styling options are exaggerated
+    to demonstrate each option rather than to produce a chart that looks nice!
+</p>
+
+<?= example('Cartesian Chart Customisations', 'custom-cartesian-chart', 'generated', array("enterprise" => true)) ?>
+
+<h2>Axis Types</h2>
+
+<p>
+    Charts can use different types of axes to present data in different ways. The grid will select best-guess defaults based on the type of chart,
+    the <a href="../javascript-grid-charts-range-chart/#coldef-chartdatatype">column chart data types</a>, and the data being plotted. If required,
+    you can override the default axis types for line and scatter/bubble charts by setting the <code>type</code> in the relevant
+    <code>AxisOptions</code> object.
+</p>
+
+<note>
+    Changing the default axis types can result in nonsensical or broken charts - please use with caution!
+</note>
+
+<p>There are three types of axis available: <code>'category'</code>, <code>'number'</code> and <code>'time'</code>.</p>
+
+<h3>Category</h3>
+
+This is a discrete axis used for showing data based on a collection of categories. It is used automatically for <code>'category'</code>
+columns. If no category column is selected and this axis is used, default category names will be created using an ascending numeric sequence.
+
+<h3>Number</h3>
+
+This is a continuous axis used for plotting numerical values. It is used automatically for <code>'series'</code> columns that contain
+<code>number</code> values.
+
+<h3>Time</h3>
+
+This is a continuous axis used for plotting date/time values. It is used automatically in line and scatter/bubble charts for columns that contain
+<code>Date</code> values. Use of this type of axis allows the creation of time series charts.
+
+<h4>Format String</h4>
 
 <p>
     For time axes, a format string can be provided, which will be used to format the data for display as axis labels.
@@ -158,15 +198,14 @@ interface GridStyle {
     If no padding modifier is specified, the default is <code>0</code> for all directives except <code>%e</code>, which defaults to <code>_</code>.
 </p>
 
-<h3>Example: Cartesian Chart Customisations</h3>
+<h4>Example: Time Series Chart</h4>
 
 <p>
-    The example below changes all available styling options. The styling options are exaggerated
-    to demonstrate each option rather than to produce a chart that looks nice!
+    This example shows how a time series chart can be created. It demonstrates explicitly setting the axis type to <code>'time'</code>,
+    but you can also remove this and the chart will still use the time axis as it automatically detects the axis type from the data in the
+    Date column.
 </p>
 
-<p>It also demonstrates the use of a time axis for line charts, achieved by setting <code>xAxis.type</code> to <code>'time'</code>.</p>
-
-<?= example('Cartesian Chart Customisations', 'custom-cartesian-chart', 'generated', array("enterprise" => true)) ?>
+<?= example('Time Series', 'time-series', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
