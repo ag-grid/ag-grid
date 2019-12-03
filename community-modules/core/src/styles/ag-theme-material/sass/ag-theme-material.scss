@@ -132,7 +132,7 @@
 
     .ag-group-expanded {
         .ag-icon-expanded:empty:before {
-            content: map-get($ag-icons-font-codes, tree-open);
+            content: $ag-icon-tree-open;
         }
     }
 }

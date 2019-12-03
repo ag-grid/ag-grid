@@ -157,6 +157,14 @@
     }
 }
 
+@mixin icon_element($icon, $code) {
+  .ag-icon-#{$icon} {
+      &:before {
+          content: $code;
+      }
+  }
+}
+
 @mixin icons_webfont() {
   .ag-icon {
       /* use !important to prevent issues with browser extensions that change fonts */
@@ -175,13 +183,60 @@
       -moz-osx-font-smoothing: grayscale;
   }
 
-  @each $icon, $code in $ag-icons-font-codes {
-      .ag-icon-#{$icon} {
-          &:before {
-              content: $code;
-          }
-      }
-  }
+  @include icon_element('aggregation', $ag-icon-aggregation);
+  @include icon_element('arrows', $ag-icon-arrows);
+  @include icon_element('asc', $ag-icon-asc);
+  @include icon_element('cancel', $ag-icon-cancel);
+  @include icon_element('chart', $ag-icon-chart);
+  @include icon_element('checkbox-checked', $ag-icon-checkbox-checked);
+  @include icon_element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
+  @include icon_element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
+  @include icon_element('color-picker', $ag-icon-color-picker);
+  @include icon_element('column', $ag-icon-column);
+  @include icon_element('columns', $ag-icon-columns);
+  @include icon_element('contracted', $ag-icon-contracted);
+  @include icon_element('copy', $ag-icon-copy);
+  @include icon_element('cross', $ag-icon-cross);
+  @include icon_element('cut', $ag-icon-cut);
+  @include icon_element('data', $ag-icon-data);
+  @include icon_element('desc', $ag-icon-desc);
+  @include icon_element('expanded', $ag-icon-expanded);
+  @include icon_element('eye-slash', $ag-icon-eye-slash);
+  @include icon_element('eye', $ag-icon-eye);
+  @include icon_element('filter', $ag-icon-filter);
+  @include icon_element('first', $ag-icon-first);
+  @include icon_element('grip', $ag-icon-grip);
+  @include icon_element('group', $ag-icon-group);
+  @include icon_element('indeterminate', $ag-icon-indeterminate);
+  @include icon_element('last', $ag-icon-last);
+  @include icon_element('left', $ag-icon-left);
+  @include icon_element('linked', $ag-icon-linked);
+  @include icon_element('loading', $ag-icon-loading);
+  @include icon_element('maximize', $ag-icon-maximize);
+  @include icon_element('menu', $ag-icon-menu);
+  @include icon_element('minimize', $ag-icon-minimize);
+  @include icon_element('minus', $ag-icon-minus);
+  @include icon_element('next', $ag-icon-next);
+  @include icon_element('none', $ag-icon-none);
+  @include icon_element('not-allowed', $ag-icon-not-allowed);
+  @include icon_element('paste', $ag-icon-paste);
+  @include icon_element('pin', $ag-icon-pin);
+  @include icon_element('pivot', $ag-icon-pivot);
+  @include icon_element('plus', $ag-icon-plus);
+  @include icon_element('previous', $ag-icon-previous);
+  @include icon_element('radio-button-off', $ag-icon-radio-button-off);
+  @include icon_element('radio-button-on', $ag-icon-radio-button-on);
+  @include icon_element('right', $ag-icon-right);
+  @include icon_element('save', $ag-icon-save);
+  @include icon_element('small-down', $ag-icon-small-down);
+  @include icon_element('small-left', $ag-icon-small-left);
+  @include icon_element('small-right', $ag-icon-small-right);
+  @include icon_element('small-up', $ag-icon-small-up);
+  @include icon_element('tick', $ag-icon-tick);
+  @include icon_element('tree-closed', $ag-icon-tree-closed);
+  @include icon_element('tree-indeterminate', $ag-icon-tree-indeterminate);
+  @include icon_element('tree-open', $ag-icon-tree-open);
+  @include icon_element('unlinked', $ag-icon-unlinked);
 
   .ag-icon-checkbox-checked,
   .ag-icon-checkbox-indeterminate,
@@ -197,22 +252,22 @@
   .ag-icon-checkbox-checked {
       color: $ag-accent-color;
       &-readonly:before {
-          content: map-get($ag-icons-font-codes, checkbox-checked);
+          content: $ag-icon-checkbox-checked;
       }
   }
   .ag-icon-checkbox-indeterminate-readonly:before {
-      content: map-get($ag-icons-font-codes, checkbox-indeterminate);
+      content: $ag-icon-checkbox-indeterminate;
   }
   .ag-icon-checkbox-unchecked-readonly:before  {
-      content: map-get($ag-icons-font-codes, checkbox-unchecked); 
+      content: $ag-icon-checkbox-unchecked; 
   }
 
   .ag-icon-row-drag:before {
-      content: map-get($ag-icons-font-codes, grip);
+      content: $ag-icon-grip;
   }
 
   .ag-right-arrow:before {
-      content: map-get($ag-icons-font-codes, left);
+      content: $ag-icon-left;
   }
 
   .ag-icon-radio-button-on {
@@ -220,6 +275,6 @@
   }
 
   .ag-right-arrow:before {
-      content: map-get($ag-icons-font-codes, right);
+      content: $ag-icon-right;
   }
 }
