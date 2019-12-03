@@ -29,7 +29,6 @@ include '../documentation-main/documentation_header.php';
         <p>
             If you have created your own theme and want to include the stock icons, this is easiest
             done by adding the WebFont from the theme you like: <br>
-            <code>dist/styles/webfont/agGridClassicFont.css</code> - WebFont used by themes fresh, blue, dark and bootstrap <br>
             <code>dist/styles/webfont/agGridBalhamFont.css</code> - WebFont used by theme balham and balham-dark <br>
             <code>dist/styles/webfont/agGridMaterialFont.css</code> - WebFont used by theme material<br>
         </p>

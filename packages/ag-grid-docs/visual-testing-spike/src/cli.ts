@@ -70,7 +70,7 @@ export const runCli = async (baseFolder: string) => {
             folder,
             mode: args.update ? 'update' : 'compare',
             specs,
-            defaultThemes: [/*'alpine', */ 'balham', 'material', 'fresh'],
+            defaultThemes: ['alpine', 'balham', 'material'],
             server: args.server,
             reportFile: args.reportFile,
             clean: !!args.clean,

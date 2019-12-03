@@ -78,8 +78,6 @@ const scssTask = () => {
 
     return gulp.src([
         'src/styles/**/*.scss',
-        '!src/styles/*alpine*/**', // spl alpine exclusion
-        '!src/styles/**/*Alpine**',
         '!src/styles/**/_*.scss',
         '!**/node_modules/**'])
         .pipe(named())

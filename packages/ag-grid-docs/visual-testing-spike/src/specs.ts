@@ -236,7 +236,6 @@ export const specs: SpecDefinition[] = [
             width: 500,
             height: 1200
         },
-        withoutThemes: ['fresh'], // fresh doesn't support charts
         selector: '.ag-chart',
         steps: [
             {

@@ -40,32 +40,28 @@ include '../documentation-main/documentation_header.php';
             <th>Theme Name</th>
             <th>Description</th>
         </tr>
-        <?php/*
-        spl alpine exclusion
         <tr>
             <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
             <td>
                 <p>
-                    <strong>New</strong> modern looking themes using styled components and two accent colors. <code>ag-theme-alpine-dark</code> is a dark
-                    version of <code>ag-theme-alpine</code>.
+                    Modern looking themes with high contrast, generous padding and two accent colors.
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    This is the most recent and polished theme set, upgrading the Balham theme.  
+                    This is the default grid theme, and a great choice for most applications.
                 </p>
             </td>
         </tr>
-        */?>
         <tr>
             <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
             <td>
                 <p>
-                    Flat themes for professional applications. <code>ag-theme-balham-dark</code> is a dark
-                    version of <code>ag-theme-balham</code>.
+                    Themes for professional data-heavy applications.
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    This is the default theme for the grid and a great choice for most applications.
+                    Balham was the default theme before Alpine was developed. It is still a great choice
+                    for applications that need to fit more data onto each page.
                 </p>
             </td>
         </tr>
@@ -77,25 +73,10 @@ include '../documentation-main/documentation_header.php';
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    This theme looks great for simple applications with lots of white space. However the Google
-                    Material spec doesn't cater for advanced grid features such as grouped columns
-                    and tool panels. For applications that use these advanced features,
-                    or need to pack a lot of data into a small space, <code>ag-theme-balham</code>
-                    may be a better choice.
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td class="theme-name-cell"><code>ag-theme-fresh</code><br/><code>ag-theme-dark</code><br/><code>ag-theme-blue</code><br/><code>ag-theme-bootstrap</code></td>
-            <td>
-                <p>
-                    Older flat themes that were part of the grid before we designed the Balham and Material themes. These themes are deprecated and
-                    will be removed in the next major release.
-                </p>
-                <p>
-                    <span class="reccommendation">Recommendation:</span>
-                    Prefer the <code>ag-theme-balham</code> or <code>ag-theme-material</code> themes and use
-                    SASS variables to change the colors if required.
+                    This theme looks great for simple applications with lots of white space, and is the obvious
+                    choice if the rest of your application follows the Google Material Design spec. However the
+                    Material spec doesn't cater for advanced grid features such as grouped columns and tool panels.
+                    If your application uses these features, consider using <code>ag-theme-alpine</code> instead.
                 </p>
             </td>
         </tr>
@@ -120,9 +101,6 @@ include '../documentation-main/documentation_header.php';
     <snippet language="html">
         &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
     </snippet>
-
-    <?php /*
-    spl alpine exclusion
 
   <h1>Alpine Themes</h1>
     <p>
@@ -258,8 +236,6 @@ $ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
 $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 </snippet>
 
-        */ ?>
-
     <h1>Balham Themes</h1>
 
     <p>
@@ -354,33 +330,6 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
         You can customize the various UI bits of the grid by providing custom cell renderers or editor components.
         A working example that integrates Angular Material's input, checkbox, select and datepicker can be found in the <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">ag-grid-material GitHub repository</a>.
     </p>
-
-
-
-
-    <h1>Deprecated Themes</h1>
-
-    <note>
-        The fresh, dark, blue and bootstrap themes were the original themes provided by the grid. They are deprecated
-        and will be removed in the next major release (v23).
-    </note>
-
-    <h2>Fresh Theme (ag-theme-fresh)</h2>
-
-    <?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
-
-    <h2>Dark Theme (ag-theme-dark)</h2>
-
-    <?= example('Dark Theme', 'theme-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
-
-    <h2>Blue Theme (ag-theme-blue)</h2>
-    
-    <?= example('Blue Theme', 'theme-blue', 'generated', array( "enterprise" => true, 'processVue' => true )) ?>
-    
-    <h2>Bootstrap Theme (ag-theme-bootstrap)</h2>
-    
-    <?= example('Bootstrap Theme', 'theme-bootstrap', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
-
 
 
 

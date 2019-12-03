@@ -25,15 +25,10 @@ if (USE_LOCAL) {
     // plain js examples that require old skool umd bundles
     define('AG_GRID_CSS_PATHS', array(
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
-// spl alpine exclusion
-//        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
-//        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
-        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
-        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css",
-        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
-        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css"
     ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");

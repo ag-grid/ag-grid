@@ -99,8 +99,6 @@ const copyGridCoreStyles = (done) => {
         gulp.src('./node_modules/@ag-grid-community/core/dist/styles/**/*').pipe(gulp.dest('./dist/styles')),
         gulp.src([
             './node_modules/@ag-grid-community/core/src/styles/**/*',
-            '!./node_modules/@ag-grid-community/core/src/styles/*alpine*/**', // spl alpine exclusion
-            '!./node_modules/@ag-grid-community/core/src/styles/**/*Alpine**',
         ]).pipe(gulp.dest('./dist/styles'))
     ]);
 };

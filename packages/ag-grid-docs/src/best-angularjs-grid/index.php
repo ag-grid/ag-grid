@@ -144,9 +144,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Five themes come with the grid, <code>ag-theme-material</code>, <code>ag-theme-balham</code>, <code>ag-theme-fresh</code>, <code>ag-theme-dark</code> and <code>ag-theme-blue</code>. Each one is
-    set by applying the corresponding class of the same name to the div. In the
-    example, <code>ag-theme-balham</code> is used.
+    the grid. Three themes come with the grid, <code>ag-theme-alpine</code>, <code>ag-theme-balham</code> and <code>ag-theme-material</code>. Each one is
+    set by applying the corresponding class of the same name to the div.
 </p>
 
 <p>

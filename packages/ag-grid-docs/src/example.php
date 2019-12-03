@@ -37,17 +37,13 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
                 <select onchange="onThemeChanged()" id="grid-theme">
                     <option value="">-none-</option>
-<!--
-                    // spl alpine exclusion
                     <option value="ag-theme-alpine">Alpine (Beta)</option>
                     <option value="ag-theme-alpine-dark">Alpine Dark (Beta)</option>
--->                    <option value="ag-theme-balham" selected>Balham</option>
+                    <option value="ag-theme-balham" selected>Balham</option>
                     <option value="ag-theme-balham-dark">Balham Dark</option>
                     <option value="ag-theme-material">Material</option>
                 </select>
 
-<!--
-                // spl alpine exclusion
                 <script>
                     (function() {
                         var themeDropdown = document.querySelector('#grid-theme');
@@ -64,7 +60,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                         }
                     })();
                 </script>
--->            </div>
+            </div>
             <div>
                 <label for="global-filter">Filter:</label>
                 <input 
@@ -89,8 +85,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
     <!-- The table div -->
     <div id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
-        <!-- // spl alpine exclusion -->
-        <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
+        <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-alpine"></div>
     </div>
 </div> <!-- example wrapper -->
 

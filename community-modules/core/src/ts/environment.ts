@@ -9,7 +9,6 @@ interface HardCodedSize {
         [key in SASS_PROPERTIES]?: number;
     };
 }
-const FRESH_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
 
@@ -18,12 +17,6 @@ const HARD_CODED_SIZES: HardCodedSize = {
         headerHeight: MAT_GRID_SIZE * 7,
         virtualItemHeight: MAT_GRID_SIZE * 5,
         rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-classic': {
-        headerHeight: 25,
-        virtualItemHeight: FRESH_GRID_SIZE * 5,
-        rowHeight: 25,
         chartMenuPanelWidth: 220
     },
     'ag-theme-balham': {

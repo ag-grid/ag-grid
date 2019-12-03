@@ -109,6 +109,14 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
         }
 
         page = await context.browser.newPage();
+        // hide text cursor because it blinks, so screenshots vary based on timing
+        await page.addStyleTag({
+            content: `
+            input[type="text"]{
+                caret-color: transparent !important;
+            }
+            `
+        });
         if (spec.urlParams.theme) {
             await page.evaluateOnNewDocument(setThemeInBrowser, spec.urlParams.theme);
         }
@@ -118,7 +126,14 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
         if (setThemeError) {
             throw new Error('Error setting theme: ' + setThemeError);
         }
-        await wait(500); // let the page stabilise
+
+        let exampleHasLoaded = false;
+        while (!exampleHasLoaded) {
+            await wait(500);
+            const content = await page.evaluate(() => document.body.textContent);
+            exampleHasLoaded = content != null && !content.includes("Loading...");
+        };
+        
         const selector = spec.selector || defaultSelector;
         const wrapper = await getElement(page, selector);
 
