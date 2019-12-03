@@ -25,7 +25,20 @@ var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
     sideBar: {
-        toolPanels: ['filters', 'columns']
+        toolPanels: [
+            'filters',
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    // prevents custom layout changing when columns are reordered in the grid
+                    suppressSyncLayoutWithGrid: true
+                }
+            },
+        ]
     },
     statusBar: {
         statusPanels: [
