@@ -4,6 +4,7 @@ include_once '../includes/html-helpers.php';
 include_once '../php-utils/printPropertiesTable.php';
 $DONT_USE_FONT_AWESOME = true;
 $version = 'latest';
+$latest_hash='';
 
 $rootFolder;
 if (strcmp($version, 'latest') == 0) {
