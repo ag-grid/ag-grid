@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         Your application interacts with columns through the grid's column interface. The column interface
         is defined as all the public facing parts of the columns that your application interacts with.
-        This section list all the column methods, properties, events e.t.c. for interacting with
+        This section list all the column methods, properties, events etc. for interacting with
         the grid's columns.
     </p>
 
@@ -188,8 +188,8 @@ var gridOptions = {
 <h3>Numeric Columns</h3>
 
 <p>
-The grid provides a handy shortcut for formatting numeric columns. 
-Setting the column definition type to <code>numericColumn</code> aligns the column header and contents to the right, 
+The grid provides a handy shortcut for formatting numeric columns.
+Setting the column definition type to <code>numericColumn</code> aligns the column header and contents to the right,
 which makes the scanning of the data easier for the user.
 </p>
 
