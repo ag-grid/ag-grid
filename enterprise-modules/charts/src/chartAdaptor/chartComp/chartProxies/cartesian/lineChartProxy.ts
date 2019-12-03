@@ -103,17 +103,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     private updateAxes(testDatum: any, categoryKey: string): void {
         const { chartOptions } = this;
 
-        if (chartOptions.xAxis.type || !testDatum) { return; }
-
-        const value = testDatum[categoryKey];
-
-        if (!value) { return; }
+        if (chartOptions.xAxis.type) { return; }
 
         const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
 
         if (!xAxis) { return; }
 
-        const categoryIsDate = isDate(value);
+        const categoryIsDate = isDate(testDatum && testDatum[categoryKey]);
 
         if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
             const options: CartesianChartOptions<LineSeriesOptions> = {
