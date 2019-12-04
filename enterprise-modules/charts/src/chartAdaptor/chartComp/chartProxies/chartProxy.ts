@@ -391,10 +391,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         // store current width and height so any charts created in the future maintain the size
-        this.chartOptions.width = this.chart.width;
-        this.chartOptions.height = this.chart.height;
+        if (this.chart) {
+            this.chartOptions.width = this.chart.width;
+            this.chartOptions.height = this.chart.height;
 
-        this.chart.destroy();
-        this.chart = null;
+            this.chart.destroy();
+            this.chart = null;
+        }
     }
 }
