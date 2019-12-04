@@ -1,46 +1,39 @@
-var columnDefs = [
-    { field: "1" },
-    { field: "2" },
-    { field: "3" },
-    { field: "4" },
-    { field: "5" },
-    { field: "6" },
-    { field: "7" },
-    { field: "8" },
-    { field: "9" },
-    { field: "10" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "1" },
+        { field: "2" },
+        { field: "3" },
+        { field: "4" },
+        { field: "5" },
+        { field: "6" },
+        { field: "7" },
+        { field: "8" },
+        { field: "9" },
+        { field: "10" }
+    ],
     defaultColDef: {
-        cellRenderer: ShowOrderCellRenderer,
+        cellRenderer: showOrderCellRenderer,
         width: 80
     },
+    rowData: getRowData(),
     rowSelection: 'single',
-    rowData: [],
-    rowBuffer: 0
+    rowBuffer: 0,
 };
-
-for (var i=0; i<1000; i++) {
-    gridOptions.rowData.push({});
-}
 
 var count = 0;
 
-function ShowOrderCellRenderer() {}
-
-ShowOrderCellRenderer.prototype.init = function(params) {
-    this.params = params;
-    this.eGui = document.createElement("div");
-    this.eGui.innerHTML = ++count;
+function showOrderCellRenderer() {
+    var eGui = document.createElement("div");
+    eGui.innerHTML = ++count;
     var start = new Date();
     while (new Date() - start < 15) {}
-};
+    return eGui;
+}
 
-ShowOrderCellRenderer.prototype.getGui = function() {
-    return this.eGui;
-};
+function getRowData() {
+    // 1000 blank rows for the grid
+    return new Array(1000).fill(null);
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     var gridDiv = document.querySelector("#myGrid");
