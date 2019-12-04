@@ -24,18 +24,16 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
-        const { chart } = this;
-
         if (params.fields.length === 0) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
 
         this.updateAxes(params.data[0], params.category.id);
 
+        const { chart } = this;
         const fieldIds = params.fields.map(f => f.colId);
         const { fills, strokes } = this.getPalette();
-
         const data = this.transformData(params.data, params.category.id);
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
