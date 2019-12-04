@@ -200,7 +200,7 @@ export class ClipboardService implements IClipboardService {
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode!);
             columns!.forEach((column: Column, idx: number) => {
-                if (!column.isCellEditable(rowNode!)) { return; }
+                if (!column.isCellEditable(rowNode!) || column.isSuppressPaste(rowNode)) { return; }
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
                 if (idx >= currentRowData.length) {
