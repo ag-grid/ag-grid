@@ -1112,7 +1112,7 @@ function onThemeChanged() {
     } else {
         document.body.classList.remove('dark');
     }
-    
+
 }
 
 var filterCount = 0;
@@ -1417,7 +1417,11 @@ function currencyFormatter(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '$' + formatThousands(Math.floor(params.value));
+            let prefix = '$';
+            if (params.value < 0) {
+                prefix = '-' + prefix;
+            }
+            return prefix + formatThousands(Math.floor(Math.abs(params.value)));
         }
     }
 }
