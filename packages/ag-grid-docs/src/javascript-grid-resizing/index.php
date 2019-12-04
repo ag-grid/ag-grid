@@ -189,7 +189,7 @@ gridOptions: {
             by its minWidth/maxWidth rules, in which case it should take up the remaining available space.</li>
     </ul>
 
-    <?= example('Column Flex', 'flex-columns', 'vanilla', array("processVue" => true)) ?>
+    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
