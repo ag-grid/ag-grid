@@ -7,7 +7,6 @@ import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
 import linearScale from "../../../scale/linearScale";
 import { Marker } from "../../marker/marker";
-import { Circle } from "../../marker/circle";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -217,7 +216,7 @@ export class ScatterSeries extends CartesianSeries {
             highlightedNode
         } = this;
 
-        const Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
+        const Marker = marker.type;
         const markerFormatter = marker.formatter;
 
         this.sizeScale.range = [marker.minSize, marker.size];

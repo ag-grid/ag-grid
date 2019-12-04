@@ -63,6 +63,7 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.highlightStyle = {
             fill: 'yellow'
         };
+        _this.marker.enabled = false;
         _this.marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
         _this.marker.addEventListener('change', function () { return _this.update(); });
         return _this;
@@ -297,7 +298,7 @@ var AreaSeries = /** @class */ (function (_super) {
     };
     AreaSeries.prototype.update = function () {
         var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
-        this.group.visible = visible;
+        this.group.visible = visible && !!(xData.length && yData.length);
         if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
             return;
         }

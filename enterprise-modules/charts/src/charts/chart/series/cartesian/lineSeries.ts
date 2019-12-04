@@ -31,6 +31,8 @@ export class LineSeries extends CartesianSeries {
 
     private lineNode = new Path();
 
+    // We use groups for this selection even though each group only contains a marker ATM
+    // because in the future we might want to add label support as well.
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     readonly marker = new CartesianSeriesMarker();
@@ -283,16 +285,16 @@ export class LineSeries extends CartesianSeries {
 
     private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
         const { marker, xKey, yKey, highlightedNode, fill, stroke, strokeWidth } = this;
-        const Marker = marker.type;
         let { groupSelection } = this;
 
-        // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
-        if (!Marker) {
+        if (!marker.enabled) {
             if (!groupSelection.size) {
                 this.groupSelection.remove();
             }
             return;
         }
+
+        const Marker = marker.type;
 
         const updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();

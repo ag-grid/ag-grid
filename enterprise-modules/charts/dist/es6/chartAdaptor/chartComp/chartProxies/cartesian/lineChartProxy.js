@@ -41,12 +41,12 @@ var LineChartProxy = /** @class */ (function (_super) {
     };
     LineChartProxy.prototype.update = function (params) {
         var _this = this;
-        var chart = this.chart;
         if (params.fields.length === 0) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
         this.updateAxes(params.data[0], params.category.id);
+        var chart = this.chart;
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var data = this.transformData(params.data, params.category.id);

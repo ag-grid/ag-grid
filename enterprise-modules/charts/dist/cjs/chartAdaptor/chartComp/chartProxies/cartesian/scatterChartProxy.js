@@ -44,16 +44,17 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return chartBuilder_1.ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
     };
     ScatterChartProxy.prototype.update = function (params) {
-        var chart = this.chart;
         if (params.fields.length < 2) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
         var fields = params.fields;
-        var seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
+        var seriesDefaults = this.chartOptions.seriesDefaults;
+        var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         this.updateAxes(params.data[0], seriesDefinitions.map(function (d) { return d.xField.colId; }));
+        var chart = this.chart;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var seriesOptions = __assign({ type: "scatter" }, this.chartOptions.seriesDefaults);
+        var seriesOptions = __assign({ type: "scatter" }, seriesDefaults);
         var labelFieldDefinition = params.category.id === chartDataModel_1.ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = core_1._.findIndex(seriesDefinitions, function (s) {

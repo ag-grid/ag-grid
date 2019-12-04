@@ -48,7 +48,7 @@ var gridOptions = {
 function processChartOptions(params) {
     var options = params.options;
 
-    if (['line',].indexOf(params.type) < 0) {
+    if (['line'].indexOf(params.type) < 0) {
         console.log('chart type is ' + params.type + ', making no changes.');
         return options;
     }

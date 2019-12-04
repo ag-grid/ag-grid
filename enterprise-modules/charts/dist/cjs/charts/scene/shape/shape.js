@@ -22,7 +22,7 @@ var Shape = /** @class */ (function (_super) {
         _this.lastInstanceId = 0;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
-        _this._fill = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
+        _this._fill = Shape.defaultStyles.fill;
         /**
          * Note that `strokeStyle = null` means invisible stroke,
          * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.

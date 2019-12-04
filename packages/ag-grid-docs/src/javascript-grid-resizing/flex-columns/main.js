@@ -24,40 +24,23 @@ var columnDefs = [
     }
 ];
 
+function fillAllCellsWithWidthMeasurement() {
+    document.querySelectorAll(".ag-cell").forEach(function(cell) {
+        var width = cell.offsetWidth;
+        var isFullWidthRow = cell.parentElement.childNodes.length === 1;
+        cell.textContent = (isFullWidthRow ? "Total width: " : "") + width + "px";
+    });
+}
+
 var gridOptions = {
     defaultColDef: {
-        resizable: true,
-        cellRenderer: ShowWidthCellRenderer
+        resizable: true
     },
     columnDefs: columnDefs,
-    rowData: [1, 2]
-};
-
-function ShowWidthCellRenderer() {}
-
-ShowWidthCellRenderer.prototype.init = function(params) {
-    this.eGui = document.createElement("div");
-    this.isTotalWidthRow = params.data === 2;
-    this.interval = setInterval(this.refreshValue.bind(this), 50);
-    this.refreshValue();
-};
-
-ShowWidthCellRenderer.prototype.refreshValue = function() {
-    if (this.eGui.parentElement) {
-        var width = this.eGui.parentElement.offsetWidth;
-        this.eGui.textContent = width + "px";
-        if (this.isTotalWidthRow) {
-            this.eGui.textContent =  "Total width: " + this.eGui.textContent;
-        }
+    rowData: [1, 2],
+    onGridReady: function() {
+        setInterval(fillAllCellsWithWidthMeasurement, 50);
     }
-};
-
-ShowWidthCellRenderer.prototype.getGui = function() {
-    return this.eGui;
-};
-
-ShowWidthCellRenderer.prototype.destroy = function() {
-    clearInterval(this.interval);
 };
 
 // setup the grid after the page has finished loading

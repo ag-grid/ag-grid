@@ -5,30 +5,30 @@ var columnDefs = [
         headerName: 'Make',
         field: 'make',
         editable: true,
-        cellEditor:'agSelectCellEditor',
+        cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            values: ['Porsche','Toyota','Ford','AAA', 'BBB', 'CCC']
+            values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC']
         }
     },
-    {headerName: 'Model', field: 'model', editable: true},
-    {headerName: 'Price', field: 'price', editable: true, cellEditor: 'numericCellEditor'},
-    {headerName: 'Suppress Navigable', field: 'field5', editable: true, suppressNavigable: true},
-    {headerName: 'Not Editable', field: 'field6', editable: false}
+    { headerName: 'Model', field: 'model', editable: true },
+    { headerName: 'Price', field: 'price', editable: true, cellEditor: 'numericCellEditor' },
+    { headerName: 'Suppress Navigable', field: 'field5', editable: true, suppressNavigable: true },
+    { headerName: 'Not Editable', field: 'field6', editable: false }
 ];
 
 function getRowData() {
     var rowData = [];
     for (var i = 0; i < 10; i++) {
-        rowData.push({make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field5: 'Sample 22', field6: 'Sample 23'});
-        rowData.push({make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field5: 'Sample 24', field6: 'Sample 25'});
-        rowData.push({make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field5: 'Sample 26', field6: 'Sample 27'});
+        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field5: 'Sample 22', field6: 'Sample 23' });
+        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field5: 'Sample 24', field6: 'Sample 25' });
+        rowData.push({ make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field5: 'Sample 26', field6: 'Sample 27' });
     }
 
     return rowData;
 }
 
 var gridOptions = {
-    components:{
+    components: {
         numericCellEditor: getNumericCellEditor()
     },
     columnDefs: columnDefs,
@@ -39,7 +39,7 @@ var gridOptions = {
     },
     onRowValueChanged: function(event) {
         var data = event.data;
-        console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ')');
+        console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')');
     }
 };
 
@@ -72,7 +72,7 @@ function getNumericCellEditor() {
     }
 
     // function to act as a class
-    function NumericCellEditor() {}
+    function NumericCellEditor() { }
 
     // gets called once before the renderer is used
     NumericCellEditor.prototype.init = function(params) {
@@ -116,7 +116,7 @@ function getNumericCellEditor() {
 
     // example - will reject the number if it contains the value 007
     // - not very practical, but demonstrates the method.
-    NumericCellEditor.prototype.isCancelAfterEnd = function() {};
+    NumericCellEditor.prototype.isCancelAfterEnd = function() { };
 
     // returns the new value after editing
     NumericCellEditor.prototype.getValue = function() {

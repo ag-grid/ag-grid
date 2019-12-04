@@ -5,7 +5,7 @@ export declare class SeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    type?: new () => Marker;
+    type: new () => Marker;
     size: number;
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
@@ -15,8 +15,7 @@ export declare class SeriesMarker extends Observable {
      */
     minSize: number;
     fill?: string;
-    protected _stroke?: string;
-    stroke: string | undefined;
+    stroke?: string;
     strokeWidth?: number;
 }
 export interface SeriesMarkerFormatterParams {

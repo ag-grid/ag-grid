@@ -31,6 +31,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.xData = [];
         _this.yData = [];
         _this.lineNode = new Path();
+        // We use groups for this selection even though each group only contains a marker ATM
+        // because in the future we might want to add label support as well.
         _this.groupSelection = Selection.select(_this.group).selectAll();
         _this.marker = new CartesianSeriesMarker();
         _this._xKey = '';
@@ -270,15 +272,14 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        var Marker = marker.type;
         var groupSelection = this.groupSelection;
-        // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
-        if (!Marker) {
+        if (!marker.enabled) {
             if (!groupSelection.size) {
                 this.groupSelection.remove();
             }
             return;
         }
+        var Marker = marker.type;
         var updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);

@@ -16886,7 +16886,6 @@ var CellComp = /** @class */ (function (_super) {
         // and recompile (if applicable)
         this.updateAngular1ScopeAndCompile();
         this.refreshToolTip();
-        this.refreshHandle();
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.postProcessCellClassRules();
@@ -18187,7 +18186,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.refreshHandle();
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
@@ -47558,7 +47556,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
@@ -47568,10 +47566,10 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXmlSerializingSession.prototype.onNewHeaderRow = function () {
-        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewBodyRow = function () {
-        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
+        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
         var currentCells = [];
@@ -47771,7 +47769,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
@@ -56725,17 +56723,35 @@ var SeriesMarker = /** @class */ (function (_super) {
     __extends$23(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.size = 12;
         /**
          * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
          * will be used to determine the size of the marker. All values will be mapped to a marker size
          * within the `[minSize, size]` range, where the largest values will correspond to the `size`
          * and the lowest to the `minSize`.
          */
-        _this.size = 12;
         _this.minSize = 12;
-        _this.enabled = true;
         return _this;
     }
+    Object.defineProperty(SeriesMarker.prototype, "stroke", {
+        get: function () {
+            return this._stroke;
+        },
+        set: function (value) {
+            var oldValue = this._stroke;
+            if (oldValue !== value) {
+                this._stroke = value;
+                this.fireEvent({ type: 'change' });
+                this.notifyPropertyListeners('stroke', oldValue, value);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    __decorate$2I([
+        reactive(['change'])
+    ], SeriesMarker.prototype, "enabled", void 0);
     __decorate$2I([
         reactive(['change'])
     ], SeriesMarker.prototype, "type", void 0);
@@ -56747,7 +56763,10 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "minSize", void 0);
     __decorate$2I([
         reactive(['change'])
-    ], SeriesMarker.prototype, "enabled", void 0);
+    ], SeriesMarker.prototype, "fill", void 0);
+    __decorate$2I([
+        reactive(['change'])
+    ], SeriesMarker.prototype, "strokeWidth", void 0);
     return SeriesMarker;
 }(Observable));
 
@@ -59168,8 +59187,7 @@ var LineSeries = /** @class */ (function (_super) {
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth;
-        var markerSize = marker.size;
+        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode;
         var groupSelectionData = [];
         var linePath = lineNode.path;
         linePath.clear();
@@ -59187,20 +59205,16 @@ var LineSeries = /** @class */ (function (_super) {
                 groupSelectionData.push({
                     seriesDatum: data[i],
                     x: x,
-                    y: y,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: markerSize
+                    y: y
                 });
             }
         });
-        lineNode.stroke = stroke;
+        lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
         this.updateGroupSelection(groupSelectionData);
     };
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode;
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var Marker = marker.type;
         var groupSelection = this.groupSelection;
         // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
@@ -59216,35 +59230,35 @@ var LineSeries = /** @class */ (function (_super) {
         enterGroups.append(Marker);
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
         var markerFormatter = marker.formatter;
+        var markerSize = marker.size;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(Marker)
             .each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            var stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-            var strokeWidth = datum.strokeWidth, size = datum.size;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: yKey,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: size,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = fill;
-                node.stroke = stroke;
-                node.strokeWidth = strokeWidth;
-                node.size = size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : markerSize;
             node.translationX = datum.x;
             node.translationY = datum.y;
             node.visible = marker.enabled && node.size > 0;
@@ -59291,8 +59305,8 @@ var LineSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     type: marker.type,
-                    fill: fill,
-                    stroke: stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }
@@ -59594,33 +59608,33 @@ var ScatterSeries = /** @class */ (function (_super) {
         enterGroups.append(Marker);
         var groupSelection = updateGroups.merge(enterGroups);
         var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         groupSelection.selectByClass(Marker)
             .each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : stroke;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: yKey,
                     fill: markerFill,
                     stroke: markerStroke,
-                    strokeWidth: strokeWidth,
+                    strokeWidth: markerStrokeWidth,
                     size: datum.size,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = markerFill;
-                node.stroke = markerStroke;
-                node.strokeWidth = strokeWidth;
-                node.size = datum.size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : datum.size;
             node.fillOpacity = fillOpacity;
             node.strokeOpacity = strokeOpacity;
             node.translationX = datum.x;
@@ -59679,8 +59693,8 @@ var ScatterSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     type: marker.type,
-                    fill: fill,
-                    stroke: stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }
@@ -60586,13 +60600,12 @@ var AreaSeries = /** @class */ (function (_super) {
         this.updateMarkerSelection(markerSelectionData);
     };
     AreaSeries.prototype.generateSelectionData = function () {
-        var _a = this, yKeys = _a.yKeys, yNames = _a.yNames, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, strokeWidth = _a.strokeWidth, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
+        var _a = this, yKeys = _a.yKeys, yNames = _a.yNames, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var areaSelectionData = [];
         var markerSelectionData = [];
         var last = xData.length * 2 - 1;
-        var markerSize = marker.size;
         xData.forEach(function (xDatum, i) {
             var yDatum = yData[i];
             var seriesDatum = data[i];
@@ -60611,8 +60624,6 @@ var AreaSeries = /** @class */ (function (_super) {
                         y: y,
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length],
-                        strokeWidth: strokeWidth,
-                        size: markerSize,
                         text: yNames[j]
                     });
                 }
@@ -60696,6 +60707,8 @@ var AreaSeries = /** @class */ (function (_super) {
             return;
         }
         var markerFormatter = marker.formatter;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        var markerSize = marker.size;
         var _b = this, yKeyEnabled = _b.yKeyEnabled, highlightedNode = _b.highlightedNode;
         var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
         var updateMarkers = this.markerSelection.setData(markerSelectionData);
@@ -60704,31 +60717,29 @@ var AreaSeries = /** @class */ (function (_super) {
         var markerSelection = updateMarkers.merge(enterMarkers);
         markerSelection.each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            var stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-            var strokeWidth = datum.strokeWidth, size = datum.size;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: datum.yKey,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: size,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = fill;
-                node.stroke = stroke;
-                node.strokeWidth = strokeWidth;
-                node.size = size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : markerSize;
             node.translationX = datum.x;
             node.translationY = datum.y;
             node.visible = marker.enabled && node.size > 0 && !!yKeyEnabled.get(datum.yKey);
@@ -60781,8 +60792,8 @@ var AreaSeries = /** @class */ (function (_super) {
                     },
                     marker: {
                         type: marker.type,
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
+                        fill: marker.fill || fills[index % fills.length],
+                        stroke: marker.stroke || strokes[index % strokes.length],
                         fillOpacity: fillOpacity,
                         strokeOpacity: strokeOpacity
                     }
@@ -63923,16 +63934,14 @@ var ChartBuilder = /** @class */ (function () {
         if (fill) {
             this.setValueIfExists(series, 'fill', fill.color);
             // default marker to same fill as series
-            this.setValueIfExists(series, 'fill', fill.color);
-            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series.marker, 'fill', fill.color);
         }
         if (stroke) {
             this.setValueIfExists(series, 'stroke', stroke.color);
             this.setValueIfExists(series, 'strokeWidth', stroke.width);
             // default marker to same stroke as series
-            this.setValueIfExists(series, 'stroke', stroke.color);
-            this.setValueIfExists(series, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series.marker, 'stroke', stroke.color);
+            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
         }
         if (highlightStyle) {
             this.initHighlightStyle(series.highlightStyle, highlightStyle);
@@ -63962,14 +63971,12 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (fill) {
             // default marker to same fill as series
-            this.setValueIfExists(series, 'fill', fill.color);
-            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series.marker, 'fill', fill.color);
         }
         if (stroke) {
             // default marker to same stroke as series
-            this.setValueIfExists(series, 'stroke', stroke.color);
-            this.setValueIfExists(series, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series.marker, 'stroke', stroke.color);
+            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
         }
         if (highlightStyle) {
             this.initHighlightStyle(series.highlightStyle, highlightStyle);
@@ -64132,6 +64139,9 @@ var ChartBuilder = /** @class */ (function () {
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);
+        this.setValueIfExists(marker, 'fill', options.fill);
+        this.setValueIfExists(marker, 'stroke', options.stroke);
+        this.setValueIfExists(marker, 'strokeWidth', options.strokeWidth);
     };
     ChartBuilder.initHighlightStyle = function (highlightStyle, options) {
         this.setValueIfExists(highlightStyle, 'fill', options.fill);
@@ -64380,10 +64390,6 @@ var ChartProxy = /** @class */ (function () {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'marker.enabled': 'marker.enabled',
-            'marker.size': 'marker.size',
-            'marker.minSize': 'marker.minSize',
-            'marker.strokeWidth': 'strokeWidth',
             'tooltip.enabled': 'tooltipEnabled',
             'callout.colors': 'calloutColors',
             'callout.strokeWidth': 'calloutStrokeWidth',
@@ -67628,7 +67634,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                         xName: params.category.name,
                         yKey: f.colId,
                         yName: f.displayName,
-                    }, fill: __assign$8(__assign$8({}, seriesDefaults.fill), { color: fill }), stroke: __assign$8(__assign$8({}, seriesDefaults.stroke), { color: fill }) });
+                    }, fill: __assign$8(__assign$8({}, seriesDefaults.fill), { color: fill }), stroke: __assign$8(__assign$8({}, seriesDefaults.stroke), { color: fill }), marker: __assign$8(__assign$8({}, seriesDefaults.marker), { stroke: stroke }) });
                 lineSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }

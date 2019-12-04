@@ -54,6 +54,7 @@ export class AreaSeries extends CartesianSeries {
     constructor() {
         super();
 
+        this.marker.enabled = false;
         this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
         this.marker.addEventListener('change', () => this.update());
     }
@@ -307,7 +308,7 @@ export class AreaSeries extends CartesianSeries {
     update(): void {
         const { visible, chart, xAxis, yAxis, xData, yData } = this;
 
-        this.group.visible = visible;
+        this.group.visible = visible && !!(xData.length && yData.length);
 
         if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
             return;

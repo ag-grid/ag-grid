@@ -29,20 +29,20 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     public update(params: UpdateChartParams): void {
-        const { chart } = this;
-
         if (params.fields.length < 2) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
 
         const { fields } = params;
-        const seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
+        const { seriesDefaults } = this.chartOptions;
+        const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
 
         this.updateAxes(params.data[0], seriesDefinitions.map(d => d.xField.colId));
 
+        const { chart } = this;
         const { fills, strokes } = this.getPalette();
-        const seriesOptions: SeriesOptions = { type: "scatter", ...this.chartOptions.seriesDefaults };
+        const seriesOptions: SeriesOptions = { type: "scatter", ...seriesDefaults };
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {

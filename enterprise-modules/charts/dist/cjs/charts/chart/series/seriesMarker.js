@@ -20,12 +20,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var observable_1 = require("../../util/observable");
+var circle_1 = require("../marker/circle");
 var SeriesMarker = /** @class */ (function (_super) {
     __extends(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
-        _this.size = 12;
+        /**
+         * Marker constructor function. A series will create one marker instance per data point.
+         */
+        _this.type = circle_1.Circle;
+        _this.size = 8;
         /**
          * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
          * will be used to determine the size of the marker. All values will be mapped to a marker size
@@ -35,21 +40,6 @@ var SeriesMarker = /** @class */ (function (_super) {
         _this.minSize = 12;
         return _this;
     }
-    Object.defineProperty(SeriesMarker.prototype, "stroke", {
-        get: function () {
-            return this._stroke;
-        },
-        set: function (value) {
-            var oldValue = this._stroke;
-            if (oldValue !== value) {
-                this._stroke = value;
-                this.fireEvent({ type: 'change' });
-                this.notifyPropertyListeners('stroke', oldValue, value);
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
     __decorate([
         observable_1.reactive(['change'])
     ], SeriesMarker.prototype, "enabled", void 0);
@@ -65,6 +55,9 @@ var SeriesMarker = /** @class */ (function (_super) {
     __decorate([
         observable_1.reactive(['change'])
     ], SeriesMarker.prototype, "fill", void 0);
+    __decorate([
+        observable_1.reactive(['change'])
+    ], SeriesMarker.prototype, "stroke", void 0);
     __decorate([
         observable_1.reactive(['change'])
     ], SeriesMarker.prototype, "strokeWidth", void 0);

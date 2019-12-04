@@ -25,7 +25,6 @@ var array_1 = require("../../../util/array");
 var number_1 = require("../../../util/number");
 var linearScale_1 = require("../../../scale/linearScale");
 var marker_1 = require("../../marker/marker");
-var circle_1 = require("../../marker/circle");
 var observable_1 = require("../../../util/observable");
 var cartesianSeries_1 = require("./cartesianSeries");
 var chartAxis_1 = require("../../chartAxis");
@@ -181,7 +180,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, xKey = _b.xKey, yKey = _b.yKey, sizeScale = _b.sizeScale, marker = _b.marker, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, highlightedNode = _b.highlightedNode;
-        var Marker = marker.type || circle_1.Circle; // TODO: what should really happen when the `type` is undefined?
+        var Marker = marker.type;
         var markerFormatter = marker.formatter;
         this.sizeScale.range = [marker.minSize, marker.size];
         var groupSelectionData = xData.map(function (xDatum, i) { return ({

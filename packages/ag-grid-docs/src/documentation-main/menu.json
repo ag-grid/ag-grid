@@ -665,13 +665,13 @@
             "url": "javascript-grid-editing-flow/",
             "items": [
               {
-                "title": "Value Setters",
-                "url": "javascript-grid-value-setters/",
+                "title": "Value Parsers",
+                "url": "javascript-grid-value-parsers/",
                 "showInCollapsed": true
               },
               {
-                "title": "Value Parsers",
-                "url": "javascript-grid-value-parsers/",
+                "title": "Value Setters",
+                "url": "javascript-grid-value-setters/",
                 "showInCollapsed": true
               }
             ]
