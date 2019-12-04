@@ -10,6 +10,7 @@
     "precheck": "tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && npm run clean && npm run ngc-build && npm run verify-properties",
     "ngc-build": "ngc -p tsconfig-src.json && gulp",
+    "build-cjs": "gulp update-properties-and-compile-source",
     "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
     "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main"
   },
