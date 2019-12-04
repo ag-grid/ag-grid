@@ -4,5 +4,4 @@ import { ChartAxis } from "./chartAxis";
 export declare type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 export declare class GroupedCategoryChart extends CartesianChart {
     updateAxes(): void;
-    computeAxisAutopadding(axis: ChartAxis): void;
 }

@@ -52342,7 +52342,7 @@ var Shape = /** @class */ (function (_super) {
         _this.lastInstanceId = 0;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
-        _this._fill = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
+        _this._fill = Shape.defaultStyles.fill;
         /**
          * Note that `strokeStyle = null` means invisible stroke,
          * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
@@ -56713,6 +56713,35 @@ var __extends$23 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var Circle = /** @class */ (function (_super) {
+    __extends$23(Circle, _super);
+    function Circle() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Circle.prototype.updatePath = function () {
+        var _a = this, x = _a.x, y = _a.y, path = _a.path, size = _a.size;
+        var r = size / 2;
+        path.clear();
+        path.cubicArc(x, y, r, r, 0, 0, Math.PI * 2, 0);
+        path.closePath();
+    };
+    Circle.className = 'Circle';
+    return Circle;
+}(Marker));
+
+var __extends$24 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate$2I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -56720,11 +56749,15 @@ var __decorate$2I = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SeriesMarker = /** @class */ (function (_super) {
-    __extends$23(SeriesMarker, _super);
+    __extends$24(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
-        _this.size = 12;
+        /**
+         * Marker constructor function. A series will create one marker instance per data point.
+         */
+        _this.type = Circle;
+        _this.size = 8;
         /**
          * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
          * will be used to determine the size of the marker. All values will be mapped to a marker size
@@ -56734,21 +56767,6 @@ var SeriesMarker = /** @class */ (function (_super) {
         _this.minSize = 12;
         return _this;
     }
-    Object.defineProperty(SeriesMarker.prototype, "stroke", {
-        get: function () {
-            return this._stroke;
-        },
-        set: function (value) {
-            var oldValue = this._stroke;
-            if (oldValue !== value) {
-                this._stroke = value;
-                this.fireEvent({ type: 'change' });
-                this.notifyPropertyListeners('stroke', oldValue, value);
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
     __decorate$2I([
         reactive(['change'])
     ], SeriesMarker.prototype, "enabled", void 0);
@@ -56766,11 +56784,14 @@ var SeriesMarker = /** @class */ (function (_super) {
     ], SeriesMarker.prototype, "fill", void 0);
     __decorate$2I([
         reactive(['change'])
+    ], SeriesMarker.prototype, "stroke", void 0);
+    __decorate$2I([
+        reactive(['change'])
     ], SeriesMarker.prototype, "strokeWidth", void 0);
     return SeriesMarker;
 }(Observable));
 
-var __extends$24 = (undefined && undefined.__extends) || (function () {
+var __extends$25 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56784,7 +56805,7 @@ var __extends$24 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianSeries = /** @class */ (function (_super) {
-    __extends$24(CartesianSeries, _super);
+    __extends$25(CartesianSeries, _super);
     function CartesianSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -56797,14 +56818,14 @@ var CartesianSeries = /** @class */ (function (_super) {
     return CartesianSeries;
 }(Series));
 var CartesianSeriesMarker = /** @class */ (function (_super) {
-    __extends$24(CartesianSeriesMarker, _super);
+    __extends$25(CartesianSeriesMarker, _super);
     function CartesianSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CartesianSeriesMarker;
 }(SeriesMarker));
 
-var __extends$25 = (undefined && undefined.__extends) || (function () {
+var __extends$26 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -56824,7 +56845,7 @@ var __decorate$2J = (undefined && undefined.__decorate) || function (decorators,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Chart = /** @class */ (function (_super) {
-    __extends$25(Chart, _super);
+    __extends$26(Chart, _super);
     function Chart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this) || this;
@@ -57605,7 +57626,7 @@ var BandScale = /** @class */ (function () {
     return BandScale;
 }());
 
-var __extends$26 = (undefined && undefined.__extends) || (function () {
+var __extends$27 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -57619,7 +57640,7 @@ var __extends$26 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CategoryAxis = /** @class */ (function (_super) {
-    __extends$26(CategoryAxis, _super);
+    __extends$27(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = this;
         var scale = new BandScale();
@@ -57944,7 +57965,7 @@ var TreeLayout = /** @class */ (function () {
     return TreeLayout;
 }());
 
-var __extends$27 = (undefined && undefined.__extends) || (function () {
+var __extends$28 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -57958,7 +57979,7 @@ var __extends$27 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
-    __extends$27(GroupedCategoryAxisLabel, _super);
+    __extends$28(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.grid = false;
@@ -57976,7 +57997,7 @@ var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var GroupedCategoryAxis = /** @class */ (function (_super) {
-    __extends$27(GroupedCategoryAxis, _super);
+    __extends$28(GroupedCategoryAxis, _super);
     function GroupedCategoryAxis() {
         var _this = _super.call(this, new BandScale()) || this;
         _this.id = _this.createId();
@@ -58346,7 +58367,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     return GroupedCategoryAxis;
 }(ChartAxis));
 
-var __extends$28 = (undefined && undefined.__extends) || (function () {
+var __extends$29 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58372,7 +58393,7 @@ var CartesianChartLayout;
     CartesianChartLayout[CartesianChartLayout["Horizontal"] = 1] = "Horizontal";
 })(CartesianChartLayout || (CartesianChartLayout = {}));
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$28(CartesianChart, _super);
+    __extends$29(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -58552,7 +58573,7 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$29 = (undefined && undefined.__extends) || (function () {
+var __extends$2a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58566,7 +58587,7 @@ var __extends$29 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$29(PolarSeries, _super);
+    __extends$2a(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -58593,14 +58614,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$29(PolarSeriesMarker, _super);
+    __extends$2a(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$2a = (undefined && undefined.__extends) || (function () {
+var __extends$2b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58614,7 +58635,7 @@ var __extends$2a = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChart = /** @class */ (function (_super) {
-    __extends$2a(PolarChart, _super);
+    __extends$2b(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -58954,7 +58975,7 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 
-var __extends$2b = (undefined && undefined.__extends) || (function () {
+var __extends$2c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -58968,7 +58989,7 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
     };
 })();
 var LineSeries = /** @class */ (function (_super) {
-    __extends$2b(LineSeries, _super);
+    __extends$2c(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -58976,6 +58997,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.xData = [];
         _this.yData = [];
         _this.lineNode = new Path();
+        // We use groups for this selection even though each group only contains a marker ATM
+        // because in the future we might want to add label support as well.
         _this.groupSelection = Selection.select(_this.group).selectAll();
         _this.marker = new CartesianSeriesMarker();
         _this._xKey = '';
@@ -59215,15 +59238,14 @@ var LineSeries = /** @class */ (function (_super) {
     };
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        var Marker = marker.type;
         var groupSelection = this.groupSelection;
-        // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
-        if (!Marker) {
+        if (!marker.enabled) {
             if (!groupSelection.size) {
                 this.groupSelection.remove();
             }
             return;
         }
+        var Marker = marker.type;
         var updateGroups = this.groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);
@@ -59317,7 +59339,7 @@ var LineSeries = /** @class */ (function (_super) {
     return LineSeries;
 }(CartesianSeries));
 
-var __extends$2c = (undefined && undefined.__extends) || (function () {
+var __extends$2d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -59334,7 +59356,7 @@ var __extends$2c = (undefined && undefined.__extends) || (function () {
  * Maps continuous domain to a continuous range.
  */
 var LinearScale = /** @class */ (function (_super) {
-    __extends$2c(LinearScale, _super);
+    __extends$2d(LinearScale, _super);
     function LinearScale() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -59393,35 +59415,6 @@ var LinearScale = /** @class */ (function (_super) {
 function scaleLinear() {
     return new LinearScale();
 }
-
-var __extends$2d = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var Circle = /** @class */ (function (_super) {
-    __extends$2d(Circle, _super);
-    function Circle() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Circle.prototype.updatePath = function () {
-        var _a = this, x = _a.x, y = _a.y, path = _a.path, size = _a.size;
-        var r = size / 2;
-        path.clear();
-        path.cubicArc(x, y, r, r, 0, 0, Math.PI * 2, 0);
-        path.closePath();
-    };
-    Circle.className = 'Circle';
-    return Circle;
-}(Marker));
 
 var __extends$2e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -59593,7 +59586,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, xKey = _b.xKey, yKey = _b.yKey, sizeScale = _b.sizeScale, marker = _b.marker, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, highlightedNode = _b.highlightedNode;
-        var Marker = marker.type || Circle; // TODO: what should really happen when the `type` is undefined?
+        var Marker = marker.type;
         var markerFormatter = marker.formatter;
         this.sizeScale.range = [marker.minSize, marker.size];
         var groupSelectionData = xData.map(function (xDatum, i) { return ({
@@ -60356,6 +60349,7 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.highlightStyle = {
             fill: 'yellow'
         };
+        _this.marker.enabled = false;
         _this.marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
         _this.marker.addEventListener('change', function () { return _this.update(); });
         return _this;
@@ -60590,7 +60584,7 @@ var AreaSeries = /** @class */ (function (_super) {
     };
     AreaSeries.prototype.update = function () {
         var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
-        this.group.visible = visible;
+        this.group.visible = visible && !!(xData.length && yData.length);
         if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
             return;
         }
@@ -64694,16 +64688,17 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
     };
     ScatterChartProxy.prototype.update = function (params) {
-        var chart = this.chart;
         if (params.fields.length < 2) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
         var fields = params.fields;
-        var seriesDefinitions = this.getSeriesDefinitions(fields, this.chartOptions.seriesDefaults.paired);
+        var seriesDefaults = this.chartOptions.seriesDefaults;
+        var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         this.updateAxes(params.data[0], seriesDefinitions.map(function (d) { return d.xField.colId; }));
+        var chart = this.chart;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var seriesOptions = __assign$5({ type: "scatter" }, this.chartOptions.seriesDefaults);
+        var seriesOptions = __assign$5({ type: "scatter" }, seriesDefaults);
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = _.findIndex(seriesDefinitions, function (s) {
@@ -67593,12 +67588,12 @@ var LineChartProxy = /** @class */ (function (_super) {
     };
     LineChartProxy.prototype.update = function (params) {
         var _this = this;
-        var chart = this.chart;
         if (params.fields.length === 0) {
-            chart.removeAllSeries();
+            this.chart.removeAllSeries();
             return;
         }
         this.updateAxes(params.data[0], params.category.id);
+        var chart = this.chart;
         var fieldIds = params.fields.map(function (f) { return f.colId; });
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var data = this.transformData(params.data, params.category.id);

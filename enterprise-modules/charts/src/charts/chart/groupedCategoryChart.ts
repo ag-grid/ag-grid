@@ -2,7 +2,6 @@ import { CartesianChart } from "./cartesianChart";
 import { numericExtent } from "../util/array";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxis, ChartAxisDirection, ChartAxisPosition } from "./chartAxis";
-import { Series } from "./series/series";
 
 export type GroupedCategoryChartAxis = GroupedCategoryAxis | ChartAxis;
 
@@ -11,7 +10,7 @@ export class GroupedCategoryChart extends CartesianChart {
         const { axes } = this;
 
         axes.forEach(axis => {
-            const { direction, boundSeries } = axis;
+            const { direction, position, boundSeries } = axis;
             const domains: any[][] = [];
             let isNumericX: boolean | undefined = undefined;
             boundSeries.filter(s => s.visible).forEach(series => {
@@ -32,47 +31,24 @@ export class GroupedCategoryChart extends CartesianChart {
             const domain = new Array<any>().concat(...domains);
             axis.domain = numericExtent(domain) || domain;
 
-            this.computeAxisAutopadding(axis);
             axis.update();
-        });
-    }
 
-    computeAxisAutopadding(axis: ChartAxis) {
-        const { position } = axis;
-        const axisBBox = axis.computeBBox();
+            const axisThickness = Math.floor(axis.computeBBox().width);
 
-        // The bbox may not be valid if the axis has had zero updates so far.
-        if (!axisBBox.isValid()) {
-            return;
-        }
-
-        const axisThickness = Math.floor(axisBBox.width);
-
-        switch (position) {
-            case ChartAxisPosition.Left:
-                if (this.axisAutoPadding.left !== axisThickness) {
+            switch (position) {
+                case ChartAxisPosition.Left:
                     this.axisAutoPadding.left = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Right:
-                if (this.axisAutoPadding.right !== axisThickness) {
+                    break;
+                case ChartAxisPosition.Right:
                     this.axisAutoPadding.right = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Bottom:
-                if (this.axisAutoPadding.bottom !== axisThickness) {
+                    break;
+                case ChartAxisPosition.Bottom:
                     this.axisAutoPadding.bottom = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Top:
-                if (this.axisAutoPadding.top !== axisThickness) {
+                    break;
+                case ChartAxisPosition.Top:
                     this.axisAutoPadding.top = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-        }
+                    break;
+            }
+        });
     }
 }

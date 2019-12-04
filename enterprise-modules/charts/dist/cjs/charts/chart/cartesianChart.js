@@ -106,7 +106,7 @@ var CartesianChart = /** @class */ (function (_super) {
             axis.group.visible = true;
             switch (axis.position) {
                 case chartAxis_1.ChartAxisPosition.Top:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + 1);
                     axis.label.mirrored = true;
@@ -114,10 +114,10 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case chartAxis_1.ChartAxisPosition.Right:
                     if (axis instanceof categoryAxis_1.CategoryAxis || axis instanceof groupedCategoryAxis_1.GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -125,17 +125,17 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
                 case chartAxis_1.ChartAxisPosition.Bottom:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     axis.gridLength = shrinkRect.height;
                     break;
                 case chartAxis_1.ChartAxisPosition.Left:
                     if (axis instanceof categoryAxis_1.CategoryAxis || axis instanceof groupedCategoryAxis_1.GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y);

@@ -9694,6 +9694,9 @@ var ChartDataModel = /** @class */ (function (_super) {
         };
     };
     ChartDataModel.prototype.getAllColumnsFromRanges = function () {
+        if (this.pivotChart) {
+            return agGridCommunity._.convertToSet(this.columnController.getAllDisplayedColumns());
+        }
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
             columns.push.apply(columns, this.dimensionCellRange.columns);
@@ -9793,16 +9796,17 @@ var ChartDataModel = /** @class */ (function (_super) {
     };
     ChartDataModel.prototype.updateData = function () {
         var _a = this.getRowIndexes(), startRow = _a.startRow, endRow = _a.endRow;
-        var selectedDimension = this.getSelectedDimension();
-        var selectedValueCols = this.getSelectedValueCols();
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
         this.grouping = this.isGrouping();
         var params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
+            valueCols: this.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow
         };
@@ -9813,7 +9817,7 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.resetColumnState = function () {
         var _this = this;
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        var allCols = this.pivotChart ? agGridCommunity._.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+        var allCols = this.getAllColumnsFromRanges();
         var isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];
@@ -12726,6 +12730,9 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
+        _this.onShadowChange = function () {
+            _this.dirty = true;
+        };
         _this._fillShadow = Shape.defaultStyles.fillShadow;
         _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
@@ -12934,14 +12941,13 @@ var Shape = /** @class */ (function (_super) {
             return this._fillShadow;
         },
         set: function (value) {
-            var _this = this;
-            var fillShadow = this._fillShadow;
-            if (fillShadow !== value) {
-                if (fillShadow) {
-                    fillShadow.onChange = undefined;
+            var oldValue = this._fillShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._fillShadow = value;
                 this.dirty = true;
@@ -12955,14 +12961,13 @@ var Shape = /** @class */ (function (_super) {
             return this._strokeShadow;
         },
         set: function (value) {
-            var _this = this;
-            var strokeShadow = this._strokeShadow;
-            if (strokeShadow !== value) {
-                if (strokeShadow) {
-                    strokeShadow.onChange = undefined;
+            var oldValue = this._strokeShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._strokeShadow = value;
                 this.dirty = true;
@@ -18831,7 +18836,7 @@ var CartesianChart = /** @class */ (function (_super) {
             axis.group.visible = true;
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + 1);
                     axis.label.mirrored = true;
@@ -18839,10 +18844,10 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case ChartAxisPosition.Right:
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -18850,17 +18855,17 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
                 case ChartAxisPosition.Bottom:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -22485,87 +22490,6 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(PolarSeries));
 
-var DropShadow = /** @class */ (function () {
-    function DropShadow() {
-        this._enabled = true;
-        this._color = 'rgba(0, 0, 0, 0.5)';
-        this._xOffset = 0;
-        this._yOffset = 0;
-        this._blur = 5;
-    }
-    Object.defineProperty(DropShadow.prototype, "enabled", {
-        get: function () {
-            return this._enabled;
-        },
-        set: function (value) {
-            if (this._enabled !== value) {
-                this._enabled = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "color", {
-        get: function () {
-            return this._color;
-        },
-        set: function (value) {
-            if (this._color !== value) {
-                this._color = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "xOffset", {
-        get: function () {
-            return this._xOffset;
-        },
-        set: function (value) {
-            if (this._xOffset !== value) {
-                this._xOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "yOffset", {
-        get: function () {
-            return this._yOffset;
-        },
-        set: function (value) {
-            if (this._yOffset !== value) {
-                this._yOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "blur", {
-        get: function () {
-            return this._blur;
-        },
-        set: function (value) {
-            if (this._blur !== value) {
-                this._blur = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    DropShadow.prototype.update = function () {
-        if (this.onChange) {
-            this.onChange();
-        }
-    };
-    return DropShadow;
-}());
-
 var __extends$14 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22579,8 +22503,56 @@ var __extends$14 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var DropShadow = /** @class */ (function (_super) {
+    __extends$14(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate$V([
+        reactive(['change'])
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate$V([
+        reactive(['change'])
+    ], DropShadow.prototype, "color", void 0);
+    __decorate$V([
+        reactive(['change'])
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate$V([
+        reactive(['change'])
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate$V([
+        reactive(['change'])
+    ], DropShadow.prototype, "blur", void 0);
+    return DropShadow;
+}(Observable));
+
+var __extends$15 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$14(NumberAxis, _super);
+    __extends$15(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -22618,65 +22590,6 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(ChartAxis));
 
-var __extends$15 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var Caption = /** @class */ (function (_super) {
-    __extends$15(Caption, _super);
-    function Caption() {
-        var _this = _super.call(this) || this;
-        _this.node = new Text();
-        _this.enabled = true;
-        _this.padding = new Padding(10);
-        var node = _this.node;
-        node.textAlign = 'center';
-        node.textBaseline = 'top';
-        node.pointerEvents = PointerEvents.None;
-        return _this;
-    }
-    __decorate$V([
-        reactive(['change'])
-    ], Caption.prototype, "enabled", void 0);
-    __decorate$V([
-        reactive(['change'])
-    ], Caption.prototype, "padding", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.text')
-    ], Caption.prototype, "text", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.fontStyle')
-    ], Caption.prototype, "fontStyle", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.fontWeight')
-    ], Caption.prototype, "fontWeight", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.fontSize')
-    ], Caption.prototype, "fontSize", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.fontFamily')
-    ], Caption.prototype, "fontFamily", void 0);
-    __decorate$V([
-        reactive(['change'], 'node.fill')
-    ], Caption.prototype, "color", void 0);
-    return Caption;
-}(Observable));
-
 var __extends$16 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22690,8 +22603,67 @@ var __extends$16 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var Caption = /** @class */ (function (_super) {
+    __extends$16(Caption, _super);
+    function Caption() {
+        var _this = _super.call(this) || this;
+        _this.node = new Text();
+        _this.enabled = true;
+        _this.padding = new Padding(10);
+        var node = _this.node;
+        node.textAlign = 'center';
+        node.textBaseline = 'top';
+        node.pointerEvents = PointerEvents.None;
+        return _this;
+    }
+    __decorate$W([
+        reactive(['change'])
+    ], Caption.prototype, "enabled", void 0);
+    __decorate$W([
+        reactive(['change'])
+    ], Caption.prototype, "padding", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.text')
+    ], Caption.prototype, "text", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.fontStyle')
+    ], Caption.prototype, "fontStyle", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.fontWeight')
+    ], Caption.prototype, "fontWeight", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.fontSize')
+    ], Caption.prototype, "fontSize", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.fontFamily')
+    ], Caption.prototype, "fontFamily", void 0);
+    __decorate$W([
+        reactive(['change'], 'node.fill')
+    ], Caption.prototype, "color", void 0);
+    return Caption;
+}(Observable));
+
+var __extends$17 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$16(GroupedCategoryChart, _super);
+    __extends$17(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -22700,7 +22672,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
         var axes = this.axes;
         axes.forEach(function (axis) {
             var _a;
-            var direction = axis.direction, boundSeries = axis.boundSeries;
+            var direction = axis.direction, position = axis.position, boundSeries = axis.boundSeries;
             var domains = [];
             var isNumericX = undefined;
             boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
@@ -22722,49 +22694,28 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             });
             var domain = (_a = new Array()).concat.apply(_a, domains);
             axis.domain = numericExtent(domain) || domain;
-            _this.computeAxisAutopadding(axis);
             axis.update();
+            var axisThickness = Math.floor(axis.computeBBox().width);
+            switch (position) {
+                case ChartAxisPosition.Left:
+                    _this.axisAutoPadding.left = axisThickness;
+                    break;
+                case ChartAxisPosition.Right:
+                    _this.axisAutoPadding.right = axisThickness;
+                    break;
+                case ChartAxisPosition.Bottom:
+                    _this.axisAutoPadding.bottom = axisThickness;
+                    break;
+                case ChartAxisPosition.Top:
+                    _this.axisAutoPadding.top = axisThickness;
+                    break;
+            }
         });
-    };
-    GroupedCategoryChart.prototype.computeAxisAutopadding = function (axis) {
-        var position = axis.position;
-        var axisBBox = axis.computeBBox();
-        // The bbox may not be valid if the axis has had zero updates so far.
-        if (!axisBBox.isValid()) {
-            return;
-        }
-        var axisThickness = Math.floor(axisBBox.width);
-        switch (position) {
-            case ChartAxisPosition.Left:
-                if (this.axisAutoPadding.left !== axisThickness) {
-                    this.axisAutoPadding.left = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Right:
-                if (this.axisAutoPadding.right !== axisThickness) {
-                    this.axisAutoPadding.right = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Bottom:
-                if (this.axisAutoPadding.bottom !== axisThickness) {
-                    this.axisAutoPadding.bottom = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Top:
-                if (this.axisAutoPadding.top !== axisThickness) {
-                    this.axisAutoPadding.top = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-        }
     };
     return GroupedCategoryChart;
 }(CartesianChart));
 
-var __extends$17 = (undefined && undefined.__extends) || (function () {
+var __extends$18 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22778,7 +22729,7 @@ var __extends$17 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$17(Cross, _super);
+    __extends$18(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -22805,7 +22756,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$18 = (undefined && undefined.__extends) || (function () {
+var __extends$19 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22819,7 +22770,7 @@ var __extends$18 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$18(Diamond, _super);
+    __extends$19(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -22839,7 +22790,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$19 = (undefined && undefined.__extends) || (function () {
+var __extends$1a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22853,7 +22804,7 @@ var __extends$19 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$19(Plus, _super);
+    __extends$1a(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -22881,7 +22832,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$1a = (undefined && undefined.__extends) || (function () {
+var __extends$1b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22895,7 +22846,7 @@ var __extends$1a = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$1a(Triangle, _super);
+    __extends$1b(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -22922,7 +22873,7 @@ function convertToMap(list) {
     return map;
 }
 
-var __extends$1b = (undefined && undefined.__extends) || (function () {
+var __extends$1c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -23047,7 +22998,7 @@ var TimeInterval = /** @class */ (function () {
     return TimeInterval;
 }());
 var CountableTimeInterval = /** @class */ (function (_super) {
-    __extends$1b(CountableTimeInterval, _super);
+    __extends$1c(CountableTimeInterval, _super);
     function CountableTimeInterval(floor, offset, count, field) {
         var _this = _super.call(this, floor, offset) || this;
         _this._count = count;
@@ -23896,7 +23847,7 @@ function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
 
-var __extends$1c = (undefined && undefined.__extends) || (function () {
+var __extends$1d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -23910,7 +23861,7 @@ var __extends$1c = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeScale = /** @class */ (function (_super) {
-    __extends$1c(TimeScale, _super);
+    __extends$1d(TimeScale, _super);
     function TimeScale() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.year = year;
@@ -24082,7 +24033,7 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(ContinuousScale));
 
-var __extends$1d = (undefined && undefined.__extends) || (function () {
+var __extends$1e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -24096,7 +24047,7 @@ var __extends$1d = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeAxis = /** @class */ (function (_super) {
-    __extends$1d(TimeAxis, _super);
+    __extends$1e(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this, new TimeScale()) || this;
         _this._nice = true;
@@ -24926,7 +24877,7 @@ var ChartProxy = /** @class */ (function () {
     return ChartProxy;
 }());
 
-var __extends$1e = (undefined && undefined.__extends) || (function () {
+var __extends$1f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -24951,7 +24902,7 @@ var __assign$2 = (undefined && undefined.__assign) || function () {
     return __assign$2.apply(this, arguments);
 };
 var CartesianChartProxy = /** @class */ (function (_super) {
-    __extends$1e(CartesianChartProxy, _super);
+    __extends$1f(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
         return _super.call(this, params) || this;
     }
@@ -25017,7 +24968,7 @@ function isDate(value) {
     return value instanceof Date;
 }
 
-var __extends$1f = (undefined && undefined.__extends) || (function () {
+var __extends$1g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25042,7 +24993,7 @@ var __assign$3 = (undefined && undefined.__assign) || function () {
     return __assign$3.apply(this, arguments);
 };
 var ScatterChartProxy = /** @class */ (function (_super) {
-    __extends$1f(ScatterChartProxy, _super);
+    __extends$1g(ScatterChartProxy, _super);
     function ScatterChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.getMarkersEnabled = function () { return true; }; // markers are always enabled on scatter charts
@@ -25190,7 +25141,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     return ScatterChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1g = (undefined && undefined.__extends) || (function () {
+var __extends$1h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25203,14 +25154,14 @@ var __extends$1g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MarkersPanel = /** @class */ (function (_super) {
-    __extends$1g(MarkersPanel, _super);
+    __extends$1h(MarkersPanel, _super);
     function MarkersPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartController = chartController;
@@ -25249,28 +25200,28 @@ var MarkersPanel = /** @class */ (function (_super) {
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.RefSelector('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.RefSelector('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.RefSelector('seriesMarkerMinSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.RefSelector('seriesMarkerStrokeWidthSlider')
     ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.Autowired('chartTranslator')
     ], MarkersPanel.prototype, "chartTranslator", void 0);
-    __decorate$W([
+    __decorate$X([
         agGridCommunity.PostConstruct
     ], MarkersPanel.prototype, "init", null);
     return MarkersPanel;
 }(agGridCommunity.Component));
 
-var __extends$1h = (undefined && undefined.__extends) || (function () {
+var __extends$1i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25283,14 +25234,14 @@ var __extends$1h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeriesPanel = /** @class */ (function (_super) {
-    __extends$1h(LineSeriesPanel, _super);
+    __extends$1i(LineSeriesPanel, _super);
     function LineSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -25346,25 +25297,25 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$X([
+    __decorate$Y([
         agGridCommunity.RefSelector('seriesGroup')
     ], LineSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$X([
+    __decorate$Y([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], LineSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$X([
+    __decorate$Y([
         agGridCommunity.RefSelector('seriesLineWidthSlider')
     ], LineSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$X([
+    __decorate$Y([
         agGridCommunity.Autowired('chartTranslator')
     ], LineSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$X([
+    __decorate$Y([
         agGridCommunity.PostConstruct
     ], LineSeriesPanel.prototype, "init", null);
     return LineSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1i = (undefined && undefined.__extends) || (function () {
+var __extends$1j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25377,14 +25328,14 @@ var __extends$1i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var CalloutPanel = /** @class */ (function (_super) {
-    __extends$1i(CalloutPanel, _super);
+    __extends$1j(CalloutPanel, _super);
     function CalloutPanel(chartProxy) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartProxy;
@@ -25413,28 +25364,28 @@ var CalloutPanel = /** @class */ (function (_super) {
         initInput("label.offset", this.labelOffsetSlider, "offset", 30);
     };
     CalloutPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"calloutGroup\">\n                <ag-slider ref=\"calloutLengthSlider\"></ag-slider>\n                <ag-slider ref=\"calloutStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"labelOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.RefSelector('calloutGroup')
     ], CalloutPanel.prototype, "calloutGroup", void 0);
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.RefSelector('calloutLengthSlider')
     ], CalloutPanel.prototype, "calloutLengthSlider", void 0);
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.RefSelector('calloutStrokeWidthSlider')
     ], CalloutPanel.prototype, "calloutStrokeWidthSlider", void 0);
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.RefSelector('labelOffsetSlider')
     ], CalloutPanel.prototype, "labelOffsetSlider", void 0);
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.Autowired('chartTranslator')
     ], CalloutPanel.prototype, "chartTranslator", void 0);
-    __decorate$Y([
+    __decorate$Z([
         agGridCommunity.PostConstruct
     ], CalloutPanel.prototype, "init", null);
     return CalloutPanel;
 }(agGridCommunity.Component));
 
-var __extends$1j = (undefined && undefined.__extends) || (function () {
+var __extends$1k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25447,14 +25398,14 @@ var __extends$1j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PieSeriesPanel = /** @class */ (function (_super) {
-    __extends$1j(PieSeriesPanel, _super);
+    __extends$1k(PieSeriesPanel, _super);
     function PieSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -25569,31 +25520,31 @@ var PieSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     PieSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.RefSelector('seriesGroup')
     ], PieSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], PieSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.RefSelector('seriesStrokeWidthSlider')
     ], PieSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.RefSelector('seriesLineOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.RefSelector('seriesFillOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.Autowired('chartTranslator')
     ], PieSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$Z([
+    __decorate$_([
         agGridCommunity.PostConstruct
     ], PieSeriesPanel.prototype, "init", null);
     return PieSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1k = (undefined && undefined.__extends) || (function () {
+var __extends$1l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25606,14 +25557,14 @@ var __extends$1k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PaddingPanel = /** @class */ (function (_super) {
-    __extends$1k(PaddingPanel, _super);
+    __extends$1l(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -25645,31 +25596,31 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('left', this.paddingLeftSlider);
     };
     PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.RefSelector('chartPaddingGroup')
     ], PaddingPanel.prototype, "chartPaddingGroup", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.RefSelector('paddingTopSlider')
     ], PaddingPanel.prototype, "paddingTopSlider", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.RefSelector('paddingRightSlider')
     ], PaddingPanel.prototype, "paddingRightSlider", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.RefSelector('paddingBottomSlider')
     ], PaddingPanel.prototype, "paddingBottomSlider", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.RefSelector('paddingLeftSlider')
     ], PaddingPanel.prototype, "paddingLeftSlider", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.Autowired('chartTranslator')
     ], PaddingPanel.prototype, "chartTranslator", void 0);
-    __decorate$_([
+    __decorate$$([
         agGridCommunity.PostConstruct
     ], PaddingPanel.prototype, "init", null);
     return PaddingPanel;
 }(agGridCommunity.Component));
 
-var __extends$1l = (undefined && undefined.__extends) || (function () {
+var __extends$1m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25682,14 +25633,14 @@ var __extends$1l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var BackgroundPanel = /** @class */ (function (_super) {
-    __extends$1l(BackgroundPanel, _super);
+    __extends$1m(BackgroundPanel, _super);
     function BackgroundPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -25719,22 +25670,22 @@ var BackgroundPanel = /** @class */ (function (_super) {
             .onValueChange(function (newColor) { return _this.chartProxy.setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
-    __decorate$$([
+    __decorate$10([
         agGridCommunity.RefSelector('chartBackgroundGroup')
     ], BackgroundPanel.prototype, "group", void 0);
-    __decorate$$([
+    __decorate$10([
         agGridCommunity.RefSelector('colorPicker')
     ], BackgroundPanel.prototype, "colorPicker", void 0);
-    __decorate$$([
+    __decorate$10([
         agGridCommunity.Autowired('chartTranslator')
     ], BackgroundPanel.prototype, "chartTranslator", void 0);
-    __decorate$$([
+    __decorate$10([
         agGridCommunity.PostConstruct
     ], BackgroundPanel.prototype, "init", null);
     return BackgroundPanel;
 }(agGridCommunity.Component));
 
-var __extends$1m = (undefined && undefined.__extends) || (function () {
+var __extends$1n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25747,14 +25698,14 @@ var __extends$1m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartPanel = /** @class */ (function (_super) {
-    __extends$1m(ChartPanel, _super);
+    __extends$1n(ChartPanel, _super);
     function ChartPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -25849,22 +25800,22 @@ var ChartPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n                <ag-input-text-area ref=\"titleInput\"></ag-input-text-area>\n            </ag-group-component>\n        <div>";
-    __decorate$10([
+    __decorate$11([
         agGridCommunity.RefSelector('chartGroup')
     ], ChartPanel.prototype, "chartGroup", void 0);
-    __decorate$10([
+    __decorate$11([
         agGridCommunity.RefSelector('titleInput')
     ], ChartPanel.prototype, "titleInput", void 0);
-    __decorate$10([
+    __decorate$11([
         agGridCommunity.Autowired('chartTranslator')
     ], ChartPanel.prototype, "chartTranslator", void 0);
-    __decorate$10([
+    __decorate$11([
         agGridCommunity.PostConstruct
     ], ChartPanel.prototype, "init", null);
     return ChartPanel;
 }(agGridCommunity.Component));
 
-var __extends$1n = (undefined && undefined.__extends) || (function () {
+var __extends$1o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -25877,14 +25828,14 @@ var __extends$1n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeriesPanel = /** @class */ (function (_super) {
-    __extends$1n(AreaSeriesPanel, _super);
+    __extends$1o(AreaSeriesPanel, _super);
     function AreaSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -25964,31 +25915,31 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.RefSelector('seriesGroup')
     ], AreaSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], AreaSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.RefSelector('seriesLineWidthSlider')
     ], AreaSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.RefSelector('seriesLineOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.RefSelector('seriesFillOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.Autowired('chartTranslator')
     ], AreaSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$11([
+    __decorate$12([
         agGridCommunity.PostConstruct
     ], AreaSeriesPanel.prototype, "init", null);
     return AreaSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1o = (undefined && undefined.__extends) || (function () {
+var __extends$1p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26001,14 +25952,14 @@ var __extends$1o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeriesPanel = /** @class */ (function (_super) {
-    __extends$1o(ScatterSeriesPanel, _super);
+    __extends$1p(ScatterSeriesPanel, _super);
     function ScatterSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -26054,22 +26005,22 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ScatterSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n            </ag-group-component>\n        </div>";
-    __decorate$12([
+    __decorate$13([
         agGridCommunity.RefSelector('seriesGroup')
     ], ScatterSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$12([
+    __decorate$13([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], ScatterSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$12([
+    __decorate$13([
         agGridCommunity.Autowired('chartTranslator')
     ], ScatterSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$12([
+    __decorate$13([
         agGridCommunity.PostConstruct
     ], ScatterSeriesPanel.prototype, "init", null);
     return ScatterSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1p = (undefined && undefined.__extends) || (function () {
+var __extends$1q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26082,14 +26033,14 @@ var __extends$1p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartFormattingPanel = /** @class */ (function (_super) {
-    __extends$1p(ChartFormattingPanel, _super);
+    __extends$1q(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
         var _this = _super.call(this, ChartFormattingPanel.TEMPLATE) || this;
         _this.panels = [];
@@ -26159,57 +26110,10 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartFormattingPanel.TEMPLATE = "<div class=\"ag-chart-format-wrapper\"></div>";
-    __decorate$13([
+    __decorate$14([
         agGridCommunity.PostConstruct
     ], ChartFormattingPanel.prototype, "init", null);
     return ChartFormattingPanel;
-}(agGridCommunity.Component));
-
-var __extends$1q = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var MiniChart = /** @class */ (function (_super) {
-    __extends$1q(MiniChart, _super);
-    function MiniChart(parent, tooltipName) {
-        var _this = _super.call(this) || this;
-        _this.size = 58;
-        _this.padding = 5;
-        _this.root = new Group();
-        var scene = new Scene();
-        scene.width = _this.size;
-        scene.height = _this.size;
-        scene.root = _this.root;
-        scene.parent = parent;
-        _this.scene = scene;
-        _this.tooltipName = tooltipName;
-        return _this;
-    }
-    MiniChart.prototype.init = function () {
-        this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
-    };
-    __decorate$14([
-        agGridCommunity.Autowired('chartTranslator')
-    ], MiniChart.prototype, "chartTranslator", void 0);
-    __decorate$14([
-        agGridCommunity.PostConstruct
-    ], MiniChart.prototype, "init", null);
-    return MiniChart;
 }(agGridCommunity.Component));
 
 var __extends$1r = (undefined && undefined.__extends) || (function () {
@@ -26231,8 +26135,55 @@ var __decorate$15 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var MiniChart = /** @class */ (function (_super) {
+    __extends$1r(MiniChart, _super);
+    function MiniChart(parent, tooltipName) {
+        var _this = _super.call(this) || this;
+        _this.size = 58;
+        _this.padding = 5;
+        _this.root = new Group();
+        var scene = new Scene();
+        scene.width = _this.size;
+        scene.height = _this.size;
+        scene.root = _this.root;
+        scene.parent = parent;
+        _this.scene = scene;
+        _this.tooltipName = tooltipName;
+        return _this;
+    }
+    MiniChart.prototype.init = function () {
+        this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
+    };
+    __decorate$15([
+        agGridCommunity.Autowired('chartTranslator')
+    ], MiniChart.prototype, "chartTranslator", void 0);
+    __decorate$15([
+        agGridCommunity.PostConstruct
+    ], MiniChart.prototype, "init", null);
+    return MiniChart;
+}(agGridCommunity.Component));
+
+var __extends$1s = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var MiniChartWithAxes = /** @class */ (function (_super) {
-    __extends$1r(MiniChartWithAxes, _super);
+    __extends$1s(MiniChartWithAxes, _super);
     function MiniChartWithAxes(parent, tooltipName) {
         var _this = _super.call(this, parent, tooltipName) || this;
         _this.stroke = 'gray';
@@ -26258,13 +26209,13 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
         root.append(leftAxis);
         root.append(bottomAxis);
     };
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.PostConstruct
     ], MiniChartWithAxes.prototype, "addAxes", null);
     return MiniChartWithAxes;
 }(MiniChart));
 
-var __extends$1s = (undefined && undefined.__extends) || (function () {
+var __extends$1t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26278,7 +26229,7 @@ var __extends$1s = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniColumn = /** @class */ (function (_super) {
-    __extends$1s(MiniColumn, _super);
+    __extends$1t(MiniColumn, _super);
     function MiniColumn(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedColumnTooltip") || this;
         var padding = _this.padding;
@@ -26319,7 +26270,7 @@ var MiniColumn = /** @class */ (function (_super) {
     return MiniColumn;
 }(MiniChartWithAxes));
 
-var __extends$1t = (undefined && undefined.__extends) || (function () {
+var __extends$1u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26333,7 +26284,7 @@ var __extends$1t = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedColumn = /** @class */ (function (_super) {
-    __extends$1t(MiniStackedColumn, _super);
+    __extends$1u(MiniStackedColumn, _super);
     function MiniStackedColumn(parent, fills, strokes, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
@@ -26385,33 +26336,6 @@ var MiniStackedColumn = /** @class */ (function (_super) {
     return MiniStackedColumn;
 }(MiniChartWithAxes));
 
-var __extends$1u = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedColumn = /** @class */ (function (_super) {
-    __extends$1u(MiniNormalizedColumn, _super);
-    function MiniNormalizedColumn(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
-    }
-    MiniNormalizedColumn.chartType = agGridCommunity.ChartType.NormalizedColumn;
-    MiniNormalizedColumn.data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6]
-    ];
-    return MiniNormalizedColumn;
-}(MiniStackedColumn));
-
 var __extends$1v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -26425,8 +26349,35 @@ var __extends$1v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var MiniNormalizedColumn = /** @class */ (function (_super) {
+    __extends$1v(MiniNormalizedColumn, _super);
+    function MiniNormalizedColumn(parent, fills, strokes) {
+        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
+    }
+    MiniNormalizedColumn.chartType = agGridCommunity.ChartType.NormalizedColumn;
+    MiniNormalizedColumn.data = [
+        [10, 10, 10],
+        [6, 7, 8],
+        [2, 4, 6]
+    ];
+    return MiniNormalizedColumn;
+}(MiniStackedColumn));
+
+var __extends$1w = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var MiniBar = /** @class */ (function (_super) {
-    __extends$1v(MiniBar, _super);
+    __extends$1w(MiniBar, _super);
     function MiniBar(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedBarTooltip") || this;
         var padding = _this.padding;
@@ -26466,7 +26417,7 @@ var MiniBar = /** @class */ (function (_super) {
     return MiniBar;
 }(MiniChartWithAxes));
 
-var __extends$1w = (undefined && undefined.__extends) || (function () {
+var __extends$1x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26480,7 +26431,7 @@ var __extends$1w = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedBar = /** @class */ (function (_super) {
-    __extends$1w(MiniStackedBar, _super);
+    __extends$1x(MiniStackedBar, _super);
     function MiniStackedBar(parent, fills, strokes, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
@@ -26531,33 +26482,6 @@ var MiniStackedBar = /** @class */ (function (_super) {
     return MiniStackedBar;
 }(MiniChartWithAxes));
 
-var __extends$1x = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedBar = /** @class */ (function (_super) {
-    __extends$1x(MiniNormalizedBar, _super);
-    function MiniNormalizedBar(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
-    }
-    MiniNormalizedBar.chartType = agGridCommunity.ChartType.NormalizedBar;
-    MiniNormalizedBar.data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6]
-    ];
-    return MiniNormalizedBar;
-}(MiniStackedBar));
-
 var __extends$1y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -26571,8 +26495,35 @@ var __extends$1y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var MiniNormalizedBar = /** @class */ (function (_super) {
+    __extends$1y(MiniNormalizedBar, _super);
+    function MiniNormalizedBar(parent, fills, strokes) {
+        return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
+    }
+    MiniNormalizedBar.chartType = agGridCommunity.ChartType.NormalizedBar;
+    MiniNormalizedBar.data = [
+        [10, 10, 10],
+        [6, 7, 8],
+        [2, 4, 6]
+    ];
+    return MiniNormalizedBar;
+}(MiniStackedBar));
+
+var __extends$1z = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var MiniDoughnut = /** @class */ (function (_super) {
-    __extends$1y(MiniDoughnut, _super);
+    __extends$1z(MiniDoughnut, _super);
     function MiniDoughnut(parent, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
@@ -26613,7 +26564,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
     return MiniDoughnut;
 }(MiniChart));
 
-var __extends$1z = (undefined && undefined.__extends) || (function () {
+var __extends$1A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26627,7 +26578,7 @@ var __extends$1z = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniPie = /** @class */ (function (_super) {
-    __extends$1z(MiniPie, _super);
+    __extends$1A(MiniPie, _super);
     function MiniPie(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
     }
@@ -26635,7 +26586,7 @@ var MiniPie = /** @class */ (function (_super) {
     return MiniPie;
 }(MiniDoughnut));
 
-var __extends$1A = (undefined && undefined.__extends) || (function () {
+var __extends$1B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26654,7 +26605,7 @@ var __extends$1A = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$1A(ClipRect, _super);
+    __extends$1B(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -26781,7 +26732,7 @@ var ClipRect = /** @class */ (function (_super) {
     return ClipRect;
 }(Node));
 
-var __extends$1B = (undefined && undefined.__extends) || (function () {
+var __extends$1C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26795,7 +26746,7 @@ var __extends$1B = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniLine = /** @class */ (function (_super) {
-    __extends$1B(MiniLine, _super);
+    __extends$1C(MiniLine, _super);
     function MiniLine(parent, fills, strokes) {
         var _this = _super.call(this, parent, "lineTooltip") || this;
         var size = _this.size;
@@ -26838,7 +26789,7 @@ var MiniLine = /** @class */ (function (_super) {
     return MiniLine;
 }(MiniChartWithAxes));
 
-var __extends$1C = (undefined && undefined.__extends) || (function () {
+var __extends$1D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26852,7 +26803,7 @@ var __extends$1C = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniScatter = /** @class */ (function (_super) {
-    __extends$1C(MiniScatter, _super);
+    __extends$1D(MiniScatter, _super);
     function MiniScatter(parent, fills, strokes) {
         var _this = _super.call(this, parent, "scatterTooltip") || this;
         var size = _this.size;
@@ -26899,7 +26850,7 @@ var MiniScatter = /** @class */ (function (_super) {
     return MiniScatter;
 }(MiniChartWithAxes));
 
-var __extends$1D = (undefined && undefined.__extends) || (function () {
+var __extends$1E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26913,7 +26864,7 @@ var __extends$1D = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBubble = /** @class */ (function (_super) {
-    __extends$1D(MiniBubble, _super);
+    __extends$1E(MiniBubble, _super);
     function MiniBubble(parent, fills, strokes) {
         var _this = _super.call(this, parent, "bubbleTooltip") || this;
         var size = _this.size;
@@ -26962,7 +26913,7 @@ var MiniBubble = /** @class */ (function (_super) {
     return MiniBubble;
 }(MiniChartWithAxes));
 
-var __extends$1E = (undefined && undefined.__extends) || (function () {
+var __extends$1F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26976,7 +26927,7 @@ var __extends$1E = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniArea = /** @class */ (function (_super) {
-    __extends$1E(MiniArea, _super);
+    __extends$1F(MiniArea, _super);
     function MiniArea(parent, fills, strokes, data) {
         if (data === void 0) { data = MiniArea.data; }
         var _this = _super.call(this, parent, "groupedAreaTooltip") || this;
@@ -27038,7 +26989,7 @@ var MiniArea = /** @class */ (function (_super) {
     return MiniArea;
 }(MiniChartWithAxes));
 
-var __extends$1F = (undefined && undefined.__extends) || (function () {
+var __extends$1G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27052,7 +27003,7 @@ var __extends$1F = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedArea = /** @class */ (function (_super) {
-    __extends$1F(MiniStackedArea, _super);
+    __extends$1G(MiniStackedArea, _super);
     function MiniStackedArea(parent, fills, strokes, data, tooltipName) {
         if (data === void 0) { data = MiniStackedArea.data; }
         if (tooltipName === void 0) { tooltipName = "stackedAreaTooltip"; }
@@ -27115,33 +27066,6 @@ var MiniStackedArea = /** @class */ (function (_super) {
     return MiniStackedArea;
 }(MiniChartWithAxes));
 
-var __extends$1G = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedArea = /** @class */ (function (_super) {
-    __extends$1G(MiniNormalizedArea, _super);
-    function MiniNormalizedArea(parent, fills, strokes, data) {
-        if (data === void 0) { data = MiniNormalizedArea.data; }
-        return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
-    }
-    MiniNormalizedArea.chartType = agGridCommunity.ChartType.NormalizedArea;
-    MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {
-        var sum = stack.reduce(function (p, c) { return p + c; }, 0);
-        return stack.map(function (v) { return v / sum * 16; });
-    });
-    return MiniNormalizedArea;
-}(MiniStackedArea));
-
 var __extends$1H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -27155,14 +27079,41 @@ var __extends$1H = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var MiniNormalizedArea = /** @class */ (function (_super) {
+    __extends$1H(MiniNormalizedArea, _super);
+    function MiniNormalizedArea(parent, fills, strokes, data) {
+        if (data === void 0) { data = MiniNormalizedArea.data; }
+        return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
+    }
+    MiniNormalizedArea.chartType = agGridCommunity.ChartType.NormalizedArea;
+    MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {
+        var sum = stack.reduce(function (p, c) { return p + c; }, 0);
+        return stack.map(function (v) { return v / sum * 16; });
+    });
+    return MiniNormalizedArea;
+}(MiniStackedArea));
+
+var __extends$1I = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartsContainer = /** @class */ (function (_super) {
-    __extends$1H(MiniChartsContainer, _super);
+    __extends$1I(MiniChartsContainer, _super);
     function MiniChartsContainer(chartController, fills, strokes) {
         var _this = _super.call(this, MiniChartsContainer.TEMPLATE) || this;
         _this.wrappers = {};
@@ -27232,16 +27183,16 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         }
     };
     MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.PostConstruct
     ], MiniChartsContainer.prototype, "init", null);
     return MiniChartsContainer;
 }(agGridCommunity.Component));
 
-var __extends$1I = (undefined && undefined.__extends) || (function () {
+var __extends$1J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27254,14 +27205,14 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartSettingsPanel = /** @class */ (function (_super) {
-    __extends$1I(ChartSettingsPanel, _super);
+    __extends$1J(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
         var _this = _super.call(this, ChartSettingsPanel.TEMPLATE) || this;
         _this.miniCharts = [];
@@ -27396,34 +27347,34 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev-btn\">\n                    <button type=\"button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-nav-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next-btn\">\n                    <button type=\"button\"></button>\n                </div>\n            </div>\n        </div>";
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.RefSelector('eNavBar')
     ], ChartSettingsPanel.prototype, "eNavBar", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.RefSelector('eCardSelector')
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.RefSelector('ePrevBtn')
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.RefSelector('eNextBtn')
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
-    __decorate$17([
+    __decorate$18([
         agGridCommunity.PreDestroy
     ], ChartSettingsPanel.prototype, "destroy", null);
     return ChartSettingsPanel;
 }(agGridCommunity.Component));
 
-var __extends$1J = (undefined && undefined.__extends) || (function () {
+var __extends$1K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27436,14 +27387,14 @@ var __extends$1J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TabbedChartMenu = /** @class */ (function (_super) {
-    __extends$1J(TabbedChartMenu, _super);
+    __extends$1K(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
         var _this = _super.call(this) || this;
         _this.tabs = [];
@@ -27519,16 +27470,16 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_MAIN = 'settings';
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
-    __decorate$18([
+    __decorate$19([
         agGridCommunity.Autowired('chartTranslator')
     ], TabbedChartMenu.prototype, "chartTranslator", void 0);
-    __decorate$18([
+    __decorate$19([
         agGridCommunity.PostConstruct
     ], TabbedChartMenu.prototype, "init", null);
     return TabbedChartMenu;
 }(agGridCommunity.Component));
 
-var __extends$1K = (undefined && undefined.__extends) || (function () {
+var __extends$1L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27541,14 +27492,14 @@ var __extends$1K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartMenu = /** @class */ (function (_super) {
-    __extends$1K(ChartMenu, _super);
+    __extends$1L(ChartMenu, _super);
     function ChartMenu(chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.buttons = {
@@ -27690,16 +27641,16 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
-    __decorate$19([
+    __decorate$1a([
         agGridCommunity.Autowired("gridOptionsWrapper")
     ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$19([
+    __decorate$1a([
         agGridCommunity.PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
     return ChartMenu;
 }(agGridCommunity.Component));
 
-var __extends$1L = (undefined && undefined.__extends) || (function () {
+var __extends$1M = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27724,7 +27675,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
     return __assign$4.apply(this, arguments);
 };
 var BarChartProxy = /** @class */ (function (_super) {
-    __extends$1L(BarChartProxy, _super);
+    __extends$1M(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -27783,7 +27734,7 @@ var BarChartProxy = /** @class */ (function (_super) {
     return BarChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1M = (undefined && undefined.__extends) || (function () {
+var __extends$1N = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27808,7 +27759,7 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
     return __assign$5.apply(this, arguments);
 };
 var AreaChartProxy = /** @class */ (function (_super) {
-    __extends$1M(AreaChartProxy, _super);
+    __extends$1N(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -27916,7 +27867,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     return AreaChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1N = (undefined && undefined.__extends) || (function () {
+var __extends$1O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27941,7 +27892,7 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
     return __assign$6.apply(this, arguments);
 };
 var LineChartProxy = /** @class */ (function (_super) {
-    __extends$1N(LineChartProxy, _super);
+    __extends$1O(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28037,7 +27988,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     return LineChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1O = (undefined && undefined.__extends) || (function () {
+var __extends$1P = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28051,14 +28002,14 @@ var __extends$1O = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChartProxy = /** @class */ (function (_super) {
-    __extends$1O(PolarChartProxy, _super);
+    __extends$1P(PolarChartProxy, _super);
     function PolarChartProxy(params) {
         return _super.call(this, params) || this;
     }
     return PolarChartProxy;
 }(ChartProxy));
 
-var __extends$1P = (undefined && undefined.__extends) || (function () {
+var __extends$1Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28083,7 +28034,7 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
     return __assign$7.apply(this, arguments);
 };
 var PieChartProxy = /** @class */ (function (_super) {
-    __extends$1P(PieChartProxy, _super);
+    __extends$1Q(PieChartProxy, _super);
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28140,7 +28091,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     return PieChartProxy;
 }(PolarChartProxy));
 
-var __extends$1Q = (undefined && undefined.__extends) || (function () {
+var __extends$1R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28165,7 +28116,7 @@ var __assign$8 = (undefined && undefined.__assign) || function () {
     return __assign$8.apply(this, arguments);
 };
 var DoughnutChartProxy = /** @class */ (function (_super) {
-    __extends$1Q(DoughnutChartProxy, _super);
+    __extends$1R(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28252,7 +28203,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     return DoughnutChartProxy;
 }(PolarChartProxy));
 
-var __extends$1R = (undefined && undefined.__extends) || (function () {
+var __extends$1S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28265,14 +28216,14 @@ var __extends$1R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var GridChartComp = /** @class */ (function (_super) {
-    __extends$1R(GridChartComp, _super);
+    __extends$1S(GridChartComp, _super);
     function GridChartComp(params) {
         var _this = _super.call(this, GridChartComp.TEMPLATE) || this;
         _this.getChartPaletteName = function () { return _this.chartController.getPaletteName(); };
@@ -28496,40 +28447,40 @@ var GridChartComp = /** @class */ (function (_super) {
         agGridCommunity._.removeFromParent(eGui);
     };
     GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartComponentsWrapper\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                    <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n                </div>\n            </div>\n            <div ref=\"eDockedContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.RefSelector('eChartComponentsWrapper')
     ], GridChartComp.prototype, "eChartComponentsWrapper", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.RefSelector('eDockedContainer')
     ], GridChartComp.prototype, "eDockedContainer", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.Autowired('resizeObserverService')
     ], GridChartComp.prototype, "resizeObserverService", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.Autowired('eventService')
     ], GridChartComp.prototype, "eventService", void 0);
-    __decorate$1a([
+    __decorate$1b([
         agGridCommunity.PostConstruct
     ], GridChartComp.prototype, "init", null);
     return GridChartComp;
 }(agGridCommunity.Component));
 
-var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28646,31 +28597,31 @@ var ChartService = /** @class */ (function () {
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.Optional('rangeController')
     ], ChartService.prototype, "rangeController", void 0);
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.Autowired('columnController')
     ], ChartService.prototype, "columnController", void 0);
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.Autowired('context')
     ], ChartService.prototype, "context", void 0);
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1b([
+    __decorate$1c([
         agGridCommunity.PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
-    ChartService = __decorate$1b([
+    ChartService = __decorate$1c([
         agGridCommunity.Bean('chartService')
     ], ChartService);
     return ChartService;
 }());
 
-var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28765,16 +28716,16 @@ var ChartTranslator = /** @class */ (function () {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate$1c([
+    __decorate$1d([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
-    ChartTranslator = ChartTranslator_1 = __decorate$1c([
+    ChartTranslator = ChartTranslator_1 = __decorate$1d([
         agGridCommunity.Bean("chartTranslator")
     ], ChartTranslator);
     return ChartTranslator;
 }());
 
-var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29274,46 +29225,46 @@ var RangeController = /** @class */ (function () {
         }
         return columns;
     };
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('eventService')
     ], RangeController.prototype, "eventService", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
-    __decorate$1d([
+    __decorate$1e([
         agGridCommunity.PostConstruct
     ], RangeController.prototype, "init", null);
-    RangeController = __decorate$1d([
+    RangeController = __decorate$1e([
         agGridCommunity.Bean('rangeController')
     ], RangeController);
     return RangeController;
@@ -29377,7 +29328,7 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 
-var __extends$1S = (undefined && undefined.__extends) || (function () {
+var __extends$1T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -29390,14 +29341,14 @@ var __extends$1S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AbstractSelectionHandle = /** @class */ (function (_super) {
-    __extends$1S(AbstractSelectionHandle, _super);
+    __extends$1T(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.changedCell = false;
@@ -29533,34 +29484,34 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             eGui.parentElement.removeChild(eGui);
         }
     };
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
-    __decorate$1e([
+    __decorate$1f([
         agGridCommunity.PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
 }(agGridCommunity.Component));
 
-var __extends$1T = (undefined && undefined.__extends) || (function () {
+var __extends$1U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -29584,7 +29535,7 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
     };
     return __assign$9.apply(this, arguments);
 };
-var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29598,7 +29549,7 @@ var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FillHandle = /** @class */ (function (_super) {
-    __extends$1T(FillHandle, _super);
+    __extends$1U(FillHandle, _super);
     function FillHandle() {
         var _this = _super.call(this, FillHandle.TEMPLATE) || this;
         _this.markedCellComps = [];
@@ -30037,19 +29988,19 @@ var FillHandle = /** @class */ (function (_super) {
         _super.prototype.refresh.call(this, cellComp);
     };
     FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
-    __decorate$1f([
+    __decorate$1g([
         agGridCommunity.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate$1f([
+    __decorate$1g([
         agGridCommunity.Autowired('eventService')
     ], FillHandle.prototype, "eventService", void 0);
-    __decorate$1f([
+    __decorate$1g([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
-var __extends$1U = (undefined && undefined.__extends) || (function () {
+var __extends$1V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30074,7 +30025,7 @@ var __assign$a = (undefined && undefined.__assign) || function () {
     return __assign$a.apply(this, arguments);
 };
 var RangeHandle = /** @class */ (function (_super) {
-    __extends$1U(RangeHandle, _super);
+    __extends$1V(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
         _this.type = 'range';
@@ -30147,7 +30098,7 @@ var GridChartsModule = {
     ]
 };
 
-var __extends$1V = (undefined && undefined.__extends) || (function () {
+var __extends$1W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30160,14 +30111,14 @@ var __extends$1V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DetailCellRenderer = /** @class */ (function (_super) {
-    __extends$1V(DetailCellRenderer, _super);
+    __extends$1W(DetailCellRenderer, _super);
     function DetailCellRenderer() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.needRefresh = false;
@@ -30308,13 +30259,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         }
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
-    __decorate$1g([
+    __decorate$1h([
         agGridCommunity.RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-    __decorate$1g([
+    __decorate$1h([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1g([
+    __decorate$1h([
         agGridCommunity.Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
     return DetailCellRenderer;
@@ -30331,7 +30282,7 @@ var MasterDetailModule = {
     ]
 };
 
-var __extends$1W = (undefined && undefined.__extends) || (function () {
+var __extends$1X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30344,14 +30295,14 @@ var __extends$1W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemComponent = /** @class */ (function (_super) {
-    __extends$1W(MenuItemComponent, _super);
+    __extends$1X(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         var _this = _super.call(this, MenuItemComponent.TEMPLATE) || this;
         _this.params = params;
@@ -30447,31 +30398,31 @@ var MenuItemComponent = /** @class */ (function (_super) {
     // private instance = Math.random();
     MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.Autowired('tooltipManager')
     ], MenuItemComponent.prototype, "tooltipManager", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.RefSelector('eName')
     ], MenuItemComponent.prototype, "eName", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.RefSelector('eShortcut')
     ], MenuItemComponent.prototype, "eShortcut", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.RefSelector('ePopupPointer')
     ], MenuItemComponent.prototype, "ePopupPointer", void 0);
-    __decorate$1h([
+    __decorate$1i([
         agGridCommunity.PostConstruct
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(agGridCommunity.Component));
 
-var __extends$1X = (undefined && undefined.__extends) || (function () {
+var __extends$1Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30484,14 +30435,14 @@ var __extends$1X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuList = /** @class */ (function (_super) {
-    __extends$1X(MenuList, _super);
+    __extends$1Y(MenuList, _super);
     function MenuList() {
         var _this = _super.call(this, MenuList.TEMPLATE) || this;
         _this.timerCount = 0;
@@ -30613,13 +30564,13 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
     MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
-    __decorate$1i([
+    __decorate$1j([
         agGridCommunity.Autowired('popupService')
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
 }(agGridCommunity.Component));
 
-var __extends$1Y = (undefined && undefined.__extends) || (function () {
+var __extends$1Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30632,7 +30583,7 @@ var __extends$1Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30719,22 +30670,22 @@ var EnterpriseMenuFactory = /** @class */ (function () {
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('context')
     ], EnterpriseMenuFactory.prototype, "context", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    EnterpriseMenuFactory = __decorate$1j([
+    EnterpriseMenuFactory = __decorate$1k([
         agGridCommunity.Bean('menuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
 var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$1Y(EnterpriseMenu, _super);
+    __extends$1Z(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
         var _this = _super.call(this) || this;
         _this.tabFactories = {};
@@ -31033,34 +30984,34 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
     EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('columnController')
     ], EnterpriseMenu.prototype, "columnController", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('filterManager')
     ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('eventService')
     ], EnterpriseMenu.prototype, "eventService", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.Autowired('rowModel')
     ], EnterpriseMenu.prototype, "rowModel", void 0);
-    __decorate$1j([
+    __decorate$1k([
         agGridCommunity.PostConstruct
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
 }(agGridCommunity.BeanStub));
 
-var __extends$1Z = (undefined && undefined.__extends) || (function () {
+var __extends$1_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31073,7 +31024,7 @@ var __extends$1Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31164,34 +31115,34 @@ var ContextMenuFactory = /** @class */ (function () {
             }
         });
     };
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('context')
     ], ContextMenuFactory.prototype, "context", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('rowModel')
     ], ContextMenuFactory.prototype, "rowModel", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('columnController')
     ], ContextMenuFactory.prototype, "columnController", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.PostConstruct
     ], ContextMenuFactory.prototype, "init", null);
-    ContextMenuFactory = __decorate$1k([
+    ContextMenuFactory = __decorate$1l([
         agGridCommunity.Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$1Z(ContextMenu, _super);
+    __extends$1_(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
         _this.menuItems = menuItems;
@@ -31212,19 +31163,19 @@ var ContextMenu = /** @class */ (function (_super) {
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('eventService')
     ], ContextMenu.prototype, "eventService", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
-    __decorate$1k([
+    __decorate$1l([
         agGridCommunity.PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
 }(agGridCommunity.Component));
 
-var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31607,28 +31558,28 @@ var MenuItemMapper = /** @class */ (function () {
         });
         return result;
     };
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Autowired('gridApi')
     ], MenuItemMapper.prototype, "gridApi", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Optional('clipboardService')
     ], MenuItemMapper.prototype, "clipboardService", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Optional('aggFuncService')
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Optional('chartService')
     ], MenuItemMapper.prototype, "chartService", void 0);
-    __decorate$1l([
+    __decorate$1m([
         agGridCommunity.Optional('context')
     ], MenuItemMapper.prototype, "context", void 0);
-    MenuItemMapper = __decorate$1l([
+    MenuItemMapper = __decorate$1m([
         agGridCommunity.Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
@@ -31642,7 +31593,7 @@ var MenuModule = {
     ]
 };
 
-var __extends$1_ = (undefined && undefined.__extends) || (function () {
+var __extends$1$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31655,14 +31606,14 @@ var __extends$1_ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectRow = /** @class */ (function (_super) {
-    __extends$1_(RichSelectRow, _super);
+    __extends$1$(RichSelectRow, _super);
     function RichSelectRow(params) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
         _this.params = params;
@@ -31713,16 +31664,16 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate$1m([
+    __decorate$1n([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(agGridCommunity.Component));
 
-var __extends$1$ = (undefined && undefined.__extends) || (function () {
+var __extends$20 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31735,14 +31686,14 @@ var __extends$1$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectCellEditor = /** @class */ (function (_super) {
-    __extends$1$(RichSelectCellEditor, _super);
+    __extends$20(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
         _this.selectionConfirmed = false;
@@ -31932,16 +31883,16 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     // tab index is needed so we can focus, which is needed for keyboard events
     RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
-    __decorate$1n([
+    __decorate$1o([
         agGridCommunity.RefSelector('eList')
     ], RichSelectCellEditor.prototype, "eList", void 0);
     return RichSelectCellEditor;
@@ -31959,7 +31910,7 @@ var RichSelectModule = {
     ]
 };
 
-var __extends$20 = (undefined && undefined.__extends) || (function () {
+var __extends$21 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31972,7 +31923,7 @@ var __extends$20 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31982,7 +31933,7 @@ var __param = (undefined && undefined.__param) || function (paramIndex, decorato
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideBlock = /** @class */ (function (_super) {
-    __extends$20(ServerSideBlock, _super);
+    __extends$21(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
         _this.params = params;
@@ -32367,28 +32318,28 @@ var ServerSideBlock = /** @class */ (function (_super) {
         return this.groupField;
     };
     ServerSideBlock.DefaultBlockSize = 100;
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.Autowired('rowRenderer')
     ], ServerSideBlock.prototype, "rowRenderer", void 0);
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.Autowired('columnController')
     ], ServerSideBlock.prototype, "columnController", void 0);
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.Autowired('valueService')
     ], ServerSideBlock.prototype, "valueService", void 0);
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1o([
+    __decorate$1p([
         agGridCommunity.PostConstruct
     ], ServerSideBlock.prototype, "init", null);
-    __decorate$1o([
+    __decorate$1p([
         __param(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);
     return ServerSideBlock;
 }(agGridCommunity.RowNodeBlock));
 
-var __extends$21 = (undefined && undefined.__extends) || (function () {
+var __extends$22 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -32401,7 +32352,7 @@ var __extends$21 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32411,7 +32362,7 @@ var __param$1 = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideCache = /** @class */ (function (_super) {
-    __extends$21(ServerSideCache, _super);
+    __extends$22(ServerSideCache, _super);
     function ServerSideCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
@@ -32756,22 +32707,22 @@ var ServerSideCache = /** @class */ (function (_super) {
             });
         }
     };
-    __decorate$1p([
+    __decorate$1q([
         agGridCommunity.Autowired('eventService')
     ], ServerSideCache.prototype, "eventService", void 0);
-    __decorate$1p([
+    __decorate$1q([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1p([
+    __decorate$1q([
         __param$1(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideCache.prototype, "setBeans", null);
-    __decorate$1p([
+    __decorate$1q([
         agGridCommunity.PostConstruct
     ], ServerSideCache.prototype, "init", null);
     return ServerSideCache;
 }(agGridCommunity.RowNodeCache));
 
-var __extends$22 = (undefined && undefined.__extends) || (function () {
+var __extends$23 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -32784,7 +32735,7 @@ var __extends$22 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32794,7 +32745,7 @@ var __param$2 = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$22(ServerSideRowModel, _super);
+    __extends$23(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -33330,40 +33281,40 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.isLoading = function () {
         return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     };
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('eventService')
     ], ServerSideRowModel.prototype, "eventService", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('columnController')
     ], ServerSideRowModel.prototype, "columnController", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('filterManager')
     ], ServerSideRowModel.prototype, "filterManager", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('sortController')
     ], ServerSideRowModel.prototype, "sortController", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('gridApi')
     ], ServerSideRowModel.prototype, "gridApi", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('columnApi')
     ], ServerSideRowModel.prototype, "columnApi", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.PostConstruct
     ], ServerSideRowModel.prototype, "postConstruct", null);
-    __decorate$1q([
+    __decorate$1r([
         agGridCommunity.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
-    __decorate$1q([
+    __decorate$1r([
         __param$2(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideRowModel.prototype, "setBeans", null);
-    ServerSideRowModel = __decorate$1q([
+    ServerSideRowModel = __decorate$1r([
         agGridCommunity.Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
@@ -33775,7 +33726,7 @@ var SetValueModel = /** @class */ (function () {
     return SetValueModel;
 }());
 
-var __extends$23 = (undefined && undefined.__extends) || (function () {
+var __extends$24 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -33788,14 +33739,14 @@ var __extends$23 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilterListItem = /** @class */ (function (_super) {
-    __extends$23(SetFilterListItem, _super);
+    __extends$24(SetFilterListItem, _super);
     function SetFilterListItem(value, column) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.selected = true;
@@ -33888,22 +33839,22 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
     SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <div class=\"ag-filter-checkbox\"></div>\n            <span class=\"ag-filter-value\"></span>\n        </label>";
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
-    __decorate$1r([
+    __decorate$1s([
         agGridCommunity.PostConstruct
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
 }(agGridCommunity.Component));
 
-var __extends$24 = (undefined && undefined.__extends) || (function () {
+var __extends$25 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -33916,7 +33867,7 @@ var __extends$24 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33929,7 +33880,7 @@ var CheckboxState;
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
 var SetFilter = /** @class */ (function (_super) {
-    __extends$24(SetFilter, _super);
+    __extends$25(SetFilter, _super);
     function SetFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34306,22 +34257,22 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getUniqueValue = function (index) {
         return this.valueModel.getUniqueValue(index);
     };
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.RefSelector('eSelectAll')
     ], SetFilter.prototype, "eSelectAll", void 0);
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.RefSelector('eSelectAllContainer')
     ], SetFilter.prototype, "eSelectAllContainer", void 0);
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.RefSelector('ag-filter-loading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
-    __decorate$1s([
+    __decorate$1t([
         agGridCommunity.Autowired('eventService')
     ], SetFilter.prototype, "eventService", void 0);
     return SetFilter;
@@ -34339,7 +34290,7 @@ var ModelWrapper = /** @class */ (function () {
     return ModelWrapper;
 }());
 
-var __extends$25 = (undefined && undefined.__extends) || (function () {
+var __extends$26 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34352,14 +34303,14 @@ var __extends$25 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$25(SetFloatingFilterComp, _super);
+    __extends$26(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
         return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
     }
@@ -34388,10 +34339,10 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var valuesString = "(" + values.length + ") " + arrayToDisplay.join(",");
         this.eFloatingFilterText.value = valuesString;
     };
-    __decorate$1t([
+    __decorate$1u([
         agGridCommunity.RefSelector('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
-    __decorate$1t([
+    __decorate$1u([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
     return SetFloatingFilterComp;
@@ -34409,7 +34360,7 @@ var SetFilterModule = {
     ]
 };
 
-var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34426,13 +34377,13 @@ var StatusBarService = /** @class */ (function () {
     StatusBarService.prototype.getStatusPanel = function (key) {
         return this.allComponents[key];
     };
-    StatusBarService = __decorate$1u([
+    StatusBarService = __decorate$1v([
         agGridCommunity.Bean('statusBarService')
     ], StatusBarService);
     return StatusBarService;
 }());
 
-var __extends$26 = (undefined && undefined.__extends) || (function () {
+var __extends$27 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34445,14 +34396,14 @@ var __extends$26 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBar = /** @class */ (function (_super) {
-    __extends$26(StatusBar, _super);
+    __extends$27(StatusBar, _super);
     function StatusBar() {
         return _super.call(this, StatusBar.TEMPLATE) || this;
     }
@@ -34507,77 +34458,31 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.Autowired('userComponentFactory')
     ], StatusBar.prototype, "userComponentFactory", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.Autowired('statusBarService')
     ], StatusBar.prototype, "statusBarService", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.RefSelector('eStatusBarLeft')
     ], StatusBar.prototype, "eStatusBarLeft", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.RefSelector('eStatusBarCenter')
     ], StatusBar.prototype, "eStatusBarCenter", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.RefSelector('eStatusBarRight')
     ], StatusBar.prototype, "eStatusBarRight", void 0);
-    __decorate$1v([
+    __decorate$1w([
         agGridCommunity.PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
     return StatusBar;
-}(agGridCommunity.Component));
-
-var __extends$27 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var NameValueComp = /** @class */ (function (_super) {
-    __extends$27(NameValueComp, _super);
-    function NameValueComp() {
-        return _super.call(this, NameValueComp.TEMPLATE) || this;
-    }
-    NameValueComp.prototype.setLabel = function (key, defaultValue) {
-        // we want to hide until the first value comes in
-        this.setDisplayed(false);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
-    };
-    NameValueComp.prototype.setValue = function (value) {
-        this.eValue.innerHTML = value;
-    };
-    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
-    __decorate$1w([
-        agGridCommunity.Autowired('gridOptionsWrapper')
-    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1w([
-        agGridCommunity.RefSelector('eLabel')
-    ], NameValueComp.prototype, "eLabel", void 0);
-    __decorate$1w([
-        agGridCommunity.RefSelector('eValue')
-    ], NameValueComp.prototype, "eValue", void 0);
-    return NameValueComp;
 }(agGridCommunity.Component));
 
 var __extends$28 = (undefined && undefined.__extends) || (function () {
@@ -34599,8 +34504,54 @@ var __decorate$1x = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var NameValueComp = /** @class */ (function (_super) {
+    __extends$28(NameValueComp, _super);
+    function NameValueComp() {
+        return _super.call(this, NameValueComp.TEMPLATE) || this;
+    }
+    NameValueComp.prototype.setLabel = function (key, defaultValue) {
+        // we want to hide until the first value comes in
+        this.setDisplayed(false);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
+    };
+    NameValueComp.prototype.setValue = function (value) {
+        this.eValue.innerHTML = value;
+    };
+    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
+    __decorate$1x([
+        agGridCommunity.Autowired('gridOptionsWrapper')
+    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate$1x([
+        agGridCommunity.RefSelector('eLabel')
+    ], NameValueComp.prototype, "eLabel", void 0);
+    __decorate$1x([
+        agGridCommunity.RefSelector('eValue')
+    ], NameValueComp.prototype, "eValue", void 0);
+    return NameValueComp;
+}(agGridCommunity.Component));
+
+var __extends$29 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
-    __extends$28(TotalAndFilteredRowsComp, _super);
+    __extends$29(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34646,19 +34597,19 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
-    __decorate$1x([
+    __decorate$1y([
         agGridCommunity.Autowired('gridApi')
     ], TotalAndFilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1x([
+    __decorate$1y([
         agGridCommunity.Autowired('eventService')
     ], TotalAndFilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$1x([
+    __decorate$1y([
         agGridCommunity.PostConstruct
     ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
     return TotalAndFilteredRowsComp;
 }(NameValueComp));
 
-var __extends$29 = (undefined && undefined.__extends) || (function () {
+var __extends$2a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34671,14 +34622,14 @@ var __extends$29 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilteredRowsComp = /** @class */ (function (_super) {
-    __extends$29(FilteredRowsComp, _super);
+    __extends$2a(FilteredRowsComp, _super);
     function FilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34716,19 +34667,19 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };
-    __decorate$1y([
+    __decorate$1z([
         agGridCommunity.Autowired('eventService')
     ], FilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$1y([
+    __decorate$1z([
         agGridCommunity.Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1y([
+    __decorate$1z([
         agGridCommunity.PostConstruct
     ], FilteredRowsComp.prototype, "postConstruct", null);
     return FilteredRowsComp;
 }(NameValueComp));
 
-var __extends$2a = (undefined && undefined.__extends) || (function () {
+var __extends$2b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34741,14 +34692,14 @@ var __extends$2a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalRowsComp = /** @class */ (function (_super) {
-    __extends$2a(TotalRowsComp, _super);
+    __extends$2b(TotalRowsComp, _super);
     function TotalRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34775,19 +34726,19 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.init = function () {
     };
-    __decorate$1z([
+    __decorate$1A([
         agGridCommunity.Autowired('eventService')
     ], TotalRowsComp.prototype, "eventService", void 0);
-    __decorate$1z([
+    __decorate$1A([
         agGridCommunity.Autowired('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
-    __decorate$1z([
+    __decorate$1A([
         agGridCommunity.PostConstruct
     ], TotalRowsComp.prototype, "postConstruct", null);
     return TotalRowsComp;
 }(NameValueComp));
 
-var __extends$2b = (undefined && undefined.__extends) || (function () {
+var __extends$2c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34800,14 +34751,14 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectedRowsComp = /** @class */ (function (_super) {
-    __extends$2b(SelectedRowsComp, _super);
+    __extends$2c(SelectedRowsComp, _super);
     function SelectedRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34838,19 +34789,19 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.init = function () {
     };
-    __decorate$1A([
+    __decorate$1B([
         agGridCommunity.Autowired('eventService')
     ], SelectedRowsComp.prototype, "eventService", void 0);
-    __decorate$1A([
+    __decorate$1B([
         agGridCommunity.Autowired('gridApi')
     ], SelectedRowsComp.prototype, "gridApi", void 0);
-    __decorate$1A([
+    __decorate$1B([
         agGridCommunity.PostConstruct
     ], SelectedRowsComp.prototype, "postConstruct", null);
     return SelectedRowsComp;
 }(NameValueComp));
 
-var __extends$2c = (undefined && undefined.__extends) || (function () {
+var __extends$2d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34863,14 +34814,14 @@ var __extends$2c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AggregationComp = /** @class */ (function (_super) {
-    __extends$2c(AggregationComp, _super);
+    __extends$2d(AggregationComp, _super);
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }
@@ -35000,52 +34951,52 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('eventService')
     ], AggregationComp.prototype, "eventService", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.RefSelector('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.RefSelector('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.RefSelector('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.RefSelector('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.RefSelector('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
-    __decorate$1B([
+    __decorate$1C([
         agGridCommunity.PostConstruct
     ], AggregationComp.prototype, "postConstruct", null);
     return AggregationComp;
@@ -35070,7 +35021,7 @@ var StatusBarModule = {
     ]
 };
 
-var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35292,34 +35243,34 @@ var ViewportRowModel = /** @class */ (function () {
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('eventService')
     ], ViewportRowModel.prototype, "eventService", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('selectionController')
     ], ViewportRowModel.prototype, "selectionController", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('context')
     ], ViewportRowModel.prototype, "context", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('columnApi')
     ], ViewportRowModel.prototype, "columnApi", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.Autowired('rowRenderer')
     ], ViewportRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.PostConstruct
     ], ViewportRowModel.prototype, "init", null);
-    __decorate$1C([
+    __decorate$1D([
         agGridCommunity.PreDestroy
     ], ViewportRowModel.prototype, "destroyDatasource", null);
-    ViewportRowModel = __decorate$1C([
+    ViewportRowModel = __decorate$1D([
         agGridCommunity.Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;

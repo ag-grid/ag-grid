@@ -49325,6 +49325,9 @@ var ChartDataModel = /** @class */ (function (_super) {
         };
     };
     ChartDataModel.prototype.getAllColumnsFromRanges = function () {
+        if (this.pivotChart) {
+            return _.convertToSet(this.columnController.getAllDisplayedColumns());
+        }
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
             columns.push.apply(columns, this.dimensionCellRange.columns);
@@ -49424,16 +49427,17 @@ var ChartDataModel = /** @class */ (function (_super) {
     };
     ChartDataModel.prototype.updateData = function () {
         var _a = this.getRowIndexes(), startRow = _a.startRow, endRow = _a.endRow;
-        var selectedDimension = this.getSelectedDimension();
-        var selectedValueCols = this.getSelectedValueCols();
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
         this.grouping = this.isGrouping();
         var params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
+            valueCols: this.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow
         };
@@ -49444,7 +49448,7 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.resetColumnState = function () {
         var _this = this;
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        var allCols = this.pivotChart ? _.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+        var allCols = this.getAllColumnsFromRanges();
         var isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];
@@ -52357,6 +52361,9 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
+        _this.onShadowChange = function () {
+            _this.dirty = true;
+        };
         _this._fillShadow = Shape.defaultStyles.fillShadow;
         _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
@@ -52565,14 +52572,13 @@ var Shape = /** @class */ (function (_super) {
             return this._fillShadow;
         },
         set: function (value) {
-            var _this = this;
-            var fillShadow = this._fillShadow;
-            if (fillShadow !== value) {
-                if (fillShadow) {
-                    fillShadow.onChange = undefined;
+            var oldValue = this._fillShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._fillShadow = value;
                 this.dirty = true;
@@ -52586,14 +52592,13 @@ var Shape = /** @class */ (function (_super) {
             return this._strokeShadow;
         },
         set: function (value) {
-            var _this = this;
-            var strokeShadow = this._strokeShadow;
-            if (strokeShadow !== value) {
-                if (strokeShadow) {
-                    strokeShadow.onChange = undefined;
+            var oldValue = this._strokeShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._strokeShadow = value;
                 this.dirty = true;
@@ -58462,7 +58467,7 @@ var CartesianChart = /** @class */ (function (_super) {
             axis.group.visible = true;
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + 1);
                     axis.label.mirrored = true;
@@ -58470,10 +58475,10 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case ChartAxisPosition.Right:
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -58481,17 +58486,17 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
                 case ChartAxisPosition.Bottom:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     axis.gridLength = shrinkRect.height;
                     break;
                 case ChartAxisPosition.Left:
                     if (axis instanceof CategoryAxis || axis instanceof GroupedCategoryAxis) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -62116,87 +62121,6 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(PolarSeries));
 
-var DropShadow = /** @class */ (function () {
-    function DropShadow() {
-        this._enabled = true;
-        this._color = 'rgba(0, 0, 0, 0.5)';
-        this._xOffset = 0;
-        this._yOffset = 0;
-        this._blur = 5;
-    }
-    Object.defineProperty(DropShadow.prototype, "enabled", {
-        get: function () {
-            return this._enabled;
-        },
-        set: function (value) {
-            if (this._enabled !== value) {
-                this._enabled = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "color", {
-        get: function () {
-            return this._color;
-        },
-        set: function (value) {
-            if (this._color !== value) {
-                this._color = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "xOffset", {
-        get: function () {
-            return this._xOffset;
-        },
-        set: function (value) {
-            if (this._xOffset !== value) {
-                this._xOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "yOffset", {
-        get: function () {
-            return this._yOffset;
-        },
-        set: function (value) {
-            if (this._yOffset !== value) {
-                this._yOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "blur", {
-        get: function () {
-            return this._blur;
-        },
-        set: function (value) {
-            if (this._blur !== value) {
-                this._blur = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    DropShadow.prototype.update = function () {
-        if (this.onChange) {
-            this.onChange();
-        }
-    };
-    return DropShadow;
-}());
-
 var __extends$2k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -62210,8 +62134,56 @@ var __extends$2k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$2P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var DropShadow = /** @class */ (function (_super) {
+    __extends$2k(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate$2P([
+        reactive(['change'])
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate$2P([
+        reactive(['change'])
+    ], DropShadow.prototype, "color", void 0);
+    __decorate$2P([
+        reactive(['change'])
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate$2P([
+        reactive(['change'])
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate$2P([
+        reactive(['change'])
+    ], DropShadow.prototype, "blur", void 0);
+    return DropShadow;
+}(Observable));
+
+var __extends$2l = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$2k(NumberAxis, _super);
+    __extends$2l(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -62249,65 +62221,6 @@ var NumberAxis = /** @class */ (function (_super) {
     return NumberAxis;
 }(ChartAxis));
 
-var __extends$2l = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$2P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var Caption = /** @class */ (function (_super) {
-    __extends$2l(Caption, _super);
-    function Caption() {
-        var _this = _super.call(this) || this;
-        _this.node = new Text();
-        _this.enabled = true;
-        _this.padding = new Padding(10);
-        var node = _this.node;
-        node.textAlign = 'center';
-        node.textBaseline = 'top';
-        node.pointerEvents = PointerEvents.None;
-        return _this;
-    }
-    __decorate$2P([
-        reactive(['change'])
-    ], Caption.prototype, "enabled", void 0);
-    __decorate$2P([
-        reactive(['change'])
-    ], Caption.prototype, "padding", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.text')
-    ], Caption.prototype, "text", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.fontStyle')
-    ], Caption.prototype, "fontStyle", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.fontWeight')
-    ], Caption.prototype, "fontWeight", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.fontSize')
-    ], Caption.prototype, "fontSize", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.fontFamily')
-    ], Caption.prototype, "fontFamily", void 0);
-    __decorate$2P([
-        reactive(['change'], 'node.fill')
-    ], Caption.prototype, "color", void 0);
-    return Caption;
-}(Observable));
-
 var __extends$2m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -62321,8 +62234,67 @@ var __extends$2m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$2Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var Caption = /** @class */ (function (_super) {
+    __extends$2m(Caption, _super);
+    function Caption() {
+        var _this = _super.call(this) || this;
+        _this.node = new Text();
+        _this.enabled = true;
+        _this.padding = new Padding(10);
+        var node = _this.node;
+        node.textAlign = 'center';
+        node.textBaseline = 'top';
+        node.pointerEvents = PointerEvents.None;
+        return _this;
+    }
+    __decorate$2Q([
+        reactive(['change'])
+    ], Caption.prototype, "enabled", void 0);
+    __decorate$2Q([
+        reactive(['change'])
+    ], Caption.prototype, "padding", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.text')
+    ], Caption.prototype, "text", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.fontStyle')
+    ], Caption.prototype, "fontStyle", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.fontWeight')
+    ], Caption.prototype, "fontWeight", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.fontSize')
+    ], Caption.prototype, "fontSize", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.fontFamily')
+    ], Caption.prototype, "fontFamily", void 0);
+    __decorate$2Q([
+        reactive(['change'], 'node.fill')
+    ], Caption.prototype, "color", void 0);
+    return Caption;
+}(Observable));
+
+var __extends$2n = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$2m(GroupedCategoryChart, _super);
+    __extends$2n(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62331,7 +62303,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
         var axes = this.axes;
         axes.forEach(function (axis) {
             var _a;
-            var direction = axis.direction, boundSeries = axis.boundSeries;
+            var direction = axis.direction, position = axis.position, boundSeries = axis.boundSeries;
             var domains = [];
             var isNumericX = undefined;
             boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
@@ -62353,49 +62325,28 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             });
             var domain = (_a = new Array()).concat.apply(_a, domains);
             axis.domain = numericExtent(domain) || domain;
-            _this.computeAxisAutopadding(axis);
             axis.update();
+            var axisThickness = Math.floor(axis.computeBBox().width);
+            switch (position) {
+                case ChartAxisPosition.Left:
+                    _this.axisAutoPadding.left = axisThickness;
+                    break;
+                case ChartAxisPosition.Right:
+                    _this.axisAutoPadding.right = axisThickness;
+                    break;
+                case ChartAxisPosition.Bottom:
+                    _this.axisAutoPadding.bottom = axisThickness;
+                    break;
+                case ChartAxisPosition.Top:
+                    _this.axisAutoPadding.top = axisThickness;
+                    break;
+            }
         });
-    };
-    GroupedCategoryChart.prototype.computeAxisAutopadding = function (axis) {
-        var position = axis.position;
-        var axisBBox = axis.computeBBox();
-        // The bbox may not be valid if the axis has had zero updates so far.
-        if (!axisBBox.isValid()) {
-            return;
-        }
-        var axisThickness = Math.floor(axisBBox.width);
-        switch (position) {
-            case ChartAxisPosition.Left:
-                if (this.axisAutoPadding.left !== axisThickness) {
-                    this.axisAutoPadding.left = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Right:
-                if (this.axisAutoPadding.right !== axisThickness) {
-                    this.axisAutoPadding.right = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Bottom:
-                if (this.axisAutoPadding.bottom !== axisThickness) {
-                    this.axisAutoPadding.bottom = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case ChartAxisPosition.Top:
-                if (this.axisAutoPadding.top !== axisThickness) {
-                    this.axisAutoPadding.top = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-        }
     };
     return GroupedCategoryChart;
 }(CartesianChart));
 
-var __extends$2n = (undefined && undefined.__extends) || (function () {
+var __extends$2o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62409,7 +62360,7 @@ var __extends$2n = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$2n(Cross, _super);
+    __extends$2o(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62436,7 +62387,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$2o = (undefined && undefined.__extends) || (function () {
+var __extends$2p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62450,7 +62401,7 @@ var __extends$2o = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$2o(Diamond, _super);
+    __extends$2p(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62470,7 +62421,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$2p = (undefined && undefined.__extends) || (function () {
+var __extends$2q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62484,7 +62435,7 @@ var __extends$2p = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$2p(Plus, _super);
+    __extends$2q(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62512,7 +62463,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$2q = (undefined && undefined.__extends) || (function () {
+var __extends$2r = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62526,7 +62477,7 @@ var __extends$2q = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$2q(Triangle, _super);
+    __extends$2r(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -62553,7 +62504,7 @@ function convertToMap(list) {
     return map;
 }
 
-var __extends$2r = (undefined && undefined.__extends) || (function () {
+var __extends$2s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -62678,7 +62629,7 @@ var TimeInterval = /** @class */ (function () {
     return TimeInterval;
 }());
 var CountableTimeInterval = /** @class */ (function (_super) {
-    __extends$2r(CountableTimeInterval, _super);
+    __extends$2s(CountableTimeInterval, _super);
     function CountableTimeInterval(floor, offset, count, field) {
         var _this = _super.call(this, floor, offset) || this;
         _this._count = count;
@@ -63527,7 +63478,7 @@ function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
 
-var __extends$2s = (undefined && undefined.__extends) || (function () {
+var __extends$2t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63541,7 +63492,7 @@ var __extends$2s = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeScale = /** @class */ (function (_super) {
-    __extends$2s(TimeScale, _super);
+    __extends$2t(TimeScale, _super);
     function TimeScale() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.year = year;
@@ -63713,7 +63664,7 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(ContinuousScale));
 
-var __extends$2t = (undefined && undefined.__extends) || (function () {
+var __extends$2u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -63727,7 +63678,7 @@ var __extends$2t = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeAxis = /** @class */ (function (_super) {
-    __extends$2t(TimeAxis, _super);
+    __extends$2u(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this, new TimeScale()) || this;
         _this._nice = true;
@@ -64557,7 +64508,7 @@ var ChartProxy = /** @class */ (function () {
     return ChartProxy;
 }());
 
-var __extends$2u = (undefined && undefined.__extends) || (function () {
+var __extends$2v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64582,7 +64533,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
     return __assign$4.apply(this, arguments);
 };
 var CartesianChartProxy = /** @class */ (function (_super) {
-    __extends$2u(CartesianChartProxy, _super);
+    __extends$2v(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
         return _super.call(this, params) || this;
     }
@@ -64648,7 +64599,7 @@ function isDate(value) {
     return value instanceof Date;
 }
 
-var __extends$2v = (undefined && undefined.__extends) || (function () {
+var __extends$2w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64673,7 +64624,7 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
     return __assign$5.apply(this, arguments);
 };
 var ScatterChartProxy = /** @class */ (function (_super) {
-    __extends$2v(ScatterChartProxy, _super);
+    __extends$2w(ScatterChartProxy, _super);
     function ScatterChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.getMarkersEnabled = function () { return true; }; // markers are always enabled on scatter charts
@@ -64821,7 +64772,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     return ScatterChartProxy;
 }(CartesianChartProxy));
 
-var __extends$2w = (undefined && undefined.__extends) || (function () {
+var __extends$2x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64834,14 +64785,14 @@ var __extends$2w = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MarkersPanel = /** @class */ (function (_super) {
-    __extends$2w(MarkersPanel, _super);
+    __extends$2x(MarkersPanel, _super);
     function MarkersPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartController = chartController;
@@ -64880,28 +64831,28 @@ var MarkersPanel = /** @class */ (function (_super) {
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
     };
     MarkersPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesMarkersGroup\">\n                <ag-slider ref=\"seriesMarkerMinSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerSizeSlider\"></ag-slider>\n                <ag-slider ref=\"seriesMarkerStrokeWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2Q([
+    __decorate$2R([
         RefSelector('seriesMarkersGroup')
     ], MarkersPanel.prototype, "seriesMarkersGroup", void 0);
-    __decorate$2Q([
+    __decorate$2R([
         RefSelector('seriesMarkerSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerSizeSlider", void 0);
-    __decorate$2Q([
+    __decorate$2R([
         RefSelector('seriesMarkerMinSizeSlider')
     ], MarkersPanel.prototype, "seriesMarkerMinSizeSlider", void 0);
-    __decorate$2Q([
+    __decorate$2R([
         RefSelector('seriesMarkerStrokeWidthSlider')
     ], MarkersPanel.prototype, "seriesMarkerStrokeWidthSlider", void 0);
-    __decorate$2Q([
+    __decorate$2R([
         Autowired('chartTranslator')
     ], MarkersPanel.prototype, "chartTranslator", void 0);
-    __decorate$2Q([
+    __decorate$2R([
         PostConstruct
     ], MarkersPanel.prototype, "init", null);
     return MarkersPanel;
 }(Component));
 
-var __extends$2x = (undefined && undefined.__extends) || (function () {
+var __extends$2y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -64914,14 +64865,14 @@ var __extends$2x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeriesPanel = /** @class */ (function (_super) {
-    __extends$2x(LineSeriesPanel, _super);
+    __extends$2y(LineSeriesPanel, _super);
     function LineSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -64977,25 +64928,25 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     LineSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2R([
+    __decorate$2S([
         RefSelector('seriesGroup')
     ], LineSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2R([
+    __decorate$2S([
         RefSelector('seriesTooltipsToggle')
     ], LineSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2R([
+    __decorate$2S([
         RefSelector('seriesLineWidthSlider')
     ], LineSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$2R([
+    __decorate$2S([
         Autowired('chartTranslator')
     ], LineSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2R([
+    __decorate$2S([
         PostConstruct
     ], LineSeriesPanel.prototype, "init", null);
     return LineSeriesPanel;
 }(Component));
 
-var __extends$2y = (undefined && undefined.__extends) || (function () {
+var __extends$2z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65008,14 +64959,14 @@ var __extends$2y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var CalloutPanel = /** @class */ (function (_super) {
-    __extends$2y(CalloutPanel, _super);
+    __extends$2z(CalloutPanel, _super);
     function CalloutPanel(chartProxy) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartProxy;
@@ -65044,28 +64995,28 @@ var CalloutPanel = /** @class */ (function (_super) {
         initInput("label.offset", this.labelOffsetSlider, "offset", 30);
     };
     CalloutPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"calloutGroup\">\n                <ag-slider ref=\"calloutLengthSlider\"></ag-slider>\n                <ag-slider ref=\"calloutStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"labelOffsetSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2S([
+    __decorate$2T([
         RefSelector('calloutGroup')
     ], CalloutPanel.prototype, "calloutGroup", void 0);
-    __decorate$2S([
+    __decorate$2T([
         RefSelector('calloutLengthSlider')
     ], CalloutPanel.prototype, "calloutLengthSlider", void 0);
-    __decorate$2S([
+    __decorate$2T([
         RefSelector('calloutStrokeWidthSlider')
     ], CalloutPanel.prototype, "calloutStrokeWidthSlider", void 0);
-    __decorate$2S([
+    __decorate$2T([
         RefSelector('labelOffsetSlider')
     ], CalloutPanel.prototype, "labelOffsetSlider", void 0);
-    __decorate$2S([
+    __decorate$2T([
         Autowired('chartTranslator')
     ], CalloutPanel.prototype, "chartTranslator", void 0);
-    __decorate$2S([
+    __decorate$2T([
         PostConstruct
     ], CalloutPanel.prototype, "init", null);
     return CalloutPanel;
 }(Component));
 
-var __extends$2z = (undefined && undefined.__extends) || (function () {
+var __extends$2A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65078,14 +65029,14 @@ var __extends$2z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PieSeriesPanel = /** @class */ (function (_super) {
-    __extends$2z(PieSeriesPanel, _super);
+    __extends$2A(PieSeriesPanel, _super);
     function PieSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -65200,31 +65151,31 @@ var PieSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     PieSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2T([
+    __decorate$2U([
         RefSelector('seriesGroup')
     ], PieSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2T([
+    __decorate$2U([
         RefSelector('seriesTooltipsToggle')
     ], PieSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2T([
+    __decorate$2U([
         RefSelector('seriesStrokeWidthSlider')
     ], PieSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
-    __decorate$2T([
+    __decorate$2U([
         RefSelector('seriesLineOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2T([
+    __decorate$2U([
         RefSelector('seriesFillOpacitySlider')
     ], PieSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2T([
+    __decorate$2U([
         Autowired('chartTranslator')
     ], PieSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2T([
+    __decorate$2U([
         PostConstruct
     ], PieSeriesPanel.prototype, "init", null);
     return PieSeriesPanel;
 }(Component));
 
-var __extends$2A = (undefined && undefined.__extends) || (function () {
+var __extends$2B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65237,14 +65188,14 @@ var __extends$2A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PaddingPanel = /** @class */ (function (_super) {
-    __extends$2A(PaddingPanel, _super);
+    __extends$2B(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -65276,31 +65227,31 @@ var PaddingPanel = /** @class */ (function (_super) {
         initInput('left', this.paddingLeftSlider);
     };
     PaddingPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartPaddingGroup\">\n                <ag-slider ref=\"paddingTopSlider\"></ag-slider>\n                <ag-slider ref=\"paddingRightSlider\"></ag-slider>\n                <ag-slider ref=\"paddingBottomSlider\"></ag-slider>\n                <ag-slider ref=\"paddingLeftSlider\"></ag-slider>\n            </ag-group-component>\n        <div>";
-    __decorate$2U([
+    __decorate$2V([
         RefSelector('chartPaddingGroup')
     ], PaddingPanel.prototype, "chartPaddingGroup", void 0);
-    __decorate$2U([
+    __decorate$2V([
         RefSelector('paddingTopSlider')
     ], PaddingPanel.prototype, "paddingTopSlider", void 0);
-    __decorate$2U([
+    __decorate$2V([
         RefSelector('paddingRightSlider')
     ], PaddingPanel.prototype, "paddingRightSlider", void 0);
-    __decorate$2U([
+    __decorate$2V([
         RefSelector('paddingBottomSlider')
     ], PaddingPanel.prototype, "paddingBottomSlider", void 0);
-    __decorate$2U([
+    __decorate$2V([
         RefSelector('paddingLeftSlider')
     ], PaddingPanel.prototype, "paddingLeftSlider", void 0);
-    __decorate$2U([
+    __decorate$2V([
         Autowired('chartTranslator')
     ], PaddingPanel.prototype, "chartTranslator", void 0);
-    __decorate$2U([
+    __decorate$2V([
         PostConstruct
     ], PaddingPanel.prototype, "init", null);
     return PaddingPanel;
 }(Component));
 
-var __extends$2B = (undefined && undefined.__extends) || (function () {
+var __extends$2C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65313,14 +65264,14 @@ var __extends$2B = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var BackgroundPanel = /** @class */ (function (_super) {
-    __extends$2B(BackgroundPanel, _super);
+    __extends$2C(BackgroundPanel, _super);
     function BackgroundPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartProxy = chartController.getChartProxy();
@@ -65350,22 +65301,22 @@ var BackgroundPanel = /** @class */ (function (_super) {
             .onValueChange(function (newColor) { return _this.chartProxy.setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
-    __decorate$2V([
+    __decorate$2W([
         RefSelector('chartBackgroundGroup')
     ], BackgroundPanel.prototype, "group", void 0);
-    __decorate$2V([
+    __decorate$2W([
         RefSelector('colorPicker')
     ], BackgroundPanel.prototype, "colorPicker", void 0);
-    __decorate$2V([
+    __decorate$2W([
         Autowired('chartTranslator')
     ], BackgroundPanel.prototype, "chartTranslator", void 0);
-    __decorate$2V([
+    __decorate$2W([
         PostConstruct
     ], BackgroundPanel.prototype, "init", null);
     return BackgroundPanel;
 }(Component));
 
-var __extends$2C = (undefined && undefined.__extends) || (function () {
+var __extends$2D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65378,14 +65329,14 @@ var __extends$2C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartPanel = /** @class */ (function (_super) {
-    __extends$2C(ChartPanel, _super);
+    __extends$2D(ChartPanel, _super);
     function ChartPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -65480,22 +65431,22 @@ var ChartPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n                <ag-input-text-area ref=\"titleInput\"></ag-input-text-area>\n            </ag-group-component>\n        <div>";
-    __decorate$2W([
+    __decorate$2X([
         RefSelector('chartGroup')
     ], ChartPanel.prototype, "chartGroup", void 0);
-    __decorate$2W([
+    __decorate$2X([
         RefSelector('titleInput')
     ], ChartPanel.prototype, "titleInput", void 0);
-    __decorate$2W([
+    __decorate$2X([
         Autowired('chartTranslator')
     ], ChartPanel.prototype, "chartTranslator", void 0);
-    __decorate$2W([
+    __decorate$2X([
         PostConstruct
     ], ChartPanel.prototype, "init", null);
     return ChartPanel;
 }(Component));
 
-var __extends$2D = (undefined && undefined.__extends) || (function () {
+var __extends$2E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65508,14 +65459,14 @@ var __extends$2D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeriesPanel = /** @class */ (function (_super) {
-    __extends$2D(AreaSeriesPanel, _super);
+    __extends$2E(AreaSeriesPanel, _super);
     function AreaSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -65595,31 +65546,31 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$2X([
+    __decorate$2Y([
         RefSelector('seriesGroup')
     ], AreaSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         RefSelector('seriesTooltipsToggle')
     ], AreaSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         RefSelector('seriesLineWidthSlider')
     ], AreaSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         RefSelector('seriesLineOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         RefSelector('seriesFillOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         Autowired('chartTranslator')
     ], AreaSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2X([
+    __decorate$2Y([
         PostConstruct
     ], AreaSeriesPanel.prototype, "init", null);
     return AreaSeriesPanel;
 }(Component));
 
-var __extends$2E = (undefined && undefined.__extends) || (function () {
+var __extends$2F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65632,14 +65583,14 @@ var __extends$2E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeriesPanel = /** @class */ (function (_super) {
-    __extends$2E(ScatterSeriesPanel, _super);
+    __extends$2F(ScatterSeriesPanel, _super);
     function ScatterSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -65685,22 +65636,22 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ScatterSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n            </ag-group-component>\n        </div>";
-    __decorate$2Y([
+    __decorate$2Z([
         RefSelector('seriesGroup')
     ], ScatterSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$2Y([
+    __decorate$2Z([
         RefSelector('seriesTooltipsToggle')
     ], ScatterSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$2Y([
+    __decorate$2Z([
         Autowired('chartTranslator')
     ], ScatterSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$2Y([
+    __decorate$2Z([
         PostConstruct
     ], ScatterSeriesPanel.prototype, "init", null);
     return ScatterSeriesPanel;
 }(Component));
 
-var __extends$2F = (undefined && undefined.__extends) || (function () {
+var __extends$2G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65713,14 +65664,14 @@ var __extends$2F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartFormattingPanel = /** @class */ (function (_super) {
-    __extends$2F(ChartFormattingPanel, _super);
+    __extends$2G(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
         var _this = _super.call(this, ChartFormattingPanel.TEMPLATE) || this;
         _this.panels = [];
@@ -65790,57 +65741,10 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartFormattingPanel.TEMPLATE = "<div class=\"ag-chart-format-wrapper\"></div>";
-    __decorate$2Z([
+    __decorate$2_([
         PostConstruct
     ], ChartFormattingPanel.prototype, "init", null);
     return ChartFormattingPanel;
-}(Component));
-
-var __extends$2G = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$2_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var MiniChart = /** @class */ (function (_super) {
-    __extends$2G(MiniChart, _super);
-    function MiniChart(parent, tooltipName) {
-        var _this = _super.call(this) || this;
-        _this.size = 58;
-        _this.padding = 5;
-        _this.root = new Group();
-        var scene = new Scene();
-        scene.width = _this.size;
-        scene.height = _this.size;
-        scene.root = _this.root;
-        scene.parent = parent;
-        _this.scene = scene;
-        _this.tooltipName = tooltipName;
-        return _this;
-    }
-    MiniChart.prototype.init = function () {
-        this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
-    };
-    __decorate$2_([
-        Autowired('chartTranslator')
-    ], MiniChart.prototype, "chartTranslator", void 0);
-    __decorate$2_([
-        PostConstruct
-    ], MiniChart.prototype, "init", null);
-    return MiniChart;
 }(Component));
 
 var __extends$2H = (undefined && undefined.__extends) || (function () {
@@ -65862,8 +65766,55 @@ var __decorate$2$ = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var MiniChart = /** @class */ (function (_super) {
+    __extends$2H(MiniChart, _super);
+    function MiniChart(parent, tooltipName) {
+        var _this = _super.call(this) || this;
+        _this.size = 58;
+        _this.padding = 5;
+        _this.root = new Group();
+        var scene = new Scene();
+        scene.width = _this.size;
+        scene.height = _this.size;
+        scene.root = _this.root;
+        scene.parent = parent;
+        _this.scene = scene;
+        _this.tooltipName = tooltipName;
+        return _this;
+    }
+    MiniChart.prototype.init = function () {
+        this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
+    };
+    __decorate$2$([
+        Autowired('chartTranslator')
+    ], MiniChart.prototype, "chartTranslator", void 0);
+    __decorate$2$([
+        PostConstruct
+    ], MiniChart.prototype, "init", null);
+    return MiniChart;
+}(Component));
+
+var __extends$2I = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$30 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var MiniChartWithAxes = /** @class */ (function (_super) {
-    __extends$2H(MiniChartWithAxes, _super);
+    __extends$2I(MiniChartWithAxes, _super);
     function MiniChartWithAxes(parent, tooltipName) {
         var _this = _super.call(this, parent, tooltipName) || this;
         _this.stroke = 'gray';
@@ -65889,13 +65840,13 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
         root.append(leftAxis);
         root.append(bottomAxis);
     };
-    __decorate$2$([
+    __decorate$30([
         PostConstruct
     ], MiniChartWithAxes.prototype, "addAxes", null);
     return MiniChartWithAxes;
 }(MiniChart));
 
-var __extends$2I = (undefined && undefined.__extends) || (function () {
+var __extends$2J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65909,7 +65860,7 @@ var __extends$2I = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniColumn = /** @class */ (function (_super) {
-    __extends$2I(MiniColumn, _super);
+    __extends$2J(MiniColumn, _super);
     function MiniColumn(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedColumnTooltip") || this;
         var padding = _this.padding;
@@ -65950,7 +65901,7 @@ var MiniColumn = /** @class */ (function (_super) {
     return MiniColumn;
 }(MiniChartWithAxes));
 
-var __extends$2J = (undefined && undefined.__extends) || (function () {
+var __extends$2K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -65964,7 +65915,7 @@ var __extends$2J = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedColumn = /** @class */ (function (_super) {
-    __extends$2J(MiniStackedColumn, _super);
+    __extends$2K(MiniStackedColumn, _super);
     function MiniStackedColumn(parent, fills, strokes, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
@@ -66016,33 +65967,6 @@ var MiniStackedColumn = /** @class */ (function (_super) {
     return MiniStackedColumn;
 }(MiniChartWithAxes));
 
-var __extends$2K = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedColumn = /** @class */ (function (_super) {
-    __extends$2K(MiniNormalizedColumn, _super);
-    function MiniNormalizedColumn(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
-    }
-    MiniNormalizedColumn.chartType = exports.ChartType.NormalizedColumn;
-    MiniNormalizedColumn.data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6]
-    ];
-    return MiniNormalizedColumn;
-}(MiniStackedColumn));
-
 var __extends$2L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -66056,8 +65980,35 @@ var __extends$2L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var MiniNormalizedColumn = /** @class */ (function (_super) {
+    __extends$2L(MiniNormalizedColumn, _super);
+    function MiniNormalizedColumn(parent, fills, strokes) {
+        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
+    }
+    MiniNormalizedColumn.chartType = exports.ChartType.NormalizedColumn;
+    MiniNormalizedColumn.data = [
+        [10, 10, 10],
+        [6, 7, 8],
+        [2, 4, 6]
+    ];
+    return MiniNormalizedColumn;
+}(MiniStackedColumn));
+
+var __extends$2M = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var MiniBar = /** @class */ (function (_super) {
-    __extends$2L(MiniBar, _super);
+    __extends$2M(MiniBar, _super);
     function MiniBar(parent, fills, strokes) {
         var _this = _super.call(this, parent, "groupedBarTooltip") || this;
         var padding = _this.padding;
@@ -66097,7 +66048,7 @@ var MiniBar = /** @class */ (function (_super) {
     return MiniBar;
 }(MiniChartWithAxes));
 
-var __extends$2M = (undefined && undefined.__extends) || (function () {
+var __extends$2N = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66111,7 +66062,7 @@ var __extends$2M = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedBar = /** @class */ (function (_super) {
-    __extends$2M(MiniStackedBar, _super);
+    __extends$2N(MiniStackedBar, _super);
     function MiniStackedBar(parent, fills, strokes, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
@@ -66162,33 +66113,6 @@ var MiniStackedBar = /** @class */ (function (_super) {
     return MiniStackedBar;
 }(MiniChartWithAxes));
 
-var __extends$2N = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedBar = /** @class */ (function (_super) {
-    __extends$2N(MiniNormalizedBar, _super);
-    function MiniNormalizedBar(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
-    }
-    MiniNormalizedBar.chartType = exports.ChartType.NormalizedBar;
-    MiniNormalizedBar.data = [
-        [10, 10, 10],
-        [6, 7, 8],
-        [2, 4, 6]
-    ];
-    return MiniNormalizedBar;
-}(MiniStackedBar));
-
 var __extends$2O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -66202,8 +66126,35 @@ var __extends$2O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var MiniNormalizedBar = /** @class */ (function (_super) {
+    __extends$2O(MiniNormalizedBar, _super);
+    function MiniNormalizedBar(parent, fills, strokes) {
+        return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
+    }
+    MiniNormalizedBar.chartType = exports.ChartType.NormalizedBar;
+    MiniNormalizedBar.data = [
+        [10, 10, 10],
+        [6, 7, 8],
+        [2, 4, 6]
+    ];
+    return MiniNormalizedBar;
+}(MiniStackedBar));
+
+var __extends$2P = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var MiniDoughnut = /** @class */ (function (_super) {
-    __extends$2O(MiniDoughnut, _super);
+    __extends$2P(MiniDoughnut, _super);
     function MiniDoughnut(parent, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
@@ -66244,7 +66195,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
     return MiniDoughnut;
 }(MiniChart));
 
-var __extends$2P = (undefined && undefined.__extends) || (function () {
+var __extends$2Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66258,7 +66209,7 @@ var __extends$2P = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniPie = /** @class */ (function (_super) {
-    __extends$2P(MiniPie, _super);
+    __extends$2Q(MiniPie, _super);
     function MiniPie(parent, fills, strokes) {
         return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
     }
@@ -66266,7 +66217,7 @@ var MiniPie = /** @class */ (function (_super) {
     return MiniPie;
 }(MiniDoughnut));
 
-var __extends$2Q = (undefined && undefined.__extends) || (function () {
+var __extends$2R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66285,7 +66236,7 @@ var __extends$2Q = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$2Q(ClipRect, _super);
+    __extends$2R(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -66412,7 +66363,7 @@ var ClipRect = /** @class */ (function (_super) {
     return ClipRect;
 }(Node$1));
 
-var __extends$2R = (undefined && undefined.__extends) || (function () {
+var __extends$2S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66426,7 +66377,7 @@ var __extends$2R = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniLine = /** @class */ (function (_super) {
-    __extends$2R(MiniLine, _super);
+    __extends$2S(MiniLine, _super);
     function MiniLine(parent, fills, strokes) {
         var _this = _super.call(this, parent, "lineTooltip") || this;
         var size = _this.size;
@@ -66469,7 +66420,7 @@ var MiniLine = /** @class */ (function (_super) {
     return MiniLine;
 }(MiniChartWithAxes));
 
-var __extends$2S = (undefined && undefined.__extends) || (function () {
+var __extends$2T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66483,7 +66434,7 @@ var __extends$2S = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniScatter = /** @class */ (function (_super) {
-    __extends$2S(MiniScatter, _super);
+    __extends$2T(MiniScatter, _super);
     function MiniScatter(parent, fills, strokes) {
         var _this = _super.call(this, parent, "scatterTooltip") || this;
         var size = _this.size;
@@ -66530,7 +66481,7 @@ var MiniScatter = /** @class */ (function (_super) {
     return MiniScatter;
 }(MiniChartWithAxes));
 
-var __extends$2T = (undefined && undefined.__extends) || (function () {
+var __extends$2U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66544,7 +66495,7 @@ var __extends$2T = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBubble = /** @class */ (function (_super) {
-    __extends$2T(MiniBubble, _super);
+    __extends$2U(MiniBubble, _super);
     function MiniBubble(parent, fills, strokes) {
         var _this = _super.call(this, parent, "bubbleTooltip") || this;
         var size = _this.size;
@@ -66593,7 +66544,7 @@ var MiniBubble = /** @class */ (function (_super) {
     return MiniBubble;
 }(MiniChartWithAxes));
 
-var __extends$2U = (undefined && undefined.__extends) || (function () {
+var __extends$2V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66607,7 +66558,7 @@ var __extends$2U = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniArea = /** @class */ (function (_super) {
-    __extends$2U(MiniArea, _super);
+    __extends$2V(MiniArea, _super);
     function MiniArea(parent, fills, strokes, data) {
         if (data === void 0) { data = MiniArea.data; }
         var _this = _super.call(this, parent, "groupedAreaTooltip") || this;
@@ -66669,7 +66620,7 @@ var MiniArea = /** @class */ (function (_super) {
     return MiniArea;
 }(MiniChartWithAxes));
 
-var __extends$2V = (undefined && undefined.__extends) || (function () {
+var __extends$2W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66683,7 +66634,7 @@ var __extends$2V = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedArea = /** @class */ (function (_super) {
-    __extends$2V(MiniStackedArea, _super);
+    __extends$2W(MiniStackedArea, _super);
     function MiniStackedArea(parent, fills, strokes, data, tooltipName) {
         if (data === void 0) { data = MiniStackedArea.data; }
         if (tooltipName === void 0) { tooltipName = "stackedAreaTooltip"; }
@@ -66746,33 +66697,6 @@ var MiniStackedArea = /** @class */ (function (_super) {
     return MiniStackedArea;
 }(MiniChartWithAxes));
 
-var __extends$2W = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var MiniNormalizedArea = /** @class */ (function (_super) {
-    __extends$2W(MiniNormalizedArea, _super);
-    function MiniNormalizedArea(parent, fills, strokes, data) {
-        if (data === void 0) { data = MiniNormalizedArea.data; }
-        return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
-    }
-    MiniNormalizedArea.chartType = exports.ChartType.NormalizedArea;
-    MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {
-        var sum = stack.reduce(function (p, c) { return p + c; }, 0);
-        return stack.map(function (v) { return v / sum * 16; });
-    });
-    return MiniNormalizedArea;
-}(MiniStackedArea));
-
 var __extends$2X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -66786,14 +66710,41 @@ var __extends$2X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$30 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var MiniNormalizedArea = /** @class */ (function (_super) {
+    __extends$2X(MiniNormalizedArea, _super);
+    function MiniNormalizedArea(parent, fills, strokes, data) {
+        if (data === void 0) { data = MiniNormalizedArea.data; }
+        return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
+    }
+    MiniNormalizedArea.chartType = exports.ChartType.NormalizedArea;
+    MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {
+        var sum = stack.reduce(function (p, c) { return p + c; }, 0);
+        return stack.map(function (v) { return v / sum * 16; });
+    });
+    return MiniNormalizedArea;
+}(MiniStackedArea));
+
+var __extends$2Y = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$31 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartsContainer = /** @class */ (function (_super) {
-    __extends$2X(MiniChartsContainer, _super);
+    __extends$2Y(MiniChartsContainer, _super);
     function MiniChartsContainer(chartController, fills, strokes) {
         var _this = _super.call(this, MiniChartsContainer.TEMPLATE) || this;
         _this.wrappers = {};
@@ -66863,16 +66814,16 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         }
     };
     MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
-    __decorate$30([
+    __decorate$31([
         Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);
-    __decorate$30([
+    __decorate$31([
         PostConstruct
     ], MiniChartsContainer.prototype, "init", null);
     return MiniChartsContainer;
 }(Component));
 
-var __extends$2Y = (undefined && undefined.__extends) || (function () {
+var __extends$2Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -66885,14 +66836,14 @@ var __extends$2Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$31 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$32 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartSettingsPanel = /** @class */ (function (_super) {
-    __extends$2Y(ChartSettingsPanel, _super);
+    __extends$2Z(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
         var _this = _super.call(this, ChartSettingsPanel.TEMPLATE) || this;
         _this.miniCharts = [];
@@ -67027,34 +66978,34 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev-btn\">\n                    <button type=\"button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-nav-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next-btn\">\n                    <button type=\"button\"></button>\n                </div>\n            </div>\n        </div>";
-    __decorate$31([
+    __decorate$32([
         Autowired('gridOptionsWrapper')
     ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$31([
+    __decorate$32([
         RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
-    __decorate$31([
+    __decorate$32([
         RefSelector('eNavBar')
     ], ChartSettingsPanel.prototype, "eNavBar", void 0);
-    __decorate$31([
+    __decorate$32([
         RefSelector('eCardSelector')
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
-    __decorate$31([
+    __decorate$32([
         RefSelector('ePrevBtn')
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
-    __decorate$31([
+    __decorate$32([
         RefSelector('eNextBtn')
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
-    __decorate$31([
+    __decorate$32([
         PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
-    __decorate$31([
+    __decorate$32([
         PreDestroy
     ], ChartSettingsPanel.prototype, "destroy", null);
     return ChartSettingsPanel;
 }(Component));
 
-var __extends$2Z = (undefined && undefined.__extends) || (function () {
+var __extends$2_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67067,14 +67018,14 @@ var __extends$2Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$32 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$33 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TabbedChartMenu = /** @class */ (function (_super) {
-    __extends$2Z(TabbedChartMenu, _super);
+    __extends$2_(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
         var _this = _super.call(this) || this;
         _this.tabs = [];
@@ -67150,16 +67101,16 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_MAIN = 'settings';
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
-    __decorate$32([
+    __decorate$33([
         Autowired('chartTranslator')
     ], TabbedChartMenu.prototype, "chartTranslator", void 0);
-    __decorate$32([
+    __decorate$33([
         PostConstruct
     ], TabbedChartMenu.prototype, "init", null);
     return TabbedChartMenu;
 }(Component));
 
-var __extends$2_ = (undefined && undefined.__extends) || (function () {
+var __extends$2$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67172,14 +67123,14 @@ var __extends$2_ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$33 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$34 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartMenu = /** @class */ (function (_super) {
-    __extends$2_(ChartMenu, _super);
+    __extends$2$(ChartMenu, _super);
     function ChartMenu(chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.buttons = {
@@ -67321,16 +67272,16 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
-    __decorate$33([
+    __decorate$34([
         Autowired("gridOptionsWrapper")
     ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$33([
+    __decorate$34([
         PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
     return ChartMenu;
 }(Component));
 
-var __extends$2$ = (undefined && undefined.__extends) || (function () {
+var __extends$30 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67355,7 +67306,7 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
     return __assign$6.apply(this, arguments);
 };
 var BarChartProxy = /** @class */ (function (_super) {
-    __extends$2$(BarChartProxy, _super);
+    __extends$30(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -67414,7 +67365,7 @@ var BarChartProxy = /** @class */ (function (_super) {
     return BarChartProxy;
 }(CartesianChartProxy));
 
-var __extends$30 = (undefined && undefined.__extends) || (function () {
+var __extends$31 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67439,7 +67390,7 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
     return __assign$7.apply(this, arguments);
 };
 var AreaChartProxy = /** @class */ (function (_super) {
-    __extends$30(AreaChartProxy, _super);
+    __extends$31(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -67547,7 +67498,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     return AreaChartProxy;
 }(CartesianChartProxy));
 
-var __extends$31 = (undefined && undefined.__extends) || (function () {
+var __extends$32 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67572,7 +67523,7 @@ var __assign$8 = (undefined && undefined.__assign) || function () {
     return __assign$8.apply(this, arguments);
 };
 var LineChartProxy = /** @class */ (function (_super) {
-    __extends$31(LineChartProxy, _super);
+    __extends$32(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -67668,7 +67619,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     return LineChartProxy;
 }(CartesianChartProxy));
 
-var __extends$32 = (undefined && undefined.__extends) || (function () {
+var __extends$33 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67682,14 +67633,14 @@ var __extends$32 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChartProxy = /** @class */ (function (_super) {
-    __extends$32(PolarChartProxy, _super);
+    __extends$33(PolarChartProxy, _super);
     function PolarChartProxy(params) {
         return _super.call(this, params) || this;
     }
     return PolarChartProxy;
 }(ChartProxy));
 
-var __extends$33 = (undefined && undefined.__extends) || (function () {
+var __extends$34 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67714,7 +67665,7 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
     return __assign$9.apply(this, arguments);
 };
 var PieChartProxy = /** @class */ (function (_super) {
-    __extends$33(PieChartProxy, _super);
+    __extends$34(PieChartProxy, _super);
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -67771,7 +67722,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     return PieChartProxy;
 }(PolarChartProxy));
 
-var __extends$34 = (undefined && undefined.__extends) || (function () {
+var __extends$35 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67796,7 +67747,7 @@ var __assign$a = (undefined && undefined.__assign) || function () {
     return __assign$a.apply(this, arguments);
 };
 var DoughnutChartProxy = /** @class */ (function (_super) {
-    __extends$34(DoughnutChartProxy, _super);
+    __extends$35(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -67883,7 +67834,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     return DoughnutChartProxy;
 }(PolarChartProxy));
 
-var __extends$35 = (undefined && undefined.__extends) || (function () {
+var __extends$36 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -67896,14 +67847,14 @@ var __extends$35 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$34 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$35 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var GridChartComp = /** @class */ (function (_super) {
-    __extends$35(GridChartComp, _super);
+    __extends$36(GridChartComp, _super);
     function GridChartComp(params) {
         var _this = _super.call(this, GridChartComp.TEMPLATE) || this;
         _this.getChartPaletteName = function () { return _this.chartController.getPaletteName(); };
@@ -68127,40 +68078,40 @@ var GridChartComp = /** @class */ (function (_super) {
         _.removeFromParent(eGui);
     };
     GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartComponentsWrapper\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                    <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n                </div>\n            </div>\n            <div ref=\"eDockedContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
-    __decorate$34([
+    __decorate$35([
         RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
-    __decorate$34([
+    __decorate$35([
         RefSelector('eChartComponentsWrapper')
     ], GridChartComp.prototype, "eChartComponentsWrapper", void 0);
-    __decorate$34([
+    __decorate$35([
         RefSelector('eDockedContainer')
     ], GridChartComp.prototype, "eDockedContainer", void 0);
-    __decorate$34([
+    __decorate$35([
         RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
-    __decorate$34([
+    __decorate$35([
         Autowired('resizeObserverService')
     ], GridChartComp.prototype, "resizeObserverService", void 0);
-    __decorate$34([
+    __decorate$35([
         Autowired('gridOptionsWrapper')
     ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$34([
+    __decorate$35([
         Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
-    __decorate$34([
+    __decorate$35([
         Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
-    __decorate$34([
+    __decorate$35([
         Autowired('eventService')
     ], GridChartComp.prototype, "eventService", void 0);
-    __decorate$34([
+    __decorate$35([
         PostConstruct
     ], GridChartComp.prototype, "init", null);
     return GridChartComp;
 }(Component));
 
-var __decorate$35 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$36 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -68277,31 +68228,31 @@ var ChartService = /** @class */ (function () {
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
-    __decorate$35([
+    __decorate$36([
         Optional('rangeController')
     ], ChartService.prototype, "rangeController", void 0);
-    __decorate$35([
+    __decorate$36([
         Autowired('columnController')
     ], ChartService.prototype, "columnController", void 0);
-    __decorate$35([
+    __decorate$36([
         Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate$35([
+    __decorate$36([
         Autowired('context')
     ], ChartService.prototype, "context", void 0);
-    __decorate$35([
+    __decorate$36([
         Autowired('gridOptionsWrapper')
     ], ChartService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$35([
+    __decorate$36([
         PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
-    ChartService = __decorate$35([
+    ChartService = __decorate$36([
         Bean('chartService')
     ], ChartService);
     return ChartService;
 }());
 
-var __decorate$36 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$37 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -68396,16 +68347,16 @@ var ChartTranslator = /** @class */ (function () {
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate$36([
+    __decorate$37([
         Autowired('gridOptionsWrapper')
     ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
-    ChartTranslator = ChartTranslator_1 = __decorate$36([
+    ChartTranslator = ChartTranslator_1 = __decorate$37([
         Bean("chartTranslator")
     ], ChartTranslator);
     return ChartTranslator;
 }());
 
-var __decorate$37 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$38 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -68905,46 +68856,46 @@ var RangeController = /** @class */ (function () {
         }
         return columns;
     };
-    __decorate$37([
+    __decorate$38([
         Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('eventService')
     ], RangeController.prototype, "eventService", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('gridOptionsWrapper')
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
-    __decorate$37([
+    __decorate$38([
         Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
-    __decorate$37([
+    __decorate$38([
         PostConstruct
     ], RangeController.prototype, "init", null);
-    RangeController = __decorate$37([
+    RangeController = __decorate$38([
         Bean('rangeController')
     ], RangeController);
     return RangeController;
@@ -69008,7 +68959,7 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 
-var __extends$36 = (undefined && undefined.__extends) || (function () {
+var __extends$37 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69021,14 +68972,14 @@ var __extends$36 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$38 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$39 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AbstractSelectionHandle = /** @class */ (function (_super) {
-    __extends$36(AbstractSelectionHandle, _super);
+    __extends$37(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.changedCell = false;
@@ -69164,34 +69115,34 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             eGui.parentElement.removeChild(eGui);
         }
     };
-    __decorate$38([
+    __decorate$39([
         Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
-    __decorate$38([
+    __decorate$39([
         Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
-    __decorate$38([
+    __decorate$39([
         PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
 }(Component));
 
-var __extends$37 = (undefined && undefined.__extends) || (function () {
+var __extends$38 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69215,7 +69166,7 @@ var __assign$b = (undefined && undefined.__assign) || function () {
     };
     return __assign$b.apply(this, arguments);
 };
-var __decorate$39 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -69229,7 +69180,7 @@ var __spreadArrays$a = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FillHandle = /** @class */ (function (_super) {
-    __extends$37(FillHandle, _super);
+    __extends$38(FillHandle, _super);
     function FillHandle() {
         var _this = _super.call(this, FillHandle.TEMPLATE) || this;
         _this.markedCellComps = [];
@@ -69668,19 +69619,19 @@ var FillHandle = /** @class */ (function (_super) {
         _super.prototype.refresh.call(this, cellComp);
     };
     FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
-    __decorate$39([
+    __decorate$3a([
         Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate$39([
+    __decorate$3a([
         Autowired('eventService')
     ], FillHandle.prototype, "eventService", void 0);
-    __decorate$39([
+    __decorate$3a([
         Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
-var __extends$38 = (undefined && undefined.__extends) || (function () {
+var __extends$39 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69705,7 +69656,7 @@ var __assign$c = (undefined && undefined.__assign) || function () {
     return __assign$c.apply(this, arguments);
 };
 var RangeHandle = /** @class */ (function (_super) {
-    __extends$38(RangeHandle, _super);
+    __extends$39(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
         _this.type = 'range';
@@ -69778,7 +69729,7 @@ var GridChartsModule = {
     ]
 };
 
-var __extends$39 = (undefined && undefined.__extends) || (function () {
+var __extends$3a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69791,14 +69742,14 @@ var __extends$39 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DetailCellRenderer = /** @class */ (function (_super) {
-    __extends$39(DetailCellRenderer, _super);
+    __extends$3a(DetailCellRenderer, _super);
     function DetailCellRenderer() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.needRefresh = false;
@@ -69939,13 +69890,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         }
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
-    __decorate$3a([
+    __decorate$3b([
         RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-    __decorate$3a([
+    __decorate$3b([
         Autowired('gridOptionsWrapper')
     ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3a([
+    __decorate$3b([
         Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
     return DetailCellRenderer;
@@ -69962,7 +69913,7 @@ var MasterDetailModule = {
     ]
 };
 
-var __extends$3a = (undefined && undefined.__extends) || (function () {
+var __extends$3b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -69975,14 +69926,14 @@ var __extends$3a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemComponent = /** @class */ (function (_super) {
-    __extends$3a(MenuItemComponent, _super);
+    __extends$3b(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         var _this = _super.call(this, MenuItemComponent.TEMPLATE) || this;
         _this.params = params;
@@ -70078,31 +70029,31 @@ var MenuItemComponent = /** @class */ (function (_super) {
     // private instance = Math.random();
     MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
-    __decorate$3b([
+    __decorate$3c([
         Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3b([
+    __decorate$3c([
         Autowired('tooltipManager')
     ], MenuItemComponent.prototype, "tooltipManager", void 0);
-    __decorate$3b([
+    __decorate$3c([
         RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);
-    __decorate$3b([
+    __decorate$3c([
         RefSelector('eName')
     ], MenuItemComponent.prototype, "eName", void 0);
-    __decorate$3b([
+    __decorate$3c([
         RefSelector('eShortcut')
     ], MenuItemComponent.prototype, "eShortcut", void 0);
-    __decorate$3b([
+    __decorate$3c([
         RefSelector('ePopupPointer')
     ], MenuItemComponent.prototype, "ePopupPointer", void 0);
-    __decorate$3b([
+    __decorate$3c([
         PostConstruct
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(Component));
 
-var __extends$3b = (undefined && undefined.__extends) || (function () {
+var __extends$3c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70115,14 +70066,14 @@ var __extends$3b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuList = /** @class */ (function (_super) {
-    __extends$3b(MenuList, _super);
+    __extends$3c(MenuList, _super);
     function MenuList() {
         var _this = _super.call(this, MenuList.TEMPLATE) || this;
         _this.timerCount = 0;
@@ -70244,13 +70195,13 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.TEMPLATE = '<div class="ag-menu-list"></div>';
     MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
-    __decorate$3c([
+    __decorate$3d([
         Autowired('popupService')
     ], MenuList.prototype, "popupService", void 0);
     return MenuList;
 }(Component));
 
-var __extends$3c = (undefined && undefined.__extends) || (function () {
+var __extends$3d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70263,7 +70214,7 @@ var __extends$3c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -70350,22 +70301,22 @@ var EnterpriseMenuFactory = /** @class */ (function () {
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
-    __decorate$3d([
+    __decorate$3e([
         Autowired('context')
     ], EnterpriseMenuFactory.prototype, "context", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('gridOptionsWrapper')
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    EnterpriseMenuFactory = __decorate$3d([
+    EnterpriseMenuFactory = __decorate$3e([
         Bean('menuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
 var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$3c(EnterpriseMenu, _super);
+    __extends$3d(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
         var _this = _super.call(this) || this;
         _this.tabFactories = {};
@@ -70664,34 +70615,34 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
     EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-    __decorate$3d([
+    __decorate$3e([
         Autowired('columnController')
     ], EnterpriseMenu.prototype, "columnController", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('filterManager')
     ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('eventService')
     ], EnterpriseMenu.prototype, "eventService", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-    __decorate$3d([
+    __decorate$3e([
         Autowired('rowModel')
     ], EnterpriseMenu.prototype, "rowModel", void 0);
-    __decorate$3d([
+    __decorate$3e([
         PostConstruct
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
 }(BeanStub));
 
-var __extends$3d = (undefined && undefined.__extends) || (function () {
+var __extends$3e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -70704,7 +70655,7 @@ var __extends$3d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -70795,34 +70746,34 @@ var ContextMenuFactory = /** @class */ (function () {
             }
         });
     };
-    __decorate$3e([
+    __decorate$3f([
         Autowired('context')
     ], ContextMenuFactory.prototype, "context", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Autowired('gridOptionsWrapper')
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Autowired('rowModel')
     ], ContextMenuFactory.prototype, "rowModel", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Autowired('columnController')
     ], ContextMenuFactory.prototype, "columnController", void 0);
-    __decorate$3e([
+    __decorate$3f([
         PostConstruct
     ], ContextMenuFactory.prototype, "init", null);
-    ContextMenuFactory = __decorate$3e([
+    ContextMenuFactory = __decorate$3f([
         Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$3d(ContextMenu, _super);
+    __extends$3e(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
         _this.menuItems = menuItems;
@@ -70843,19 +70794,19 @@ var ContextMenu = /** @class */ (function (_super) {
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
-    __decorate$3e([
+    __decorate$3f([
         Autowired('eventService')
     ], ContextMenu.prototype, "eventService", void 0);
-    __decorate$3e([
+    __decorate$3f([
         Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
-    __decorate$3e([
+    __decorate$3f([
         PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
 }(Component));
 
-var __decorate$3f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -71238,28 +71189,28 @@ var MenuItemMapper = /** @class */ (function () {
         });
         return result;
     };
-    __decorate$3f([
+    __decorate$3g([
         Autowired('gridOptionsWrapper')
     ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Autowired('gridApi')
     ], MenuItemMapper.prototype, "gridApi", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Optional('clipboardService')
     ], MenuItemMapper.prototype, "clipboardService", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Optional('aggFuncService')
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Optional('chartService')
     ], MenuItemMapper.prototype, "chartService", void 0);
-    __decorate$3f([
+    __decorate$3g([
         Optional('context')
     ], MenuItemMapper.prototype, "context", void 0);
-    MenuItemMapper = __decorate$3f([
+    MenuItemMapper = __decorate$3g([
         Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
@@ -71273,7 +71224,7 @@ var MenuModule = {
     ]
 };
 
-var __extends$3e = (undefined && undefined.__extends) || (function () {
+var __extends$3f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71286,14 +71237,14 @@ var __extends$3e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectRow = /** @class */ (function (_super) {
-    __extends$3e(RichSelectRow, _super);
+    __extends$3f(RichSelectRow, _super);
     function RichSelectRow(params) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
         _this.params = params;
@@ -71344,16 +71295,16 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$3g([
+    __decorate$3h([
         Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate$3g([
+    __decorate$3h([
         Autowired('gridOptionsWrapper')
     ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(Component));
 
-var __extends$3f = (undefined && undefined.__extends) || (function () {
+var __extends$3g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71366,14 +71317,14 @@ var __extends$3f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectCellEditor = /** @class */ (function (_super) {
-    __extends$3f(RichSelectCellEditor, _super);
+    __extends$3g(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
         _this.selectionConfirmed = false;
@@ -71563,16 +71514,16 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     // tab index is needed so we can focus, which is needed for keyboard events
     RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
-    __decorate$3h([
+    __decorate$3i([
         Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
-    __decorate$3h([
+    __decorate$3i([
         Autowired('gridOptionsWrapper')
     ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3h([
+    __decorate$3i([
         RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
-    __decorate$3h([
+    __decorate$3i([
         RefSelector('eList')
     ], RichSelectCellEditor.prototype, "eList", void 0);
     return RichSelectCellEditor;
@@ -71590,7 +71541,7 @@ var RichSelectModule = {
     ]
 };
 
-var __extends$3g = (undefined && undefined.__extends) || (function () {
+var __extends$3h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -71603,7 +71554,7 @@ var __extends$3g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -71613,7 +71564,7 @@ var __param$c = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideBlock = /** @class */ (function (_super) {
-    __extends$3g(ServerSideBlock, _super);
+    __extends$3h(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
         _this.params = params;
@@ -71998,28 +71949,28 @@ var ServerSideBlock = /** @class */ (function (_super) {
         return this.groupField;
     };
     ServerSideBlock.DefaultBlockSize = 100;
-    __decorate$3i([
+    __decorate$3j([
         Autowired('rowRenderer')
     ], ServerSideBlock.prototype, "rowRenderer", void 0);
-    __decorate$3i([
+    __decorate$3j([
         Autowired('columnController')
     ], ServerSideBlock.prototype, "columnController", void 0);
-    __decorate$3i([
+    __decorate$3j([
         Autowired('valueService')
     ], ServerSideBlock.prototype, "valueService", void 0);
-    __decorate$3i([
+    __decorate$3j([
         Autowired('gridOptionsWrapper')
     ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3i([
+    __decorate$3j([
         PostConstruct
     ], ServerSideBlock.prototype, "init", null);
-    __decorate$3i([
+    __decorate$3j([
         __param$c(0, Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);
     return ServerSideBlock;
 }(RowNodeBlock));
 
-var __extends$3h = (undefined && undefined.__extends) || (function () {
+var __extends$3i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72032,7 +71983,7 @@ var __extends$3h = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -72042,7 +71993,7 @@ var __param$d = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideCache = /** @class */ (function (_super) {
-    __extends$3h(ServerSideCache, _super);
+    __extends$3i(ServerSideCache, _super);
     function ServerSideCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
@@ -72387,22 +72338,22 @@ var ServerSideCache = /** @class */ (function (_super) {
             });
         }
     };
-    __decorate$3j([
+    __decorate$3k([
         Autowired('eventService')
     ], ServerSideCache.prototype, "eventService", void 0);
-    __decorate$3j([
+    __decorate$3k([
         Autowired('gridOptionsWrapper')
     ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3j([
+    __decorate$3k([
         __param$d(0, Qualifier('loggerFactory'))
     ], ServerSideCache.prototype, "setBeans", null);
-    __decorate$3j([
+    __decorate$3k([
         PostConstruct
     ], ServerSideCache.prototype, "init", null);
     return ServerSideCache;
 }(RowNodeCache));
 
-var __extends$3i = (undefined && undefined.__extends) || (function () {
+var __extends$3j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -72415,7 +72366,7 @@ var __extends$3i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -72425,7 +72376,7 @@ var __param$e = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$3i(ServerSideRowModel, _super);
+    __extends$3j(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -72961,40 +72912,40 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.isLoading = function () {
         return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     };
-    __decorate$3k([
+    __decorate$3l([
         Autowired('gridOptionsWrapper')
     ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('eventService')
     ], ServerSideRowModel.prototype, "eventService", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('columnController')
     ], ServerSideRowModel.prototype, "columnController", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('filterManager')
     ], ServerSideRowModel.prototype, "filterManager", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('sortController')
     ], ServerSideRowModel.prototype, "sortController", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('gridApi')
     ], ServerSideRowModel.prototype, "gridApi", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('columnApi')
     ], ServerSideRowModel.prototype, "columnApi", void 0);
-    __decorate$3k([
+    __decorate$3l([
         Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
-    __decorate$3k([
+    __decorate$3l([
         PostConstruct
     ], ServerSideRowModel.prototype, "postConstruct", null);
-    __decorate$3k([
+    __decorate$3l([
         PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
-    __decorate$3k([
+    __decorate$3l([
         __param$e(0, Qualifier('loggerFactory'))
     ], ServerSideRowModel.prototype, "setBeans", null);
-    ServerSideRowModel = __decorate$3k([
+    ServerSideRowModel = __decorate$3l([
         Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
@@ -73406,7 +73357,7 @@ var SetValueModel = /** @class */ (function () {
     return SetValueModel;
 }());
 
-var __extends$3j = (undefined && undefined.__extends) || (function () {
+var __extends$3k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73419,14 +73370,14 @@ var __extends$3j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilterListItem = /** @class */ (function (_super) {
-    __extends$3j(SetFilterListItem, _super);
+    __extends$3k(SetFilterListItem, _super);
     function SetFilterListItem(value, column) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.selected = true;
@@ -73519,22 +73470,22 @@ var SetFilterListItem = /** @class */ (function (_super) {
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
     SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <div class=\"ag-filter-checkbox\"></div>\n            <span class=\"ag-filter-value\"></span>\n        </label>";
-    __decorate$3l([
+    __decorate$3m([
         Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3l([
+    __decorate$3m([
         Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
-    __decorate$3l([
+    __decorate$3m([
         Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
-    __decorate$3l([
+    __decorate$3m([
         PostConstruct
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
 }(Component));
 
-var __extends$3k = (undefined && undefined.__extends) || (function () {
+var __extends$3l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73547,7 +73498,7 @@ var __extends$3k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -73560,7 +73511,7 @@ var CheckboxState;
     CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
 })(CheckboxState || (CheckboxState = {}));
 var SetFilter = /** @class */ (function (_super) {
-    __extends$3k(SetFilter, _super);
+    __extends$3l(SetFilter, _super);
     function SetFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -73937,22 +73888,22 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getUniqueValue = function (index) {
         return this.valueModel.getUniqueValue(index);
     };
-    __decorate$3m([
+    __decorate$3n([
         RefSelector('eSelectAll')
     ], SetFilter.prototype, "eSelectAll", void 0);
-    __decorate$3m([
+    __decorate$3n([
         RefSelector('eSelectAllContainer')
     ], SetFilter.prototype, "eSelectAllContainer", void 0);
-    __decorate$3m([
+    __decorate$3n([
         RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
-    __decorate$3m([
+    __decorate$3n([
         RefSelector('ag-filter-loading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
-    __decorate$3m([
+    __decorate$3n([
         Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
-    __decorate$3m([
+    __decorate$3n([
         Autowired('eventService')
     ], SetFilter.prototype, "eventService", void 0);
     return SetFilter;
@@ -73970,7 +73921,7 @@ var ModelWrapper = /** @class */ (function () {
     return ModelWrapper;
 }());
 
-var __extends$3l = (undefined && undefined.__extends) || (function () {
+var __extends$3m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -73983,14 +73934,14 @@ var __extends$3l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$3l(SetFloatingFilterComp, _super);
+    __extends$3m(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
         return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
     }
@@ -74019,10 +73970,10 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var valuesString = "(" + values.length + ") " + arrayToDisplay.join(",");
         this.eFloatingFilterText.value = valuesString;
     };
-    __decorate$3n([
+    __decorate$3o([
         RefSelector('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
-    __decorate$3n([
+    __decorate$3o([
         Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
     return SetFloatingFilterComp;
@@ -74040,7 +73991,7 @@ var SetFilterModule = {
     ]
 };
 
-var __decorate$3o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -74057,13 +74008,13 @@ var StatusBarService = /** @class */ (function () {
     StatusBarService.prototype.getStatusPanel = function (key) {
         return this.allComponents[key];
     };
-    StatusBarService = __decorate$3o([
+    StatusBarService = __decorate$3p([
         Bean('statusBarService')
     ], StatusBarService);
     return StatusBarService;
 }());
 
-var __extends$3m = (undefined && undefined.__extends) || (function () {
+var __extends$3n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -74076,14 +74027,14 @@ var __extends$3m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBar = /** @class */ (function (_super) {
-    __extends$3m(StatusBar, _super);
+    __extends$3n(StatusBar, _super);
     function StatusBar() {
         return _super.call(this, StatusBar.TEMPLATE) || this;
     }
@@ -74138,77 +74089,31 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
-    __decorate$3p([
+    __decorate$3q([
         Autowired('gridOptionsWrapper')
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3p([
+    __decorate$3q([
         Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);
-    __decorate$3p([
+    __decorate$3q([
         Autowired('userComponentFactory')
     ], StatusBar.prototype, "userComponentFactory", void 0);
-    __decorate$3p([
+    __decorate$3q([
         Autowired('statusBarService')
     ], StatusBar.prototype, "statusBarService", void 0);
-    __decorate$3p([
+    __decorate$3q([
         RefSelector('eStatusBarLeft')
     ], StatusBar.prototype, "eStatusBarLeft", void 0);
-    __decorate$3p([
+    __decorate$3q([
         RefSelector('eStatusBarCenter')
     ], StatusBar.prototype, "eStatusBarCenter", void 0);
-    __decorate$3p([
+    __decorate$3q([
         RefSelector('eStatusBarRight')
     ], StatusBar.prototype, "eStatusBarRight", void 0);
-    __decorate$3p([
+    __decorate$3q([
         PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
     return StatusBar;
-}(Component));
-
-var __extends$3n = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$3q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var NameValueComp = /** @class */ (function (_super) {
-    __extends$3n(NameValueComp, _super);
-    function NameValueComp() {
-        return _super.call(this, NameValueComp.TEMPLATE) || this;
-    }
-    NameValueComp.prototype.setLabel = function (key, defaultValue) {
-        // we want to hide until the first value comes in
-        this.setDisplayed(false);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
-    };
-    NameValueComp.prototype.setValue = function (value) {
-        this.eValue.innerHTML = value;
-    };
-    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
-    __decorate$3q([
-        Autowired('gridOptionsWrapper')
-    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3q([
-        RefSelector('eLabel')
-    ], NameValueComp.prototype, "eLabel", void 0);
-    __decorate$3q([
-        RefSelector('eValue')
-    ], NameValueComp.prototype, "eValue", void 0);
-    return NameValueComp;
 }(Component));
 
 var __extends$3o = (undefined && undefined.__extends) || (function () {
@@ -74230,8 +74135,54 @@ var __decorate$3r = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var NameValueComp = /** @class */ (function (_super) {
+    __extends$3o(NameValueComp, _super);
+    function NameValueComp() {
+        return _super.call(this, NameValueComp.TEMPLATE) || this;
+    }
+    NameValueComp.prototype.setLabel = function (key, defaultValue) {
+        // we want to hide until the first value comes in
+        this.setDisplayed(false);
+        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
+    };
+    NameValueComp.prototype.setValue = function (value) {
+        this.eValue.innerHTML = value;
+    };
+    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
+    __decorate$3r([
+        Autowired('gridOptionsWrapper')
+    ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate$3r([
+        RefSelector('eLabel')
+    ], NameValueComp.prototype, "eLabel", void 0);
+    __decorate$3r([
+        RefSelector('eValue')
+    ], NameValueComp.prototype, "eValue", void 0);
+    return NameValueComp;
+}(Component));
+
+var __extends$3p = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$3s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
-    __extends$3o(TotalAndFilteredRowsComp, _super);
+    __extends$3p(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -74277,19 +74228,19 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
-    __decorate$3r([
+    __decorate$3s([
         Autowired('gridApi')
     ], TotalAndFilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$3r([
+    __decorate$3s([
         Autowired('eventService')
     ], TotalAndFilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$3r([
+    __decorate$3s([
         PostConstruct
     ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
     return TotalAndFilteredRowsComp;
 }(NameValueComp));
 
-var __extends$3p = (undefined && undefined.__extends) || (function () {
+var __extends$3q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -74302,14 +74253,14 @@ var __extends$3p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilteredRowsComp = /** @class */ (function (_super) {
-    __extends$3p(FilteredRowsComp, _super);
+    __extends$3q(FilteredRowsComp, _super);
     function FilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -74347,19 +74298,19 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };
-    __decorate$3s([
+    __decorate$3t([
         Autowired('eventService')
     ], FilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$3s([
+    __decorate$3t([
         Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$3s([
+    __decorate$3t([
         PostConstruct
     ], FilteredRowsComp.prototype, "postConstruct", null);
     return FilteredRowsComp;
 }(NameValueComp));
 
-var __extends$3q = (undefined && undefined.__extends) || (function () {
+var __extends$3r = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -74372,14 +74323,14 @@ var __extends$3q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalRowsComp = /** @class */ (function (_super) {
-    __extends$3q(TotalRowsComp, _super);
+    __extends$3r(TotalRowsComp, _super);
     function TotalRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -74406,19 +74357,19 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.init = function () {
     };
-    __decorate$3t([
+    __decorate$3u([
         Autowired('eventService')
     ], TotalRowsComp.prototype, "eventService", void 0);
-    __decorate$3t([
+    __decorate$3u([
         Autowired('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
-    __decorate$3t([
+    __decorate$3u([
         PostConstruct
     ], TotalRowsComp.prototype, "postConstruct", null);
     return TotalRowsComp;
 }(NameValueComp));
 
-var __extends$3r = (undefined && undefined.__extends) || (function () {
+var __extends$3s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -74431,14 +74382,14 @@ var __extends$3r = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectedRowsComp = /** @class */ (function (_super) {
-    __extends$3r(SelectedRowsComp, _super);
+    __extends$3s(SelectedRowsComp, _super);
     function SelectedRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -74469,19 +74420,19 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.init = function () {
     };
-    __decorate$3u([
+    __decorate$3v([
         Autowired('eventService')
     ], SelectedRowsComp.prototype, "eventService", void 0);
-    __decorate$3u([
+    __decorate$3v([
         Autowired('gridApi')
     ], SelectedRowsComp.prototype, "gridApi", void 0);
-    __decorate$3u([
+    __decorate$3v([
         PostConstruct
     ], SelectedRowsComp.prototype, "postConstruct", null);
     return SelectedRowsComp;
 }(NameValueComp));
 
-var __extends$3s = (undefined && undefined.__extends) || (function () {
+var __extends$3t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -74494,14 +74445,14 @@ var __extends$3s = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$3v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AggregationComp = /** @class */ (function (_super) {
-    __extends$3s(AggregationComp, _super);
+    __extends$3t(AggregationComp, _super);
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }
@@ -74631,52 +74582,52 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
-    __decorate$3v([
+    __decorate$3w([
         Autowired('eventService')
     ], AggregationComp.prototype, "eventService", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('gridOptionsWrapper')
     ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
-    __decorate$3v([
+    __decorate$3w([
         Autowired('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
-    __decorate$3v([
+    __decorate$3w([
         RefSelector('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
-    __decorate$3v([
+    __decorate$3w([
         RefSelector('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
-    __decorate$3v([
+    __decorate$3w([
         RefSelector('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
-    __decorate$3v([
+    __decorate$3w([
         RefSelector('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
-    __decorate$3v([
+    __decorate$3w([
         RefSelector('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
-    __decorate$3v([
+    __decorate$3w([
         PostConstruct
     ], AggregationComp.prototype, "postConstruct", null);
     return AggregationComp;
@@ -74701,7 +74652,7 @@ var StatusBarModule = {
     ]
 };
 
-var __decorate$3w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -74923,34 +74874,34 @@ var ViewportRowModel = /** @class */ (function () {
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
-    __decorate$3w([
+    __decorate$3x([
         Autowired('gridOptionsWrapper')
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('eventService')
     ], ViewportRowModel.prototype, "eventService", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('selectionController')
     ], ViewportRowModel.prototype, "selectionController", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('context')
     ], ViewportRowModel.prototype, "context", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('columnApi')
     ], ViewportRowModel.prototype, "columnApi", void 0);
-    __decorate$3w([
+    __decorate$3x([
         Autowired('rowRenderer')
     ], ViewportRowModel.prototype, "rowRenderer", void 0);
-    __decorate$3w([
+    __decorate$3x([
         PostConstruct
     ], ViewportRowModel.prototype, "init", null);
-    __decorate$3w([
+    __decorate$3x([
         PreDestroy
     ], ViewportRowModel.prototype, "destroyDatasource", null);
-    ViewportRowModel = __decorate$3w([
+    ViewportRowModel = __decorate$3x([
         Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;

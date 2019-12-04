@@ -46,6 +46,7 @@
     "docs": "cd packages/ag-grid-docs && npx gulp serve",
     "docs-source-mod-only": "cd packages/ag-grid-docs && npx gulp serve-source-mod-only",
     "docs-beta": "cd packages/ag-grid-docs && npx gulp serve-beta",
+    "docs-running-check": "cd packages/ag-grid-docs && npx gulp serve-check",
     "updateAndRebuild": "npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild"
   },

@@ -120,6 +120,10 @@ var ChartDataModel = /** @class */ (function (_super) {
         };
     };
     ChartDataModel.prototype.getAllColumnsFromRanges = function () {
+        if (this.pivotChart) {
+            return core_1._.convertToSet(this.columnController.getAllDisplayedColumns());
+        }
+        ;
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
             columns.push.apply(columns, this.dimensionCellRange.columns);
@@ -219,16 +223,17 @@ var ChartDataModel = /** @class */ (function (_super) {
     };
     ChartDataModel.prototype.updateData = function () {
         var _a = this.getRowIndexes(), startRow = _a.startRow, endRow = _a.endRow;
-        var selectedDimension = this.getSelectedDimension();
-        var selectedValueCols = this.getSelectedValueCols();
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
         this.grouping = this.isGrouping();
         var params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
+            valueCols: this.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow
         };
@@ -239,7 +244,7 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.resetColumnState = function () {
         var _this = this;
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        var allCols = this.pivotChart ? core_1._.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+        var allCols = this.getAllColumnsFromRanges();
         var isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];

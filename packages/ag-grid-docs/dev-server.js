@@ -425,7 +425,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(communityModules, enterp
     })
 }
 
-module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
+module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningCheck = false, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(inUse => {
             if (inUse) {
@@ -436,16 +436,19 @@ module.exports = (buildSourceModuleOnly = false, beta = false, done) => {
                 return;
             }
 
-            if (!docsLock.add('One `gulp serve` task is already running.')) {
-                 return;
+            if(alreadyRunningCheck) {
+                if (!docsLock.add('One `gulp serve` task is already running.')) {
+                    return;
+                }
+
+                process.on('exit', () => {
+                    docsLock.remove();
+                });
+                process.on('SIGINT', () => {
+                    docsLock.remove();
+                });
             }
 
-            process.on('exit', () => {
-                docsLock.remove();
-            });
-            process.on('SIGINT', () => {
-                docsLock.remove();
-            });
             process.on('SIGINT', () => {
                 console.log("Docs process killed. Safe to restart.");
                 process.exit(0);

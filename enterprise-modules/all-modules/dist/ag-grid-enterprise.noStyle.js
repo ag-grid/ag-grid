@@ -45796,6 +45796,10 @@ var ChartDataModel = /** @class */ (function (_super) {
         };
     };
     ChartDataModel.prototype.getAllColumnsFromRanges = function () {
+        if (this.pivotChart) {
+            return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["_"].convertToSet(this.columnController.getAllDisplayedColumns());
+        }
+        ;
         var columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
         if (this.dimensionCellRange) {
             columns.push.apply(columns, this.dimensionCellRange.columns);
@@ -45895,16 +45899,17 @@ var ChartDataModel = /** @class */ (function (_super) {
     };
     ChartDataModel.prototype.updateData = function () {
         var _a = this.getRowIndexes(), startRow = _a.startRow, endRow = _a.endRow;
-        var selectedDimension = this.getSelectedDimension();
-        var selectedValueCols = this.getSelectedValueCols();
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
         this.grouping = this.isGrouping();
         var params = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
+            valueCols: this.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow
         };
@@ -45915,7 +45920,7 @@ var ChartDataModel = /** @class */ (function (_super) {
     ChartDataModel.prototype.resetColumnState = function () {
         var _this = this;
         var _a = this.getAllChartColumns(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-        var allCols = this.pivotChart ? _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["_"].convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
+        var allCols = this.getAllColumnsFromRanges();
         var isInitialising = this.valueColState.length < 1;
         this.dimensionColState = [];
         this.valueColState = [];
@@ -49824,6 +49829,9 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
+        _this.onShadowChange = function () {
+            _this.dirty = true;
+        };
         _this._fillShadow = Shape.defaultStyles.fillShadow;
         _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
@@ -50032,14 +50040,13 @@ var Shape = /** @class */ (function (_super) {
             return this._fillShadow;
         },
         set: function (value) {
-            var _this = this;
-            var fillShadow = this._fillShadow;
-            if (fillShadow !== value) {
-                if (fillShadow) {
-                    fillShadow.onChange = undefined;
+            var oldValue = this._fillShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._fillShadow = value;
                 this.dirty = true;
@@ -50053,14 +50060,13 @@ var Shape = /** @class */ (function (_super) {
             return this._strokeShadow;
         },
         set: function (value) {
-            var _this = this;
-            var strokeShadow = this._strokeShadow;
-            if (strokeShadow !== value) {
-                if (strokeShadow) {
-                    strokeShadow.onChange = undefined;
+            var oldValue = this._strokeShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._strokeShadow = value;
                 this.dirty = true;
@@ -52958,7 +52964,7 @@ var CartesianChart = /** @class */ (function (_super) {
             axis.group.visible = true;
             switch (axis.position) {
                 case _chartAxis__WEBPACK_IMPORTED_MODULE_7__["ChartAxisPosition"].Top:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + 1);
                     axis.label.mirrored = true;
@@ -52966,10 +52972,10 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case _chartAxis__WEBPACK_IMPORTED_MODULE_7__["ChartAxisPosition"].Right:
                     if (axis instanceof _axis_categoryAxis__WEBPACK_IMPORTED_MODULE_4__["CategoryAxis"] || axis instanceof _axis_groupedCategoryAxis__WEBPACK_IMPORTED_MODULE_5__["GroupedCategoryAxis"]) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -52977,17 +52983,17 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
                 case _chartAxis__WEBPACK_IMPORTED_MODULE_7__["ChartAxisPosition"].Bottom:
-                    axis.scale.range = [0, shrinkRect.width];
+                    axis.range = [0, shrinkRect.width];
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     axis.gridLength = shrinkRect.height;
                     break;
                 case _chartAxis__WEBPACK_IMPORTED_MODULE_7__["ChartAxisPosition"].Left:
                     if (axis instanceof _axis_categoryAxis__WEBPACK_IMPORTED_MODULE_4__["CategoryAxis"] || axis instanceof _axis_groupedCategoryAxis__WEBPACK_IMPORTED_MODULE_5__["GroupedCategoryAxis"]) {
-                        axis.scale.range = [0, shrinkRect.height];
+                        axis.range = [0, shrinkRect.height];
                     }
                     else {
-                        axis.scale.range = [shrinkRect.height, 0];
+                        axis.range = [shrinkRect.height, 0];
                     }
                     axis.translation.x = Math.floor(shrinkRect.x);
                     axis.translation.y = Math.floor(shrinkRect.y);
@@ -60590,86 +60596,55 @@ var Color = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DropShadow", function() { return DropShadow; });
-var DropShadow = /** @class */ (function () {
-    function DropShadow() {
-        this._enabled = true;
-        this._color = 'rgba(0, 0, 0, 0.5)';
-        this._xOffset = 0;
-        this._yOffset = 0;
-        this._blur = 5;
-    }
-    Object.defineProperty(DropShadow.prototype, "enabled", {
-        get: function () {
-            return this._enabled;
-        },
-        set: function (value) {
-            if (this._enabled !== value) {
-                this._enabled = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "color", {
-        get: function () {
-            return this._color;
-        },
-        set: function (value) {
-            if (this._color !== value) {
-                this._color = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "xOffset", {
-        get: function () {
-            return this._xOffset;
-        },
-        set: function (value) {
-            if (this._xOffset !== value) {
-                this._xOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "yOffset", {
-        get: function () {
-            return this._yOffset;
-        },
-        set: function (value) {
-            if (this._yOffset !== value) {
-                this._yOffset = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DropShadow.prototype, "blur", {
-        get: function () {
-            return this._blur;
-        },
-        set: function (value) {
-            if (this._blur !== value) {
-                this._blur = value;
-                this.update();
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    DropShadow.prototype.update = function () {
-        if (this.onChange) {
-            this.onChange();
-        }
+/* harmony import */ var _util_observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(254);
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+var DropShadow = /** @class */ (function (_super) {
+    __extends(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate([
+        Object(_util_observable__WEBPACK_IMPORTED_MODULE_0__["reactive"])(['change'])
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate([
+        Object(_util_observable__WEBPACK_IMPORTED_MODULE_0__["reactive"])(['change'])
+    ], DropShadow.prototype, "color", void 0);
+    __decorate([
+        Object(_util_observable__WEBPACK_IMPORTED_MODULE_0__["reactive"])(['change'])
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate([
+        Object(_util_observable__WEBPACK_IMPORTED_MODULE_0__["reactive"])(['change'])
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate([
+        Object(_util_observable__WEBPACK_IMPORTED_MODULE_0__["reactive"])(['change'])
+    ], DropShadow.prototype, "blur", void 0);
     return DropShadow;
-}());
+}(_util_observable__WEBPACK_IMPORTED_MODULE_0__["Observable"]));
 
 
 
@@ -60850,7 +60825,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
         var axes = this.axes;
         axes.forEach(function (axis) {
             var _a;
-            var direction = axis.direction, boundSeries = axis.boundSeries;
+            var direction = axis.direction, position = axis.position, boundSeries = axis.boundSeries;
             var domains = [];
             var isNumericX = undefined;
             boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
@@ -60872,44 +60847,23 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             });
             var domain = (_a = new Array()).concat.apply(_a, domains);
             axis.domain = Object(_util_array__WEBPACK_IMPORTED_MODULE_1__["numericExtent"])(domain) || domain;
-            _this.computeAxisAutopadding(axis);
             axis.update();
+            var axisThickness = Math.floor(axis.computeBBox().width);
+            switch (position) {
+                case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Left:
+                    _this.axisAutoPadding.left = axisThickness;
+                    break;
+                case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Right:
+                    _this.axisAutoPadding.right = axisThickness;
+                    break;
+                case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Bottom:
+                    _this.axisAutoPadding.bottom = axisThickness;
+                    break;
+                case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Top:
+                    _this.axisAutoPadding.top = axisThickness;
+                    break;
+            }
         });
-    };
-    GroupedCategoryChart.prototype.computeAxisAutopadding = function (axis) {
-        var position = axis.position;
-        var axisBBox = axis.computeBBox();
-        // The bbox may not be valid if the axis has had zero updates so far.
-        if (!axisBBox.isValid()) {
-            return;
-        }
-        var axisThickness = Math.floor(axisBBox.width);
-        switch (position) {
-            case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Left:
-                if (this.axisAutoPadding.left !== axisThickness) {
-                    this.axisAutoPadding.left = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Right:
-                if (this.axisAutoPadding.right !== axisThickness) {
-                    this.axisAutoPadding.right = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Bottom:
-                if (this.axisAutoPadding.bottom !== axisThickness) {
-                    this.axisAutoPadding.bottom = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case _chartAxis__WEBPACK_IMPORTED_MODULE_2__["ChartAxisPosition"].Top:
-                if (this.axisAutoPadding.top !== axisThickness) {
-                    this.axisAutoPadding.top = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-        }
     };
     return GroupedCategoryChart;
 }(_cartesianChart__WEBPACK_IMPORTED_MODULE_0__["CartesianChart"]));

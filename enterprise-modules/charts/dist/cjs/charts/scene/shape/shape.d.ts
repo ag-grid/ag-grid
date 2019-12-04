@@ -79,6 +79,7 @@ export declare abstract class Shape extends Node {
     lineJoin: ShapeLineJoin;
     private _opacity;
     opacity: number;
+    private readonly onShadowChange;
     private _fillShadow;
     fillShadow: DropShadow | undefined;
     private _strokeShadow;

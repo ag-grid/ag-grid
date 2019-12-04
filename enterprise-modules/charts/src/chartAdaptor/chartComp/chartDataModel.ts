@@ -177,6 +177,10 @@ export class ChartDataModel extends BeanStub {
     }
 
     private getAllColumnsFromRanges(): Set<Column> {
+        if (this.pivotChart) {
+            return _.convertToSet(this.columnController.getAllDisplayedColumns());
+        };
+
         let columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
 
         if (this.dimensionCellRange) {
@@ -305,18 +309,20 @@ export class ChartDataModel extends BeanStub {
 
     public updateData(): void {
         const { startRow, endRow } = this.getRowIndexes();
-        const selectedDimension = this.getSelectedDimension();
-        const selectedValueCols = this.getSelectedValueCols();
+
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
 
         this.grouping = this.isGrouping();
 
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
-            dimensionCols: [selectedDimension],
+            dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             multiCategories: this.isMultiCategoryChart(),
-            valueCols: selectedValueCols,
+            valueCols: this.getSelectedValueCols(),
             startRow,
             endRow
         };
@@ -329,8 +335,7 @@ export class ChartDataModel extends BeanStub {
 
     private resetColumnState(): void {
         const { dimensionCols, valueCols } = this.getAllChartColumns();
-        const allCols = this.pivotChart ? _.convertToSet(this.columnController.getAllDisplayedColumns()) : this.getAllColumnsFromRanges();
-
+        const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
 
         this.dimensionColState = [];

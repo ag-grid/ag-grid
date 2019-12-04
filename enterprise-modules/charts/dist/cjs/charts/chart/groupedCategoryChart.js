@@ -26,7 +26,7 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
         var axes = this.axes;
         axes.forEach(function (axis) {
             var _a;
-            var direction = axis.direction, boundSeries = axis.boundSeries;
+            var direction = axis.direction, position = axis.position, boundSeries = axis.boundSeries;
             var domains = [];
             var isNumericX = undefined;
             boundSeries.filter(function (s) { return s.visible; }).forEach(function (series) {
@@ -48,44 +48,23 @@ var GroupedCategoryChart = /** @class */ (function (_super) {
             });
             var domain = (_a = new Array()).concat.apply(_a, domains);
             axis.domain = array_1.numericExtent(domain) || domain;
-            _this.computeAxisAutopadding(axis);
             axis.update();
+            var axisThickness = Math.floor(axis.computeBBox().width);
+            switch (position) {
+                case chartAxis_1.ChartAxisPosition.Left:
+                    _this.axisAutoPadding.left = axisThickness;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Right:
+                    _this.axisAutoPadding.right = axisThickness;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Bottom:
+                    _this.axisAutoPadding.bottom = axisThickness;
+                    break;
+                case chartAxis_1.ChartAxisPosition.Top:
+                    _this.axisAutoPadding.top = axisThickness;
+                    break;
+            }
         });
-    };
-    GroupedCategoryChart.prototype.computeAxisAutopadding = function (axis) {
-        var position = axis.position;
-        var axisBBox = axis.computeBBox();
-        // The bbox may not be valid if the axis has had zero updates so far.
-        if (!axisBBox.isValid()) {
-            return;
-        }
-        var axisThickness = Math.floor(axisBBox.width);
-        switch (position) {
-            case chartAxis_1.ChartAxisPosition.Left:
-                if (this.axisAutoPadding.left !== axisThickness) {
-                    this.axisAutoPadding.left = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case chartAxis_1.ChartAxisPosition.Right:
-                if (this.axisAutoPadding.right !== axisThickness) {
-                    this.axisAutoPadding.right = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case chartAxis_1.ChartAxisPosition.Bottom:
-                if (this.axisAutoPadding.bottom !== axisThickness) {
-                    this.axisAutoPadding.bottom = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-            case chartAxis_1.ChartAxisPosition.Top:
-                if (this.axisAutoPadding.top !== axisThickness) {
-                    this.axisAutoPadding.top = axisThickness;
-                    this.layoutPending = true;
-                }
-                break;
-        }
     };
     return GroupedCategoryChart;
 }(cartesianChart_1.CartesianChart));

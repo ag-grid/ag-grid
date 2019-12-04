@@ -38,6 +38,9 @@ var Shape = /** @class */ (function (_super) {
         _this._lineCap = Shape.defaultStyles.lineCap;
         _this._lineJoin = Shape.defaultStyles.lineJoin;
         _this._opacity = Shape.defaultStyles.opacity;
+        _this.onShadowChange = function () {
+            _this.dirty = true;
+        };
         _this._fillShadow = Shape.defaultStyles.fillShadow;
         _this._strokeShadow = Shape.defaultStyles.strokeShadow;
         return _this;
@@ -246,14 +249,13 @@ var Shape = /** @class */ (function (_super) {
             return this._fillShadow;
         },
         set: function (value) {
-            var _this = this;
-            var fillShadow = this._fillShadow;
-            if (fillShadow !== value) {
-                if (fillShadow) {
-                    fillShadow.onChange = undefined;
+            var oldValue = this._fillShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._fillShadow = value;
                 this.dirty = true;
@@ -267,14 +269,13 @@ var Shape = /** @class */ (function (_super) {
             return this._strokeShadow;
         },
         set: function (value) {
-            var _this = this;
-            var strokeShadow = this._strokeShadow;
-            if (strokeShadow !== value) {
-                if (strokeShadow) {
-                    strokeShadow.onChange = undefined;
+            var oldValue = this._strokeShadow;
+            if (oldValue !== value) {
+                if (oldValue) {
+                    oldValue.removeEventListener('change', this.onShadowChange);
                 }
                 if (value) {
-                    value.onChange = function () { return _this.dirty = true; };
+                    value.addEventListener('change', this.onShadowChange);
                 }
                 this._strokeShadow = value;
                 this.dirty = true;

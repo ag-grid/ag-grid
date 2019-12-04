@@ -51,5 +51,6 @@ gulp.task('clean-post-build-artifacts', cleanPostBuildArtifacts);
 gulp.task('main-post-compile-rename', mainPostCompileRename);
 gulp.task('update-properties', updateProperties);
 gulp.task('compile-source', compileSource);
-gulp.task('watch', series('update-properties', 'compile-source', watch));
+gulp.task('update-properties-and-compile-source', compileSource);
+gulp.task('watch', series('update-properties-and-compile-source', watch));
 gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename','clean-post-build-artifacts'));
