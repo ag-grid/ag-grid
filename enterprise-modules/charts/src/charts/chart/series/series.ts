@@ -133,9 +133,9 @@ export abstract class Series extends Observable {
 
     protected fixNumericExtent(extent?: [number, number], type?: string): [number, number] {
         if (!extent) {
-            if (type) {
-                console.warn(`The ${type}-domain could not be found (no valid values), using the default of [0, 1].`);
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain could not be found (no valid values), using the default of [0, 1].`);
+            // }
             return [0, 1];
         }
 
@@ -144,18 +144,18 @@ export abstract class Series extends Observable {
         if (min === max) {
             min -= 1;
             max += 1;
-            if (type) {
-                console.warn(`The ${type}-domain has zero length and has been automatically expanded`
-                    + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
+            //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
+            // }
         }
 
         if (!isFinite(min) || !isFinite(max)) {
             min = 0;
             max = 1;
-            if (type) {
-                console.warn(`The ${type}-domain has infinite length, using the default of [0, 1].`);
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain has infinite length, using the default of [0, 1].`);
+            // }
         }
 
         return [min, max];

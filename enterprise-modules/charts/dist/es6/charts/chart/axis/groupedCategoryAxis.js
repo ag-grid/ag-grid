@@ -177,6 +177,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         group.translationY = this.translation.y;
         group.rotation = rotation;
         var title = this.title;
+        // The Text `node` of the Caption is not used to render the title of the grouped category axis.
+        // The phantom root of the tree layout is used instead.
+        title.node.visible = false;
         var lineHeight = this.lineHeight;
         // Render ticks and labels.
         var tickTreeLayout = this.tickTreeLayout;
