@@ -372,9 +372,11 @@
 
         .ag-menu-separator {
             height: $ag-grid-size * 2;
-            & > span {
-                background-image: url("data:image/svg+xml,%3Csvg%20width%3D'1'%20height%3D'#{$ag-grid-size * 2}'%20viewBox%3D'0%200%201%20#{$ag-grid-size * 2}'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cline%20x1%3D'0'%20y1%3D'#{$ag-grid-size}'%20x2%3D'1'%20y2%3D'#{$ag-grid-size}'%20stroke-width%3D'1'%20stroke%3D'#{encodecolor($ag-border-color)}'%2F%3E%3C%2Fsvg%3E");
-            }
+            & > span:after {
+                content: "";
+                display: block;
+                border-top: solid 1px $ag-border-color;
+			}
         }
 
         .ag-menu-option-popup-pointer {
