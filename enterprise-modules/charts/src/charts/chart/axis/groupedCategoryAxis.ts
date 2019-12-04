@@ -272,6 +272,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
                     node.fontWeight = title.fontWeight;
                     node.fontFamily = title.fontFamily;
                     node.textBaseline = 'hanging';
+                    node.visible = labels.length > 0;
                 } else {
                     node.text = labelFormatter
                         ? labelFormatter({
