@@ -272,10 +272,12 @@ var ChartProxy = /** @class */ (function () {
             parentElement.removeChild(canvas);
         }
         // store current width and height so any charts created in the future maintain the size
-        this.chartOptions.width = this.chart.width;
-        this.chartOptions.height = this.chart.height;
-        this.chart.destroy();
-        this.chart = null;
+        if (this.chart) {
+            this.chartOptions.width = this.chart.width;
+            this.chartOptions.height = this.chart.height;
+            this.chart.destroy();
+            this.chart = null;
+        }
     };
     return ChartProxy;
 }());

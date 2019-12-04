@@ -36452,7 +36452,7 @@ var ClipboardService = /** @class */ (function () {
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
             columns.forEach(function (column, idx) {
-                if (!column.isCellEditable(rowNode)) {
+                if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                     return;
                 }
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range

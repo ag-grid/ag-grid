@@ -233,6 +233,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 node.fontWeight = title.fontWeight;
                 node.fontFamily = title.fontFamily;
                 node.textBaseline = 'hanging';
+                node.visible = labels.length > 0;
             }
             else {
                 node.text = labelFormatter

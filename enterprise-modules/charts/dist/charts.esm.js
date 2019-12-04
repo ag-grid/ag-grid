@@ -45686,6 +45686,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 node.fontWeight = title.fontWeight;
                 node.fontFamily = title.fontFamily;
                 node.textBaseline = 'hanging';
+                node.visible = labels.length > 0;
             }
             else {
                 node.text = labelFormatter
@@ -51999,10 +52000,12 @@ var ChartProxy = /** @class */ (function () {
             parentElement.removeChild(canvas);
         }
         // store current width and height so any charts created in the future maintain the size
-        this.chartOptions.width = this.chart.width;
-        this.chartOptions.height = this.chart.height;
-        this.chart.destroy();
-        this.chart = null;
+        if (this.chart) {
+            this.chartOptions.width = this.chart.width;
+            this.chartOptions.height = this.chart.height;
+            this.chart.destroy();
+            this.chart = null;
+        }
     };
     return ChartProxy;
 }());
@@ -55389,9 +55392,11 @@ var GridChartComp = /** @class */ (function (_super) {
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
             var chart = this.chartProxy.getChart();
-            // preserve existing width/height
-            width = chart.width;
-            height = chart.height;
+            if (chart) {
+                // preserve existing width/height
+                width = chart.width;
+                height = chart.height;
+            }
             this.chartProxy.destroy();
         }
         var processChartOptionsFunc = this.params.processChartOptions ?

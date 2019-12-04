@@ -47,14 +47,25 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
-
-    if (['line'].indexOf(params.type) < 0) {
-        console.log('chart type is ' + params.type + ', making no changes.');
-        return options;
+    var dateFormatter = function(params) {
+        return params.value.value && params.value.value.toLocaleDateString ? params.value.value.toLocaleDateString() : params.value;
     }
 
-    options.xAxis.type = 'time';
-    options.xAxis.label.format = '%d %B';
+    options.seriesDefaults.tooltip.renderer = function(params) {
+        var value = params.datum[params.xKey];
+
+        return value && value.toLocaleDateString ? value.toLocaleDateString() : null;
+    };
+
+    if (['line'].indexOf(params.type) < 0) {
+        if (options.xAxis && options.yAxis) {
+            options.xAxis.label.formatter = dateFormatter;
+            options.yAxis.label.formatter = dateFormatter;
+        }
+    } else {
+        options.xAxis.type = 'time';
+        options.xAxis.label.format = '%d %B';
+    }
 
     return options;
 }

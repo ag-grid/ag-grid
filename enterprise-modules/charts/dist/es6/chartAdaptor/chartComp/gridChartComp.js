@@ -64,9 +64,11 @@ var GridChartComp = /** @class */ (function (_super) {
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
             var chart = this.chartProxy.getChart();
-            // preserve existing width/height
-            width = chart.width;
-            height = chart.height;
+            if (chart) {
+                // preserve existing width/height
+                width = chart.width;
+                height = chart.height;
+            }
             this.chartProxy.destroy();
         }
         var processChartOptionsFunc = this.params.processChartOptions ?
