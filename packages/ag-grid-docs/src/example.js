@@ -1417,11 +1417,11 @@ function currencyFormatter(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            let prefix = '$';
+            var result = '$' + formatThousands(Math.floor(Math.abs(params.value)));
             if (params.value < 0) {
-                prefix = '-' + prefix;
+                result = '(' + result + ')';
             }
-            return prefix + formatThousands(Math.floor(Math.abs(params.value)));
+            return result;
         }
     }
 }
