@@ -15,17 +15,12 @@ do
     if [ -f "$source" ]
     then
         # build first, because --watch doesn't do an initial build
-        ./node_modules/.bin/node-sass --output "$dest" "$source"
-        ./node_modules/.bin/node-sass --output "$dest" --watch "$source" & pid=$!
+        ./node_modules/.bin/node-sass --source-map true --error-bell --output "$dest" "$source"
+        ./node_modules/.bin/node-sass --source-map true --error-bell --output "$dest" --watch "$source" & pid=$!
         PID_LIST+=" $pid"
     fi
 done
 
+# kill watch processes on Ctrl+C
 trap "kill $PID_LIST" SIGINT
-
-echo "Parallel processes have started";
-
 wait $PID_LIST
-
-echo
-echo "All processes have completed";

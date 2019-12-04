@@ -21,6 +21,10 @@
     font-size: $ag-font-size;
     line-height: normal;
 
+    .ag-root-wrapper {
+        @include grid-border($radius: $ag-grid-radius);
+    }
+
     label {
         margin-bottom: 0;
     }
@@ -186,9 +190,8 @@
     }
 
     .ag-row {
-        @include row-border($ag-border-color);
+        border: solid 0 $ag-border-color;
         height: $ag-row-height;
-        border-width: 0;
         &:not(.ag-row-first) {
             border-width: $ag-row-border-width 0 0;
         }
@@ -237,14 +240,13 @@
 
     .ag-header-cell,
     .ag-header-group-cell {
-        @include row-border($ag-border-color);
+        border: solid 0 $ag-border-color;
         @include grid-header-cell($ag-cell-horizontal-padding);
         @if $ag-header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $ag-header-cell-moving-background-color;
             }
         }
-        border-width: 0;
         &:not(.ag-header-group-cell-no-group) {
             border-top-width: 1px;
         }
@@ -366,6 +368,7 @@
         .ag-menu-option-shortcut {
             padding-left: $ag-grid-size * 2;
         }
+        
 
         .ag-menu-separator {
             height: $ag-grid-size * 2;
@@ -1169,8 +1172,7 @@
 
     .ag-status-bar {
         background: $ag-background-color;
-        border: 1px solid $ag-border-color;
-        border-top-width: 0;
+        @include grid-border(top);
         color: $ag-disabled-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
@@ -1208,7 +1210,7 @@
     }
 
     %side-bar-left {
-        border-left: 1px solid $ag-border-color;
+        @include grid-border(right);
         .ag-side-button.ag-selected button {
             margin-right: -1px;
             padding-right: 1px;
@@ -1219,7 +1221,7 @@
     }
 
     %side-bar-right {
-        border-right: 1px solid $ag-border-color;
+        @include grid-border(left);
         .ag-side-button.ag-selected button {
             margin-left: -1px;
             padding-left: 1px;
@@ -1231,8 +1233,6 @@
 
     .ag-side-bar {
         background-color: $ag-tool-panel-background-color;
-        border: 1px solid $ag-border-color;
-        border-left-width: 0;
         position: relative;
 
         .ag-side-buttons {

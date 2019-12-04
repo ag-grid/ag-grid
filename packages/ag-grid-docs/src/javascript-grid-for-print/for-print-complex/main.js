@@ -56,9 +56,7 @@ function onBtPrint() {
 
 function setPrinterFriendly(api) {
     var eGridDiv = document.querySelector('#myGrid');
-    eGridDiv.style.width = '';
     eGridDiv.style.height = '';
-
     api.setDomLayout('print');
 }
 

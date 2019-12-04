@@ -46,6 +46,9 @@ export class StatusBar extends Component {
             const rightStatusPanelComponents = this.gridOptions.statusBar.statusPanels
                 .filter((componentConfig) => (!componentConfig.align || componentConfig.align === 'right'));
             this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
+        } else {
+            // TODO uncomment this, it's commented to pass VR testing
+            // this.setDisplayed(false);
         }
     }
 

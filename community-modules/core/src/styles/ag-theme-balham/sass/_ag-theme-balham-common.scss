@@ -58,8 +58,7 @@
     }
 
     .ag-column-drop-horizontal.ag-column-drop {
-        border: 1px solid $ag-border-color;
-        border-bottom: 0;
+        @include grid-border(bottom);
     }
 
     .ag-ltr {
@@ -111,10 +110,6 @@
         .ag-column-drop-cell-text {
             margin-left: $ag-grid-size * 2;
         }
-    }
-
-    .ag-root {
-        border: 1px solid $ag-border-color;
     }
 
     // tool panel

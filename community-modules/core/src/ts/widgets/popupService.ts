@@ -15,6 +15,13 @@ interface AgPopup {
     hideFunc: () => void;
 }
 
+interface Rect {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+}
+
 @Bean('popupService')
 export class PopupService {
 
@@ -31,10 +38,6 @@ export class PopupService {
         this.gridCore = gridCore;
     }
 
-    private getDocument(): Document {
-        return this.gridOptionsWrapper.getDocument();
-    }
-
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
         if (ePopupParent) {
@@ -46,20 +49,8 @@ export class PopupService {
 
     public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
-
-        let parentRect: ClientRect;
-
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement!.getBoundingClientRect();
-        } else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
-
-        let y = sourceRect.top - parentRect.top;
-
-        y = this.keepYWithinBounds(params, y);
+        const parentRect = this.getParentRect();
+        const y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         params.ePopup.style.minWidth = `${minWidth}px`;
@@ -128,14 +119,11 @@ export class PopupService {
     }
 
     private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number } {
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
-        const parentRect = popupParent.getBoundingClientRect();
-        const documentRect = eDocument.documentElement!.getBoundingClientRect();
+        const parentRect = this.getParentRect();
 
         return {
-            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
-            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+            x: e.clientX - parentRect.left,
+            y: e.clientY - parentRect.top
         };
     }
 
@@ -153,17 +141,8 @@ export class PopupService {
         keepWithinBounds?: boolean
     }) {
         const sourceRect = params.eventSource.getBoundingClientRect();
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
         const alignSide = params.alignSide || 'left';
-
-        let parentRect: ClientRect;
-
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement!.getBoundingClientRect();
-        } else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        const parentRect = this.getParentRect();
 
         let x = sourceRect.left - parentRect.left;
 
@@ -196,18 +175,8 @@ export class PopupService {
         nudgeY?: number,
         keepWithinBounds?: boolean
     }) {
-
         const sourceRect = params.eventSource.getBoundingClientRect();
-        const eDocument = this.getDocument();
-        const popupParent = this.getPopupParent();
-
-        let parentRect: ClientRect;
-
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement!.getBoundingClientRect();
-        } else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        const parentRect = this.getParentRect();
 
         this.positionPopup({
             ePopup: params.ePopup,
@@ -266,6 +235,26 @@ export class PopupService {
 
         params.ePopup!.style.left = `${x}px`;
         params.ePopup!.style.top = `${y}px`;
+    }
+
+    private getParentRect(): Rect {
+        // subtract the popup parent borders, because popupParent.getBoundingClientRect
+        // returns the rect outside the borders, but the 0,0 coordinate for absolute
+        // positioning is inside the border, leading the popup to be off by the width
+        // of the border
+        let popupParent = this.getPopupParent();
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        if (popupParent === eDocument.body) {
+            popupParent = eDocument.documentElement;
+        }
+        const style = getComputedStyle(popupParent);
+        const bounds = popupParent.getBoundingClientRect();
+        return {
+            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+        };
     }
 
     private keepYWithinBounds(params: { ePopup: HTMLElement | null, minHeight?: number }, y: number): number {

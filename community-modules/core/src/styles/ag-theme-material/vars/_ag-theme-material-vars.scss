@@ -3,6 +3,8 @@
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 
+$ag-borders: false;
+
 // opacity values used for black values, taken from material spec
 $ag-foreground-opacity: 0.87 !default;
 $ag-secondary-foreground-color-opacity: 0.54 !default;

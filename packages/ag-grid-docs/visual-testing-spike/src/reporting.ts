@@ -84,17 +84,20 @@ const getPassHtml = (result: SpecResults) => /*html*/ `
 </div>
 `;
 
-export const getReportHtml = (results: SpecResults[]) => {
+export const getReportHtml = (results: SpecResults[], inProgress: boolean) => {
     results = results.slice().sort((a, b) => (a.name === b.name ? 0 : a.name < b.name ? -1 : 1));
     const failures = results.filter(r => r.difference);
     let body = '';
+    if (inProgress) {
+        body += '<h1>⌛ Report generation in progress...</h1>'
+    }
     if (failures.length > 0) {
-        body += `<h1>${failures.length} failure${failures.length > 1 ? 's' : ''}</h1>`;
+        body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
         body += failures.map(getFailureHtml).join('\n\n');
     }
     const passes = results.filter(r => !r.difference);
     if (passes.length > 0) {
-        body += `<h1>${passes.length} passes${passes.length > 1 ? 's' : ''}</h1>`;
+        body += `<h2>${passes.length} passes${passes.length > 1 ? 's' : ''}</h2>`;
         body += passes.map(getPassHtml).join('\n\n');
     }
     return pageTemplate(body);

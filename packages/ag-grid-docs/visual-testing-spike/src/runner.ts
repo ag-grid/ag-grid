@@ -334,6 +334,14 @@ export const runSuite = async (params: RunSuiteParams) => {
     }
 
     const results: SpecResults[] = [];
+    const writeReportFile = async (inProgress: boolean) => {
+        const html = getReportHtml(results, inProgress);
+        await fs.writeFile(params.reportFile, html);
+    };
+    let reportIteration = -1;
+    const reportGenerationInterval = 2500;
+    const startTime = Date.now();
+
     const browser = await launch({
         args: ['--disable-gpu', '--font-render-hinting=none']
     });
@@ -373,6 +381,12 @@ export const runSuite = async (params: RunSuiteParams) => {
                     log(`${chalk.green.bold(`✔ ${testCaseName}`)} - OK`);
                 }
             }
+
+            const thisReportIteration = Math.floor((Date.now() - startTime) / reportGenerationInterval);
+            if (reportIteration !== thisReportIteration) {
+                reportIteration = thisReportIteration;
+                await writeReportFile(true);
+            }
         }
     });
 
@@ -384,8 +398,7 @@ export const runSuite = async (params: RunSuiteParams) => {
         } else if (existsSync(failedTestsFile)) {
             await fs.unlink(failedTestsFile);
         }
-        const html = getReportHtml(results);
-        await fs.writeFile(params.reportFile, html);
+        await writeReportFile(false);
         log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
     } else {
         process.stdout.clearLine(0);

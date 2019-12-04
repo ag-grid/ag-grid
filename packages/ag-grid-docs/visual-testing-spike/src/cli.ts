@@ -50,6 +50,11 @@ const args: any = yargs
                     describe: 'Overwrite test cases that already exist',
                     type: 'boolean'
                 })
+                .option('themes', {
+                    describe: 'Comma-separated list of themes',
+                    type: 'string',
+                    default: 'alpine,balham,material'
+                })
     ).argv;
 
 export const runCli = async (baseFolder: string) => {
@@ -74,7 +79,7 @@ export const runCli = async (baseFolder: string) => {
             folder,
             mode: args.update ? 'update' : 'compare',
             specs,
-            defaultThemes: ['alpine', 'balham', 'material'],
+            defaultThemes: args.themes.split(","),
             server: args.server,
             reportFile: args.reportFile,
             clean: !!args.clean,

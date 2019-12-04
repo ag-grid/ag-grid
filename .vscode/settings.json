@@ -24,5 +24,9 @@
         "packages/ag-grid-vue": true,
         "**/.git": true,
         "**/.DS_Store": true
-    }
+    },
+    "[scss]": {
+        "editor.detectIndentation": false,
+        "editor.tabSize": 4
+    },
 }

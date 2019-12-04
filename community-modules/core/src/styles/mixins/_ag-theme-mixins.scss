@@ -1,3 +1,20 @@
+
+@mixin grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color) {
+    @if $ag-borders {
+        @if $sides {
+            @each $side in $sides {
+              border-#{$side}: solid $width $color;
+            }
+        }
+        @else {
+            border: solid $width $color;
+        }
+        @if $radius {
+          border-radius: $color;
+        }
+    }
+}
+
 @function encodecolor($string) {
     @if $string == null {
         @return "";
@@ -10,11 +27,6 @@
     $string: "%23" + $string;
 
     @return $string;
-}
-
-@mixin row-border($color) {
-    border-style: solid;
-    border-color: $color;
 }
 
 @mixin grid-header-cell($padding) {

@@ -4,6 +4,7 @@ $ag-foreground-opacity: 1 !default;
 $ag-secondary-foreground-color-opacity: 1 !default;
 $ag-disabled-foreground-color-opacity: 0.5 !default;
 
+
 // Colors
 $ag-border-color: transparent !default;
 $ag-background-color: #fff !default;
@@ -45,8 +46,16 @@ $ag-tooltip-border-style: solid !default;
 $ag-tooltip-border-color: #ebebeb !default;
 
 // Misc
+
+// Apply a border around the grid and between elements
+$ag-borders: true !default;
+
+// radius applied to the the grid wrapper grid
+$ag-grid-radius: null !default;
+
+// radius applied to popup elements
+$ag-card-radius: $ag-grid-radius !default;
 $ag-card-shadow: none !default;
-$ag-card-radius: 0 !default;
 $ag-row-border-width: 0 !default;
 $ag-transition-speed: 120ms !default;
 $ag-cell-horizontal-border: 1px solid transparent !default;
