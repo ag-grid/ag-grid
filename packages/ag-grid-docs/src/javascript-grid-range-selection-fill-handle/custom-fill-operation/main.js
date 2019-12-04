@@ -7,13 +7,13 @@ var getRandom = function(start, finish) {
 
 var columnDefs = [
     { field: "athlete", width: 150 },
+    { headerName: 'Day of the Week', field: 'dayOfTheWeek', width: 150 },
     { field: "age", width: 90 },
     { field: "country", width: 120 },
     { field: "sport", width: 110 },
     { field: "gold", width: 100 },
     { field: "silver", width: 100 },
-    { field: "bronze", width: 100 },
-    { headerName: 'Day of the Week', field: 'dayOfTheWeek', width: 150 }
+    { field: "bronze", width: 100 }
 ];
 
 var gridOptions = {
@@ -34,7 +34,10 @@ var gridOptions = {
 
         return daysList[(idxOfLast + 1) % daysList.length];
     },
-    rowData: null
+    rowData: null,
+    defaultColDef: {
+        editable: true
+    }
 };
 
 // setup the grid after the page has finished loading
