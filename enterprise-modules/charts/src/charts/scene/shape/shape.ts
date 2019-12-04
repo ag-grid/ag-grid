@@ -226,15 +226,19 @@ export abstract class Shape extends Node {
         return this._opacity;
     }
 
+    private readonly onShadowChange = () => {
+        this.dirty = true;
+    }
+
     private _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
     set fillShadow(value: DropShadow | undefined) {
-        const fillShadow = this._fillShadow;
-        if (fillShadow !== value) {
-            if (fillShadow) {
-                fillShadow.onChange = undefined;
+        const oldValue = this._fillShadow;
+        if (oldValue !== value) {
+            if (oldValue) {
+                oldValue.removeEventListener('change', this.onShadowChange);
             }
             if (value) {
-                value.onChange = () => this.dirty = true;
+                value.addEventListener('change', this.onShadowChange);
             }
             this._fillShadow = value;
             this.dirty = true;
@@ -246,13 +250,13 @@ export abstract class Shape extends Node {
 
     private _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
     set strokeShadow(value: DropShadow | undefined) {
-        const strokeShadow = this._strokeShadow;
-        if (strokeShadow !== value) {
-            if (strokeShadow) {
-                strokeShadow.onChange = undefined;
+        const oldValue = this._strokeShadow;
+        if (oldValue !== value) {
+            if (oldValue) {
+                oldValue.removeEventListener('change', this.onShadowChange);
             }
             if (value) {
-                value.onChange = () => this.dirty = true;
+                value.addEventListener('change', this.onShadowChange);
             }
             this._strokeShadow = value;
             this.dirty = true;
