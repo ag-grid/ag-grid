@@ -196,33 +196,33 @@ var ScatterSeries = /** @class */ (function (_super) {
         enterGroups.append(Marker);
         var groupSelection = updateGroups.merge(enterGroups);
         var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         groupSelection.selectByClass(Marker)
             .each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : stroke;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: yKey,
                     fill: markerFill,
                     stroke: markerStroke,
-                    strokeWidth: strokeWidth,
+                    strokeWidth: markerStrokeWidth,
                     size: datum.size,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = markerFill;
-                node.stroke = markerStroke;
-                node.strokeWidth = strokeWidth;
-                node.size = datum.size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : datum.size;
             node.fillOpacity = fillOpacity;
             node.strokeOpacity = strokeOpacity;
             node.translationX = datum.x;
@@ -281,8 +281,8 @@ var ScatterSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     type: marker.type,
-                    fill: fill,
-                    stroke: stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

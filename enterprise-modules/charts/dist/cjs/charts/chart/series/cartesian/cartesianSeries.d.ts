@@ -6,13 +6,14 @@ export declare abstract class CartesianSeries extends Series {
         [key in ChartAxisDirection]?: string[];
     };
 }
+export interface CartesianSeriesMarkerFormat {
+    fill?: string;
+    stroke?: string;
+    strokeWidth?: number;
+    size?: number;
+}
 export declare class CartesianSeriesMarker extends SeriesMarker {
-    formatter?: (params: CartesianSeriesMarkerFormatterParams) => {
-        fill?: string;
-        stroke?: string;
-        strokeWidth?: number;
-        size?: number;
-    };
+    formatter?: (params: CartesianSeriesMarkerFormatterParams) => CartesianSeriesMarkerFormat;
 }
 export interface CartesianSeriesMarkerFormatterParams extends SeriesMarkerFormatterParams {
     xKey: string;

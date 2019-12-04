@@ -9,8 +9,6 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     y: number;
     fill?: string;
     stroke?: string;
-    strokeWidth: number;
-    size: number;
     text?: string;
     yKey: string;
     yValue: number;

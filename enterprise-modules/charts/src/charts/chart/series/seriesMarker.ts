@@ -2,10 +2,15 @@ import { Marker } from "../marker/marker";
 import { Observable, reactive } from "../../util/observable";
 
 export class SeriesMarker extends Observable {
+
+    @reactive(['change']) enabled = true;
+
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
     @reactive(['change']) type?: new () => Marker;
+
+    @reactive(['change']) size = 12;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
@@ -13,11 +18,25 @@ export class SeriesMarker extends Observable {
      * within the `[minSize, size]` range, where the largest values will correspond to the `size`
      * and the lowest to the `minSize`.
      */
-    @reactive(['change']) size = 12;
-
     @reactive(['change']) minSize = 12;
 
-    @reactive(['change']) enabled = true;
+    @reactive(['change']) fill?: string;
+
+    // @reactive(['change']) stroke?: string;
+    protected  _stroke?: string;
+    set stroke(value: string | undefined) {
+        const oldValue = this._stroke;
+        if (oldValue !== value) {
+            this._stroke = value;
+            this.fireEvent({type: 'change'});
+            this.notifyPropertyListeners('stroke', oldValue, value);
+        }
+    }
+    get stroke(): string | undefined {
+        return this._stroke;
+    }
+
+    @reactive(['change']) strokeWidth?: number;
 }
 
 export interface SeriesMarkerFormatterParams {

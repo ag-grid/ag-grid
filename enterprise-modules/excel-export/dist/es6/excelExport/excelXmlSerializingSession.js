@@ -49,7 +49,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
@@ -59,10 +59,10 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXmlSerializingSession.prototype.onNewHeaderRow = function () {
-        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewBodyRow = function () {
-        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
+        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
         var currentCells = [];

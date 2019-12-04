@@ -16,33 +16,32 @@ include '../documentation-main/documentation_header.php';
     <? enterprise_feature("Fill Handle"); ?>
 
     <h2>Enabling the Fill Handle</h2>
-    <p> 
-        To enable the Fill Handle, simply set <code>enableFillHandle</code> to true in the <strong>gridOptions</strong>.
+    <p>
+        To enable the Fill Handle, simply set <code>enableFillHandle</code> to <code>true</code> in the <code>gridOptions</code>.
     </p>
 
     <note>
-        It's important to notice that if you enable both <code>enableFillHandle</code> and <code>enableRangeHandle</code>, 
+        It's important to note that if you enable both <code>enableFillHandle</code> and <code>enableRangeHandle</code>,
         the Fill Handle will take precedence.
     </note>
 
-
-    <h3>Example - Range Selection with Fill Handle</h3>
+    <h3>Example: Range Selection with Fill Handle</h3>
 
     <p>
-        The example below demonstrates the basic features of the fill handle: 
+        The example below demonstrates the basic features of the fill handle:
 
         <ul>
             <li>
-                When a range of numbers is selected and that range is extended, the Grid will detect the linear progression of the 
+                When a range of numbers is selected and that range is extended, the Grid will detect the linear progression of the
                 selected items and fill the extra cells with calculated values.
             </li>
             <br>
-            <li>When a range of strings or a mix of strings and numbers are selected and that range is extended, the range items 
+            <li>When a range of strings or a mix of strings and numbers are selected and that range is extended, the range items
                 will be copied in order until all new cells have been properly filled.
             </li>
             <br>
             <li>
-                When a range of numbers is selected and the range is increased while pressing the <code>option / alt</code> key, the behaviour
+                When a range of numbers is selected and the range is increased while pressing the <code>Option / Alt</code> key, the behaviour
                 will be the same as when a range of strings or mixed values is selected.
             </li>
             <br>
@@ -51,7 +50,7 @@ include '../documentation-main/documentation_header.php';
             </li>
             <br>
             <li>
-                When a single cell containing a <strong>number</strong> value is selected and the range is increased while pressing the <code>option / alt</code> key, 
+                When a single cell containing a <strong>number</strong> value is selected and the range is increased while pressing the <code>Option / Alt</code> key,
                 that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
             </li>
             <br>
@@ -61,7 +60,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Fill Handle', 'fill-handle', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h3>Example - Reducing the Range Size</h3>
+    <h3>Example: Reducing the Range Size</h3>
 
     <p>
         If the behaviour for decreasing selection needs to be prevented, the flag <code>suppressClearOnFillReduction</code> should be set to <code>true</code>.
@@ -72,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Custom User Function</h2>
 
     <p>
-        Often there is a need to use a custom method to fill values instead of simply copying values or increasing number 
+        Often there is a need to use a custom method to fill values instead of simply copying values or increasing number
         values using linear progression. In these scenarios, the <code>fillOperation</code> callback should be used.
     </p>
 
@@ -105,11 +104,11 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         If a <code>fillOperation</code> callback is provided, the fill handle will always run it. If the current values are not
-        relevant to the <code>fillOperation</code> function that was provided, <code>false</code> should be returned to allow 
+        relevant to the <code>fillOperation</code> function that was provided, <code>false</code> should be returned to allow
         the grid to process the values as it normally would.
     </note>
 
-    <h3>Example - Using Custom User Functions</h3>
+    <h3>Example: Using Custom User Functions</h3>
 
     <p> The example below will use the custom <code>fillOperation</code> for the <strong>Day of the week</strong> column, but it will
     use the default operation for any other column.

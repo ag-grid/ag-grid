@@ -183,16 +183,14 @@ var ChartBuilder = /** @class */ (function () {
         if (fill) {
             this.setValueIfExists(series, 'fill', fill.color);
             // default marker to same fill as series
-            this.setValueIfExists(series, 'fill', fill.color);
-            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series.marker, 'fill', fill.color);
         }
         if (stroke) {
             this.setValueIfExists(series, 'stroke', stroke.color);
             this.setValueIfExists(series, 'strokeWidth', stroke.width);
             // default marker to same stroke as series
-            this.setValueIfExists(series, 'stroke', stroke.color);
-            this.setValueIfExists(series, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series.marker, 'stroke', stroke.color);
+            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
         }
         if (highlightStyle) {
             this.initHighlightStyle(series.highlightStyle, highlightStyle);
@@ -222,14 +220,12 @@ var ChartBuilder = /** @class */ (function () {
         }
         if (fill) {
             // default marker to same fill as series
-            this.setValueIfExists(series, 'fill', fill.color);
-            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+            this.setValueIfExists(series.marker, 'fill', fill.color);
         }
         if (stroke) {
             // default marker to same stroke as series
-            this.setValueIfExists(series, 'stroke', stroke.color);
-            this.setValueIfExists(series, 'strokeWidth', stroke.width);
-            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series.marker, 'stroke', stroke.color);
+            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
         }
         if (highlightStyle) {
             this.initHighlightStyle(series.highlightStyle, highlightStyle);
@@ -392,6 +388,9 @@ var ChartBuilder = /** @class */ (function () {
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);
+        this.setValueIfExists(marker, 'fill', options.fill);
+        this.setValueIfExists(marker, 'stroke', options.stroke);
+        this.setValueIfExists(marker, 'strokeWidth', options.strokeWidth);
     };
     ChartBuilder.initHighlightStyle = function (highlightStyle, options) {
         this.setValueIfExists(highlightStyle, 'fill', options.fill);

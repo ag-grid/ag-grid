@@ -6,10 +6,6 @@ import { ChartAxisDirection } from "../../chartAxis";
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
     y: number;
-    fill?: string;
-    stroke?: string;
-    strokeWidth: number;
-    size: number;
 }
 export { LineTooltipRendererParams };
 export declare class LineSeries extends CartesianSeries {

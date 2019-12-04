@@ -22,7 +22,7 @@ export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: (header: string, index: number, span: number) => {

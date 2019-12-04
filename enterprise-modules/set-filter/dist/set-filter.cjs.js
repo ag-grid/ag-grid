@@ -16652,7 +16652,6 @@ var CellComp = /** @class */ (function (_super) {
         // and recompile (if applicable)
         this.updateAngular1ScopeAndCompile();
         this.refreshToolTip();
-        this.refreshHandle();
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.postProcessCellClassRules();
@@ -17953,7 +17952,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.refreshHandle();
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {

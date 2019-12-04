@@ -242,8 +242,7 @@ var LineSeries = /** @class */ (function (_super) {
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth;
-        var markerSize = marker.size;
+        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode;
         var groupSelectionData = [];
         var linePath = lineNode.path;
         linePath.clear();
@@ -261,20 +260,16 @@ var LineSeries = /** @class */ (function (_super) {
                 groupSelectionData.push({
                     seriesDatum: data[i],
                     x: x,
-                    y: y,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: markerSize
+                    y: y
                 });
             }
         });
-        lineNode.stroke = stroke;
+        lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
         this.updateGroupSelection(groupSelectionData);
     };
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode;
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var Marker = marker.type;
         var groupSelection = this.groupSelection;
         // Don't update markers if the marker type is undefined, but do update when it becomes undefined.
@@ -290,35 +285,35 @@ var LineSeries = /** @class */ (function (_super) {
         enterGroups.append(Marker);
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
         var markerFormatter = marker.formatter;
+        var markerSize = marker.size;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         groupSelection = updateGroups.merge(enterGroups);
         groupSelection.selectByClass(Marker)
             .each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            var stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-            var strokeWidth = datum.strokeWidth, size = datum.size;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: yKey,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: size,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = fill;
-                node.stroke = stroke;
-                node.strokeWidth = strokeWidth;
-                node.size = size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : markerSize;
             node.translationX = datum.x;
             node.translationY = datum.y;
             node.visible = marker.enabled && node.size > 0;
@@ -365,8 +360,8 @@ var LineSeries = /** @class */ (function (_super) {
                 },
                 marker: {
                     type: marker.type,
-                    fill: fill,
-                    stroke: stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity
                 }

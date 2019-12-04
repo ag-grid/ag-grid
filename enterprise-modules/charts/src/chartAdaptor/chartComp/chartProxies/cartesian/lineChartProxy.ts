@@ -86,6 +86,10 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     stroke: {
                         ...seriesDefaults.stroke,
                         color: fill, // this is deliberate, so that the line colours match the fills of other series
+                    },
+                    marker: {
+                        ...seriesDefaults.marker,
+                        stroke
                     }
                 };
 

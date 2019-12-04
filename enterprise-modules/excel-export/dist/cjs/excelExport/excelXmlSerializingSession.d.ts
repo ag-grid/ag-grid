@@ -24,8 +24,6 @@ export declare class ExcelXmlSerializingSession extends BaseGridSerializingSessi
     };
     protected mixedStyleCounter: number;
     protected excelStyles: ExcelStyle[];
-    protected rowHeight: number | undefined;
-    protected headerRowHeight: number | undefined;
     protected rows: ExcelRow[];
     protected cols: ExcelColumn[];
     protected config: ExcelGridSerializingParams;

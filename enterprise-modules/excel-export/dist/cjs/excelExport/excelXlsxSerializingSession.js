@@ -29,7 +29,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {

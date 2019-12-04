@@ -9,7 +9,7 @@ import linearScale from "../../../scale/linearScale";
 import { Marker } from "../../marker/marker";
 import { Circle } from "../../marker/circle";
 import { reactive } from "../../../util/observable";
-import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
 
@@ -237,35 +237,36 @@ export class ScatterSeries extends CartesianSeries {
 
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
                 const isHighlightedNode = node === highlightedNode;
-                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : fill;
-                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : stroke;
+                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
-                    const style = markerFormatter({
+                    markerFormat = markerFormatter({
                         datum: datum.seriesDatum,
                         xKey,
                         yKey,
                         fill: markerFill,
                         stroke: markerStroke,
-                        strokeWidth,
+                        strokeWidth: markerStrokeWidth,
                         size: datum.size,
                         highlighted: isHighlightedNode
                     });
-                    node.fill = style.fill;
-                    node.stroke = style.stroke;
-                    node.strokeWidth = style.strokeWidth;
-                    node.size = style.size;
-                } else {
-                    node.fill = markerFill;
-                    node.stroke = markerStroke;
-                    node.strokeWidth = strokeWidth;
-                    node.size = datum.size;
                 }
 
+                node.fill = markerFormat && markerFormat.fill || markerFill;
+                node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+                node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                    ? markerFormat.strokeWidth
+                    : markerStrokeWidth;
+                node.size = markerFormat && markerFormat.size !== undefined
+                    ? markerFormat.size
+                    : datum.size;
                 node.fillOpacity = fillOpacity;
                 node.strokeOpacity = strokeOpacity;
                 node.translationX = datum.x;
@@ -344,8 +345,8 @@ export class ScatterSeries extends CartesianSeries {
                 },
                 marker: {
                     type: marker.type,
-                    fill,
-                    stroke,
+                    fill: marker.fill || fill,
+                    stroke: marker.stroke || stroke,
                     fillOpacity,
                     strokeOpacity
                 }

@@ -16652,7 +16652,6 @@ var CellComp = /** @class */ (function (_super) {
         // and recompile (if applicable)
         this.updateAngular1ScopeAndCompile();
         this.refreshToolTip();
-        this.refreshHandle();
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
         this.postProcessCellClassRules();
@@ -17953,7 +17952,6 @@ var CellComp = /** @class */ (function (_super) {
         if (!cellFocused && !fullRowEdit && this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.refreshHandle();
     };
     // pass in 'true' to cancel the editing.
     CellComp.prototype.stopRowOrCellEdit = function (cancel) {
@@ -39274,7 +39272,7 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {
@@ -39284,10 +39282,10 @@ var ExcelXmlSerializingSession = /** @class */ (function (_super) {
         };
     };
     ExcelXmlSerializingSession.prototype.onNewHeaderRow = function () {
-        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewBodyRow = function () {
-        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
+        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     };
     ExcelXmlSerializingSession.prototype.onNewRow = function (onNewColumnAccumulator, height) {
         var currentCells = [];
@@ -39487,7 +39485,7 @@ var ExcelXlsxSerializingSession = /** @class */ (function (_super) {
         var currentCells = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: function (header, index, span) {

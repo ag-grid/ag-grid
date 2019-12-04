@@ -82,7 +82,7 @@ var LineChartProxy = /** @class */ (function (_super) {
                         xName: params.category.name,
                         yKey: f.colId,
                         yName: f.displayName,
-                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: fill }) });
+                    }, fill: __assign(__assign({}, seriesDefaults.fill), { color: fill }), stroke: __assign(__assign({}, seriesDefaults.stroke), { color: fill }), marker: __assign(__assign({}, seriesDefaults.marker), { stroke: stroke }) });
                 lineSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }

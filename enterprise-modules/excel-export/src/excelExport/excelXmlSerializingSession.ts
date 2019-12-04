@@ -38,8 +38,6 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     protected mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     protected mixedStyleCounter: number = 0;
     protected excelStyles: ExcelStyle[];
-    protected rowHeight: number | undefined;
-    protected headerRowHeight: number | undefined;
 
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
@@ -69,7 +67,7 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
         const currentCells: ExcelCell[] = [];
         this.rows.push({
             cells: currentCells,
-            height: this.headerRowHeight
+            height: this.config.headerRowHeight
         });
         return {
             onColumn: (header: string, index: number, span: number) => {
@@ -80,11 +78,11 @@ export class ExcelXmlSerializingSession extends BaseGridSerializingSession<Excel
     }
 
     public onNewHeaderRow(): RowAccumulator {
-        return this.onNewRow(this.onNewHeaderColumn, this.headerRowHeight);
+        return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     }
 
     public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn, this.rowHeight);
+        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
     }
 
     onNewRow(onNewColumnAccumulator: (rowIndex: number, currentCells: ExcelCell[]) => (column: Column, index: number, node: RowNode) => void, height?: number): RowAccumulator {

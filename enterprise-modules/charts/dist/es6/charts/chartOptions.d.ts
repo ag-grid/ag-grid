@@ -175,6 +175,8 @@ export interface MarkerOptions {
     enabled?: boolean;
     size?: number;
     minSize?: number;
+    fill?: string;
+    stroke?: string;
     strokeWidth?: number;
 }
 export interface LineSeriesFieldOptions {

@@ -309,13 +309,12 @@ var AreaSeries = /** @class */ (function (_super) {
         this.updateMarkerSelection(markerSelectionData);
     };
     AreaSeries.prototype.generateSelectionData = function () {
-        var _a = this, yKeys = _a.yKeys, yNames = _a.yNames, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, strokeWidth = _a.strokeWidth, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
+        var _a = this, yKeys = _a.yKeys, yNames = _a.yNames, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var areaSelectionData = [];
         var markerSelectionData = [];
         var last = xData.length * 2 - 1;
-        var markerSize = marker.size;
         xData.forEach(function (xDatum, i) {
             var yDatum = yData[i];
             var seriesDatum = data[i];
@@ -334,8 +333,6 @@ var AreaSeries = /** @class */ (function (_super) {
                         y: y,
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length],
-                        strokeWidth: strokeWidth,
-                        size: markerSize,
                         text: yNames[j]
                     });
                 }
@@ -419,6 +416,8 @@ var AreaSeries = /** @class */ (function (_super) {
             return;
         }
         var markerFormatter = marker.formatter;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        var markerSize = marker.size;
         var _b = this, yKeyEnabled = _b.yKeyEnabled, highlightedNode = _b.highlightedNode;
         var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
         var updateMarkers = this.markerSelection.setData(markerSelectionData);
@@ -427,31 +426,29 @@ var AreaSeries = /** @class */ (function (_super) {
         var markerSelection = updateMarkers.merge(enterMarkers);
         markerSelection.each(function (node, datum) {
             var isHighlightedNode = node === highlightedNode;
-            var fill = isHighlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            var stroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
-            var strokeWidth = datum.strokeWidth, size = datum.size;
+            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+            var markerFormat = undefined;
             if (markerFormatter) {
-                var style = markerFormatter({
+                markerFormat = markerFormatter({
                     datum: datum.seriesDatum,
                     xKey: xKey,
                     yKey: datum.yKey,
-                    fill: fill,
-                    stroke: stroke,
-                    strokeWidth: strokeWidth,
-                    size: size,
+                    fill: markerFill,
+                    stroke: markerStroke,
+                    strokeWidth: markerStrokeWidth,
+                    size: markerSize,
                     highlighted: isHighlightedNode
                 });
-                node.fill = style.fill;
-                node.stroke = style.stroke;
-                node.strokeWidth = style.strokeWidth;
-                node.size = style.size;
             }
-            else {
-                node.fill = fill;
-                node.stroke = stroke;
-                node.strokeWidth = strokeWidth;
-                node.size = size;
-            }
+            node.fill = markerFormat && markerFormat.fill || markerFill;
+            node.stroke = markerFormat && markerFormat.stroke || markerStroke;
+            node.strokeWidth = markerFormat && markerFormat.strokeWidth !== undefined
+                ? markerFormat.strokeWidth
+                : markerStrokeWidth;
+            node.size = markerFormat && markerFormat.size !== undefined
+                ? markerFormat.size
+                : markerSize;
             node.translationX = datum.x;
             node.translationY = datum.y;
             node.visible = marker.enabled && node.size > 0 && !!yKeyEnabled.get(datum.yKey);
@@ -504,8 +501,8 @@ var AreaSeries = /** @class */ (function (_super) {
                     },
                     marker: {
                         type: marker.type,
-                        fill: fills[index % fills.length],
-                        stroke: strokes[index % strokes.length],
+                        fill: marker.fill || fills[index % fills.length],
+                        stroke: marker.stroke || strokes[index % strokes.length],
                         fillOpacity: fillOpacity,
                         strokeOpacity: strokeOpacity
                     }
