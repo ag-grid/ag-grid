@@ -112,7 +112,7 @@ export abstract class Shape extends Node {
         return this._strokeOpacity;
     }
 
-    private _fill: string | undefined = Shape.defaultStyles.fill; //| CanvasGradient | CanvasPattern;
+    private _fill: string | undefined = Shape.defaultStyles.fill;
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
