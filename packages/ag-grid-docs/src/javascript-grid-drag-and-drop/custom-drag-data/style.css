@@ -49,3 +49,8 @@
 .blue-row {
     background-color: #ddddff !important;
 }
+
+#myGrid {
+    width: 100%;
+    height: 100%;
+}
