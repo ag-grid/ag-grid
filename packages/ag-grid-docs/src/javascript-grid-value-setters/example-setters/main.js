@@ -10,6 +10,7 @@ var columnDefs = [
             var newFirstName = nameSplit[0];
             var newLastName = nameSplit[1];
             var data = params.data;
+
             if (data.firstName !== newFirstName || data.lastName !== newLastName) {
                 data.firstName = newFirstName;
                 data.lastName = newLastName;
@@ -32,7 +33,7 @@ var columnDefs = [
         },
         valueSetter: function(params) {
             if (params.data.b !== params.newValue) {
-                params.data.b = params.newValue;
+                params.data.b = parseInt(params.newValue);
                 return true;
             } else {
                 return false;
@@ -77,11 +78,10 @@ var columnDefs = [
 
 function createRowData() {
     var rowData = [];
-
     var firstNames = ['Niall', 'John', 'Rob', 'Alberto', 'Bas', 'Dimple', 'Sean'];
     var lastNames = ['Pink', 'Black', 'White', 'Brown', 'Smith', 'Smooth', 'Anderson'];
 
-    for (var i = 0; i<100; i++) {
+    for (var i = 0; i < 100; i++) {
         rowData.push({
             a: Math.floor(Math.random() * 100),
             b: Math.floor(Math.random() * 100),

@@ -84,10 +84,10 @@ include '../documentation-main/documentation_header.php';
 
         // interface for params
         interface FillOperationParams {
-            event: MouseEvent, // The MouseEvent that generated the fill operation
-            values: any[], // The values that have been processed by the fill operation
-            initialValues: any[], // The values that were present before processing started
-            currentIndex: number, // Index of the current processed value
+            event: MouseEvent, // the MouseEvent that generated the fill operation
+            values: any[], // the values that have been processed by the fill operation
+            initialValues: any[], // the values that were present before processing started
+            currentIndex: number, // index of the current processed value
             api: GridApi, // the grid API
             columnApi: ColumnApi, // the grid Column API
             context: any,  // the context
@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
     use the default operation for any other column.
     </p>
 
-    <?= example('Custom FillOperation', 'custom-fill-operation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= example('Custom Fill Operation', 'custom-fill-operation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 </div>
 
