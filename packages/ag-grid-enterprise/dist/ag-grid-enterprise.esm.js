@@ -56670,26 +56670,26 @@ var Series = /** @class */ (function (_super) {
     };
     Series.prototype.fixNumericExtent = function (extent, type) {
         if (!extent) {
-            if (type) {
-                console.warn("The " + type + "-domain could not be found (no valid values), using the default of [0, 1].");
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain could not be found (no valid values), using the default of [0, 1].`);
+            // }
             return [0, 1];
         }
         var min = extent[0], max = extent[1];
         if (min === max) {
             min -= 1;
             max += 1;
-            if (type) {
-                console.warn("The " + type + "-domain has zero length and has been automatically expanded"
-                    + (" by 1 in each direction (from the single valid " + type + "-value: " + min + ")."));
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain has zero length and has been automatically expanded`
+            //         + ` by 1 in each direction (from the single valid ${type}-value: ${min}).`);
+            // }
         }
         if (!isFinite(min) || !isFinite(max)) {
             min = 0;
             max = 1;
-            if (type) {
-                console.warn("The " + type + "-domain has infinite length, using the default of [0, 1].");
-            }
+            // if (type) {
+            //     console.warn(`The ${type}-domain has infinite length, using the default of [0, 1].`);
+            // }
         }
         return [min, max];
     };
@@ -58137,6 +58137,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         group.translationY = this.translation.y;
         group.rotation = rotation;
         var title = this.title;
+        // The Text `node` of the Caption is not used to render the title of the grouped category axis.
+        // The phantom root of the tree layout is used instead.
+        title.node.visible = false;
         var lineHeight = this.lineHeight;
         // Render ticks and labels.
         var tickTreeLayout = this.tickTreeLayout;
