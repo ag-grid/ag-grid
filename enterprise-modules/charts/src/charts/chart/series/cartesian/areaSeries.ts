@@ -54,6 +54,7 @@ export class AreaSeries extends CartesianSeries {
     constructor() {
         super();
 
+        this.marker.enabled = false;
         this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
         this.marker.addEventListener('change', () => this.update());
     }
