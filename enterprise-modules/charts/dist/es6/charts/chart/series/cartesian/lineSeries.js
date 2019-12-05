@@ -274,9 +274,8 @@ var LineSeries = /** @class */ (function (_super) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var groupSelection = this.groupSelection;
         if (!marker.enabled) {
-            if (!groupSelection.size) {
-                this.groupSelection.remove();
-            }
+            this.groupSelection = this.groupSelection.setData([]);
+            this.groupSelection.exit.remove();
             return;
         }
         var Marker = marker.type;

@@ -264,7 +264,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.searchFilters = function (searchFilter) {
         var passesFilter = function (groupName) {
-            return !core_1._.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
+            return !core_1._.exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
         var recursivelySearch = function (filterItem, parentPasses) {
             if (!(filterItem instanceof toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp)) {

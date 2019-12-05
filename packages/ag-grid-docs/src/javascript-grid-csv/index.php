@@ -48,25 +48,21 @@ include_once '../php-utils/printPropertiesTable.php';
         can use the same data for both exports.</p>
     <p>
         For compatibility with earlier versions of the Grid you can also pass a string, which will be
-        inserted into the CSV file without any processing. When passing a string, note that:
+        inserted into the CSV file without any processing. You are responsible for formatting the
+        string according to the CSV standard.
     </p>
-
-    <ul>
-        <li>You must either avoid using the <code>columnSeparator</code> character within the content, or escape the content yourself</li>
-        <li>If the string passed to <code>customFooter</code> does not have a newline at the start, one will be added to ensure that the footer appears on a new line</li>
-        <li>If the string contains unix-style line breaks (\n) they will be replaced with Windows-style line breaks (\r\n).</li>
-    </ul>
     
     <h2>Example: CSV Export Options</h2>
 
     <ul>
-        <li>suppressQuotes and columnSeparator have the effects documented above</li>
-        <li>Use the "<strong>&lt;- ExcelCell[][]</strong>" button to fill the customHeader/customFooter field with sample
-            data in the recommended format, or the "<strong>&lt;- text</strong>" button to try the legacy string format.
-        </li>
-        <li>The sample ExcelCell[][] data contains quotes, commas and mergeAcross cells. Provided that
-            <code>suppressQuotes = false</code>, when the file is downloaded and opened in a spreadsheet program, the
-            commas and quotes will be visible as text content in cells because they have been escaped.</li>
+        <li><code>suppressQuotes</code> and <code>columnSeparator</code> have the effects documented above. Use the "api.getTextAsCsv()" button to see their effect,
+            because changing their default values will prevent the file from opening properly in Excel</li>
+        <li>With <code>customHeader=ExcelCell[][]</code>, custom content will be inserted containing commas
+            and quotes. These commas and quotes will be visible when opened in Excel because they have been
+            escaped properly.</li>
+        <li>Setting <code>customHeader=string</code> causes a string to be inserted into the CSV file without any processing, and without
+            being affected by <code>suppressQuotes</code> and <code>columnSeparator</code>. It contains commas and quotes what will not be
+            visible in Excel.</li>
     </ul>
 
     <?= example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>

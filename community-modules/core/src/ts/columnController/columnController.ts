@@ -236,7 +236,7 @@ export class ColumnController {
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
 
-        this.flexActive = !!this.getDisplayedCenterColumns().find(col => col.getFlex());
+        this.flexActive = !!_.find(this.getDisplayedCenterColumns(), col => !!col.getFlex());
     }
 
     public isAutoRowHeightActive(): boolean {

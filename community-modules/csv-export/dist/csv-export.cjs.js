@@ -4873,7 +4873,7 @@ var ColumnController = /** @class */ (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-        this.flexActive = !!this.getDisplayedCenterColumns().find(function (col) { return col.getFlex(); });
+        this.flexActive = !!_.find(this.getDisplayedCenterColumns(), function (col) { return !!col.getFlex(); });
     };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
@@ -35881,7 +35881,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
         this.processRowGroupCallback = processRowGroupCallback;
     }
     BaseGridSerializingSession.prototype.prepare = function (columnsToExport) {
-        this.firstGroupColumn = columnsToExport.find(function (col) { return col.getColDef().showRowGroup; });
+        this.firstGroupColumn = _.find(columnsToExport, function (col) { return !!col.getColDef().showRowGroup; });
     };
     BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
         var value = this.getHeaderName(this.processHeaderCallback, column);
@@ -36170,6 +36170,7 @@ var CsvSerializingSession = /** @class */ (function (_super) {
     __extends$1d(CsvSerializingSession, _super);
     function CsvSerializingSession(config) {
         var _this = _super.call(this, config) || this;
+        _this.isFirstLine = true;
         _this.result = '';
         var suppressQuotes = config.suppressQuotes, columnSeparator = config.columnSeparator;
         _this.suppressQuotes = suppressQuotes;
@@ -36184,12 +36185,12 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         if (typeof content === 'string') {
             // we used to require the customFooter to be prefixed with a newline but no longer do,
             // so only add the newline if the user has not supplied one
-            if (this.result && !/^\s*\n/.test(content)) {
-                content = LINE_SEPARATOR + content;
+            if (!/^\s*\n/.test(content)) {
+                this.beginNewLine();
             }
             // replace whatever newlines are supplied with the style we're using
             content = content.replace(/\r?\n/g, LINE_SEPARATOR);
-            this.result += content + LINE_SEPARATOR;
+            this.result += content;
         }
         else {
             content.forEach(function (row) {
@@ -36271,15 +36272,13 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         return '"' + valueEscaped + '"';
     };
     CsvSerializingSession.prototype.parse = function () {
-        if (!this.result.endsWith(LINE_SEPARATOR)) {
-            this.result += LINE_SEPARATOR;
-        }
-        return this.result;
+        return this.result + LINE_SEPARATOR;
     };
     CsvSerializingSession.prototype.beginNewLine = function () {
-        if (this.result) {
+        if (!this.isFirstLine) {
             this.result += LINE_SEPARATOR;
         }
+        this.isFirstLine = false;
     };
     return CsvSerializingSession;
 }(BaseGridSerializingSession));

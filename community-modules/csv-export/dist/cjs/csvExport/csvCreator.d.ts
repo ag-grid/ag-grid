@@ -6,6 +6,7 @@ export interface CsvSerializingParams extends GridSerializingParams {
     columnSeparator: string;
 }
 export declare class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
+    private isFirstLine;
     private result;
     private suppressQuotes;
     private columnSeparator;

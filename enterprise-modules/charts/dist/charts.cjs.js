@@ -4873,7 +4873,7 @@ var ColumnController = /** @class */ (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-        this.flexActive = !!this.getDisplayedCenterColumns().find(function (col) { return col.getFlex(); });
+        this.flexActive = !!_.find(this.getDisplayedCenterColumns(), function (col) { return !!col.getFlex(); });
     };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
@@ -46746,9 +46746,8 @@ var LineSeries = /** @class */ (function (_super) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var groupSelection = this.groupSelection;
         if (!marker.enabled) {
-            if (!groupSelection.size) {
-                this.groupSelection.remove();
-            }
+            this.groupSelection = this.groupSelection.setData([]);
+            this.groupSelection.exit.remove();
             return;
         }
         var Marker = marker.type;

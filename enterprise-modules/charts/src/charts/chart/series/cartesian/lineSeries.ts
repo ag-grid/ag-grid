@@ -288,9 +288,8 @@ export class LineSeries extends CartesianSeries {
         let { groupSelection } = this;
 
         if (!marker.enabled) {
-            if (!groupSelection.size) {
-                this.groupSelection.remove();
-            }
+            this.groupSelection = this.groupSelection.setData([]);
+            this.groupSelection.exit.remove();
             return;
         }
 

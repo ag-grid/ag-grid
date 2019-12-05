@@ -4869,7 +4869,7 @@ var ColumnController = /** @class */ (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-        this.flexActive = !!this.getDisplayedCenterColumns().find(function (col) { return col.getFlex(); });
+        this.flexActive = !!_.find(this.getDisplayedCenterColumns(), function (col) { return !!col.getFlex(); });
     };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;
@@ -37055,7 +37055,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     };
     FiltersToolPanelListPanel.prototype.searchFilters = function (searchFilter) {
         var passesFilter = function (groupName) {
-            return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter);
+            return !_.exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
         var recursivelySearch = function (filterItem, parentPasses) {
             if (!(filterItem instanceof ToolPanelFilterGroupComp)) {

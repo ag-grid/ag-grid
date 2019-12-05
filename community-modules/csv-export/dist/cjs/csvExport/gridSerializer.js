@@ -19,7 +19,7 @@ var BaseGridSerializingSession = /** @class */ (function () {
         this.processRowGroupCallback = processRowGroupCallback;
     }
     BaseGridSerializingSession.prototype.prepare = function (columnsToExport) {
-        this.firstGroupColumn = columnsToExport.find(function (col) { return col.getColDef().showRowGroup; });
+        this.firstGroupColumn = core_1._.find(columnsToExport, function (col) { return !!col.getColDef().showRowGroup; });
     };
     BaseGridSerializingSession.prototype.extractHeaderValue = function (column) {
         var value = this.getHeaderName(this.processHeaderCallback, column);

@@ -100,7 +100,7 @@ var ColumnController = /** @class */ (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
-        this.flexActive = !!this.getDisplayedCenterColumns().find(function (col) { return col.getFlex(); });
+        this.flexActive = !!utils_1._.find(this.getDisplayedCenterColumns(), function (col) { return !!col.getFlex(); });
     };
     ColumnController.prototype.isAutoRowHeightActive = function () {
         return this.autoRowHeightColumns && this.autoRowHeightColumns.length > 0;

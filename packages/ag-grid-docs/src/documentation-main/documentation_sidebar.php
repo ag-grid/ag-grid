@@ -163,7 +163,7 @@
 <!--End mc_embed_signup-->
     <div class="card">
         <div class="card-body">
-            <p>Work at ag-Grid</a>:</p>
+            <p>Work at ag-Grid:</p>
             <h5 class="card-title"><a
                         href="../ag-grid-jobs-board/">JavaScript Developers</a></h5>
             <h6 class="card-subtitle mb-2 text-muted">London, United Kingdom</h6>
