@@ -35,24 +35,40 @@ button {
 
 <div style="display: flex;">
     <div>
-        <br>
-        <label><input type="checkbox" id="suppressQuotes"/> suppressQuotes = true</label>
         <div class="row"> 
-            <label><input type="checkbox" id="columnSeparator"/> columnSeparator = </label>
-            <input type="text" id="columnSeparatorValue" value="|" style="width: 30px;" />
+            <label>suppressQuotes = </label>
+            <select id="suppressQuotes">
+                <option value="none">(default)</option>
+                <option value="true">true</option>
+            </select>
+        </div>
+        <div class="row"> 
+            <label>columnSeparator = </label>
+            <select id="columnSeparator">
+                <option value="none">(default)</option>
+                <option value="tab">tab</option>
+                <option value="|">bar (|)</option>
+            </select>
         </div>
     </div>
 
     <div style="margin-left: 10px;">
-        Value for customHeader and customFooter (JSON)<br>
-        <textarea id="customValue" rows="6" style="width: 400px;">null</textarea>
-    </div>
-
-    <div style="margin-left: 10px;">
-        <br>
-            <button onclick="setCustomValue('&quot;Value for custom headers and footers\\nmulti-line, and, commas, are, not, escaped&quot;')">&lt;- text</button><br>
-            <button onclick="setCustomValue(JSON.stringify(sampleExcelCellContent, null, '  '))">&lt;- ExcelCell[][]</button><br>
-            <button onclick="setCustomValue('null')">&lt;- null</button><br>
+        <div class="row"> 
+            <label>customHeader = </label>
+            <select id="customHeader">
+                <option>none</option>
+                <option value="array">ExcelCell[][] (recommended format)</option>
+                <option value="string">string (legacy format)</option>
+            </select>
+        </div>
+        <div class="row"> 
+            <label>customFooter = </label>
+            <select id="customFooter">
+                <option>none</option>
+                <option value="array">ExcelCell[][] (recommended format)</option>
+                <option value="string">string (legacy format)</option>
+            </select>
+        </div>
     </div>
 </div>
 
