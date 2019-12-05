@@ -1,7 +1,6 @@
 import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import { ChartController } from "../../../chartController";
 
 export class CalloutPanel extends Component {
 
@@ -21,11 +20,11 @@ export class CalloutPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: PieChartProxy | DoughnutChartProxy;
+    private readonly chartController: ChartController;
 
-    constructor(chartProxy: PieChartProxy | DoughnutChartProxy) {
+    constructor(chartController: ChartController) {
         super();
-        this.chartProxy = chartProxy;
+        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -43,10 +42,10 @@ export class CalloutPanel extends Component {
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartProxy.getSeriesOption(expression))
+                .setValue(this.chartController.getChartProxy().getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setSeriesOption(expression, newValue));
+                .onValueChange(newValue => this.chartController.getChartProxy().setSeriesOption(expression, newValue));
         };
 
         initInput("callout.length", this.calloutLengthSlider, "length", 40);

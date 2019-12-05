@@ -35,13 +35,11 @@ export class AreaSeriesPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private readonly chartController: ChartController;
-    private readonly chartProxy: AreaChartProxy;
     private activePanels: Component[] = [];
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = chartController.getChartProxy() as AreaChartProxy;
     }
 
     @PostConstruct
@@ -69,8 +67,8 @@ export class AreaSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesLineWidth() {
@@ -78,8 +76,8 @@ export class AreaSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("lineWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.width", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
     }
 
     private initOpacity() {
@@ -88,16 +86,16 @@ export class AreaSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.opacity", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("fill.opacity", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fill.opacity", newValue));
     }
 
     private initMarkersPanel() {
@@ -107,7 +105,7 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
+        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -117,6 +115,10 @@ export class AreaSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    }
+
+    private getChartProxy(): AreaChartProxy {
+        return this.chartController.getChartProxy() as AreaChartProxy;
     }
 
     public destroy(): void {

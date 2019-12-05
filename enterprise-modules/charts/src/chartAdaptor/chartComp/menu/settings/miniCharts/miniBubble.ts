@@ -1,10 +1,9 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {ClipRect} from "../../../../../charts/scene/clipRect";
-import {Arc} from "../../../../../charts/scene/shape/arc";
-import {Shape} from "../../../../../charts/scene/shape/shape";
+import { ClipRect } from "../../../../../charts/scene/clipRect";
+import { Arc } from "../../../../../charts/scene/shape/arc";
+import { Shape } from "../../../../../charts/scene/shape/shape";
 
 export class MiniBubble extends MiniChartWithAxes {
     static chartType = ChartType.Bubble;

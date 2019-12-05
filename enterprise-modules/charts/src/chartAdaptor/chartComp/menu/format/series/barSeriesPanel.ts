@@ -38,12 +38,10 @@ export class BarSeriesPanel extends Component {
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
-    private chartProxy: BarChartProxy;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = this.chartController.getChartProxy() as BarChartProxy;
     }
 
     @PostConstruct
@@ -68,8 +66,8 @@ export class BarSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesStrokeWidth() {
@@ -77,8 +75,8 @@ export class BarSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.width", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
     }
 
     private initOpacity() {
@@ -87,39 +85,42 @@ export class BarSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.opacity", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("fill.opacity", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fill.opacity", newValue));
     }
 
     private initLabelPanel() {
+        const chartProxy = this.getChartProxy();
         const initialFont = {
-            family: this.chartProxy.getSeriesOption("label.fontFamily"),
-            style: this.chartProxy.getSeriesOption<FontStyle>("label.fontStyle"),
-            weight: this.chartProxy.getSeriesOption<FontWeight>("label.fontWeight"),
-            size: this.chartProxy.getSeriesOption<number>("label.fontSize"),
-            color: this.chartProxy.getSeriesOption("label.color")
+            family: chartProxy.getSeriesOption("label.fontFamily"),
+            style: chartProxy.getSeriesOption<FontStyle>("label.fontStyle"),
+            weight: chartProxy.getSeriesOption<FontWeight>("label.fontWeight"),
+            size: chartProxy.getSeriesOption<number>("label.fontSize"),
+            color: chartProxy.getSeriesOption("label.color")
         };
 
         const setFont = (font: Font) => {
-            if (font.family) { this.chartProxy.setSeriesOption("label.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setSeriesOption("label.fontWeight", font.weight); }
-            if (font.style) { this.chartProxy.setSeriesOption("label.fontStyle", font.style); }
-            if (font.size) { this.chartProxy.setSeriesOption("label.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setSeriesOption("label.color", font.color); }
+            const chartProxy = this.getChartProxy();
+
+            if (font.family) { chartProxy.setSeriesOption("label.fontFamily", font.family); }
+            if (font.weight) { chartProxy.setSeriesOption("label.fontWeight", font.weight); }
+            if (font.style) { chartProxy.setSeriesOption("label.fontStyle", font.style); }
+            if (font.size) { chartProxy.setSeriesOption("label.fontSize", font.size); }
+            if (font.color) { chartProxy.setSeriesOption("label.color", font.color); }
         };
 
         const params: FontPanelParams = {
             name: this.chartTranslator.translate('labels'),
-            enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: (enabled: boolean) => this.chartProxy.setSeriesOption("label.enabled", enabled),
+            enabled: chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: (enabled: boolean) => this.getChartProxy().setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
@@ -132,7 +133,7 @@ export class BarSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
+        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -142,6 +143,10 @@ export class BarSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    }
+
+    private getChartProxy(): BarChartProxy {
+        return this.chartController.getChartProxy() as BarChartProxy;
     }
 
     public destroy(): void {

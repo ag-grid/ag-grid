@@ -10,7 +10,7 @@ import {
 import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
 
 export class ScatterSeriesPanel extends Component {
 
@@ -29,12 +29,10 @@ export class ScatterSeriesPanel extends Component {
     private activePanels: Component[] = [];
 
     private readonly chartController: ChartController;
-    private readonly chartProxy: LineChartProxy;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = chartController.getChartProxy() as LineChartProxy;
     }
 
     @PostConstruct
@@ -59,8 +57,8 @@ export class ScatterSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initMarkersPanel() {
@@ -74,6 +72,10 @@ export class ScatterSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    }
+
+    private getChartProxy(): ScatterChartProxy {
+        return this.chartController.getChartProxy() as ScatterChartProxy;
     }
 
     public destroy(): void {

@@ -1,5 +1,4 @@
 import { _, ChartType } from "@ag-grid-community/core";
-
 import { MiniChart } from "./miniChart";
 import { Sector } from "../../../../../charts/scene/shape/sector";
 import { toRadians } from "../../../../../charts/util/angle";

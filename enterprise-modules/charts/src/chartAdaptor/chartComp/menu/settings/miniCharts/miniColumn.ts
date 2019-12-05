@@ -1,8 +1,7 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {Rect} from "../../../../../charts/scene/shape/rect";
-import {BandScale} from "../../../../../charts/scale/bandScale";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { Rect } from "../../../../../charts/scene/shape/rect";
+import { BandScale } from "../../../../../charts/scale/bandScale";
 import linearScale from "../../../../../charts/scale/linearScale";
 
 export class MiniColumn extends MiniChartWithAxes {
