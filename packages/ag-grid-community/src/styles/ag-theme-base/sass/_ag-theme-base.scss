@@ -1913,6 +1913,8 @@
                 @extend %side-bar-left;
             }
 
+            border-right-width: 0;
+
             .ag-panel-container {
                 border-left: 1px solid $ag-border-color;
                 border-right: 0;

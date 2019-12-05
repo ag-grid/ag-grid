@@ -1664,11 +1664,13 @@
     .ag-theme-material .ag-rtl .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-last-left-pinned:not(.ag-cell-range-right),
     .ag-theme-material .ag-rtl .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
       border-right: 1px solid #e2e2e2; }
-    .ag-theme-material .ag-rtl .ag-side-bar .ag-panel-container {
-      border-left: 1px solid #e2e2e2;
-      border-right: 0; }
-    .ag-theme-material .ag-rtl .ag-side-bar.full-width .ag-panel-container {
-      border-left: 0; }
+    .ag-theme-material .ag-rtl .ag-side-bar {
+      border-right-width: 0; }
+      .ag-theme-material .ag-rtl .ag-side-bar .ag-panel-container {
+        border-left: 1px solid #e2e2e2;
+        border-right: 0; }
+      .ag-theme-material .ag-rtl .ag-side-bar.full-width .ag-panel-container {
+        border-left: 0; }
     .ag-theme-material .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-filter-toolpanel-header > div:not(.ag-input-wrapper) {
       padding-right: 4px; }
     .ag-theme-material .ag-rtl .ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item {

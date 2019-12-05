@@ -33,7 +33,8 @@
 }
 
 .grid-col {
-    flex: 1;
+    flex: 1 1 auto;
+    position: relative;
     height: 100%;
 }
 
@@ -47,4 +48,9 @@
 
 .blue-row {
     background-color: #ddddff !important;
+}
+
+#myGrid {
+    width: 100%;
+    height: 100%;
 }
