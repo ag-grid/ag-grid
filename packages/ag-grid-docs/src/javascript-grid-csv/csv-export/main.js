@@ -68,11 +68,11 @@ function getParams() {
 }
 
 function onBtnExport() {
-    let p = getParams();
-    if (p.suppressQuotes || p.columnSeparator) {
+    var params = getParams();
+    if (params.suppressQuotes || params.columnSeparator) {
         alert("NOTE: you are downloading a file with non-standard quotes or separators - it may not render correctly in Excel.");
     }
-    gridOptions.api.exportDataAsCsv(p);
+    gridOptions.api.exportDataAsCsv(params);
 }
 
 function onBtnUpdate() {
