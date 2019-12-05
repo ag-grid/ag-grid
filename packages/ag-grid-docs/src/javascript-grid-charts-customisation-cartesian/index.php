@@ -198,7 +198,7 @@ This is a continuous axis used for plotting date/time values. It is used automat
     If no padding modifier is specified, the default is <code>0</code> for all directives except <code>%e</code>, which defaults to <code>_</code>.
 </p>
 
-<h4>Example: Time Series Chart</h4>
+<h2>Example: Time Series Chart</h2>
 
 <p>
     This example shows how a time series chart can be created. It demonstrates explicitly setting the axis type to <code>'time'</code>,
