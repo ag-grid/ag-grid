@@ -8,7 +8,6 @@ export declare class MarkersPanel extends Component {
     private seriesMarkerStrokeWidthSlider;
     private chartTranslator;
     private readonly chartController;
-    private readonly chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initMarkers;

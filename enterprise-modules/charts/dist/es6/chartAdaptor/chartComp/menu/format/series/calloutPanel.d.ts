@@ -1,6 +1,5 @@
 import { Component } from "@ag-grid-community/core";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import { ChartController } from "../../../chartController";
 export declare class CalloutPanel extends Component {
     static TEMPLATE: string;
     private calloutGroup;
@@ -8,8 +7,8 @@ export declare class CalloutPanel extends Component {
     private calloutStrokeWidthSlider;
     private labelOffsetSlider;
     private chartTranslator;
-    private chartProxy;
-    constructor(chartProxy: PieChartProxy | DoughnutChartProxy);
+    private readonly chartController;
+    constructor(chartController: ChartController);
     private init;
     private initCalloutOptions;
 }

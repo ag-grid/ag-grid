@@ -7,8 +7,9 @@ export declare class AxisTicksPanel extends Component {
     private axisTicksWidthSlider;
     private axisTicksSizeSlider;
     private chartTranslator;
-    private chartProxy;
+    private readonly chartController;
     constructor(chartController: ChartController);
     private init;
     private initAxisTicks;
+    private getChartProxy;
 }

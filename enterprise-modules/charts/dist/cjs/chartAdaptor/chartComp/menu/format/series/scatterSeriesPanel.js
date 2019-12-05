@@ -27,7 +27,6 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     ScatterSeriesPanel.prototype.init = function () {
@@ -49,8 +48,8 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     ScatterSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new markersPanel_1.MarkersPanel(this.chartController));
@@ -62,6 +61,9 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
             core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    ScatterSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     ScatterSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();

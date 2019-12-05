@@ -22,7 +22,7 @@ var BackgroundPanel = /** @class */ (function (_super) {
     __extends(BackgroundPanel, _super);
     function BackgroundPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     BackgroundPanel.prototype.init = function () {
@@ -34,10 +34,10 @@ var BackgroundPanel = /** @class */ (function (_super) {
         var _this = this;
         this.group
             .setTitle(this.chartTranslator.translate('background'))
-            .setEnabled(this.chartProxy.getChartOption('background.visible'))
+            .setEnabled(this.chartController.getChartProxy().getChartOption('background.visible'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (enabled) { return _this.chartProxy.setChartOption('background.visible', enabled); });
+            .onEnableChange(function (enabled) { return _this.chartController.getChartProxy().setChartOption('background.visible', enabled); });
     };
     BackgroundPanel.prototype.initColorPicker = function () {
         var _this = this;
@@ -45,8 +45,8 @@ var BackgroundPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue(this.chartProxy.getChartOption('background.fill'))
-            .onValueChange(function (newColor) { return _this.chartProxy.setChartOption('background.fill', newColor); });
+            .setValue(this.chartController.getChartProxy().getChartOption('background.fill'))
+            .onValueChange(function (newColor) { return _this.chartController.getChartProxy().setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
     __decorate([

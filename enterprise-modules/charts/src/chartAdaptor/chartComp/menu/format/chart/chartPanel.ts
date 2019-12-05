@@ -13,7 +13,6 @@ import { ChartController } from "../../../chartController";
 import { PaddingPanel } from "./paddingPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartProxy } from "../../../chartProxies/chartProxy";
 import { CaptionOptions } from "../../../../../charts/chartOptions";
 import { BackgroundPanel } from "./backgroundPanel";
 
@@ -31,14 +30,12 @@ export class ChartPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ChartProxy<any, any>;
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = this.chartController.getChartProxy();
     }
 
     @PostConstruct
@@ -59,23 +56,26 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const title = this.chartProxy.getChartOption<CaptionOptions>('title');
+        const chartProxy = this.chartController.getChartProxy();
+        const title = chartProxy.getChartOption<CaptionOptions>('title');
         const text = title && title.text ? title.text : '';
 
         const setFont = (font: Font) => {
-            if (font.family) { this.chartProxy.setTitleOption('fontFamily', font.family); }
-            if (font.weight) { this.chartProxy.setTitleOption('fontWeight', font.weight); }
-            if (font.style) { this.chartProxy.setTitleOption('fontStyle', font.style); }
-            if (font.size) { this.chartProxy.setTitleOption('fontSize', font.size); }
-            if (font.color) { this.chartProxy.setTitleOption('color', font.color); }
+            const chartProxy = this.chartController.getChartProxy();
+
+            if (font.family) { chartProxy.setTitleOption('fontFamily', font.family); }
+            if (font.weight) { chartProxy.setTitleOption('fontWeight', font.weight); }
+            if (font.style) { chartProxy.setTitleOption('fontStyle', font.style); }
+            if (font.size) { chartProxy.setTitleOption('fontSize', font.size); }
+            if (font.color) { chartProxy.setTitleOption('color', font.color); }
         };
 
         const initialFont = {
-            family: title ? this.chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: title ? this.chartProxy.getChartOption<FontStyle>('title.fontStyle') : undefined,
-            weight: title ? this.chartProxy.getChartOption<FontWeight>('title.fontWeight') : undefined,
-            size: title ? this.chartProxy.getChartOption<number>('title.fontSize') : 22,
-            color: title ? this.chartProxy.getChartOption('title.color') : 'black'
+            family: title ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
+            style: title ? chartProxy.getChartOption<FontStyle>('title.fontStyle') : undefined,
+            weight: title ? chartProxy.getChartOption<FontWeight>('title.fontWeight') : undefined,
+            size: title ? chartProxy.getChartOption<number>('title.fontSize') : 22,
+            color: title ? chartProxy.getChartOption('title.color') : 'black'
         };
 
         if (!title) {
@@ -88,7 +88,7 @@ export class ChartPanel extends Component {
             .setLabelWidth('flex')
             .setValue(text)
             .onValueChange(value => {
-                this.chartProxy.setTitleOption('text', value);
+                this.chartController.getChartProxy().setTitleOption('text', value);
 
                 // only show font panel when title exists
                 fontPanelComp.setEnabled(_.exists(value));

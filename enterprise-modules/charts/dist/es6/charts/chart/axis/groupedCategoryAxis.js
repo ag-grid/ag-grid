@@ -179,7 +179,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        title.node.visible = false;
+        if (title) {
+            title.node.visible = false;
+        }
         var lineHeight = this.lineHeight;
         // Render ticks and labels.
         var tickTreeLayout = this.tickTreeLayout;
@@ -251,7 +253,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 maxLeafLabelWidth = bbox.width;
             }
         });
-        var labelX = sideFlag * label.padding; // label padding from the axis line
+        var labelX = sideFlag * label.padding;
         var autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
@@ -291,10 +293,11 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                     }
                 }
                 else {
+                    var x = -maxLeafLabelWidth - _this.label.padding * 2 + datum.screenY;
                     separatorData.push({
                         y: y,
-                        x1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
-                        x2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
+                        x1: x + lineHeight,
+                        x2: x,
                         toString: function () { return String(index); }
                     });
                 }

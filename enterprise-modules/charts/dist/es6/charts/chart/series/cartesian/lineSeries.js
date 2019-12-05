@@ -50,8 +50,15 @@ var LineSeries = /** @class */ (function (_super) {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         _this.group.append(lineNode);
-        _this.marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
-        _this.marker.addEventListener('change', function () { return _this.update(); });
+        var marker = _this.marker;
+        marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
+        marker.addPropertyListener('enabled', function (event) {
+            if (!event.value) {
+                _this.groupSelection = _this.groupSelection.setData([]);
+                _this.groupSelection.exit.remove();
+            }
+        });
+        marker.addEventListener('change', function () { return _this.update(); });
         return _this;
     }
     LineSeries.prototype.onMarkerTypeChange = function () {
@@ -273,13 +280,8 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var groupSelection = this.groupSelection;
-        if (!marker.enabled) {
-            this.groupSelection = this.groupSelection.setData([]);
-            this.groupSelection.exit.remove();
-            return;
-        }
         var Marker = marker.type;
-        var updateGroups = this.groupSelection.setData(groupSelectionData);
+        var updateGroups = groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Marker);

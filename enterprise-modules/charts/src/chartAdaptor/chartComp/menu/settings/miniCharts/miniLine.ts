@@ -1,9 +1,8 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {Path} from "../../../../../charts/scene/shape/path";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { Path } from "../../../../../charts/scene/shape/path";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {ClipRect} from "../../../../../charts/scene/clipRect";
+import { ClipRect } from "../../../../../charts/scene/clipRect";
 
 export class MiniLine extends MiniChartWithAxes {
     static chartType = ChartType.Line;
@@ -50,7 +49,7 @@ export class MiniLine extends MiniChartWithAxes {
         clipRect.append(this.lines);
         this.root.append(clipRect);
     }
-    
+
     updateColors(fills: string[], strokes: string[]) {
         this.lines.forEach((line, i) => {
             line.stroke = fills[i];

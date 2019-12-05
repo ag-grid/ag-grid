@@ -24,7 +24,7 @@ var PaddingPanel = /** @class */ (function (_super) {
     __extends(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     PaddingPanel.prototype.init = function () {
@@ -42,10 +42,10 @@ var PaddingPanel = /** @class */ (function (_super) {
         var _this = this;
         var initInput = function (property, input) {
             input.setLabel(_this.chartTranslator.translate(property))
-                .setValue(_this.chartProxy.getChartPaddingOption(property))
+                .setValue(_this.chartController.getChartProxy().getChartPaddingOption(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setChartPaddingOption(property, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartPaddingOption(property, newValue); });
         };
         initInput('top', this.paddingTopSlider);
         initInput('right', this.paddingRightSlider);

@@ -25,7 +25,6 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     LineSeriesPanel.prototype.init = function () {
@@ -48,8 +47,8 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     LineSeriesPanel.prototype.initSeriesLineWidth = function () {
         var _this = this;
@@ -57,8 +56,8 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     LineSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
@@ -70,6 +69,9 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    LineSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     LineSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();

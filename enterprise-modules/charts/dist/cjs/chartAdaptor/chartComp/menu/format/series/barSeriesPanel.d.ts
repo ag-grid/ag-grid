@@ -10,7 +10,6 @@ export declare class BarSeriesPanel extends Component {
     private chartTranslator;
     private readonly chartController;
     private activePanels;
-    private chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initSeriesTooltips;
@@ -19,5 +18,6 @@ export declare class BarSeriesPanel extends Component {
     private initLabelPanel;
     private initShadowPanel;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

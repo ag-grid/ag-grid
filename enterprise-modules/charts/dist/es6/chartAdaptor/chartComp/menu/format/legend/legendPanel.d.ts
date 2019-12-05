@@ -12,7 +12,6 @@ export declare class LegendPanel extends Component {
     private itemPaddingYSlider;
     private chartTranslator;
     private activePanels;
-    private chartProxy;
     private readonly chartController;
     constructor(chartController: ChartController);
     private init;

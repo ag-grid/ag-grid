@@ -10757,7 +10757,6 @@ var LegendPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     LegendPanel.prototype.init = function () {
@@ -10773,16 +10772,15 @@ var LegendPanel = /** @class */ (function (_super) {
         this.legendGroup
             .setTitle(this.chartTranslator.translate("legend"))
             .hideEnabledCheckbox(false)
-            .setEnabled(this.chartProxy.getChartOption("legend.enabled") || false)
+            .setEnabled(this.chartController.getChartProxy().getChartOption("legend.enabled") || false)
             .toggleGroupExpand(false)
             .onEnableChange(function (enabled) {
-            _this.chartProxy.setChartOption("legend.enabled", enabled);
+            _this.chartController.getChartProxy().setChartOption("legend.enabled", enabled);
             _this.legendGroup.toggleGroupExpand(true);
         });
     };
     LegendPanel.prototype.initLegendPosition = function () {
         var _this = this;
-        var chartProxy = this.chartController.getChartProxy();
         var positions = ["top", "right", "bottom", "left"];
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
@@ -10792,26 +10790,26 @@ var LegendPanel = /** @class */ (function (_super) {
             value: position,
             text: _this.chartTranslator.translate(position)
         }); }))
-            .setValue(chartProxy.getChartOption("legend.position"))
-            .onValueChange(function (newValue) { return chartProxy.setChartOption("legend.position", newValue); });
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.position"))
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.position", newValue); });
     };
     LegendPanel.prototype.initLegendPadding = function () {
         var _this = this;
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getChartOption("legend.padding"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(function (newValue) { return _this.chartProxy.setChartOption("legend.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.padding", newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
         var initSlider = function (expression, labelKey, input, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getChartOption("legend." + expression))
+                .setValue(_this.chartController.getChartProxy().getChartOption("legend." + expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setChartOption("legend." + expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend." + expression, newValue); });
         };
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
@@ -10821,28 +10819,30 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.prototype.initLabelPanel = function () {
         var _this = this;
+        var chartProxy = this.chartController.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getChartOption("legend.item.label.fontFamily"),
-            style: this.chartProxy.getChartOption("legend.item.label.fontStyle"),
-            weight: this.chartProxy.getChartOption("legend.item.label.fontWeight"),
-            size: this.chartProxy.getChartOption("legend.item.label.fontSize"),
-            color: this.chartProxy.getChartOption("legend.item.label.color")
+            family: chartProxy.getChartOption("legend.item.label.fontFamily"),
+            style: chartProxy.getChartOption("legend.item.label.fontStyle"),
+            weight: chartProxy.getChartOption("legend.item.label.fontWeight"),
+            size: chartProxy.getChartOption("legend.item.label.fontSize"),
+            color: chartProxy.getChartOption("legend.item.label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.chartController.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
+                chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
+                chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
+                chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setChartOption("legend.item.label.fontSize", font.size);
+                chartProxy.setChartOption("legend.item.label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setChartOption("legend.item.label.color", font.color);
+                chartProxy.setChartOption("legend.item.label.color", font.color);
             }
         };
         var params = {
@@ -10920,9 +10920,9 @@ var __decorate$I = (undefined && undefined.__decorate) || function (decorators, 
 };
 var ShadowPanel = /** @class */ (function (_super) {
     __extends$x(ShadowPanel, _super);
-    function ShadowPanel(chartProxy) {
+    function ShadowPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartProxy;
+        _this.chartController = chartController;
         return _this;
     }
     ShadowPanel.prototype.init = function () {
@@ -10936,22 +10936,22 @@ var ShadowPanel = /** @class */ (function (_super) {
         var _this = this;
         this.shadowGroup
             .setTitle(this.chartTranslator.translate("shadow"))
-            .setEnabled(this.chartProxy.getShadowEnabled())
+            .setEnabled(this.chartController.getChartProxy().getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (newValue) { return _this.chartProxy.setShadowProperty("enabled", newValue); });
+            .onEnableChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty("enabled", newValue); });
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue("rgba(0,0,0,0.5)")
-            .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty("color", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty("color", newValue); });
         var initInput = function (input, property, minValue, maxValue) {
             input.setLabel(_this.chartTranslator.translate(property))
-                .setValue(_this.chartProxy.getShadowProperty(property))
+                .setValue(_this.chartController.getChartProxy().getShadowProperty(property))
                 .setMinValue(minValue)
                 .setMaxValue(maxValue)
-                .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty(property, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty(property, newValue); });
         };
         initInput(this.shadowBlurSlider, "blur", 0, 20);
         initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);
@@ -11007,7 +11007,6 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     BarSeriesPanel.prototype.init = function () {
@@ -11029,8 +11028,8 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     BarSeriesPanel.prototype.initSeriesStrokeWidth = function () {
         var _this = this;
@@ -11038,8 +11037,8 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     BarSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
@@ -11048,46 +11047,48 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("fill.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
     };
     BarSeriesPanel.prototype.initLabelPanel = function () {
         var _this = this;
+        var chartProxy = this.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getSeriesOption("label.fontFamily"),
-            style: this.chartProxy.getSeriesOption("label.fontStyle"),
-            weight: this.chartProxy.getSeriesOption("label.fontWeight"),
-            size: this.chartProxy.getSeriesOption("label.fontSize"),
-            color: this.chartProxy.getSeriesOption("label.color")
+            family: chartProxy.getSeriesOption("label.fontFamily"),
+            style: chartProxy.getSeriesOption("label.fontStyle"),
+            weight: chartProxy.getSeriesOption("label.fontWeight"),
+            size: chartProxy.getSeriesOption("label.fontSize"),
+            color: chartProxy.getSeriesOption("label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setSeriesOption("label.fontFamily", font.family);
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setSeriesOption("label.fontWeight", font.weight);
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setSeriesOption("label.fontStyle", font.style);
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setSeriesOption("label.fontSize", font.size);
+                chartProxy.setSeriesOption("label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setSeriesOption("label.color", font.color);
+                chartProxy.setSeriesOption("label.color", font.color);
             }
         };
         var params = {
             name: this.chartTranslator.translate('labels'),
-            enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: function (enabled) { return _this.chartProxy.setSeriesOption("label.enabled", enabled); },
+            enabled: chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: function (enabled) { return _this.getChartProxy().setSeriesOption("label.enabled", enabled); },
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
@@ -11097,7 +11098,7 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         this.seriesGroup.addItem(labelPanelComp);
     };
     BarSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
+        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
@@ -11106,6 +11107,9 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    BarSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     BarSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -11159,7 +11163,7 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     __extends$z(AxisTicksPanel, _super);
     function AxisTicksPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     AxisTicksPanel.prototype.init = function () {
@@ -11176,19 +11180,22 @@ var AxisTicksPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("tick.color"))
-            .onValueChange(function (newColor) { return _this.chartProxy.setAxisProperty("tick.color", newColor); });
+            .setValue(this.getChartProxy().getAxisProperty("tick.color"))
+            .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("tick.color", newColor); });
         var initInput = function (expression, input, label, maxValue) {
             input.setLabel(label)
-                .setValue(_this.chartProxy.getAxisProperty(expression))
+                .setValue(_this.getChartProxy().getAxisProperty(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty(expression, newValue); });
         };
         initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
         initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
     };
-    AxisTicksPanel.TEMPLATE = "<div>         \n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    AxisTicksPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
+    };
+    AxisTicksPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate$K([
         agGridCommunity.RefSelector('axisTicksGroup')
     ], AxisTicksPanel.prototype, "axisTicksGroup", void 0);
@@ -15303,7 +15310,6 @@ var AxisPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AxisPanel.prototype.init = function () {
@@ -15322,14 +15328,14 @@ var AxisPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.color"))
-            .onValueChange(function (newColor) { return _this.chartProxy.setAxisProperty("line.color", newColor); });
+            .setValue(this.getChartProxy().getAxisProperty("line.color"))
+            .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("line.color", newColor); });
         this.axisLineWidthSlider
             .setLabel(this.chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty("line.width", newValue); });
+            .setValue(this.getChartProxy().getAxisProperty("line.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("line.width", newValue); });
     };
     AxisPanel.prototype.initAxisTicks = function () {
         var axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
@@ -15338,30 +15344,32 @@ var AxisPanel = /** @class */ (function (_super) {
     };
     AxisPanel.prototype.initAxisLabels = function () {
         var _this = this;
+        var chartProxy = this.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getAxisProperty("label.fontFamily"),
-            style: this.chartProxy.getAxisProperty("label.fontStyle"),
-            weight: this.chartProxy.getAxisProperty("label.fontWeight"),
-            size: this.chartProxy.getAxisProperty("label.fontSize"),
-            color: this.chartProxy.getAxisProperty("label.color")
+            family: chartProxy.getAxisProperty("label.fontFamily"),
+            style: chartProxy.getAxisProperty("label.fontStyle"),
+            weight: chartProxy.getAxisProperty("label.fontWeight"),
+            size: chartProxy.getAxisProperty("label.fontSize"),
+            color: chartProxy.getAxisProperty("label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setAxisProperty("label.fontFamily", font.family);
+                chartProxy.setAxisProperty("label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setAxisProperty("label.fontWeight", font.weight);
+                chartProxy.setAxisProperty("label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setAxisProperty("label.fontStyle", font.style);
+                chartProxy.setAxisProperty("label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setAxisProperty("label.fontSize", font.size);
+                chartProxy.setAxisProperty("label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setAxisProperty("label.color", font.color);
+                chartProxy.setAxisProperty("label.color", font.color);
             }
-            _this.chartProxy.getChart().performLayout();
+            chartProxy.getChart().performLayout();
         };
         var params = {
             enabled: true,
@@ -15385,30 +15393,24 @@ var AxisPanel = /** @class */ (function (_super) {
             labelPanelComp.addCompToPanel(rotationInput);
         };
         var degreesSymbol = String.fromCharCode(176);
+        var createLabelUpdateFunc = function (axisPosition) { return function (newValue) {
+            var chart = _this.getChartProxy().getChart();
+            var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
+            if (axis) {
+                axis.label.rotation = newValue;
+                chart.performLayout();
+            }
+        }; };
         var xRotationLabel = this.chartTranslator.translate("xRotation") + " " + degreesSymbol;
-        var xUpdateFunc = function (newValue) {
-            var xAxis = find(_this.chartProxy.getChart().axes, function (axis) { return axis.position === ChartAxisPosition.Bottom; });
-            if (xAxis) {
-                xAxis.label.rotation = newValue;
-            }
-            _this.chartProxy.getChart().performLayout();
-        };
-        createAngleComp(xRotationLabel, this.chartProxy.getChartOption("xAxis.label.rotation"), xUpdateFunc);
         var yRotationLabel = this.chartTranslator.translate("yRotation") + " " + degreesSymbol;
-        var yUpdateFunc = function (newValue) {
-            var yAxis = find(_this.chartProxy.getChart().axes, function (axis) { return axis.position === ChartAxisPosition.Left; });
-            if (yAxis) {
-                yAxis.label.rotation = newValue;
-            }
-            _this.chartProxy.getChart().performLayout();
-        };
-        createAngleComp(yRotationLabel, this.chartProxy.getChartOption("yAxis.label.rotation"), yUpdateFunc);
+        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
+        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
         var labelPaddingSlider = this.wireBean(new agGridCommunity.AgSlider());
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getAxisProperty("label.padding"))
+            .setValue(this.getChartProxy().getAxisProperty("label.padding"))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty("label.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("label.padding", newValue); });
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     };
     AxisPanel.prototype.destroyActivePanels = function () {
@@ -15416,6 +15418,9 @@ var AxisPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    AxisPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     AxisPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -18504,7 +18509,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        title.node.visible = false;
+        if (title) {
+            title.node.visible = false;
+        }
         var lineHeight = this.lineHeight;
         // Render ticks and labels.
         var tickTreeLayout = this.tickTreeLayout;
@@ -18576,7 +18583,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 maxLeafLabelWidth = bbox.width;
             }
         });
-        var labelX = sideFlag * label.padding; // label padding from the axis line
+        var labelX = sideFlag * label.padding;
         var autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
@@ -18616,10 +18623,11 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                     }
                 }
                 else {
+                    var x = -maxLeafLabelWidth - _this.label.padding * 2 + datum.screenY;
                     separatorData.push({
                         y: y,
-                        x1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
-                        x2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
+                        x1: x + lineHeight,
+                        x2: x,
                         toString: function () { return String(index); }
                     });
                 }
@@ -19390,8 +19398,15 @@ var LineSeries = /** @class */ (function (_super) {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         _this.group.append(lineNode);
-        _this.marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
-        _this.marker.addEventListener('change', function () { return _this.update(); });
+        var marker = _this.marker;
+        marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
+        marker.addPropertyListener('enabled', function (event) {
+            if (!event.value) {
+                _this.groupSelection = _this.groupSelection.setData([]);
+                _this.groupSelection.exit.remove();
+            }
+        });
+        marker.addEventListener('change', function () { return _this.update(); });
         return _this;
     }
     LineSeries.prototype.onMarkerTypeChange = function () {
@@ -19613,13 +19628,8 @@ var LineSeries = /** @class */ (function (_super) {
     LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
         var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var groupSelection = this.groupSelection;
-        if (!marker.enabled) {
-            this.groupSelection = this.groupSelection.setData([]);
-            this.groupSelection.exit.remove();
-            return;
-        }
         var Marker = marker.type;
-        var updateGroups = this.groupSelection.setData(groupSelectionData);
+        var updateGroups = groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);
         enterGroups.append(Marker);
@@ -25169,7 +25179,6 @@ var MarkersPanel = /** @class */ (function (_super) {
     function MarkersPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     MarkersPanel.prototype.init = function () {
@@ -25179,19 +25188,19 @@ var MarkersPanel = /** @class */ (function (_super) {
     MarkersPanel.prototype.initMarkers = function () {
         var _this = this;
         // scatter charts should always show markers
-        var shouldHideEnabledCheckbox = this.chartProxy instanceof ScatterChartProxy;
+        var shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof ScatterChartProxy;
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
-            .setEnabled(this.chartProxy.getSeriesOption("marker.enabled") || false)
+            .setEnabled(this.chartController.getChartProxy().getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
-            .onEnableChange(function (newValue) { return _this.chartProxy.setSeriesOption("marker.enabled", newValue); });
+            .onEnableChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption("marker.enabled", newValue); });
         var initInput = function (expression, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getSeriesOption(expression))
+                .setValue(_this.chartController.getChartProxy().getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         if (this.chartController.getChartType() === agGridCommunity.ChartType.Bubble) {
             initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);
@@ -25250,7 +25259,6 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     LineSeriesPanel.prototype.init = function () {
@@ -25273,8 +25281,8 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     LineSeriesPanel.prototype.initSeriesLineWidth = function () {
         var _this = this;
@@ -25282,8 +25290,8 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     LineSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
@@ -25295,6 +25303,9 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    LineSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     LineSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -25340,9 +25351,9 @@ var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, 
 };
 var CalloutPanel = /** @class */ (function (_super) {
     __extends$1j(CalloutPanel, _super);
-    function CalloutPanel(chartProxy) {
+    function CalloutPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartProxy;
+        _this.chartController = chartController;
         return _this;
     }
     CalloutPanel.prototype.init = function () {
@@ -25358,10 +25369,10 @@ var CalloutPanel = /** @class */ (function (_super) {
             .hideEnabledCheckbox(true);
         var initInput = function (expression, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getSeriesOption(expression))
+                .setValue(_this.chartController.getChartProxy().getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         initInput("callout.length", this.calloutLengthSlider, "length", 40);
         initInput("callout.strokeWidth", this.calloutStrokeWidthSlider, "strokeWidth", 10);
@@ -25413,7 +25424,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
     function PieSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     PieSeriesPanel.prototype.init = function () {
@@ -25438,8 +25449,8 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     PieSeriesPanel.prototype.initSeriesStrokeWidth = function () {
         var _this = this;
@@ -25447,8 +25458,8 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     PieSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
@@ -25457,59 +25468,61 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fillOpacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("fillOpacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("fillOpacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fillOpacity", newValue); });
     };
     PieSeriesPanel.prototype.initLabelPanel = function () {
         var _this = this;
+        var chartProxy = this.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getSeriesOption("label.fontFamily"),
-            style: this.chartProxy.getSeriesOption("label.fontStyle"),
-            weight: this.chartProxy.getSeriesOption("label.fontWeight"),
-            size: this.chartProxy.getSeriesOption("label.fontSize"),
-            color: this.chartProxy.getSeriesOption("label.color")
+            family: chartProxy.getSeriesOption("label.fontFamily"),
+            style: chartProxy.getSeriesOption("label.fontStyle"),
+            weight: chartProxy.getSeriesOption("label.fontWeight"),
+            size: chartProxy.getSeriesOption("label.fontSize"),
+            color: chartProxy.getSeriesOption("label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setSeriesOption("label.fontFamily", font.family);
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setSeriesOption("label.fontWeight", font.weight);
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setSeriesOption("label.fontStyle", font.style);
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setSeriesOption("label.fontSize", font.size);
+                chartProxy.setSeriesOption("label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setSeriesOption("label.color", font.color);
+                chartProxy.setSeriesOption("label.color", font.color);
             }
         };
         var params = {
             name: this.chartTranslator.translate('labels'),
-            enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: function (enabled) { return _this.chartProxy.setSeriesOption("label.enabled", enabled); },
+            enabled: chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: function (enabled) { return _this.getChartProxy().setSeriesOption("label.enabled", enabled); },
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
         };
         var labelPanelComp = this.wireBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
-        var calloutPanelComp = this.wireBean(new CalloutPanel(this.chartProxy));
+        var calloutPanelComp = this.wireBean(new CalloutPanel(this.chartController));
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     };
     PieSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
+        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);
     };
@@ -25518,6 +25531,9 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    PieSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     PieSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -25571,7 +25587,7 @@ var PaddingPanel = /** @class */ (function (_super) {
     __extends$1l(PaddingPanel, _super);
     function PaddingPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     PaddingPanel.prototype.init = function () {
@@ -25589,10 +25605,10 @@ var PaddingPanel = /** @class */ (function (_super) {
         var _this = this;
         var initInput = function (property, input) {
             input.setLabel(_this.chartTranslator.translate(property))
-                .setValue(_this.chartProxy.getChartPaddingOption(property))
+                .setValue(_this.chartController.getChartProxy().getChartPaddingOption(property))
                 .setMaxValue(200)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setChartPaddingOption(property, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartPaddingOption(property, newValue); });
         };
         initInput('top', this.paddingTopSlider);
         initInput('right', this.paddingRightSlider);
@@ -25647,7 +25663,7 @@ var BackgroundPanel = /** @class */ (function (_super) {
     __extends$1m(BackgroundPanel, _super);
     function BackgroundPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     BackgroundPanel.prototype.init = function () {
@@ -25659,10 +25675,10 @@ var BackgroundPanel = /** @class */ (function (_super) {
         var _this = this;
         this.group
             .setTitle(this.chartTranslator.translate('background'))
-            .setEnabled(this.chartProxy.getChartOption('background.visible'))
+            .setEnabled(this.chartController.getChartProxy().getChartOption('background.visible'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (enabled) { return _this.chartProxy.setChartOption('background.visible', enabled); });
+            .onEnableChange(function (enabled) { return _this.chartController.getChartProxy().setChartOption('background.visible', enabled); });
     };
     BackgroundPanel.prototype.initColorPicker = function () {
         var _this = this;
@@ -25670,8 +25686,8 @@ var BackgroundPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue(this.chartProxy.getChartOption('background.fill'))
-            .onValueChange(function (newColor) { return _this.chartProxy.setChartOption('background.fill', newColor); });
+            .setValue(this.chartController.getChartProxy().getChartOption('background.fill'))
+            .onValueChange(function (newColor) { return _this.chartController.getChartProxy().setChartOption('background.fill', newColor); });
     };
     BackgroundPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartBackgroundGroup\">\n                <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n            </ag-group-component>\n        <div>";
     __decorate$10([
@@ -25714,7 +25730,6 @@ var ChartPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     ChartPanel.prototype.init = function () {
@@ -25732,31 +25747,33 @@ var ChartPanel = /** @class */ (function (_super) {
     };
     ChartPanel.prototype.initTitles = function () {
         var _this = this;
-        var title = this.chartProxy.getChartOption('title');
+        var chartProxy = this.chartController.getChartProxy();
+        var title = chartProxy.getChartOption('title');
         var text = title && title.text ? title.text : '';
         var setFont = function (font) {
+            var chartProxy = _this.chartController.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setTitleOption('fontFamily', font.family);
+                chartProxy.setTitleOption('fontFamily', font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setTitleOption('fontWeight', font.weight);
+                chartProxy.setTitleOption('fontWeight', font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setTitleOption('fontStyle', font.style);
+                chartProxy.setTitleOption('fontStyle', font.style);
             }
             if (font.size) {
-                _this.chartProxy.setTitleOption('fontSize', font.size);
+                chartProxy.setTitleOption('fontSize', font.size);
             }
             if (font.color) {
-                _this.chartProxy.setTitleOption('color', font.color);
+                chartProxy.setTitleOption('color', font.color);
             }
         };
         var initialFont = {
-            family: title ? this.chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: title ? this.chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: title ? this.chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: title ? this.chartProxy.getChartOption('title.fontSize') : 22,
-            color: title ? this.chartProxy.getChartOption('title.color') : 'black'
+            family: title ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
+            style: title ? chartProxy.getChartOption('title.fontStyle') : undefined,
+            weight: title ? chartProxy.getChartOption('title.fontWeight') : undefined,
+            size: title ? chartProxy.getChartOption('title.fontSize') : 22,
+            color: title ? chartProxy.getChartOption('title.color') : 'black'
         };
         if (!title) {
             setFont(initialFont);
@@ -25767,7 +25784,7 @@ var ChartPanel = /** @class */ (function (_super) {
             .setLabelWidth('flex')
             .setValue(text)
             .onValueChange(function (value) {
-            _this.chartProxy.setTitleOption('text', value);
+            _this.chartController.getChartProxy().setTitleOption('text', value);
             // only show font panel when title exists
             fontPanelComp.setEnabled(agGridCommunity._.exists(value));
         });
@@ -25844,7 +25861,6 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AreaSeriesPanel.prototype.init = function () {
@@ -25869,8 +25885,8 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     AreaSeriesPanel.prototype.initSeriesLineWidth = function () {
         var _this = this;
@@ -25878,8 +25894,8 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("lineWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     AreaSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
@@ -25888,15 +25904,15 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("fill.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
     };
     AreaSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
@@ -25904,7 +25920,7 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         this.activePanels.push(markersPanelComp);
     };
     AreaSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartProxy));
+        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
@@ -25913,6 +25929,9 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    AreaSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     AreaSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -25968,7 +25987,6 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     ScatterSeriesPanel.prototype.init = function () {
@@ -25990,8 +26008,8 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     ScatterSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
@@ -26003,6 +26021,9 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    ScatterSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     ScatterSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();
@@ -29568,8 +29589,8 @@ var FillHandle = /** @class */ (function (_super) {
     }
     FillHandle.prototype.onDrag = function (e) {
         if (!this.initialXY) {
-            var _a = this.getGui().getBoundingClientRect(), x_1 = _a.x, y_1 = _a.y;
-            this.initialXY = { x: x_1, y: y_1 };
+            var _a = this.getGui().getBoundingClientRect(), left = _a.left, top_1 = _a.top;
+            this.initialXY = { x: left, y: top_1 };
         }
         var _b = this.initialXY, x = _b.x, y = _b.y;
         var diffX = Math.abs(x - e.clientX);

@@ -212,7 +212,9 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
         const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
         // The phantom root of the tree layout is used instead.
-        title.node.visible = false;
+        if (title) {
+            title.node.visible = false;
+        }
         const lineHeight = this.lineHeight;
 
         // Render ticks and labels.
@@ -290,7 +292,7 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
                 }
             });
 
-        const labelX = sideFlag * label.padding; // label padding from the axis line
+        const labelX = sideFlag * label.padding;
         const autoRotation = parallelLabels
             ? parallelFlipFlag * Math.PI / 2
             : (regularFlipFlag === -1 ? Math.PI : 0);
@@ -329,10 +331,11 @@ export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandSc
                         });
                     }
                 } else {
+                    const x = -maxLeafLabelWidth - this.label.padding * 2 + datum.screenY;
                     separatorData.push({
                         y,
-                        x1: -maxLeafLabelWidth + datum.screenY + lineHeight / 2,
-                        x2: -maxLeafLabelWidth + datum.screenY - lineHeight / 2,
+                        x1: x + lineHeight,
+                        x2: x,
                         toString: () => String(index)
                     });
                 }

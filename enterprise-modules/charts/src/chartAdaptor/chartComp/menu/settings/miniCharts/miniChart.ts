@@ -1,8 +1,7 @@
-import {_, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
-
-import {ChartTranslator} from "../../../chartTranslator";
-import {Group} from "../../../../../charts/scene/group";
-import {Scene} from "../../../../../charts/scene/scene";
+import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartTranslator } from "../../../chartTranslator";
+import { Group } from "../../../../../charts/scene/group";
+import { Scene } from "../../../../../charts/scene/scene";
 
 export abstract class MiniChart extends Component {
     protected tooltipName: string;

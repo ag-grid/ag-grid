@@ -22,9 +22,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var CalloutPanel = /** @class */ (function (_super) {
     __extends(CalloutPanel, _super);
-    function CalloutPanel(chartProxy) {
+    function CalloutPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartProxy;
+        _this.chartController = chartController;
         return _this;
     }
     CalloutPanel.prototype.init = function () {
@@ -40,10 +40,10 @@ var CalloutPanel = /** @class */ (function (_super) {
             .hideEnabledCheckbox(true);
         var initInput = function (expression, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getSeriesOption(expression))
+                .setValue(_this.chartController.getChartProxy().getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         initInput("callout.length", this.calloutLengthSlider, "length", 40);
         initInput("callout.strokeWidth", this.calloutStrokeWidthSlider, "strokeWidth", 10);

@@ -8,7 +8,6 @@ export declare class AxisPanel extends Component {
     private chartTranslator;
     private readonly chartController;
     private activePanels;
-    private chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initAxis;
@@ -16,5 +15,6 @@ export declare class AxisPanel extends Component {
     private initAxisLabels;
     private addAdditionalLabelComps;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

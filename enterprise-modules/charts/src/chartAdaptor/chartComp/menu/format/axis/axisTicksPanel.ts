@@ -14,7 +14,7 @@ import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianCh
 export class AxisTicksPanel extends Component {
 
     public static TEMPLATE =
-        `<div>         
+        `<div>
             <ag-group-component ref="axisTicksGroup">
                 <ag-color-picker ref="axisTicksColorPicker"></ag-color-picker>
                 <ag-slider ref="axisTicksWidthSlider"></ag-slider>
@@ -29,11 +29,11 @@ export class AxisTicksPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: CartesianChartProxy<any>;
+    private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
-        this.chartProxy = chartController.getChartProxy() as CartesianChartProxy<any>;
+        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -52,18 +52,22 @@ export class AxisTicksPanel extends Component {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("tick.color"))
-            .onValueChange(newColor => this.chartProxy.setAxisProperty("tick.color", newColor));
+            .setValue(this.getChartProxy().getAxisProperty("tick.color"))
+            .onValueChange(newColor => this.getChartProxy().setAxisProperty("tick.color", newColor));
 
         const initInput = (expression: string, input: AgSlider, label: string, maxValue: number) => {
             input.setLabel(label)
-                .setValue(this.chartProxy.getAxisProperty(expression))
+                .setValue(this.getChartProxy().getAxisProperty(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setAxisProperty(expression, newValue));
+                .onValueChange(newValue => this.getChartProxy().setAxisProperty(expression, newValue));
         };
 
         initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
         initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
+    }
+
+    private getChartProxy(): CartesianChartProxy<any> {
+        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 }

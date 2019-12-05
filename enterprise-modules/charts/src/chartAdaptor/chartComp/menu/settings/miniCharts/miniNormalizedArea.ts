@@ -1,6 +1,5 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniStackedArea} from "./miniStackedArea";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniStackedArea } from "./miniStackedArea";
 
 export class MiniNormalizedArea extends MiniStackedArea {
     static chartType = ChartType.NormalizedArea;

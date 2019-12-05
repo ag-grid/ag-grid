@@ -8,7 +8,7 @@ export declare class PaddingPanel extends Component {
     private paddingBottomSlider;
     private paddingLeftSlider;
     private chartTranslator;
-    private chartProxy;
+    private readonly chartController;
     constructor(chartController: ChartController);
     private init;
     private initGroup;

@@ -9,12 +9,7 @@ import {
     DropShadowOptions,
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
-import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
-
-type ShadowProxy = BarChartProxy | AreaChartProxy | PieChartProxy | DoughnutChartProxy;
+import { ChartController } from "../../../chartController";
 
 export class ShadowPanel extends Component {
 
@@ -36,11 +31,11 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ShadowProxy;
+    private readonly chartController: ChartController;
 
-    constructor(chartProxy: ShadowProxy) {
+    constructor(chartController: ChartController) {
         super();
-        this.chartProxy = chartProxy;
+        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -57,24 +52,24 @@ export class ShadowPanel extends Component {
     private initSeriesShadow() {
         this.shadowGroup
             .setTitle(this.chartTranslator.translate("shadow"))
-            .setEnabled(this.chartProxy.getShadowEnabled())
+            .setEnabled(this.chartController.getChartProxy().getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartProxy.setShadowProperty("enabled", newValue));
+            .onEnableChange(newValue => this.chartController.getChartProxy().setShadowProperty("enabled", newValue));
 
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue("rgba(0,0,0,0.5)")
-            .onValueChange(newValue => this.chartProxy.setShadowProperty("color", newValue));
+            .onValueChange(newValue => this.chartController.getChartProxy().setShadowProperty("color", newValue));
 
         const initInput = (input: AgSlider, property: keyof DropShadowOptions, minValue: number, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(this.chartProxy.getShadowProperty(property))
+                .setValue(this.chartController.getChartProxy().getShadowProperty(property))
                 .setMinValue(minValue)
                 .setMaxValue(maxValue)
-                .onValueChange(newValue => this.chartProxy.setShadowProperty(property, newValue));
+                .onValueChange(newValue => this.chartController.getChartProxy().setShadowProperty(property, newValue));
         };
 
         initInput(this.shadowBlurSlider, "blur", 0, 20);

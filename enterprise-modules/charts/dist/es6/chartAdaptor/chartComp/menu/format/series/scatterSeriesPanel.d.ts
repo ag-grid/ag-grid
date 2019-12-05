@@ -7,12 +7,12 @@ export declare class ScatterSeriesPanel extends Component {
     private chartTranslator;
     private activePanels;
     private readonly chartController;
-    private readonly chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initSeriesGroup;
     private initSeriesTooltips;
     private initMarkersPanel;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

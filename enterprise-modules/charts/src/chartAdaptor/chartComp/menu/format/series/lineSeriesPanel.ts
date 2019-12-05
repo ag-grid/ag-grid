@@ -32,12 +32,10 @@ export class LineSeriesPanel extends Component {
     private activePanels: Component[] = [];
 
     private readonly chartController: ChartController;
-    private readonly chartProxy: LineChartProxy;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = chartController.getChartProxy() as LineChartProxy;
     }
 
     @PostConstruct
@@ -63,8 +61,8 @@ export class LineSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesLineWidth() {
@@ -72,8 +70,8 @@ export class LineSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.chartProxy.setSeriesOption("stroke.width", newValue));
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
     }
 
     private initMarkersPanel() {
@@ -87,6 +85,10 @@ export class LineSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    }
+
+    private getChartProxy(): LineChartProxy {
+        return this.chartController.getChartProxy() as LineChartProxy;
     }
 
     public destroy(): void {

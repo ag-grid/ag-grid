@@ -8,7 +8,7 @@ export declare class PieSeriesPanel extends Component {
     private seriesLineOpacitySlider;
     private seriesFillOpacitySlider;
     private chartTranslator;
-    private readonly chartProxy;
+    private readonly chartController;
     private activePanels;
     constructor(chartController: ChartController);
     private init;
@@ -19,5 +19,6 @@ export declare class PieSeriesPanel extends Component {
     private initLabelPanel;
     private initShadowPanel;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

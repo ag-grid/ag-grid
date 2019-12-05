@@ -53,8 +53,8 @@ var FillHandle = /** @class */ (function (_super) {
     }
     FillHandle.prototype.onDrag = function (e) {
         if (!this.initialXY) {
-            var _a = this.getGui().getBoundingClientRect(), x_1 = _a.x, y_1 = _a.y;
-            this.initialXY = { x: x_1, y: y_1 };
+            var _a = this.getGui().getBoundingClientRect(), left = _a.left, top_1 = _a.top;
+            this.initialXY = { x: left, y: top_1 };
         }
         var _b = this.initialXY, x = _b.x, y = _b.y;
         var diffX = Math.abs(x - e.clientX);

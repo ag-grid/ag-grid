@@ -1,9 +1,8 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {Path} from "../../../../../charts/scene/shape/path";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { Path } from "../../../../../charts/scene/shape/path";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {BandScale} from "../../../../../charts/scale/bandScale";
+import { BandScale } from "../../../../../charts/scale/bandScale";
 
 export interface ICoordinate {
     x: number;

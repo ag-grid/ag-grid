@@ -20,9 +20,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Component, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 var ShadowPanel = /** @class */ (function (_super) {
     __extends(ShadowPanel, _super);
-    function ShadowPanel(chartProxy) {
+    function ShadowPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartProxy;
+        _this.chartController = chartController;
         return _this;
     }
     ShadowPanel.prototype.init = function () {
@@ -36,22 +36,22 @@ var ShadowPanel = /** @class */ (function (_super) {
         var _this = this;
         this.shadowGroup
             .setTitle(this.chartTranslator.translate("shadow"))
-            .setEnabled(this.chartProxy.getShadowEnabled())
+            .setEnabled(this.chartController.getChartProxy().getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(function (newValue) { return _this.chartProxy.setShadowProperty("enabled", newValue); });
+            .onEnableChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty("enabled", newValue); });
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue("rgba(0,0,0,0.5)")
-            .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty("color", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty("color", newValue); });
         var initInput = function (input, property, minValue, maxValue) {
             input.setLabel(_this.chartTranslator.translate(property))
-                .setValue(_this.chartProxy.getShadowProperty(property))
+                .setValue(_this.chartController.getChartProxy().getShadowProperty(property))
                 .setMinValue(minValue)
                 .setMaxValue(maxValue)
-                .onValueChange(function (newValue) { return _this.chartProxy.setShadowProperty(property, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setShadowProperty(property, newValue); });
         };
         initInput(this.shadowBlurSlider, "blur", 0, 20);
         initInput(this.shadowXOffsetSlider, "xOffset", -10, 10);

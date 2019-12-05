@@ -28,7 +28,6 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AreaSeriesPanel.prototype.init = function () {
@@ -53,8 +52,8 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     AreaSeriesPanel.prototype.initSeriesLineWidth = function () {
         var _this = this;
@@ -62,8 +61,8 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("lineWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     AreaSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
@@ -72,15 +71,15 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("fill.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
     };
     AreaSeriesPanel.prototype.initMarkersPanel = function () {
         var markersPanelComp = this.wireBean(new markersPanel_1.MarkersPanel(this.chartController));
@@ -88,7 +87,7 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         this.activePanels.push(markersPanelComp);
     };
     AreaSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartProxy));
+        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
@@ -97,6 +96,9 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    AreaSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     AreaSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();

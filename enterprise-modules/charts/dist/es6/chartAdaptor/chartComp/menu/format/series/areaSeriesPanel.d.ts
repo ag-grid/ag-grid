@@ -9,7 +9,6 @@ export declare class AreaSeriesPanel extends Component {
     private seriesFillOpacitySlider;
     private chartTranslator;
     private readonly chartController;
-    private readonly chartProxy;
     private activePanels;
     constructor(chartController: ChartController);
     private init;
@@ -20,5 +19,6 @@ export declare class AreaSeriesPanel extends Component {
     private initMarkersPanel;
     private initShadowPanel;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

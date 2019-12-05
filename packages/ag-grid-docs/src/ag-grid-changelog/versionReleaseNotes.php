@@ -1,3 +1,37 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_22_1_0">
+    <p>Release 22.1.0 (6th Dec 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-1630 - Add Excel-like Fill Handle
+            (see <a href="/javascript-grid-range-selection-fill-handle/">Fill Handle</a>).
+        </li>
+        <li>
+            AG-2566 - Allow specifying column width as reminder viewport view
+            (see <a href="/javascript-grid-resizing/#column-flex">Column Flex</a>).
+        </li>
+        <li>
+            AG-169 - Allow Undo / Redo of Cell Editing
+            (see <a href="/javascript-grid-undo-redo-edits/">Undo / Redo Edits</a>).
+        </li>
+        <li>
+            AG-3318	- Allow charts to be saved and restored
+            (see <a href="/javascript-grid-charts-chart-range-api/#saving-and-restoring-charts">Saving and Restoring Charts</a>).
+        </li>
+        <li>
+            AG-2819 - Add support for Time Series charts
+            (see <a href="/javascript-grid-charts-customisation-cartesian/#example-time-series-chart">Time Series Charting</a>).
+        </li>
+        <li>
+            AG-332 - Allow exporting Master Detail to Excel
+            (see <a href="/javascript-grid-master-detail/#exporting-master-detail-data">Exporting Master / Detail Data</a>).
+        </li>
+    </ul>
+</div>
+
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_22_0_0">
     <p>Release 22.0.0 (11th Nov 2019)</p>
 

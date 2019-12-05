@@ -1,8 +1,7 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {Rect} from "../../../../../charts/scene/shape/rect";
-import {BandScale} from "../../../../../charts/scale/bandScale";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { Rect } from "../../../../../charts/scene/shape/rect";
+import { BandScale } from "../../../../../charts/scale/bandScale";
 import linearScale from "../../../../../charts/scale/linearScale";
 
 export class MiniStackedColumn extends MiniChartWithAxes {
@@ -41,7 +40,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         const width = xScale.bandwidth;
 
         this.bars = data.map(series =>
-             series.map((datum, i) => {
+            series.map((datum, i) => {
                 const top = yScale.convert(datum);
                 const rect = new Rect();
                 rect.x = xScale.convert(i);
@@ -52,7 +51,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
                 rect.crisp = true;
 
                 return rect;
-             })
+            })
         );
 
         this.updateColors(fills, strokes);

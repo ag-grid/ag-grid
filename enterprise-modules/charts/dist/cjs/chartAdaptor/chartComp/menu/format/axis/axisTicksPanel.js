@@ -24,7 +24,7 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     __extends(AxisTicksPanel, _super);
     function AxisTicksPanel(chartController) {
         var _this = _super.call(this) || this;
-        _this.chartProxy = chartController.getChartProxy();
+        _this.chartController = chartController;
         return _this;
     }
     AxisTicksPanel.prototype.init = function () {
@@ -41,19 +41,22 @@ var AxisTicksPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("tick.color"))
-            .onValueChange(function (newColor) { return _this.chartProxy.setAxisProperty("tick.color", newColor); });
+            .setValue(this.getChartProxy().getAxisProperty("tick.color"))
+            .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("tick.color", newColor); });
         var initInput = function (expression, input, label, maxValue) {
             input.setLabel(label)
-                .setValue(_this.chartProxy.getAxisProperty(expression))
+                .setValue(_this.getChartProxy().getAxisProperty(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty(expression, newValue); });
         };
         initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
         initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
     };
-    AxisTicksPanel.TEMPLATE = "<div>         \n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    AxisTicksPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
+    };
+    AxisTicksPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisTicksGroup\">\n                <ag-color-picker ref=\"axisTicksColorPicker\"></ag-color-picker>\n                <ag-slider ref=\"axisTicksWidthSlider\"></ag-slider>\n                <ag-slider ref=\"axisTicksSizeSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('axisTicksGroup')
     ], AxisTicksPanel.prototype, "axisTicksGroup", void 0);

@@ -5,7 +5,7 @@ export declare class BackgroundPanel extends Component {
     private group;
     private colorPicker;
     private chartTranslator;
-    private chartProxy;
+    private readonly chartController;
     constructor(chartController: ChartController);
     private init;
     private initGroup;

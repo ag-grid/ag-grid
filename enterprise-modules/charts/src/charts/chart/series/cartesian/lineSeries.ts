@@ -46,8 +46,15 @@ export class LineSeries extends CartesianSeries {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
-        this.marker.addEventListener('change', () => this.update());
+        const { marker } = this;
+        marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        marker.addPropertyListener('enabled', event => {
+            if (!event.value) {
+                this.groupSelection = this.groupSelection.setData([]);
+                this.groupSelection.exit.remove();
+            }
+        });
+        marker.addEventListener('change', () => this.update());
     }
 
     onMarkerTypeChange() {
@@ -287,15 +294,9 @@ export class LineSeries extends CartesianSeries {
         const { marker, xKey, yKey, highlightedNode, fill, stroke, strokeWidth } = this;
         let { groupSelection } = this;
 
-        if (!marker.enabled) {
-            this.groupSelection = this.groupSelection.setData([]);
-            this.groupSelection.exit.remove();
-            return;
-        }
-
         const Marker = marker.type;
 
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
+        const updateGroups = groupSelection.setData(groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);

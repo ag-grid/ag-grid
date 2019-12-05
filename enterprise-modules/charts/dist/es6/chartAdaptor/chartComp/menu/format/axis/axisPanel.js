@@ -28,7 +28,6 @@ var AxisPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     AxisPanel.prototype.init = function () {
@@ -47,14 +46,14 @@ var AxisPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.color"))
-            .onValueChange(function (newColor) { return _this.chartProxy.setAxisProperty("line.color", newColor); });
+            .setValue(this.getChartProxy().getAxisProperty("line.color"))
+            .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("line.color", newColor); });
         this.axisLineWidthSlider
             .setLabel(this.chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty("line.width", newValue); });
+            .setValue(this.getChartProxy().getAxisProperty("line.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("line.width", newValue); });
     };
     AxisPanel.prototype.initAxisTicks = function () {
         var axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
@@ -63,30 +62,32 @@ var AxisPanel = /** @class */ (function (_super) {
     };
     AxisPanel.prototype.initAxisLabels = function () {
         var _this = this;
+        var chartProxy = this.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getAxisProperty("label.fontFamily"),
-            style: this.chartProxy.getAxisProperty("label.fontStyle"),
-            weight: this.chartProxy.getAxisProperty("label.fontWeight"),
-            size: this.chartProxy.getAxisProperty("label.fontSize"),
-            color: this.chartProxy.getAxisProperty("label.color")
+            family: chartProxy.getAxisProperty("label.fontFamily"),
+            style: chartProxy.getAxisProperty("label.fontStyle"),
+            weight: chartProxy.getAxisProperty("label.fontWeight"),
+            size: chartProxy.getAxisProperty("label.fontSize"),
+            color: chartProxy.getAxisProperty("label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setAxisProperty("label.fontFamily", font.family);
+                chartProxy.setAxisProperty("label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setAxisProperty("label.fontWeight", font.weight);
+                chartProxy.setAxisProperty("label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setAxisProperty("label.fontStyle", font.style);
+                chartProxy.setAxisProperty("label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setAxisProperty("label.fontSize", font.size);
+                chartProxy.setAxisProperty("label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setAxisProperty("label.color", font.color);
+                chartProxy.setAxisProperty("label.color", font.color);
             }
-            _this.chartProxy.getChart().performLayout();
+            chartProxy.getChart().performLayout();
         };
         var params = {
             enabled: true,
@@ -110,30 +111,24 @@ var AxisPanel = /** @class */ (function (_super) {
             labelPanelComp.addCompToPanel(rotationInput);
         };
         var degreesSymbol = String.fromCharCode(176);
+        var createLabelUpdateFunc = function (axisPosition) { return function (newValue) {
+            var chart = _this.getChartProxy().getChart();
+            var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
+            if (axis) {
+                axis.label.rotation = newValue;
+                chart.performLayout();
+            }
+        }; };
         var xRotationLabel = this.chartTranslator.translate("xRotation") + " " + degreesSymbol;
-        var xUpdateFunc = function (newValue) {
-            var xAxis = find(_this.chartProxy.getChart().axes, function (axis) { return axis.position === ChartAxisPosition.Bottom; });
-            if (xAxis) {
-                xAxis.label.rotation = newValue;
-            }
-            _this.chartProxy.getChart().performLayout();
-        };
-        createAngleComp(xRotationLabel, this.chartProxy.getChartOption("xAxis.label.rotation"), xUpdateFunc);
         var yRotationLabel = this.chartTranslator.translate("yRotation") + " " + degreesSymbol;
-        var yUpdateFunc = function (newValue) {
-            var yAxis = find(_this.chartProxy.getChart().axes, function (axis) { return axis.position === ChartAxisPosition.Left; });
-            if (yAxis) {
-                yAxis.label.rotation = newValue;
-            }
-            _this.chartProxy.getChart().performLayout();
-        };
-        createAngleComp(yRotationLabel, this.chartProxy.getChartOption("yAxis.label.rotation"), yUpdateFunc);
+        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
+        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
         var labelPaddingSlider = this.wireBean(new AgSlider());
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getAxisProperty("label.padding"))
+            .setValue(this.getChartProxy().getAxisProperty("label.padding"))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .onValueChange(function (newValue) { return _this.chartProxy.setAxisProperty("label.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("label.padding", newValue); });
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     };
     AxisPanel.prototype.destroyActivePanels = function () {
@@ -141,6 +136,9 @@ var AxisPanel = /** @class */ (function (_super) {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    AxisPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     AxisPanel.prototype.destroy = function () {
         this.destroyActivePanels();

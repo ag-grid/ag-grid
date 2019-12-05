@@ -5,7 +5,6 @@ export declare class ChartPanel extends Component {
     private chartGroup;
     private titleInput;
     private chartTranslator;
-    private chartProxy;
     private activePanels;
     private readonly chartController;
     constructor(chartController: ChartController);

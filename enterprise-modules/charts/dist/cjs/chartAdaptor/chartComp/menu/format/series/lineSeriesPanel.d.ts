@@ -8,7 +8,6 @@ export declare class LineSeriesPanel extends Component {
     private chartTranslator;
     private activePanels;
     private readonly chartController;
-    private readonly chartProxy;
     constructor(chartController: ChartController);
     private init;
     private initSeriesGroup;
@@ -16,5 +15,6 @@ export declare class LineSeriesPanel extends Component {
     private initSeriesLineWidth;
     private initMarkersPanel;
     private destroyActivePanels;
+    private getChartProxy;
     destroy(): void;
 }

@@ -29,7 +29,6 @@ var ChartPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     ChartPanel.prototype.init = function () {
@@ -47,31 +46,33 @@ var ChartPanel = /** @class */ (function (_super) {
     };
     ChartPanel.prototype.initTitles = function () {
         var _this = this;
-        var title = this.chartProxy.getChartOption('title');
+        var chartProxy = this.chartController.getChartProxy();
+        var title = chartProxy.getChartOption('title');
         var text = title && title.text ? title.text : '';
         var setFont = function (font) {
+            var chartProxy = _this.chartController.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setTitleOption('fontFamily', font.family);
+                chartProxy.setTitleOption('fontFamily', font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setTitleOption('fontWeight', font.weight);
+                chartProxy.setTitleOption('fontWeight', font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setTitleOption('fontStyle', font.style);
+                chartProxy.setTitleOption('fontStyle', font.style);
             }
             if (font.size) {
-                _this.chartProxy.setTitleOption('fontSize', font.size);
+                chartProxy.setTitleOption('fontSize', font.size);
             }
             if (font.color) {
-                _this.chartProxy.setTitleOption('color', font.color);
+                chartProxy.setTitleOption('color', font.color);
             }
         };
         var initialFont = {
-            family: title ? this.chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: title ? this.chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: title ? this.chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: title ? this.chartProxy.getChartOption('title.fontSize') : 22,
-            color: title ? this.chartProxy.getChartOption('title.color') : 'black'
+            family: title ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
+            style: title ? chartProxy.getChartOption('title.fontStyle') : undefined,
+            weight: title ? chartProxy.getChartOption('title.fontWeight') : undefined,
+            size: title ? chartProxy.getChartOption('title.fontSize') : 22,
+            color: title ? chartProxy.getChartOption('title.color') : 'black'
         };
         if (!title) {
             setFont(initialFont);
@@ -82,7 +83,7 @@ var ChartPanel = /** @class */ (function (_super) {
             .setLabelWidth('flex')
             .setValue(text)
             .onValueChange(function (value) {
-            _this.chartProxy.setTitleOption('text', value);
+            _this.chartController.getChartProxy().setTitleOption('text', value);
             // only show font panel when title exists
             fontPanelComp.setEnabled(core_1._.exists(value));
         });

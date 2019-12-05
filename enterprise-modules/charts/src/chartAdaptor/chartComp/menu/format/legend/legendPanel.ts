@@ -14,7 +14,6 @@ import {
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartProxy } from "../../../chartProxies/chartProxy";
 
 export class LegendPanel extends Component {
 
@@ -43,14 +42,11 @@ export class LegendPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
-
-    private chartProxy: ChartProxy<any, any>;
     private readonly chartController: ChartController;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = this.chartController.getChartProxy();
     }
 
     @PostConstruct
@@ -68,17 +64,15 @@ export class LegendPanel extends Component {
         this.legendGroup
             .setTitle(this.chartTranslator.translate("legend"))
             .hideEnabledCheckbox(false)
-            .setEnabled(this.chartProxy.getChartOption<boolean>("legend.enabled") || false)
+            .setEnabled(this.chartController.getChartProxy().getChartOption<boolean>("legend.enabled") || false)
             .toggleGroupExpand(false)
             .onEnableChange(enabled => {
-                this.chartProxy.setChartOption("legend.enabled", enabled);
+                this.chartController.getChartProxy().setChartOption("legend.enabled", enabled);
                 this.legendGroup.toggleGroupExpand(true);
             });
     }
 
     private initLegendPosition() {
-        const chartProxy = this.chartController.getChartProxy();
-
         const positions: LegendPosition[] = ["top", "right", "bottom", "left"];
 
         this.legendPositionSelect
@@ -89,26 +83,26 @@ export class LegendPanel extends Component {
                 value: position,
                 text: this.chartTranslator.translate(position)
             })))
-            .setValue(chartProxy.getChartOption("legend.position"))
-            .onValueChange(newValue => chartProxy.setChartOption("legend.position", newValue));
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.position"))
+            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.position", newValue));
     }
 
     private initLegendPadding() {
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getChartOption("legend.padding"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chartProxy.setChartOption("legend.padding", newValue));
+            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.padding", newValue));
     }
 
     private initLegendItems() {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartProxy.getChartOption(`legend.${expression}`))
+                .setValue(this.chartController.getChartProxy().getChartOption(`legend.${expression}`))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartProxy.setChartOption(`legend.${expression}`, newValue));
+                .onValueChange(newValue => this.chartController.getChartProxy().setChartOption(`legend.${expression}`, newValue));
         };
 
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
@@ -119,20 +113,23 @@ export class LegendPanel extends Component {
     }
 
     private initLabelPanel() {
+        const chartProxy = this.chartController.getChartProxy();
         const initialFont = {
-            family: this.chartProxy.getChartOption("legend.item.label.fontFamily"),
-            style: this.chartProxy.getChartOption<FontStyle>("legend.item.label.fontStyle"),
-            weight: this.chartProxy.getChartOption<FontWeight>("legend.item.label.fontWeight"),
-            size: this.chartProxy.getChartOption<number>("legend.item.label.fontSize"),
-            color: this.chartProxy.getChartOption("legend.item.label.color")
+            family: chartProxy.getChartOption("legend.item.label.fontFamily"),
+            style: chartProxy.getChartOption<FontStyle>("legend.item.label.fontStyle"),
+            weight: chartProxy.getChartOption<FontWeight>("legend.item.label.fontWeight"),
+            size: chartProxy.getChartOption<number>("legend.item.label.fontSize"),
+            color: chartProxy.getChartOption("legend.item.label.color")
         };
 
         const setFont = (font: Font) => {
-            if (font.family) { this.chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
-            if (font.style) { this.chartProxy.setChartOption("legend.item.label.fontStyle", font.style); }
-            if (font.size) { this.chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setChartOption("legend.item.label.color", font.color); }
+            const chartProxy = this.chartController.getChartProxy();
+
+            if (font.family) { chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
+            if (font.weight) { chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
+            if (font.style) { chartProxy.setChartOption("legend.item.label.fontStyle", font.style); }
+            if (font.size) { chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
+            if (font.color) { chartProxy.setChartOption("legend.item.label.color", font.color); }
         };
 
         const params: FontPanelParams = {

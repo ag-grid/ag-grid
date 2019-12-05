@@ -3,19 +3,41 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="https://youtu.be/HG_D1_N-RwQ">Angular Connect</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Oct 01</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.1.0">Version 22.1.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Dec 6</h6>
         <p class="card-text">
-            <iframe width="180" height="100" src="https://www.youtube.com/embed/HG_D1_N-RwQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            Minor release with new features and bug fixes:
         </p>
-        <p class="card-text">
-            Niall Crosby presents ag-Grid at Angular Connect 2019
-        </p>
+        <ul>
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-range-selection-fill-handle/">Fill Handle</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-resizing/#column-flex">Column Flex</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-undo-redo-edits/">Undo / Redo Edits</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/#saving-and-restoring-charts">
+                    Save / Restore Charts</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-charts-customisation-cartesian/#example-time-series-chart">
+                    Time Series Charting</a></li>
+
+            <li><a class="learn-more"
+                   href="https://www.ag-grid.com/javascript-grid-master-detail/#exporting-master-detail-data">
+                    Master Detail Export</a></li>
+        </ul>
+
         <p class="text-right">
-            <a class="learn-more" href="https://youtu.be/HG_D1_N-RwQ">Open on YouTube</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=22.1.0">Change Log</a>
         </p>
     </div>
 </div>
+
+
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Version 22.0.0</a></h5>

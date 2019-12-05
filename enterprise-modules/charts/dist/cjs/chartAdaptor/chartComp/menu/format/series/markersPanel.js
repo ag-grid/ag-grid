@@ -26,7 +26,6 @@ var MarkersPanel = /** @class */ (function (_super) {
     function MarkersPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.chartController = chartController;
-        _this.chartProxy = chartController.getChartProxy();
         return _this;
     }
     MarkersPanel.prototype.init = function () {
@@ -36,19 +35,19 @@ var MarkersPanel = /** @class */ (function (_super) {
     MarkersPanel.prototype.initMarkers = function () {
         var _this = this;
         // scatter charts should always show markers
-        var shouldHideEnabledCheckbox = this.chartProxy instanceof scatterChartProxy_1.ScatterChartProxy;
+        var shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof scatterChartProxy_1.ScatterChartProxy;
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
-            .setEnabled(this.chartProxy.getSeriesOption("marker.enabled") || false)
+            .setEnabled(this.chartController.getChartProxy().getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
-            .onEnableChange(function (newValue) { return _this.chartProxy.setSeriesOption("marker.enabled", newValue); });
+            .onEnableChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption("marker.enabled", newValue); });
         var initInput = function (expression, input, labelKey, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getSeriesOption(expression))
+                .setValue(_this.chartController.getChartProxy().getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption(expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setSeriesOption(expression, newValue); });
         };
         if (this.chartController.getChartType() === core_1.ChartType.Bubble) {
             initInput("marker.minSize", this.seriesMarkerMinSizeSlider, "minSize", 60);

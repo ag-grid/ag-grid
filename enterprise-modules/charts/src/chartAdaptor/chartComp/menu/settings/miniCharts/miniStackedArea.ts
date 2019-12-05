@@ -1,10 +1,9 @@
-import {_, ChartType} from "@ag-grid-community/core";
-
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {ICoordinate} from "./miniArea";
-import {Path} from "../../../../../charts/scene/shape/path";
+import { _, ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { ICoordinate } from "./miniArea";
+import { Path } from "../../../../../charts/scene/shape/path";
 import linearScale from "../../../../../charts/scale/linearScale";
-import {BandScale} from "../../../../../charts/scale/bandScale";
+import { BandScale } from "../../../../../charts/scale/bandScale";
 
 export class MiniStackedArea extends MiniChartWithAxes {
     static chartType = ChartType.StackedArea;

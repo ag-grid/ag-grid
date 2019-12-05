@@ -28,7 +28,6 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     BarSeriesPanel.prototype.init = function () {
@@ -50,8 +49,8 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(40)
-            .setValue(this.chartProxy.getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("tooltip.enabled", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     BarSeriesPanel.prototype.initSeriesStrokeWidth = function () {
         var _this = this;
@@ -59,8 +58,8 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.width"))
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.width", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     BarSeriesPanel.prototype.initOpacity = function () {
         var _this = this;
@@ -69,46 +68,48 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("stroke.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getSeriesOption("fill.opacity") || "1")
-            .onValueChange(function (newValue) { return _this.chartProxy.setSeriesOption("fill.opacity", newValue); });
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
     };
     BarSeriesPanel.prototype.initLabelPanel = function () {
         var _this = this;
+        var chartProxy = this.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getSeriesOption("label.fontFamily"),
-            style: this.chartProxy.getSeriesOption("label.fontStyle"),
-            weight: this.chartProxy.getSeriesOption("label.fontWeight"),
-            size: this.chartProxy.getSeriesOption("label.fontSize"),
-            color: this.chartProxy.getSeriesOption("label.color")
+            family: chartProxy.getSeriesOption("label.fontFamily"),
+            style: chartProxy.getSeriesOption("label.fontStyle"),
+            weight: chartProxy.getSeriesOption("label.fontWeight"),
+            size: chartProxy.getSeriesOption("label.fontSize"),
+            color: chartProxy.getSeriesOption("label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setSeriesOption("label.fontFamily", font.family);
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setSeriesOption("label.fontWeight", font.weight);
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setSeriesOption("label.fontStyle", font.style);
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setSeriesOption("label.fontSize", font.size);
+                chartProxy.setSeriesOption("label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setSeriesOption("label.color", font.color);
+                chartProxy.setSeriesOption("label.color", font.color);
             }
         };
         var params = {
             name: this.chartTranslator.translate('labels'),
-            enabled: this.chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: function (enabled) { return _this.chartProxy.setSeriesOption("label.enabled", enabled); },
+            enabled: chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: function (enabled) { return _this.getChartProxy().setSeriesOption("label.enabled", enabled); },
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
@@ -118,7 +119,7 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         this.seriesGroup.addItem(labelPanelComp);
     };
     BarSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartProxy));
+        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
@@ -127,6 +128,9 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             core_1._.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    };
+    BarSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
     };
     BarSeriesPanel.prototype.destroy = function () {
         this.destroyActivePanels();

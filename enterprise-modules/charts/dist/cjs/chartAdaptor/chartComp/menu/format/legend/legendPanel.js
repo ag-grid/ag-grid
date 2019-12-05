@@ -27,7 +27,6 @@ var LegendPanel = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
-        _this.chartProxy = _this.chartController.getChartProxy();
         return _this;
     }
     LegendPanel.prototype.init = function () {
@@ -43,16 +42,15 @@ var LegendPanel = /** @class */ (function (_super) {
         this.legendGroup
             .setTitle(this.chartTranslator.translate("legend"))
             .hideEnabledCheckbox(false)
-            .setEnabled(this.chartProxy.getChartOption("legend.enabled") || false)
+            .setEnabled(this.chartController.getChartProxy().getChartOption("legend.enabled") || false)
             .toggleGroupExpand(false)
             .onEnableChange(function (enabled) {
-            _this.chartProxy.setChartOption("legend.enabled", enabled);
+            _this.chartController.getChartProxy().setChartOption("legend.enabled", enabled);
             _this.legendGroup.toggleGroupExpand(true);
         });
     };
     LegendPanel.prototype.initLegendPosition = function () {
         var _this = this;
-        var chartProxy = this.chartController.getChartProxy();
         var positions = ["top", "right", "bottom", "left"];
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
@@ -62,26 +60,26 @@ var LegendPanel = /** @class */ (function (_super) {
             value: position,
             text: _this.chartTranslator.translate(position)
         }); }))
-            .setValue(chartProxy.getChartOption("legend.position"))
-            .onValueChange(function (newValue) { return chartProxy.setChartOption("legend.position", newValue); });
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.position"))
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.position", newValue); });
     };
     LegendPanel.prototype.initLegendPadding = function () {
         var _this = this;
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getChartOption("legend.padding"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(function (newValue) { return _this.chartProxy.setChartOption("legend.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.padding", newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
         var initSlider = function (expression, labelKey, input, maxValue) {
             input.setLabel(_this.chartTranslator.translate(labelKey))
-                .setValue(_this.chartProxy.getChartOption("legend." + expression))
+                .setValue(_this.chartController.getChartProxy().getChartOption("legend." + expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(function (newValue) { return _this.chartProxy.setChartOption("legend." + expression, newValue); });
+                .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend." + expression, newValue); });
         };
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
@@ -91,28 +89,30 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.prototype.initLabelPanel = function () {
         var _this = this;
+        var chartProxy = this.chartController.getChartProxy();
         var initialFont = {
-            family: this.chartProxy.getChartOption("legend.item.label.fontFamily"),
-            style: this.chartProxy.getChartOption("legend.item.label.fontStyle"),
-            weight: this.chartProxy.getChartOption("legend.item.label.fontWeight"),
-            size: this.chartProxy.getChartOption("legend.item.label.fontSize"),
-            color: this.chartProxy.getChartOption("legend.item.label.color")
+            family: chartProxy.getChartOption("legend.item.label.fontFamily"),
+            style: chartProxy.getChartOption("legend.item.label.fontStyle"),
+            weight: chartProxy.getChartOption("legend.item.label.fontWeight"),
+            size: chartProxy.getChartOption("legend.item.label.fontSize"),
+            color: chartProxy.getChartOption("legend.item.label.color")
         };
         var setFont = function (font) {
+            var chartProxy = _this.chartController.getChartProxy();
             if (font.family) {
-                _this.chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
+                chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
             }
             if (font.weight) {
-                _this.chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
+                chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
             }
             if (font.style) {
-                _this.chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
+                chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
             }
             if (font.size) {
-                _this.chartProxy.setChartOption("legend.item.label.fontSize", font.size);
+                chartProxy.setChartOption("legend.item.label.fontSize", font.size);
             }
             if (font.color) {
-                _this.chartProxy.setChartOption("legend.item.label.color", font.color);
+                chartProxy.setChartOption("legend.item.label.color", font.color);
             }
         };
         var params = {

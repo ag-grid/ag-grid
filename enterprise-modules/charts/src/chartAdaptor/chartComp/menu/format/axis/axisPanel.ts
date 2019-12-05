@@ -15,9 +15,9 @@ import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 import { find } from "../../../../../charts/util/array";
 import { ChartAxisPosition } from "../../../../../charts/chart/chartAxis";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
@@ -37,12 +37,10 @@ export class AxisPanel extends Component {
 
     private readonly chartController: ChartController;
     private activePanels: Component[] = [];
-    private chartProxy: CartesianChartProxy<any>;
 
     constructor(chartController: ChartController) {
         super();
         this.chartController = chartController;
-        this.chartProxy = chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     @PostConstruct
@@ -64,15 +62,15 @@ export class AxisPanel extends Component {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.color"))
-            .onValueChange(newColor => this.chartProxy.setAxisProperty("line.color", newColor));
+            .setValue(this.getChartProxy().getAxisProperty("line.color"))
+            .onValueChange(newColor => this.getChartProxy().setAxisProperty("line.color", newColor));
 
         this.axisLineWidthSlider
             .setLabel(this.chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartProxy.getAxisProperty("line.width"))
-            .onValueChange(newValue => this.chartProxy.setAxisProperty("line.width", newValue));
+            .setValue(this.getChartProxy().getAxisProperty("line.width"))
+            .onValueChange(newValue => this.getChartProxy().setAxisProperty("line.width", newValue));
     }
 
     private initAxisTicks() {
@@ -82,22 +80,25 @@ export class AxisPanel extends Component {
     }
 
     private initAxisLabels() {
+        const chartProxy = this.getChartProxy();
         const initialFont = {
-            family: this.chartProxy.getAxisProperty("label.fontFamily"),
-            style: this.chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
-            weight: this.chartProxy.getAxisProperty<FontWeight>("label.fontWeight"),
-            size: this.chartProxy.getAxisProperty<number>("label.fontSize"),
-            color: this.chartProxy.getAxisProperty("label.color")
+            family: chartProxy.getAxisProperty("label.fontFamily"),
+            style: chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
+            weight: chartProxy.getAxisProperty<FontWeight>("label.fontWeight"),
+            size: chartProxy.getAxisProperty<number>("label.fontSize"),
+            color: chartProxy.getAxisProperty("label.color")
         };
 
         const setFont = (font: Font) => {
-            if (font.family) { this.chartProxy.setAxisProperty("label.fontFamily", font.family); }
-            if (font.weight) { this.chartProxy.setAxisProperty("label.fontWeight", font.weight); }
-            if (font.style) { this.chartProxy.setAxisProperty("label.fontStyle", font.style); }
-            if (font.size) { this.chartProxy.setAxisProperty("label.fontSize", font.size); }
-            if (font.color) { this.chartProxy.setAxisProperty("label.color", font.color); }
+            const chartProxy = this.getChartProxy();
 
-            this.chartProxy.getChart().performLayout();
+            if (font.family) { chartProxy.setAxisProperty("label.fontFamily", font.family); }
+            if (font.weight) { chartProxy.setAxisProperty("label.fontWeight", font.weight); }
+            if (font.style) { chartProxy.setAxisProperty("label.fontStyle", font.style); }
+            if (font.size) { chartProxy.setAxisProperty("label.fontSize", font.size); }
+            if (font.color) { chartProxy.setAxisProperty("label.color", font.color); }
+
+            chartProxy.getChart().performLayout();
         };
 
         const params: FontPanelParams = {
@@ -126,36 +127,29 @@ export class AxisPanel extends Component {
         };
 
         const degreesSymbol = String.fromCharCode(176);
+        const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
+            const chart = this.getChartProxy().getChart();
+            const axis = find(chart.axes, axis => axis.position === axisPosition);
+
+            if (axis) {
+                axis.label.rotation = newValue;
+                chart.performLayout();
+            }
+        };
 
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
-        const xUpdateFunc = (newValue: number) => {
-            const xAxis = find(this.chartProxy.getChart().axes, axis => axis.position === ChartAxisPosition.Bottom);
-            if (xAxis) {
-                xAxis.label.rotation = newValue;
-            }
-            this.chartProxy.getChart().performLayout();
-        };
-
-        createAngleComp(xRotationLabel, this.chartProxy.getChartOption("xAxis.label.rotation"), xUpdateFunc);
-
         const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
-        const yUpdateFunc = (newValue: number) => {
-            const yAxis = find(this.chartProxy.getChart().axes, axis => axis.position === ChartAxisPosition.Left);
-            if (yAxis) {
-                yAxis.label.rotation = newValue;
-            }
-            this.chartProxy.getChart().performLayout();
-        };
 
-        createAngleComp(yRotationLabel, this.chartProxy.getChartOption("yAxis.label.rotation"), yUpdateFunc);
+        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
+        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
 
         const labelPaddingSlider = this.wireBean(new AgSlider());
 
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartProxy.getAxisProperty("label.padding"))
+            .setValue(this.getChartProxy().getAxisProperty("label.padding"))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .onValueChange(newValue => this.chartProxy.setAxisProperty("label.padding", newValue));
+            .onValueChange(newValue => this.getChartProxy().setAxisProperty("label.padding", newValue));
 
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     }
@@ -165,6 +159,10 @@ export class AxisPanel extends Component {
             _.removeFromParent(panel.getGui());
             panel.destroy();
         });
+    }
+
+    private getChartProxy(): CartesianChartProxy<any> {
+        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     public destroy(): void {
