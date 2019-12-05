@@ -23,7 +23,7 @@ function getBooleanValue(checkboxSelector) {
 }
 
 function getValue(inputSelector) {
-    const text = document.querySelector(inputSelector).value;
+    var text = document.querySelector(inputSelector).value;
     switch (text) {
     case "string":
         return 'Here is a comma, and a some "quotes". You can see them using the\n'

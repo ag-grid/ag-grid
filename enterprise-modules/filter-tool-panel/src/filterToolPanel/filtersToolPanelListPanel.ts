@@ -316,7 +316,7 @@ export class FiltersToolPanelListPanel extends Component {
 
     private searchFilters(searchFilter: string | null) {
         const passesFilter = (groupName: string) => {
-            return !_.exists(searchFilter) || groupName.toLowerCase().includes(searchFilter as string);
+            return !_.exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
 
         const recursivelySearch = (filterItem: ToolPanelFilterItem, parentPasses: boolean): boolean => {

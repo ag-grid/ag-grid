@@ -95,7 +95,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     }
 
     public prepare(columnsToExport: Column[]): void {
-        this.firstGroupColumn = columnsToExport.find(col => col.getColDef().showRowGroup);
+        this.firstGroupColumn = _.find(columnsToExport, col => !!col.getColDef().showRowGroup);
     }
 
     abstract addCustomContent(customContent: T): void;
