@@ -26,13 +26,12 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    //floatingFilter:true,
     groupHeaderHeight:75,
     headerHeight: 150,
     floatingFiltersHeight:50,
     pivotGroupHeaderHeight:50,
     pivotHeaderHeight:100,
-    showToolPanel:true
+    sideBar: true
 };
 
 // setup the grid after the page has finished loading
