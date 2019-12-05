@@ -50,8 +50,9 @@ export class FillHandle extends AbstractSelectionHandle {
 
     protected onDrag(e: MouseEvent) {
         if (!this.initialXY) {
-           const { x, y } = this.getGui().getBoundingClientRect() as DOMRect;
-           this.initialXY = { x, y };
+           const { left, top } = this.getGui().getBoundingClientRect() as DOMRect;
+           
+           this.initialXY = { x: left, y: top };
         }
 
         const { x, y } = this.initialXY;
