@@ -76,6 +76,7 @@ localeText = {
 
         // other
         noRowsToShow: 'la no rows',
+        enabled: 'laEnabled',
 
         // enterprise menu
         pinColumn: 'laPin Column',
@@ -156,7 +157,7 @@ localeText = {
         categories: 'laCategories',
         series: 'laSeries',
         xyValues: 'laX Y Values',
-        paired: 'laPaired Mode'
+        paired: 'laPaired Mode',
         axis: 'laAxis',
         color: 'laColor',
         thickness: 'laThickness',
