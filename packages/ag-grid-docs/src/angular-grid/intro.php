@@ -14,12 +14,6 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 import { Component } from '@angular/core';
-import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
-
-ModuleRegistry.registerModules(AllCommunityModules);
-
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
 @Component({
   selector: 'my-app',
@@ -39,6 +33,7 @@ export class AppComponent  {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
+
 }
 </snippet>
                 </div>
@@ -48,7 +43,7 @@ export class AppComponent  {
     [rowData]="rowData"
     [columnDefs]="columnDefs">
 &lt;/ag-grid-angular>
-</snippet>  
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

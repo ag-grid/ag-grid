@@ -41,7 +41,7 @@ module.exports = {
                 test: /\.js$/,
                 use: ["source-map-loader"],
                 enforce: "pre"
-            },
+            }/*,
             {
                 test: /\.css$/,
                 loader: "style-loader!css-loader"
@@ -51,7 +51,7 @@ module.exports = {
                 use: [
                     {loader: 'url-loader', options: {limit: 20000}}
                 ]
-            }
+            }*/
         ]
     },
     watchOptions: {
