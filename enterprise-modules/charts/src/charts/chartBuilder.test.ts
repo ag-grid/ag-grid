@@ -80,6 +80,32 @@ describe('createAxis', () => {
     });
 });
 
+describe('toAxisClass', () => {
+    it('returns category axis when "category" is specified', () => {
+        const axisClass = ChartBuilder.toAxisClass('category');
+
+        expect(axisClass).toBe(CategoryAxis);
+    });
+
+    it('returns number axis when "number" is specified', () => {
+        const axisClass = ChartBuilder.toAxisClass('number');
+
+        expect(axisClass).toBe(NumberAxis);
+    });
+
+    it('returns time axis when "time" is specified', () => {
+        const axisClass = ChartBuilder.toAxisClass('time');
+
+        expect(axisClass).toBe(TimeAxis);
+    });
+
+    it('returns undefined when unrecognised type is specified', () => {
+        const axisClass = ChartBuilder.toAxisClass('foo' as any as AxisType);
+
+        expect(axisClass).toBeUndefined();
+    });
+});
+
 describe('createSeries', () => {
     it('returns a line series when specified in options', () => {
         const options: SeriesOptions = { type: 'line' };

@@ -10,6 +10,8 @@ import {
     RefSelector,
     FontStyle,
     FontWeight,
+    AgSelect,
+    AxisType,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
@@ -26,12 +28,14 @@ export class AxisPanel extends Component {
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider>
+                <ag-select ref="xAxisTypeSelect"></ag-select>
             </ag-group-component>
         </div>`;
 
     @RefSelector('axisGroup') private axisGroup: AgGroupComponent;
-    @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('axisColorInput') private axisColorInput: AgColorPicker;
+    @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
+    @RefSelector('xAxisTypeSelect') private xAxisTypeSelect: AgSelect;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -53,24 +57,51 @@ export class AxisPanel extends Component {
     }
 
     private initAxis() {
+        const { chartTranslator } = this;
+
         this.axisGroup
-            .setTitle(this.chartTranslator.translate("axis"))
+            .setTitle(chartTranslator.translate("axis"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput
-            .setLabel(this.chartTranslator.translate("color"))
+            .setLabel(chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.color"))
             .onValueChange(newColor => this.getChartProxy().setAxisProperty("line.color", newColor));
 
         this.axisLineWidthSlider
-            .setLabel(this.chartTranslator.translate("thickness"))
+            .setLabel(chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.width"))
             .onValueChange(newValue => this.getChartProxy().setAxisProperty("line.width", newValue));
+
+        if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType())) {
+            const options: { value: AxisType | '', text: string }[] = [
+                { value: '', text: chartTranslator.translate('automatic') }
+            ];
+
+            ['category', 'time', 'number'].forEach((type: AxisType) => {
+                options.push({ value: type, text: chartTranslator.translate(type) });
+            });
+
+            this.xAxisTypeSelect
+                .setLabel(chartTranslator.translate('xType'))
+                .setLabelWidth('flex')
+                .addOptions(options)
+                .setValue(this.getChartProxy().getChartOption('xAxis.type') || '')
+                .onValueChange(newValue => {
+                    const chartProxy = this.getChartProxy();
+
+                    chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+
+                    this.chartController.updateForDataChange();
+                });
+        } else {
+            this.xAxisTypeSelect.setDisplayed(false);
+        }
     }
 
     private initAxisTicks() {

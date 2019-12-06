@@ -104,13 +104,20 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     private updateAxes(testDatum: any, xKeys: string[]): void {
-        const { chartOptions } = this;
-
-        if (chartOptions.xAxis.type) { return; }
-
         const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
 
         if (!xAxis) { return; }
+
+        const { chartOptions } = this;
+
+        if (chartOptions.xAxis.type) {
+            // ensure xAxis is the correct type
+            if (!(xAxis instanceof ChartBuilder.toAxisClass(chartOptions.xAxis.type))) {
+                this.recreateChart();
+            }
+
+            return;
+        }
 
         const xValuesAreDates = xKeys.map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
 

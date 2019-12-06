@@ -92,6 +92,7 @@ export class GridChartComp extends Component {
         this.model = this.wireBean(new ChartDataModel(modelParams));
         this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 
+        // create chart before dialog to ensure dialog is correct size
         this.createChart();
 
         if (this.params.insideDialog) {
@@ -188,7 +189,7 @@ export class GridChartComp extends Component {
             resizable: true,
             movable: true,
             maximizable: true,
-            title: title,
+            title,
             component: this,
             centered: true,
             closable: true
@@ -327,7 +328,7 @@ export class GridChartComp extends Component {
             return;
         }
 
-        this.chartController.setChartRange();
+        this.chartController.setChartRange(true);
     }
 
     public destroy(): void {

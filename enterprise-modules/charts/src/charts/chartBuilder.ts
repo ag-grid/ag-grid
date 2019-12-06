@@ -725,25 +725,31 @@ export class ChartBuilder {
     }
 
     static createAxis(options: AxisOptions, defaultType: AxisType): CategoryAxis | NumberAxis | TimeAxis {
-        let axis;
+        const AxisClass = this.toAxisClass(options.type || defaultType);
 
-        switch (options.type || defaultType) {
-            case 'category':
-                axis = new CategoryAxis();
-                break;
-            case 'number':
-                axis = new NumberAxis();
-                break;
-            case 'time':
-                axis = new TimeAxis();
-                break;
-            default:
-                throw new Error('Unknown axis type');
+        if (!AxisClass) {
+            throw new Error('Unknown axis type');
         }
+
+        const axis = new AxisClass();
 
         this.initAxis(axis, options);
 
         return axis;
+    }
+
+    static readonly types = (() => {
+        const types = new Map<AxisType, typeof CategoryAxis | typeof NumberAxis | typeof TimeAxis>();
+
+        types.set('category', CategoryAxis);
+        types.set('number', NumberAxis);
+        types.set('time', TimeAxis);
+
+        return types;
+    })();
+
+    static toAxisClass(type: AxisType) {
+        return this.types.get(type);
     }
 
     private static setValueIfExists<T, K extends keyof T>(target: T, property: K, value?: T[K], transform?: (value: any) => T[K]) {

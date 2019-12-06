@@ -134,12 +134,14 @@ export class ChartController extends BeanStub {
         return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
     }
 
-    public setChartRange() {
+    public setChartRange(silent = false) {
         if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
 
-        this.raiseChartUpdatedEvent();
+        if (!silent) {
+            this.raiseChartUpdatedEvent();
+        }
     }
 
     public detachChartRange() {

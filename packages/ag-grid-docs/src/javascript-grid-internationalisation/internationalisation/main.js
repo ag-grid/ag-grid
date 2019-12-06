@@ -164,7 +164,7 @@ var gridOptions = {
 
         // standard menu
         copy: 'laCopy',
-        copyWithHeaders: 'laCopy Wit hHeaders',
+        copyWithHeaders: 'laCopy With Headers',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
         ctrlV: 'ctrl n V',
@@ -182,6 +182,11 @@ var gridOptions = {
         axis: 'laAxis',
         color: 'laColor',
         thickness: 'laThickness',
+        xType: 'laX Type',
+        automatic: 'laAutomatic',
+        category: 'laCategory',
+        number: 'laNumber',
+        time: 'laTime',
         xRotation: 'laX Rotation',
         yRotation: 'laY Rotation',
         ticks: 'laTicks',
