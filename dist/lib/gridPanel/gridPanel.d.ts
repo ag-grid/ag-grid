@@ -31,6 +31,7 @@ export declare class GridPanel extends Component {
     private dragAndDropService;
     private heightScaler;
     private resizeObserverService;
+    private undoRedoService;
     private rangeController;
     private contextMenuFactory;
     private clipboardService;
@@ -101,7 +102,7 @@ export declare class GridPanel extends Component {
     getBodyClientRect(): ClientRect;
     private getRowForEvent;
     private processKeyboardEvent;
-    private doClipboardOperations;
+    private doGridOperations;
     scrollToTop(): void;
     private processMouseEvent;
     private mockContextMenuForIPad;
@@ -122,6 +123,7 @@ export declare class GridPanel extends Component {
     private setHorizontalScrollVisible;
     private setVerticalScrollPaddingVisible;
     updateRowCount(): void;
+    private updateColumnCount;
     ensureColumnVisible(key: any): void;
     showLoadingOverlay(): void;
     showNoRowsOverlay(): void;

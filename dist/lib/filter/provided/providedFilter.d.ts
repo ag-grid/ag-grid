@@ -4,6 +4,7 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { IRowModel } from "../../interfaces/iRowModel";
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
+    resetButton?: boolean;
     applyButton?: boolean;
     newRowsAction?: string;
     debounceMs?: number;
@@ -18,12 +19,12 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     private static NEW_ROWS_ACTION_CLEAR;
     private newRowsActionKeep;
     private providedFilterParams;
-    private clearActive;
     private applyActive;
     private eButtonsPanel;
     protected eFilterBodyWrapper: HTMLElement;
-    private eApplyButton;
     private eClearButton;
+    private eResetButton;
+    private eApplyButton;
     protected gridOptionsWrapper: GridOptionsWrapper;
     protected rowModel: IRowModel;
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
@@ -46,6 +47,7 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     getModel(): ProvidedFilterModel;
     setModel(model: ProvidedFilterModel): void;
     private onBtClear;
+    private onBtReset;
     applyModel(): boolean;
     private onBtApply;
     onNewRowsLoaded(): void;

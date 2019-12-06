@@ -109,6 +109,10 @@ export interface ColDef extends AbstractColDef {
     minWidth?: number;
     /** Max width, in pixels, of the cell */
     maxWidth?: number;
+    /** Sets the grow factor of a column. It specifies how much of the remaining
+     * space should be assigned to the column.
+     */
+    flex?: number;
     /** True if this column should stretch rows height to fit contents */
     autoHeight?: boolean;
     /** Class to use for the cell. Can be string, array of strings, or function. */

@@ -8,10 +8,13 @@ export declare class AnimationFrameService {
     private useAnimationFrame;
     private scrollGoingDown;
     private lastScrollTop;
+    private taskCount;
+    private cancelledTasks;
     setScrollTop(scrollTop: number): void;
     private init;
     private verifyAnimationFrameOn;
     createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2'): void;
+    cancelTask(task: () => void): void;
     private addTaskToList;
     private sortTaskList;
     addDestroyTask(task: () => void): void;

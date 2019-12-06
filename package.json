@@ -1,8 +1,8 @@
 {
   "name": "ag-grid-community",
-  "version": "22.0.0",
+  "version": "22.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-  "main": "./main.js",
+  "main": "./dist/ag-grid-community.cjs.js",
   "typings": "./main.d.ts",
   "repository": {
     "type": "git",

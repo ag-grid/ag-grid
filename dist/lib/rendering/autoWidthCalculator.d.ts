@@ -8,7 +8,7 @@ export declare class AutoWidthCalculator {
     private headerRootComp;
     registerGridComp(gridPanel: GridPanel): void;
     registerHeaderRootComp(headerRootComp: HeaderRootComp): void;
-    getPreferredWidthForColumn(column: Column): number;
+    getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number;
     private getHeaderCellForColumn;
     private putRowCellsIntoDummyContainer;
     private cloneItemIntoDummy;

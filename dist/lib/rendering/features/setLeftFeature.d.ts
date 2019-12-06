@@ -5,6 +5,7 @@ import { Beans } from "../beans";
 export declare class SetLeftFeature extends BeanStub {
     private readonly columnOrGroup;
     private eCell;
+    private ariaEl;
     private actualLeft;
     private colsSpanning;
     private beans;
