@@ -157,7 +157,8 @@ function createViewportDatasource(mockServer) {
     ViewportDatasource.prototype.onRowCountChanged = function (event) {
         var rowCountFromServer = event.rowCount;
         // this will get the grid to make set the height of the row container, so we can scroll vertically properly
-        this.params.setRowCount(rowCountFromServer);
+        var keepRenderedRows = true; // prevents unnecessary row redraws
+        this.params.setRowCount(rowCountFromServer, keepRenderedRows);
     };
 
     return new ViewportDatasource(mockServer);

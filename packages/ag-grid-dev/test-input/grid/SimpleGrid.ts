@@ -1,11 +1,9 @@
-import {Grid, GridOptions} from "ag-grid-community";
-
-import './styles.scss';
+import {Grid, GridOptions} from "@ag-grid-community/core";
 
 export class SimpleGrid {
     private readonly gridOptions: GridOptions = {};
 
-    constructor(selector: string) {
+    constructor(selector: string, gridModule: any) {
         this.gridOptions = {
             columnDefs: this.createColumnDefs(),
             rowData: this.createRowData(),
@@ -14,7 +12,7 @@ export class SimpleGrid {
         };
 
         let eGridDiv: HTMLElement = <HTMLElement>document.querySelector(selector);
-        new Grid(eGridDiv, this.gridOptions);
+        new Grid(eGridDiv, this.gridOptions, { modules: [gridModule]});
     }
 
     // specify the columns

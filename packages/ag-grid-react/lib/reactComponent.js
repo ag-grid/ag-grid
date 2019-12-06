@@ -1,4 +1,4 @@
-// ag-grid-react v22.0.0
+// ag-grid-react v22.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -93,10 +93,14 @@ var ReactComponent = /** @class */ (function (_super) {
         // fixed fragmentsFuncRendererCreateDestroy funcRendererWithNan (changeDetectionService too for NaN)
         return this.eParentElement.childElementCount > 0 || this.eParentElement.childNodes.length > 0;
     };
-    ReactComponent.isStateless = function (Component) {
-        return (typeof Component === 'function' &&
-            !(Component.prototype && Component.prototype.isReactComponent));
+    ReactComponent.hasSymbol = function () {
+        return typeof Symbol === 'function' && Symbol.for;
     };
+    ReactComponent.isStateless = function (Component) {
+        return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
+            || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
+    };
+    ReactComponent.REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
     return ReactComponent;
 }(baseReactComponent_1.BaseReactComponent));
 exports.ReactComponent = ReactComponent;

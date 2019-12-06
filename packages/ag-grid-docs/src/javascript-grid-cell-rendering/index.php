@@ -125,4 +125,29 @@ var colDef3 = function(params) {
 
 <?= example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
 
+<h2>Example: Rendering Order</h2>
+
+<p>This example is configured with a custom cell render to make the order of cell rendering clear. Cells are numbered in
+    order of rendering, and rendering function takes 10ms to execute, allowing you to see the process of incremental
+    rendering more clearly. Note the cell values do not correspond to row or cell indexes.</p>
+
+<p>
+    Notice the following in the example below:
+</p>
+
+<ul>
+    <li>The grid remains interactive while cells are rendering. For example, you can click
+        on any row to select it while cells are still rendering.</li>
+    <li>In initial rendering and when scrolling down, rows render top to bottom</li>
+    <li>When scrolling up, rows render bottom to top</li>
+    <li>Cells within a row render left to right regardless of scroll direction</li>
+    <li>Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you
+        take about 10 seconds to scroll from the top to the bottom, only a few hundred cells
+        will actually be rendered. Any cells that are scrolled into view and then back out
+        of view again before they have a chance to be rendered will be skipped.</li>
+</ul>
+
+<?= example('Rendering Order', 'rendering-order', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>

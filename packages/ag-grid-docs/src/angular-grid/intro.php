@@ -43,7 +43,7 @@ export class AppComponent  {
     [rowData]="rowData"
     [columnDefs]="columnDefs">
 &lt;/ag-grid-angular>
-</snippet>  
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

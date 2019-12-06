@@ -42,6 +42,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
     console.log('chart options:', options);
 
     // we are only interested in processing pie type.
@@ -52,45 +53,41 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    var seriesDefaults = options.seriesDefaults;
-    seriesDefaults.fill.colors = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
-    seriesDefaults.fill.opacity = 0.8;
-    seriesDefaults.stroke.colors = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
-    seriesDefaults.stroke.opacity = 0.8;
-    seriesDefaults.stroke.width = 2;
-    seriesDefaults.highlightStyle = {
-        fill: 'red',
-        stroke: 'yellow'
-    };
+    options.seriesDefaults.title.enabled = true;
+    options.seriesDefaults.title.text = 'Custom title';
+    options.seriesDefaults.title.fontStyle = 'italic';
+    options.seriesDefaults.title.fontWeight = 'bold';
+    options.seriesDefaults.title.fontSize = 14;
+    options.seriesDefaults.title.fontFamily = 'Arial, sans-serif';
+    options.seriesDefaults.title.color = 'maroon';
 
-    seriesDefaults.title = {
-        enabled: true,
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 12,
-        fontFamily: 'Arial, sans-serif',
-        color: 'maroon'
-    }
+    options.seriesDefaults.fill.colors = ['#5e64b2', '#b594dc', '#fec444', '#f07372', '#35c2bd'];
+    options.seriesDefaults.fill.opacity = 0.8;
 
-    seriesDefaults.label.enabled = true;
-    seriesDefaults.label.minRequiredAngle = 30;
-    seriesDefaults.label.fontStyle = 'italic';
-    seriesDefaults.label.fontWeight = 'bold';
-    seriesDefaults.label.fontSize = 14;
-    seriesDefaults.label.fontFamily = 'Arial, sans-serif';
-    seriesDefaults.label.color = '#2222aa';
+    options.seriesDefaults.stroke.colors = ['#42467d', '#7f689a', '#b28930', '#a85150', '#258884'];
+    options.seriesDefaults.stroke.opacity = 0.8;
+    options.seriesDefaults.stroke.width = 2;
 
-    seriesDefaults.callout.strokeWidth = 3;
-    seriesDefaults.callout.colors = ['black', '#00ff00'];
-    seriesDefaults.callout.length = 15;
+    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
-    seriesDefaults.shadow = {
-        color: 'rgba(96, 96, 175, 0.5)',
-        offset: [0, 0],
-        blur: 10
-    };
+    options.seriesDefaults.shadow.color = 'rgba(96, 96, 175, 0.5)';
+    options.seriesDefaults.shadow.offset = [0, 0];
+    options.seriesDefaults.shadow.blur = 1;
 
-    seriesDefaults.tooltip.renderer = function(params) {
+    options.seriesDefaults.label.enabled = true;
+    options.seriesDefaults.label.fontStyle = 'italic';
+    options.seriesDefaults.label.fontWeight = 'bold';
+    options.seriesDefaults.label.fontSize = 14;
+    options.seriesDefaults.label.fontFamily = 'Arial, sans-serif';
+    options.seriesDefaults.label.color = '#2222aa';
+    options.seriesDefaults.label.minRequiredAngle = 30;
+
+    options.seriesDefaults.callout.strokeWidth = 3;
+    options.seriesDefaults.callout.colors = ['black', '#00ff00'];
+    options.seriesDefaults.callout.length = 15;
+
+    options.seriesDefaults.tooltip.renderer = function(params) {
         var value = params.datum[params.angleKey];
         var label = params.datum[params.labelKey];
         return '<b>' + params.angleName.toUpperCase() + ':</b> ' + value + '<br><b>' + params.labelName.toUpperCase() + ':</b> ' + label;

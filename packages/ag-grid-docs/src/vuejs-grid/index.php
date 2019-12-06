@@ -73,29 +73,22 @@ npm run serve
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="sh">
-npm install --save @ag-grid-community/all-modules @ag-grid-community/vue vue-property-decorator
-
-# or, if using Enterprise featuers
-npm install --save @ag-grid-enterprise/all-modules @ag-grid-community/vue vue-property-decorator
+npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 </snippet>
 </section>
 
-<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, 
+<p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step,
     let's add the ag-Grid the ag-Grid styles - import them in the style section of <code>src/App.vue</code>:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
 &lt;style lang="scss"&gt;
-  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-  @import "../node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
-
-  // or, if using Enterprise featuers
-  // @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-  // @import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css";
 &lt;/style&gt;
 </snippet>
 </section>
-<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>). 
+<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
 The grid ships several different themes; pick one that matches your project design.</p>
 
 <div class="note">In a later section we documentation on how you can <a href="#vue_theme_look">Customise the Theme Look</a> using SCSS, which is our recommended approach.</div>
@@ -120,7 +113,7 @@ The grid ships several different themes; pick one that matches your project desi
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
 &lt;script&gt;
-    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AgGridVue} from "ag-grid-vue";
 
     export default {
         name: 'App',
@@ -150,17 +143,17 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;/script&gt;
 </snippet>
 </section>
-<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns; 
-each column entry specifies the header label and the data field to be displayed in the body of the table.</p> 
+<p>The code above presents two essential configuration properties of the grid - <a href="https://www.ag-grid.com/javascript-grid-column-definitions/"><strong>the column definitions</strong></a> (<code>columnDefs</code>) and the data (<code>rowData</code>). In our case, the column definitions contain three columns;
+each column entry specifies the header label and the data field to be displayed in the body of the table.</p>
 
-<p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>. 
-We have set the class to <code>ag-theme-balham</code>, which defines the grid theme. 
+<p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>.
+We have set the class to <code>ag-theme-balham</code>, which defines the grid theme.
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
-<p>Finally, note that we've imported the <code>@ag-grid-community/vue</code> component - this is actual component that will provide the ag-Grid functionality.</p>
+<p>Finally, note that we've imported the <code>ag-grid-vue</code> component - this is actual component that will provide the ag-Grid functionality.</p>
 
-<p>If everything works as expected, you should see a simple grid like the one on the screenshot:</p> 
+<p>If everything works as expected, you should see a simple grid like the one on the screenshot:</p>
 
 <img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid hello world" />
 
@@ -224,11 +217,11 @@ beforeMount() {
 <p>The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid. However, you will see an additional HTTP request performed if you open your developer tools.</p>
 
 
-<h2>Enable Selection</h2> 
+<h2>Enable Selection</h2>
 
-<p>Being a programmer is a hectic job. Just when we thought that we are done with our assignment, the manager shows up with a fresh set of requirements! 
-It turned out that we need to allow the user to select certain rows from the grid and to mark them as flagged in the system. 
-We will leave the flag toggle state and persistence to the backend team. On our side, we should enable the selection and, afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.</p> 
+<p>Being a programmer is a hectic job. Just when we thought that we are done with our assignment, the manager shows up with a fresh set of requirements!
+It turned out that we need to allow the user to select certain rows from the grid and to mark them as flagged in the system.
+We will leave the flag toggle state and persistence to the backend team. On our side, we should enable the selection and, afterwards, to obtain the selected records and pass them with an API call to a remote service endpoint.</p>
 
 <p>Fortunately, the above task is quite simple with ag-Grid. As you may have already guessed, it is just a matter of adding and changing couple of properties.</p>
 <section>
@@ -244,7 +237,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AgGridVue} from "ag-grid-vue";
 
     export default {
         name: 'App',
@@ -315,7 +308,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AgGridVue} from "ag-grid-vue";
 
     export default {
         name: 'App',
@@ -359,7 +352,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 </snippet>
 </section>
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend.
-Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p> 
+Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p>
 
 <h2>Grouping</h2>
 
@@ -369,9 +362,7 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another
-    effective way for the user to make sense out of large amounts of data. In our case, the data is not that much.
-    Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="diff">
@@ -391,6 +382,30 @@ beforeMount() {
 }
 </snippet>
 </section>
+<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+<section>
+<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
+<snippet language="sh">
+npm install --save ag-grid-enterprise
+</snippet>
+</section>
+<p>Then, add the import to <code>src/main.js</code>:</p>
+<section>
+<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
+<snippet language="diff">
+import Vue from 'vue'
+
++import 'ag-grid-enterprise';
+
+import App from './App'
+</snippet>
+</section>
+<p>
+    If everything is ok, you should see a message in the console that tells you there is no enterprise license key.
+    You can ignore the message as we are trialing.
+    In addition to that, the grid got a few UI improvements - a custom context menu and fancier column menu popup -
+    feel free to look around:
+</p>
 
 <img class="img-fluid" src="../getting-started/step3.png" alt="ag-Grid final" />
 
@@ -413,7 +428,7 @@ beforeMount() {
 &lt;/template&gt;
 
 &lt;script&gt;
-    import {AgGridVue} from "@ag-grid-community/vue";
+    import {AgGridVue} from "ag-grid-vue";
 
     export default {
         name: 'App',
@@ -471,28 +486,24 @@ beforeMount() {
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded.
 Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
 
-<div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. 
+<div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially.
 The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
 <h2 id="vue_theme_look">Customize the Theme Look</h2>
 
-<p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p> 
+<p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p>
 
-<p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/">pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, 
+<p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/">pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project,
 override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 
-<p>The <code>vue cli</code> did a lot of for us including providing support for Sass. Let's switch to using the provided 
+<p>The <code>vue cli</code> did a lot of for us including providing support for Sass. Let's switch to using the provided
 ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</code> with:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="scss">
 &lt;style lang="scss"&gt;
-  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
-  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
-
-// or, if using Enterprise features
-//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-grid.scss";
-//  @import "../node_modules/@ag-grid-community/all-modules/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 &lt;/style&gt;
 </snippet>
 </section>

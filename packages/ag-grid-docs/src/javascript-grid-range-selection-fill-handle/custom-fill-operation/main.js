@@ -1,4 +1,4 @@
-var list = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 var getRandom = function(start, finish) {
     min = Math.ceil(start);
     max = Math.floor(finish);
@@ -6,14 +6,14 @@ var getRandom = function(start, finish) {
 };
 
 var columnDefs = [
-    {field: "athlete", width: 150},
-    {field: "age", width: 90},
-    {field: "country", width: 120},
-    {field: "sport", width: 110},
-    {field: "gold", width: 100},
-    {field: "silver", width: 100},
-    {field: "bronze", width: 100},
-    {headerName: 'Day of the Week', field: 'dayOfTheWeek', width: 150}
+    { field: "athlete", width: 150 },
+    { headerName: 'Day of the Week', field: 'dayOfTheWeek', width: 150 },
+    { field: "age", width: 90 },
+    { field: "country", width: 120 },
+    { field: "sport", width: 110 },
+    { field: "gold", width: 100 },
+    { field: "silver", width: 100 },
+    { field: "bronze", width: 100 }
 ];
 
 var gridOptions = {
@@ -21,17 +21,23 @@ var gridOptions = {
     enableRangeSelection: true,
     enableFillHandle: true,
     fillOperation: function(params) {
-        if (params.initialValues.some(function(val) {
-            return list.indexOf(val) === -1
-        })) {
+        var hasNonDayValues = params.initialValues.some(function(val) {
+            return daysList.indexOf(val) === -1
+        });
+
+        if (hasNonDayValues) {
             return false;
         }
-        var lastValue = params.values[params.values.length - 1];
-        var idxOfLast = list.indexOf(lastValue);
 
-        return list[(idxOfLast + 1) % list.length];
+        var lastValue = params.values[params.values.length - 1];
+        var idxOfLast = daysList.indexOf(lastValue);
+
+        return daysList[(idxOfLast + 1) % daysList.length];
     },
-    rowData: null
+    rowData: null,
+    defaultColDef: {
+        editable: true
+    }
 };
 
 // setup the grid after the page has finished loading
@@ -52,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             for (var i = 0; i < 100; i++) {
                 var dt = new Date(getRandom(currentYear - 10, currentYear + 10), getRandom(0, 12), getRandom(1, 25));
-                httpResult[i].dayOfTheWeek = list[dt.getDay()];
+                httpResult[i].dayOfTheWeek = daysList[dt.getDay()];
             }
 
             gridOptions.api.setRowData(httpResult);

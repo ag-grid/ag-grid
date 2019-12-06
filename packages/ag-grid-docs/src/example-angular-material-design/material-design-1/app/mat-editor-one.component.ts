@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 
-import {GridOptions, Module, AllModules} from "@ag-grid-enterprise/all-modules";
+import {GridOptions, Module, AllCommunityModules} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
 
 import { MatCheckboxComponent } from "./mat-checkbox.component";
 import { MatInputComponent } from "./mat-input.component";
@@ -16,7 +16,7 @@ import { MatSelectComponent } from "./mat-select.component";
 })
 export class MatEditorComponentOne {
     public gridOptions: GridOptions;
-    modules: Module[] = AllModules;
+    modules: Module[] = AllCommunityModules;
 
     constructor() {
         this.gridOptions = <GridOptions>{

@@ -45,14 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;title>Ag-Grid Basic Example&lt;/title&gt;
-    &lt;script src="https://unpkg.com/@ag-grid-community/all-modules/dist/ag-grid-community.min.js"&gt;&lt;/script&gt;
+    &lt;script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"&gt;&lt;/script&gt;
     &lt;script src="main.js"&gt;&lt;/script&gt;
 &lt;/head>
 &lt;body>
     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-</snippet>  
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Saving Content</h1>
 
 <p class="lead">
-    This section outlines the flow of saving cell content after editing. That is the process the values goes through from
+    This section outlines the flow of saving cell content after editing. That is the process that values go through from
     leaving the editors and then into your data.
 </p>
 
@@ -20,11 +20,11 @@ include '../documentation-main/documentation_header.php';
 
 <ul>
     <li>
-        <a href="../javascript-grid-value-setters/#value-parser">Value Parser</a>:
+        <a href="../javascript-grid-value-parsers/">Value Parser</a>:
         Allows you to parse values after an edit.
     </li>
     <li>
-        <a href="../javascript-grid-value-setters/#value-setter">Value Setter</a>
+        <a href="../javascript-grid-value-setters/">Value Setter</a>:
         Allows you to put values back into the underlying data.
     </li>
 </ul>

@@ -1,0 +1,262 @@
+// We prefixed all global vars with "ag-" to avoid clashes with other libraries
+// Import old-style var names to avoid breaking 3rd party themes that use them
+
+@if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
+
+  @if (variable-exists("accent-color") and not variable-exists("ag-accent-color")) {
+    $ag-accent-color: $accent-color;
+  }
+
+  @if (variable-exists("alt-icon-color") and not variable-exists("ag-alt-icon-color")) {
+    $ag-alt-icon-color: $alt-icon-color;
+  }
+
+  @if (variable-exists("background-color") and not variable-exists("ag-background-color")) {
+    $ag-background-color: $background-color;
+  }
+
+  @if (variable-exists("border-color") and not variable-exists("ag-border-color")) {
+    $ag-border-color: $border-color;
+  }
+
+  @if (variable-exists("card-radius") and not variable-exists("ag-card-radius")) {
+    $ag-card-radius: $card-radius;
+  }
+
+  @if (variable-exists("card-shadow") and not variable-exists("ag-card-shadow")) {
+    $ag-card-shadow: $card-shadow;
+  }
+
+  @if (variable-exists("cell-horizontal-border") and not variable-exists("ag-cell-horizontal-border")) {
+    $ag-cell-horizontal-border: $cell-horizontal-border;
+  }
+
+  @if (variable-exists("cell-horizontal-padding") and not variable-exists("ag-cell-horizontal-padding")) {
+    $ag-cell-horizontal-padding: $cell-horizontal-padding;
+  }
+
+  @if (variable-exists("dialog-background-color") and not variable-exists("ag-dialog-background-color")) {
+    $ag-dialog-background-color: $dialog-background-color;
+  }
+
+  @if (variable-exists("dialog-border-color") and not variable-exists("ag-dialog-border-color")) {
+    $ag-dialog-border-color: $dialog-border-color;
+  }
+
+  @if (variable-exists("dialog-border-size") and not variable-exists("ag-dialog-border-size")) {
+    $ag-dialog-border-size: $dialog-border-size;
+  }
+
+  @if (variable-exists("dialog-border-style") and not variable-exists("ag-dialog-border-style")) {
+    $ag-dialog-border-style: $dialog-border-style;
+  }
+
+  @if (variable-exists("dialog-title-background-color") and not variable-exists("ag-dialog-title-background-color")) {
+    $ag-dialog-title-background-color: $dialog-title-background-color;
+  }
+
+  @if (variable-exists("dialog-title-font-family") and not variable-exists("ag-dialog-title-font-family")) {
+    $ag-dialog-title-font-family: $dialog-title-font-family;
+  }
+
+  @if (variable-exists("dialog-title-font-size") and not variable-exists("ag-dialog-title-font-size")) {
+    $ag-dialog-title-font-size: $dialog-title-font-size;
+  }
+
+  @if (variable-exists("dialog-title-font-weight") and not variable-exists("ag-dialog-title-font-weight")) {
+    $ag-dialog-title-font-weight: $dialog-title-font-weight;
+  }
+
+  @if (variable-exists("dialog-title-foreground-color") and not variable-exists("ag-dialog-title-foreground-color")) {
+    $ag-dialog-title-foreground-color: $dialog-title-foreground-color;
+  }
+
+  @if (variable-exists("dialog-title-height") and not variable-exists("ag-dialog-title-height")) {
+    $ag-dialog-title-height: $dialog-title-height;
+  }
+
+  @if (variable-exists("dialog-title-icon-size") and not variable-exists("ag-dialog-title-icon-size")) {
+    $ag-dialog-title-icon-size: $dialog-title-icon-size;
+  }
+
+  @if (variable-exists("dialog-title-padding") and not variable-exists("ag-dialog-title-padding")) {
+    $ag-dialog-title-padding: $dialog-title-padding;
+  }
+
+  @if (variable-exists("disabled-foreground-color-opacity") and not variable-exists("ag-disabled-foreground-color-opacity")) {
+    $ag-disabled-foreground-color-opacity: $disabled-foreground-color-opacity;
+  }
+
+  @if (variable-exists("font-family") and not variable-exists("ag-font-family")) {
+    $ag-font-family: $font-family;
+  }
+
+  @if (variable-exists("font-size") and not variable-exists("ag-font-size")) {
+    $ag-font-size: $font-size;
+  }
+
+  @if (variable-exists("font-weight") and not variable-exists("ag-font-weight")) {
+    $ag-font-weight: $font-weight;
+  }
+
+  @if (variable-exists("foreground-color") and not variable-exists("ag-foreground-color")) {
+    $ag-foreground-color: $foreground-color;
+  }
+
+  @if (variable-exists("foreground-opacity") and not variable-exists("ag-foreground-opacity")) {
+    $ag-foreground-opacity: $foreground-opacity;
+  }
+
+  @if (variable-exists("grid-size") and not variable-exists("ag-grid-size")) {
+    // $ag-grid-size: $grid-size;
+  }
+
+  @if (variable-exists("group-component-background-color") and not variable-exists("ag-group-component-background-color")) {
+    $ag-group-component-background-color: $group-component-background-color;
+  }
+
+  @if (variable-exists("group-component-border-color") and not variable-exists("ag-group-component-border-color")) {
+    $ag-group-component-border-color: $group-component-border-color;
+  }
+
+  @if (variable-exists("group-component-title-background-color") and not variable-exists("ag-group-component-title-background-color")) {
+    $ag-group-component-title-background-color: $group-component-title-background-color;
+  }
+
+  @if (variable-exists("header-background-color") and not variable-exists("ag-header-background-color")) {
+    $ag-header-background-color: $header-background-color;
+  }
+
+  @if (variable-exists("header-cell-moving-background-color") and not variable-exists("ag-header-cell-moving-background-color")) {
+    $ag-header-cell-moving-background-color: $header-cell-moving-background-color;
+  }
+
+  @if (variable-exists("header-foreground-color") and not variable-exists("ag-header-foreground-color")) {
+    $ag-header-foreground-color: $header-foreground-color;
+  }
+
+  @if (variable-exists("header-height") and not variable-exists("ag-header-height")) {
+    $ag-header-height: $header-height;
+  }
+
+  @if (variable-exists("header-icon-size") and not variable-exists("ag-header-icon-size")) {
+    $ag-header-icon-size: $header-icon-size;
+  }
+
+  @if (variable-exists("icon-color") and not variable-exists("ag-icon-color")) {
+    $ag-icon-color: $icon-color;
+  }
+
+  @if (variable-exists("icon-font-family") and not variable-exists("ag-icon-font-family")) {
+    $ag-icon-font-family: $icon-font-family;
+  }
+
+  @if (variable-exists("icon-size") and not variable-exists("ag-icon-size")) {
+    $ag-icon-size: $icon-size;
+  }
+
+  @if (variable-exists("icons-data") and not variable-exists("ag-icons-data")) {
+    $ag-icons-data: $icons-data;
+  }
+
+  @if (variable-exists("input-border-color") and not variable-exists("ag-input-border-color")) {
+    $ag-input-border-color: $input-border-color;
+  }
+
+  @if (variable-exists("input-disabled-background-color") and not variable-exists("ag-input-disabled-background-color")) {
+    $ag-input-disabled-background-color: $input-disabled-background-color;
+  }
+
+  @if (variable-exists("range-selection-background-color") and not variable-exists("ag-range-selection-background-color")) {
+    $ag-range-selection-background-color: $range-selection-background-color;
+  }
+
+  @if (variable-exists("range-selection-chart-background-color") and not variable-exists("ag-range-selection-chart-background-color")) {
+    $ag-range-selection-chart-background-color: $range-selection-chart-background-color;
+  }
+
+  @if (variable-exists("range-selection-chart-category-background-color") and not variable-exists("ag-range-selection-chart-category-background-color")) {
+    $ag-range-selection-chart-category-background-color: $range-selection-chart-category-background-color;
+  }
+
+  @if (variable-exists("rich-select-item-height") and not variable-exists("ag-rich-select-item-height")) {
+    $ag-rich-select-item-height: $rich-select-item-height;
+  }
+
+  @if (variable-exists("row-border-width") and not variable-exists("ag-row-border-width")) {
+    $ag-row-border-width: $row-border-width;
+  }
+
+  @if (variable-exists("row-group-indent-size") and not variable-exists("ag-row-group-indent-size")) {
+    $ag-row-group-indent-size: $row-group-indent-size;
+  }
+
+  @if (variable-exists("row-height") and not variable-exists("ag-row-height")) {
+    $ag-row-height: $row-height;
+  }
+
+  @if (variable-exists("scroll-spacer-border") and not variable-exists("ag-scroll-spacer-border")) {
+    $ag-scroll-spacer-border: $scroll-spacer-border;
+  }
+
+  @if (variable-exists("secondary-font-family") and not variable-exists("ag-secondary-font-family")) {
+    $ag-secondary-font-family: $secondary-font-family;
+  }
+
+  @if (variable-exists("secondary-font-size") and not variable-exists("ag-secondary-font-size")) {
+    $ag-secondary-font-size: $secondary-font-size;
+  }
+
+  @if (variable-exists("secondary-font-weight") and not variable-exists("ag-secondary-font-weight")) {
+    $ag-secondary-font-weight: $secondary-font-weight;
+  }
+
+  @if (variable-exists("secondary-foreground-color-opacity") and not variable-exists("ag-secondary-foreground-color-opacity")) {
+    $ag-secondary-foreground-color-opacity: $secondary-foreground-color-opacity;
+  }
+
+  @if (variable-exists("tool-panel-background-color") and not variable-exists("ag-tool-panel-background-color")) {
+    $ag-tool-panel-background-color: $tool-panel-background-color;
+  }
+
+  @if (variable-exists("toolpanel-indent-size") and not variable-exists("ag-toolpanel-indent-size")) {
+    $ag-toolpanel-indent-size: $toolpanel-indent-size;
+  }
+
+  @if (variable-exists("tooltip-background-color") and not variable-exists("ag-tooltip-background-color")) {
+    $ag-tooltip-background-color: $tooltip-background-color;
+  }
+
+  @if (variable-exists("tooltip-border-color") and not variable-exists("ag-tooltip-border-color")) {
+    $ag-tooltip-border-color: $tooltip-border-color;
+  }
+
+  @if (variable-exists("tooltip-border-radius") and not variable-exists("ag-tooltip-border-radius")) {
+    $ag-tooltip-border-radius: $tooltip-border-radius;
+  }
+
+  @if (variable-exists("tooltip-border-style") and not variable-exists("ag-tooltip-border-style")) {
+    $ag-tooltip-border-style: $tooltip-border-style;
+  }
+
+  @if (variable-exists("tooltip-border-width") and not variable-exists("ag-tooltip-border-width")) {
+    $ag-tooltip-border-width: $tooltip-border-width;
+  }
+
+  @if (variable-exists("tooltip-foreground-color") and not variable-exists("ag-tooltip-foreground-color")) {
+    $ag-tooltip-foreground-color: $tooltip-foreground-color;
+  }
+
+  @if (variable-exists("tooltip-padding") and not variable-exists("ag-tooltip-padding")) {
+    $ag-tooltip-padding: $tooltip-padding;
+  }
+
+  @if (variable-exists("transition-speed") and not variable-exists("ag-transition-speed")) {
+    $ag-transition-speed: $transition-speed;
+  }
+
+  @if (variable-exists("virtual-item-height") and not variable-exists("ag-virtual-item-height")) {
+    $ag-virtual-item-height: $virtual-item-height;
+  }
+
+}

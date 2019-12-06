@@ -271,9 +271,12 @@ agGrid.LicenseManager.setLicenseKey("your license key");
 
     <h3>CommonJS</h3>
 
+    <note>If you're using <span style="font-style: italic">any</span> Enterprise feature then <code>@ag-grid-enterprise/core</code>
+    will be available - you do not need to specify it as a dependency.</note>
+
     <p>Use this if you are using CommonJS to load ag-Grid.</p>
 <snippet>
-var enterprise = require("@ag-grid-enterprise/all-modules");
+var enterprise = require("@ag-grid-enterprise/core");
 enterprise.LicenseManager.setLicenseKey("your license key");
 </snippet>
 
@@ -295,7 +298,7 @@ enterprise.LicenseManager.setLicenseKey("your license key");
 <snippet>
             // other imports...
 
-import {LicenseManager} from "@ag-grid-enterprise/all-modules";
+import {LicenseManager} from "@ag-grid-enterprise/core";
 LicenseManager.setLicenseKey("your license key");
 
 // bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
@@ -314,7 +317,7 @@ import {render} from "react-dom";
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
-import {LicenseManager} from "@ag-grid-enterprise/all-modules";
+import {LicenseManager} from "@ag-grid-enterprise/core";
 LicenseManager.setLicenseKey("your license key");
 
 import App from "./App";
@@ -340,7 +343,7 @@ import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css"
 import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
 
 import {AllModules} from "@ag-grid-enterprise/all-modules";
-import {LicenseManager} from "@ag-grid-enterprise/all-modules";
+import {LicenseManager} from "@ag-grid-enterprise/core";
 
 LicenseManager.setLicenseKey("your license key");
 

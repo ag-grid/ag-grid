@@ -1,4 +1,3 @@
-import '@ag-grid-enterprise/rich-select';
-import 'ag-grid-enterprise';
+import {RichSelectModule as GridModule} from '@ag-grid-enterprise/rich-select';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

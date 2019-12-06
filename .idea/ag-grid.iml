@@ -6,42 +6,25 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-community/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/ag-grid/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/csv-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-all-modules/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-angular/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-client-side-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-core/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-csv-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-infinite-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-react/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-react/umd" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/grid-vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/all-modules/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/charts/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/clipboard/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/column-tool-panel/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/filter-tool-panel/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-all-modules/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-charts/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-clipboard/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-column-tool-panel/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-core/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-excel-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-filter-tool-panel/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-master-detail/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-menu/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-range-selection/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-rich-select/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-row-grouping/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-server-side-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-set-filter/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-side-bar/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-status-bar/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/grid-viewport-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/master-detail/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/menu/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/range-selection/dist" />
@@ -65,11 +48,13 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist_orig" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundle-size-tests" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />
@@ -91,6 +76,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/node_modules" />
     </content>
+    <content url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

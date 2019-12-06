@@ -927,7 +927,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-$handleSize: 5px;
+$ag-handleSize: 5px;
 
 .ag-dialog, .ag-panel {
     display: flex;
@@ -975,57 +975,57 @@ $handleSize: 5px;
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;
-            height: $handleSize;
-            width: $handleSize;
+            height: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: nwse-resize;
         }
         &.ag-resizer-top {
             top: 0;
-            left: $handleSize;
-            right: $handleSize;
-            height: $handleSize;
+            left: $ag-handleSize;
+            right: $ag-handleSize;
+            height: $ag-handleSize;
             cursor: ns-resize;
         }
         &.ag-resizer-topRight {
             top: 0;
             right: 0;
-            height: $handleSize;
-            width: $handleSize;
+            height: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: nesw-resize;
         }
         &.ag-resizer-right {
-            top: $handleSize;
+            top: $ag-handleSize;
             right: 0;
-            bottom: $handleSize;
-            width: $handleSize;
+            bottom: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: ew-resize;
         }
         &.ag-resizer-bottomRight {
             bottom: 0;
             right: 0;
-            height: $handleSize;
-            width: $handleSize;
+            height: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: nwse-resize;
         }
         &.ag-resizer-bottom {
             bottom: 0;
-            left: $handleSize;
-            right: $handleSize;
-            height: $handleSize;
+            left: $ag-handleSize;
+            right: $ag-handleSize;
+            height: $ag-handleSize;
             cursor: ns-resize;
         }
         &.ag-resizer-bottomLeft {
             bottom: 0;
             left: 0;
-            height: $handleSize;
-            width: $handleSize;
+            height: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: nesw-resize;
         }
         &.ag-resizer-left {
             left: 0;
-            top: $handleSize;
-            bottom: $handleSize;
-            width: $handleSize;
+            top: $ag-handleSize;
+            bottom: $ag-handleSize;
+            width: $ag-handleSize;
             cursor: ew-resize;
         }
     }
@@ -1681,25 +1681,25 @@ $handleSize: 5px;
 }
 
 
-$toolpanel-indent-size: 10px !default;
-$row-group-indent-size: 10px !default;
+$ag-toolpanel-indent-size: 10px !default;
+$ag-row-group-indent-size: 10px !default;
 
 // Default values for themes that do not use the mixins
 @for $i from 1 to 50 {
     .ag-ltr .ag-toolpanel-indent-#{$i} {
-        padding-left: $i * $toolpanel-indent-size;
+        padding-left: $i * $ag-toolpanel-indent-size;
     }
 
     .ag-rtl .ag-toolpanel-indent-#{$i} {
-        padding-right: $i * $toolpanel-indent-size;
+        padding-right: $i * $ag-toolpanel-indent-size;
     }
 
     .ag-ltr .ag-row-group-indent-#{$i} {
-        padding-left: $i * $row-group-indent-size;
+        padding-left: $i * $ag-row-group-indent-size;
     }
 
     .ag-rtl .ag-row-group-indent-#{$i} {
-        padding-right: $i * $row-group-indent-size;
+        padding-right: $i * $ag-row-group-indent-size;
     }
 }
 

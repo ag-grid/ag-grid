@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
     }
 </style>
 <?php
-function printFeatures($enterprise = false)
+function printFeatures($enterprise, $framework)
 {
     $lev1Items = json_decode(file_get_contents('../documentation-main/modules.json'), true);
     foreach ($lev1Items as $lev1Item) {
@@ -42,39 +42,42 @@ function printFeatures($enterprise = false)
             if($lev1Item['enterprise']) {
                 printFeature($lev1Item, 0);
             }
-        } else if(!$lev1Item['enterprise']) {
+        } else if($framework) {
+            if($lev1Item['framework']) {
+                printFeature($lev1Item, 0);
+            }
+        }
+        else if(!$lev1Item['enterprise'] && !$lev1Item['framework']) {
             printFeature($lev1Item, 0);
         }
     }
 }
 
-function printFeature($item, $indent)
+function printFeature($item)
 {
     $itemTitle = $item['title'];
     $module = $item['module'];
+    $exported = $item['exported'];
 
     echo "<tr>";
-    echo "<td>$itemTitle ";
+    echo "<td style='white-space: nowrap'>$itemTitle ";
     if ($item['enterprise']) {
         echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
     }
     echo "</span></td>";
-    echo "<td><i class=\"\" style=';'></i>$module</td>";
+    echo "<td style='white-space: nowrap'>$module</td>";
+    echo "<td>$exported</td>";
     echo "</tr>";
 }
 ?>
 
-<h1 class="first-h1">ag-Grid Modules</h1>
+<h1 class="heading-enterprise">ag-Grid Modules</h1>
 
 <p class="lead">
     Version 22.0.0 changes the way ag-Grid is made available by providing functionality in modules, allowing you to
     pick and choose which features you require, resulting in a smaller application size overall.
 </p>
 
-<note><p>The <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages have now been deprecated (but still supported
-        for the time being).</p>
-    The documentation on this page should be read, but for a quick how-to migration please see the <a href="#migrating-to-modules">Migration</a>
-    section for more information.</note>
 <h2>Introduction</h2>
 
 <p>
@@ -82,34 +85,89 @@ function printFeature($item, $indent)
     and all Enterprise functionality in another dependency (<code>ag-grid-enterprise</code>).
 </p>
 
-<p>From Version 22.0.0, ag-Grid can be consumed on a per-feature basis using separate feature modules, resulting in a
-   smaller application size overall.</p>
+<p>
+    Since version 22.0.0, ag-Grid can be consumed by just including the feature modules required, which should result in smaller overall application sizes.
+</p>
+
+<note>
+    The introduction of modules in version 22.0.0 is a significant first step towards reducing the size of ag-Grid inside applications. As most of the new modules
+    cover enterprise features, community users should not expect to see a size reduction right away. However, in the coming releases, we will strive to reduce
+    the size of the community-core module by splitting it out into separate community modules.
+</note>
 
 <h2>Modules</h2>
 
 <p>
-    The below table summarises the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
+    The below table summarizes the modules provided in the ag-Grid Community and ag-Grid Enterprise packages.
 </p>
 
 <table class="properties">
     <tr>
         <th></th>
         <th>Community Module</th>
+        <th>Exported</th>
     </tr>
-    <?php printFeatures() ?>
+    <?php printFeatures(false, false) ?>
+
+    <tr>
+        <th></th>
+        <th>Framework Module</th>
+        <th>Exported</th>
+    </tr>
+    <?php printFeatures(false, true) ?>
 
     <tr>
         <th></th>
         <th>Enterprise Module <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/></th>
+        <th>Exported</th>
     </tr>
-    <?php printFeatures(true) ?>
+    <?php printFeatures(true, false) ?>
 </table>
+
+<note><sup>(!)</sup> The framework modules are <strong>not</strong> included in either <code>@ag-grid-community/all-modules</code> or
+    <code style="white-space: nowrap">@ag-grid-enterprise/all-modules</code>. You need to explicitly import the framework module that corresponds to
+your chosen framework, if using a framework.</note>
+
+<note>If you decide to use <code style="white-space: nowrap">@ag-grid-enterprise/all-modules</code> then you do <strong>not</strong> need to
+specify <code style="white-space: nowrap">@ag-grid-community/all-modules</code> too. <code style="white-space: nowrap">@ag-grid-enterprise/all-modules</code>
+will contain all Community modules.</note>
 
 <h2>Installing ag-Grid Modules</h2>
 
-<p>If you wish to pull in all Community or all Enterprise modules like before, you can specify the corresponding
-    packages (<code>@ag-grid-community/all-modules</code> and <code>@ag-grid-enterprise/all-modules</code>) and reference
-    them later.</p>
+<p>If you wish to pull in all Community or all Enterprise modules as you did before you can specify the corresponding
+    packages (<code>@ag-grid-community/all-modules</code> and <code>@ag-grid-enterprise/all-modules</code>) and reference them later.</p>
+
+<p>There are two ways to supply modules to the grid - either globally or by individual grid:</p>
+
+<h3>Providing Modules Globally</h3>
+
+<p>You can import and provide all modules to the Grid globally if you so desire, but you need to ensure that this is done
+before <span style="font-style: italic"><strong>any</strong></span> Grids are instantiated.</p>
+
+<p>First, import the modules you require:</p>
+<snippet>
+import {ModuleRegistry, AllCommunityModules} from '@ag-grid-community/all-modules';
+
+// or if using ag-Grid Enterprise
+import {ModuleRegistry, AllModules} from '@ag-grid-enterprise/all-modules';
+
+// or if choosing individual modules
+import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
+</snippet>
+
+<p>Then provide these modules to the Grid:</p>
+
+<snippet>
+ModuleRegistry.registerModules(AllCommunityModules);
+
+// or if using ag-Grid Enterprise
+ModuleRegistry.registerModules(AllModules);
+
+// or if choosing individual modules
+ModuleRegistry.register(ClientSideRowModelModule);
+</snippet>
+
+<h3>Providing Modules To Individual Grids</h3>
 
 <p>If you choose to select modules based on requirements then at a minimum the a
     <a href="../javascript-grid-row-models/">Row Model</a> need to be specified. After that all other modules are optional
@@ -134,9 +192,9 @@ function printFeature($item, $indent)
 </snippet>
 
     <p>Note that if you specify an Enterprise module you do not need to specify Community module(s) unless you require them.
-    For example if you use the <code>ServerSideRowModelModule</code> then you only need to specify
+        For example if you use the <code>ServerSideRowModelModule</code> then you only need to specify
         <span style="white-space: nowrap"><code>@ag-grid-enterprise/server-side-row-model</code></span>
-    as a dependency.</p>
+        as a dependency.</p>
 
     <li>Import the module(s) you need</li>
 <snippet>
@@ -189,9 +247,9 @@ data() {
     }
 }
 &lt;ag-grid-vue
-     :columnDefs="columnDefs"
-     :rowData="rowData"
-     :modules="modules"&gt;
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
 &lt;/ag-grid-vue&gt;
 
 // or if choosing individual modules
@@ -203,19 +261,18 @@ data() {
     }
 }
 &lt;ag-grid-vue
-     :columnDefs="columnDefs"
-     :rowData="rowData"
-     :modules="modules"&gt;
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
 &lt;/ag-grid-vue&gt;
-
 </snippet>
 </ol>
 
 <h2 id="migrating-to-modules">Migrating</h2>
-<p>This section documents how to quickly migrate from the deprecated <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
+<p>This section documents how to migrate from the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> packages
     to the new modular based one.</p>
 
-<p>In versions 21.x and earlier you would have needed to reference the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>
+<p>In versions 21.x and before you would have needed to referenced the <code>ag-grid-community</code> and <code>ag-grid-enterprise</code>
     packages in <code>package.json</code>:</p>
 <snippet>
 "dependencies": {
@@ -228,7 +285,7 @@ data() {
 
 <snippet>import "ag-grid-enterprise";</snippet>
 
-<p>For Version 22.x and onwards you need to update your <code>package.json</code> to reference the new module base package,
+<p>For Version 22.x onwards you need to update your <code>package.json</code> to reference the new module base package,
     depending on the feature set you require (note you no longer need to specify both Community and Enterprise - just the one will do):</p>
 <snippet>
 "dependencies": {
@@ -281,9 +338,9 @@ data() {
     }
 }
 &lt;ag-grid-vue
-     :columnDefs="columnDefs"
-     :rowData="rowData"
-     :modules="modules"&gt;
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
 &lt;/ag-grid-vue&gt;
 
 // --------------------------------
@@ -318,13 +375,13 @@ data() {
     }
 }
 &lt;ag-grid-vue
-     :columnDefs="columnDefs"
-     :rowData="rowData"
-     :modules="modules"&gt;
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules"&gt;
 &lt;/ag-grid-vue&gt;
 </snippet>
 
-<p>Finally, you'll need to update the paths of the CSS or SCSS scripts that you reference:</p>
+<p>Finally, you'll need to update the paths of CSS or SCSS that you reference:</p>
 
 <snippet>
 // CSS Community

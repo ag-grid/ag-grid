@@ -1,5 +1,5 @@
 var columnDefs = [
-    {field: 'name', width: 100},
+    { field: 'name', width: 100 },
     {
         field: 'gender',
         width: 90,
@@ -22,18 +22,19 @@ var columnDefs = [
     {
         field: 'city', width: 70,
         cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: function (params) {
+        cellEditorParams: function(params) {
             var selectedCountry = params.data.country;
             var allowedCities = countyToCityMap(selectedCountry);
+
             return {
                 values: allowedCities,
-                formatValue: function (value) {
+                formatValue: function(value) {
                     return value + ' (' + selectedCountry + ')';
                 }
             };
         }
     },
-    {field: 'address', width: 200, cellEditor: 'agLargeTextCellEditor'}
+    { field: 'address', width: 200, cellEditor: 'agLargeTextCellEditor' }
 ];
 
 var rowData = [
@@ -244,7 +245,7 @@ var gridOptions = {
         editable: true,
         resizable: true
     },
-    onGridReady: function (params) {
+    onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
     onCellValueChanged: onCellValueChanged
@@ -252,11 +253,10 @@ var gridOptions = {
 
 function onCellValueChanged(params) {
     var colId = params.column.getId();
-    if (colId === 'country') {
 
+    if (colId === 'country') {
         var selectedCountry = params.data.country;
         var selectedCity = params.data.city;
-
         var allowedCities = countyToCityMap(selectedCountry);
         var cityMismatch = allowedCities.indexOf(selectedCity) < 0;
 
@@ -267,7 +267,7 @@ function onCellValueChanged(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

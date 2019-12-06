@@ -316,11 +316,11 @@ export interface ProcessDataFromClipboardParams {
 
     <ul>
         <li>
-            Paste data with no cells starting with 'Red' or 'Yellow' works as normal. This is achieved
-            by <code>processDataFromClipboard</code> returning the 2d array it was provided with.
+            Pasting data that is copied from cells in the 'Green' highlighted column works as normal. Note that it uses
+            <code>processDataFromClipboard</code> returning the 2d array it was provided with.
         </li>
         <li>
-            Pasting any data where a cell starts with 'Red' will result in always 2x2 cells getting pasted
+            Pasting any data from cells in the 'Red' highlighted column will result in 2x2 cells getting pasted
             with contents <code>[ ['Orange', 'Orange'], ['Grey', 'Grey'] ]</code>. To see this, copy and
             paste some 'Red' cells from column F.
             This is achieved by <code>processDataFromClipboard</code> returning the same 2d array always

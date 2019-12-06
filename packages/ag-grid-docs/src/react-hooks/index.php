@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h1 id="react-grid-api">React Hooks with ag-Grid</h1>
+    <h1 id="react-grid-api">React Hooks & Functional Components</h1>
 
     <h3 id="react-hooks">React Hooks</h3>
     <p>React Hooks are fully supported within ag-Grid - please refer to our working example in <a
@@ -72,6 +72,25 @@ export default forwardRef((props, ref) => {
 </snippet>
 
 <p>The same applies to any other component to be used within the grid that requires lifecycle methods to be present.</p>
+
+    <h2 id="react-null">Rendering Null</h2>
+
+    <p>If you don't want to output anything on <code>render</code> then return an empty string rather than <code>null</code>.</p>
+
+    <p>If you return <code>null</code> then React simply won't render the component and the Grid is unable to determine if this
+    is by design or an error.</p>
+
+<snippet>
+function myRenderer({ data }) {
+    if (!data.value) {
+        return ''; // not null!
+    }
+
+    return (
+        data.value
+    );
+}
+</snippet>
 
 </div>
 

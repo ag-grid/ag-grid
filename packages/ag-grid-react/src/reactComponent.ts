@@ -8,6 +8,7 @@ import {assignProperties} from "./utils";
 import generateNewKey from "./keyGenerator";
 
 export class ReactComponent extends BaseReactComponent {
+    static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
 
     private eParentElement!: HTMLElement;
     private componentInstance: any;
@@ -74,7 +75,7 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     private addParentContainerStyleAndClasses() {
-        if(!this.componentInstance) {
+        if (!this.componentInstance) {
             return;
         }
 
@@ -104,10 +105,12 @@ export class ReactComponent extends BaseReactComponent {
         return this.eParentElement.childElementCount > 0 || this.eParentElement.childNodes.length > 0;
     }
 
+    private static hasSymbol() {
+        return typeof Symbol === 'function' && Symbol.for;
+    }
+
     private static isStateless(Component: any) {
-        return (
-            typeof Component === 'function' &&
-            !(Component.prototype && Component.prototype.isReactComponent)
-        );
+        return (typeof Component === 'function' &&  !(Component.prototype && Component.prototype.isReactComponent))
+            || (typeof Component === 'object' &&  Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
     }
 }

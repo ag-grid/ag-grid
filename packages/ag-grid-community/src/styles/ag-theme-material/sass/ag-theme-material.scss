@@ -3,10 +3,10 @@
 
 .ag-theme-material {
     %selected-tab {
-        border-bottom: 2px solid $primary-color;
+        border-bottom: 2px solid $ag-primary-color;
     }
 
-    @include ag-grid-theme($params);
+    @include ag-grid-theme($ag-params);
 
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-checked-readonly,
@@ -16,19 +16,19 @@
     .ag-icon-checkbox-indeterminate-readonly,
     .ag-icon-radio-button-on,
     .ag-icon-radio-button-off {
-        height: $icon-size + 6;
-        width: $icon-size + 6;
-        font-size: $icon-size + 6;
-        line-height: $icon-size + 6;
+        height: $ag-icon-size + 6;
+        width: $ag-icon-size + 6;
+        font-size: $ag-icon-size + 6;
+        line-height: $ag-icon-size + 6;
     }
 
     .ag-header-cell, .ag-header-group-cell {
-        background-color: $background-color;
+        background-color: $ag-background-color;
         transition: background-color 0.5s;
     }
 
     .ag-cell-highlight {
-        background-color: $range-selection-highlight-color !important;
+        background-color: $ag-range-selection-highlight-color !important;
     }
 
     .ag-cell-highlight-animation {
@@ -36,7 +36,7 @@
     }
 
     .ag-menu-option {
-        height: $grid-size * 5 - 2;
+        height: $ag-grid-size * 5 - 2;
     }
 
     .ag-side-bar {
@@ -47,22 +47,22 @@
             z-index: 1;
             .ag-side-button {
                 button {
-                    color: $secondary-foreground-color;
-                    font-family: $secondary-font-family;
-                    font-size: $secondary-font-size;
-                    font-weight: $secondary-font-weight;
+                    color: $ag-secondary-foreground-color;
+                    font-family: $ag-secondary-font-family;
+                    font-size: $ag-secondary-font-size;
+                    font-weight: $ag-secondary-font-weight;
                     background-color: transparent;
                     border-width: 0;
                     width: calc(100% + 2px);
                 }
                 &.ag-selected {
-                    background-color: $tool-panel-background-color;
+                    background-color: $ag-tool-panel-background-color;
                 }
             } 
         }
 
         .ag-filter-toolpanel-body {
-            background-color: $background-color;
+            background-color: $ag-background-color;
         }
     }
 
@@ -79,7 +79,7 @@
                 }
                 &.ag-selected {
                     button {
-                        border-left-color: $primary-color;
+                        border-left-color: $ag-primary-color;
                     }
                 }
             }
@@ -93,7 +93,7 @@
                 }
                 &.ag-selected {
                     button {
-                        border-right-color: $primary-color;
+                        border-right-color: $ag-primary-color;
                     }
                 }
             }
@@ -109,7 +109,7 @@
                 }
                 &.ag-selected {
                     button {
-                        border-right-color: $primary-color;
+                        border-right-color: $ag-primary-color;
                     }
                 }
             }
@@ -123,7 +123,7 @@
                 }
                 &.ag-selected {
                     button {
-                        border-left-color: $primary-color;
+                        border-left-color: $ag-primary-color;
                     }
                 }
             }
@@ -132,7 +132,7 @@
 
     .ag-group-expanded {
         .ag-icon-expanded:empty:before {
-            content: map-get($icons-font-codes, tree-open);
+            content: map-get($ag-icons-font-codes, tree-open);
         }
     }
 }

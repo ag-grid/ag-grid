@@ -42,6 +42,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
     console.log('chart options:', options);
 
     // we are only interested in processing line type.
@@ -52,80 +53,22 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    var xAxis = options.xAxis;
-    xAxis.title = {
-        enabled: true,
-        text: 'Country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
-        color: 'gray'
-    };
-    xAxis.line.width = 2;
-    xAxis.line.color = 'gray';
-    xAxis.tick.width = 2;
-    xAxis.tick.size = 10;
-    xAxis.tick.color = 'gray';
-    xAxis.label.fontStyle = 'italic';
-    xAxis.label.fontWeight = 'bold';
-    xAxis.label.fontSize = 15;
-    xAxis.label.fontFamily = 'Arial, sans-serif';
-    xAxis.label.padding = 10;
-    xAxis.label.color = '#de7b73';
-    xAxis.label.rotation = 20;
-    xAxis.label.formatter = function(params) {
-        var value = String(params.value);
-        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
-    };
-    xAxis.gridStyle = [
-        {
-            stroke: 'rgba(94,100,178,0.5)'
-        }
-    ];
+    options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
+    options.seriesDefaults.fill.opacity = 0.7;
 
-    var yAxis = options.yAxis;
-    yAxis.line.width = 2;
-    yAxis.line.color = 'blue';
-    yAxis.tick.width = 2;
-    yAxis.tick.size = 10;
-    yAxis.tick.color = 'blue';
-    yAxis.label.fontStyle = 'italic';
-    yAxis.label.fontWeight = 'bold';
-    yAxis.label.fontSize = 15;
-    yAxis.label.fontFamily = 'Arial, sans-serif';
-    yAxis.label.padding = 10;
-    yAxis.label.color = '#de7b73';
-    yAxis.label.rotation = -20;
-    yAxis.label.formatter = function(params) {
-        return params.value.toString().toUpperCase();
-    };
-    yAxis.gridStyle = [
-        {
-            stroke: '#80808044',
-            lineDash: undefined
-        },
-        {
-            stroke: '#80808044',
-            lineDash: [6, 3]
-        }
-    ];
+    options.seriesDefaults.stroke.colors = ['black', '#ff0000'];
+    options.seriesDefaults.stroke.opacity = 0.6;
+    options.seriesDefaults.stroke.width = 5;
 
-    var seriesDefaults = options.seriesDefaults;
+    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
-    seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
-    seriesDefaults.stroke.colors = ['black', '#ff0000'];
-    seriesDefaults.stroke.width = 2;
-    seriesDefaults.highlightStyle = {
-        fill: 'red',
-        stroke: 'yellow'
-    };
+    options.seriesDefaults.marker.enabled = true;
+    options.seriesDefaults.marker.type = 'diamond';
+    options.seriesDefaults.marker.size = 12;
+    options.seriesDefaults.marker.strokeWidth = 4;
 
-    seriesDefaults.marker.enabled = true;
-    seriesDefaults.marker.size = 12;
-    seriesDefaults.marker.strokeWidth = 4;
-
-    seriesDefaults.tooltip.renderer = function(params) {
+    options.seriesDefaults.tooltip.renderer = function(params) {
         var x = params.datum[params.xKey];
         var y = params.datum[params.yKey];
         return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;

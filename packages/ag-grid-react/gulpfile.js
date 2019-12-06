@@ -3,7 +3,6 @@ const gulp = require('gulp');
 const {series} = require('gulp');
 const gulpTypescript = require('gulp-typescript');
 const header = require('gulp-header');
-const merge = require('gulp-merge');
 const pkg = require('./package.json');
 const tsConfig = 'tsconfig.build.json';
 const typescript = require('rollup-plugin-typescript');
@@ -14,6 +13,8 @@ const source = require('vinyl-source-stream');
 const clean = require('gulp-clean');
 const link = require('lnk').sync;
 const os = require('os');
+const replace = require('gulp-replace');
+const merge = require('merge-stream');
 
 const WINDOWS = /^win/.test(os.platform());
 
@@ -83,14 +84,14 @@ const linkUmdForE2E = (done) => {
         linkType = 'junction';
     }
 
-    if(!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
-        link('./umd/ag-grid-react.min.js', './cypress/integration/',{
+    if (!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
+        link('./umd/ag-grid-react.min.js', './cypress/integration/', {
             force: true,
             type: linkType
         })
     }
-    if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
-        link('../../community-modules/grid-all-modules/dist/ag-grid-community.min.js', './cypress/integration/',{
+    if (!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
+        link('../../community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/', {
             force: true,
             type: linkType
         })
@@ -98,10 +99,25 @@ const linkUmdForE2E = (done) => {
     done();
 };
 
+const copyFromModuleSource = () => {
+    const copySource = gulp.src([
+        "../../community-modules/react/src/**/!__tests__"
+    ])
+        .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
+        .pipe(gulp.dest("./src"));
+
+    const copyMain = gulp.src(["../../community-modules/react/main.d.ts",
+        "../../community-modules/react/main.js"])
+        .pipe(gulp.dest("./"));
+
+    return merge(copySource, copyMain);
+};
+
+gulp.task('copy-from-module-source', copyFromModuleSource);
 gulp.task('clean-umd', cleanUmd);
 gulp.task('umd', umd);
 gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('clean-lib', cleanLib);
 gulp.task('tsc', tscTask);
 gulp.task('watch', series('tsc', watch));
-gulp.task('default', series('clean-lib', 'tsc', "clean-umd", "umd"));
+gulp.task('default', series('clean-lib', 'copy-from-module-source', 'tsc', "clean-umd", "umd"));

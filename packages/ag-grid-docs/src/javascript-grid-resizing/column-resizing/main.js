@@ -1,6 +1,6 @@
 var columnDefs = [
     {field: "athlete", width: 150, suppressSizeToFit: true},
-    {field: "age", width: 90, minWidth: 50, maxWidth: 100},
+    {field: "age", headerName: "Age of Athlete", width: 90, minWidth: 50, maxWidth: 150},
     {field: "country", width: 120},
     {field: "year", width: 90},
     {field: "date", width: 110},
@@ -26,12 +26,13 @@ function sizeToFit() {
     gridOptions.api.sizeColumnsToFit();
 }
 
-function autoSizeAll() {
+function autoSizeAll(skipHeader) {
     var allColumnIds = [];
     gridOptions.columnApi.getAllColumns().forEach(function(column) {
         allColumnIds.push(column.colId);
     });
-    gridOptions.columnApi.autoSizeColumns(allColumnIds);
+
+    gridOptions.columnApi.autoSizeColumns(allColumnIds, skipHeader);
 }
 
 // setup the grid after the page has finished loading

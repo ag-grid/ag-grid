@@ -1,4 +1,3 @@
-import '@ag-grid-enterprise/master-detail';
-import 'ag-grid-enterprise';
+import {MasterDetailModule as GridModule} from '@ag-grid-enterprise/master-detail';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

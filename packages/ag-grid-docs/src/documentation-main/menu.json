@@ -100,7 +100,7 @@
                     "url": "react-grid-apis/"
                   },
                   {
-                    "title": "React Hooks",
+                    "title": "Hooks & Functional Components",
                     "url": "react-hooks/"
                   },
                   {
@@ -505,6 +505,11 @@
                 "title": "Range Handle",
                 "url": "javascript-grid-range-selection-handle/",
                 "enterprise": true
+              },
+              {
+                "title": "Fill Handle",
+                "url": "javascript-grid-range-selection-fill-handle/",
+                "enterprise": true
               }
             ]
           }
@@ -660,13 +665,13 @@
             "url": "javascript-grid-editing-flow/",
             "items": [
               {
-                "title": "Value Setters",
-                "url": "javascript-grid-value-setters/",
+                "title": "Value Parsers",
+                "url": "javascript-grid-value-parsers/",
                 "showInCollapsed": true
               },
               {
-                "title": "Value Parsers",
-                "url": "javascript-grid-value-parsers/",
+                "title": "Value Setters",
+                "url": "javascript-grid-value-setters/",
                 "showInCollapsed": true
               }
             ]
@@ -674,6 +679,10 @@
           {
             "title": "Provided Editors",
             "url": "javascript-grid-provided-cell-editors/"
+          },
+          {
+            "title": "Undo / Redo Edits",
+            "url": "javascript-grid-undo-redo-edits/"
           }
         ]
       },
@@ -713,13 +722,19 @@
         "icon": "icon-import-export",
         "items": [
           {
-            "title": "CSV Export",
-            "url": "javascript-grid-export/"
-          },
-          {
-            "title": "Excel Export",
-            "url": "javascript-grid-excel/",
-            "enterprise": true
+            "title": "Export",
+            "url": "javascript-grid-export/",
+            "items": [
+              {
+                "title": "CSV Export",
+                "url": "javascript-grid-csv/"
+              },
+              {
+                "title": "Excel Export",
+                "url": "javascript-grid-excel/",
+                "enterprise": true
+              }
+            ]
           },
           {
             "title": "Clipboard",
@@ -921,6 +936,11 @@
               {
                 "title": "General",
                 "url": "javascript-grid-charts-customisation-general/",
+                "enterprise": true
+              },
+              {
+                "title": "Cartesian",
+                "url": "javascript-grid-charts-customisation-cartesian/",
                 "enterprise": true
               },
               {

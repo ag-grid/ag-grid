@@ -1,32 +1,10 @@
 const gulp = require('gulp');
-const {series} = require('gulp');
-const gulpTypescript = require('gulp-typescript');
-const typescript = require('typescript');
-const merge = require('merge2');
+const replace = require('gulp-replace');
 
-const compileSource = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig-lib.json');
-
-    const tsResult = gulp
-        .src('./src/**/*.ts', {typescript: typescript})
-        .pipe(tsProject());
-
-    return merge([
-        tsResult.dts
-            .pipe(gulp.dest('./lib')),
-        tsResult.js
-            .pipe(gulp.dest('./lib'))
-    ]);
+const copyFromModuleSource = () => {
+    return gulp.src("../../community-modules/vue/src/**/*")
+        .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
+        .pipe(gulp.dest("./src"));
 };
 
-const watch = () => {
-    gulp.watch([
-            './src/*',
-            './node_modules/ag-grid-community/dist/lib/**/*'],
-        compileSource);
-};
-
-
-gulp.task('compile-source', compileSource);
-gulp.task('watch', series('compile-source', watch));
-gulp.task('default', series('compile-source'));
+gulp.task('copy-from-module-source', copyFromModuleSource);

@@ -164,7 +164,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
     rowSelection: 'multiple',
-    enableRangeSelection: true,
     autoGroupColumnDef: {
         headerName: 'Symbol',
         cellRenderer:'agGroupCellRenderer',

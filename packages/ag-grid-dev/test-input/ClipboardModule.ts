@@ -1,4 +1,3 @@
-import '@ag-grid-enterprise/clipboard';
-import 'ag-grid-enterprise';
+import {ClipboardModule as GridModule} from '@ag-grid-enterprise/clipboard';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);
