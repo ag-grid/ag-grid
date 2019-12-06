@@ -1,0 +1,125 @@
+
+@mixin ag-theme-base-part-sidebar {
+
+    
+    @for $i from 1 to 20 {
+        .ag-ltr .ag-toolpanel-indent-#{$i} {
+            padding-left: $i * $ag-toolpanel-indent-size;
+        }
+    
+        .ag-rtl .ag-toolpanel-indent-#{$i} {
+            padding-right: $i * $ag-toolpanel-indent-size;
+        }
+    }
+
+    .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
+        margin-left: $ag-toolpanel-indent-size + $ag-grid-size;
+    }
+    
+    .ag-rtl {
+
+        .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
+            margin-left: 0;
+            margin-right: $ag-toolpanel-indent-size + $ag-grid-size;
+        }
+    }
+
+    .ag-tool-panel-wrapper {
+        border-right: 0;
+    }
+
+
+    %side-bar-left {
+        @include grid-border(right);
+        .ag-side-button.ag-selected button {
+            // TODO check if these are required without borders
+            margin-right: -1px;
+            padding-right: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-left: 1px solid $ag-border-color;
+        }
+    }
+    
+    %side-bar-right {
+        @include grid-border(left);
+        .ag-side-button.ag-selected button {
+            // TODO check if these are required without borders
+            margin-left: -1px;
+            padding-left: 1px;
+        }
+        .ag-tool-panel-wrapper {
+            border-right: 1px solid $ag-border-color;
+        }
+    }
+
+    .ag-side-bar {
+        background-color: $ag-tool-panel-background-color;
+        position: relative;
+
+        .ag-side-buttons {
+            padding-top: $ag-grid-size * 4;
+            background: $ag-background-color;
+            width: $ag-icon-size + 4;
+            position: relative;
+
+            .ag-side-button {
+                button {
+                    background: transparent;
+                    border: 0;
+                    color: $ag-foreground-color;
+                    padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
+                    width: calc(100% + 1px);
+                    margin: 0;
+                    min-height: $ag-grid-size * 18;
+                    border-width: 1px 0 1px 0;
+                    border-style: solid;
+                    border-color: transparent;
+                    background-position-y: center;
+                    background-position-x: center;
+                    background-repeat: no-repeat;
+                }
+            }
+
+            .ag-selected {
+                button {
+                    background-color: $ag-tool-panel-background-color;
+                    border-color: $ag-border-color;
+                }
+            }
+        }
+
+        .ag-panel-container {
+            border-right: 1px solid $ag-border-color;
+        }
+
+        &.full-width .ag-panel-container {
+            border-right: 0;
+        }
+
+        .ag-column-drop {
+            min-height: 50px;
+        }
+    }
+
+    .ag-ltr .ag-side-bar {
+        &.ag-side-bar-left {
+            @extend %side-bar-left;
+        }
+
+        &.ag-side-bar-right {
+            @extend %side-bar-right;
+        }
+    }
+
+    .ag-primary-cols-filter-wrapper {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
+    }
+
+    .ag-column-drop-vertical {
+        @include grid-border(bottom, $color: $ag-secondary-border-color);
+    }
+    
+}
+

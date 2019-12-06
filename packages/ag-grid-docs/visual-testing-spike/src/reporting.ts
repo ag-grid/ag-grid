@@ -86,10 +86,10 @@ export const getReportHtml = (results: SpecResults[], inProgress: boolean) => {
         body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
         body += failures.map(getFailureHtml).join('\n\n');
     }
-    const passes = results.filter(r => !r.difference);
-    if (passes.length > 0) {
-        body += `<h2>${passes.length} passes${passes.length > 1 ? 's' : ''}</h2>`;
-        body += passes.map(getPassHtml).join('\n\n');
-    }
+    // const passes = results.filter(r => !r.difference);
+    // if (passes.length > 0) {
+    //     body += `<h2>${passes.length} passes${passes.length > 1 ? 's' : ''}</h2>`;
+    //     body += passes.map(getPassHtml).join('\n\n');
+    // }
     return pageTemplate(body);
 };

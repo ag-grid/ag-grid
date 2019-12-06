@@ -96,65 +96,6 @@
     text-transform: $text-transform;
 }
 
-@mixin padding-filters($rtl) {
-    .ag-tool-panel-wrapper .ag-filter-panel {
-        .ag-filter-toolpanel-header {
-            > div {
-                &:not(.ag-input-wrapper) {
-                    @if ($rtl) {
-                        padding-right: $ag-grid-size / 2;
-                    }
-                    @else {
-                        padding-left: $ag-grid-size / 2;
-                    }
-                }
-            }
-        }
-        .ag-group-component-container {
-            .ag-group-item {
-                @if ($rtl) {
-                    margin-top: $ag-grid-size;
-                    margin-bottom: $ag-grid-size;
-                    margin-right: 0;
-                    margin-left: $ag-grid-size / 2;
-                }
-                @else {
-                    margin-top: $ag-grid-size;
-                    margin-right: $ag-grid-size / 2; 
-                    margin-bottom: $ag-grid-size;
-                    margin-left: 0;
-                }
-                
-            }
-            .ag-group-item:not(.ag-filter-toolpanel-instance),
-            .ag-group-item > .ag-group-component {
-                @for $i from 1 through 5 {
-                    &.ag-level-#{$i} {
-                        @if $i > 1 {
-                            .ag-group-component-title-bar {
-                                @if($rtl) {
-                                    padding-right: 1rem * ($i - 1);
-                                }
-                                @else {
-                                    padding-left: 1rem * ($i - 1);
-                                }
-                            }
-                        }
-                        .ag-filter-toolpanel-header {
-                            @if ($rtl) {
-                                padding-right: 1rem * $i;
-                            }
-                            @else {
-                                padding-left: 1rem * $i;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 @mixin icon_element($icon, $code) {
   .ag-icon-#{$icon} {
       &:before {

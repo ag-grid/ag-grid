@@ -75,13 +75,19 @@ const initInBrowser = (theme: string) => {
             });
 
             if (document.head) {
-                // hide text cursor because it blinks, so screenshots vary based on timing
                 const style = document.createElement('style');
-                style.innerHTML = `
+                style.innerHTML =
+                    // hide text cursor because it blinks, so screenshots vary based on timing
+                    `
                     input, textarea {
                         caret-color: transparent !important;
                     }
-                `;
+                    `
+                    // disable all transitions because they mess up text rendering
+                    + `
+                    * {
+                        transition: none !important;
+                    }`;
                 document.head.appendChild(style);
             }
         };
@@ -267,7 +273,7 @@ export const runSuite = async (params: RunSuiteParams) => {
     let specsAlreadyCreated = 0;
 
     let filters: Filter[] = [];
-    const filterFunc = (name: string) => !filters.find(f => !f(name));
+    const nameMatchesFilter = (name: string) => !filters.find(f => !f(name));
 
     if (params.filter) {
         const filterRegexp = new RegExp(params.filter);
@@ -307,8 +313,8 @@ export const runSuite = async (params: RunSuiteParams) => {
         // apply provided filter
         .filter(spec => {
             return (
-                filterFunc(spec.name) ||
-                spec.steps.find(step => filterFunc(getTestCaseName(spec, step)))
+                nameMatchesFilter(spec.name) ||
+                spec.steps.find(step => nameMatchesFilter(getTestCaseName(spec, step)))
             );
         });
 
@@ -348,14 +354,17 @@ export const runSuite = async (params: RunSuiteParams) => {
         args: ['--disable-gpu', '--font-render-hinting=none']
     });
 
-    const totalTestCases = specs.reduce((acc, spec) => acc + spec.steps.length, 0);
+    const totalMatchingTestCases = specs.reduce((acc, spec) => {
+        const matchingCases = spec.steps.filter(step => nameMatchesFilter(getTestCaseName(spec, step)));
+        return acc + matchingCases.length
+    }, 0);
     let generatedTestCases = 0;
 
     let failedTestCases: string[] = [];
 
     await runSpecs(specs, {
         browser,
-        passesFilter: filterFunc,
+        passesFilter: nameMatchesFilter,
         server: params.server,
         handler: async (screenshot, testCaseName) => {
             const file = getTestCaseImagePath(params, testCaseName);
@@ -363,7 +372,7 @@ export const runSuite = async (params: RunSuiteParams) => {
                 await fs.writeFile(file, screenshot);
                 process.stdout.clearLine(0);
                 process.stdout.cursorTo(0);
-                process.stdout.write(`🙌  generating: ${generatedTestCases} of ${totalTestCases}`);
+                process.stdout.write(`🙌  generating: ${generatedTestCases} of ${totalMatchingTestCases}`);
                 ++generatedTestCases;
             } else {
                 const oldData = await fs.readFile(file);

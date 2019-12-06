@@ -1,0 +1,7 @@
+@import "./grid-layout";
+@import "./grid-selection";
+
+@mixin ag-theme-base-part-grid {
+    @include ag-theme-base-part-grid-layout();
+    @include ag-theme-base-part-grid-selection();
+}

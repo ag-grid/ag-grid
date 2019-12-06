@@ -1,0 +1,188 @@
+
+@mixin ag-theme-base-part-filter-tool-panel {
+    
+    .ag-filter-panel {
+        color: $ag-header-foreground-color;
+        font-weight: $ag-secondary-font-weight;
+        font-size: $ag-secondary-font-size;
+        font-family: $ag-secondary-font-family;
+        .ag-filter-toolpanel-header {
+            &.ag-filter-header {
+                min-height: $ag-header-height;
+                height: $ag-header-height;
+                border-bottom: 1px solid $ag-border-color;
+                box-sizing: content-box;
+            }
+
+            > div {
+                &:not(.ag-input-wrapper) {
+                    margin: 0 $ag-grid-size / 2;
+                }
+                &.ag-input-wrapper {
+                    padding-left: $ag-grid-size;
+                    padding-right: $ag-grid-size;
+                    input {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+
+        .ag-filter-list-panel {
+            flex: 1 1 auto;
+            overflow: auto;
+            > div {
+                &.ag-first-group-visible {
+                    > .ag-group-component {
+                        > .ag-group-component-title-bar {
+                            border-top: none;
+                            min-height: calc(#{$ag-header-height} - 1px);
+                        }
+                    }
+                }
+                &.ag-last-group-visible {
+                    > .ag-group-component.ag-collapsed {
+                        border-bottom: 1px solid $ag-border-color;
+                    }
+                }
+            }
+        }
+
+        .ag-group-component {
+            border: none;
+            background-color: $ag-header-background-color;
+            .ag-group-component-title-bar {
+                min-height: $ag-header-height;
+                .ag-group-component-title {
+                    white-space: nowrap;
+                }
+
+                .ag-column-group-icons {
+                    margin: 0 $ag-grid-size;
+                }
+            }
+
+            &.ag-level-0 {
+                > .ag-group-component-title-bar {
+                    border: 0 solid $ag-border-color;
+                    border-top-width: 1px;
+                }
+            }
+
+            &.ag-has-filter {
+                > .ag-group-component-title-bar {
+                    .ag-group-component-title:after {
+                        content: $ag-icon-filter;
+                        font-family: $ag-icon-font-family;
+                        font-size: $ag-icon-size;
+                        margin-left: $ag-grid-size;
+                        color: $ag-icon-color;
+                        font-weight: normal;
+                    }
+                }
+            }
+        }
+
+        .ag-group-component-container {
+            margin-left: 0;
+            padding: 0;
+            .ag-group-item {
+                &:not(.ag-filter-toolpanel-instance) {
+                    margin-top: 0;
+                }
+                .ag-group-component-title-bar {
+                    background-color: $ag-group-component-background-color;
+                }
+                .ag-filter-toolpanel-header {
+                    padding: $ag-grid-size / 2 0;
+                }
+                .ag-filter-toolpanel-body {
+                    &:not(:empty) {
+                        margin: $ag-grid-size 0;
+                    }
+                    .ag-filter-air {
+                        border: 1px solid $ag-border-color;
+                        padding-top: $ag-grid-size;
+                        color: $ag-foreground-color;
+                        font-weight: $ag-font-weight;
+                        font-size: $ag-font-size;
+                        font-family: $ag-font-family;
+                    }
+                }
+            }
+
+            .ag-group-item:not(.ag-filter-toolpanel-instance),
+            .ag-group-item > .ag-group-component {
+                border-top: none;
+                margin-bottom: 0;
+                .ag-group-component-title-bar {
+                    min-height: unset;
+                    height: unset;
+                    margin: $ag-grid-size 0;
+                }
+            }
+        }
+    }
+
+    @include filter-toolpanel-padding(false);
+
+    .rtl {
+        @include filter-toolpanel-padding(true);
+    }
+}
+
+
+@mixin filter-toolpanel-padding($rtl) {
+    .ag-filter-toolpanel-header-expand {
+        @if ($rtl) {
+            padding-right: $ag-grid-size / 2;
+        }
+        @else {
+            padding-left: $ag-grid-size / 2;
+        }
+    }
+    
+    .ag-filter-panel {
+        .ag-group-item {
+            @if ($rtl) {
+                margin-top: $ag-grid-size;
+                margin-bottom: $ag-grid-size;
+                margin-right: 0;
+                margin-left: $ag-grid-size / 2;
+            }
+            @else {
+                margin-top: $ag-grid-size;
+                margin-right: $ag-grid-size / 2; 
+                margin-bottom: $ag-grid-size;
+                margin-left: 0;
+            }
+            
+        }
+        
+        .ag-group-item:not(.ag-filter-toolpanel-instance),
+        .ag-group-item > .ag-group-component {
+            @for $i from 1 through 5 {
+                &.ag-level-#{$i} {
+                    @if $i > 1 {
+                        .ag-group-component-title-bar {
+                            @if($rtl) {
+                                padding-right: 1rem * ($i - 1);
+                            }
+                            @else {
+                                padding-left: 1rem * ($i - 1);
+                            }
+                        }
+                    }
+                    .ag-filter-toolpanel-header {
+                        @if ($rtl) {
+                            padding-right: 1rem * $i;
+                        }
+                        @else {
+                            padding-left: 1rem * $i;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

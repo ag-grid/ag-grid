@@ -1,6 +1,5 @@
 import { SpecDefinition, SpecStep } from './types';
 import { wait, dragFromTo as drag, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin } from './utils';
-import { toUnicode } from 'punycode';
 
 export const specs: SpecDefinition[] = [
     {
@@ -268,6 +267,10 @@ export const specs: SpecDefinition[] = [
                 }
             }))
         ]
+    },
+    {
+        exampleSection: 'pagination',
+        exampleId: 'client-paging'
     },
     {
         exampleSection: 'master-detail',

@@ -1,0 +1,209 @@
+
+@mixin ag-theme-base-part-menu {
+    
+
+    .ag-tab {
+        box-sizing: content-box;
+    }
+
+    .ag-menu {
+        @include card();
+        padding: 0;
+    }
+
+    .ag-menu-list {
+        cursor: default;
+        margin-bottom: $ag-grid-size;
+        margin-top: $ag-grid-size;
+        width: 100%;
+    }
+
+    @if $ag-hover-color {
+        .ag-menu-option-active {
+            background-color: $ag-hover-color;
+        }
+    }
+
+    .ag-menu-option-disabled {
+        opacity: 0.5;
+    }
+
+    .ag-menu-option-text {
+        margin-left: $ag-grid-size;
+    }
+
+    .ag-menu-option-icon {
+        padding-left: $ag-grid-size;
+        padding-right: $ag-grid-size;
+        min-width: $ag-icon-size + $ag-grid-size * 2;
+    }
+
+    .ag-menu-option-shortcut {
+        padding-left: $ag-grid-size * 2;
+    }
+    
+
+    .ag-menu-separator {
+        height: $ag-grid-size * 2;
+        & > span:after {
+            content: "";
+            display: block;
+            @include grid-border(top, $color: $ag-secondary-border-color);
+        }
+    }
+
+    .ag-menu-option-popup-pointer {
+        width: $ag-icon-size + $ag-grid-size * 2;
+        text-align: center;
+    }
+
+
+    ////////////////////////////////////////
+    // Column Filter
+    ////////////////////////////////////////
+    .ag-tab-header {
+        background: $ag-panel-background-color;
+        min-width: 220px;
+        width: 100%;
+        display: flex;
+
+        .ag-tab {
+            @extend %tab !optional;
+
+            display: flex;
+            border-bottom: 2px solid transparent;
+            height: $ag-grid-size * 4;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+
+            @if $ag-full-width-tabs {
+                flex: 1 1 auto;
+            }
+
+            &.ag-tab-selected {
+                @extend %selected-tab !optional;
+            }
+        }
+    }
+
+    .ag-tab-body {
+        padding: $ag-grid-size / 2 0;
+
+        .ag-menu-list {
+            margin-bottom: 0;
+            margin-top: 0;
+
+            & > div:first-child > span {
+                padding-top: 0;
+            }
+
+            & > div:last-child > span {
+                padding-bottom: 0;
+            }
+
+            & > div:last-child > .ag-menu-option-popup-pointer {
+                background-position-y: 0;
+            }
+        }
+    }
+
+    ////////////////////////////////////////
+    // Value Set Filter
+    ////////////////////////////////////////
+    .ag-filter {
+        .ag-filter-select,
+        .ag-filter-body {
+            margin-bottom: $ag-grid-size;
+        }
+
+        .ag-filter-body {
+            margin-top: 0;
+        }
+
+        .ag-filter-filter {
+            margin-left: $ag-grid-size;
+            margin-right: $ag-grid-size;
+        }
+
+        // string filter type
+        .ag-filter-select {
+            margin: $ag-grid-size;
+        }
+
+        input[type='radio'] {
+            margin: 0 3px 0 6px;
+            width: 12px;
+            height: 17px;
+            vertical-align: top;
+        }
+
+        input[type='text'],
+        input[type='date'] {
+            padding-left: $ag-grid-size;
+        }
+
+        .ag-set-filter-list {
+            height: $ag-virtual-item-height * 6;
+        }
+
+        .ag-set-filter-item {
+            height: $ag-virtual-item-height;
+            > {
+                div,
+                span {
+                    margin-left: 5px;
+                }
+            }
+        }
+
+        .ag-filter-header-container {
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            padding-bottom: $ag-grid-size / 2;
+        }
+
+        .ag-filter-apply-panel {
+            display: flex;
+            justify-content: flex-end;
+            padding: $ag-grid-size;
+            padding-top: $ag-grid-size * 2;
+            button {
+                line-height: 1.5;
+                @if $ag-customize-buttons {
+                    @include regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
+                }
+            }
+
+            button + button {
+                margin-left: $ag-grid-size * 2;
+            }
+        }
+    }
+    
+
+    ////////////////////////////////////////
+    // Column selector
+    ////////////////////////////////////////
+    .ag-column-select-panel {
+        .ag-column-tool-panel-column-group,
+        .ag-column-tool-panel-column {
+            height: $ag-grid-size * 4;
+
+            .ag-column-select-checkbox,
+            .ag-column-tool-panel-column-label,
+            .ag-column-group-icons {
+                margin-left: $ag-grid-size;
+                margin-right: $ag-grid-size;
+            }
+        }
+        // TODO move up level
+        .ag-primary-cols-list-panel {
+            @include grid-border(top, $color: $ag-secondary-border-color);
+            padding-top: $ag-grid-size;
+            // TODO  add className in code
+            > div {
+                cursor: pointer;
+            }
+        }
+    }
+}

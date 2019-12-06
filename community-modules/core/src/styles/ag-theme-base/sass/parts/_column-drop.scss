@@ -1,0 +1,78 @@
+
+@mixin ag-theme-base-part-column-drop {
+    
+    .ag-column-drop-horizontal {
+        background-color: $ag-panel-background-color;
+        height: $ag-row-height;
+        padding-left: $ag-cell-horizontal-padding;
+        @include grid-border(bottom);
+
+        .ag-icon-group,
+        .ag-icon-pivot {
+            margin-right: $ag-cell-horizontal-padding;
+        }
+
+        .ag-icon-small-left,
+        .ag-icon-small-right {
+            margin: 0 $ag-grid-size;
+            opacity: $ag-secondary-foreground-color-opacity;
+        }
+
+        .ag-column-drop-empty-message {
+            opacity: $ag-disabled-foreground-color-opacity;
+        }
+    }
+
+    .ag-column-drop-cell {
+        background: $ag-chip-background-color;
+        border-radius: $ag-grid-size * 4;
+        min-height: $ag-grid-size * 4;
+        padding: 0 $ag-grid-size / 2;
+
+        .ag-column-drop-cell-text {
+            margin: 0 $ag-grid-size;
+        }
+
+        .ag-column-drop-cell-button {
+            min-width: $ag-grid-size * 4;
+
+            margin: 0 $ag-grid-size / 2;
+            opacity: $ag-secondary-foreground-color-opacity;
+
+            &:hover {
+                opacity: $ag-foreground-opacity;
+            }
+        }
+
+        .ag-column-drag {
+            margin-left: $ag-grid-size * 2;
+        }
+    }
+
+    .ag-column-drop-vertical {
+        .ag-column-drop-cell {
+            margin-top: $ag-grid-size;
+            margin-left: $ag-grid-size;
+            margin-top: $ag-grid-size;
+        }
+    }
+    
+
+    .ag-select-agg-func-popup {
+        @include card();
+
+        background: $ag-background-color;
+        height: $ag-grid-size * 5 * 3.5;
+        padding: 0;
+
+        .ag-virtual-list-item {
+            cursor: default;
+            line-height: $ag-grid-size * 5;
+            padding-left: $ag-grid-size * 2;
+        }
+
+        .ag-virtual-list-item:hover {
+            background-color: $ag-menu-option-active-color;
+        }
+    }
+}

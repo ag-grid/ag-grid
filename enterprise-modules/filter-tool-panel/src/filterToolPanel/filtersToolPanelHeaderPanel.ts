@@ -40,7 +40,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
         this.setTemplate(
         `<div class="ag-filter-toolpanel-header ag-filter-header" role="presentation">
-            <div ref="eExpand"></div>
+            <div ref="eExpand" class="ag-filter-toolpanel-header-expand"></div>
             <div class="ag-input-wrapper ag-filters-tool-panel-filter-wrapper" ref="eFilterWrapper" role="presentation">
                 <input ref="eFilterTextField" type="text" placeholder="${translate('searchOoo', 'Search...')}">        
             </div>

@@ -1140,7 +1140,6 @@ $ag-handleSize: 5px;
 .ag-menu-column-select-wrapper {
     height: 265px;
     overflow: auto;
-    width: 200px;
 }
 
 .ag-menu-list {
@@ -1686,7 +1685,7 @@ $ag-toolpanel-indent-size: 10px !default;
 $ag-row-group-indent-size: 10px !default;
 
 // Default values for themes that do not use the mixins
-@for $i from 1 to 50 {
+@for $i from 1 to 20 {
     .ag-ltr .ag-toolpanel-indent-#{$i} {
         padding-left: $i * $ag-toolpanel-indent-size;
     }

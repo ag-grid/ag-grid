@@ -1,0 +1,67 @@
+
+@mixin ag-theme-base-part-columns-tool-panel {
+    
+    .ag-primary-cols-header-panel {
+        border-top: 1px solid $ag-border-color;
+        height: $ag-header-height;
+        align-items: center;
+
+        > div {
+            cursor: pointer;
+            margin: 0 $ag-grid-size;
+        }
+
+        .ag-filter-body {
+            margin-left: $ag-grid-size;
+            margin-right: $ag-grid-size;
+        }
+    }
+
+    .ag-pivot-mode-panel {
+        height: $ag-header-height;
+        display: flex;
+        flex: none;
+
+        .ag-pivot-mode-select {
+            display: flex;
+            align-items: center;
+            margin-left: $ag-grid-size;
+        }
+    }
+
+    .ag-column-panel {
+        // needs nesting because ag-column-select-panel is also used in header menu
+        .ag-column-select-panel {
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
+        }
+    }
+
+    .ag-column-drop-vertical {
+        padding: $ag-grid-size 0;
+        padding-bottom: $ag-grid-size * 2;
+
+        .ag-column-drop-empty-message {
+            color: $ag-disabled-foreground-color;
+            font-weight: $ag-secondary-font-weight;
+            font-size: $ag-secondary-font-size;
+            font-family: $ag-secondary-font-family;
+            padding-left: $ag-icon-size + $ag-grid-size * 2;
+            padding-right: $ag-grid-size;
+            margin-top: $ag-grid-size;
+        }
+
+        .ag-column-drop-list {
+            cursor: default;
+            margin-top: $ag-grid-size;
+        }
+
+        > div:first-child > span:first-child {
+            margin-left: $ag-grid-size;
+            margin-right: $ag-grid-size;
+        }
+
+        &.ag-last-column-drop {
+            border-bottom-width: 0;
+        }
+    }
+}

@@ -1,0 +1,137 @@
+
+@mixin ag-theme-base-part-header {
+    
+    .ag-header {
+        @if $ag-header-background-color {
+            background-color: $ag-header-background-color;
+        }
+        @if $ag-header-background-image {
+            background-image: $ag-header-background-image;
+        }
+
+        color: $ag-header-foreground-color;
+        font-weight: $ag-secondary-font-weight;
+        font-size: $ag-secondary-font-size;
+        font-family: $ag-secondary-font-family;
+        border-bottom: 1px solid $ag-border-color;
+    }
+
+    .ag-pinned-right-header {
+        border-left: 1px solid $ag-border-color;
+    }
+
+    .ag-pinned-left-header {
+        border-right: 1px solid $ag-border-color;
+    }
+
+    .ag-header-row {
+        border: none;
+        height: $ag-header-height;
+    }
+
+    .ag-header-cell-label {
+        .ag-header-icon {
+            margin-left: $ag-grid-size;
+            opacity: $ag-foreground-opacity;
+        }
+    }
+
+    .ag-header-cell,
+    .ag-header-group-cell {
+        border: solid 0 $ag-border-color;
+        @include grid-header-cell($ag-cell-horizontal-padding);
+        @if $ag-header-cell-moving-background-color {
+            &.ag-header-cell-moving {
+                background-color: $ag-header-cell-moving-background-color;
+            }
+        }
+        &:not(.ag-header-group-cell-no-group) {
+            border-top-width: 1px;
+        }
+    }
+
+    .ag-header-row:first-child {
+        .ag-header-cell,
+        .ag-header-group-cell {
+            border-top-width: 0;
+        }
+    }
+
+    .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
+    .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
+    .ag-header-group-cell:first-of-type,
+    .ag-header-cell:first-of-type {
+        @if ($ag-header-background-color != $ag-header-cell-hover-background-color) {
+            &:hover,
+            &.ag-column-resizing {
+                background-color: $ag-header-cell-hover-background-color;
+            }
+        }
+    }
+
+    .ag-header-cell-resize {
+        cursor: col-resize;
+    }
+
+    .ag-header-select-all {
+        margin-right: $ag-cell-horizontal-padding;
+    }
+
+    .ag-column-drag {
+        // added 'move' as IE fallback
+        cursor: move;
+        cursor: grab;
+    }
+
+    .ag-header-cell-resize {
+        width: $ag-grid-size * 2;
+    }
+
+    &.ag-dnd-ghost {
+        @include card();
+
+        // TODO add new flag for element borders which need tgo be controlled separately from $ag-borders
+        border: 1px solid $ag-secondary-border-color;
+        color: $ag-secondary-foreground-color;
+        font-weight: $ag-secondary-font-weight;
+        font-size: $ag-secondary-font-size;
+        font-family: $ag-secondary-font-family;
+        height: $ag-header-height !important;
+        line-height: $ag-header-height;
+        margin: 0;
+        padding: 0 $ag-grid-size * 2;
+        transform: translateY($ag-grid-size * 2);
+
+        span,
+        div {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ag-dnd-ghost-icon {
+            margin-right: $ag-grid-size;
+            opacity: $ag-foreground-opacity;
+        }
+    }
+
+
+    ////////////////////////////////////////
+    // Floating filter
+    ////////////////////////////////////////
+    .ag-ltr .ag-floating-filter-button {
+        margin-left: $ag-grid-size * 3;
+    }
+
+    .ag-floating-filter-button {
+        button {
+            appearance: none;
+            background: transparent;
+            border: 0;
+            height: $ag-icon-size;
+            padding: 0;
+            width: $ag-icon-size;
+        }
+    }
+
+}
