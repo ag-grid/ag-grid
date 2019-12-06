@@ -54,7 +54,7 @@ const createSpecFromDefinition = (definition: SpecDefinition): Spec => {
 
 interface RunContext {
     browser: Browser;
-    filter: RegExp;
+    passesFilter: Filter;
     server: string;
     handler: (screenshot: Buffer, specName: string) => Promise<void>;
 }
@@ -162,7 +162,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
                 await step.prepare(page);
             }
             const testCaseName = getTestCaseName(spec, step);
-            if (context.filter.test(testCaseName)) {
+            if (context.passesFilter(testCaseName)) {
                 // let CSS animations stabilise before taking screenshot
                 await wait(500);
                 const screenshotElement = step.selector
@@ -254,6 +254,8 @@ export interface RunSuiteParams {
     clean: boolean;
 }
 
+type Filter = (testCaseName: string) => boolean;
+
 export const runSuite = async (params: RunSuiteParams) => {
     const log = console.error.bind(console);
     log('Running suite...');
@@ -264,18 +266,18 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     let specsAlreadyCreated = 0;
 
-    let filterPatterns: string[] = [];
+    let filters: Filter[] = [];
+    const filterFunc = (name: string) => !filters.find(f => !f(name));
 
     if (params.filter) {
-        filterPatterns.push(params.filter);
+        const filterRegexp = new RegExp(params.filter);
+        filters.push(name => filterRegexp.test(name));
     }
     if (params.onlyFailed && existsSync(failedTestsFile)) {
         const failedLastRun = (await fs.readFile(failedTestsFile, 'utf8')).trim().split('\n');
         log(chalk.yellow(`Limiting to ${failedLastRun.length} tests that failed last run.`));
-        filterPatterns = filterPatterns.concat(failedLastRun);
+        filters.push(name => failedLastRun.includes(name));
     }
-
-    const filter = new RegExp(filterPatterns.join('|'));
 
     let specs: Spec[] = params.specs
         .map(createSpecFromDefinition)
@@ -305,8 +307,8 @@ export const runSuite = async (params: RunSuiteParams) => {
         // apply provided filter
         .filter(spec => {
             return (
-                filter.test(spec.name) ||
-                spec.steps.find(step => filter.test(getTestCaseName(spec, step)))
+                filterFunc(spec.name) ||
+                spec.steps.find(step => filterFunc(getTestCaseName(spec, step)))
             );
         });
 
@@ -353,7 +355,7 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     await runSpecs(specs, {
         browser,
-        filter,
+        passesFilter: filterFunc,
         server: params.server,
         handler: async (screenshot, testCaseName) => {
             const file = getTestCaseImagePath(params, testCaseName);
@@ -383,7 +385,7 @@ export const runSuite = async (params: RunSuiteParams) => {
             }
 
             const thisReportIteration = Math.floor((Date.now() - startTime) / reportGenerationInterval);
-            if (reportIteration !== thisReportIteration) {
+            if (params.mode === 'compare' && reportIteration !== thisReportIteration) {
                 reportIteration = thisReportIteration;
                 await writeReportFile(true);
             }

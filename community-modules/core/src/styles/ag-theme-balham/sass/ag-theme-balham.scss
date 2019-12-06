@@ -3,10 +3,4 @@
 
 .ag-theme-balham {
     @include ag-theme-balham();
-
-    .ag-filter-toolpanel-body{
-        background-color: $ag-background-color;
-    }
 }
-
-

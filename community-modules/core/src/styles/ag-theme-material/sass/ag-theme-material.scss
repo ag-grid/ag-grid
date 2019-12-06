@@ -1,6 +1,15 @@
 @import "../vars/ag-theme-material-vars";
 @import "../../ag-theme-base/sass/ag-theme-base";
 
+@if $ag-icon-font-family == 'agGridMaterial' {
+    @font-face {
+        font-family: $ag-icon-font-family;
+        src: $ag-icons-data;
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
 .ag-theme-material {
     %selected-tab {
         border-bottom: 2px solid $ag-primary-color;
@@ -66,13 +75,40 @@
         }
     }
 
+    .ag-column-drop-vertical {
+        border-bottom: solid 1px $ag-border-color;
+    }
+
     .ag-status-bar {
       border: solid 1px $ag-border-color;
     }
 
+    .ag-row {
+        height: $ag-row-height;
+        &:not(.ag-row-first) {
+            // TOOD move to base theme, needs another flag other than $ag-borders
+            border-top: solid 1px $ag-row-border-color;
+        }
+        &.ag-row-last {
+            // TOOD move to base theme, needs another flag other than $ag-borders
+            border-bottom: solid 1px $ag-row-border-color;
+        }
+    }
+
+    .ag-column-select-panel {
+        // TODO move to base theme with new flag
+        border-bottom: solid 1px $ag-secondary-border-color;
+    }
+
+    .ag-primary-cols-header-panel, .ag-primary-cols-list-panel {
+        // TODO move to base theme with new flag
+        border-top: solid 1px $ag-secondary-border-color;
+    }
+
+    // TODO remove the need for this LTR/RTL selectors
     .ag-ltr .ag-side-bar {
         &.ag-side-bar-right {
-            border-right: none;
+            border-right: solid 1px $ag-border-color;
             .ag-side-buttons .ag-side-button {
                 button {
                     border-left: 2px solid transparent;
@@ -84,9 +120,9 @@
                 }
             }
         }
-
+        
         &.ag-side-bar-left {
-            border-left: none;
+            border-left: solid 1px $ag-border-color;
             .ag-side-buttons .ag-side-button {
                 button {
                     border-right: 2px solid transparent;
@@ -102,7 +138,7 @@
 
     .ag-rtl .ag-side-bar {
         &.ag-side-bar-right {
-            border-right: none;
+            border-left: solid 1px $ag-border-color;
             .ag-side-buttons .ag-side-button {
                 button {
                     border-right: 2px solid transparent;
@@ -114,9 +150,9 @@
                 }
             }
         }
-
+        
         &.ag-side-bar-left {
-            border-left: none;
+            border-right: solid 1px $ag-border-color;
             .ag-side-buttons .ag-side-button {
                 button {
                     border-left: 2px solid transparent;

@@ -53,7 +53,7 @@ const args: any = yargs
                 .option('themes', {
                     describe: 'Comma-separated list of themes',
                     type: 'string',
-                    default: 'alpine,balham,material'
+                    default: 'alpine,alpine-dark,balham,balham-dark,material'
                 })
     ).argv;
 

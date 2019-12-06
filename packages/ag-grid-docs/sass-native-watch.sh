@@ -4,22 +4,29 @@
 # Run docs with `AG_NO_CSS=1 npm run docs` then run this file to 
 
 command="./node_modules/.bin/node-sass --watch "
+srcFolder="../../community-modules/core/src/styles"
+destFolder="../../community-modules/all-modules/dist/styles"
 
+build_sass() {
+    # build first, because --watch doesn't do an initial build
+    ./node_modules/.bin/node-sass --source-map true --error-bell --output "$destFolder" "$1"
+    ./node_modules/.bin/node-sass --source-map true --error-bell --output "$destFolder" --watch "$1" & pid=$!
+    PID_LIST+=" $pid"
+}
 
-for themeDir in ../../community-modules/core/src/styles/ag-theme-*
+for themeDir in $srcFolder/ag-theme-*
 do
     themeName=`basename "$themeDir"`
 
-    source="../../community-modules/core/src/styles/$themeName/sass/$themeName.scss"
-    dest="../../community-modules/all-modules/dist/styles"
+    source="$srcFolder/$themeName/sass/$themeName.scss"
+    dest=
     if [ -f "$source" ]
     then
-        # build first, because --watch doesn't do an initial build
-        ./node_modules/.bin/node-sass --source-map true --error-bell --output "$dest" "$source"
-        ./node_modules/.bin/node-sass --source-map true --error-bell --output "$dest" --watch "$source" & pid=$!
-        PID_LIST+=" $pid"
+        build_sass "$source"
     fi
 done
+
+build_sass "$srcFolder/ag-grid.scss"
 
 # kill watch processes on Ctrl+C
 trap "kill $PID_LIST" SIGINT

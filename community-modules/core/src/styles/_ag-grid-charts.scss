@@ -163,6 +163,7 @@
         > div {
             display: flex;
             margin: 0;
+            // TODO remove this, it causes an odd background overlap effect at the bottom border
             padding-bottom: 2px;
             &:not(:first-child) {
                 margin-top: 0;

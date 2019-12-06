@@ -109,6 +109,7 @@ const spawnWatcher = async ({ paths, buildChains }, singleModule) => {
 
 const spawnCssWatcher = async ({ paths, buildChains }) => {
     if (process.env.AG_NO_CSS) {
+        console.log("Disabling CSS watching - manually launch sass-native-watch.sh instead");
         return;
     }
 

@@ -1,6 +1,5 @@
-@import '../vars/public-vars';
-@import '../../ag-theme-alpine/vars/ag-theme-alpine-vars';
-@import '../../ag-theme-alpine/sass/ag-theme-alpine-common';
+@import '../vars/ag-theme-alpine-dark-vars';
+@import '../../ag-theme-alpine/sass/ag-theme-alpine';
 
 .ag-theme-alpine-dark {
     @include ag-theme-alpine();

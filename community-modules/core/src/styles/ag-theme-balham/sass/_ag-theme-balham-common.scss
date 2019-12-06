@@ -1,5 +1,14 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
+@if $ag-icon-font-family == 'agGridBalham' {
+    @font-face {
+        font-family: $ag-icon-font-family;
+        src: $ag-icons-data;
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
 @mixin ag-theme-balham() {
 
     %card {
@@ -57,10 +66,6 @@
         }
     }
 
-    .ag-column-drop-horizontal.ag-column-drop {
-        @include grid-border(bottom);
-    }
-
     .ag-ltr {
         .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
             border-right: 0;
@@ -71,14 +76,6 @@
         .ag-column-drop-horizontal.ag-column-drop.ag-width-half:first-child {
             border-left: 0;
         }
-    }
-
-    .ag-row {
-        border-color: lighten($ag-border-color, 10);
-    }
-
-    .ag-row-selected {
-        border-color: $ag-selected-color;
     }
 
     .ag-column-drop-cell {
@@ -208,5 +205,10 @@
         .ag-icon-expanded:empty:before {
             content: $ag-icon-tree-open;
         }
+    }
+
+    // TODO move to base
+    .ag-filter-toolpanel-body{
+        background-color: $ag-background-color;
     }
 }

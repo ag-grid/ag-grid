@@ -10,7 +10,7 @@
             border: solid $width $color;
         }
         @if $radius {
-          border-radius: $color;
+          border-radius: $radius;
         }
     }
 }

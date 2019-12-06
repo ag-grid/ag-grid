@@ -1,6 +1,15 @@
 @import '../../ag-theme-base/sass/ag-theme-base';
 @import './ag-theme-alpine-mixins';
 
+@if $ag-icon-font-family == 'agGridAlpine' {
+    @font-face {
+        font-family: $ag-icon-font-family;
+        src: $ag-icons-data;
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
 @mixin ag-theme-alpine() {
     @include ag-grid-theme();
 
@@ -10,32 +19,8 @@
         color: $ag-color-foreground;
     }
 
-    .ag-column-drop {
-        border-bottom: 1px solid $ag-color-border-primary;
-    }
-
-    .ag-header {
-        border-bottom: 1px solid $ag-color-border-primary;
-    }
-
     .ag-header-cell {
-        border-color: $ag-color-border-primary;
-    }
-
-    .ag-row:not(.ag-row-first) {
-        border-top-width: 0;
-
-        .ag-cell {
-            border-top: 1px solid $ag-color-border-secondary;
-        }
-    }
-
-    .ag-row.ag-full-width-row {
-      border-top: 1px solid $ag-color-border-secondary;
-
-      &.ag-row-hover {
-          background: none;
-      }
+        border-color: $ag-border-color;
     }
 
     ////////////////////////////////////////
@@ -141,7 +126,7 @@
 
     .ag-tab-header {
         min-width: 15rem;
-        border-bottom: 1px solid $ag-color-border-primary;
+        border-bottom: 1px solid $ag-border-color;
         justify-content: center;
 
         .ag-tab {
@@ -184,7 +169,7 @@
     ////////////////////////////////////////
     &.ag-popup > div:not(.ag-tooltip-custom) {
         @include chrome-box-shadow();
-        border: 1px solid $ag-color-border-primary;
+        border: 1px solid $ag-secondary-border-color;
         border-radius: $ag-border-radius;
         @include chrome-box-shadow();
     }
@@ -225,7 +210,7 @@
     ////////////////////////////////////////
     // Column Resize Handle
     ////////////////////////////////////////
-    $resize-handle-color: transparentize($ag-color-border-primary, 0.6);
+    $resize-handle-color: transparentize($ag-border-color, 0.6);
 
     .ag-header-cell-resize {
         right: -2px;
@@ -248,11 +233,11 @@
     ////////////////////////////////////////
     .ag-pinned-left-header,
     .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-        border-right: 1px solid $ag-color-border-primary !important;
+        border-right: 1px solid $ag-border-color !important;
     }
 
     .ag-pinned-right-header {
-        border-left-color: $ag-color-border-primary;
+        border-left-color: $ag-border-color;
     }
 
     .ag-ltr .ag-pinned-right-header .ag-header-cell-resize {
@@ -260,7 +245,7 @@
     }
 
     .ag-ltr .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-        border-left-color: $ag-color-border-primary;
+        border-left-color: $ag-border-color;
     }
 
     ////////////////////////////////////////
@@ -394,7 +379,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         .ag-rich-select-value {
-            border-bottom: 1px solid $ag-color-border-secondary;
+            border-bottom: 1px solid $ag-secondary-border-color;
         }
 
         .ag-virtual-list-item {
@@ -466,7 +451,7 @@
     ////////////////////////////////////////
     .ag-overlay-loading-center {
         @include chrome-box-shadow();
-        border: 1px solid $ag-color-border-primary;
+        border: 1px solid $ag-border-color;
         padding: $ag-grid-size * 2 $ag-grid-size * 3;
         font: $ag-font-default;
     }
@@ -565,7 +550,7 @@
     ////////////////////////////////////////
     .ag-status-bar {
         border: 0;
-        border-top: 1px solid $ag-color-border-primary;
+        border-top: 1px solid $ag-border-color;
         font: $ag-font-chrome;
         font-size: $ag-size-font-status-bar;
         padding-left: $ag-cell-horizontal-padding;
@@ -591,13 +576,7 @@
     .ag-side-bar {
         font: $ag-font-chrome;
 
-        border-top: none;
-
         .ag-tool-panel-wrapper {
-            // this requires !important because it overrides borders set in the base theme
-            // around rtl/ltr styles.
-            border-left: 1px solid $ag-color-border-primary!important;
-            border-right: 1px solid $ag-color-border-primary!important;
             background-color: $ag-color-background-alt;
 
             .ag-pivot-mode-select {
@@ -607,14 +586,14 @@
                 }
             }
         }
-
+        
         .ag-column-drop {
             padding-top: 0;
 
             & > div:first-child {
                 background-color: $ag-color-background;
                 padding: $ag-grid-size * 2 $ag-grid-size * 2;
-                border-bottom: 1px solid $ag-border-color;
+                @include grid-border(bottom, $color: $ag-secondary-border-color);
                 & > span:first-child {
                     margin-left: 0px;
                     // display: none;
@@ -725,7 +704,7 @@
     .ag-panel {
         .ag-title-bar {
             background-color: $ag-dialog-title-background-color;
-            border-bottom: 1px solid $ag-color-border-primary;
+            border-bottom: 1px solid $ag-border-color;
             color: $ag-dialog-title-foreground-color;
             height: $ag-dialog-title-height;
             font-size: $ag-dialog-title-font-size;
@@ -796,11 +775,11 @@
         }
 
         .ag-chart-docked-container .ag-panel {
-            border-left: 1px solid $ag-color-border-primary;
+            border-left: 1px solid $ag-border-color;
         }
 
         .ag-chart-settings-nav-bar {
-            border-top: 1px solid $ag-color-border-primary;
+            border-top: 1px solid $ag-border-color;
         }
 
         // Data Tab
@@ -867,12 +846,13 @@
 
     .ag-group-component {
         background: $ag-color-background-alt;
+        // TODO find out why this is being set and make it no longer necessary to override
         border-top: 0;
 
         .ag-group-component-title-bar {
             font: $ag-font-chrome;
             background: $ag-color-background;
-            border-bottom: 1px solid $ag-border-color;
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
             padding: $ag-grid-size $ag-grid-size * 2 !important;
             // hacky way to adjust the height of the header to match the one in the filter panel
             line-height: $ag-icon-size + $ag-grid-size - 2;
@@ -886,7 +866,7 @@
         }
 
         .ag-group-component-container {
-            border-bottom: 1px solid $ag-border-color;
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
             margin-left: 0;
             justify-content: flex-start;
             padding: $ag-grid-size $ag-grid-size * 2;
@@ -919,15 +899,10 @@
         }
     }
 
-    // override to make the border radius work :(
-    .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail {
-        border-radius: $ag-border-radius;
-    }
-
     // Color Picker
     .ag-color-picker > .ag-wrapper {
         border-radius: $ag-border-radius;
-        border-color: $ag-color-border-primary;
+        border-color: $ag-border-color;
 
         & > div {
             height: $ag-grid-size * 4;
@@ -940,7 +915,7 @@
 
     .ag-color-panel {
         .ag-spectrum-slider {
-            border: 1px solid $ag-color-border-primary;
+            border: 1px solid $ag-border-color;
             box-shadow: 0 0px 1px 1px $ag-color-background;
         }
     }
@@ -1079,11 +1054,6 @@
             }
         }
 
-        .ag-side-bar .ag-tool-panel-wrapper {
-            border-left: 0;
-            border-right: 1px solid $ag-color-border-primary;
-        }
-
         .ag-side-bar {
             .ag-side-button {
                 border-left-width: 0;
@@ -1134,7 +1104,7 @@
 
         .ag-chart-docked-container .ag-panel {
             border-left: none;
-            border-right: 1px solid $ag-color-border-primary;
+            border-right: 1px solid $ag-border-color;
         }
 
         .ag-group-component .ag-group-component-title-bar .ag-column-group-icons {

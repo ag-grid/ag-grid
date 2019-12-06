@@ -4,11 +4,15 @@ $ag-foreground-opacity: 1 !default;
 $ag-secondary-foreground-color-opacity: 1 !default;
 $ag-disabled-foreground-color-opacity: 0.5 !default;
 
+$ag-borders: true !default;
 
 // Colors
-$ag-border-color: transparent !default;
-$ag-background-color: #fff !default;
+// Apply a border around the grid and between elements
 $ag-foreground-color: #000 !default;
+$ag-background-color: #fff !default;
+$ag-border-color: $ag-foreground-color !default;
+$ag-secondary-border-color: $ag-border-color !default;
+$ag-row-border-color: $ag-secondary-border-color !default;
 $ag-header-background-color: $ag-background-color !default;
 $ag-header-foreground-color: $ag-foreground-color !default;
 $ag-icon-color: lightgray !default;
@@ -47,8 +51,6 @@ $ag-tooltip-border-color: #ebebeb !default;
 
 // Misc
 
-// Apply a border around the grid and between elements
-$ag-borders: true !default;
 
 // radius applied to the the grid wrapper grid
 $ag-grid-radius: null !default;

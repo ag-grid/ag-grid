@@ -18,8 +18,8 @@ $ag-color-background-range-selected-2: lighten($ag-color-background-range-select
 $ag-color-background-range-selected-3: lighten($ag-color-background-range-selection, 30) !default;
 $ag-color-background-range-selected-4: lighten($ag-color-background-range-selection, 40) !default;
 
-$ag-color-border-primary: $ag-alpine-gray-3 !default;
-$ag-color-border-secondary: transparentize($ag-alpine-gray-2, 0.5) !default;
+$ag-border-color: $ag-alpine-gray-3 !default;
+$ag-secondary-border-color: transparentize($ag-alpine-gray-2, 0.5) !default;
 $ag-color-icon: $ag-alpine-gray-3 !default;
 
 $ag-color-row-hover: transparentize($ag-color-primary, 0.8) !default;

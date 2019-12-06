@@ -1,17 +1,5 @@
 @import '../../mixins/ag-theme-mixins';
 
-@if $ag-icon-font-family == 'agGridBalham' or
-    $ag-icon-font-family == 'agGridMaterial' or
-    $ag-icon-font-family == 'agGridAlpine' or
-    $ag-icon-font-family == 'agGridClassic' {
-    @font-face {
-        font-family: '#{$ag-icon-font-family}';
-        src: $ag-icons-data;
-        font-weight: normal;
-        font-style: normal;
-    }
-}
-
 @mixin ag-grid-theme() {
     -webkit-font-smoothing: antialiased;
     background-color: $ag-background-color;
@@ -190,13 +178,17 @@
     }
 
     .ag-row {
-        border: solid 0 $ag-border-color;
         height: $ag-row-height;
         &:not(.ag-row-first) {
-            border-width: $ag-row-border-width 0 0;
+            @include grid-border(top, $color: $ag-row-border-color);
         }
         &.ag-row-last {
-            border-bottom-width: $ag-row-border-width;
+            @include grid-border(bottom, $color: $ag-row-border-color);
+        }
+
+        &.ag-row-selected {
+            // TODO remove and replace with transparent row borders in :after
+            border-color: $ag-selected-color;
         }
     }
 
@@ -375,7 +367,7 @@
             & > span:after {
                 content: "";
                 display: block;
-                border-top: solid 1px $ag-border-color;
+                @include grid-border(top, $color: $ag-secondary-border-color);
 			}
         }
 
@@ -391,7 +383,8 @@
     &.ag-dnd-ghost {
         @include card();
 
-        border: 1px solid $ag-border-color;
+        // TODO add new flag for element borders which need tgo be controlled separately from $ag-borders
+        border: 1px solid $ag-secondary-border-color;
         color: $ag-secondary-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
@@ -515,7 +508,7 @@
         }
 
         .ag-filter-header-container {
-            border-bottom: 1px solid $ag-border-color;
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
             padding-bottom: $ag-grid-size / 2;
         }
 
@@ -552,9 +545,11 @@
                 margin-right: $ag-grid-size;
             }
         }
+        // TODO move up level
         .ag-primary-cols-list-panel {
-            border-top: 1px solid $ag-border-color;
+            @include grid-border(top, $color: $ag-secondary-border-color);
             padding-top: $ag-grid-size;
+            // TODO  add className in code
             > div {
                 cursor: pointer;
             }
@@ -723,7 +718,8 @@
         }
 
         .ag-column-select-panel {
-            border-bottom: 1px solid $ag-border-color;
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            // TODO remove?
             padding-bottom: $ag-grid-size - 1; // absorb the bottom border;
             padding-top: 0;
         }
@@ -731,7 +727,6 @@
         $group-height: $ag-grid-size * 5;
 
         .ag-column-drop {
-            border-bottom: 1px solid $ag-border-color;
             padding: $ag-grid-size 0;
             padding-bottom: $ag-grid-size * 2;
 
@@ -1040,6 +1035,7 @@
         background-color: $ag-panel-background-color;
         height: $ag-row-height;
         padding-left: $ag-cell-horizontal-padding;
+        @include grid-border(bottom);
 
         .ag-icon-group,
         .ag-icon-pivot {
@@ -1055,6 +1051,8 @@
         .ag-column-drop-empty-message {
             opacity: $ag-disabled-foreground-color-opacity;
         }
+
+
     }
 
     .ag-column-drop-cell {
@@ -1214,6 +1212,7 @@
     %side-bar-left {
         @include grid-border(right);
         .ag-side-button.ag-selected button {
+            // TODO check if these are required without borders
             margin-right: -1px;
             padding-right: 1px;
         }
@@ -1221,10 +1220,11 @@
             border-left: 1px solid $ag-border-color;
         }
     }
-
+    
     %side-bar-right {
         @include grid-border(left);
         .ag-side-button.ag-selected button {
+            // TODO check if these are required without borders
             margin-left: -1px;
             padding-left: 1px;
         }
@@ -1295,6 +1295,10 @@
     .ag-primary-cols-filter-wrapper {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;
+    }
+
+    .ag-column-drop-vertical {
+        @include grid-border(bottom, $color: $ag-secondary-border-color);
     }
 
     ////
@@ -1614,7 +1618,7 @@
                     margin-left: 0;
                 }
                 .ag-chart-mini-thumbnail {
-                    border: 1px solid $ag-border-color;
+                    border: 1px solid $ag-secondary-border-color;
                     border-radius: 5px;
                     margin: 5px;
                     &:nth-child(2n + 2):not(:last-child) {
@@ -1811,8 +1815,6 @@
             &.ag-side-bar-right {
                 @extend %side-bar-left;
             }
-
-            border-right-width: 0;
 
             .ag-panel-container {
                 border-left: 1px solid $ag-border-color;

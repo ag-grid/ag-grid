@@ -2,15 +2,12 @@ import { SpecResults } from './types';
 
 const init = () => {
     $('.tab-block').each((_, tabBlock) => {
-        const selectTab = (name: string, expand = false) => {
+        const selectTab = (name: string) => {
             $(tabBlock)
                 .find('img')
                 .each((_, img) => {
                 const selected = img.getAttribute('data-name') === name;
                 img.style.display = selected ? '' : 'none';
-                if (expand) {
-                    img.classList.add('full-size');
-                }
             });
             $(tabBlock)
                 .find('.tab-button')
@@ -27,9 +24,8 @@ const init = () => {
         selectTab('difference');
         $(tabBlock)
             .find('.tab-button')
-            .click(e => selectTab(e.target.textContent!.trim(), true));
+            .click(e => selectTab(e.target.textContent!.trim()));
     });
-    $('img').click(e => e.target.classList.add('full-size'));
 };
 
 const pageTemplate = (content: string) => /*html*/ `<!doctype html>
@@ -40,12 +36,8 @@ const pageTemplate = (content: string) => /*html*/ `<!doctype html>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
         <style>
             img {
-                max-width: 300px;
-                max-height: 300px;
-            }
-            img.full-size {
-                max-width: none;
-                max-height: none;
+                max-width: 100%;
+                height: auto;
             }
             .selected {
                 font-weight: bold;
@@ -85,7 +77,6 @@ const getPassHtml = (result: SpecResults) => /*html*/ `
 `;
 
 export const getReportHtml = (results: SpecResults[], inProgress: boolean) => {
-    results = results.slice().sort((a, b) => (a.name === b.name ? 0 : a.name < b.name ? -1 : 1));
     const failures = results.filter(r => r.difference);
     let body = '';
     if (inProgress) {
