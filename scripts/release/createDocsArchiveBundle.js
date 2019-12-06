@@ -2,6 +2,8 @@ const walk = require('walk');
 const fs = require('fs');
 const archiver = require('archiver');
 
+const LATEST_HASH = require('child_process').execSync('cat .git/refs/heads/latest').toString().trim();
+
 if (process.argv.length !== 3) {
     console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number]");
     console.log("For example: node scripts/release/createDocsArchiveBundle.js 19.1.0");
@@ -39,14 +41,23 @@ function preProcessRootIndex(fileContents) {
         </html>`
 }
 
-function preDocHeader(fileContents) {
-    const re = /\$version.*=.*'latest'/;
+function preDocHeader(fileContents, latestHash) {
+    // replace $version with archive version (determines root - ie /archive/<version> instead of just /)
+    let re = /\$version.*=.*'latest'/;
     const {index} = re.exec(fileContents);
 
-    const startIndex = fileContents.indexOf("'latest'", index) + 1;
-    const endIndex = fileContents.indexOf("'", startIndex);
+    let startIndex = fileContents.indexOf("'latest'", index) + 1;
+    let endIndex = fileContents.indexOf("'", startIndex);
 
-    return `${fileContents.substr(0, startIndex)}${newVersion}${fileContents.substr(endIndex, fileContents.length)}`;
+    fileContents=`${fileContents.substr(0, startIndex)}${newVersion}${fileContents.substr(endIndex, fileContents.length)}`;
+
+    // insert latest hash - useful to determine which changes should be in a given archive
+    re = /\$latest_hash.*=.*''/;
+    startIndex = fileContents.indexOf("''", index) + 1;
+    endIndex = fileContents.indexOf("'", startIndex);
+    fileContents=`${fileContents.substr(0, startIndex)}${latestHash}${fileContents.substr(endIndex, fileContents.length)}`;
+
+    return fileContents;
 }
 
 
@@ -82,7 +93,7 @@ walker.on("file", (root, fileStats, next) => {
     if (isRootIndexPhp(fullFileName)) {
         fileContents = preProcessRootIndex(fs.readFileSync(fullFileName, 'utf8'));
     } else if (isDocHeaderPhp(fullFileName, fileStats)) {
-        fileContents = preDocHeader(fs.readFileSync(fullFileName, 'utf8'));
+        fileContents = preDocHeader(fs.readFileSync(fullFileName, 'utf8'), LATEST_HASH);
     } else {
         fileContents = fs.createReadStream(fullFileName);
     }

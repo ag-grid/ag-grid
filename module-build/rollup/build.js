@@ -5,7 +5,12 @@ const rollup = require('rollup');
 const terser = require('terser');
 
 const sourceDirectory = process.cwd();
-const moduleName = sourceDirectory.split(path.sep).pop();
+
+// if supplied the module name argument will take priority
+let moduleName = sourceDirectory.split(path.sep).pop();
+if(process.argv.length === 3) {
+    moduleName = process.argv[2];
+}
 
 let builds = require('./config').getAllBuilds(sourceDirectory, moduleName);
 build(builds);

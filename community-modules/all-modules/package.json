@@ -1,9 +1,10 @@
 {
   "name": "@ag-grid-community/all-modules",
-  "version": "22.0.0",
+  "version": "22.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
+  "types": "./dist/es6/main.d.ts",
   "scripts": {
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
@@ -11,7 +12,7 @@
     "build": "npm run build-cjs && npm run build-es6 && npm run build-css",
     "watchWebpack": "webpack --watch",
     "webpack-updater": "node webpackUpdater.js",
-    "rollup": "node ../../module-build/rollup/build.js",
+    "rollup": "node ../../module-build/rollup/build.js ag-grid-community",
     "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
     "test:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
     "start-server": "http-server .",
@@ -56,10 +57,10 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "~22.0.0",
-    "@ag-grid-community/core": "~22.0.0",
-    "@ag-grid-community/csv-export": "~22.0.0",
-    "@ag-grid-community/infinite-row-model": "~22.0.0"
+    "@ag-grid-community/client-side-row-model": "~22.1.0",
+    "@ag-grid-community/core": "~22.1.0",
+    "@ag-grid-community/csv-export": "~22.1.0",
+    "@ag-grid-community/infinite-row-model": "~22.1.0"
   },
   "devDependencies": {
     "css-loader": "^3.2.0",
