@@ -57,21 +57,21 @@ export class ChartController extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
 
-    public updateForGridChange() {
+    public updateForGridChange(): void {
         if (this.model.isDetached()) { return; }
 
         this.model.updateCellRanges();
         this.setChartRange();
     }
 
-    public updateForDataChange() {
+    public updateForDataChange(): void {
         if (this.model.isDetached()) { return; }
 
         this.model.updateData();
         this.raiseChartUpdatedEvent();
     }
 
-    public updateForRangeChange() {
+    public updateForRangeChange(): void {
         this.updateForGridChange();
         this.raiseChartRangeSelectionChangedEvent();
     }
@@ -92,8 +92,17 @@ export class ChartController extends BeanStub {
         };
     }
 
-    public getChartType = (): ChartType => this.model.getChartType();
-    public isPivotChart = () => this.model.isPivotChart();
+    public getChartType(): ChartType {
+        return this.model.getChartType();
+    }
+
+    public isPivotChart(): boolean {
+        return this.model.isPivotChart();
+    }
+
+    public isGrouping(): boolean {
+        return this.model.isGrouping();
+    }
 
     public getPaletteName(): ChartPaletteName {
         return this.chartPaletteName;
@@ -129,12 +138,12 @@ export class ChartController extends BeanStub {
         return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     }
 
-    public isDefaultCategorySelected() {
+    public isDefaultCategorySelected(): boolean {
         const selectedDimension = this.model.getSelectedDimension().colId;
         return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
     }
 
-    public setChartRange(silent = false) {
+    public setChartRange(silent = false): void {
         if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
@@ -144,7 +153,7 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public detachChartRange() {
+    public detachChartRange(): void {
         // when chart is detached it won't listen to changes from the grid
         this.model.toggleDetached();
 
@@ -159,7 +168,7 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public setChartProxy(chartProxy: ChartProxy<any, any>) {
+    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
         this.chartProxy = chartProxy;
     }
 
@@ -167,7 +176,7 @@ export class ChartController extends BeanStub {
         return this.chartProxy;
     }
 
-    public isActiveXYChart() {
+    public isActiveXYChart(): boolean {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
@@ -184,7 +193,7 @@ export class ChartController extends BeanStub {
         };
     }
 
-    private raiseChartUpdatedEvent() {
+    private raiseChartUpdatedEvent(): void {
         const event: ChartModelUpdatedEvent = Object.freeze({
             type: ChartController.EVENT_CHART_UPDATED
         });
@@ -203,7 +212,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    private raiseChartRangeSelectionChangedEvent() {
+    private raiseChartRangeSelectionChangedEvent(): void {
         const event: ChartRangeSelectionChanged = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.getChartId(),
@@ -215,7 +224,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy() {
+    public destroy(): void {
         super.destroy();
 
         if (this.rangeController) {

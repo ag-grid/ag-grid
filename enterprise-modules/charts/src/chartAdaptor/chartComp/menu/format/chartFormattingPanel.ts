@@ -13,6 +13,7 @@ export class ChartFormattingPanel extends Component {
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartType: ChartType;
+    private isGrouping: boolean;
     private panels: Component[] = [];
     private readonly chartController: ChartController;
 
@@ -30,9 +31,10 @@ export class ChartFormattingPanel extends Component {
 
     private createPanels() {
         const chartType = this.chartController.getChartType();
+        const isGrouping = this.chartController.isGrouping();
 
-        if (chartType === this.chartType) {
-            // same chart type, so keep existing panels
+        if (chartType === this.chartType && isGrouping === this.isGrouping) {
+            // existing panels can be re-used
             return;
         }
 
@@ -75,6 +77,7 @@ export class ChartFormattingPanel extends Component {
         }
 
         this.chartType = chartType;
+        this.isGrouping = isGrouping;
     }
 
     private addComponent(component: Component): void {

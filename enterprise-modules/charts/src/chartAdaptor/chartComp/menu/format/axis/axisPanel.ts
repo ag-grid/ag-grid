@@ -78,7 +78,7 @@ export class AxisPanel extends Component {
             .setValue(this.getChartProxy().getAxisProperty("line.width"))
             .onValueChange(newValue => this.getChartProxy().setAxisProperty("line.width", newValue));
 
-        if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType())) {
+        if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
             const options: { value: AxisType | '', text: string }[] = [
                 { value: '', text: chartTranslator.translate('automatic') }
             ];
