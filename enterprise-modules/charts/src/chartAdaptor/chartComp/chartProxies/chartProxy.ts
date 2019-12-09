@@ -28,7 +28,6 @@ export interface ChartProxyParams {
     height?: number;
     parentElement: HTMLElement;
     eventService: EventService;
-    categorySelected: boolean;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
@@ -44,11 +43,11 @@ export interface FieldDefinition {
 
 export interface UpdateChartParams {
     data: any[];
+    grouping: boolean;
     category: {
         id: string;
         name: string;
     };
-
     fields: FieldDefinition[];
 }
 
@@ -64,14 +63,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.chartType = chartProxyParams.chartType;
     }
 
-    protected abstract createChart(options: TOptions): TChart;
+    protected abstract createChart(options?: TOptions): TChart;
 
     public recreateChart(options?: TOptions): void {
         if (this.chart) {
             this.destroyChart();
         }
 
-        this.chart = this.createChart(options || this.chartOptions);
+        this.chart = this.createChart(options);
     }
 
     public abstract update(params: UpdateChartParams): void;
@@ -390,11 +389,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             parentElement.removeChild(canvas);
         }
 
-        // store current width and height so any charts created in the future maintain the size
         if (this.chart) {
-            this.chartOptions.width = this.chart.width;
-            this.chartOptions.height = this.chart.height;
-
             this.chart.destroy();
             this.chart = null;
         }

@@ -71,9 +71,26 @@ export class ChartBuilder {
     static createBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createNumberAxis(options.xAxis),
-            ChartBuilder.createCategoryAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis, 'number'),
+            ChartBuilder.createAxis(options.yAxis, 'category'),
             options.document);
+
+        ChartBuilder.initChart(chart, options);
+
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
+        }
+
+        return chart;
+    }
+
+    static createGroupedBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
+        const chart = this.createGroupedCategoryChart(
+            parent,
+            ChartBuilder.createAxis(options.xAxis, 'number'),
+            ChartBuilder.createGroupedCategoryAxis(options.yAxis),
+            options.document
+        );
 
         ChartBuilder.initChart(chart, options);
 
@@ -87,9 +104,26 @@ export class ChartBuilder {
     static createColumnChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createCategoryAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis, 'category'),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
+
+        ChartBuilder.initChart(chart, options);
+
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
+        }
+
+        return chart;
+    }
+
+    static createGroupedColumnChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
+        const chart = this.createGroupedCategoryChart(
+            parent,
+            ChartBuilder.createGroupedCategoryAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
+            options.document
+        );
 
         ChartBuilder.initChart(chart, options);
 
@@ -106,6 +140,23 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.xAxis, 'category'),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
+
+        ChartBuilder.initChart(chart, options);
+
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
+        }
+
+        return chart;
+    }
+
+    static createGroupedLineChart(parent: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): GroupedCategoryChart {
+        const chart = this.createGroupedCategoryChart(
+            parent,
+            ChartBuilder.createGroupedCategoryAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
+            options.document,
+        );
 
         ChartBuilder.initChart(chart, options);
 
@@ -135,8 +186,8 @@ export class ChartBuilder {
     static createAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
             parent,
-            ChartBuilder.createCategoryAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
+            ChartBuilder.createAxis(options.xAxis, 'category'),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
         ChartBuilder.initChart(chart, options);
@@ -148,7 +199,24 @@ export class ChartBuilder {
         return chart;
     }
 
-    private static createPolarChart<T>(parent: HTMLElement): PolarChart {
+    static createGroupedAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): GroupedCategoryChart {
+        const chart = this.createGroupedCategoryChart(
+            parent,
+            ChartBuilder.createGroupedCategoryAxis(options.xAxis),
+            ChartBuilder.createAxis(options.yAxis, 'number'),
+            options.document
+        );
+
+        ChartBuilder.initChart(chart, options);
+
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
+        }
+
+        return chart;
+    }
+
+    private static createPolarChart(parent: HTMLElement): PolarChart {
         const chart = new PolarChart();
         chart.parent = parent;
         return chart;
@@ -170,75 +238,7 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createGroupedColumnChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
-        const chart = this.createGroupedCategoryChart(
-            parent,
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
-            options.document
-        );
-
-        ChartBuilder.initChart(chart, options);
-
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
-        }
-
-        return chart;
-    }
-
-    static createGroupedBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
-        const chart = this.createGroupedCategoryChart(
-            parent,
-            ChartBuilder.createNumberAxis(options.xAxis),
-            ChartBuilder.createGroupedAxis(options.yAxis),
-            options.document
-        );
-
-        ChartBuilder.initChart(chart, options);
-
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
-        }
-
-        return chart;
-    }
-
-    static createGroupedLineChart(parent: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): GroupedCategoryChart {
-        const chart = this.createGroupedCategoryChart(
-            parent,
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
-            options.document,
-        );
-
-        ChartBuilder.initChart(chart, options);
-
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
-        }
-
-        return chart;
-    }
-
-    static createGroupedAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): GroupedCategoryChart {
-        const chart = this.createGroupedCategoryChart(
-            parent,
-            ChartBuilder.createGroupedAxis(options.xAxis),
-            ChartBuilder.createNumberAxis(options.yAxis),
-            options.document
-        );
-
-        ChartBuilder.initChart(chart, options);
-
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
-        }
-
-        return chart;
-    }
-
-    static createSeries(options: SeriesOptions) {
+    static createSeries(options: SeriesOptions): Series {
         switch (options && options.type) {
             case 'line':
                 return ChartBuilder.initLineSeries(new LineSeries(), options);
@@ -255,7 +255,7 @@ export class ChartBuilder {
         }
     }
 
-    static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>) {
+    static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>): C {
         this.setValueIfExists(chart, 'width', options.width);
         this.setValueIfExists(chart, 'height', options.height);
         this.setValueIfExists(chart, 'tooltipClass', options.tooltipClass);
@@ -275,7 +275,7 @@ export class ChartBuilder {
         return chart;
     }
 
-    static initSeries<S extends Series>(series: S, options: SeriesOptions) {
+    static initSeries<S extends Series>(series: S, options: SeriesOptions): S {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
@@ -283,7 +283,7 @@ export class ChartBuilder {
         return series;
     }
 
-    static initLineSeries(series: LineSeries, options: LineSeriesOptions) {
+    static initLineSeries(series: LineSeries, options: LineSeriesOptions): LineSeries {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, 'title', options.title);
@@ -329,7 +329,7 @@ export class ChartBuilder {
         return series;
     }
 
-    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions) {
+    static initScatterSeries(series: ScatterSeries, options: ScatterSeriesOptions): ScatterSeries {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, 'title', options.title);
@@ -374,7 +374,7 @@ export class ChartBuilder {
         return series;
     }
 
-    static initLabelOptions(series: SeriesLabelOptions, options: SeriesLabelOptions) {
+    static initLabelOptions(series: SeriesLabelOptions, options: SeriesLabelOptions): void {
         this.setValueIfExists(series, 'enabled', options.enabled);
         this.setValueIfExists(series, 'fontStyle', options.fontStyle);
         this.setValueIfExists(series, 'fontWeight', options.fontWeight);
@@ -383,7 +383,7 @@ export class ChartBuilder {
         this.setValueIfExists(series, 'color', options.color);
     }
 
-    static initBarSeries(series: BarSeries, options: BarSeriesOptions) {
+    static initBarSeries(series: BarSeries, options: BarSeriesOptions): BarSeries {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, 'grouped', options.grouped);
@@ -429,7 +429,7 @@ export class ChartBuilder {
         return series;
     }
 
-    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions) {
+    static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions): AreaSeries {
         ChartBuilder.initSeries(series, options);
 
         this.setValueIfExists(series, 'normalizedTo', options.normalizedTo);
@@ -471,7 +471,7 @@ export class ChartBuilder {
         return series;
     }
 
-    static initPieSeries(series: PieSeries, options: PieSeriesOptions) {
+    static initPieSeries(series: PieSeries, options: PieSeriesOptions): PieSeries {
         ChartBuilder.initSeries(series, options);
 
         this.setTransformedValueIfExists(series, 'title', t => ChartBuilder.createPieTitle(t), options.title);
@@ -542,7 +542,7 @@ export class ChartBuilder {
         return this.markerTypes.get(type) || Circle;
     }
 
-    static initLegend(legend: Legend, options: LegendOptions) {
+    static initLegend(legend: Legend, options: LegendOptions): void {
         this.setValueIfExists(legend, 'enabled', options.enabled);
         this.setValueIfExists(legend, 'position', options.position);
 
@@ -571,7 +571,7 @@ export class ChartBuilder {
         }
     }
 
-    static initMarker(marker: SeriesMarker, options: MarkerOptions) {
+    static initMarker(marker: SeriesMarker, options: MarkerOptions): void {
         marker.type = ChartBuilder.getMarkerFromType(options.type);
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
@@ -581,12 +581,12 @@ export class ChartBuilder {
         this.setValueIfExists(marker, 'strokeWidth', options.strokeWidth);
     }
 
-    static initHighlightStyle(highlightStyle: HighlightStyle, options: HighlightOptions) {
+    static initHighlightStyle(highlightStyle: HighlightStyle, options: HighlightOptions): void {
         this.setValueIfExists(highlightStyle, 'fill', options.fill);
         this.setValueIfExists(highlightStyle, 'stroke', options.stroke);
     }
 
-    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = 'bold', fontFamily = 'Verdana, sans-serif') {
+    static setDefaultFontOptions(options: CaptionOptions, fontSize = 16, fontWeight: FontWeight = 'bold', fontFamily = 'Verdana, sans-serif'): void {
         if (options.fontSize === undefined) {
             options.fontSize = fontSize;
         }
@@ -600,7 +600,7 @@ export class ChartBuilder {
         }
     }
 
-    static createTitle(options: CaptionOptions) {
+    static createTitle(options: CaptionOptions): Caption {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -612,7 +612,7 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createSubtitle(options: CaptionOptions) {
+    static createSubtitle(options: CaptionOptions): Caption {
         options = Object.create(options);
 
         if (options.text === undefined) {
@@ -624,7 +624,7 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createPieTitle(options: CaptionOptions) {
+    static createPieTitle(options: CaptionOptions): Caption {
         options = Object.create(options);
 
         this.setDefaultFontOptions(options, 12);
@@ -632,7 +632,7 @@ export class ChartBuilder {
         return ChartBuilder.createCaption(options);
     }
 
-    static createCaption(options: CaptionOptions) {
+    static createCaption(options: CaptionOptions): Caption {
         const caption = new Caption();
 
         this.setValueIfExists(caption, 'enabled', options.enabled);
@@ -658,7 +658,7 @@ export class ChartBuilder {
         return shadow;
     }
 
-    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions) {
+    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions): void {
         this.setTransformedValueIfExists(axis, 'title', t => ChartBuilder.createTitle(t), options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
 
@@ -704,7 +704,7 @@ export class ChartBuilder {
         return axis;
     }
 
-    static createGroupedAxis(options: AxisOptions): GroupedCategoryAxis {
+    static createGroupedCategoryAxis(options: AxisOptions): GroupedCategoryAxis {
         const axis = new GroupedCategoryAxis();
 
         this.initAxis(axis, options);
@@ -744,11 +744,11 @@ export class ChartBuilder {
         return types;
     })();
 
-    static toAxisClass(type: AxisType) {
+    static toAxisClass(type: AxisType): typeof CategoryAxis | typeof NumberAxis | typeof TimeAxis {
         return this.types.get(type);
     }
 
-    private static setValueIfExists<T, K extends keyof T>(target: T, property: K, value?: T[K], transform?: (value: any) => T[K]) {
+    private static setValueIfExists<T, K extends keyof T>(target: T, property: K, value?: T[K], transform?: (value: any) => T[K]): void {
         if (value === undefined) {
             return;
         }
@@ -756,7 +756,7 @@ export class ChartBuilder {
         target[property] = transform ? transform(value) : value;
     }
 
-    private static setTransformedValueIfExists<T, K extends keyof T, V>(target: T, property: K, transform: (value: V) => T[K], value?: V) {
+    private static setTransformedValueIfExists<T, K extends keyof T, V>(target: T, property: K, transform: (value: V) => T[K], value?: V): void {
         if (value === undefined) {
             return;
         }

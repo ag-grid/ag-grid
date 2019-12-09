@@ -139,8 +139,7 @@ export class ChartController extends BeanStub {
     }
 
     public isDefaultCategorySelected(): boolean {
-        const selectedDimension = this.model.getSelectedDimension().colId;
-        return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
+        return this.model.getSelectedDimension().colId === ChartDataModel.DEFAULT_CATEGORY;
     }
 
     public setChartRange(silent = false): void {
