@@ -14,4 +14,9 @@
     label {
         margin-bottom: 0;
     }
+
+    ::-ms-clear {
+        display: none;
+    }
+
 }
