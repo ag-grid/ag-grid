@@ -1,11 +1,9 @@
 import { ChartBuilder } from "./chartBuilder";
-import { AxisOptions, SeriesOptions } from "./chartOptions";
+import { AxisOptions, AxisType, SeriesOptions } from "./chartOptions";
 import { CategoryAxis } from "./chart/axis/categoryAxis";
 import { GroupedCategoryAxis } from "./chart/axis/groupedCategoryAxis";
 import { NumberAxis } from "./chart/axis/numberAxis";
 import { TimeAxis } from "./chart/axis/timeAxis";
-import { AxisType } from "@ag-grid-community/core";
-import { CartesianChartLayout } from "./chart/cartesianChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
@@ -162,7 +160,6 @@ describe('createBarChart', () => {
 
         expect(chart.axes[0]).toBeInstanceOf(NumberAxis);
         expect(chart.axes[1]).toBeInstanceOf(CategoryAxis);
-        expect(chart.layout).toBe(CartesianChartLayout.Horizontal);
     });
 });
 
@@ -180,7 +177,6 @@ describe('createColumnChart', () => {
 
         expect(chart.axes[0]).toBeInstanceOf(CategoryAxis);
         expect(chart.axes[1]).toBeInstanceOf(NumberAxis);
-        expect(chart.layout).toBe(CartesianChartLayout.Vertical);
     });
 });
 
@@ -249,7 +245,6 @@ describe('createGroupedColumnChart', () => {
 
         expect(chart.axes[0]).toBeInstanceOf(GroupedCategoryAxis);
         expect(chart.axes[1]).toBeInstanceOf(NumberAxis);
-        expect(chart.layout).toBe(CartesianChartLayout.Vertical);
     });
 });
 
@@ -267,7 +262,6 @@ describe('createGroupedBarChart', () => {
 
         expect(chart.axes[0]).toBeInstanceOf(NumberAxis);
         expect(chart.axes[1]).toBeInstanceOf(GroupedCategoryAxis);
-        expect(chart.layout).toBe(CartesianChartLayout.Horizontal);
     });
 });
 

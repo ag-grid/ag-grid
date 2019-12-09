@@ -19,7 +19,7 @@ import {
     HighlightOptions,
     AxisType,
 } from "./chartOptions";
-import { CartesianChart, CartesianChartLayout } from "./chart/cartesianChart";
+import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
@@ -74,8 +74,6 @@ export class ChartBuilder {
             ChartBuilder.createNumberAxis(options.xAxis),
             ChartBuilder.createCategoryAxis(options.yAxis),
             options.document);
-
-        chart.layout = CartesianChartLayout.Horizontal;
 
         ChartBuilder.initChart(chart, options);
 
@@ -196,8 +194,6 @@ export class ChartBuilder {
             ChartBuilder.createGroupedAxis(options.yAxis),
             options.document
         );
-
-        chart.layout = CartesianChartLayout.Horizontal;
 
         ChartBuilder.initChart(chart, options);
 

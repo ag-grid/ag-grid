@@ -4,21 +4,12 @@ import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { reactive } from "../util/observable";
 import { ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
-
-/** Defines the orientation used when rendering data series */
-export enum CartesianChartLayout {
-    Vertical,
-    Horizontal
-}
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
     protected axisAutoPadding = new Padding();
-
-    @reactive(['layoutChange']) flipXY = false;
 
     constructor(document = window.document) {
         super(document);
@@ -139,17 +130,6 @@ export class CartesianChart extends Chart {
         });
 
         this.axes.forEach(axis => axis.update());
-    }
-
-    private _layout: CartesianChartLayout = CartesianChartLayout.Vertical;
-    set layout(value: CartesianChartLayout) {
-        if (this._layout !== value) {
-            this._layout = value;
-            this.layoutPending = true;
-        }
-    }
-    get layout(): CartesianChartLayout {
-        return this._layout;
     }
 
     private _updateAxes = this.updateAxes.bind(this);
