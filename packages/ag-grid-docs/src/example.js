@@ -816,8 +816,7 @@ var desktopDefaultCols = [
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: currencyFormatter,
-        cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -1363,7 +1362,7 @@ function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
         return { "color": "red", "font-weight": "bold" };
     } else {
-        return { color: "black", "font-weight": "normal" };
+        return {};
     }
 }
 
