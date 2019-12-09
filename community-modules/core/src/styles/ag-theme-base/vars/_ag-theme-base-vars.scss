@@ -27,6 +27,7 @@ $ag-header-height: $ag-grid-size * 6 + 1 !default;
 $ag-row-height: ($ag-grid-size * 6 + 1) !default;
 $ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
 $ag-header-icon-size: 14px !default;
 $ag-input-height: null !default;

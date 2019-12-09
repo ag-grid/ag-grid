@@ -29,6 +29,14 @@
         }
     }
 
+    .ag-rtl {
+        .ag-pivot-mode-panel {
+            .ag-pivot-mode-select {
+                margin-right: $ag-grid-size;
+            }
+        }
+    }
+
     .ag-column-panel {
         // needs nesting because ag-column-select-panel is also used in header menu
         .ag-column-select-panel {
@@ -62,6 +70,15 @@
 
         &.ag-last-column-drop {
             border-bottom-width: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-column-drop-vertical {
+            .ag-column-drop-empty-message {
+                padding-left: $ag-grid-size;
+                padding-right: $ag-grid-size * 4;
+            }
         }
     }
 }

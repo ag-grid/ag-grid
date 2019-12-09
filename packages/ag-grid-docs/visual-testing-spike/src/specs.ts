@@ -46,6 +46,20 @@ export const specs: SpecDefinition[] = [
                     await page.click(cellSelector('country', 0), { clickCount: 2 });
                     await page.hover('.ag-virtual-list-item:nth-child(4)');
                 }
+            },
+            {
+                name: 'column-grouping',
+                viewport: { width: 800, height: 1200 },
+                prepare: async page => {
+                    // show column tool panel
+                    await page.click('.ag-side-button:nth-child(1)');
+                    // group some rows (first drag handle is a group of 3 rows which will all be grouped when we drag it to the drop zone)
+                    await drag({
+                        page,
+                        from: '.ag-primary-cols-list-panel .ag-column-drag',
+                        to: '.ag-column-drop-empty-message'
+                    });
+                }
             }
         ]
     },

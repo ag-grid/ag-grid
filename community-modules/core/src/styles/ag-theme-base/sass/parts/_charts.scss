@@ -1,0 +1,79 @@
+
+@mixin ag-theme-base-part-charts {
+    
+
+    .ag-chart {
+        .ag-chart-menu {
+            border-radius: 5px;
+            background: $ag-background-color;
+            > span {
+                &:hover {
+                    background-color: darken($ag-background-color, 10%);
+                }
+            }
+        }
+    }
+
+    .ag-chart-tabbed-menu {
+        .ag-chart-settings {
+            .ag-chart-settings-mini-wrapper {
+                .ag-group-component-container {
+                    margin-left: 0;
+                }
+                .ag-chart-mini-thumbnail {
+                    border: 1px solid $ag-secondary-border-color;
+                    border-radius: 5px;
+                    margin: 5px;
+                    &:nth-child(2n + 2):not(:last-child) {
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    &:nth-child(3n + 1) {
+                        margin-left: 2px;
+                    }
+                    &:nth-child(3n) {
+                        margin-right: 2px;
+                    }
+                    &.ag-selected {
+                        border-color: $ag-primary-color;
+                    }
+                }
+            }
+
+            .ag-chart-settings-nav-bar {
+                .ag-nav-card-selector {
+                    .ag-nav-card-item {
+                        background: $ag-foreground-color;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 4px;
+                        &.ag-selected {
+                            background: $ag-primary-color;
+                        }
+                    }
+                }
+            }
+        }
+
+        .ag-chart-data {
+            .ag-data-select-checkbox .ag-column-drag {
+                margin-left: $ag-grid-size;
+            }
+
+            .ag-chart-data-wrapper {
+                .ag-toggle-button.ag-group-item {
+                    margin: $ag-grid-size * 1.2 0;
+                }
+            }
+        }
+
+        .ag-chart-format {
+            .ag-chart-format-wrapper {
+                .ag-group-item {
+                    margin: $ag-grid-size * 1.2 0;
+                }
+            }
+        }
+    }
+
+}

@@ -1,7 +1,6 @@
 
 @mixin ag-theme-base-part-widgets {
     
-
     .ag-checkbox,
     .ag-radio-button,
     .ag-toggle-button {
@@ -89,28 +88,17 @@
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
-    .ag-selection-checkbox:not(.ag-hidden),
-    .ag-group-expanded:not(.ag-hidden),
-    .ag-group-contracted:not(.ag-hidden),
-    .ag-group-checkbox:not(.ag-invisible) {
-        ~ .ag-cell-value,
-        + .ag-group-value {
-            &:not(:empty) {
-                margin-left: $ag-cell-horizontal-padding;
-            }
-        }
-        ~ .ag-group-checkbox {
-            margin-left: $ag-cell-horizontal-padding;
-        }
-    }
-
-    .ag-group-child-count {
-        margin-left: 2px;
-    }
-
-    .ag-selection-checkbox span {
-        position: relative;
-    }
+    @include ag-auto-rtl(
+        ".ag-cell-wrapper .ag-row-drag"
+        ".ag-cell-wrapper .ag-selection-checkbox"
+        ".ag-cell-wrapper .ag-group-expanded"
+        ".ag-cell-wrapper .ag-group-contracted",
+        ( margin-right: $ag-cell-widget-spacing )
+    );
+    @include ag-auto-rtl(
+        ".ag-group-child-count",
+        ( margin-left: 2px )
+    );
 
     .ag-group-component {
         background-color: $ag-group-component-background-color;
@@ -409,78 +397,16 @@
         }
     }
 
-    .ag-chart {
-        .ag-chart-menu {
-            border-radius: 5px;
-            background: $ag-background-color;
-            > span {
-                &:hover {
-                    background-color: darken($ag-background-color, 10%);
-                }
-            }
-        }
-    }
-
-    .ag-chart-tabbed-menu {
-        .ag-chart-settings {
-            .ag-chart-settings-mini-wrapper {
-                .ag-group-component-container {
+    .ag-rtl {
+        .ag-checkbox,
+        .ag-radio-button,
+        .ag-toggle-button {
+            &:not(.ag-label-align-left) {
+                label {
+                    margin-right: $ag-grid-size;
                     margin-left: 0;
                 }
-                .ag-chart-mini-thumbnail {
-                    border: 1px solid $ag-secondary-border-color;
-                    border-radius: 5px;
-                    margin: 5px;
-                    &:nth-child(2n + 2):not(:last-child) {
-                        margin-left: auto;
-                        margin-right: auto;
-                    }
-                    &:nth-child(3n + 1) {
-                        margin-left: 2px;
-                    }
-                    &:nth-child(3n) {
-                        margin-right: 2px;
-                    }
-                    &.ag-selected {
-                        border-color: $ag-primary-color;
-                    }
-                }
-            }
-
-            .ag-chart-settings-nav-bar {
-                .ag-nav-card-selector {
-                    .ag-nav-card-item {
-                        background: $ag-foreground-color;
-                        width: 8px;
-                        height: 8px;
-                        border-radius: 4px;
-                        &.ag-selected {
-                            background: $ag-primary-color;
-                        }
-                    }
-                }
-            }
-        }
-
-        .ag-chart-data {
-            .ag-data-select-checkbox .ag-column-drag {
-                margin-left: $ag-grid-size;
-            }
-
-            .ag-chart-data-wrapper {
-                .ag-toggle-button.ag-group-item {
-                    margin: $ag-grid-size * 1.2 0;
-                }
-            }
-        }
-
-        .ag-chart-format {
-            .ag-chart-format-wrapper {
-                .ag-group-item {
-                    margin: $ag-grid-size * 1.2 0;
-                }
             }
         }
     }
-
 }

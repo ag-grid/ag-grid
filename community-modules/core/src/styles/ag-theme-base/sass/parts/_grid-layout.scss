@@ -16,13 +16,35 @@
         }
     }
 
-    // do not remove .ag-ltr from here
     .ag-ltr {
+        // TODO rtl mixin
         .ag-row-group-leaf-indent {
             margin-left: $ag-row-group-indent-size;
         }
+        // TODO rtl mixin
         .ag-cell {
             border-right: $ag-cell-horizontal-border;
+        }
+        
+        // TODO clean up how selections happen, maybe move to new file or section
+        .ag-cell:not(.ag-cell-focus),
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+                border-left: 1px solid $ag-border-color;
+            }
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+                border-right: 1px solid $ag-border-color;
+            }
+        }
+    }
+
+    .ag-rtl {
+        .ag-row-group-leaf-indent {
+            margin-right: $ag-icon-size + $ag-grid-size * 3;
+        }
+        .ag-cell {
+            border-left: $ag-cell-horizontal-border;
         }
 
         .ag-cell:not(.ag-cell-focus),
@@ -142,7 +164,7 @@
         // added 'move' as IE fallback
         cursor: move;
         cursor: grab;
-        min-width: $ag-icon-size + $ag-grid-size * 3;
+        min-width: $ag-icon-size + $ag-grid-size * 3 - $ag-cell-horizontal-padding;
     }
 
     .ag-row-dragging,
@@ -154,15 +176,11 @@
         opacity: 0.5;
     }
 
-    // TODO can we remove this nesting?
-    .ag-ltr,
-    .ag-rtl {
-        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-        .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-            border: 1px solid $ag-primary-color;
-            outline: initial;
-        }
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+        border: 1px solid $ag-primary-color;
+        outline: initial;
     }
 
     .ag-cell {
@@ -245,6 +263,12 @@
 
     .ag-overlay-loading-center {
         @include card();
+    }
+
+    .ag-rtl {
+        .ag-numeric-cell {
+            text-align: left;
+        }
     }
 
 }

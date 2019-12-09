@@ -126,7 +126,7 @@
 
     @include filter-toolpanel-padding(false);
 
-    .rtl {
+    .ag-rtl {
         @include filter-toolpanel-padding(true);
     }
 }
