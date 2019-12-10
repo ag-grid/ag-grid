@@ -19,6 +19,8 @@ module.exports = {
     //     new ForkTsCheckerNotifierWebpackPlugin({title: 'TypeScript', excludeWarnings: false}),
     // ],
     resolve: {
+        // favour cjs over es6 (docs only rebuilds cjs...)
+        mainFields: ["main", "module"],
         alias: {
             "@ag-grid-community/core": path.resolve(__dirname, "../../../community-modules/core/src/ts/main.ts")
         },
