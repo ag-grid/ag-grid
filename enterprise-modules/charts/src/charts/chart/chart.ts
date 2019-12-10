@@ -308,7 +308,7 @@ export abstract class Chart extends Observable {
                 return axis;
             } else if (directionKeys) {
                 for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0 ) {
+                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
                         return axis;
                     }
                 }

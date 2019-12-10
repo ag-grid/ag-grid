@@ -86,6 +86,28 @@ function restoreChart() {
     chartModel = undefined;
 }
 
+function openImage(type) {
+    var chartModel = gridOptions.api.getChartModels()[0];
+
+    if (chartModel) {
+        var imageDataUrl = chartModel.getChartImageDataURL({ type: type });
+        var image = new Image();
+        image.src = imageDataUrl;
+
+        var w = window.open("");
+        w.document.write(image.outerHTML);
+        w.document.close();
+    }
+}
+
+function openPng() {
+    openImage('image/png');
+}
+
+function openJpg() {
+    openImage('image/jpeg');
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

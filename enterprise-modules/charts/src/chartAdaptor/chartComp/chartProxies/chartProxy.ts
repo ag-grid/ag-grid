@@ -85,7 +85,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         chart.scene.download(fileName);
     }
 
-    public getChartDataURL(type?: string) {
+    public getChartImageDataURL(type?: string) {
         return this.chart.scene.getDataURL(type);
     }
 

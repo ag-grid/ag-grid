@@ -14,6 +14,7 @@ import {
     GridApi,
     ChartModel,
     CellRangeParams,
+    GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
@@ -88,7 +89,10 @@ export class ChartController extends BeanStub {
             chartType: this.model.getChartType(),
             chartPalette: this.getPaletteName(),
             chartOptions: this.chartProxy.getChartOptions(),
-            cellRange: this.getCurrentCellRangeParams()
+            cellRange: this.getCurrentCellRangeParams(),
+            getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
+                return this.chartProxy.getChartImageDataURL(params.type);
+            }
         };
     }
 

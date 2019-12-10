@@ -222,7 +222,7 @@ export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams
 } from "./interfaces/iRangeController";
 export { IRangeController, ISelectionHandle } from "./interfaces/iRangeController";
-export { IChartService, ChartModel } from "./interfaces/IChartService";
+export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
 
 // exporter
 export {
