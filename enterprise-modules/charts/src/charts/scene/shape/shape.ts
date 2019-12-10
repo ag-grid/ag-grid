@@ -267,10 +267,6 @@ export abstract class Shape extends Node {
     }
 
     protected fillStroke(ctx: CanvasRenderingContext2D) {
-        if (!this.scene) {
-            return;
-        }
-
         const pixelRatio = this.scene.canvas.pixelRatio || 1;
 
         if (this.fill) {
