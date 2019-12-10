@@ -119,7 +119,8 @@ export abstract class Chart extends Observable {
     set axes(values: ChartAxis[]) {
         const root = this.scene.root!;
         this._axes.forEach(axis => root.removeChild(axis.group));
-        this._axes = values;
+        // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
+        this._axes = values.filter(a => !a.linkedTo).concat(values.filter(a => a.linkedTo));
         this._axes.forEach(axis => root.insertBefore(axis.group, this.seriesRoot));
         this.axesChanged = true;
     }
