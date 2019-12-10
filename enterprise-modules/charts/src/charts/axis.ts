@@ -22,18 +22,6 @@ export interface GridStyle {
     lineDash?: number[];
 }
 
-export interface ILinearAxis<S extends Scale<D, number> = Scale<any, number>, D = any> {
-    group: Group;
-    scale: S;
-    domain: D[];
-    rotation: number;
-    label: AxisLabel;
-    tick: AxisTick;
-    gridLength: number;
-    computeBBox(options?: { excludeTitle: boolean }): BBox;
-    update(): void;
-}
-
 export class AxisTick {
     /**
      * The line width to be used by axis ticks.
@@ -148,7 +136,7 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number>, D = any> implements ILinearAxis<S> {
+export class Axis<S extends Scale<D, number>, D = any> {
 
     // debug (bbox)
     // private bboxRect = (() => {
