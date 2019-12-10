@@ -75,7 +75,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public abstract update(params: UpdateChartParams): void;
 
-    public getChart = (): TChart => this.chart;
+    public getChart(): TChart {
+        return this.chart;
+    }
+
+    public downloadChart(): void {
+        const { chart } = this;
+        const fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    }
+
+    public getChartDataURL(type?: string) {
+        return this.chart.scene.getDataURL(type);
+    }
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
     protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';

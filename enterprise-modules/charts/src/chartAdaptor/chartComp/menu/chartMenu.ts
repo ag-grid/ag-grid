@@ -59,6 +59,7 @@ export class ChartMenu extends Component {
             'chartUnlink',
             'chartDownload'
         ];
+
         const toolbarItemsFunc = this.gridOptionsWrapper.getChartToolbarItemsFunc();
 
         if (toolbarItemsFunc) {
@@ -73,6 +74,7 @@ export class ChartMenu extends Component {
                     console.warn(`ag-Grid: '${option} is not a valid Chart Toolbar Option`);
                     return false;
                 }
+
                 return true;
             });
         }
@@ -185,9 +187,7 @@ export class ChartMenu extends Component {
         const tab = this.tabs.indexOf(tabName);
 
         if (!this.menuPanel) {
-            this.createMenu(tab).then(() => {
-                this.slideDockedContainer();
-            });
+            this.createMenu(tab).then(() => this.slideDockedContainer());
         } else {
             this.slideDockedContainer();
         }

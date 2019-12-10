@@ -31,12 +31,13 @@ export class HdpiCanvas {
     set parent(value: HTMLElement | undefined) {
         if (this._parent !== value) {
             this.remove();
+
             if (value) {
                 value.appendChild(this.element);
             }
+
             this._parent = value;
         }
-
     }
     get parent(): HTMLElement | undefined {
         return this._parent;
@@ -58,8 +59,12 @@ export class HdpiCanvas {
 
     toImage(): HTMLImageElement {
         const img = this.document.createElement('img');
-        img.src = this.element.toDataURL();
+        img.src = this.getDataURL();
         return img;
+    }
+
+    getDataURL(type?: string): string {
+        return this.element.toDataURL(type);
     }
 
     /**
@@ -67,21 +72,22 @@ export class HdpiCanvas {
      * @param [options.background] Defaults to `white`.
      */
     download(fileName?: string) {
-        fileName = ((fileName || '').trim() || 'image') + '.png';
+        fileName = `${(fileName || 'image').trim()}.png`;
 
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
         const type = 'image/png';
-
-        const dataUrl = this.element.toDataURL(type);
+        const dataUrl = this.getDataURL(type);
         const document = this.document;
 
         if (navigator.msSaveOrOpenBlob) { // IE11
             const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
             const array = [];
+
             for (let i = 0, n = binary.length; i < n; i++) {
                 array.push(binary.charCodeAt(i));
             }
+
             const blob = new Blob([new Uint8Array(array)], { type });
 
             navigator.msSaveOrOpenBlob(blob, fileName);
@@ -103,8 +109,6 @@ export class HdpiCanvas {
         return this._pixelRatio;
     }
 
-    private overrides: any;
-
     /**
      * Updates the pixel ratio of the Canvas element with the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
@@ -121,7 +125,8 @@ export class HdpiCanvas {
 
         const canvas = this.element;
         const ctx = this.context;
-        const overrides = this.overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
+        const overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
+
         for (const name in overrides) {
             if (overrides.hasOwnProperty(name)) {
                 // Save native methods under prefixed names,
