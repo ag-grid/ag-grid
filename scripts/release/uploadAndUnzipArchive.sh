@@ -27,7 +27,7 @@ then
 fi
 
 checkFileExists $ARCHIVE
-checkFileExists ~/aggrid/aggrid.txt
+#checkFileExists ~/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_ssh
 checkFileExists ~/aggrid/.creds
 
@@ -44,8 +44,8 @@ if [ "$3" != "skipWarning" ]; then
     done
 fi
 
-USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
-PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
+#USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
+#PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
 
 # delete dir if it exists - can ignore dir not found error
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
