@@ -104,7 +104,7 @@ class SideBarButtonComp extends Component {
             `<div class="ag-side-button">
                 <button type="button" ref="eToggleButton">
                     <div></div>
-                    <span>${label}</span>
+                    <span class="ag-side-button-label">${label}</span>
                 </button>
             </div>`;
         return res;

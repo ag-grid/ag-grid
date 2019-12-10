@@ -293,13 +293,10 @@
     ////////////////////////////////////////
     // Navigation
     ////////////////////////////////////////
-    .ag-ltr,
-    .ag-rtl {
-        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-        .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-            border: 1px solid $ag-color-primary;
-        }
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+        border: 1px solid $ag-color-primary;
     }
 
     .ag-cell.ag-cell-inline-editing {
@@ -497,30 +494,6 @@
         .ag-column-drop-cell-button {
             min-width: auto;
             transform: translateY(2px);
-        }
-    }
-
-    ////////////////////////////////////////
-    // Range selection
-    ////////////////////////////////////////
-    .ag-ltr,
-    .ag-rtl {
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-            border: 1px solid transparent;
-            &.ag-cell-range-top {
-                border-top-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-right {
-                border-right-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-bottom {
-                border-bottom-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-left {
-                border-left-color: $ag-color-secondary;
-            }
-
-            border-top-color: transparent;
         }
     }
 
@@ -937,20 +910,11 @@
     }
 
     // RTL Overrides
+    // TODO simplify this a lot, use ag-auto-rtl, and move stuff to the base
     .ag-rtl {
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;
             margin-right: $ag-grid-size * 2;
-        }
-
-        // arrows should point in the other direction
-        [ref='eExpanded'],
-        [ref='eContracted'],
-        [ref='agOpened'],
-        [ref='agClosed'],
-        [ref='eExpand'],
-        [ref='eColumnGroupIcons'] {
-            transform: scaleX(-1);
         }
 
         .ag-header-cell-resize {

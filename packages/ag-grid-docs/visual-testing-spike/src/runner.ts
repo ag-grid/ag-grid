@@ -221,10 +221,10 @@ interface ImageAnalysisResult {
     getBuffer: () => Buffer;
 }
 
-const getImageDifferencesAsDataUri = async (
+const getImageDifferences = async (
     image1: Buffer,
     image2: Buffer
-): Promise<string | null> => {
+): Promise<ImageAnalysisResult> => {
     return new Promise((resolve, reject) => {
         (resemble as any).compare(
             image1,
@@ -237,7 +237,7 @@ const getImageDifferencesAsDataUri = async (
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(result.rawMisMatchPercentage > 0 ? result.getImageDataUrl() : null);
+                    resolve(result);
                 }
             }
         );
@@ -376,14 +376,16 @@ export const runSuite = async (params: RunSuiteParams) => {
                 ++generatedTestCases;
             } else {
                 const oldData = await fs.readFile(file);
-                const difference = await getImageDifferencesAsDataUri(oldData, screenshot);
+                const result = await getImageDifferences(oldData, screenshot);
+                const differenceUri = result.rawMisMatchPercentage > 0 ? result.getImageDataUrl() : null
                 results.push({
                     name: testCaseName,
-                    difference,
-                    new: pngBufferToDataUri(screenshot),
-                    original: pngBufferToDataUri(oldData)
+                    differenceUri,
+                    newUri: pngBufferToDataUri(screenshot),
+                    originalUri: pngBufferToDataUri(oldData),
+                    area: result.diffBounds
                 });
-                if (difference) {
+                if (differenceUri) {
                     log(
                         `${chalk.red.bold(`✘ ${testCaseName}`)} - found difference, see report.html`
                     );
@@ -405,8 +407,10 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     if (params.mode === 'compare') {
         if (failedTestCases.length > 0) {
+            log(chalk.red.bold(failedTestCases.length === 1 ? '1 FAILURE' : `${failedTestCases.length} FAILURES`));
             await fs.writeFile(failedTestsFile, failedTestCases.join('\n'));
         } else if (existsSync(failedTestsFile)) {
+            log(chalk.green.bold(`ALL PASSED`))
             await fs.unlink(failedTestsFile);
         }
         await writeReportFile(false);
