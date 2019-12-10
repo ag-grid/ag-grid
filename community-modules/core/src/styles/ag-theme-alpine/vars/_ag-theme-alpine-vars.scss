@@ -44,6 +44,9 @@ $ag-color-background-range-selected-3: opacify($ag-color-background-range-select
 $ag-color-background-range-selected-4: opacify($ag-color-background-range-selection, 0.8) !default;
 
 
+$ag-column-separator-width: 2px !default;
+$ag-column-separator-height: 12px !default;
+
 $ag-color-row-hover: transparentize($ag-color-primary, 0.9) !default;
 
 // shadows of popups, menus, etc

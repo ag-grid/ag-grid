@@ -68,10 +68,20 @@
             }
         }
     }
-
-    .ag-header-cell-resize {
-        cursor: col-resize;
+    
+    .ag-header-cell::after,
+    .ag-header-group-cell::after {
+        content: "";
+        position: absolute;
+        display: block;
+        width: $ag-column-separator-width;
+        height: $ag-column-separator-height;
+        background-color: $ag-column-separator-color;
     }
+
+    @include ag-auto-rtl(".ag-header-cell::after" ".ag-header-group-cell::after", (
+        right: 0
+    ));
 
     .ag-header-select-all {
         margin-right: $ag-cell-horizontal-padding;
@@ -87,10 +97,6 @@
         // added 'move' as IE fallback
         cursor: move;
         cursor: grab;
-    }
-
-    .ag-header-cell-resize {
-        width: $ag-grid-size * 2;
     }
 
     &.ag-dnd-ghost {
@@ -121,10 +127,6 @@
         }
     }
 
-
-    ////////////////////////////////////////
-    // Floating filter
-    ////////////////////////////////////////
     
     .ag-floating-filter-button {
         button {
@@ -137,10 +139,7 @@
         }
     }
     
-    .ag-ltr .ag-floating-filter-button {
-        margin-left: $ag-grid-size * 3;
-    }
-    .ag-rtl .ag-floating-filter-button {
-        margin-right: $ag-grid-size * 3;
-    }
+    @include ag-auto-rtl(".ag-floating-filter-button", (
+        margin-left: $ag-grid-size * 3
+    ));
 }

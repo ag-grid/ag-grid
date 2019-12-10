@@ -59,6 +59,9 @@ export const specs: SpecDefinition[] = [
                         from: '.ag-primary-cols-list-panel .ag-column-drag',
                         to: '.ag-column-drop-empty-message'
                     });
+                    await page.click('[row-index="0"] .ag-icon-contracted');
+                    await page.click('[row-index="1"] .ag-icon-contracted');
+                    await page.click('[row-index="2"] .ag-icon-contracted');
                 }
             }
         ]

@@ -27,15 +27,18 @@ Will emit:
                     $rtl-property: ag-str-replace($property, "-right", "-left");
                     $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
                 }
-                @if str-index($property, "-left") {
+                @else if str-index($property, "-left") {
                     $rtl-property: ag-str-replace($property, "-left", "-right");
                     $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
                 }
-                @if $property == "right" {
+                @else if $property == "right" {
                     $rtl-rules: map-merge($rtl-rules, (left: $value));
                 }
-                @if $property == "left" {
+                @else if $property == "left" {
                     $rtl-rules: map-merge($rtl-rules, (right: $value));
+                }
+                @else {
+                    @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
                 }
                 #{$property}: $value;
             }

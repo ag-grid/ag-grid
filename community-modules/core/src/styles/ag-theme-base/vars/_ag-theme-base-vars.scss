@@ -53,6 +53,11 @@ $ag-tooltip-border-color: #ebebeb !default;
 // Misc
 
 
+$ag-column-resize-handle: $ag-borders !default;
+$ag-column-separator-height: 50% !default;
+$ag-column-separator-width: 1px !default;
+$ag-column-separator-color: $ag-secondary-border-color !default;
+
 // radius applied to the the grid wrapper grid
 $ag-grid-radius: null !default;
 

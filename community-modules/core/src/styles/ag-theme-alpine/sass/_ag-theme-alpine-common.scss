@@ -207,26 +207,6 @@
         padding: $ag-grid-size / 2 $ag-grid-size;
     }
 
-    ////////////////////////////////////////
-    // Column Resize Handle
-    ////////////////////////////////////////
-    $resize-handle-color: transparentize($ag-border-color, 0.6);
-
-    .ag-header-cell-resize {
-        right: -2px;
-        width: $ag-grid-size;
-
-        &::before {
-            content: ' ';
-            background: $resize-handle-color;
-            width: 2px;
-            border-radius: 1px;
-            height: $ag-header-height / 4;
-            margin-top: $ag-header-height * 3 / 2 / 4;
-            display: block;
-            transform: translateX($ag-grid-size / 2 - 2);
-        }
-    }
 
     ////////////////////////////////////////
     // Pinned Containers
@@ -240,9 +220,6 @@
         border-left-color: $ag-border-color;
     }
 
-    .ag-ltr .ag-pinned-right-header .ag-header-cell-resize {
-        left: -1px;
-    }
 
     .ag-ltr .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
         border-left-color: $ag-border-color;
@@ -915,11 +892,6 @@
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;
             margin-right: $ag-grid-size * 2;
-        }
-
-        .ag-header-cell-resize {
-            right: unset;
-            left: -2px;
         }
 
         .ag-floating-filter-button {

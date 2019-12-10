@@ -404,8 +404,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
     z-index: 1;
     height: 100%;
-    width: 4px;
+    width: 10px;
+    cursor: col-resize;
 }
+
+@include ag-auto-rtl(".ag-header-cell-resize", (
+    right: -5px
+));
 
 @include ag-auto-rtl(".ag-header-expand-icon", (
     padding-left: 4px
@@ -1676,14 +1681,6 @@ $ag-row-group-indent-size: 10px !default;
         transform: rotate(180deg);
     }
 }
-
-@include ag-auto-rtl(".ag-header-cell-resize", (
-    left: -4px
-));
-
-@include ag-auto-rtl(".ag-pinned-left-header .ag-header-cell-resize", (
-    right: -4px
-));
 
 @media print {
     .ag-body-viewport {
