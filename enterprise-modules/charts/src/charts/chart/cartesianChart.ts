@@ -1,6 +1,5 @@
 import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
-import { Padding } from "../util/padding";
 import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
@@ -9,7 +8,6 @@ import { Series } from "./series/series";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
-    protected axisAutoPadding = new Padding();
 
     constructor(document = window.document) {
         super(document);
@@ -74,7 +72,7 @@ export class CartesianChart extends Chart {
             }
         }
 
-        const { captionAutoPadding, padding, axisAutoPadding } = this;
+        const { captionAutoPadding, padding } = this;
 
         this.updateAxes();
 
