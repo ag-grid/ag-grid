@@ -110,14 +110,7 @@ export class ChartDataModel extends BeanStub {
     }
 
     public setChartType(chartType: ChartType) {
-        const isCurrentMultiCategory = this.isMultiCategoryChart();
-
         this.chartType = chartType;
-
-        // switching between single and multi-category charts requires data to be reformatted
-        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
-            this.updateData();
-        }
     }
 
     public isGrouping(): boolean {
@@ -299,10 +292,6 @@ export class ChartDataModel extends BeanStub {
         return col;
     }
 
-    private isMultiCategoryChart(): boolean {
-        return !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
-    }
-
     private generateId(): string {
         return 'id-' + Math.random().toString(36).substr(2, 16);
     }
@@ -321,7 +310,6 @@ export class ChartDataModel extends BeanStub {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
-            multiCategories: this.isMultiCategoryChart(),
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow

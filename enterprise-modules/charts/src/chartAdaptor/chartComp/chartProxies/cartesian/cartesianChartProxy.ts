@@ -96,8 +96,11 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
         if (!baseAxis) { return; }
 
-        if (this.chartProxyParams.grouping && !(baseAxis instanceof GroupedCategoryAxis)) {
-            this.recreateChart();
+        if (this.chartProxyParams.grouping) {
+            if (!(baseAxis instanceof GroupedCategoryAxis)) {
+                this.recreateChart();
+            }
+
             return;
         }
 
