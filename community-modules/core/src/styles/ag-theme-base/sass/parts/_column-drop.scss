@@ -23,6 +23,17 @@
         }
     }
 
+    .ag-rtl {
+        .ag-column-drop-horizontal {
+            padding-right: $ag-cell-horizontal-padding;
+            .ag-icon-group,
+            .ag-icon-pivot {
+                margin-left: $ag-cell-horizontal-padding;
+                margin-right: 0;
+            }
+        }
+    }
+
     .ag-column-drop-cell {
         background: $ag-chip-background-color;
         border-radius: $ag-grid-size * 4;

@@ -15,17 +15,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
-
-        const areaSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
-
-        if (areaSeries) {
-            this.chart.addSeries(areaSeries);
-        }
     }
 
-    protected createChart(options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+    protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
-        const chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options);
+        const chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options || this.chartOptions);
 
         chart.axes
             .filter(axis => axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis)
@@ -38,12 +32,27 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     public update(params: UpdateChartParams): void {
+        this.chartProxyParams.grouping = params.grouping;
+
+        this.updateAxes();
+
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
         } else {
             // stacked and normalized has a single series
-            const areaSeries = this.chart.series[0] as AreaSeries;
+            let areaSeries = this.chart.series[0] as AreaSeries;
+
+            if (!areaSeries) {
+                areaSeries = ChartBuilder.createSeries(this.getSeriesDefaults()) as AreaSeries;
+
+                if (areaSeries) {
+                    this.chart.addSeries(areaSeries);
+                } else {
+                    return;
+                }
+            }
+
             const { fills, strokes } = this.getPalette();
 
             areaSeries.data = this.transformData(params.data, params.category.id);
@@ -58,7 +67,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         this.updateLabelRotation(params.category.id);
     }
 
-    private updateAreaChart(params: UpdateChartParams) {
+    private updateAreaChart(params: UpdateChartParams): void {
         const { chart } = this;
 
         if (params.fields.length === 0) {

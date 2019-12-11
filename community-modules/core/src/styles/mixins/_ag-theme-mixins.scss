@@ -1,3 +1,4 @@
+@import "./ag-grid-mixins";
 
 @mixin grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color) {
     @if $ag-borders {
@@ -104,12 +105,9 @@
   }
 }
 
-@mixin icons_webfont() {
+@mixin ag-icons-webfont() {
   .ag-icon {
-      /* use !important to prevent issues with browser extensions that change fonts */
       font-family: '#{$ag-icon-font-family}';
-      display: block;
-      speak: none;
       font-size: $ag-icon-size;
       color: $ag-icon-color;
       font-style: normal;

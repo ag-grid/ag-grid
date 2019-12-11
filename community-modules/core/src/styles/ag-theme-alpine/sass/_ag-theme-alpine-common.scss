@@ -207,26 +207,6 @@
         padding: $ag-grid-size / 2 $ag-grid-size;
     }
 
-    ////////////////////////////////////////
-    // Column Resize Handle
-    ////////////////////////////////////////
-    $resize-handle-color: transparentize($ag-border-color, 0.6);
-
-    .ag-header-cell-resize {
-        right: -2px;
-        width: $ag-grid-size;
-
-        &::before {
-            content: ' ';
-            background: $resize-handle-color;
-            width: 2px;
-            border-radius: 1px;
-            height: $ag-header-height / 4;
-            margin-top: $ag-header-height * 3 / 2 / 4;
-            display: block;
-            transform: translateX($ag-grid-size / 2 - 2);
-        }
-    }
 
     ////////////////////////////////////////
     // Pinned Containers
@@ -240,9 +220,6 @@
         border-left-color: $ag-border-color;
     }
 
-    .ag-ltr .ag-pinned-right-header .ag-header-cell-resize {
-        left: -1px;
-    }
 
     .ag-ltr .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
         border-left-color: $ag-border-color;
@@ -293,13 +270,10 @@
     ////////////////////////////////////////
     // Navigation
     ////////////////////////////////////////
-    .ag-ltr,
-    .ag-rtl {
-        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-        .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-            border: 1px solid $ag-color-primary;
-        }
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+        border: 1px solid $ag-color-primary;
     }
 
     .ag-cell.ag-cell-inline-editing {
@@ -469,27 +443,6 @@
         transform: translatey(-1px);
     }
 
-    ////////////////////////////////////////
-    // The below works great for grid-size = 4, but does not for larger one.
-    ////////////////////////////////////////
-    .ag-selection-checkbox:not(.ag-hidden),
-    .ag-group-expanded:not(.ag-hidden),
-    .ag-group-contracted:not(.ag-hidden),
-    .ag-group-checkbox:not(.ag-invisible) {
-        ~ .ag-cell-value,
-        + .ag-group-value {
-            &:not(:empty) {
-                margin-left: $ag-grid-size;
-            }
-        }
-        ~ .ag-group-checkbox {
-            margin-left: $ag-grid-size;
-        }
-    }
-
-    .ag-header-select-all {
-        margin-right: $ag-grid-size;
-    }
 
     ////////////////////////////////////////
     // Group panel
@@ -518,30 +471,6 @@
         .ag-column-drop-cell-button {
             min-width: auto;
             transform: translateY(2px);
-        }
-    }
-
-    ////////////////////////////////////////
-    // Range selection
-    ////////////////////////////////////////
-    .ag-ltr,
-    .ag-rtl {
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-            border: 1px solid transparent;
-            &.ag-cell-range-top {
-                border-top-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-right {
-                border-right-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-bottom {
-                border-bottom-color: $ag-color-secondary;
-            }
-            &.ag-cell-range-left {
-                border-left-color: $ag-color-secondary;
-            }
-
-            border-top-color: transparent;
         }
     }
 
@@ -575,123 +504,123 @@
 
     .ag-side-bar {
         font: $ag-font-chrome;
+    }
 
-        .ag-tool-panel-wrapper {
-            background-color: $ag-color-background-alt;
+    .ag-tool-panel-wrapper {
+        background-color: $ag-color-background-alt;
 
-            .ag-pivot-mode-select {
-                margin-left: $ag-grid-size * 2;
-                input {
-                    @include toggle-button;
-                }
+        .ag-pivot-mode-select {
+            margin-left: $ag-grid-size * 2;
+            input {
+                @include toggle-button;
             }
         }
-        
-        .ag-column-drop {
-            padding-top: 0;
+    }
 
-            & > div:first-child {
+    .ag-column-drop-vertical {
+        padding-top: 0;
+
+        & > div:first-child {
+            background-color: $ag-color-background;
+            padding: $ag-grid-size * 2 $ag-grid-size * 2;
+            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            & > span:first-child {
+                margin-left: 0px;
+                // display: none;
+            }
+        }
+
+        .ag-column-drop-list {
+            padding: $ag-grid-size;
+        }
+
+        .ag-column-drop-empty-message {
+            font-weight: inherit;
+            opacity: 0.5;
+            border: 1px dashed $ag-border-color;
+            margin: $ag-grid-size * 2;
+            padding: $ag-grid-size * 2;
+        }
+    }
+
+    // filter panel
+    .ag-filter-panel {
+        .ag-filter-body-wrapper {
+            padding: $ag-grid-size * 2;
+            padding-top: $ag-grid-size;
+        }
+
+        .ag-filter-apply-panel {
+            margin: 0;
+            margin-bottom: $ag-grid-size;
+            padding-top: $ag-grid-size * 2;
+            justify-content: space-evenly;
+            button {
+                font-size: 0.8em;
+                padding: $ag-grid-size / 2 $ag-grid-size;
+            }
+        }
+
+        .ag-filter-toolpanel-instance {
+            font-weight: $ag-weight-font-chrome;
+
+            .ag-filter-toolpanel-header {
+                padding: $ag-grid-size $ag-grid-size * 2;
                 background-color: $ag-color-background;
-                padding: $ag-grid-size * 2 $ag-grid-size * 2;
-                @include grid-border(bottom, $color: $ag-secondary-border-color);
-                & > span:first-child {
-                    margin-left: 0px;
-                    // display: none;
+                border-bottom: 1px solid $ag-border-color;
+
+                [ref='eExpand'] {
+                    margin-right: $ag-grid-size;
                 }
             }
 
-            .ag-column-drop-list {
-                padding: $ag-grid-size;
-            }
-
-            .ag-column-drop-empty-message {
-                font-weight: inherit;
-                opacity: 0.5;
-                border: 1px dashed $ag-border-color;
-                margin: $ag-grid-size * 2;
-                padding: $ag-grid-size * 2;
+            .ag-filter-air {
+                border-top: 0;
             }
         }
+    }
 
-        // filter panel
-        .ag-filter-panel {
-            .ag-filter-body-wrapper {
-                padding: $ag-grid-size * 2;
-                padding-top: $ag-grid-size;
-            }
+    // side buttons
+    .ag-side-buttons {
+        width: $ag-grid-size * 5;
 
-            .ag-filter-apply-panel {
-                margin: 0;
-                margin-bottom: $ag-grid-size;
-                padding-top: $ag-grid-size * 2;
-                justify-content: space-evenly;
-                button {
-                    font-size: 0.8em;
-                    padding: $ag-grid-size / 2 $ag-grid-size;
-                }
-            }
+        .ag-side-button {
+            box-sizing: border-box;
+            margin-bottom: $ag-grid-size;
+            display: flex;
+            align-items: center;
+            transition: border-color 0.3s linear;
 
-            .ag-filter-toolpanel-instance {
-                font-weight: $ag-weight-font-chrome;
-
-                .ag-filter-toolpanel-header {
-                    padding: $ag-grid-size $ag-grid-size * 2;
-                    background-color: $ag-color-background;
-                    border-bottom: 1px solid $ag-border-color;
-
-                    [ref='eExpand'] {
-                        margin-right: $ag-grid-size;
-                    }
-                }
-
-                .ag-filter-air {
-                    border-top: 0;
-                }
-            }
-        }
-
-        // side buttons
-        .ag-side-buttons {
-            width: $ag-grid-size * 5;
-
-            .ag-side-button {
-                box-sizing: border-box;
-                margin-bottom: $ag-grid-size;
+            button {
+                background: none;
                 display: flex;
-                align-items: center;
-                transition: border-color 0.3s linear;
+                align-items: flex-start;
+                justify-content: center;
+                flex-direction: column;
+                appearance: none;
+                padding: 0;
+                & > div {
+                    margin-left: $ag-grid-size;
+                    margin-bottom: $ag-grid-size;
+                }
+                & > span {
+                    margin-left: $ag-grid-size * 1.5;
+                }
+            }
+
+            border-left: 2px solid transparent;
+
+            &.ag-selected {
+                border-color: $ag-color-primary;
 
                 button {
                     background: none;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: center;
-                    flex-direction: column;
-                    appearance: none;
-                    padding: 0;
-                    & > div {
-                        margin-left: $ag-grid-size;
-                        margin-bottom: $ag-grid-size;
-                    }
-                    & > span {
-                        margin-left: $ag-grid-size * 1.5;
-                    }
-                }
+                    border: 0;
+                    margin-left: 0;
+                    color: $ag-color-primary;
 
-                border-left: 2px solid transparent;
-
-                &.ag-selected {
-                    border-color: $ag-color-primary;
-
-                    button {
-                        background: none;
-                        border: 0;
-                        margin-left: 0;
+                    & > div .ag-icon {
                         color: $ag-color-primary;
-
-                        & > div .ag-icon {
-                            color: $ag-color-primary;
-                        }
                     }
                 }
             }
@@ -958,25 +887,11 @@
     }
 
     // RTL Overrides
+    // TODO simplify this a lot, use ag-auto-rtl, and move stuff to the base
     .ag-rtl {
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;
             margin-right: $ag-grid-size * 2;
-        }
-
-        // arrows should point in the other direction
-        [ref='eExpanded'],
-        [ref='eContracted'],
-        [ref='agOpened'],
-        [ref='agClosed'],
-        [ref='eExpand'],
-        [ref='eColumnGroupIcons'] {
-            transform: scaleX(-1);
-        }
-
-        .ag-header-cell-resize {
-            right: unset;
-            left: -2px;
         }
 
         .ag-floating-filter-button {
@@ -1124,11 +1039,6 @@
             font-size: 0.9em;
             padding-right: $ag-grid-size;
             padding-left: 0;
-        }
-
-        .ag-labeled label {
-            margin-right: 0;
-            margin-left: $ag-grid-size;
         }
     }
 

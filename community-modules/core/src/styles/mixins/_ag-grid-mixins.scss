@@ -1,0 +1,63 @@
+
+/*
+Helper to define a style in LTR form and generate the RTL form
+For example, this scss:
+
+@include ag-auto-rtl(".foo", (
+    padding-right: 2px,
+    border-left-width: 0
+));
+
+Will emit:
+
+.ag-ltr .foo {
+  padding-right: 2px;
+  border-left-width: 0; }
+
+.ag-rtl .foo {
+  padding-left: 2px;
+  border-right-width: 0; }
+*/
+@mixin ag-auto-rtl($selectors, $rules) {
+    @each $selector in $selectors {
+        $rtl-rules: ();
+        .ag-ltr #{$selector} {
+            @each $property, $value in $rules {
+                @if str-index($property, "-right") {
+                    $rtl-property: ag-str-replace($property, "-right", "-left");
+                    $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+                }
+                @else if str-index($property, "-left") {
+                    $rtl-property: ag-str-replace($property, "-left", "-right");
+                    $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+                }
+                @else if $property == "right" {
+                    $rtl-rules: map-merge($rtl-rules, (left: $value));
+                }
+                @else if $property == "left" {
+                    $rtl-rules: map-merge($rtl-rules, (right: $value));
+                }
+                @else {
+                    @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
+                }
+                #{$property}: $value;
+            }
+        }
+        .ag-rtl #{$selector} {
+            @each $property, $value in $rtl-rules {
+                #{$property}: $value;
+            }
+        }
+    }
+}
+
+@function ag-str-replace($string, $search, $replace: '') {
+    $index: str-index($string, $search);
+    @if $index {
+        @return str-slice($string, 1, $index - 1)
+                + $replace
+                + ag-str-replace(str-slice($string, $index
+                + str-length($search)), $search, $replace);
+    }
+    @return $string;
+}

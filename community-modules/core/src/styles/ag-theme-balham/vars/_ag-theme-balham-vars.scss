@@ -23,6 +23,8 @@ $ag-alt-background: #ECF0F1 !default;
 $ag-odd-row-background-color: rgb(252, 253, 254) !default;
 $ag-header-cell-moving-background-color: $ag-default-background !default;
 
+$ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
+
 // Derived from above
 $ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
 $ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary

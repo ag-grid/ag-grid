@@ -6,6 +6,7 @@ export class Scene {
 
     private static id = 1;
     readonly id: string = this.createId();
+
     private createId(): string {
         return (this.constructor as any).name + '-' + (Scene.id++);
     }
@@ -29,6 +30,10 @@ export class Scene {
         this.canvas.download(fileName);
     }
 
+    getDataURL(type?: string): string {
+        return this.canvas.getDataURL(type);
+    }
+
     set width(value: number) {
         this.size = [value, this.height];
     }
@@ -45,6 +50,7 @@ export class Scene {
 
     set size(value: [number, number]) {
         const [width, height] = value;
+
         if (this.width !== width || this.height !== height) {
             this.canvas.resize(width, height);
             this.dirty = true;
@@ -166,6 +172,7 @@ export class Scene {
         }
 
         this._frameIndex++;
+
         if (this.renderFrameIndex) {
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, 40, 15);

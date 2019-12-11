@@ -13,7 +13,6 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { find } from "../../charts/util/array";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -23,7 +22,6 @@ export interface ChartDatasourceParams {
     startRow: number;
     endRow: number;
     aggFunc?: string | IAggFunc;
-    multiCategories: boolean;
 }
 
 interface IData {
@@ -77,13 +75,7 @@ export class ChartDatasource extends BeanStub {
                         // traverse parents to extract group label path
                         const labels = this.getGroupLabels(rowNode, valueString);
 
-                        if (params.multiCategories) {
-                            // add group labels to group column for multi category charts
-                            data[colId] = { labels, toString: function() { return find(this.labels as string[], v => !!v) || ''; } };
-                        } else {
-                            // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels.slice().reverse().join(' - ');
-                        }
+                        data[colId] = { labels, toString: function() { return this.labels.filter((l: string) => !!l).reverse().join(' - '); } };
 
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {

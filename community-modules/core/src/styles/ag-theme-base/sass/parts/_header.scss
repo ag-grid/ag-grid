@@ -68,23 +68,54 @@
             }
         }
     }
+    
+    @if $ag-header-column-separator {
+        .ag-header-cell::after,
+        .ag-header-group-cell::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            display: block;
+            width: $ag-header-column-separator-width;
+            top: $ag-header-column-separator-top;
+            bottom: $ag-header-column-separator-bottom;
+            background-color: $ag-header-column-separator-color;
+        }
 
-    .ag-header-cell-resize {
-        cursor: col-resize;
+        @include ag-auto-rtl(".ag-header-cell::after" ".ag-header-group-cell::after", (
+            right: 0
+        ));
+    }
+    
+    @if $ag-header-column-resize-handle {
+        .ag-header-cell-resize::after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            display: block;
+            left: calc(50% - #{$ag-header-column-resize-handle-width / 2});
+            width: $ag-header-column-resize-handle-width;
+            top: $ag-header-column-resize-handle-top;
+            bottom: $ag-header-column-resize-handle-bottom;
+            background-color: $ag-header-column-resize-handle-color;
+        }
+        @debug $ag-header-column-resize-handle-color;
     }
 
     .ag-header-select-all {
         margin-right: $ag-cell-horizontal-padding;
+    }
+    .ag-rtl {
+        .ag-header-select-all {
+            margin-left: $ag-cell-horizontal-padding;
+            margin-right: 0;
+        }
     }
 
     .ag-column-drag {
         // added 'move' as IE fallback
         cursor: move;
         cursor: grab;
-    }
-
-    .ag-header-cell-resize {
-        width: $ag-grid-size * 2;
     }
 
     &.ag-dnd-ghost {
@@ -115,14 +146,7 @@
         }
     }
 
-
-    ////////////////////////////////////////
-    // Floating filter
-    ////////////////////////////////////////
-    .ag-ltr .ag-floating-filter-button {
-        margin-left: $ag-grid-size * 3;
-    }
-
+    
     .ag-floating-filter-button {
         button {
             appearance: none;
@@ -133,5 +157,8 @@
             width: $ag-icon-size;
         }
     }
-
+    
+    @include ag-auto-rtl(".ag-floating-filter-button", (
+        margin-left: $ag-grid-size * 3
+    ));
 }

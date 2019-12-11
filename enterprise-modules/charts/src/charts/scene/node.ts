@@ -533,7 +533,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * and there is no need to check if node's {@link Node._scene} property
      * is defined inside node's `render` method. For example, instead of doing this:
      *
-     *     if (!this.scene) return;
      *     this.scene.appendPath(this.path);
      *
      * it's safe to do this:

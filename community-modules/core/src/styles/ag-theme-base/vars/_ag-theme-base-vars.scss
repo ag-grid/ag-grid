@@ -27,6 +27,7 @@ $ag-header-height: $ag-grid-size * 6 + 1 !default;
 $ag-row-height: ($ag-grid-size * 6 + 1) !default;
 $ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
 $ag-header-icon-size: 14px !default;
 $ag-input-height: null !default;
@@ -51,6 +52,21 @@ $ag-tooltip-border-color: #ebebeb !default;
 
 // Misc
 
+// Separator between columns in the header
+// For best UX, use either this or $ag-header-column-resize-handle but not both
+$ag-header-column-separator: $ag-borders !default;
+    $ag-header-column-separator-top: 25% !default;
+    $ag-header-column-separator-bottom: 25% !default;
+    $ag-header-column-separator-width: 1px !default;
+    $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
+
+// Visible marker for resizeable columns. Displays in the same position as the column
+// separator, but only when the column is resizeable
+$ag-header-column-resize-handle: not $ag-header-column-separator !default;
+    $ag-header-column-resize-handle-top: 25% !default;
+    $ag-header-column-resize-handle-bottom: 25% !default;
+    $ag-header-column-resize-handle-width: 1px !default;
+    $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
 // radius applied to the the grid wrapper grid
 $ag-grid-radius: null !default;

@@ -1,10 +1,12 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _, SeriesOptions, AxisOptions } from "@ag-grid-community/core";
+import { CartesianChartOptions, _, SeriesOptions, AxisOptions, AxisType } from "@ag-grid-community/core";
 import { CartesianChart } from "../../../../charts/chart/cartesianChart";
 import { ChartDataModel } from "../../chartDataModel";
 import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
-import { ChartAxisPosition } from "../../../../charts/chart/chartAxis";
+import { ChartAxisPosition, ChartAxis } from "../../../../charts/chart/chartAxis";
 import { find } from "../../../../charts/util/array";
+import { ChartBuilder } from "../../../../charts/chartBuilder";
+import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
     protected constructor(params: ChartProxyParams) {
@@ -42,6 +44,7 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
         const axis = find(this.chart.axes, axis => axis.position === axisPosition);
+
         if (axis) {
             axis.label.rotation = labelRotation;
         }
@@ -86,5 +89,53 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
         options.yAxis = this.getDefaultAxisOptions();
 
         return options;
+    }
+
+    protected updateAxes(baseAxisType: AxisType = 'category', isHorizontalChart = false): void {
+        const baseAxis = isHorizontalChart ? this.getYAxis() : this.getXAxis();
+
+        if (!baseAxis) { return; }
+
+        if (this.chartProxyParams.grouping) {
+            if (!(baseAxis instanceof GroupedCategoryAxis)) {
+                this.recreateChart();
+            }
+
+            return;
+        }
+
+        const axisClass = ChartBuilder.toAxisClass(baseAxisType)
+
+        if (baseAxis instanceof axisClass) { return; }
+
+        let options = this.chartOptions;
+
+        if (isHorizontalChart && !options.yAxis.type) {
+            options = {
+                ...options,
+                yAxis: {
+                    ...options.yAxis,
+                    type: baseAxisType,
+                }
+            };
+        } else if (!isHorizontalChart && !options.xAxis.type) {
+            options = {
+                ...options,
+                xAxis: {
+                    ...options.xAxis,
+                    type: baseAxisType,
+                }
+            };
+        }
+
+        this.recreateChart(options);
+    }
+
+    protected getXAxis(): ChartAxis {
+        return find(this.chart.axes, a => a.position === ChartAxisPosition.Bottom);
+    }
+
+    protected getYAxis(): ChartAxis {
+        return find(this.chart.axes, a => a.position === ChartAxisPosition.Left);
     }
 }

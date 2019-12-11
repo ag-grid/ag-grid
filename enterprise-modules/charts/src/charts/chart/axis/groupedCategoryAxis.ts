@@ -8,7 +8,7 @@ import { Matrix } from "../../scene/matrix";
 // import { Rect } from "../../scene/shape/rect"; debug (bbox)
 import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
-import { ILinearAxis, AxisLabel } from "../../axis";
+import { AxisLabel } from "../../axis";
 import { ChartAxis } from "../chartAxis";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
@@ -24,7 +24,7 @@ class GroupedCategoryAxisLabel extends AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class GroupedCategoryAxis extends ChartAxis implements ILinearAxis<BandScale<string | number>, string | number> {
+export class GroupedCategoryAxis extends ChartAxis {
     // debug (bbox)
     // private bboxRect = (() => {
     //     const rect = new Rect();

@@ -14,8 +14,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {

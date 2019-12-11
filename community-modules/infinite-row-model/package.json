@@ -4,7 +4,7 @@
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
-  "types": "./dist/es6/main.d.ts",
+  "types": "./dist/cjs/main.d.ts",
   "scripts": {
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",

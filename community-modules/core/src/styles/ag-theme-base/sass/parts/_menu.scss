@@ -149,10 +149,23 @@
 
         .ag-set-filter-item {
             height: $ag-virtual-item-height;
+            // TODO specific selectors
             > {
                 div,
                 span {
                     margin-left: 5px;
+                }
+            }
+        }
+
+        .ag-rtl {
+            .ag-set-filter-item {
+                > {
+                    div,
+                    span {
+                        margin-left: 0;
+                        margin-right: 5px;
+                    }
                 }
             }
         }
@@ -181,9 +194,6 @@
     }
     
 
-    ////////////////////////////////////////
-    // Column selector
-    ////////////////////////////////////////
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
@@ -204,6 +214,20 @@
             > div {
                 cursor: pointer;
             }
+        }
+    }
+
+    .ag-rtl {
+        .ag-column-select-panel {
+            .ag-column-tool-panel-column-group,
+            .ag-column-tool-panel-column {
+                .ag-column-select-checkbox,
+                .ag-column-group-icons {
+                    margin-left: $ag-grid-size;
+                    margin-right: $ag-grid-size;
+                }
+            }
+
         }
     }
 }

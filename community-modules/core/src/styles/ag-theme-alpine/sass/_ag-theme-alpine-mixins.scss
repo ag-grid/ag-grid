@@ -151,6 +151,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     @extend %form-font;
 }
 
+// TODO remove this and use icon font
 @mixin with-dropdown-arrow() {
     background-image: $ag-url-data-image-dropdown-arrow !important;
     background-repeat: no-repeat;

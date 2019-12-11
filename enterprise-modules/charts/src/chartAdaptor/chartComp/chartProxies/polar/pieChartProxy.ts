@@ -14,8 +14,8 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {

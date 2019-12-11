@@ -173,11 +173,16 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupMove(eHeaderCellLabel: HTMLElement, displayName: string): void {
+        const colDef = this.column.getColDef();
         const suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.getComponentHolder().suppressMovable
-            || this.column.getColDef().lockPosition;
+            || colDef.lockPosition;
 
-        if (suppressMove) { return; }
+        if (
+            suppressMove &&
+            !colDef.enableRowGroup &&
+            !colDef.enablePivot
+        ) { return; }
 
         if (eHeaderCellLabel) {
             const dragSource: DragSource = {
@@ -186,8 +191,8 @@ export class HeaderWrapperComp extends Component {
                 getDragItem: () => this.createDragItem(),
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
-                onDragStopped: () => this.column.setMoving(false, "uiColumnMoved")
+                onDragStarted: () => !suppressMove && this.column.setMoving(true, "uiColumnMoved"),
+                onDragStopped: () => !suppressMove && this.column.setMoving(false, "uiColumnMoved")
             };
 
             this.dragAndDropService.addDragSource(dragSource, true);

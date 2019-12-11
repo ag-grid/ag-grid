@@ -20,11 +20,20 @@ const init = () => {
                     button.classList.remove('selected');
                 }
             });
+            $(tabBlock)
+                .find('.failure-bounds')
+                .toggle(name === 'difference');
         };
         selectTab('difference');
         $(tabBlock)
             .find('.tab-button')
             .click(e => selectTab(e.target.textContent!.trim()));
+        $(document.body).addClass('blink-failure-bounds');
+        document.onkeypress = e => {
+            if (e.key === 'm') {
+                $(document.body).toggleClass('blink-failure-bounds');
+            }
+        }
     });
 };
 
@@ -35,12 +44,22 @@ const pageTemplate = (content: string) => /*html*/ `<!doctype html>
         <title>Visual Regression Results</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
         <style>
-            img {
-                max-width: 100%;
-                height: auto;
-            }
             .selected {
                 font-weight: bold;
+            }
+            .failure-image {
+                position: relative;
+            }
+            .failure-bounds {
+                display: none;
+            }
+            .blink-failure-bounds .failure-bounds {
+                display: block;
+                position: absolute;                
+                animation: blink .5s step-end infinite alternate;
+            }
+            @keyframes blink { 
+                50% { outline: solid 1px red; } 
             }
         </style>
 	</head>
@@ -53,18 +72,28 @@ const pageTemplate = (content: string) => /*html*/ `<!doctype html>
 </html>
 `;
 
-const getFailureHtml = (result: SpecResults) => /*html*/ `
+const getFailureHtml = ({name, area, differenceUri, originalUri, newUri}: SpecResults) => /*html*/ `
 <div>
-    <h2>❌ ${result.name}</h2>
+    <h2>❌ ${name}</h2>
     <div class="tab-block">
         <div class="tab-buttons">
             <button class="tab-button">difference</button>
             <button class="tab-button">original</button>
             <button class="tab-button">new</button>
         </div>
-        <img data-name="difference" src="${result.difference}">
-        <img data-name="original" src="${result.original}">
-        <img data-name="new" src="${result.new}">
+        <div class="failure-image">
+            <img data-name="difference" src="${differenceUri}">
+            <img data-name="original" src="${originalUri}">
+            <img data-name="new" src="${newUri}">
+            <div
+                class="failure-bounds"
+                style="
+                    top: ${area.top - 5}px;
+                    left: ${area.left - 5}px;
+                    width: ${area.right - area.left + 5}px;
+                    height: ${area.bottom - area.top + 5}px
+                "></div>
+        </div>
     </div>
 </div>
 `;
@@ -72,20 +101,23 @@ const getFailureHtml = (result: SpecResults) => /*html*/ `
 const getPassHtml = (result: SpecResults) => /*html*/ `
 <div>
     <h2>✅ ${result.name}</h2>
-    <img src="${result.original}">
+    <img src="${result.originalUri}">
 </div>
 `;
 
 export const getReportHtml = (results: SpecResults[], inProgress: boolean) => {
-    const failures = results.filter(r => r.difference);
+    const failures = results.filter(r => !!r.differenceUri);
     let body = '';
     if (inProgress) {
         body += '<h1>⌛ Report generation in progress...</h1>'
     }
     if (failures.length > 0) {
         body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
-        body += failures.map(getFailureHtml).join('\n\n');
+    } else {
+        body += `<h2>✅ ALL PASSED</h2>`;
     }
+    body += '<p>Press "m" to toggle the red blinkensquares.</p>';
+    body += failures.map(getFailureHtml).join('\n\n');
     // const passes = results.filter(r => !r.difference);
     // if (passes.length > 0) {
     //     body += `<h2>${passes.length} passes${passes.length > 1 ? 's' : ''}</h2>`;

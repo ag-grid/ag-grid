@@ -130,7 +130,7 @@
     "title": "Set Filter",
     "module": "@ag-grid-enterprise/set-filter",
     "enterprise": true,
-    "exported": "ServerSideRowModule"
+    "exported": "SetFilterModule"
   },
   {
     "title": "Side Bar",

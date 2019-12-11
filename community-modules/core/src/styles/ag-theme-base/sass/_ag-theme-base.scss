@@ -9,6 +9,7 @@
 @import "./parts/header";
 @import "./parts/footer";
 @import "./parts/column-drop";
+@import "./parts/charts";
 
 @mixin ag-grid-theme() {
     -webkit-font-smoothing: antialiased;
@@ -29,132 +30,13 @@
     @include ag-theme-base-part-header();
     @include ag-theme-base-part-footer();
     @include ag-theme-base-part-column-drop();
+    @include ag-theme-base-part-charts();
 
-    // TODO do we need this here?
-    @include icons_webfont();
-
+    @include ag-icons-webfont();
 
     // TODO move this general RTL section into the specific mixins
     .ag-rtl {
         text-align: right;
-
-        .ag-numeric-cell {
-            text-align: left;
-        }
-
-        .ag-checkbox,
-        .ag-radio-button,
-        .ag-toggle-button {
-            &:not(.ag-label-align-left) {
-                label {
-                    margin-right: $ag-grid-size;
-                    margin-left: 0;
-                }
-            }
-        }
-
-        .ag-tool-panel-wrapper {
-            .ag-pivot-mode-panel {
-                .ag-pivot-mode-select {
-                    margin-right: $ag-grid-size;
-                }
-            }
-
-            .ag-column-drop {
-                .ag-column-drop-empty-message {
-                    padding-left: $ag-grid-size;
-                    padding-right: $ag-grid-size * 4;
-                }
-            }
-        }
-
-        .ag-column-select-panel {
-            .ag-column-tool-panel-column-group,
-            .ag-column-tool-panel-column {
-                .ag-column-select-checkbox,
-                .ag-column-group-icons {
-                    margin-left: $ag-grid-size;
-                    margin-right: $ag-grid-size;
-                }
-            }
-
-            .ag-column-group-closed-icon {
-                display: block;
-                transform: rotate(180deg);
-            }
-        }
-
-        .ag-header-select-all {
-            margin-left: $ag-cell-horizontal-padding;
-            margin-right: 0;
-        }
-
-        .ag-selection-checkbox,
-        .ag-group-checkbox,
-        .ag-group-expanded,
-        .ag-group-contracted {
-            + .ag-cell-value, + .ag-group-value {
-                &:not(:empty) {
-                    margin-right: $ag-cell-horizontal-padding;
-                    margin-left: initial;
-                }
-            }
-            + .ag-group-checkbox {
-                margin-right: $ag-cell-horizontal-padding;
-                margin-left: initial;
-            }
-        }
-
-        .ag-group-child-count {
-            margin-left: unset;
-            margin-right: 2px;
-        }
-
-        .ag-column-drop-horizontal {
-            padding-right: $ag-cell-horizontal-padding;
-            .ag-icon-group,
-            .ag-icon-pivot {
-                margin-left: $ag-cell-horizontal-padding;
-                margin-right: 0;
-            }
-        }
-
-        .ag-floating-filter-button {
-            margin-right: $ag-grid-size * 3;
-        }
-
-        .ag-set-filter-item {
-            > {
-                div,
-                span {
-                    margin-left: 0;
-                    margin-right: 5px;
-                }
-            }
-        }
-
-        .ag-header .ag-header-cell-resize::after {
-            border-left: 1px solid $ag-border-color;
-            border-right: 0;
-        }
-
-        .ag-row-group-leaf-indent {
-            margin-right: $ag-icon-size + $ag-grid-size * 3;
-        }
-        .ag-cell {
-            border-left: $ag-cell-horizontal-border;
-        }
-
-        .ag-cell:not(.ag-cell-focus),
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-        .ag-root:not(.ag-has-focus) .ag-cell {
-            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-                border-left: 1px solid $ag-border-color;
-            }
-            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-                border-right: 1px solid $ag-border-color;
-            }
-        }
 
         .ag-side-bar {
             &.ag-side-bar-left {

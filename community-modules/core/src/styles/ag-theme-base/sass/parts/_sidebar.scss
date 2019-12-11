@@ -1,6 +1,5 @@
 
 @mixin ag-theme-base-part-sidebar {
-
     
     @for $i from 1 to 20 {
         .ag-ltr .ag-toolpanel-indent-#{$i} {
@@ -12,22 +11,13 @@
         }
     }
 
-    .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
-        margin-left: $ag-toolpanel-indent-size + $ag-grid-size;
-    }
-    
-    .ag-rtl {
-
-        .ag-column-tool-panel-column.ag-toolpanel-add-group-indent {
-            margin-left: 0;
-            margin-right: $ag-toolpanel-indent-size + $ag-grid-size;
-        }
-    }
+    @include ag-auto-rtl(".ag-toolpanel-add-group-indent", (
+        margin-left: $ag-toolpanel-indent-size + $ag-grid-size
+    ));
 
     .ag-tool-panel-wrapper {
         border-right: 0;
     }
-
 
     %side-bar-left {
         @include grid-border(right);
@@ -57,38 +47,6 @@
         background-color: $ag-tool-panel-background-color;
         position: relative;
 
-        .ag-side-buttons {
-            padding-top: $ag-grid-size * 4;
-            background: $ag-background-color;
-            width: $ag-icon-size + 4;
-            position: relative;
-
-            .ag-side-button {
-                button {
-                    background: transparent;
-                    border: 0;
-                    color: $ag-foreground-color;
-                    padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-                    width: calc(100% + 1px);
-                    margin: 0;
-                    min-height: $ag-grid-size * 18;
-                    border-width: 1px 0 1px 0;
-                    border-style: solid;
-                    border-color: transparent;
-                    background-position-y: center;
-                    background-position-x: center;
-                    background-repeat: no-repeat;
-                }
-            }
-
-            .ag-selected {
-                button {
-                    background-color: $ag-tool-panel-background-color;
-                    border-color: $ag-border-color;
-                }
-            }
-        }
-
         .ag-panel-container {
             border-right: 1px solid $ag-border-color;
         }
@@ -96,9 +54,37 @@
         &.full-width .ag-panel-container {
             border-right: 0;
         }
+    }
 
-        .ag-column-drop {
-            min-height: 50px;
+    .ag-side-buttons {
+        padding-top: $ag-grid-size * 4;
+        background: $ag-background-color;
+        width: $ag-icon-size + 4;
+        position: relative;
+
+        .ag-side-button {
+            button {
+                background: transparent;
+                border: 0;
+                color: $ag-foreground-color;
+                padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
+                width: calc(100% + 1px);
+                margin: 0;
+                min-height: $ag-grid-size * 18;
+                border-width: 1px 0 1px 0;
+                border-style: solid;
+                border-color: transparent;
+                background-position-y: center;
+                background-position-x: center;
+                background-repeat: no-repeat;
+            }
+        }
+
+        .ag-selected {
+            button {
+                background-color: $ag-tool-panel-background-color;
+                border-color: $ag-border-color;
+            }
         }
     }
 
@@ -111,6 +97,25 @@
             @extend %side-bar-right;
         }
     }
+    
+    .ag-rtl {
+        &.ag-side-bar-left {
+            @extend %side-bar-right;
+        }
+
+        &.ag-side-bar-right {
+            @extend %side-bar-left;
+        }
+
+        .ag-panel-container {
+            border-left: 1px solid $ag-border-color;
+            border-right: 0;
+        }
+
+        &.full-width .ag-panel-container {
+            border-left: 0;
+        }
+    }
 
     .ag-primary-cols-filter-wrapper {
         margin-left: $ag-grid-size;
@@ -119,6 +124,8 @@
 
     .ag-column-drop-vertical {
         @include grid-border(bottom, $color: $ag-secondary-border-color);
+
+        min-height: 50px;
     }
     
 }

@@ -12,16 +12,9 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
         this.initChartOptions();
         this.recreateChart();
-
-        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
-
-        if (barSeries) {
-            (barSeries as BarSeries).flipXY = !this.isColumnChart();
-            this.chart.addSeries(barSeries);
-        }
     }
 
-    protected createChart(options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         let builderFunction: keyof typeof ChartBuilder;
 
@@ -31,10 +24,22 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
         }
 
-        return ChartBuilder[builderFunction](parentElement, options);
+        const chart = ChartBuilder[builderFunction](parentElement, options || this.chartOptions);
+        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+
+        if (barSeries) {
+            (barSeries as BarSeries).flipXY = !this.isColumnChart();
+            chart.addSeries(barSeries);
+        }
+
+        return chart;
     }
 
     public update(params: UpdateChartParams): void {
+        this.chartProxyParams.grouping = params.grouping;
+
+        this.updateAxes('category', !this.isColumnChart());
+
         const chart = this.chart;
         const barSeries = chart.series[0] as BarSeries;
         const { fills, strokes } = this.getPalette();

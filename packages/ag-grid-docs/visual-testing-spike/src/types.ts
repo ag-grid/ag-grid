@@ -43,7 +43,8 @@ export type SpecStep = {
 
 export interface SpecResults {
     name: string;
-    difference: string | null;
-    original: string;
-    new: string;
+    differenceUri: string | null;
+    originalUri: string;
+    newUri: string;
+    area: { top: number; left: number; bottom: number; right: number };
 }
