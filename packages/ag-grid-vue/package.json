@@ -35,6 +35,7 @@
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-typescript": "^5.0.0",
+    "merge-stream": "^2.0.0",
     "typescript": "^3.6.0",
     "vue": "2.6.10",
     "vue-class-component": "^7.0.0",
