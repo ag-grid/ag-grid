@@ -44,7 +44,6 @@ packages/ag-grid-enterprise/main.js
 packages/ag-grid-vue/lib/**
 packages/ag-grid-vue/main.js
 community-modules/vue/lib/**
-community-modules/vue/dist/**
 community-modules/vue/main.js
 
 packages/ag-grid-angular/exports.d.ts
