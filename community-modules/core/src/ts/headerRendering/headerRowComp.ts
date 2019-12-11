@@ -43,6 +43,9 @@ export class HeaderRowComp extends Component {
         this.type = type;
         this.pinned = pinned;
         this.dropTarget = dropTarget;
+
+        const niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        this.addCssClass(`ag-header-row-${niceClassName}`);
     }
 
     public forEachHeaderElement(callback: (comp: IComponent<any>) => void): void {

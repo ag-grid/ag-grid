@@ -52,11 +52,21 @@ $ag-tooltip-border-color: #ebebeb !default;
 
 // Misc
 
+// Separator between columns in the header
+// For best UX, use either this or $ag-header-column-resize-handle but not both
+$ag-header-column-separator: $ag-borders !default;
+    $ag-header-column-separator-top: 25% !default;
+    $ag-header-column-separator-bottom: 25% !default;
+    $ag-header-column-separator-width: 1px !default;
+    $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
 
-$ag-column-resize-handle: $ag-borders !default;
-$ag-column-separator-height: 50% !default;
-$ag-column-separator-width: 1px !default;
-$ag-column-separator-color: $ag-secondary-border-color !default;
+// Visible marker for resizeable columns. Displays in the same position as the column
+// separator, but only when the column is resizeable
+$ag-header-column-resize-handle: not $ag-header-column-separator !default;
+    $ag-header-column-resize-handle-top: 25% !default;
+    $ag-header-column-resize-handle-bottom: 25% !default;
+    $ag-header-column-resize-handle-width: 1px !default;
+    $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
 // radius applied to the the grid wrapper grid
 $ag-grid-radius: null !default;

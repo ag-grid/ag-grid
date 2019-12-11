@@ -38,19 +38,6 @@
     .ag-rtl {
         text-align: right;
 
-
-
-
-
-
-
-        // TODO can we remove this?
-        .ag-header .ag-header-cell-resize::after {
-            border-left: 1px solid $ag-border-color;
-            border-right: 0;
-        }
-
-
         .ag-side-bar {
             &.ag-side-bar-left {
                 @extend %side-bar-right;

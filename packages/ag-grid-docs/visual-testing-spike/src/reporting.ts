@@ -28,6 +28,12 @@ const init = () => {
         $(tabBlock)
             .find('.tab-button')
             .click(e => selectTab(e.target.textContent!.trim()));
+        $(document.body).addClass('blink-failure-bounds');
+        document.onkeypress = e => {
+            if (e.key === 'm') {
+                $(document.body).toggleClass('blink-failure-bounds');
+            }
+        }
     });
 };
 
@@ -45,6 +51,10 @@ const pageTemplate = (content: string) => /*html*/ `<!doctype html>
                 position: relative;
             }
             .failure-bounds {
+                display: none;
+            }
+            .blink-failure-bounds .failure-bounds {
+                display: block;
                 position: absolute;                
                 animation: blink .5s step-end infinite alternate;
             }
@@ -103,10 +113,11 @@ export const getReportHtml = (results: SpecResults[], inProgress: boolean) => {
     }
     if (failures.length > 0) {
         body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
-        body += failures.map(getFailureHtml).join('\n\n');
     } else {
         body += `<h2>✅ ALL PASSED</h2>`;
     }
+    body += '<p>Press "m" to toggle the red blinkensquares.</p>';
+    body += failures.map(getFailureHtml).join('\n\n');
     // const passes = results.filter(r => !r.difference);
     // if (passes.length > 0) {
     //     body += `<h2>${passes.length} passes${passes.length > 1 ? 's' : ''}</h2>`;
