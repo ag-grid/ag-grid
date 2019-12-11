@@ -6,46 +6,19 @@
     }
     
     @for $i from 1 to 20 {
-    
-        .ag-ltr .ag-row-group-indent-#{$i} {
-            padding-left: $i * $ag-row-group-indent-size;
-        }
-    
-        .ag-rtl .ag-row-group-indent-#{$i} {
-            padding-right: $i * $ag-row-group-indent-size;
-        }
+        @include ag-auto-rtl(".ag-row-group-indent-#{$i}", (
+            padding-left: $i * $ag-row-group-indent-size
+        ));
     }
 
-    .ag-ltr {
-        // TODO rtl mixin
-        .ag-row-group-leaf-indent {
-            margin-left: $ag-row-group-indent-size;
-        }
-        // TODO rtl mixin
-        .ag-cell {
-            border-right: $ag-cell-horizontal-border;
-        }
-        
-        // TODO clean up how selections happen, maybe move to new file or section
-        .ag-cell:not(.ag-cell-focus),
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-        .ag-root:not(.ag-has-focus) .ag-cell {
-            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-                border-left: 1px solid $ag-border-color;
-            }
-            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-                border-right: 1px solid $ag-border-color;
-            }
-        }
-    }
+
+    @include ag-auto-rtl(".ag-row-group-leaf-indent", (
+        margin-left: $ag-row-group-indent-size
+    ));
 
     .ag-rtl {
-        .ag-row-group-leaf-indent {
-            margin-right: $ag-icon-size + $ag-grid-size * 3;
-        }
-        .ag-cell {
-            border-left: $ag-cell-horizontal-border;
-        }
+        text-align: right;
+        
 
         .ag-cell:not(.ag-cell-focus),
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
@@ -147,9 +120,9 @@
         background-color: $ag-hover-color;
     }
 
-    .ag-numeric-cell {
-        text-align: right;
-    }
+    @include ag-auto-rtl(".ag-numeric-cell", (
+        text-align: right
+    ));
 
     .ag-cell {
         @include grid-cell($ag-row-height - 2, $ag-cell-horizontal-padding);
@@ -263,12 +236,6 @@
 
     .ag-overlay-loading-center {
         @include card();
-    }
-
-    .ag-rtl {
-        .ag-numeric-cell {
-            text-align: left;
-        }
     }
 
 }

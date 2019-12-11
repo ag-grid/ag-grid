@@ -166,12 +166,6 @@ $ag-checkbox-border-radius: $ag-border-radius;
     &:active {
         background-image: $ag-url-pressed-data-image-dropdown-arrow !important;
     }
-
-    .ag-rtl & {
-        background-position: left $ag-grid-size top $ag-grid-size;
-        padding-right: $ag-grid-size;
-        padding-left: $ag-grid-size * 4;
-    }
 }
 
 %select {

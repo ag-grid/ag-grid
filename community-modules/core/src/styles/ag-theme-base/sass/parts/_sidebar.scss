@@ -19,30 +19,6 @@
         border-right: 0;
     }
 
-    %side-bar-left {
-        @include grid-border(right);
-        .ag-side-button.ag-selected button {
-            // TODO check if these are required without borders
-            margin-right: -1px;
-            padding-right: 1px;
-        }
-        .ag-tool-panel-wrapper {
-            border-left: 1px solid $ag-border-color;
-        }
-    }
-    
-    %side-bar-right {
-        @include grid-border(left);
-        .ag-side-button.ag-selected button {
-            // TODO check if these are required without borders
-            margin-left: -1px;
-            padding-left: 1px;
-        }
-        .ag-tool-panel-wrapper {
-            border-right: 1px solid $ag-border-color;
-        }
-    }
-
     .ag-side-bar {
         background-color: $ag-tool-panel-background-color;
         position: relative;
@@ -88,32 +64,48 @@
         }
     }
 
-    .ag-ltr .ag-side-bar {
-        &.ag-side-bar-left {
+    %side-bar-left {
+        @include grid-border(right);
+        .ag-tool-panel-wrapper {
+            @include grid-border(left);
+        }
+
+        .ag-side-button.ag-selected button {
+            margin-right: -1px;
+            padding-right: 1px;
+        }
+    }
+    
+    %side-bar-right {
+        @include grid-border(left);
+        
+        .ag-tool-panel-wrapper {
+            @include grid-border(right);
+        }
+
+        .ag-side-button.ag-selected button {
+            margin-left: -1px;
+            padding-left: 1px;
+        }
+    }
+
+    .ag-ltr {
+        .ag-side-bar-left {
             @extend %side-bar-left;
         }
 
-        &.ag-side-bar-right {
+        .ag-side-bar-right {
             @extend %side-bar-right;
         }
     }
     
     .ag-rtl {
-        &.ag-side-bar-left {
+        .ag-side-bar-left {
             @extend %side-bar-right;
         }
 
-        &.ag-side-bar-right {
+        .ag-side-bar-right {
             @extend %side-bar-left;
-        }
-
-        .ag-panel-container {
-            border-left: 1px solid $ag-border-color;
-            border-right: 0;
-        }
-
-        &.full-width .ag-panel-container {
-            border-left: 0;
         }
     }
 
