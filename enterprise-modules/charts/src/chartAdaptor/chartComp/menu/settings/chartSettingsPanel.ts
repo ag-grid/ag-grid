@@ -1,7 +1,15 @@
-import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector, PreDestroy } from "@ag-grid-community/core";
+import {
+    _,
+    Autowired,
+    Component,
+    GridOptionsWrapper,
+    PostConstruct,
+    PreDestroy,
+    RefSelector
+} from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { ChartController } from "../../chartController";
-import { ChartPaletteName, ChartPalette } from "../../../../charts/chart/palettes";
+import {ChartPalette, ChartPaletteName} from "ag-charts-community";
+import {ChartController} from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 

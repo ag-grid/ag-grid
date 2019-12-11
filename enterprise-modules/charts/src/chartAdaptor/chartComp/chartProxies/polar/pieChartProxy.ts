@@ -1,10 +1,7 @@
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PieSeries } from "../../../../charts/chart/series/polar/pieSeries";
-import { PolarChartProxy } from "./polarChartProxy";
-import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
-import { PolarChart } from "../../../../charts/chart/polarChart";
+import {ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart} from "ag-charts-community";
+import {PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {PolarChartProxy} from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy {
     public constructor(params: ChartProxyParams) {

@@ -1,5 +1,5 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniDoughnut } from "./miniDoughnut";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniDoughnut} from "./miniDoughnut";
 
 export class MiniPie extends MiniDoughnut {
     static chartType = ChartType.Pie;

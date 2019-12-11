@@ -5,12 +5,12 @@ import {
     AgSelect,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
+    FontStyle,
     FontWeight,
-    FontStyle
+    PostConstruct,
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartTranslator} from "../../chartTranslator";
 
 export type Font = {
     family?: string;

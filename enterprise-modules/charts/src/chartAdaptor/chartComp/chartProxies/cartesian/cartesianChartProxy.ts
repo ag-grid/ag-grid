@@ -1,12 +1,15 @@
-import { ChartProxy, ChartProxyParams } from "../chartProxy";
-import { CartesianChartOptions, _, SeriesOptions, AxisOptions, AxisType } from "@ag-grid-community/core";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import { ChartDataModel } from "../../chartDataModel";
-import { GroupedCategoryChart } from "../../../../charts/chart/groupedCategoryChart";
-import { ChartAxisPosition, ChartAxis } from "../../../../charts/chart/chartAxis";
-import { find } from "../../../../charts/util/array";
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { GroupedCategoryAxis } from "../../../../charts/chart/axis/groupedCategoryAxis";
+import {ChartProxy, ChartProxyParams} from "../chartProxy";
+import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
+import {
+    CartesianChart,
+    ChartAxis,
+    ChartAxisPosition,
+    ChartBuilder,
+    find,
+    GroupedCategoryAxis,
+    GroupedCategoryChart
+} from "ag-charts-community";
+import {ChartDataModel} from "../../chartDataModel";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
     protected constructor(params: ChartProxyParams) {

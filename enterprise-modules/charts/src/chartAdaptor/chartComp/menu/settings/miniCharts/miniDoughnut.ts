@@ -1,7 +1,6 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChart } from "./miniChart";
-import { Sector } from "../../../../../charts/scene/shape/sector";
-import { toRadians } from "../../../../../charts/util/angle";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChart} from "./miniChart";
+import {Sector, toRadians} from "ag-charts-community";
 
 export class MiniDoughnut extends MiniChart {
     static chartType = ChartType.Doughnut;

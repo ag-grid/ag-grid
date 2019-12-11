@@ -8,10 +8,10 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import {ChartController} from "../../../chartController";
+import {MarkersPanel} from "./markersPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
 
 export class LineSeriesPanel extends Component {
 

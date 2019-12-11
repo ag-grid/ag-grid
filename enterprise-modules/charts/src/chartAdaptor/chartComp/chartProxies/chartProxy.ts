@@ -1,26 +1,30 @@
 import {
     _,
+    CaptionOptions,
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    DropShadowOptions,
     Events,
     EventService,
+    FontOptions,
+    PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
-    PaddingOptions,
-    DropShadowOptions,
-    FontOptions,
-    CaptionOptions,
 } from "@ag-grid-community/core";
-import { Chart } from "../../../charts/chart/chart";
-import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
-import { ColumnSeries as BarSeries } from "../../../charts/chart/series/cartesian/columnSeries";
-import { DropShadow } from "../../../charts/scene/dropShadow";
-import { AreaSeries } from "../../../charts/chart/series/cartesian/areaSeries";
-import { PieSeries } from "../../../charts/chart/series/polar/pieSeries";
-import { Padding } from "../../../charts/util/padding";
-import { Caption } from "../../../charts/caption";
-import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
+import {
+    AreaSeries,
+    Caption,
+    CategoryAxis,
+    Chart,
+    ChartPalette,
+    ChartPaletteName,
+    ColumnSeries as BarSeries,
+    DropShadow,
+    Padding,
+    palettes,
+    PieSeries
+} from "ag-charts-community";
 
 export interface ChartProxyParams {
     chartType: ChartType;

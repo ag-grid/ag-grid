@@ -2,6 +2,7 @@
   "packages": [
     "community-modules/*",
     "enterprise-modules/*",
+    "charts-community-modules/*",
     "packages/*"
   ],
   "command": {

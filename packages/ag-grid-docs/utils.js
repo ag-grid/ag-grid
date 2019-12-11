@@ -25,8 +25,7 @@ const getAllModules = () => {
             const sourceDir = fullPath.substr(0, fullPath.lastIndexOf("/"));
             const rootDir = sourceDir.substr(0, sourceDir.lastIndexOf("/"));
 
-            const barrelNamePrefix = moduleRoot === 'community-modules' ? '@ag-grid-community' : '@ag-grid-enterprise';
-            const publishedName = `${barrelNamePrefix}/${moduleDirName}`;
+            const publishedName = require(`${rootDir}/package.json`).name;
 
             return {
                 publishedName,
@@ -40,25 +39,27 @@ const getAllModules = () => {
             }
         });
 
-    const communityModules = mapModules('community-modules');
-    const enterpriseModules = mapModules('enterprise-modules');
+    const gridCommunityModules = mapModules('community-modules');
+    const gridEnterpriseModules = mapModules('enterprise-modules');
 
-    return {communityModules, enterpriseModules};
+    const chartCommunityModules = mapModules('charts-community-modules');
+
+    return {gridCommunityModules, gridEnterpriseModules, chartCommunityModules};
 };
 
 function updateBetweenStrings(fileContents,
-                                startString,
-                                endString,
-                                communityModules,
-                                enterpriseModules,
-                                communityMappingFunc,
-                                enterpriseMappingFunc) {
+                              startString,
+                              endString,
+                              gridCommunityModules,
+                              gridEnterpriseModules,
+                              communityMappingFunc,
+                              enterpriseMappingFunc) {
 
     const startIndex = fileContents.indexOf(startString) + startString.length;
-    const endIndex = fileContents.indexOf(endString) ;
+    const endIndex = fileContents.indexOf(endString);
 
-    const communityModuleEntries = communityModules.map(communityMappingFunc);
-    const enterpriseModuleEntries = enterpriseModules.map(enterpriseMappingFunc);
+    const communityModuleEntries = gridCommunityModules.map(communityMappingFunc);
+    const enterpriseModuleEntries = gridEnterpriseModules.map(enterpriseMappingFunc);
 
     const fragmentToBeInserted = communityModuleEntries.concat(enterpriseModuleEntries).join('\n');
     return `${fileContents.substring(0, startIndex)}\n${fragmentToBeInserted}\n${fileContents.substring(endIndex)}`;

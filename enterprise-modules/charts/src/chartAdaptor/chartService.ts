@@ -1,28 +1,28 @@
 import {
     _,
-    Bean,
     Autowired,
-    PreDestroy,
+    Bean,
     CellRange,
-    CreateRangeChartParams,
-    CreatePivotChartParams,
+    ChartModel,
+    ChartOptions,
     ChartRef,
     ChartType,
-    Context,
-    GridOptionsWrapper,
-    ProcessChartOptionsParams,
-    ChartOptions,
-    IAggFunc,
-    Environment,
     ColumnController,
+    Context,
+    CreatePivotChartParams,
+    CreateRangeChartParams,
+    Environment,
+    GridOptionsWrapper,
+    IAggFunc,
     IChartService,
-    SeriesOptions,
-    Optional,
     IRangeController,
-    ChartModel
+    Optional,
+    PreDestroy,
+    ProcessChartOptionsParams,
+    SeriesOptions
 } from "@ag-grid-community/core";
-import { GridChartParams, GridChartComp } from "./chartComp/gridChartComp";
-import { ChartPaletteName } from "../charts/chart/palettes";
+import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
+import {ChartPaletteName} from "ag-charts-community";
 
 @Bean('chartService')
 export class ChartService implements IChartService {
@@ -104,13 +104,13 @@ export class ChartService implements IChartService {
     }
 
     private createChart(cellRange: CellRange,
-        chartType: ChartType,
-        chartPaletteName?: ChartPaletteName,
-        pivotChart = false,
-        suppressChartRanges = false,
-        container?: HTMLElement,
-        aggFunc?: string | IAggFunc,
-        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
+                        chartType: ChartType,
+                        chartPaletteName?: ChartPaletteName,
+                        pivotChart = false,
+                        suppressChartRanges = false,
+                        container?: HTMLElement,
+                        aggFunc?: string | IAggFunc,
+                        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 

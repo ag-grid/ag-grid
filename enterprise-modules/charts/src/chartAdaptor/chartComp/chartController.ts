@@ -1,24 +1,24 @@
 import {
+    _,
     AgEvent,
     Autowired,
     BeanStub,
+    CellRangeParams,
+    ChartModel,
+    ChartOptionsChanged,
+    ChartRangeSelectionChanged,
     ChartType,
+    ColumnApi,
     Events,
     EventService,
-    ChartOptionsChanged,
-    PostConstruct,
-    _,
-    IRangeController,
-    ChartRangeSelectionChanged,
-    ColumnApi,
-    GridApi,
-    ChartModel,
-    CellRangeParams,
     GetChartImageDataUrlParams,
+    GridApi,
+    IRangeController,
+    PostConstruct,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, palettes, ChartPaletteName } from "../../charts/chart/palettes";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import {ChartDataModel, ColState} from "./chartDataModel";
+import {ChartPalette, ChartPaletteName, palettes} from "ag-charts-community";
+import {ChartProxy} from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

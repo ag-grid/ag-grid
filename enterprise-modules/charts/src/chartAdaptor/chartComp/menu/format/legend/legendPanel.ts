@@ -5,15 +5,15 @@ import {
     AgSlider,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
-    LegendPosition,
     FontStyle,
     FontWeight,
+    LegendPosition,
+    PostConstruct,
+    RefSelector,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import {ChartController} from "../../../chartController";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
@@ -125,11 +125,21 @@ export class LegendPanel extends Component {
         const setFont = (font: Font) => {
             const chartProxy = this.chartController.getChartProxy();
 
-            if (font.family) { chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setChartOption("legend.item.label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
-            if (font.color) { chartProxy.setChartOption("legend.item.label.color", font.color); }
+            if (font.family) {
+                chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setChartOption("legend.item.label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setChartOption("legend.item.label.color", font.color);
+            }
         };
 
         const params: FontPanelParams = {

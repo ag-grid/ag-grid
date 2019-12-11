@@ -1,13 +1,15 @@
-import { CartesianChartOptions, AreaSeriesOptions, ChartType, _ } from "@ag-grid-community/core";
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { AreaSeries } from "../../../../charts/chart/series/cartesian/areaSeries";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { AreaSeriesOptions as InternalAreaSeriesOptions } from "../../../../charts/chartOptions";
-import { ChartAxisPosition } from "../../../../charts/chart/chartAxis";
-import { BandScale } from "../../../../charts/scale/bandScale";
+import {AreaSeriesOptions, CartesianChartOptions, ChartType} from "@ag-grid-community/core";
+import {
+    AreaSeries,
+    AreaSeriesOptions as InternalAreaSeriesOptions,
+    BandScale,
+    CartesianChart,
+    CategoryAxis,
+    ChartAxisPosition,
+    ChartBuilder
+} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
 
 export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     public constructor(params: ChartProxyParams) {

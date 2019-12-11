@@ -41,6 +41,10 @@ if (USE_LOCAL) {
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
 /* END OF CSS DEV - DO NOT DELETE */
 /* START OF MODULES DEV - DO NOT DELETE */
@@ -49,6 +53,7 @@ if (USE_LOCAL) {
         "@ag-grid-community/core" => "$prefix/@ag-grid-community/core",
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/csv-export",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/infinite-row-model",
+        "ag-charts-community" => "$prefix/ag-charts-community",
         "@ag-grid-enterprise/all-modules" => "$prefix/@ag-grid-enterprise/all-modules",
         "@ag-grid-enterprise/charts" => "$prefix/@ag-grid-enterprise/charts",
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/clipboard",
@@ -80,6 +85,9 @@ if (USE_LOCAL) {
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
 /* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        /* START OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/core.cjs.js",
+/* END OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
     );
     $systemJsEnterprisePaths = array(
 /* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
@@ -119,6 +127,10 @@ if (USE_LOCAL) {
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-blue.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-bootstrap.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-dark.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-fresh.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
 /* END OF CSS PROD - DO NOT DELETE */
         "@ag-grid-community/react" => "npm:@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",

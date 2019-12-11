@@ -1,5 +1,5 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniStackedBar } from "./miniStackedBar";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniStackedBar} from "./miniStackedBar";
 
 export class MiniNormalizedBar extends MiniStackedBar {
     static chartType = ChartType.NormalizedBar;

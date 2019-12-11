@@ -7,10 +7,10 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
+import {ChartController} from "../../../chartController";
+import {MarkersPanel} from "./markersPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
 
 export class ScatterSeriesPanel extends Component {
 

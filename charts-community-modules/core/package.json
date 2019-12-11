@@ -1,7 +1,7 @@
 {
-  "name": "@ag-grid-enterprise/charts",
+  "name": "ag-charts-community",
   "version": "22.1.0",
-  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "description": "Advanced Charting / Charts supporting Javascript / React / Angular",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
@@ -17,10 +17,9 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "keywords": [
-    "web-components",
-    "grid",
+    "chart",
+    "charts",
     "data",
-    "table",
     "angular",
     "angular-component",
     "react",
@@ -42,10 +41,6 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-community": "~22.1.0",
-    "@ag-grid-community/core": "~22.1.0",
-    "@ag-grid-enterprise/core": "~22.1.0",
-    "@ag-grid-enterprise/range-selection": "~22.1.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",

@@ -1,7 +1,15 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
-import { ChartController } from "../../../chartController";
+import {
+    AgGroupComponent,
+    AgSlider,
+    Autowired,
+    ChartType,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "@ag-grid-community/core";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
+import {ChartController} from "../../../chartController";
 
 export class MarkersPanel extends Component {
 

@@ -9,13 +9,13 @@ import {
     ColumnController,
     GridOptionsWrapper,
     IAggFunc,
+    IRangeController,
     PostConstruct,
     RowNode,
     RowRenderer,
-    IRangeController,
     ValueService
 } from "@ag-grid-community/core";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import {ChartDatasource, ChartDatasourceParams} from "./chartDatasource";
 
 export interface ColState {
     column?: Column;

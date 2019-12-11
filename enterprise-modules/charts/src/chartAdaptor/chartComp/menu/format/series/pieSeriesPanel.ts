@@ -5,18 +5,18 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
     FontStyle,
-    FontWeight
+    FontWeight,
+    PostConstruct,
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ShadowPanel } from "./shadowPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { CalloutPanel } from "./calloutPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {CalloutPanel} from "./calloutPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 
@@ -115,11 +115,21 @@ export class PieSeriesPanel extends Component {
         const setFont = (font: Font) => {
             const chartProxy = this.getChartProxy();
 
-            if (font.family) { chartProxy.setSeriesOption("label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setSeriesOption("label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setSeriesOption("label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setSeriesOption("label.fontSize", font.size); }
-            if (font.color) { chartProxy.setSeriesOption("label.color", font.color); }
+            if (font.family) {
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setSeriesOption("label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setSeriesOption("label.color", font.color);
+            }
         };
 
         const params: FontPanelParams = {

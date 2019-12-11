@@ -3,6 +3,7 @@ import {
     AgDialog,
     Autowired,
     CellRange,
+    ChartModel,
     ChartOptions,
     ChartType,
     Component,
@@ -13,21 +14,20 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService,
-    ChartModel
+    ResizeObserverService
 } from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartController } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { ChartPaletteName } from "../../charts/chart/palettes";
-import { ChartTranslator } from "./chartTranslator";
+import {ChartMenu} from "./menu/chartMenu";
+import {ChartController} from "./chartController";
+import {ChartDataModel, ChartModelParams} from "./chartDataModel";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
+import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {ChartPaletteName} from "ag-charts-community";
+import {ChartTranslator} from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;

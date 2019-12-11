@@ -1,6 +1,13 @@
-import { AgGroupComponent, Autowired, Component, PostConstruct, RefSelector, AgColorPicker } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ChartTranslator } from "../../../chartTranslator";
+import {
+    AgColorPicker,
+    AgGroupComponent,
+    Autowired,
+    Component,
+    PostConstruct,
+    RefSelector
+} from "@ag-grid-community/core";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE =
