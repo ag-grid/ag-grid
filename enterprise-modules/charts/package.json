@@ -42,6 +42,7 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
+    "ag-charts-community": "~22.1.0",
     "@ag-grid-community/core": "~22.1.0",
     "@ag-grid-enterprise/core": "~22.1.0",
     "@ag-grid-enterprise/range-selection": "~22.1.0"

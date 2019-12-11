@@ -4,22 +4,22 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
+    AgToggleButton,
     Autowired,
-    Component,
-    PostConstruct,
     ChartType,
-    GridOptionsWrapper,
-    DragSource,
-    DragSourceType,
+    Component,
     DragAndDropService,
     DraggingEvent,
-    VerticalDirection,
+    DragSource,
+    DragSourceType,
     DropTarget,
-    AgToggleButton
+    GridOptionsWrapper,
+    PostConstruct,
+    VerticalDirection
 } from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartDataModel";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartDataModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;

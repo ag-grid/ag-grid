@@ -4,17 +4,17 @@ import {
     AgInputTextArea,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
     FontStyle,
-    FontWeight
+    FontWeight,
+    PostConstruct,
+    RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { PaddingPanel } from "./paddingPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { CaptionOptions } from "../../../../../charts/chartOptions";
-import { BackgroundPanel } from "./backgroundPanel";
+import {ChartController} from "../../../chartController";
+import {PaddingPanel} from "./paddingPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CaptionOptions} from "ag-charts-community";
+import {BackgroundPanel} from "./backgroundPanel";
 
 export class ChartPanel extends Component {
 

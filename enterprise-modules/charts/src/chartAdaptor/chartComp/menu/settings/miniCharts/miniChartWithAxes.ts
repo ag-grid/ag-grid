@@ -1,6 +1,6 @@
-import { _, PostConstruct } from "@ag-grid-community/core";
-import { MiniChart } from "./miniChart";
-import { Line } from "../../../../../charts/scene/shape/line";
+import {PostConstruct} from "@ag-grid-community/core";
+import {MiniChart} from "./miniChart";
+import {Line} from "ag-charts-community";
 
 export abstract class MiniChartWithAxes extends MiniChart {
     private readonly stroke = 'gray';

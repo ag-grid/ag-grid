@@ -896,77 +896,100 @@
       {
         "title": "Charts",
         "icon": "icon-charts",
-        "level-2-display-style-forced": "block",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-grid-charts-overview/",
-            "enterprise": true
-          },
-          {
-            "title": "Range Chart",
-            "url": "javascript-grid-charts-range-chart/",
-            "enterprise": true
-          },
-          {
-            "title": "Pivot Chart",
-            "url": "javascript-grid-charts-pivot-chart/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Toolbar",
-            "url": "javascript-grid-charts-chart-toolbar/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart API",
-            "url": "javascript-grid-charts-chart-range-api/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Container",
-            "url": "javascript-grid-charts-container/",
-            "enterprise": true
-          },
-          {
-            "title": "Customisation",
-            "url": "javascript-grid-charts-customisation/",
+            "title": "Integrated",
+            "url": "javascript-grid-charts-integrated-overview/",
             "enterprise": true,
             "items": [
               {
-                "title": "General",
-                "url": "javascript-grid-charts-customisation-general/",
+                "title": "Range Chart",
+                "url": "javascript-grid-charts-integrated-range-chart/",
                 "enterprise": true
               },
               {
-                "title": "Cartesian",
-                "url": "javascript-grid-charts-customisation-cartesian/",
+                "title": "Pivot Chart",
+                "url": "javascript-grid-charts-integrated-pivot-chart/",
                 "enterprise": true
               },
               {
-                "title": "Bar/Column",
-                "url": "javascript-grid-charts-customisation-bar/",
+                "title": "Chart Toolbar",
+                "url": "javascript-grid-charts-integrated-chart-toolbar/",
                 "enterprise": true
               },
               {
-                "title": "Line",
-                "url": "javascript-grid-charts-customisation-line/",
+                "title": "Chart API",
+                "url": "javascript-grid-charts-integrated-chart-range-api/",
                 "enterprise": true
               },
               {
-                "title": "Scatter/Bubble",
-                "url": "javascript-grid-charts-customisation-scatter/",
+                "title": "Chart Container",
+                "url": "javascript-grid-charts-integrated-container/",
                 "enterprise": true
               },
               {
-                "title": "Area",
-                "url": "javascript-grid-charts-customisation-area/",
-                "enterprise": true
+                "title": "Customisation",
+                "url": "javascript-grid-charts-integrated-customisation/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "General",
+                    "url": "javascript-grid-charts-integrated-customisation-general/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Cartesian",
+                    "url": "javascript-grid-charts-integrated-customisation-cartesian/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-grid-charts-integrated-customisation-bar/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Line",
+                    "url": "javascript-grid-charts-integrated-customisation-line/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-grid-charts-integrated-customisation-scatter/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-grid-charts-integrated-customisation-area/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-grid-charts-integrated-customisation-pie/",
+                    "enterprise": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Standalone",
+            "url": "javascript-grid-charts-standalone-overview/",
+            "items": [
+              {
+                "title": "Getting Started",
+                "url": "javascript-grid-charts-standalone-getting-started/"
               },
               {
-                "title": "Pie/Doughnut",
-                "url": "javascript-grid-charts-customisation-pie/",
-                "enterprise": true
+                "title": "Gallery",
+                "url": "javascript-grid-charts-standalone-gallery"
+              },
+              {
+                "title": "Features",
+                "url": "javascript-grid-charts-standalone-features"
+              },
+              {
+                "title": "API",
+                "url": "javascript-grid-charts-standalone-api"
               }
             ]
           },
@@ -979,7 +1002,7 @@
               }
             ]
           }
-        ]
+         ]
       }
     ]
   },

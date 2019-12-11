@@ -1,6 +1,7 @@
 @import '../../mixins/ag-theme-mixins';
 @import "./parts/reset";
-@import "./parts/grid";
+@import "./parts/grid-layout";
+@import "./parts/grid-borders";
 @import "./parts/menu";
 @import "./parts/sidebar";
 @import "./parts/filter-tool-panel";
@@ -21,7 +22,8 @@
     line-height: normal;
 
     @include ag-theme-base-part-reset();
-    @include ag-theme-base-part-grid();
+    @include ag-theme-base-part-grid-layout();
+    @include ag-theme-base-part-grid-borders();
     @include ag-theme-base-part-menu();
     @include ag-theme-base-part-sidebar();
     @include ag-theme-base-part-filter-tool-panel();
@@ -33,28 +35,4 @@
     @include ag-theme-base-part-charts();
 
     @include ag-icons-webfont();
-
-    // TODO move this general RTL section into the specific mixins
-    .ag-rtl {
-        text-align: right;
-
-        .ag-side-bar {
-            &.ag-side-bar-left {
-                @extend %side-bar-right;
-            }
-
-            &.ag-side-bar-right {
-                @extend %side-bar-left;
-            }
-
-            .ag-panel-container {
-                border-left: 1px solid $ag-border-color;
-                border-right: 0;
-            }
-
-            &.full-width .ag-panel-container {
-                border-left: 0;
-            }
-        }
-    }
 }

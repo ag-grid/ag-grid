@@ -49,6 +49,7 @@ if (USE_LOCAL) {
         "@ag-grid-community/core" => "$prefix/@ag-grid-community/core",
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/csv-export",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/infinite-row-model",
+        "ag-charts-community" => "$prefix/ag-charts-community",
         "@ag-grid-enterprise/all-modules" => "$prefix/@ag-grid-enterprise/all-modules",
         "@ag-grid-enterprise/charts" => "$prefix/@ag-grid-enterprise/charts",
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/clipboard",
@@ -80,6 +81,9 @@ if (USE_LOCAL) {
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
 /* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        /* START OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/core.cjs.js",
+/* END OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
     );
     $systemJsEnterprisePaths = array(
 /* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */

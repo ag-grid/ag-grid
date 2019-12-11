@@ -297,11 +297,8 @@ ng serve
                 we want.</p>
 
             <p>We also need to let the Angular CLI know about the styles we want to use. In our demo we're going to use
-                the
-                <a href="https://www.ag-grid.com/javascript-grid-themes/fresh-theme.php">Fresh Theme</a>, but there are
-                others available - please see the <a href="https://www.ag-grid.com/javascript-grid-styling/">Themes
-                    Documentation</a>
-                for more details.</p>
+                the Balham Theme, but there are others available - please see the
+                <a href="https://www.ag-grid.com/javascript-grid-themes/">Themes Documentation</a> for more details.</p>
 
             <p>In order to let the CLI know about the styles we want to add we need to add them to the <code>.angular-cli.json</code>
                 file. Look for the styles section and add the following CSS entries:</p>

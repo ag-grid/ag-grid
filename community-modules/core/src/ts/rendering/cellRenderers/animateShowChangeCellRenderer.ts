@@ -54,9 +54,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
         }
 
-        // class makes it green (in ag-fresh)
         _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
-        // class makes it red (in ag-fresh)
         _.addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
     }
 

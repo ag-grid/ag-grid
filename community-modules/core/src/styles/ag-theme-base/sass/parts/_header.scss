@@ -99,22 +99,14 @@
             bottom: $ag-header-column-resize-handle-bottom;
             background-color: $ag-header-column-resize-handle-color;
         }
-        @debug $ag-header-column-resize-handle-color;
     }
 
-    .ag-header-select-all {
-        margin-right: $ag-cell-horizontal-padding;
-    }
-    .ag-rtl {
-        .ag-header-select-all {
-            margin-left: $ag-cell-horizontal-padding;
-            margin-right: 0;
-        }
-    }
+    @include ag-auto-rtl(".ag-header-select-all", (
+        margin-right: $ag-cell-horizontal-padding
+    ));
 
     .ag-column-drag {
-        // added 'move' as IE fallback
-        cursor: move;
+        cursor: move; // IE fallback
         cursor: grab;
     }
 

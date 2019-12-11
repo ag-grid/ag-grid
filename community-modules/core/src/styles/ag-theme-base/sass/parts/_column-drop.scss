@@ -4,13 +4,7 @@
     .ag-column-drop-horizontal {
         background-color: $ag-panel-background-color;
         height: $ag-row-height;
-        padding-left: $ag-cell-horizontal-padding;
         @include grid-border(bottom);
-
-        .ag-icon-group,
-        .ag-icon-pivot {
-            margin-right: $ag-cell-horizontal-padding;
-        }
 
         .ag-icon-small-left,
         .ag-icon-small-right {
@@ -23,16 +17,13 @@
         }
     }
 
-    .ag-rtl {
-        .ag-column-drop-horizontal {
-            padding-right: $ag-cell-horizontal-padding;
-            .ag-icon-group,
-            .ag-icon-pivot {
-                margin-left: $ag-cell-horizontal-padding;
-                margin-right: 0;
-            }
-        }
-    }
+    @include ag-auto-rtl(".ag-column-drop-horizontal", (
+        padding-left: $ag-cell-horizontal-padding
+    ));
+
+    @include ag-auto-rtl(".ag-column-drop-horizontal .ag-column-drop-icon", (
+        margin-right: $ag-cell-horizontal-padding
+    ));
 
     .ag-column-drop-cell {
         background: $ag-chip-background-color;
@@ -61,6 +52,9 @@
     }
 
     .ag-column-drop-vertical {
+        padding-top: $ag-grid-size * 2;
+        padding-bottom: $ag-grid-size * 2;
+
         .ag-column-drop-cell {
             margin-top: $ag-grid-size;
             margin-left: $ag-grid-size;

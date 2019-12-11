@@ -23,7 +23,7 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 
 export class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE =
-        `<div>
+        `<div class="ag-filter-toolpanel-group">
             <ag-group-component ref="filterGroupComp"></ag-group-component>
          </div>`;
 
@@ -60,7 +60,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 
-        _.addCssClass(this.filterGroupComp.getGui(), `ag-level-${this.depth}`);
+        _.addCssClass(this.filterGroupComp.getGui(), `ag-filter-panel-group-level-${this.depth}`);
 
         this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp as Component));
 

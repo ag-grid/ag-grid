@@ -37,6 +37,12 @@ Will emit:
                 @else if $property == "left" {
                     $rtl-rules: map-merge($rtl-rules, (right: $value));
                 }
+                @else if $value == "right" {
+                    $rtl-rules: map-merge($rtl-rules, ($property: left));
+                }
+                @else if $value == "left" {
+                    $rtl-rules: map-merge($rtl-rules, (property: right));
+                }
                 @else {
                     @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
                 }
