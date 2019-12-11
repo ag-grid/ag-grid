@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Note that developers can also programmatically create range charts through the <a href="../javascript-grid-charts-chart-range-api/">Chart API</a>.
+        Note that developers can also programmatically create range charts through the <a href="../javascript-grid-charts-integrated-chart-range-api/">Chart API</a>.
     </p>
 
     <h2>Creating Chart Ranges</h2>
@@ -65,14 +65,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         In some cases it may be desirable to hide the chart ranges in the grid, like in this
-        <a href="../javascript-grid-charts-overview/#example-application-created-charts">example</a>.
+        <a href="../javascript-grid-charts-integrated-overview/#example-application-created-charts">example</a>.
     </p>
 
     <p>
         To hide the chart ranges simply enable <code>suppressChartRanges=true</code> on the <code>ChartRangeParams</code>.
     </p>
     <p>
-        For more details refer to <a href="../javascript-grid-charts-chart-range-api/#charting-api">Chart Range API</a>.
+        For more details refer to <a href="../javascript-grid-charts-integrated-chart-range-api/#charting-api">Chart Range API</a>.
     </p>
 
     <h2>Category and Series Ranges</h2>
@@ -170,6 +170,6 @@ include '../documentation-main/documentation_header.php';
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about the: <a href="../javascript-grid-charts-pivot-chart/">Pivot Chart</a>.
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-integrated-pivot-chart/">Pivot Chart</a>.
     </p>
 <?php include '../documentation-main/documentation_footer.php'; ?>

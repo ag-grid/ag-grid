@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Scatter/Bubble Chart Customisation</h1>
 
 <p class="lead">
-In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a> and
-    <a href="../javascript-grid-charts-customisation-cartesian">cartesian chart customisations</a>, you can also
+In addition to the <a href="../javascript-grid-charts-integrated-customisation-general">general chart customisations</a> and
+    <a href="../javascript-grid-charts-integrated-customisation-cartesian">cartesian chart customisations</a>, you can also
     use these customisations for scatter/bubble charts.
 </p>
 

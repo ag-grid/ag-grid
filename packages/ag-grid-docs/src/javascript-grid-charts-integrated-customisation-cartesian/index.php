@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Cartesian Chart Customisation</h1>
 
 <p class="lead">
-    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also
+    In addition to the <a href="../javascript-grid-charts-integrated-customisation-general">general chart customisations</a>, you can also
     use these customisations for cartesian charts, which have an x- and y-axis.
 </p>
 
@@ -105,7 +105,7 @@ interface GridStyle {
 
 <p>
     Charts can use different types of axes to present data in different ways. The grid will select best-guess defaults based on the type of chart,
-    the <a href="../javascript-grid-charts-range-chart/#coldef-chartdatatype">column chart data types</a>, and the data being plotted. If required,
+    the <a href="../javascript-grid-charts-integrated-range-chart/#coldef-chartdatatype">column chart data types</a>, and the data being plotted. If required,
     you can override the default axis types for line and scatter/bubble charts by setting the <code>type</code> in the relevant
     <code>AxisOptions</code> object.
 </p>

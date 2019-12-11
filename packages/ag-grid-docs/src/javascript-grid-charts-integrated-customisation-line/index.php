@@ -1,35 +1,36 @@
 <?php
-$pageTitle = "Charts: Bar/Column Chart Customisation";
+$pageTitle = "Charts: Line Chart Customisation";
 $pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Bar/Column Chart Customisation</h1>
+<h1 class="heading-enterprise">Line Chart Customisation</h1>
 
 <p class="lead">
-    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a> and
-    <a href="../javascript-grid-charts-customisation-cartesian">cartesian chart customisations</a>, you can also
-    use these customisations for bar/column charts.
+In addition to the <a href="../javascript-grid-charts-integrated-customisation-general">general chart customisations</a> and
+    <a href="../javascript-grid-charts-integrated-customisation-cartesian">cartesian chart customisations</a>, you can also
+    use these customisations for line charts.
 </p>
 
 <h2>Option Interfaces</h2>
 
 <snippet>
-interface BarChartOptions {
+interface LineChartOptions {
     seriesDefaults: {
+        // The fill colours are used by the lines in the series
+        // Will be used for markers as well, unless overridden in the marker options
         fill: FillOptions;
+
+        // The stroke colours to be used by the series' markers, unless overridden in
+        // the marker options
         stroke: StrokeOptions;
 
-        // The shadow type to use for bars. Defaults to no shadow.
-        // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
-        shadow: DropShadowOptions;
-
-        label: BarSeriesLabelOptions;
-
-        // The style to apply to a bar when it is hovered over or tapped
+        // The style to apply to a marker when it is hovered over or tapped
         highlightStyle: HighlightOptions;
+
+        marker: MarkerOptions;
 
         // Configures the tooltip for bars when they are hovered over or tapped
         tooltip: TooltipOptions;
@@ -49,25 +50,7 @@ interface StrokeOptions {
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1
 
-    width: number; // default: 1
-}
-
-interface DropShadowOptions {
-    enabled: boolean; // default: false
-    color: string; // default: 'rgba(0, 0, 0, 0.5)'
-    xOffset: number; // default: 3
-    yOffset: number; // default: 3
-    blur: number; // default: 5
-}
-
-interface BarSeriesLabelOptions {
-    enabled: boolean; // default: false
-    fontStyle: FontStyle; // default: 'normal'
-    fontWeight: FontWeight; // default: 'normal'
-    fontSize: number; // default: 12
-    fontFamily: string; // default: 'Verdana, sans-serif'
-    color: string; // default: &lt;dependent on light/dark mode&gt;
-    formatter?: (params: { value: number }) => string;
+    width: number; // default: 3
 }
 
 interface HighlightOptions {
@@ -75,13 +58,22 @@ interface HighlightOptions {
     stroke?: string;
 }
 
-interface TooltipOptions {
+interface MarkerOptions {
     enabled: boolean; // default: true
-    renderer?: (params: BarTooltipRendererParams) => string; // should return a valid HTML string
+    type: MarkerType; // default: 'circle'
+    size: number; // default: 6
+    strokeWidth: number; // default: 1
 }
 
-interface BarTooltipRendererParams {
-    // The datum object for the highlighted bar that the tooltip is being rendered for
+type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
+
+interface TooltipOptions {
+    enabled: boolean; // default: true
+    renderer?: (params: LineTooltipRendererParams) => string; // should return a valid HTML string
+}
+
+interface LineTooltipRendererParams {
+    // The datum object for the highlighted marker that the tooltip is being rendered for
     datum: any;
     // The key of the datum object that contains the X value
     xKey: string;
@@ -98,13 +90,13 @@ interface BarTooltipRendererParams {
 }
 </snippet>
 
-<h3>Example: Bar/Column Chart Customisations</h3>
+<h3>Example: Line Chart Customisations</h3>
 
 <p>
     The example below changes all available styling options. The styling options are exaggerated
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= example('Bar/Column Chart Customisations', 'custom-bar-chart', 'generated', array("enterprise" => true)) ?>
+<?= example('Line Chart Customisations', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

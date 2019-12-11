@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Pie/Doughnut Chart Customisation</h1>
 
 <p class="lead">
-    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also
+    In addition to the <a href="../javascript-grid-charts-integrated-customisation-general">general chart customisations</a>, you can also
     use these customisations for pie/doughnut charts.
 </p>
 

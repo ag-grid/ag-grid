@@ -70,7 +70,7 @@ interface ChartRef {
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn how to: <a href="../javascript-grid-charts-customisation/">Customise Charts</a>.
+        Continue to the next section to learn how to: <a href="../javascript-grid-charts-integrated-customisation/">Customise Charts</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

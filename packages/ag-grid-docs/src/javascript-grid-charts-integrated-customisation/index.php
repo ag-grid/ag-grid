@@ -55,12 +55,12 @@ type ChartType =
     <p>
         There are different available options to configure depending on the type of chart. Please refer to the relevant section below for more details:
         <ul>
-            <li><a href="../javascript-grid-charts-customisation-general/">General Chart Customisation</a> (these apply to all chart types)</li>
-            <li><a href="../javascript-grid-charts-customisation-bar/">Bar/Column Chart Customisation</a></li>
-            <li><a href="../javascript-grid-charts-customisation-line/">Line Chart Customisation</a></li>
-            <li><a href="../javascript-grid-charts-customisation-scatter/">Scatter/Bubble Chart Customisation</a></li>
-            <li><a href="../javascript-grid-charts-customisation-area/">Area Chart Customisation</a></li>
-            <li><a href="../javascript-grid-charts-customisation-pie/">Pie/Doughnut Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-general/">General Chart Customisation</a> (these apply to all chart types)</li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-bar/">Bar/Column Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-line/">Line Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-scatter/">Scatter/Bubble Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-area/">Area Chart Customisation</a></li>
+            <li><a href="../javascript-grid-charts-integrated-customisation-pie/">Pie/Doughnut Chart Customisation</a></li>
         </ul>
     </p>
 

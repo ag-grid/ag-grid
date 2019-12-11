@@ -29,12 +29,12 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            <a href="../javascript-grid-charts-overview/#user-created-charts">User Created Charts</a>: A user creates a
+            <a href="../javascript-grid-charts-integrated-overview/#user-created-charts">User Created Charts</a>: A user creates a
             chart using the grid's UI by selecting a range of cells or entering pivot mode and then creating a chart
             via the context menu.
         </li>
         <li>
-            <a href="../javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>:
+            <a href="../javascript-grid-charts-integrated-overview/#application-created-charts">Application Created Charts</a>:
             The application requests the grid to create a chart through the grid's charting API.
         </li>
     </ul>
@@ -84,7 +84,7 @@ gridOptions = {
     <p>
         To allow users to create charts from a
         <a href="../javascript-grid-range-selection/">Range Selection</a> and / or display the
-        <a href="../javascript-grid-charts-chart-ranges/">Chart Ranges</a> in the grid, then set the following grid
+        <a href="../javascript-grid-charts-integrated-range-chart/">Chart Ranges</a> in the grid, then set the following grid
         option:
     </p>
 
@@ -102,8 +102,8 @@ gridOptions = {
 
     <p>
         All that is required for users to create charts, from the data already contained in the grid,
-        is to import the <a href="../javascript-grid-charts-overview/#charts-module">charts module</a>
-        and <a href="../javascript-grid-charts-overview/#enabling-charts">enable charts</a>.
+        is to import the <a href="../javascript-grid-charts-integrated-overview/#charts-module">charts module</a>
+        and <a href="../javascript-grid-charts-integrated-overview/#enabling-charts">enable charts</a>.
     </p>
 
     <p>
@@ -135,12 +135,12 @@ gridOptions = {
         <div style="flex-grow: 1;">
             <ul>
                 <p>
-                <li><a href="../javascript-grid-charts-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding
+                <li><a href="../javascript-grid-charts-integrated-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding
                     chart ranges appear in the grid and can be adjusted via the chart range handle.
                 </li>
                 </p>
                 <p>
-                <li><a href="../javascript-grid-charts-chart-ranges/#category-and-series-ranges/">Categories and Series</a>:
+                <li><a href="../javascript-grid-charts-integrated-range-chart/#category-and-series-ranges/">Categories and Series</a>:
                     Columns can be configured as either categories or series for charting. If not configured then the
                     grid will infer whether a column contains category or series data.
                 </li>
@@ -159,7 +159,7 @@ gridOptions = {
         <div style="flex-grow: 1;">
             <ul>
                 <p>
-                    <li><a href="../javascript-grid-charts-chart-toolbar/">Chart Toolbar</a>:
+                    <li><a href="../javascript-grid-charts-integrated-chart-toolbar/">Chart Toolbar</a>:
                     The chart toolbar is located in the top right area of the chart and allows
                     a user to:
                 </p>
@@ -187,7 +187,7 @@ gridOptions = {
 
     <p>
         It is also possible to display user created charts in an another location or application dialog. For more details
-        see the section on <a href="../javascript-grid-charts-customisation/#providing-a-chart-container/">providing a chart container</a>.
+        see the section on <a href="../javascript-grid-charts-integrated-customisation/#providing-a-chart-container/">providing a chart container</a>.
     </p>
 
     <note>
@@ -200,7 +200,7 @@ gridOptions = {
 
     <p>
         Charts can be pre-defined or dynamically created from within applications, and as with
-        <a href="../javascript-grid-charts-overview/#user-created-charts">user created charts</a>, these charts also
+        <a href="../javascript-grid-charts-integrated-overview/#user-created-charts">user created charts</a>, these charts also
         benefit from the integration provided with the grid.
     </p>
 
@@ -229,10 +229,10 @@ gridOptions = {
     </p>
 
     <ul>
-        <li><a href="../javascript-grid-charts-chart-range-api/">Chart Range API</a>: Used to create charts programmatically
+        <li><a href="../javascript-grid-charts-integrated-chart-range-api/">Chart Range API</a>: Used to create charts programmatically
             inside applications.
         </li>
-        <li><a href="../javascript-grid-charts-customisation/#providing-a-chart-container/">Provide a Chart Container</a>:
+        <li><a href="../javascript-grid-charts-integrated-customisation/#providing-a-chart-container/">Provide a Chart Container</a>:
             Used to target chart containers inside the application instead of the popup window provided by the grid.
         </li>
     </ul>
@@ -241,20 +241,20 @@ gridOptions = {
 
     <p>
         Before each chart is created, the developer can perform fine-grained
-        <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> to change the chart's
+        <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a> to change the chart's
         appearance and behaviour. For example, you can change the thickness of the lines, or customise the
         formatting of the axis labels.
     </p>
 
     <p>
-        The section <a href="../javascript-grid-charts-customisation/">Chart Customisation</a> outlines all
+        The section <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a> outlines all
         the items that can be customised for each chart type.
     </p>
 
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about the: <a href="../javascript-grid-charts-range-chart/">Range Chart</a>.
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-integrated-range-chart/">Range Chart</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

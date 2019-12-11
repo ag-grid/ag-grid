@@ -115,7 +115,7 @@ interface ProcessChartOptionsParams {
     <li>
         <code>processChartOptions</code>: A callback to configure the rendered chart. This works the same
         as the grid callback <code>processChartOptions</code> described in
-        <a href="../javascript-grid-charts-customisation/">Chart Customisation</a>.
+        <a href="../javascript-grid-charts-integrated-customisation/">Chart Customisation</a>.
     </li>
 </ul>
 
@@ -243,7 +243,7 @@ interface GetChartImageDataUrlParams {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to: <a href="../javascript-grid-charts-container/">Provide a Chart Container</a>.
+    Continue to the next section to learn how to: <a href="../javascript-grid-charts-integrated-container/">Provide a Chart Container</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

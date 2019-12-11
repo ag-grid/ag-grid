@@ -80,7 +80,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         For more details on how the grid determines which columns are to be used as chart categories and series see the
-        section on <a href="../javascript-grid-charts-chart-ranges/#defining-categories-and-series">Defining Categories and Series</a>.
+        section on <a href="../javascript-grid-charts-integrated-range-chart/#defining-categories-and-series">Defining Categories and Series</a>.
     </p>
 
     <h3>Chart Format</h3>
@@ -178,7 +178,7 @@ type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUn
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about the: <a href="../javascript-grid-charts-chart-range-api/">Chart API</a>.
+        Continue to the next section to learn about the: <a href="../javascript-grid-charts-integrated-chart-range-api/">Chart API</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
