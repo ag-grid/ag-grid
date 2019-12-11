@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/polymer",
-  "version": "22.1.0",
+  "version": "22.1.1",
   "description": "ag-Grid Polymer 3 Web Component",
   "main": "index.js",
   "repository": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/ag-grid/ag-grid-polymer#readme",
   "peerDependencies": {
-    "@ag-grid-community/core": "~22.1.0",
+    "@ag-grid-community/core": "~22.1.1",
     "@polymer/polymer": "^3.0.0"
   },
   "publishConfig": {
