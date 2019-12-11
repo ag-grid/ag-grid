@@ -110,7 +110,7 @@ export class Environment {
     }
 
     public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
-        const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
 
