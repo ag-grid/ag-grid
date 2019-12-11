@@ -261,7 +261,9 @@ export class MoveColumnController implements DropListener {
     }
 
     private calculateValidMoves(movingCols: Column[], draggingRight: boolean, mouseX: number): number[] {
+        const isMoveBlocked = this.gridOptionsWrapper.isSuppressMovableColumns() || movingCols.some(col => col.getColDef().suppressMovable);
 
+        if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
         const allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,

@@ -662,7 +662,6 @@ var desktopDefaultCols = [
                 cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
-                enableRowGroup: true,
                 cellClass: 'vAlign',
                 // colSpan: function(params) {
                 //     if (params.data && params.data.country==='Ireland') {
@@ -691,6 +690,8 @@ var desktopDefaultCols = [
                 //         return 1;
                 //     }
                 // },
+                // suppressMovable: true,
+                enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: {
