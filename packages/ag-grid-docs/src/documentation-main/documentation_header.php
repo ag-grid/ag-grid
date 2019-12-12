@@ -4,14 +4,8 @@ include_once '../includes/html-helpers.php';
 include_once '../php-utils/printPropertiesTable.php';
 $DONT_USE_FONT_AWESOME = true;
 $version = 'latest';
-$latest_hash='';
-
-$rootFolder;
-if (strcmp($version, 'latest') == 0) {
-    $rootFolder = '/';
-} else {
-    $rootFolder = '/archive/' . $version . '/';
-}
+$latest_hash = '';
+$rootFolder = strcmp($version, 'latest') == 0 ? '/' : '/archive/' . $version . '/';
 
 function enterprise_feature($name)
 {
@@ -75,7 +69,7 @@ function enterprise_feature($name)
             } else {
                 container.classList.toggle('open');
             }
-            
+
         }
     </script>
 </head>
@@ -90,10 +84,10 @@ function enterprise_feature($name)
 <div class="page-content">
     <div id="documentation" class="new">
         <?php if(defined('hideSideMenu')) { ?>
-                <div class="top-toolbar">
-                    <div class="search-wrapper">
-                        <input type="text" class="search-input" placeholder="Search Docs"/>
-                    </div>
+            <div class="top-toolbar">
+                <div class="search-wrapper">
+                    <input type="text" class="search-input" placeholder="Search Docs"/>
+                </div>
             </div>
         <?php } ?>
         <div>
