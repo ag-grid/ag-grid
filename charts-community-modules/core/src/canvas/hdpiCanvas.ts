@@ -24,7 +24,7 @@ export class HdpiCanvas {
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(this._width = 300, this._height = 150);
+        this.resize(this._width = 600, this._height = 300);
     }
 
     private _parent: HTMLElement | undefined = undefined;
@@ -72,7 +72,7 @@ export class HdpiCanvas {
      * @param [options.background] Defaults to `white`.
      */
     download(fileName?: string) {
-        fileName = `${(fileName || 'image').trim()}.png`;
+        fileName = ((fileName || '').trim() || 'image') + '.png';
 
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.

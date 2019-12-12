@@ -183,7 +183,7 @@ export class OHLCSeries extends CartesianSeries {
         //     return false;
         // }
 
-        const data = dateKey && openKey && highKey && lowKey && closeKey ? this.data : [];
+        const data = dateKey && openKey && highKey && lowKey && closeKey && this.data ? this.data : [];
 
         if (dirtyDateData) {
             this.xDomain = this.calculateDomain(this.dateData = data.map(d => d[dateKey]));
@@ -398,14 +398,19 @@ export class OHLCSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: OHLCTooltipRendererParams) => string;
 
-    listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.dateKey && this.closeKey) {
-            data.push({
-                id: this.id,
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            data, id, dateKey, closeKey,
+            title, visible
+        } = this;
+
+        if (data && data.length && dateKey && closeKey) {
+            legendData.push({
+                id,
                 itemId: undefined,
-                enabled: this.visible,
+                enabled: visible,
                 label: {
-                    text: this.title || this.closeKey
+                    text: title || closeKey
                 },
                 marker: {
                     fill: 'gray',

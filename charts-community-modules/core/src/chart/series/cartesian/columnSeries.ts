@@ -79,7 +79,7 @@ export class ColumnSeries extends CartesianSeries {
      * The assumption is that the values will be reset (to `true`)
      * in the {@link yKeys} setter.
      */
-    private readonly yKeyEnabled = new Map<string, boolean>();
+    private readonly seriesItemEnabled = new Map<string, boolean>();
 
     tooltipRenderer?: (params: ColumnTooltipRendererParams) => string;
 
@@ -164,9 +164,9 @@ export class ColumnSeries extends CartesianSeries {
         this._yKeys = values;
         this.yData = [];
 
-        const { yKeyEnabled } = this;
-        yKeyEnabled.clear();
-        values.forEach(key => yKeyEnabled.set(key, true));
+        const { seriesItemEnabled } = this;
+        seriesItemEnabled.clear();
+        values.forEach(key => seriesItemEnabled.set(key, true));
 
         const groupScale = this.groupScale;
         groupScale.domain = values;
@@ -260,8 +260,8 @@ export class ColumnSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKeys, yKeyEnabled } = this;
-        const data = xKey && yKeys.length ? this.data : [];
+        const { xKey, yKeys, seriesItemEnabled } = this;
+        const data = xKey && yKeys.length && this.data ? this.data : [];
 
         // If the data is an array of rows like so:
         //
@@ -294,7 +294,7 @@ export class ColumnSeries extends CartesianSeries {
             }
             const value = datum[yKey];
 
-            return isFinite(value) && yKeyEnabled.get(yKey) ? value : 0;
+            return isFinite(value) && seriesItemEnabled.get(yKey) ? value : 0;
         }));
 
         // xData: ['Jan', 'Feb']
@@ -376,7 +376,7 @@ export class ColumnSeries extends CartesianSeries {
             strokes,
             grouped,
             strokeWidth,
-            yKeyEnabled,
+            seriesItemEnabled,
             data,
             xData,
             yData,
@@ -429,7 +429,7 @@ export class ColumnSeries extends CartesianSeries {
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth,
-                    label: yKeyEnabled.get(yKey) && labelText ? {
+                    label: seriesItemEnabled.get(yKey) && labelText ? {
                         text: labelText,
                         fontStyle: labelFontStyle,
                         fontWeight: labelFontWeight,
@@ -555,23 +555,26 @@ export class ColumnSeries extends CartesianSeries {
         }
     }
 
-    listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.xKey && this.yKeys.length) {
-            const { fills, strokes, id } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            id, data, xKey, yKeys, yNames, seriesItemEnabled,
+            fills, strokes, fillOpacity, strokeOpacity
+        } = this;
 
-            this.yKeys.forEach((yKey, index) => {
-                data.push({
+        if (data && data.length && xKey && yKeys.length) {
+            yKeys.forEach((yKey, index) => {
+                legendData.push({
                     id,
                     itemId: yKey,
-                    enabled: this.yKeyEnabled.get(yKey) || false,
+                    enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: this.yNames[index] || this.yKeys[index]
+                        text: yNames[index] || yKeys[index]
                     },
                     marker: {
                         fill: fills[index % fills.length],
                         stroke: strokes[index % strokes.length],
-                        fillOpacity: this.fillOpacity,
-                        strokeOpacity: this.strokeOpacity
+                        fillOpacity: fillOpacity,
+                        strokeOpacity: strokeOpacity
                     }
                 });
             });
@@ -579,14 +582,16 @@ export class ColumnSeries extends CartesianSeries {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.yKeyEnabled.set(itemId, enabled);
-        const enabledYKeys: string[] = [];
-        this.yKeyEnabled.forEach((enabled, yKey) => {
+        const { seriesItemEnabled } = this;
+        const enabledSeriesItems: string[] = [];
+
+        seriesItemEnabled.set(itemId, enabled);
+        seriesItemEnabled.forEach((enabled, yKey) => {
             if (enabled) {
-                enabledYKeys.push(yKey);
+                enabledSeriesItems.push(yKey);
             }
         });
-        this.groupScale.domain = enabledYKeys;
+        this.groupScale.domain = enabledSeriesItems;
         this.scheduleData();
     }
 }
