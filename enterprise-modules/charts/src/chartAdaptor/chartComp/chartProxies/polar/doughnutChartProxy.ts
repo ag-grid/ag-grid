@@ -73,7 +73,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
                     if (doughnutChart) {
                         doughnutChart.series.forEach(series => {
-                            (series as PieSeries).dataEnabled[itemId] = enabled;
+                            (series as PieSeries).seriesItemEnabled[itemId] = enabled;
                         });
                     }
 
