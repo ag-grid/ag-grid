@@ -171,6 +171,9 @@ export abstract class Chart extends Observable {
 
     protected initSeries(series: Series) {
         series.chart = this;
+        if (!series.data) {
+            series.data = this.data;
+        }
         series.addEventListener('layoutChange', this.scheduleLayout);
         series.addEventListener('dataChange', this.scheduleData);
         series.addEventListener('legendChange', this.updateLegend);
@@ -308,7 +311,7 @@ export abstract class Chart extends Observable {
                 return axis;
             } else if (directionKeys) {
                 for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
+                    if (axisKeys.indexOf(directionKeys[j]) >= 0 ) {
                         return axis;
                     }
                 }

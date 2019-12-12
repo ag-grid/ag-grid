@@ -145,7 +145,7 @@ export class ScatterSeries extends CartesianSeries {
             sizeKey
         } = this;
 
-        const data = xKey && yKey ? this.data : [];
+        const data = xKey && yKey && this.data ? this.data : [];
 
         this.xData = data.map(d => d[xKey]);
         this.yData = data.map(d => d[yKey]);
@@ -331,11 +331,14 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { id, title, visible, xKey, yKey, yName, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            id, data, xKey, yKey, yName,
+            title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
+        } = this;
 
-        if (this.data.length && xKey && yKey) {
-            data.push({
+        if (data && data.length && xKey && yKey) {
+            legendData.push({
                 id,
                 itemId: undefined,
                 enabled: visible,

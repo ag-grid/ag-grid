@@ -124,7 +124,7 @@ export class LineSeries extends CartesianSeries {
 
     processData(): boolean {
         const { xAxis, xKey, yKey, xData, yData } = this;
-        const data = xKey && yKey ? this.data : [];
+        const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis) {
             return false;
@@ -379,11 +379,14 @@ export class LineSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { id, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            id, data, xKey, yKey, yName, visible,
+            title, marker, fill, stroke, fillOpacity, strokeOpacity
+        } = this;
 
-        if (this.data.length && xKey && yKey) {
-            data.push({
+        if (data && data.length && xKey && yKey) {
+            legendData.push({
                 id: id,
                 itemId: undefined,
                 enabled: visible,
