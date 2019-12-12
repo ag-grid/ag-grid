@@ -113,7 +113,7 @@ export class FontPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif',
+            'Verdana, sans-serif'
         ];
 
         const { family } = this.params.initialFont;
