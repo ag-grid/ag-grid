@@ -75,10 +75,10 @@ function onFirstDataRendered(event) {
         processChartOptions: function(params) {
             params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 
-                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;
@@ -101,10 +101,10 @@ function onFirstDataRendered(event) {
 
             params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 
-                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;
@@ -127,10 +127,10 @@ function onFirstDataRendered(event) {
 
             params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 
-                return title + '<div class="content" style="text-align: center">' + value + '</div>';
+                return title + '<div class="ag-chart-tooltip-content" style="text-align: center">' + value + '</div>';
             };
 
             return params.options;

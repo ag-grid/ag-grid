@@ -545,13 +545,13 @@ export class ColumnSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleString = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
             const xValue = datum[xKey];
             const yValue = datum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            return `${titleString}<div class="content">${xString}: ${yString}</div>`;
+            return `${titleString}<div class="ag-chart-tooltip-content">${xString}: ${yString}</div>`;
         }
     }
 

@@ -1,6 +1,6 @@
 @import "./ag-grid-mixins";
 
-@mixin grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color) {
+@mixin ag-grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color) {
     @if $ag-borders {
         @if $sides {
             @each $side in $sides {
@@ -16,17 +16,17 @@
     }
 }
 
-@mixin grid-header-cell($padding) {
+@mixin ag-grid-header-cell($padding) {
     padding-left: $padding;
     padding-right: $padding;
 }
 
-@mixin grid-cell($height, $padding) {
+@mixin ag-grid-cell($height, $padding) {
     line-height: $height;
-    @include grid-header-cell($padding);
+    @include ag-grid-header-cell($padding);
 }
 
-@mixin card() {
+@mixin ag-card() {
     @extend %card !optional;
 
     background: $ag-card-background;
@@ -35,7 +35,7 @@
     padding: $ag-grid-size;
 }
 
-@mixin textbox() {
+@mixin ag-textbox() {
 
     @if $ag-customize-inputs {
         background: transparent;
@@ -85,7 +85,7 @@
     }
 }
 
-@mixin regular-button($color, $background-color, $text-transform) {
+@mixin ag-regular-button($color, $background-color, $text-transform) {
     appearance: none;
     background-color: $background-color;
     border: 0;
@@ -97,7 +97,7 @@
     text-transform: $text-transform;
 }
 
-@mixin icon_element($icon, $code) {
+@mixin ag-icon-element($icon, $code) {
   .ag-icon-#{$icon} {
       &:before {
           content: $code;
@@ -120,60 +120,60 @@
       -moz-osx-font-smoothing: grayscale;
   }
 
-  @include icon_element('aggregation', $ag-icon-aggregation);
-  @include icon_element('arrows', $ag-icon-arrows);
-  @include icon_element('asc', $ag-icon-asc);
-  @include icon_element('cancel', $ag-icon-cancel);
-  @include icon_element('chart', $ag-icon-chart);
-  @include icon_element('checkbox-checked', $ag-icon-checkbox-checked);
-  @include icon_element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
-  @include icon_element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
-  @include icon_element('color-picker', $ag-icon-color-picker);
-  @include icon_element('column', $ag-icon-column);
-  @include icon_element('columns', $ag-icon-columns);
-  @include icon_element('contracted', $ag-icon-contracted);
-  @include icon_element('copy', $ag-icon-copy);
-  @include icon_element('cross', $ag-icon-cross);
-  @include icon_element('cut', $ag-icon-cut);
-  @include icon_element('data', $ag-icon-data);
-  @include icon_element('desc', $ag-icon-desc);
-  @include icon_element('expanded', $ag-icon-expanded);
-  @include icon_element('eye-slash', $ag-icon-eye-slash);
-  @include icon_element('eye', $ag-icon-eye);
-  @include icon_element('filter', $ag-icon-filter);
-  @include icon_element('first', $ag-icon-first);
-  @include icon_element('grip', $ag-icon-grip);
-  @include icon_element('group', $ag-icon-group);
-  @include icon_element('indeterminate', $ag-icon-indeterminate);
-  @include icon_element('last', $ag-icon-last);
-  @include icon_element('left', $ag-icon-left);
-  @include icon_element('linked', $ag-icon-linked);
-  @include icon_element('loading', $ag-icon-loading);
-  @include icon_element('maximize', $ag-icon-maximize);
-  @include icon_element('menu', $ag-icon-menu);
-  @include icon_element('minimize', $ag-icon-minimize);
-  @include icon_element('minus', $ag-icon-minus);
-  @include icon_element('next', $ag-icon-next);
-  @include icon_element('none', $ag-icon-none);
-  @include icon_element('not-allowed', $ag-icon-not-allowed);
-  @include icon_element('paste', $ag-icon-paste);
-  @include icon_element('pin', $ag-icon-pin);
-  @include icon_element('pivot', $ag-icon-pivot);
-  @include icon_element('plus', $ag-icon-plus);
-  @include icon_element('previous', $ag-icon-previous);
-  @include icon_element('radio-button-off', $ag-icon-radio-button-off);
-  @include icon_element('radio-button-on', $ag-icon-radio-button-on);
-  @include icon_element('right', $ag-icon-right);
-  @include icon_element('save', $ag-icon-save);
-  @include icon_element('small-down', $ag-icon-small-down);
-  @include icon_element('small-left', $ag-icon-small-left);
-  @include icon_element('small-right', $ag-icon-small-right);
-  @include icon_element('small-up', $ag-icon-small-up);
-  @include icon_element('tick', $ag-icon-tick);
-  @include icon_element('tree-closed', $ag-icon-tree-closed);
-  @include icon_element('tree-indeterminate', $ag-icon-tree-indeterminate);
-  @include icon_element('tree-open', $ag-icon-tree-open);
-  @include icon_element('unlinked', $ag-icon-unlinked);
+  @include ag-icon-element('aggregation', $ag-icon-aggregation);
+  @include ag-icon-element('arrows', $ag-icon-arrows);
+  @include ag-icon-element('asc', $ag-icon-asc);
+  @include ag-icon-element('cancel', $ag-icon-cancel);
+  @include ag-icon-element('chart', $ag-icon-chart);
+  @include ag-icon-element('checkbox-checked', $ag-icon-checkbox-checked);
+  @include ag-icon-element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
+  @include ag-icon-element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
+  @include ag-icon-element('color-picker', $ag-icon-color-picker);
+  @include ag-icon-element('column', $ag-icon-column);
+  @include ag-icon-element('columns', $ag-icon-columns);
+  @include ag-icon-element('contracted', $ag-icon-contracted);
+  @include ag-icon-element('copy', $ag-icon-copy);
+  @include ag-icon-element('cross', $ag-icon-cross);
+  @include ag-icon-element('cut', $ag-icon-cut);
+  @include ag-icon-element('data', $ag-icon-data);
+  @include ag-icon-element('desc', $ag-icon-desc);
+  @include ag-icon-element('expanded', $ag-icon-expanded);
+  @include ag-icon-element('eye-slash', $ag-icon-eye-slash);
+  @include ag-icon-element('eye', $ag-icon-eye);
+  @include ag-icon-element('filter', $ag-icon-filter);
+  @include ag-icon-element('first', $ag-icon-first);
+  @include ag-icon-element('grip', $ag-icon-grip);
+  @include ag-icon-element('group', $ag-icon-group);
+  @include ag-icon-element('indeterminate', $ag-icon-indeterminate);
+  @include ag-icon-element('last', $ag-icon-last);
+  @include ag-icon-element('left', $ag-icon-left);
+  @include ag-icon-element('linked', $ag-icon-linked);
+  @include ag-icon-element('loading', $ag-icon-loading);
+  @include ag-icon-element('maximize', $ag-icon-maximize);
+  @include ag-icon-element('menu', $ag-icon-menu);
+  @include ag-icon-element('minimize', $ag-icon-minimize);
+  @include ag-icon-element('minus', $ag-icon-minus);
+  @include ag-icon-element('next', $ag-icon-next);
+  @include ag-icon-element('none', $ag-icon-none);
+  @include ag-icon-element('not-allowed', $ag-icon-not-allowed);
+  @include ag-icon-element('paste', $ag-icon-paste);
+  @include ag-icon-element('pin', $ag-icon-pin);
+  @include ag-icon-element('pivot', $ag-icon-pivot);
+  @include ag-icon-element('plus', $ag-icon-plus);
+  @include ag-icon-element('previous', $ag-icon-previous);
+  @include ag-icon-element('radio-button-off', $ag-icon-radio-button-off);
+  @include ag-icon-element('radio-button-on', $ag-icon-radio-button-on);
+  @include ag-icon-element('right', $ag-icon-right);
+  @include ag-icon-element('save', $ag-icon-save);
+  @include ag-icon-element('small-down', $ag-icon-small-down);
+  @include ag-icon-element('small-left', $ag-icon-small-left);
+  @include ag-icon-element('small-right', $ag-icon-small-right);
+  @include ag-icon-element('small-up', $ag-icon-small-up);
+  @include ag-icon-element('tick', $ag-icon-tick);
+  @include ag-icon-element('tree-closed', $ag-icon-tree-closed);
+  @include ag-icon-element('tree-indeterminate', $ag-icon-tree-indeterminate);
+  @include ag-icon-element('tree-open', $ag-icon-tree-open);
+  @include ag-icon-element('unlinked', $ag-icon-unlinked);
 
   .ag-icon-checkbox-checked,
   .ag-icon-checkbox-indeterminate,

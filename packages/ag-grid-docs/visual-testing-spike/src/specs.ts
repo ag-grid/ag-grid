@@ -246,7 +246,7 @@ export const specs: SpecDefinition[] = [
         ]
     },
     {
-        exampleSection: 'charts-range-chart',
+        exampleSection: 'charts-integrated-range-chart',
         exampleId: 'defining-categories-and-series',
         defaultViewport: {
             width: 800,
@@ -255,10 +255,24 @@ export const specs: SpecDefinition[] = [
         selector: '.ag-chart',
         steps: [
             {
-                name: 'settings-tab',
+                name: 'tooltip',
                 prepare: async page => {
                     // wait for chart to initialise
                     await wait(500);
+                    const chartCoords = await page.evaluate(() => {
+                        const chart = document.querySelector('.ag-chart-canvas-wrapper');
+                        const {top, left} = chart!.getBoundingClientRect();
+                        return {top, left};
+                    });
+                    // move mouse over bar to get tooltop
+                    await page.mouse.move(chartCoords.left + 82, chartCoords.top + 600);
+                    // wait for tooltip to fade in
+                    await wait(500);
+                }
+            },
+            {
+                name: 'settings-tab',
+                prepare: async page => {
                     await page.click('.ag-chart-menu .ag-icon-menu');
                     // wait for menu expand animation to complete
                     await wait(500);

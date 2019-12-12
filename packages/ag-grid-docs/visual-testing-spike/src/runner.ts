@@ -82,9 +82,9 @@ const initInBrowser = (theme: string) => {
                     input, textarea {
                         caret-color: transparent !important;
                     }
-                    `
+                    ` +
                     // disable all transitions because they mess up text rendering
-                    + `
+                    `
                     * {
                         transition: none !important;
                     }`;
@@ -355,10 +355,12 @@ export const runSuite = async (params: RunSuiteParams) => {
     });
 
     const totalMatchingTestCases = specs.reduce((acc, spec) => {
-        const matchingCases = spec.steps.filter(step => nameMatchesFilter(getTestCaseName(spec, step)));
-        return acc + matchingCases.length
+        const matchingCases = spec.steps.filter(step =>
+            nameMatchesFilter(getTestCaseName(spec, step))
+        );
+        return acc + matchingCases.length;
     }, 0);
-    let generatedTestCases = 0;
+    let testCasesRun = 0;
 
     let failedTestCases: string[] = [];
 
@@ -367,17 +369,20 @@ export const runSuite = async (params: RunSuiteParams) => {
         passesFilter: nameMatchesFilter,
         server: params.server,
         handler: async (screenshot, testCaseName) => {
+            ++testCasesRun;
             const file = getTestCaseImagePath(params, testCaseName);
             if (params.mode === 'update') {
                 await fs.writeFile(file, screenshot);
                 process.stdout.clearLine(0);
                 process.stdout.cursorTo(0);
-                process.stdout.write(`🙌  generating: ${generatedTestCases} of ${totalMatchingTestCases}`);
-                ++generatedTestCases;
+                process.stdout.write(
+                    `🙌  generating: ${testCasesRun} of ${totalMatchingTestCases}`
+                );
             } else {
                 const oldData = await fs.readFile(file);
                 const result = await getImageDifferences(oldData, screenshot);
-                const differenceUri = result.rawMisMatchPercentage > 0 ? result.getImageDataUrl() : null
+                const differenceUri =
+                    result.rawMisMatchPercentage > 0 ? result.getImageDataUrl() : null;
                 results.push({
                     name: testCaseName,
                     differenceUri,
@@ -395,7 +400,9 @@ export const runSuite = async (params: RunSuiteParams) => {
                 }
             }
 
-            const thisReportIteration = Math.floor((Date.now() - startTime) / reportGenerationInterval);
+            const thisReportIteration = Math.floor(
+                (Date.now() - startTime) / reportGenerationInterval
+            );
             if (params.mode === 'compare' && reportIteration !== thisReportIteration) {
                 reportIteration = thisReportIteration;
                 await writeReportFile(true);
@@ -405,19 +412,29 @@ export const runSuite = async (params: RunSuiteParams) => {
 
     await browser.close();
 
-    if (params.mode === 'compare') {
+    if (testCasesRun === 0) {
+        log(chalk.yellow('No test cases match filter'));
+    } else if (params.mode === 'compare') {
         if (failedTestCases.length > 0) {
-            log(chalk.red.bold(failedTestCases.length === 1 ? '1 FAILURE' : `${failedTestCases.length} FAILURES`));
+            log(
+                chalk.red.bold(
+                    failedTestCases.length === 1
+                        ? '1 FAILURE'
+                        : `${failedTestCases.length} FAILURES`
+                )
+            );
             await fs.writeFile(failedTestsFile, failedTestCases.join('\n'));
-        } else if (existsSync(failedTestsFile)) {
-            log(chalk.green.bold(`ALL PASSED`))
-            await fs.unlink(failedTestsFile);
+        } else {
+            log(chalk.green.bold('ALL PASSED'));
+            if (existsSync(failedTestsFile)) {
+                await fs.unlink(failedTestsFile);
+            }
         }
         await writeReportFile(false);
         log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
     } else {
         process.stdout.clearLine(0);
         process.stdout.cursorTo(0);
-        log(`✨  generated ${generatedTestCases} images`);
+        log(`✨  generated ${testCasesRun} images`);
     }
 };

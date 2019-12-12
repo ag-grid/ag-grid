@@ -39,7 +39,7 @@
     .ag-header-cell,
     .ag-header-group-cell {
         border: solid 0 $ag-border-color;
-        @include grid-header-cell($ag-cell-horizontal-padding);
+        @include ag-grid-header-cell($ag-cell-horizontal-padding);
         @if $ag-header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $ag-header-cell-moving-background-color;
@@ -111,7 +111,7 @@
     }
 
     &.ag-dnd-ghost {
-        @include card();
+        @include ag-card();
 
         // TODO add new flag for element borders which need tgo be controlled separately from $ag-borders
         border: 1px solid $ag-secondary-border-color;

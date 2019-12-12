@@ -1081,27 +1081,25 @@ $ag-handleSize: 5px;
     transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
     transition-property: opacity, transform;
 
-    // TODO add ag prefix
-    &.visible {
-        opacity: 1;
-        transform: scale(1);
-    }
+}
 
-    // TODO add ag prefix
-    .title {
-        font-weight: bold;
-        padding: 7px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        color: white;
-        background-color: #888888;
-    }
+.ag-chart-tooltip-visible {
+    opacity: 1;
+    transform: scale(1);
+}
 
-    // TODO add ag prefix
-    .content {
-        padding: 7px;
-        line-height: 1.7em;
-    }
+.ag-chart-tooltip-title {
+    font-weight: bold;
+    padding: 7px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: white;
+    background-color: #888888;
+}
+
+.ag-chart-tooltip-content {
+    padding: 7px;
+    line-height: 1.7em;
 }
 
 /**
@@ -1284,8 +1282,7 @@ $ag-handleSize: 5px;
     left: -3px
 ));
 
-// TODO ad ag prefix
-.loading-filter {
+.ag-filter-loading {
     background-color: #e6e6e6;
     height: 100%;
     padding: 5px;

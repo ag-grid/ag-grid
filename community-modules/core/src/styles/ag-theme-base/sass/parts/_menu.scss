@@ -7,7 +7,7 @@
     }
 
     .ag-menu {
-        @include card();
+        @include ag-card();
         padding: 0;
     }
 
@@ -48,7 +48,7 @@
         & > span:after {
             content: "";
             display: block;
-            @include grid-border(top, $color: $ag-secondary-border-color);
+            @include ag-grid-border(top, $color: $ag-secondary-border-color);
         }
     }
 
@@ -171,7 +171,7 @@
         }
 
         .ag-filter-header-container {
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             padding-bottom: $ag-grid-size / 2;
         }
 
@@ -183,7 +183,7 @@
             button {
                 line-height: 1.5;
                 @if $ag-customize-buttons {
-                    @include regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
+                    @include ag-regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
                 }
             }
 
@@ -208,7 +208,7 @@
         }
         // TODO move up level
         .ag-primary-cols-list-panel {
-            @include grid-border(top, $color: $ag-secondary-border-color);
+            @include ag-grid-border(top, $color: $ag-secondary-border-color);
             padding-top: $ag-grid-size;
             // TODO  add className in code
             > div {

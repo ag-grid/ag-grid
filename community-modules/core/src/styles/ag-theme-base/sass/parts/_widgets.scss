@@ -27,7 +27,7 @@
         input[type='tel'],
         input[type='date'],
         input[type='datetime-local'] {
-            @include textbox();
+            @include ag-textbox();
         }
 
         input[type='date'] {
@@ -38,7 +38,7 @@
         }
 
         textarea {
-            @include textbox();
+            @include ag-textbox();
         }
     }
 

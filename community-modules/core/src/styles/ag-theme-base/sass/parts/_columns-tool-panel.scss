@@ -36,7 +36,7 @@
     .ag-column-panel {
         // needs nesting because ag-column-select-panel is also used in header menu
         .ag-column-select-panel {
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
         }
     }
 
