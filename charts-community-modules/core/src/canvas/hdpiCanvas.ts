@@ -24,7 +24,7 @@ export class HdpiCanvas {
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(this._width = 300, this._height = 150);
+        this.resize(this._width = 600, this._height = 300);
     }
 
     private _parent: HTMLElement | undefined = undefined;
