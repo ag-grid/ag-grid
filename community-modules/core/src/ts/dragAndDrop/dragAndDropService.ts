@@ -429,7 +429,11 @@ export class DragAndDropService {
             default: eIcon = this.eHiddenIcon; break;
         }
 
-        this.eGhostIcon.appendChild(eIcon);
+        // if we are dragging out of the grid but suppressDragLeaveHidesColumns
+        // is true then no icon should be added.
+        if (eIcon !== this.eHiddenIcon || !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            this.eGhostIcon.appendChild(eIcon);
+        }
 
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
     }
