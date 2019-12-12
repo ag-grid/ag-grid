@@ -72,7 +72,7 @@ export class HdpiCanvas {
      * @param [options.background] Defaults to `white`.
      */
     download(fileName?: string) {
-        fileName = `${(fileName || 'image').trim()}.png`;
+        fileName = ((fileName || '').trim() || 'image') + '.png';
 
         // Chart images saved as JPEG are a few times larger at 50% quality than PNG images,
         // so we don't support saving to JPEG.
