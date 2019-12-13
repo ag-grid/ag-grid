@@ -9,7 +9,7 @@ fi
 
 mkdir "$BACKUP_DIR"
 
-NON_VERSIONED_ENTRIES=(support ecommerce services robots.txt .htaccess .ftpquota)
+NON_VERSIONED_ENTRIES=(support ecommerce services robots.txt .htaccess .ftpquota _shared)
 for entry in "${NON_VERSIONED_ENTRIES[@]}"; do
   cp -R "/home/ceolter/public_html/$entry" $BACKUP_DIR/
 done
