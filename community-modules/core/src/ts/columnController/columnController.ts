@@ -2692,6 +2692,7 @@ export class ColumnController {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
+        this.refreshFlexedColumns(undefined, undefined, true);
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
 
@@ -2886,7 +2887,7 @@ export class ColumnController {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     }
 
-    public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex'): void {
+    public refreshFlexedColumns(updatedFlexViewportWidth?: number, source: ColumnEventType = 'flex', silent?: boolean): void {
         if (!this.flexActive) { return; }
 
         this.flexViewportWidth = updatedFlexViewportWidth || this.flexViewportWidth;
@@ -2895,7 +2896,6 @@ export class ColumnController {
         // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
-
         const knownWidthColumns = this.displayedCenterColumns.filter(col => !col.getFlex());
         const flexingColumns = this.displayedCenterColumns.filter(col => col.getFlex());
         const flexingColumnSizes: number[] = [];
@@ -2933,8 +2933,11 @@ export class ColumnController {
         });
 
         this.setLeftValues(source);
-        this.updateBodyWidths();
-        this.fireResizedEventForColumns(flexingColumns, source);
+
+        if (!silent) {
+            this.updateBodyWidths();
+            this.fireResizedEventForColumns(flexingColumns, source);
+        }
     }
 
     // called from api
