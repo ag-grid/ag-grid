@@ -13,8 +13,14 @@
             "enterprise": true
           },
           {
-            "title": "Modules",
-            "url": "javascript-grid-modules/"
+            "title": "Packages & Modules",
+            "url": "javascript-grid-packages/",
+            "items": [
+              {
+                "title": "Modules",
+                "url": "javascript-grid-modules/"
+              }
+            ]
           },
           {
             "title": "Supported Browsers",
@@ -1002,7 +1008,7 @@
               }
             ]
           }
-         ]
+        ]
       }
     ]
   },
