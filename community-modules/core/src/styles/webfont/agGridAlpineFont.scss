@@ -3,7 +3,7 @@
 
 @font-face {
     font-family: '#{$ag-icon-font-family}';
-    src: url("data:application/x-font-ttf;charset=utf-8;base64,#{$ag-icons-data}") format('truetype');
+    src: $ag-icons-data;
     font-weight: normal;
     font-style: normal;
 }

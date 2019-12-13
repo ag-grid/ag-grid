@@ -6,6 +6,7 @@
         height: $ag-header-height;
         align-items: center;
 
+        // TODO specificity
         > div {
             cursor: pointer;
             margin: 0 $ag-grid-size;
@@ -19,6 +20,7 @@
 
     .ag-pivot-mode-panel {
         height: $ag-header-height;
+        // TODO structural styles
         display: flex;
         flex: none;
     }
@@ -43,6 +45,7 @@
     .ag-column-drop-vertical {
         padding-bottom: $ag-grid-size * 2;
 
+        // TODO nesting, naming
         .ag-column-drop-empty-message {
             color: $ag-disabled-foreground-color;
             font-weight: $ag-secondary-font-weight;
@@ -51,16 +54,19 @@
             margin-top: $ag-grid-size;
         }
 
+        // TODO nesting, naming
         .ag-column-drop-list {
             cursor: default;
             margin-top: $ag-grid-size;
         }
 
+        // TODO specificity
         > div:first-child > span:first-child {
             margin-left: $ag-grid-size;
             margin-right: $ag-grid-size;
         }
 
+        // TODO nesting, naming
         &.ag-last-column-drop {
             border-bottom-width: 0;
         }

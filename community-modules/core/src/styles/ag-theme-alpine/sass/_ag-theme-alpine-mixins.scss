@@ -9,6 +9,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 }
 
 @mixin ag-box-shadow($color) {
+    // TODO don't use rem
     box-shadow: 0 0 2px 0.1rem transparentize($color, 0.6);
 }
 

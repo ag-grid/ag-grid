@@ -73,6 +73,7 @@
         .ag-header-cell::after,
         .ag-header-group-cell::after {
             content: "";
+            // TODO structural styles
             position: absolute;
             z-index: 1;
             display: block;
@@ -105,6 +106,7 @@
         margin-right: $ag-cell-horizontal-padding
     ));
 
+    // TODO rename ag-drag-handle
     .ag-column-drag {
         cursor: move; // IE fallback
         cursor: grab;

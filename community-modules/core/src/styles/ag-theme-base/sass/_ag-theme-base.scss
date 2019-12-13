@@ -20,6 +20,7 @@
     font-weight: $ag-font-weight;
     font-size: $ag-font-size;
     line-height: normal;
+    @include ag-icons-webfont();
 
     @include ag-theme-base-part-reset();
     @include ag-theme-base-part-grid-layout();
@@ -33,6 +34,4 @@
     @include ag-theme-base-part-footer();
     @include ag-theme-base-part-column-drop();
     @include ag-theme-base-part-charts();
-
-    @include ag-icons-webfont();
 }

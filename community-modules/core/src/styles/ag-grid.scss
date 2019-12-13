@@ -80,6 +80,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal {
         height: 100%;
     }
+    // TODO nesting
     .ag-watermark {
         position: absolute;
         bottom: 10px;
@@ -97,6 +98,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
             width: 110px;
         }
 
+        // TODO nesting
       .ag-watermark-text {
         opacity: 0.5;
         font-weight: bold;
@@ -142,9 +144,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header-viewport,
 .ag-floating-top-viewport,
 .ag-body-viewport,
-.ag-pinned-left-cols-viewport,
 .ag-center-cols-viewport,
-.ag-pinned-right-cols-viewport,
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
 .ag-virtual-list-viewport {
@@ -186,13 +186,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         -webkit-overflow-scrolling: touch;
     }
 
+    // TODO specificity
     &:not(.ag-layout-print).ag-force-vertical-scroll {
         overflow-y: scroll;
     }
-}
-
-.ag-pinned-left-cols-viewport, .ag-pinned-right-cols-viewport {
-    flex-grow: 1000;
 }
 
 .ag-center-cols-viewport {
@@ -235,6 +232,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-body-viewport {
+    // TODO nesting
     .ag-center-cols-clipper {
         min-height: 100%;
     }
@@ -243,10 +241,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
             min-height: 50px;
         }
     }
+    // TODO nesting
     .ag-center-cols-container {
         display: block;
     }
 
+    // TODO consider just putting ag-layout-print on the root and tooltips and using nesting rather than combination?
     &.ag-layout-print {
         flex: none;
         .ag-center-cols-clipper {
@@ -320,7 +320,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
     height: 100%;
     min-width: 0;
-    flex-grow: 1000;
     overflow-x: scroll;
     &.ag-scroller-corner {
         overflow-x: hidden;
@@ -335,6 +334,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
     display: inline-block;
     overflow: hidden;
+    // TODO nesting
     & .ag-header-cell-sortable {
         cursor: pointer;
     }
@@ -358,11 +358,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
 }
 
-.ag-header-overlay {
-    display: block;
-    position: absolute;
-}
-
 .ag-header-cell {
     display: inline-flex;
     align-items: center;
@@ -380,6 +375,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-header-cell-label {
+    // TODO nesting?
     .ag-header-cell-text {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -389,6 +385,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-numeric-header {
     .ag-header-cell-label {
+        // TODO does this work with RTL?
         flex-direction: row-reverse;
     }
 }
@@ -403,14 +400,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
     z-index: 1;
     height: 100%;
-    width: 20px;
+    width: 8px;
     cursor: col-resize;
 }
 
 @include ag-auto-rtl(".ag-header-cell-resize", (
-    right: -10px
+    right: -4px
 ));
 
+// TODO visual style
 @include ag-auto-rtl(".ag-header-expand-icon", (
     padding-left: 4px
 ));
@@ -459,13 +457,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-shrink: 1;
     flex-basis: 0;
 
+    // TODO nesting
     .ag-primary-cols-header-panel {
         display: flex;
         flex: none;
 
-        .ag-column-name-filter {
-            flex: 1 1 auto;
-        }
+        // TODO nesting
         .ag-primary-cols-filter-wrapper {
             flex: 1 1 auto;
             input {
@@ -474,6 +471,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         }
     }
 
+    // TODO nesting?
     .ag-primary-cols-list-panel {
         flex: 1 1 auto;
         overflow: auto;
@@ -486,6 +484,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: auto;
     width: 100%;
 
+    // TODO nesting
     .ag-column-drop-list {
         display: flex;
         align-items: center;
@@ -503,12 +502,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+// TODO nesting
 .ag-column-drop.ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     flex: 1 1 0;
     align-items: stretch;
+
+    // TODO specificity
     > div {
         display: flex;
         align-items: center;
@@ -535,6 +537,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+
+    // TODO nesting
     .ag-filter-toolpanel-header {
         display: flex;
         div:not(.ag-input-wrapper) {
@@ -543,6 +547,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         }
     }
 
+    // TODO nesting
     .ag-group-item {
         flex-direction: column;
     }
@@ -616,42 +621,22 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         align-items: flex-start;
     }
 
+    // TODO nesting
     .ag-cell-value, .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;
     }
 }
 
+// TODO specificity?
 .ag-full-width-row.ag-row-group .ag-cell-wrapper {
     align-items: center;
 }
 
+// TODO naming?
 .ag-cell-with-height {
     height: 100%;
 }
-
-
-
-.ag-group-cell-entire-row {
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
-.ag-footer-cell-entire-row {
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
 
 .ag-cell-inline-editing {
     z-index: 1;
@@ -673,6 +658,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
     display: flex;
     align-items: center;
+    // TODO specificity
     > {
         div, span {
             display: flex;
@@ -683,15 +669,18 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-filter {
     // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
     // when you click on it when the quick filter has focus. this was a fix for AG-2258
+    // TODO specificity
     .ag-filter-checkbox {
         pointer-events: none;
     }
 
+    // TODO specificity
     .ag-filter-body-wrapper {
         display: flex;
         flex-direction: column;
     }
 
+    // TODO specificity
     .ag-filter-filter {
         flex: 1 1 auto;
     }
@@ -704,6 +693,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 */
 
 .ag-floating-filter-full-body, .ag-floating-filter-body {
+    // TODO nesting?
     .ag-react-container {
         height: 100%;
     }
@@ -714,6 +704,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
     height: 100%;
 
+    // TODO specificity
     input {
         margin: 0;
         flex: 1 1 auto;
@@ -726,6 +717,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     height: 100%;
     width: 100%;
+
+    // TODO specificity
     > div {
         flex: 1 1 auto;
     }
@@ -734,6 +727,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         margin: 0;
         width: 100%;
     }
+    // TODO specificity?
     input[type="range"] {
         height: 100%;
     }
@@ -748,12 +742,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-floating-filter-input:read-only {
+    // TODO visual styles
     background-color: #eee;
-}
-
-.ag-floating-filter-menu {
-    position: absolute;
-    user-select: none;
 }
 
 .ag-floating-filter-button {
@@ -772,10 +762,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-dnd-ghost {
     display: flex;
     align-items: center;
-    // TODO remove visual styles, move to base
-    background: #e5e5e5;
-    border: 1px solid black;
     cursor: move;
+    // TODO visual styles
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     overflow: hidden;
@@ -786,6 +774,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     z-index: 10;
 }
 
+// TODO visual styles
 .ag-dnd-ghost-icon {
     padding: 2px;
 }
@@ -820,6 +809,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     justify-content: center;
     text-align: center;
+    // TODO required?
     &.ag-overlay-loading-wrapper {
         pointer-events: all;
     }
@@ -836,18 +826,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 .ag-popup {
+    // TODO specificity
     > div{
         z-index: 5;
     }
-
-}
-
-.ag-popup-backdrop {
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
 }
 
 .ag-popup-editor {
@@ -864,10 +846,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
-
-    span:empty:not(.ag-icon) {
-        border-left: 1px solid transparent;
-    }
 }
 
 /**
@@ -886,17 +864,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-pinned-left-floating-top {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-top {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-floating-bottom {
@@ -910,17 +886,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-pinned-left-floating-bottom {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-bottom {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 
@@ -938,6 +912,7 @@ $ag-handleSize: 5px;
     position: relative;
     overflow: hidden;
 
+    // TODO nesting, rename?
     .ag-title-bar {
         display: flex;
         flex: none;
@@ -971,10 +946,12 @@ $ag-handleSize: 5px;
 .ag-dialog {
     position: absolute;
 
+    // TODO nesting, name
     .ag-resizer {
         position: absolute;
         pointer-events: none;
         z-index: 1;
+        // TODO specificity, name
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;
@@ -1033,6 +1010,7 @@ $ag-handleSize: 5px;
         }
     }
 
+    // TODO may be safe to delete along with the class
     .ag-message-box {
         width: 100%;
         height: 100%;
@@ -1070,25 +1048,28 @@ $ag-handleSize: 5px;
     pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
+    opacity: 0;
+    transition-property: opacity;
+
+    // TODO visual styles
     font: 12px Verdana, sans-serif;
     color: black;
     background: rgb(244, 244, 244);
     border-radius: 5px;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-
-    opacity: 0;
     transform: scale(0.90);
     transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
     transition-property: opacity, transform;
-
 }
 
 .ag-chart-tooltip-visible {
     opacity: 1;
+    // TODO visual style
     transform: scale(1);
 }
 
 .ag-chart-tooltip-title {
+    // TODO visual style
     font-weight: bold;
     padding: 7px;
     border-top-left-radius: 5px;
@@ -1098,6 +1079,7 @@ $ag-handleSize: 5px;
 }
 
 .ag-chart-tooltip-content {
+    // TODO visual style
     padding: 7px;
     line-height: 1.7em;
 }
@@ -1151,6 +1133,7 @@ $ag-handleSize: 5px;
 
 .ag-menu-option, .ag-menu-separator {
     display: table-row;
+    // TODO specificity
     > span {
         display: table-cell;
         vertical-align: middle;
@@ -1174,9 +1157,11 @@ $ag-handleSize: 5px;
 .ag-rich-select {
     cursor: default;
     outline: none;
+    // TODO nesting
     .ag-rich-select-value {
         display: flex;
         align-items: center;
+        // TODO specificity
         > span {
             flex: 1 1 auto;
             &.ag-icon {
@@ -1185,8 +1170,10 @@ $ag-handleSize: 5px;
             }
         }
     }
+    // TODO nesting
     .ag-rich-select-list {
         position: relative;
+        // TODO nesting? Required?
         .ag-virtual-list-item {
             display: flex;
             .ag-rich-select-row {
@@ -1208,9 +1195,12 @@ $ag-handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
+    // TODO nesting
     .ag-paging-row-summary-panel {
         display: flex;
+        // TODO specificity
         span {
+            // TODO visual styles
             margin: 0 3px;
         }
     }
@@ -1219,9 +1209,11 @@ $ag-handleSize: 5px;
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
+    // TODO should be global - used twice
     .ag-disabled {
         pointer-events: none;
     }
+    // TODO nesting
     .ag-paging-button {
         position: relative;
         overflow: hidden;
@@ -1253,6 +1245,7 @@ $ag-handleSize: 5px;
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    // TODO nesting
     .ag-column-tool-panel-column,
     .ag-column-tool-panel-column-group {
         flex: 1 1 auto;
@@ -1283,6 +1276,7 @@ $ag-handleSize: 5px;
 ));
 
 .ag-filter-loading {
+    // TODO visual styles
     background-color: #e6e6e6;
     height: 100%;
     padding: 5px;
@@ -1329,23 +1323,16 @@ $ag-handleSize: 5px;
 .ag-side-bar {
     display: flex;
     flex-direction: row-reverse;
-
-    // TODO add ag- prefix
-    .panel-container {
-        width: 180px;
-    }
-
-    &.full-width .panel-container {
-        width: 200px;
-    }
 }
 
 .ag-side-bar-left {
+    // TODO required? This might be positioned absolutely now
     order: -1;
     flex-direction: row;
 }
 
 .ag-side-buttons {
+    // TODO nesting, class name
     button {
         display: flex;
         flex-direction: column;
@@ -1357,6 +1344,7 @@ $ag-handleSize: 5px;
         cursor: pointer;
     }
 
+    // TODO visual styles
     .ag-icon {
         margin-bottom: 3px;
     }
@@ -1376,10 +1364,12 @@ $ag-handleSize: 5px;
     justify-content: space-between;
     overflow: hidden;
 
+    // TODO nesting
     .ag-status-panel {
         display: inline-flex;
     }
 
+    // TODO nesting, name?
     .ag-name-value {
         white-space: nowrap;
     }
@@ -1414,6 +1404,7 @@ $ag-handleSize: 5px;
     position: relative;
     flex: 1 1 100%;
 
+    // TODO nesting
     .ag-group-component-title-bar,
     .ag-group-component-title {
         display: flex;
@@ -1435,6 +1426,7 @@ $ag-handleSize: 5px;
     }
 
     .ag-column-group-icons {
+        // TODO specificity
         > span {
             display: block;
         }
@@ -1459,6 +1451,7 @@ $ag-handleSize: 5px;
     }
 
     &.ag-disabled {
+        // TODO make global, used twice
         .ag-group-component-container {
             pointer-events: none;
         }
@@ -1474,6 +1467,7 @@ $ag-handleSize: 5px;
 .ag-toggle-button {
     .ag-input-wrapper {
         .ag-icon {
+            // TODO nesting, required?
             transition: right 0.3s;
             position: absolute;
             top: -1px;
@@ -1483,6 +1477,7 @@ $ag-handleSize: 5px;
 
 
 .ag-input-field {
+    // TODO flex required here?
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1499,6 +1494,7 @@ $ag-handleSize: 5px;
 }
 
 .ag-picker-field, .ag-slider, .ag-angle-select {
+    // TODO specificity, nesting
     > .ag-wrapper {
         display: flex;
         > div {
@@ -1510,7 +1506,9 @@ $ag-handleSize: 5px;
 .ag-angle-select {
     display: flex;
     align-items: center;
+    // TODO nesting
     .ag-angle-select-field {
+        // TODO nesting, name?
         .ag-parent-circle {
             display: block;
             position: relative;
@@ -1524,7 +1522,9 @@ $ag-handleSize: 5px;
 .ag-picker-field {
     display: flex;
     align-items: center;
+    // TODO specificity, name?
     > .ag-wrapper {
+        // TODO class
         > button {
             display: flex;
             border: 0;
@@ -1535,16 +1535,19 @@ $ag-handleSize: 5px;
 }
 
 .ag-color-picker {
+    // TODO nesting, specificity, name?
     > .ag-wrapper {
         align-items: stretch;
         overflow: hidden;
     }
+    // TODO class
     button {
         cursor: pointer;
     }
 }
 
 .ag-labeled {
+    // TODO nesting, specificity
     &.ag-label-align-right {
         label {
             order: 1;
@@ -1554,6 +1557,7 @@ $ag-handleSize: 5px;
         }
     }
 
+    // TODO nesting
     &.ag-label-align-top {
         flex-direction: column;
         align-items: flex-start;
@@ -1563,11 +1567,13 @@ $ag-handleSize: 5px;
     }
 }
 
+// TODO add color picker to regression before changing this
 .ag-color-panel {
     display: flex;
     flex-direction: column;
     text-align: center;
 
+    // TODO nesting
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
@@ -1575,6 +1581,7 @@ $ag-handleSize: 5px;
         cursor: default;
     }
 
+    // TODO nesting, naming
     .ag-fill {
         position: absolute;
         top: 0;
@@ -1627,18 +1634,6 @@ $ag-handleSize: 5px;
         pointer-events: none;
     }
 
-    .ag-spectrum-text-value {
-        display: inline-block;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    .ag-spectrum-text-value:focus {
-        outline: none;
-        outline-offset: 0;
-    }
-
     .ag-recent-colors {
         display: flex;
         > div {
@@ -1648,6 +1643,7 @@ $ag-handleSize: 5px;
 }
 
 
+// TODO can be removed if we merge themes
 $ag-toolpanel-indent-size: 10px !default;
 $ag-row-group-indent-size: 10px !default;
 
@@ -1681,6 +1677,7 @@ $ag-row-group-indent-size: 10px !default;
     }
 }
 
+// TODO merge with other print styles (move to new file?)
 @media print {
     .ag-body-viewport {
         display: block;

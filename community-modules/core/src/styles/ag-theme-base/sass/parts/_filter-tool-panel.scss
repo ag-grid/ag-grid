@@ -1,6 +1,4 @@
-
 @mixin ag-theme-base-part-filter-tool-panel {
-    
     .ag-filter-panel {
         color: $ag-header-foreground-color;
         font-weight: $ag-secondary-font-weight;
@@ -9,6 +7,7 @@
     }
 
     .ag-filter-toolpanel-header {
+        // TODO specificity
         &.ag-filter-header {
             min-height: $ag-header-height;
             height: $ag-header-height;
@@ -16,6 +15,7 @@
             box-sizing: content-box;
         }
 
+        // TODO do this without reaching into input wrapper
         .ag-input-wrapper {
             padding-left: $ag-grid-size;
             padding-right: $ag-grid-size;
@@ -30,9 +30,11 @@
     }
 
     .ag-filter-list-panel {
+        // TODO structural styles
         flex: 1 1 auto;
         overflow: auto;
 
+        // TODO nesting
         .ag-first-group-visible {
             .ag-group-component-title-bar {
                 border-top: none;
@@ -41,7 +43,7 @@
         }
     }
 
-    .ag-filter-panel{
+    .ag-filter-panel {
         .ag-group-component {
             border: none;
             background-color: $ag-header-background-color;
@@ -53,13 +55,6 @@
 
                 .ag-column-group-icons {
                     margin: 0 $ag-grid-size;
-                }
-            }
-
-            &.ag-level-0 {
-                > .ag-group-component-title-bar {
-                    border: 0 solid $ag-border-color;
-                    border-top-width: 1px;
                 }
             }
 
@@ -124,21 +119,34 @@
         }
     }
 
-    @include ag-auto-rtl(".ag-filter-toolpanel-header-expand", (
-        padding-left: $ag-grid-size / 2
-    ));
+    @include ag-auto-rtl(
+        ".ag-filter-toolpanel-header-expand",
+        (
+            padding-left: $ag-grid-size / 2
+        )
+    );
 
-    @include ag-auto-rtl(".ag-filter-panel .ag-group-item", (
-        margin-right: $ag-grid-size / 2,
-        margin-left: 0
-    ));
+    @include ag-auto-rtl(
+        ".ag-filter-panel .ag-group-item",
+        (
+            margin-right: $ag-grid-size / 2,
+            margin-left: 0
+        )
+    );
 
     @for $i from 1 through 5 {
-        @include ag-auto-rtl(".ag-filter-panel-group-level-#{$i} .ag-group-component-title-bar", (
-            padding-left: 1rem * ($i - 1)
-        ));
-        @include ag-auto-rtl(".ag-filter-panel-group-level-#{$i} .ag-filter-toolpanel-header", (
-            padding-left: 1rem * $i
-        ));
+        @include ag-auto-rtl(
+            ".ag-filter-panel-group-level-#{$i} .ag-group-component-title-bar",
+            (
+                // TODO use a variable instead of rem
+                    padding-left: 1rem * ($i - 1)
+            )
+        );
+        @include ag-auto-rtl(
+            ".ag-filter-panel-group-level-#{$i} .ag-filter-toolpanel-header",
+            (
+                padding-left: 1rem * $i
+            )
+        );
     }
 }

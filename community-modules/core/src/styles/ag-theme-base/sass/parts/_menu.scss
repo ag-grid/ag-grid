@@ -65,14 +65,17 @@
         background: $ag-panel-background-color;
         min-width: 220px;
         width: 100%;
+        // TODO structural style
         display: flex;
 
         .ag-tab {
             @extend %tab !optional;
 
+            // TODO structural styles
             display: flex;
             border-bottom: 2px solid transparent;
             height: $ag-grid-size * 4;
+            // TODO structural styles
             flex: none;
             align-items: center;
             justify-content: center;
@@ -176,6 +179,7 @@
         }
 
         .ag-filter-apply-panel {
+            // TODO structural styles
             display: flex;
             justify-content: flex-end;
             padding: $ag-grid-size;

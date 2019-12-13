@@ -18,18 +18,10 @@
     .ag-tool-panel-wrapper {
         border-right: 0;
     }
-
+ 
     .ag-side-bar {
         background-color: $ag-tool-panel-background-color;
         position: relative;
-
-        .ag-panel-container {
-            border-right: 1px solid $ag-border-color;
-        }
-
-        &.full-width .ag-panel-container {
-            border-right: 0;
-        }
     }
 
     .ag-side-buttons {

@@ -3,9 +3,11 @@
     
 
     .ag-chart {
+        // TODO nesting
         .ag-chart-menu {
             border-radius: 5px;
             background: $ag-background-color;
+            // TODO specificity
             > span {
                 &:hover {
                     background-color: darken($ag-background-color, 10%);
@@ -16,7 +18,9 @@
 
     .ag-chart-tabbed-menu {
         .ag-chart-settings {
+            // TODO nesting
             .ag-chart-settings-mini-wrapper {
+                // TODO nesting, name
                 .ag-group-component-container {
                     margin-left: 0;
                 }
@@ -41,7 +45,9 @@
             }
 
             .ag-chart-settings-nav-bar {
+                // TODO rename
                 .ag-nav-card-selector {
+                    // TODO rename
                     .ag-nav-card-item {
                         background: $ag-foreground-color;
                         width: 8px;
@@ -56,6 +62,7 @@
         }
 
         .ag-chart-data {
+            // TODO rename
             .ag-data-select-checkbox .ag-column-drag {
                 margin-left: $ag-grid-size;
             }
@@ -68,6 +75,7 @@
         }
 
         .ag-chart-format {
+            // TODO nesting
             .ag-chart-format-wrapper {
                 .ag-group-item {
                     margin: $ag-grid-size * 1.2 0;
