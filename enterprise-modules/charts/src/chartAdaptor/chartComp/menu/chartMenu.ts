@@ -115,6 +115,7 @@ export class ChartMenu extends Component {
                 undefined,
                 true
             );
+            _.addCssClass(buttonEl, 'ag-chart-menu-icon');
 
             this.addDestroyableEventListener(buttonEl, 'click', callback);
             this.getGui().appendChild(buttonEl);

@@ -6,7 +6,8 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {MarkersPanel} from "./markersPanel";
@@ -40,7 +41,11 @@ export class LineSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(LineSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts',
+            direction: 'vertical'
+        };
+        this.setTemplate(LineSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.initSeriesGroup();
         this.initSeriesTooltips();

@@ -101,9 +101,9 @@ $ag-dialog-title-padding: 5px 10px !default;
 $ag-dialog-title-icon-size: max(20px, $ag-icon-size) !default;
 
 $ag-tool-panel-background-color: $ag-background-color !default;
-$ag-group-component-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
-$ag-group-component-border-color: lighten($ag-border-color, 5%) !default;
-$ag-group-component-title-background-color: darken($ag-group-component-background-color, 5%) !default;
+$ag-group-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
+$ag-group-border-color: lighten($ag-border-color, 5%) !default;
+$ag-group-title-background-color: darken($ag-group-background-color, 5%) !default;
 
 $ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
 $ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;

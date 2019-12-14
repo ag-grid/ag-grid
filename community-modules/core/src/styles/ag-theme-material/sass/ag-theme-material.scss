@@ -168,10 +168,4 @@
             }
         }
     }
-
-    .ag-group-expanded {
-        .ag-icon-expanded:empty:before {
-            content: $ag-icon-tree-open;
-        }
-    }
 }

@@ -59,9 +59,9 @@ export const specs: SpecDefinition[] = [
                         from: '.ag-primary-cols-list-panel .ag-column-drag',
                         to: '.ag-column-drop-empty-message'
                     });
-                    await page.click('[row-index="0"] .ag-icon-contracted');
-                    await page.click('[row-index="1"] .ag-icon-contracted');
-                    await page.click('[row-index="2"] .ag-icon-contracted');
+                    await page.click('[row-index="0"] .ag-icon-tree-closed');
+                    await page.click('[row-index="1"] .ag-icon-tree-closed');
+                    await page.click('[row-index="2"] .ag-icon-tree-closed');
                 }
             }
         ]
@@ -294,7 +294,7 @@ export const specs: SpecDefinition[] = [
                 name: `format-tab-${groupName}-group`,
                 selector: `[ref="${groupName}Group"]`,
                 prepare: async page => {
-                    await page.click(`[ref="${groupName}Group"].ag-collapsed`);
+                    await page.click(`[ref="${groupName}Group"]`);
                 }
             }))
         ]

@@ -773,12 +773,12 @@
         }
     }
 
-    .ag-group-component {
+    .ag-group {
         background: $ag-color-background-alt;
         // TODO find out why this is being set and make it no longer necessary to override
         border-top: 0;
 
-        .ag-group-component-title-bar {
+        .ag-group-title-bar {
             font: $ag-font-chrome;
             background: $ag-color-background;
             @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
@@ -794,9 +794,10 @@
             }
         }
 
-        .ag-group-component-container {
+        .ag-group-container {
             @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             margin-left: 0;
+            // TODO what does this do?
             justify-content: flex-start;
             padding: $ag-grid-size $ag-grid-size * 2;
 
@@ -807,18 +808,18 @@
         }
 
         // second level nesting
-        .ag-group-component {
-            .ag-group-component-container {
+        .ag-group {
+            .ag-group-container {
                 padding: $ag-grid-size * 2 0;
             }
-            .ag-group-component-title-bar {
+            .ag-group-title-bar {
                 background-color: unset;
                 padding: $ag-grid-size 0 !important;
                 height: auto;
             }
         }
 
-        .ag-group-component-toolbar {
+        .ag-group-toolbar {
             padding: $ag-grid-size $ag-grid-size * 2;
             height: auto;
             background: $ag-color-background;
@@ -1022,7 +1023,7 @@
             border-right: 1px solid $ag-border-color;
         }
 
-        .ag-group-component .ag-group-component-title-bar .ag-column-group-icons {
+        .ag-group .ag-group-title-bar .ag-column-group-icons {
             margin-left: $ag-grid-size;
             margin-right: 0;
             transform: scaleX(-1);

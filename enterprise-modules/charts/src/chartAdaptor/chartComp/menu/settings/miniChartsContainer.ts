@@ -81,7 +81,9 @@ export class MiniChartsContainer extends Component {
                 title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
-                suppressOpenCloseIcons: true
+                suppressOpenCloseIcons: true,
+                cssIdentifier: "charts",
+                direction: 'horizontal'
             }));
 
             chartGroup.forEach(MiniClass => {

@@ -1,87 +1,75 @@
-
 @mixin ag-theme-base-part-charts {
-    
+    .ag-chart-menu {
+        border-radius: 5px;
+        background: $ag-background-color;
+    }
 
-    .ag-chart {
-        // TODO nesting
-        .ag-chart-menu {
+    .ag-chart-menu-icon:hover {
+        background-color: darken($ag-background-color, 10%);
+    }
+
+
+    .ag-chart-settings-mini-wrapper {
+        .ag-chart-mini-thumbnail {
+            border: 1px solid $ag-secondary-border-color;
             border-radius: 5px;
-            background: $ag-background-color;
-            // TODO specificity
-            > span {
-                &:hover {
-                    background-color: darken($ag-background-color, 10%);
-                }
+            margin: 5px;
+            &:nth-child(2n + 2):not(:last-child) {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            &:nth-child(3n + 1) {
+                margin-left: 2px;
+            }
+            &:nth-child(3n) {
+                margin-right: 2px;
+            }
+            &.ag-selected {
+                border-color: $ag-primary-color;
             }
         }
     }
 
-    .ag-chart-tabbed-menu {
-        .ag-chart-settings {
-            // TODO nesting
-            .ag-chart-settings-mini-wrapper {
-                // TODO nesting, name
-                .ag-group-component-container {
-                    margin-left: 0;
-                }
-                .ag-chart-mini-thumbnail {
-                    border: 1px solid $ag-secondary-border-color;
-                    border-radius: 5px;
-                    margin: 5px;
-                    &:nth-child(2n + 2):not(:last-child) {
-                        margin-left: auto;
-                        margin-right: auto;
-                    }
-                    &:nth-child(3n + 1) {
-                        margin-left: 2px;
-                    }
-                    &:nth-child(3n) {
-                        margin-right: 2px;
-                    }
-                    &.ag-selected {
-                        border-color: $ag-primary-color;
-                    }
-                }
-            }
-
-            .ag-chart-settings-nav-bar {
-                // TODO rename
-                .ag-nav-card-selector {
-                    // TODO rename
-                    .ag-nav-card-item {
-                        background: $ag-foreground-color;
-                        width: 8px;
-                        height: 8px;
-                        border-radius: 4px;
-                        &.ag-selected {
-                            background: $ag-primary-color;
-                        }
-                    }
-                }
-            }
-        }
-
-        .ag-chart-data {
+    .ag-chart-settings-nav-bar {
+        // TODO rename
+        .ag-nav-card-selector {
             // TODO rename
-            .ag-data-select-checkbox .ag-column-drag {
-                margin-left: $ag-grid-size;
-            }
-
-            .ag-chart-data-wrapper {
-                .ag-toggle-button.ag-group-item {
-                    margin: $ag-grid-size * 1.2 0;
-                }
-            }
-        }
-
-        .ag-chart-format {
-            // TODO nesting
-            .ag-chart-format-wrapper {
-                .ag-group-item {
-                    margin: $ag-grid-size * 1.2 0;
+            .ag-nav-card-item {
+                background: $ag-foreground-color;
+                width: 8px;
+                height: 8px;
+                border-radius: 4px;
+                &.ag-selected {
+                    background: $ag-primary-color;
                 }
             }
         }
     }
 
+    .ag-chart-data {
+        // TODO rename
+        .ag-data-select-checkbox .ag-column-drag {
+            margin-left: $ag-grid-size;
+        }
+
+        .ag-chart-data-wrapper {
+            .ag-toggle-button.ag-group-item {
+                margin: $ag-grid-size * 1.2 0;
+            }
+        }
+    }
+
+    .ag-chart-format {
+        // TODO nesting
+        .ag-chart-format-wrapper {
+            .ag-group-item {
+                margin: $ag-grid-size * 1.2 0;
+            }
+        }
+    }
+
+    .ag-charts-group-container.ag-group-container-horizontal {
+        // TODO this causes mini charts to wrap with large grid sizes. Make it constant, or decrease size of mini charts to fit
+        padding: $ag-grid-size;
+    }
 }

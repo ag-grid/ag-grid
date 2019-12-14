@@ -36,7 +36,7 @@
 
         // TODO nesting
         .ag-first-group-visible {
-            .ag-group-component-title-bar {
+            .ag-group-title-bar {
                 border-top: none;
                 min-height: calc(#{$ag-header-height} - 1px);
             }
@@ -44,12 +44,12 @@
     }
 
     .ag-filter-panel {
-        .ag-group-component {
+        .ag-group {
             border: none;
             background-color: $ag-header-background-color;
-            .ag-group-component-title-bar {
+            .ag-group-title-bar {
                 min-height: $ag-header-height;
-                .ag-group-component-title {
+                .ag-group-title {
                     white-space: nowrap;
                 }
 
@@ -59,8 +59,8 @@
             }
 
             &.ag-has-filter {
-                > .ag-group-component-title-bar {
-                    .ag-group-component-title:after {
+                > .ag-group-title-bar {
+                    .ag-group-title:after {
                         content: $ag-icon-filter;
                         font-family: $ag-icon-font-family;
                         font-size: $ag-icon-size;
@@ -72,15 +72,15 @@
             }
         }
 
-        .ag-group-component-container {
+        .ag-group-container {
             margin-left: 0;
             padding: 0;
             .ag-group-item {
                 &:not(.ag-filter-toolpanel-instance) {
                     margin-top: 0;
                 }
-                .ag-group-component-title-bar {
-                    background-color: $ag-group-component-background-color;
+                .ag-group-title-bar {
+                    background-color: $ag-group-background-color;
                 }
                 .ag-filter-toolpanel-header {
                     padding-top: $ag-grid-size / 2;
@@ -101,22 +101,18 @@
                 }
             }
         }
+    }
 
-        .ag-group-item {
-            margin-top: $ag-grid-size;
-            margin-bottom: $ag-grid-size;
-        }
+    .ag-filter-panel-group-title-bar {
+        @include ag-grid-border(top, $color: $ag-secondary-border-color)
+    }
 
-        .ag-group-item:not(.ag-filter-toolpanel-instance),
-        .ag-group-item > .ag-group-component {
-            border-top: none;
-            margin-bottom: 0;
-            .ag-group-component-title-bar {
-                min-height: unset;
-                height: unset;
-                margin: $ag-grid-size 0;
-            }
-        }
+    @include ag-auto-rtl(".ag-filter-panel-group-title", (
+        margin-left: $ag-grid-size
+    ));
+
+    .ag-filter-toolpanel-instance {
+        margin: $ag-grid-size 0;
     }
 
     @include ag-auto-rtl(
@@ -136,7 +132,7 @@
 
     @for $i from 1 through 5 {
         @include ag-auto-rtl(
-            ".ag-filter-panel-group-level-#{$i} .ag-group-component-title-bar",
+            ".ag-filter-panel-group-level-#{$i} .ag-group-title-bar",
             (
                 // TODO use a variable instead of rem
                     padding-left: 1rem * ($i - 1)

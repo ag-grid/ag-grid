@@ -9,6 +9,7 @@ import {
     FontWeight,
     PostConstruct,
     RefSelector,
+    AgGroupComponentParams,
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {ShadowPanel} from "./shadowPanel";
@@ -46,7 +47,11 @@ export class BarSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(BarSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts',
+            direction: 'vertical'
+        };
+        this.setTemplate(BarSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.seriesGroup
             .setTitle(this.chartTranslator.translate("series"))

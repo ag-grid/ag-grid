@@ -207,7 +207,7 @@ export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgAngleSelect } from "./widgets/agAngleSelect";
 export { AgColorPicker } from "./widgets/agColorPicker";
-export { AgGroupComponent } from "./widgets/agGroupComponent";
+export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { MessageBox } from "./widgets/messageBox";

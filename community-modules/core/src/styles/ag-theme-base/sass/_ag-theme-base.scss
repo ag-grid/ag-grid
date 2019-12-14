@@ -23,13 +23,13 @@
     @include ag-icons-webfont();
 
     @include ag-theme-base-part-reset();
+    @include ag-theme-base-part-widgets();
     @include ag-theme-base-part-grid-layout();
     @include ag-theme-base-part-grid-borders();
     @include ag-theme-base-part-menu();
     @include ag-theme-base-part-sidebar();
     @include ag-theme-base-part-filter-tool-panel();
     @include ag-theme-base-part-columns-tool-panel();
-    @include ag-theme-base-part-widgets();
     @include ag-theme-base-part-header();
     @include ag-theme-base-part-footer();
     @include ag-theme-base-part-column-drop();

@@ -1209,10 +1209,6 @@ $ag-handleSize: 5px;
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
-    // TODO should be global - used twice
-    .ag-disabled {
-        pointer-events: none;
-    }
     // TODO nesting
     .ag-paging-button {
         position: relative;
@@ -1221,6 +1217,9 @@ $ag-handleSize: 5px;
             position: absolute;
         }
     }
+}
+.ag-disabled .ag-paging-page-summary-panel {
+    pointer-events: none;
 }
 
 /**
@@ -1400,68 +1399,63 @@ $ag-handleSize: 5px;
     speak: none;
 }
 
-.ag-group-component {
+.ag-group {
     position: relative;
-    flex: 1 1 100%;
+    width: 100%;
+}
 
-    // TODO nesting
-    .ag-group-component-title-bar,
-    .ag-group-component-title {
-        display: flex;
-        align-items: center;
-    }
+.ag-group-title-bar,
+.ag-group-title {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-group-component-toolbar {
-        display: flex;
-        align-items: center;
-    }
+.ag-group-toolbar {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-group-component-container {
-        display: flex;
-        flex-direction: column;
-        .ag-group-subgroup {
-            display: flex;
-            align-self: stretch;
-        }
-    }
+.ag-group-container {
+    display: flex;
+}
 
-    .ag-column-group-icons {
-        // TODO specificity
-        > span {
-            display: block;
-        }
-    }
+.ag-disabled .ag-group-container {
+    pointer-events: none;
+}
 
-    .ag-group-item {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: center;
-    }
+.ag-group-container-horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
 
-    &.ag-alignment-stretch .ag-group-item {
-        align-items: stretch;
-    }
+.ag-group-container-vertical {
+    flex-direction: column;
+}
 
-    &.ag-alignment-start .ag-group-item {
-        align-items: flex-start;
-    }
+.ag-charts-font-size-color {
+    display: flex;
+    align-self: stretch;
+    justify-content: space-between;
+}
 
-    &.ag-alignment-end .ag-group-item {
-        align-items: flex-end;
-    }
+.ag-column-group-icons {
+    display: block;
+}
 
-    &.ag-disabled {
-        // TODO make global, used twice
-        .ag-group-component-container {
-            pointer-events: none;
-        }
-    }
+.ag-group-item {
+    display: flex;
+}
 
-    &.ag-collapsed {
-        .ag-group-component-toolbar, .ag-group-component-container {
-            display: none;
-        }
-    }
+.ag-group-item-alignment-stretch .ag-group-item {
+    align-items: stretch;
+}
+
+.ag-group-item-alignment-start .ag-group-item {
+    align-items: flex-start;
+}
+
+.ag-group-item-alignment-end .ag-group-item {
+    align-items: flex-end;
 }
 
 .ag-toggle-button {
