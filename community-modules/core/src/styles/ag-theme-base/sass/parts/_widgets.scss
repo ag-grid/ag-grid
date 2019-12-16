@@ -104,9 +104,9 @@
 
     .ag-group {
         background-color: $ag-group-background-color;
-        padding: 0px;
-        border: 0 solid $ag-group-border-color;
-        border-top-width: 1px;
+        @if $ag-group-border-color {
+            border-top: 1px solid $ag-group-border-color;
+        }
     }
 
     .ag-group-item {
@@ -116,44 +116,33 @@
 
     .ag-group-title-bar {
         background-color: $ag-group-title-background-color;
-        height: $ag-icon-size;
-        font-size: $ag-font-size;
-        font-family: $ag-font-family;
-        height: 26px;
         padding: $ag-grid-size;
     }
+    
     .ag-group-toolbar {
-        background-color: darken($ag-group-background-color, 2%);
+        background-color: $ag-group-toolbar-background-color;
         padding: $ag-grid-size;
-        border: 0 solid $ag-border-color;
     }
-    .ag-group-container-vertical {
+
+    .ag-charts-minichart-group-container {
+        padding: $ag-grid-size;
+    }
+
+    .ag-charts-top-level-group-container {
         margin-left: $ag-grid-size * 2;
         padding: $ag-grid-size;
     }
-    .ag-group-container-vertical {
-        // second level of indentation
-        // TODO nesting
-        .ag-group-container-vertical {
-            margin-left: 0;
-        }
-        .ag-group-title-bar {
-            height: 18px;
-        }
+    
+    .ag-charts-sub-level-group-container {
+        padding: $ag-grid-size;
     }
 
-    .ag-disabled {
-        .ag-group-title,
-        .ag-group-container {
-            opacity: 0.5;
-        }
+    .ag-disabled-group-title-bar, .ag-disabled-group-container {
+        opacity: 0.5
     }
 
     .group-item {
         margin: $ag-grid-size / 2 0;
-        .ag-group-title-bar {
-            height: 18px;
-        }
     }
 
     .ag-labeled {

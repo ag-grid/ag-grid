@@ -100,7 +100,7 @@ export class ChartDataPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            cssIdentifier: "charts"
+            cssIdentifier: 'charts-top-level'
         }));
 
         const inputName = `chartDimension${this.getCompId()}`;
@@ -126,7 +126,7 @@ export class ChartDataPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            cssIdentifier: "charts"
+            cssIdentifier: 'charts-top-level'
         }));
 
         if (this.chartController.isActiveXYChart()) {

@@ -48,7 +48,7 @@ export class BarSeriesPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-top-level',
             direction: 'vertical'
         };
         this.setTemplate(BarSeriesPanel.TEMPLATE, {seriesGroup: groupParams});

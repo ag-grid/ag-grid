@@ -17,7 +17,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
         headerHeight: MAT_GRID_SIZE * 7,
         virtualItemHeight: MAT_GRID_SIZE * 5,
         rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 220
+        chartMenuPanelWidth: 240
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,

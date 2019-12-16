@@ -537,20 +537,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+}
 
-    // TODO nesting
-    .ag-filter-toolpanel-header {
-        display: flex;
-        div:not(.ag-input-wrapper) {
-            display: flex;
-            align-items: center;
-        }
-    }
+.ag-filter-toolpanel-header {
+    display: flex;
+}
 
-    // TODO nesting
-    .ag-group-item {
-        flex-direction: column;
-    }
+.ag-filter-toolpanel-header-expand {
+    display: flex;
+    align-items: center;
+}
+
+.ag-filter-toolpanel-instance {
+    flex-direction: column;
 }
 
 /**

@@ -30,7 +30,7 @@ export class CalloutPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-sub-level',
             direction: 'vertical'
         };
         this.setTemplate(CalloutPanel.TEMPLATE, {calloutGroup: groupParams});

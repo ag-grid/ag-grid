@@ -33,7 +33,7 @@ export class BackgroundPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true
         };

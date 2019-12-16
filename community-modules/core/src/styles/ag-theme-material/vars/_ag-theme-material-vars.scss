@@ -69,6 +69,10 @@ $ag-hover-color: #fafafa !default;
 $ag-selected-color: #eee !default;
 $ag-cell-data-changed-color: #fce4ec !default;
 
+$ag-group-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
+$ag-group-title-background-color: darken($ag-group-background-color, 5%) !default;
+$ag-group-toolbar-background-color: darken($ag-group-background-color, 2%);
+
 // Misc
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;

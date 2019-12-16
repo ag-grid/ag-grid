@@ -46,7 +46,7 @@ export class AreaSeriesPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-top-level',
             direction: 'vertical'
         };
         this.setTemplate(AreaSeriesPanel.TEMPLATE, {seriesGroup: groupParams});

@@ -42,7 +42,7 @@ export class ChartPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-top-level',
             direction: 'vertical'
         };
         this.setTemplate(ChartPanel.TEMPLATE, {chartGroup: groupParams});

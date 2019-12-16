@@ -99,7 +99,6 @@
     // context menu and enterprise column menu
     ////////////////////////////////////////
     .ag-menu {
-        background: $ag-color-background-alt;
 
         .ag-menu-list {
             margin: 0;
@@ -775,58 +774,50 @@
 
     .ag-group {
         background: $ag-color-background-alt;
-        // TODO find out why this is being set and make it no longer necessary to override
-        border-top: 0;
+    }
 
-        .ag-group-title-bar {
-            font: $ag-font-chrome;
-            background: $ag-color-background;
-            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
-            padding: $ag-grid-size $ag-grid-size * 2 !important;
-            // hacky way to adjust the height of the header to match the one in the filter panel
-            line-height: $ag-icon-size + $ag-grid-size - 2;
-            height: auto;
 
-            .ag-column-group-icons {
-                margin-left: -2px;
-                margin-right: $ag-grid-size;
-                transform: translateY(1px);
-            }
+    .ag-charts-top-level-group-title-bar {
+        font: $ag-font-chrome;
+        background: $ag-color-background;
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        padding: $ag-grid-size $ag-grid-size * 2;
+
+        .ag-column-group-icons {
+            margin-left: -2px;
+            margin-right: $ag-grid-size;
+            transform: translateY(1px);
         }
+    }
 
-        .ag-group-container {
-            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
-            margin-left: 0;
-            // TODO what does this do?
-            justify-content: flex-start;
-            padding: $ag-grid-size $ag-grid-size * 2;
+    .ag-charts-top-level-group-container {
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        margin-left: 0;
+        // TODO what does this do?
+        justify-content: flex-start;
+        padding: $ag-grid-size $ag-grid-size * 2;
 
-            .ag-group-item {
-                margin: 0;
-                margin-right: 0;
-            }
+        .ag-group-item {
+            margin: 0;
+            margin-right: 0;
         }
+    }
 
-        // second level nesting
-        .ag-group {
-            .ag-group-container {
-                padding: $ag-grid-size * 2 0;
-            }
-            .ag-group-title-bar {
-                background-color: unset;
-                padding: $ag-grid-size 0 !important;
-                height: auto;
-            }
+    .ag-charts-top-level-group-toolbar {
+        padding: $ag-grid-size $ag-grid-size * 2;
+        height: auto;
+        background: $ag-color-background;
+        input.ag-native-checkbox {
+            @include ag-toggle-button;
         }
+    }
 
-        .ag-group-toolbar {
-            padding: $ag-grid-size $ag-grid-size * 2;
-            height: auto;
-            background: $ag-color-background;
-            input.ag-native-checkbox {
-                @include ag-toggle-button;
-            }
-        }
+    .ag-charts-sub-level-group-container {
+        padding: $ag-grid-size * 2 0;
+    }
+    .ag-charts-sub-level-group-title-bar {
+        padding: $ag-grid-size 0;
+        height: auto;
     }
 
     // Color Picker

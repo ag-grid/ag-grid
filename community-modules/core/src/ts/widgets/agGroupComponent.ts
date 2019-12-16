@@ -28,6 +28,7 @@ export class AgGroupComponent extends Component {
 
     private items: GroupItem[];
     private title: string;
+    private cssIdentifier: string;
     private enabled: boolean;
     private expanded: boolean;
     private suppressEnabledCheckbox: boolean = true;
@@ -36,14 +37,13 @@ export class AgGroupComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    @RefSelector('groupTitle') private groupTitle: HTMLElement;
+    @RefSelector('eTitleBar') private eTitleBar: HTMLElement;
     @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
     @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-
     @RefSelector('eToolbar') private eToolbar: HTMLElement;
     @RefSelector('cbGroupEnabled') private cbGroupEnabled: AgCheckbox;
-    @RefSelector("lbGroupTitle") private lbGroupTitle: HTMLElement;
-    @RefSelector("eContainer") private groupContainer: HTMLElement;
+    @RefSelector('eTitle') private eTitle: HTMLElement;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
 
     constructor(params: AgGroupComponentParams = {}) {
         super(AgGroupComponent.getTemplate(params));
@@ -51,6 +51,7 @@ export class AgGroupComponent extends Component {
         const { title, enabled, items, suppressEnabledCheckbox, suppressOpenCloseIcons } = params;
 
         this.title = title;
+        this.cssIdentifier = params.cssIdentifier || 'default';
         this.enabled = enabled != null ? enabled : true;
         this.items = items || [];
 
@@ -66,13 +67,13 @@ export class AgGroupComponent extends Component {
     }
 
     private static getTemplate(params: AgGroupComponentParams) {
-        const cssIdentifier = (params && params.cssIdentifier) || 'default';
+        const cssIdentifier = params.cssIdentifier || 'default';
         const direction: Direction = params.direction || 'vertical';
         return `<div class="ag-group ag-${cssIdentifier}-group">
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar" ref="groupTitle">
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar" ref="eTitleBar">
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon"></span>
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon"></span>
-                <span ref="lbGroupTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
+                <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
             </div>
             <div ref="eToolbar" class="ag-group-toolbar ag-${cssIdentifier}-group-toolbar">
                 <ag-checkbox ref="cbGroupEnabled"></ag-checkbox>
@@ -113,7 +114,7 @@ export class AgGroupComponent extends Component {
     private setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.addDestroyableEventListener(this.groupTitle, 'click', () => this.toggleGroupExpand());
+        this.addDestroyableEventListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
     }
 
     private refreshChildDisplay(): void {
@@ -145,7 +146,7 @@ export class AgGroupComponent extends Component {
     public toggleGroupExpand(expanded?: boolean): this {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
-            _.setDisplayed(this.groupContainer, true);
+            _.setDisplayed(this.eContainer, true);
             return this;
         }
 
@@ -157,7 +158,7 @@ export class AgGroupComponent extends Component {
 
         this.expanded = expanded;
         this.refreshChildDisplay();
-        _.setDisplayed(this.groupContainer, expanded);
+        _.setDisplayed(this.eContainer, expanded);
 
         if (this.expanded) {
             const event = {
@@ -179,9 +180,10 @@ export class AgGroupComponent extends Component {
     }
 
     public addItem(item: GroupItem) {
-        const container = this.groupContainer;
+        const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
         _.addCssClass(el, 'ag-group-item');
+        _.addCssClass(el, `ag-${this.cssIdentifier}-group-item`);
 
         container.appendChild(el);
         this.items.push(el);
@@ -193,13 +195,15 @@ export class AgGroupComponent extends Component {
     }
 
     public setTitle(title: string): this {
-        this.lbGroupTitle.innerText = title;
+        this.eTitle.innerText = title;
         return this;
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
         this.enabled = enabled;
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
+        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !enabled);
+        _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !enabled);
 
         this.toggleGroupExpand(enabled);
 

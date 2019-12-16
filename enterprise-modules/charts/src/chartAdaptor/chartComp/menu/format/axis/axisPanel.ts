@@ -50,7 +50,7 @@ export class AxisPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts',
+            cssIdentifier: 'charts-top-level',
             direction: 'vertical'
         };
         this.setTemplate(AxisPanel.TEMPLATE, {axisGroup: groupParams});
