@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.0
+// @ag-grid-community/react v22.1.1
 import { Promise } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";

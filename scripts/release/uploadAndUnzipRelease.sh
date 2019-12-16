@@ -52,4 +52,4 @@ ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html/archive/$FILENAME publi
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/ && unzip $FILENAME"
 
 #update folder permissions (default is 777 - change to 755)
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "find public_html -maxdepth 1 -not \( -path public_html/ecommerce -prune \) -not \( -path public_html/ecommerce-uat -prune \) -not \( -path public_html/services -prune \) -not \( -path public_html/archive -prune \) -type d -exec chmod -R 755 {} \;"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "find public_html -maxdepth 1 -not \( -path public_html/ecommerce -prune \) -not \( -path public_html/ecommerce-uat -prune \) -not \( -path public_html/services -prune \) -not \( -path public_html/archive -prune \) -not \( -path public_html/_shared -prune \) -type d -exec chmod -R 755 {} \;"

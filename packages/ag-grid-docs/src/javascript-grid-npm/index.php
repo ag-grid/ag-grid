@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <snippet language="sh">
-npm install --save @ag-grid-community/all-modules
+npm install --save ag-grid-community
 </snippet>
 
 <p>
@@ -37,20 +37,20 @@ npm install --save ag-grid-enterprise
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('@ag-grid-community/all-modules');
+var AgGrid = require('ag-grid-community');
 
 // ECMA 6 - using the system import method
-import {Grid} from '@ag-grid-community/all-modules';
+import {Grid} from 'ag-grid-community';
 </snippet>
 
 <p>for ag-Grid Enterprise features you need to import the ag-Grid Enterprise package instead:</p>
 
 <snippet>
 // ECMA 5 - using nodes require() method
-var AgGrid = require('@ag-grid-enterprise/all-modules');
+var AgGrid = require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from '@ag-grid-enterprise/all-modules';
+import {Grid} from 'ag-grid-enterprise';
 </snippet>
 
 <p>After you have loaded the scripts, you should include the styles in your project. There are several ways to do it, depending on your module bundler and the specifics of your project. The stylesheet files reside in <code>dist/styles/</code> directory of the ag-grid package - you should include <code>ag-grid.css</code> and the theme of your choice. </p> 
