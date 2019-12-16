@@ -231,8 +231,10 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             // as above, however this would work on each column independently and take longer.
             if (!core_1._.exists(this.filterText)) {
                 var primaryCols = this.columnApi.getPrimaryColumns();
-                // we don't want to change visibility on lock visible columns
-                var colsToChange = primaryCols.filter(function (col) { return !col.getColDef().lockVisible; });
+                // we don't want to change visibility on lock visible / hidden columns
+                var colsToChange = primaryCols.filter(function (col) {
+                    return !col.getColDef().lockVisible && !col.getColDef().hide;
+                });
                 this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
                 return;
             }
