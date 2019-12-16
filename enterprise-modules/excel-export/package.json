@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/excel-export",
-  "version": "22.1.1",
+  "version": "22.1.3",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
