@@ -26,14 +26,14 @@ var columnDefs = [
   {headerName: "Model", field: "model"},
   {headerName: "Price", field: "price"}
 ];
-    
+
 // specify the data
 var rowData = [
   {make: "Toyota", model: "Celica", price: 35000},
   {make: "Ford", model: "Mondeo", price: 32000},
   {make: "Porsche", model: "Boxter", price: 72000}
 ];
-    
+
 // let the grid know which columns and what data to use
 var gridOptions = {
   columnDefs: columnDefs,
@@ -55,7 +55,7 @@ new Grid(eGridDiv, gridOptions);
 &lt;div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
-</snippet>  
+</snippet>
                 </div>
                 <div class="tab-pane" id="packages" role="tabpanel" aria-labelledby="packages-tab">
 <snippet>
