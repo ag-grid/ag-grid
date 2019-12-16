@@ -7,7 +7,8 @@ import {
     FontStyle,
     FontWeight,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {PaddingPanel} from "./paddingPanel";
@@ -40,7 +41,11 @@ export class ChartPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts',
+            direction: 'vertical'
+        };
+        this.setTemplate(ChartPanel.TEMPLATE, {chartGroup: groupParams});
 
         this.initGroup();
         this.initTitles();

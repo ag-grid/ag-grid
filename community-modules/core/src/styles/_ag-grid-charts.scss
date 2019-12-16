@@ -48,13 +48,12 @@
 }
 
 .ag-chart-tabbed-menu {
-    > div {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
     .ag-tab-header {
         flex: none;
         user-select: none;
@@ -119,36 +118,27 @@
                 flex: 1 1 auto;
                 overflow-x: hidden;
                 overflow-y: auto;
-                .ag-chart-settings-mini-wrapper {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    display: flex;
-                    flex-direction: column;
-                    width: 100%;
-                    min-height: 100%;
-                    overflow: hidden;
-                    .ag-group-component {
-                        flex: none;
-                    }
-                    .ag-group-component-container {
-                        flex-direction: row;
-                        flex-wrap: wrap;
-                        .ag-chart-mini-thumbnail {
-                            flex: none;
-                        }
-                    }
-                    &.ag-animating,
-                    &.ag-animating {
-                        transition: left 0.3s;
-                        transition-timing-function: ease-in-out;
-                    }
-                    .ag-chart-mini-thumbnail {
-                        cursor: pointer;
-                        canvas {
-                            display: block;
-                        }
-                    }
+            }
+        }
+
+        .ag-chart-settings-mini-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-height: 100%;
+            overflow: hidden;
+            &.ag-animating,
+            &.ag-animating {
+                transition: left 0.3s;
+                transition-timing-function: ease-in-out;
+            }
+            .ag-chart-mini-thumbnail {
+                cursor: pointer;
+                canvas {
+                    display: block;
                 }
             }
         }
@@ -170,15 +160,10 @@
             }
         }
     }
+}
 
-    .ag-chart-format-wrapper {
-        overflow-x: hidden;
-        .ag-group-component {
-            .ag-group-subgroup {
-                justify-content: space-between;
-            }
-        }
-    }
+.ag-charts-font-panel-controls {
+    justify-content: space-between;
 }
 
 // sizing

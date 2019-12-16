@@ -4,7 +4,8 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {ChartTranslator} from "../../../chartTranslator";
@@ -31,7 +32,12 @@ export class BackgroundPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(BackgroundPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(BackgroundPanel.TEMPLATE, {chartBackgroundGroup: groupParams});
 
         this.initGroup();
         this.initColorPicker();

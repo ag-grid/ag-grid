@@ -1338,9 +1338,9 @@ export class Utils {
         //     string column over aggregation drop zone
         dropNotAllowed: 'not-allowed',
         // shown on row group when contracted (click to expand)
-        groupContracted: 'contracted',
+        groupContracted: 'tree-closed',
         // shown on row group when expanded (click to contract)
-        groupExpanded: 'expanded',
+        groupExpanded: 'tree-open',
         // context menu chart item
         chart: 'chart',
         // chart window title bar

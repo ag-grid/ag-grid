@@ -632,7 +632,7 @@ export abstract class Chart extends Observable {
     private toggleTooltip(visible?: boolean) {
         const classList = [this.defaultTooltipClass, this._tooltipClass];
         if (visible) {
-            classList.push('visible');
+            classList.push('ag-chart-tooltip-visible');
         } else if (this.lastPick) {
             this.lastPick.series.dehighlightNode();
             this.lastPick = undefined;

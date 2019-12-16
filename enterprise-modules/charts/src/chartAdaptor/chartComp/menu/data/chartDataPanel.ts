@@ -99,7 +99,8 @@ export class ChartDataPanel extends Component {
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: "charts"
         }));
 
         const inputName = `chartDimension${this.getCompId()}`;
@@ -124,7 +125,8 @@ export class ChartDataPanel extends Component {
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: "charts"
         }));
 
         if (this.chartController.isActiveXYChart()) {

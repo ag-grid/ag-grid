@@ -4,6 +4,7 @@
     .ag-checkbox,
     .ag-radio-button,
     .ag-toggle-button {
+        // TODO structural styles
         display: flex;
         align-items: center;
         cursor: default;
@@ -27,9 +28,10 @@
         input[type='tel'],
         input[type='date'],
         input[type='datetime-local'] {
-            @include textbox();
+            @include ag-textbox();
         }
 
+        // TODO structural styles
         input[type='date'] {
             flex: 1 1 auto;
         }
@@ -38,7 +40,7 @@
         }
 
         textarea {
-            @include textbox();
+            @include ag-textbox();
         }
     }
 
@@ -100,52 +102,56 @@
         ( margin-left: 2px )
     );
 
-    .ag-group-component {
-        background-color: $ag-group-component-background-color;
+    .ag-group {
+        background-color: $ag-group-background-color;
         padding: 0px;
-        border: 0 solid $ag-group-component-border-color;
+        border: 0 solid $ag-group-border-color;
         border-top-width: 1px;
-        &.ag-disabled > {
-            .ag-group-component-label .ag-group-component-title,
-            .ag-group-component-container {
-                opacity: 0.5;
-            }
-        }
-        &:not(.ag-collapsible) {
-            > {
-                div {
-                    margin-left: 0;
-                }
-                .ag-group-component-title-bar {
-                    margin-left: 0;
-                    padding: $ag-grid-size;
-                    .ag-column-group-icons {
-                        display: none;
-                    }
-                }
-            }
-        }
     }
-    .ag-group-component-title-bar {
-        background-color: $ag-group-component-title-background-color;
+
+    .ag-group-item {
+        margin-top: $ag-grid-size / 2;
+        margin-bottom: $ag-grid-size / 2;
+    }
+
+    .ag-group-title-bar {
+        background-color: $ag-group-title-background-color;
         height: $ag-icon-size;
         font-size: $ag-font-size;
         font-family: $ag-font-family;
         height: 26px;
+        padding: $ag-grid-size;
     }
-    .ag-group-component-toolbar {
-        background-color: darken($ag-group-component-background-color, 2%);
+    .ag-group-toolbar {
+        background-color: darken($ag-group-background-color, 2%);
         padding: $ag-grid-size;
         border: 0 solid $ag-border-color;
     }
-    .ag-group-component-container {
+    .ag-group-container-vertical {
         margin-left: $ag-grid-size * 2;
         padding: $ag-grid-size;
     }
+    .ag-group-container-vertical {
+        // second level of indentation
+        // TODO nesting
+        .ag-group-container-vertical {
+            margin-left: 0;
+        }
+        .ag-group-title-bar {
+            height: 18px;
+        }
+    }
 
-    .ag-group-item {
+    .ag-disabled {
+        .ag-group-title,
+        .ag-group-container {
+            opacity: 0.5;
+        }
+    }
+
+    .group-item {
         margin: $ag-grid-size / 2 0;
-        .ag-group-component-title-bar {
+        .ag-group-title-bar {
             height: 18px;
         }
     }
@@ -195,6 +201,7 @@
     }
 
     .ag-toggle-button {
+        // TODO do this without reaching into input wrapper
         .ag-input-wrapper {
             height: $ag-icon-size;
             width: 40px;
@@ -210,6 +217,7 @@
             }
         }
         &.ag-selected {
+            // TODO do this without reaching into input wrapper
             .ag-input-wrapper {
                 background-color: $ag-accent-color;
                 .ag-icon {
@@ -291,17 +299,6 @@
             border-radius: 13px;
             background-color: rgb(248, 248, 248);
             box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .ag-spectrum-text-value {
-            font-weight: bold;
-            line-height: 20px;
-            color: #333;
-        }
-
-        .ag-spectrum-text-value:focus {
-            border: 1px solid #0d77e4;
-            padding: 2px;
         }
 
         .ag-recent-colors {

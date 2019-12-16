@@ -4,8 +4,9 @@
     .ag-column-drop-horizontal {
         background-color: $ag-panel-background-color;
         height: $ag-row-height;
-        @include grid-border(bottom);
+        @include ag-grid-border(bottom);
 
+        // TODO class name
         .ag-icon-small-left,
         .ag-icon-small-right {
             margin: 0 $ag-grid-size;
@@ -25,12 +26,14 @@
         margin-right: $ag-cell-horizontal-padding
     ));
 
+    // TODO nesting
     .ag-column-drop-cell {
         background: $ag-chip-background-color;
         border-radius: $ag-grid-size * 4;
         min-height: $ag-grid-size * 4;
         padding: 0 $ag-grid-size / 2;
 
+        // TODO nesting
         .ag-column-drop-cell-text {
             margin: 0 $ag-grid-size;
         }
@@ -46,6 +49,7 @@
             }
         }
 
+        // TODO rename ag-drag-handle it's used globally
         .ag-column-drag {
             margin-left: $ag-grid-size * 2;
         }
@@ -55,6 +59,7 @@
         padding-top: $ag-grid-size * 2;
         padding-bottom: $ag-grid-size * 2;
 
+        // TODO nesting, naming
         .ag-column-drop-cell {
             margin-top: $ag-grid-size;
             margin-left: $ag-grid-size;
@@ -64,12 +69,13 @@
     
 
     .ag-select-agg-func-popup {
-        @include card();
+        @include ag-card();
 
         background: $ag-background-color;
         height: $ag-grid-size * 5 * 3.5;
         padding: 0;
 
+        // TODO nesting, naming
         .ag-virtual-list-item {
             cursor: default;
             line-height: $ag-grid-size * 5;

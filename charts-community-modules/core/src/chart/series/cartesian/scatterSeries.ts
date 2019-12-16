@@ -313,7 +313,7 @@ export class ScatterSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleHtml = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
@@ -327,7 +327,7 @@ export class ScatterSeries extends CartesianSeries {
                 contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
             }
 
-            return `${titleHtml}<div class="content">${contentHtml}</div>`;
+            return `${titleHtml}<div class="ag-chart-tooltip-content">${contentHtml}</div>`;
         }
     }
 

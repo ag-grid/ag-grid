@@ -84,7 +84,7 @@
         }
 
         .ag-native-checkbox {
-            @include checkbox($ag-color-primary);
+            @include ag-checkbox($ag-color-primary);
         }
     }
 
@@ -168,14 +168,14 @@
     // Popup
     ////////////////////////////////////////
     &.ag-popup > div:not(.ag-tooltip-custom) {
-        @include chrome-box-shadow();
+        @include ag-chrome-box-shadow();
         border: 1px solid $ag-secondary-border-color;
         border-radius: $ag-border-radius;
-        @include chrome-box-shadow();
+        @include ag-chrome-box-shadow();
     }
 
     &.ag-dnd-ghost {
-        @include chrome-box-shadow();
+        @include ag-chrome-box-shadow();
         border-radius: $ag-border-radius;
     }
 
@@ -183,7 +183,7 @@
     // Selection Checkbox
     ////////////////////////////////////////
     .ag-selection-checkbox input {
-        @include checkbox;
+        @include ag-checkbox;
     }
 
     ////////////////////////////////////////
@@ -195,7 +195,7 @@
         }
 
         input {
-            @include checkbox;
+            @include ag-checkbox;
         }
     }
 
@@ -277,7 +277,7 @@
     }
 
     .ag-cell.ag-cell-inline-editing {
-        @include primary-box-shadow();
+        @include ag-primary-box-shadow();
         border-radius: 0;
         padding: 0;
         height: 100%;
@@ -309,7 +309,7 @@
     // Popup editing
     ////////////////////////////////////////
     .ag-popup > div.ag-popup-editor {
-        @include primary-box-shadow();
+        @include ag-primary-box-shadow();
         min-height: $ag-row-height;
         border-color: $ag-color-primary;
         border-radius: 0;
@@ -361,7 +361,7 @@
         }
 
         .ag-rich-select-row-selected {
-            @include active-invert;
+            @include ag-active-invert;
         }
     }
 
@@ -385,7 +385,7 @@
             }
 
             .ag-checkbox {
-                @include checkbox($ag-color-primary);
+                @include ag-checkbox($ag-color-primary);
             }
 
             .ag-input-wrapper {
@@ -400,7 +400,7 @@
         }
 
         .ag-primary-cols-list-panel .ag-checkbox input {
-            @include checkbox($ag-color-primary);
+            @include ag-checkbox($ag-color-primary);
         }
 
         .ag-primary-cols-list-panel .ag-column-group-icons {
@@ -424,7 +424,7 @@
     // Overlay
     ////////////////////////////////////////
     .ag-overlay-loading-center {
-        @include chrome-box-shadow();
+        @include ag-chrome-box-shadow();
         border: 1px solid $ag-border-color;
         padding: $ag-grid-size * 2 $ag-grid-size * 3;
         font: $ag-font-default;
@@ -512,7 +512,7 @@
         .ag-pivot-mode-select {
             margin-left: $ag-grid-size * 2;
             input {
-                @include toggle-button;
+                @include ag-toggle-button;
             }
         }
     }
@@ -523,7 +523,7 @@
         & > div:first-child {
             background-color: $ag-color-background;
             padding: $ag-grid-size * 2 $ag-grid-size * 2;
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             & > span:first-child {
                 margin-left: 0px;
                 // display: none;
@@ -730,7 +730,7 @@
         }
 
         .ag-native-checkbox {
-            @include checkbox($ag-color-primary);
+            @include ag-checkbox($ag-color-primary);
             margin-right: 2px;
         }
 
@@ -738,7 +738,7 @@
             flex: none;
             width: unset;
             min-width: unset;
-            @include toggle-button;
+            @include ag-toggle-button;
         }
 
         // Format tab
@@ -773,15 +773,15 @@
         }
     }
 
-    .ag-group-component {
+    .ag-group {
         background: $ag-color-background-alt;
         // TODO find out why this is being set and make it no longer necessary to override
         border-top: 0;
 
-        .ag-group-component-title-bar {
+        .ag-group-title-bar {
             font: $ag-font-chrome;
             background: $ag-color-background;
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             padding: $ag-grid-size $ag-grid-size * 2 !important;
             // hacky way to adjust the height of the header to match the one in the filter panel
             line-height: $ag-icon-size + $ag-grid-size - 2;
@@ -794,9 +794,10 @@
             }
         }
 
-        .ag-group-component-container {
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+        .ag-group-container {
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             margin-left: 0;
+            // TODO what does this do?
             justify-content: flex-start;
             padding: $ag-grid-size $ag-grid-size * 2;
 
@@ -807,23 +808,23 @@
         }
 
         // second level nesting
-        .ag-group-component {
-            .ag-group-component-container {
+        .ag-group {
+            .ag-group-container {
                 padding: $ag-grid-size * 2 0;
             }
-            .ag-group-component-title-bar {
+            .ag-group-title-bar {
                 background-color: unset;
                 padding: $ag-grid-size 0 !important;
                 height: auto;
             }
         }
 
-        .ag-group-component-toolbar {
+        .ag-group-toolbar {
             padding: $ag-grid-size $ag-grid-size * 2;
             height: auto;
             background: $ag-color-background;
             input.ag-native-checkbox {
-                @include toggle-button;
+                @include ag-toggle-button;
             }
         }
     }
@@ -1022,7 +1023,7 @@
             border-right: 1px solid $ag-border-color;
         }
 
-        .ag-group-component .ag-group-component-title-bar .ag-column-group-icons {
+        .ag-group .ag-group-title-bar .ag-column-group-icons {
             margin-left: $ag-grid-size;
             margin-right: 0;
             transform: scaleX(-1);

@@ -7,7 +7,7 @@
     }
 
     .ag-menu {
-        @include card();
+        @include ag-card();
         padding: 0;
     }
 
@@ -48,7 +48,7 @@
         & > span:after {
             content: "";
             display: block;
-            @include grid-border(top, $color: $ag-secondary-border-color);
+            @include ag-grid-border(top, $color: $ag-secondary-border-color);
         }
     }
 
@@ -65,14 +65,17 @@
         background: $ag-panel-background-color;
         min-width: 220px;
         width: 100%;
+        // TODO structural style
         display: flex;
 
         .ag-tab {
             @extend %tab !optional;
 
+            // TODO structural styles
             display: flex;
             border-bottom: 2px solid transparent;
             height: $ag-grid-size * 4;
+            // TODO structural styles
             flex: none;
             align-items: center;
             justify-content: center;
@@ -171,11 +174,12 @@
         }
 
         .ag-filter-header-container {
-            @include grid-border(bottom, $color: $ag-secondary-border-color);
+            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
             padding-bottom: $ag-grid-size / 2;
         }
 
         .ag-filter-apply-panel {
+            // TODO structural styles
             display: flex;
             justify-content: flex-end;
             padding: $ag-grid-size;
@@ -183,7 +187,7 @@
             button {
                 line-height: 1.5;
                 @if $ag-customize-buttons {
-                    @include regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
+                    @include ag-regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
                 }
             }
 
@@ -208,7 +212,7 @@
         }
         // TODO move up level
         .ag-primary-cols-list-panel {
-            @include grid-border(top, $color: $ag-secondary-border-color);
+            @include ag-grid-border(top, $color: $ag-secondary-border-color);
             padding-top: $ag-grid-size;
             // TODO  add className in code
             > div {

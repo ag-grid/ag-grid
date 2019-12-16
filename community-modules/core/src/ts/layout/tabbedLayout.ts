@@ -1,8 +1,8 @@
 import { Promise, _ } from '../utils';
+import { Component } from '../widgets/component';
 
-export class TabbedLayout {
+export class TabbedLayout extends Component {
 
-    private eGui: HTMLElement;
     private eHeader: HTMLElement;
     private eBody: HTMLElement;
     private params: TabbedLayoutParams;
@@ -19,14 +19,13 @@ export class TabbedLayout {
     private activeItem: TabbedItemWrapper;
 
     constructor(params: TabbedLayoutParams) {
+        super(TabbedLayout.TEMPLATE);
         this.params = params;
-        this.eGui = document.createElement('div');
-        this.eGui.innerHTML = TabbedLayout.TEMPLATE;
 
-        this.eHeader = this.eGui.querySelector('[ref="tabHeader"]') as HTMLElement;
-        this.eBody = this.eGui.querySelector('[ref="tabBody"]') as HTMLElement;
+        this.eHeader = this.getGui().querySelector('[ref="tabHeader"]') as HTMLElement;
+        this.eBody = this.getGui().querySelector('[ref="tabBody"]') as HTMLElement;
 
-        _.addCssClass(this.eGui, params.cssClass);
+        _.addCssClass(this.getGui(), params.cssClass);
 
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
@@ -39,7 +38,7 @@ export class TabbedLayout {
 
     public getMinDimensions(): {width: number, height: number} {
 
-        const eDummyContainer = this.eGui.cloneNode(true) as HTMLElement;
+        const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
         const eDummyBody = eDummyContainer.querySelector('[ref="tabBody"]') as HTMLElement;
 
         // position fixed, so it isn't restricted to the boundaries of the parent
@@ -47,7 +46,7 @@ export class TabbedLayout {
 
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        this.eGui.appendChild(eDummyContainer);
+        this.getGui().appendChild(eDummyContainer);
 
         let minWidth = 0;
         let minHeight = 0;
@@ -74,7 +73,7 @@ export class TabbedLayout {
         //     minWidth = this.eGui.offsetWidth;
         // }
 
-        this.eGui.removeChild(eDummyContainer);
+        this.getGui().removeChild(eDummyContainer);
 
         return {height: minHeight, width: minWidth};
     }
@@ -134,11 +133,6 @@ export class TabbedLayout {
             wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
         }
     }
-
-    public getGui(): HTMLElement {
-        return this.eGui;
-    }
-
 }
 
 export interface TabbedLayoutParams {

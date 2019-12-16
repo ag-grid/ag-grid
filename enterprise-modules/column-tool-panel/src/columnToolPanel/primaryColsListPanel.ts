@@ -268,8 +268,10 @@ export class PrimaryColsListPanel extends Component {
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
                 const primaryCols = this.columnApi.getPrimaryColumns();
-                // we don't want to change visibility on lock visible columns
-                const colsToChange = primaryCols.filter(col => !col.getColDef().lockVisible);
+                // we don't want to change visibility on lock visible / hidden columns
+                const colsToChange = primaryCols.filter(col => {
+                    return !col.getColDef().lockVisible && !col.getColDef().hide;
+                });
                 this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
                 return;
             }

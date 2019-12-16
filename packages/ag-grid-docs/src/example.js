@@ -415,9 +415,9 @@ var gridOptions = {
         if (params.type === 'pie' || params.type === 'doughnut') {
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = formatThousands(Math.round(params.datum[params.angleKey]));
-                return title + '<div class="content">' + '$' + value + '</div>';
+                return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
             };
         } else {
             var isNormalized = type === 'normalizedBar' || type === 'normalizedColumn' || type === 'normalizedArea';
@@ -454,7 +454,7 @@ var gridOptions = {
                     }
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                     var label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
                     var xValue = params.xName + ': ' + formatCurrency(params.datum[params.xKey]);
                     var yValue = params.yName + ': ' + formatCurrency(params.datum[params.yKey]);
@@ -462,14 +462,14 @@ var gridOptions = {
                     if (type === 'bubble' && params.sizeKey) {
                         size = '<br>' + params.sizeName + ': ' + formatCurrency(params.datum[params.sizeKey]);
                     }
-                    return title + '<div class="content">' + label + xValue + '<br>' + yValue + size + '</div>';
+                    return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
             } else {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
-                    var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
+                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
                     var value = formatThousands(Math.round(params.datum[params.yKey]));
-                    return title + '<div class="content">' + '$' + value + '</div>';
+                    return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
                 };
             }
 
