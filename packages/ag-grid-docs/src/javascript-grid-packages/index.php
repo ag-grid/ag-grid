@@ -91,7 +91,7 @@ function printFeature($item)
     documentation for more information on that side of things.</p>
 
 
-<h2><code>ag-grid-community</code> & <code>ag-grid-enteprise</code></h2>
+<h2><code>ag-grid-community</code> & <code>ag-grid-enterprise</code></h2>
 
 <p><code>ag-grid-community</code> contains all of the Community code and is additionally "self-registering", so you
     don't need
