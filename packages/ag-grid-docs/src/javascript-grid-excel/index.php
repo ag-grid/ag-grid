@@ -26,7 +26,10 @@ include '../documentation-main/documentation_header.php';
         </p>
 
         <ol class="content">
-            <li>The column width from your grid is exported to Excel, so the columns in Excel will have the same width as your web application</li>
+            <li>The column width in Excel will be the same as the actual width of the column in the application at the time that the export happens, or 75px,
+                whichever is wider. "Actual width" may be different from the width in the column definition
+                if column has been resized or uses flex sizing. This can be overridden using the <code>columnWidth</code>
+                export parameter.</li>
             <li>You can specify Excel styles (colors, fonts, borders etc) to be included in the Excel file.</li>
             <li>The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.</li>
             <li>The cells of the column header groups are merged in the same manner as the group headers in ag-Grid.</li>
