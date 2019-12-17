@@ -12,4 +12,8 @@ include '../documentation-main/documentation_header.php';
        This section introduces the standalone charts API.
     </p>
 
+    <h2>Adrians Awesome Arrangement API</h2>
+
+<?= reactApp('chart-api', 'chart-api') ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

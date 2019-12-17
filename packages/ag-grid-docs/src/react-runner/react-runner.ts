@@ -1,5 +1,3 @@
-// import './example-runner.scss';
-
 import * as angular from "angular";
 import * as jQuery from "jquery";
 
@@ -16,26 +14,6 @@ function resetIndent(str) {
         return str.trim();
     }
 }
-
-docs.service("HighlightService", function () {
-    this.highlight = function (code: string, language: string) {
-        return highlight(code, language);
-    };
-});
-
-docs.directive("snippet", function () {
-    return {
-        restrict: "E",
-        scope: {
-            language: "="
-        },
-        link: function (scope, element, attrs) {
-            const language = attrs.language || "js";
-            const highlightedSource = highlight(resetIndent(element.text()), language);
-            element.empty().html("<pre><code>" + highlightedSource + "</code></pre>");
-        }
-    };
-});
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
@@ -65,7 +43,7 @@ docs.factory("formPostData", [
 
 const ACTIVE_EXAMPLE_RUNNERS = [];
 
-class ExampleRunner {
+class ReactRunner {
     private ready: boolean = false;
     private source: any;
     private loadingSource: boolean;
@@ -75,6 +53,7 @@ class ExampleRunner {
     private selectedFile: string;
     private resultUrl: string;
 
+    private id: string;
     private files: string[];
     private title: string;
     private section: string;
@@ -103,7 +82,7 @@ class ExampleRunner {
         private $timeout: angular.ITimeoutService,
         private $sce: angular.ISCEService,
         private $q: angular.IQService,
-        private formPostData,
+        private formPostData: any,
         private $element: Element,
         private $cookies: angular.cookies.ICookiesService
     ) {
@@ -136,6 +115,7 @@ class ExampleRunner {
 
         this.selectedTab = options.showResult === false ? "code" : "result";
 
+        this.id = this.config.app.id;
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
@@ -145,19 +125,9 @@ class ExampleRunner {
         this.titles = {
             vanilla: "JavaScript",
             react: "React",
-            angular: "Angular"
+            angular: "Angular",
+            vue: 'Vue'
         };
-
-        // for now - once all examples have been converted/tested for vue, this can be removed and the vue entry added to
-        // this.titles as a permanent addition
-        this.processVue = options.processVue || options.processVue === undefined;
-        if (this.processVue) {
-            this.titles['vue'] = "Vue";
-        } else {
-            if (this.availableTypes.indexOf('vue') !== -1) {
-                this.availableTypes.splice(this.availableTypes.indexOf('vue'), 1)
-            }
-        }
 
         const divWrapper = jQuery(this.$element).find("div.example-wrapper");
 
@@ -211,7 +181,7 @@ class ExampleRunner {
     }
 
     setType(type: string) {
-        const typeConfig = this.config.types[type];
+        const typeConfig = this.config.app;
 
         this.boilerplateFiles = typeConfig.boilerplateFiles || [];
         this.boilerplatePath = typeConfig.boilerplatePath;
@@ -321,17 +291,22 @@ class ExampleRunner {
         return [this.config.sourcePrefix, this.section, this.name].concat(endSegment).join("/");
     }
 
-    openPlunker(clickEvent) {
+    openPlunker($event) {
+        const context = JSON.parse($event.target.getAttribute('data-context'));
+
         const postData: any = {
             "tags[0]": "ag-grid",
             "tags[1]": "example",
+            "tags[2]": "ag-charts",
             private: true,
             description: this.title
         };
 
-        this.sources.forEach((file: any, index: number) => {
-            postData["files[" + this.allFiles[index] + "]"] = file;
-        });
+        if (context.files) {
+            Object.keys(context.files).forEach(file => {
+                postData[`files[${file}]`] = context.files[file];
+            })
+        }
 
         this.formPostData("//plnkr.co/edit/?p=preview", true, postData);
     }
@@ -341,34 +316,10 @@ class ExampleRunner {
     }
 }
 
-ExampleRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$element", "$cookies"];
+ReactRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$element", "$cookies"];
 
-docs.component("exampleTab", {
-    template: `
-    <li role="presentation" ng-class="{ active: $ctrl.currentValue == $ctrl.value }">
-        <a role="tab" id="{{$ctrl.id}}" ref="{{$ctrl.id}}" data-context="" ng-click="$ctrl.doClick($event)" href="#" title="{{$ctrl.tooltip}}">
-            <i ng-class="['fa', $ctrl.icon]" aria-hidden="true"></i> {{$ctrl.title}}
-        </a>
-    </li>
-    `,
-    bindings: {
-        icon: "<",
-        title: "<",
-        id: "<",
-        tooltip: "<",
-        value: "<",
-        currentValue: "<",
-        onClick: "&"
-    },
-    controller: function() {
-        this.doClick = function(event) {
-            this.onClick({$event: event});
-            event.preventDefault();
-        }
-    }
-});
 
-docs.component("exampleRunner", {
+docs.component("reactRunner", {
     template: ` 
         <div ng-class='["example-runner"]'>
 
@@ -380,7 +331,7 @@ docs.component("exampleRunner", {
     ng-click="$ctrl.toggleFwDropdown()" 
     ng-blur="$ctrl.hideFwDropdown()"
     class="btn btn-default dropdown-toggle" 
-    data-toggle="dropdown"
+    data-toggle="dropdown" 
     aria-haspopup="true" 
     aria-expanded="false"> 
 
@@ -413,21 +364,21 @@ docs.component("exampleRunner", {
                 on-click="$ctrl.selectedTab = 'result'">
             </example-tab>
 
-            <example-tab 
-                value="'code'" 
-                current-value="$ctrl.selectedTab" 
-                title="'Code'"
-                tooltip="'Examine Example Source Code'"
-                icon="'fa-code'" 
-                on-click="$ctrl.selectedTab = 'code'">
-            </example-tab>
+<!--            <example-tab -->
+<!--                value="'code'" -->
+<!--                current-value="$ctrl.selectedTab" -->
+<!--                title="'Code'"-->
+<!--                tooltip="'Examine Example Source Code'"-->
+<!--                icon="'fa-code'" -->
+<!--                on-click="$ctrl.selectedTab = 'code'">-->
+<!--            </example-tab>-->
 
 
-            <li role="presentation">
-                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">
-                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab
-                </a>
-            </li>
+<!--            <li role="presentation">-->
+<!--                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">-->
+<!--                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab-->
+<!--                </a>-->
+<!--            </li>-->
 
             <example-tab
                 ng-hide="$ctrl.noPlunker"
@@ -435,8 +386,9 @@ docs.component("exampleRunner", {
                 current-value="$ctrl.selectedTab" 
                 title="'Plunker'"
                 tooltip="'Open Example in Plunker'"
+                id="$ctrl.id"
                 icon="'fa-external-link'" 
-                on-click="$ctrl.openPlunker($event); $event.preventDefault()">
+                on-click="$ctrl.openPlunker($event);">
             </example-tab>
 
         </ul>  
@@ -494,7 +446,7 @@ docs.component("exampleRunner", {
         config: "<"
     },
 
-    controller: ExampleRunner
+    controller: ReactRunner
 });
 
 docs.component("preview", {

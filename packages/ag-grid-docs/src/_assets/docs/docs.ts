@@ -1,5 +1,6 @@
 import "./docs.scss";
 import "../../example-runner/example-runner.ts";
+import "../../react-runner/react-runner";
 import { $, lazyload, AnchorJS } from "../common/vendor";
 
 declare const autocomplete: any;

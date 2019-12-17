@@ -1,5 +1,6 @@
 <?php
 include_once '../example-runner/utils.php';
+include_once '../react-runner/utils.php';
 include_once '../includes/html-helpers.php';
 include_once '../php-utils/printPropertiesTable.php';
 $DONT_USE_FONT_AWESOME = true;
