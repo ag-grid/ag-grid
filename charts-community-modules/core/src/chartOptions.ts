@@ -4,7 +4,7 @@ import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
-import { LegendPosition } from "./chart/chart";
+import { LegendPosition } from "./chart/legend";
 import { FontStyle, FontWeight } from "./scene/shape/text";
 import { GridStyle as GridStyleOptions } from "./axis";
 

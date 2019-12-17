@@ -8,6 +8,7 @@ import {
     Events,
     EventService,
     FontOptions,
+    LegendPosition,
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
@@ -343,7 +344,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             },
             legend: {
                 enabled: true,
-                position: 'right',
+                position: LegendPosition.Right,
                 padding: 20,
                 item: {
                     label: {

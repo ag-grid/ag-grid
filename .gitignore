@@ -43,6 +43,7 @@ packages/ag-grid-enterprise/main.js
 
 packages/ag-grid-vue/lib/**
 packages/ag-grid-vue/main.js
+packages/ag-grid-vue/main.d.ts
 community-modules/vue/lib/**
 community-modules/vue/main.js
 

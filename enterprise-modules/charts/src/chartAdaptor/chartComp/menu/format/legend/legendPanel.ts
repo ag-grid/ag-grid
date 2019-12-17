@@ -12,9 +12,9 @@ import {
     RefSelector,
     AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
@@ -78,7 +78,7 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPosition() {
-        const positions: LegendPosition[] = ["top", "right", "bottom", "left"];
+        const positions: LegendPosition[] = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
 
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
