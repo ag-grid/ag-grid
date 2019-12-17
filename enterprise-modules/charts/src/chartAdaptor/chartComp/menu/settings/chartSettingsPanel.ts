@@ -19,12 +19,12 @@ export class ChartSettingsPanel extends Component {
         `<div class="ag-chart-settings-wrapper">
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-chart-settings-prev-btn">
-                    <button type="button"></button>
+                <div ref="ePrevBtn" class="ag-chart-settings-prev">
+                    <button type="button" class="ag-chart-settings-prev-button"></button>
                 </div>
-                <div ref="eCardSelector" class="ag-nav-card-selector"></div>
-                <div ref="eNextBtn" class="ag-chart-settings-next-btn">
-                    <button type="button"></button>
+                <div ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div ref="eNextBtn" class="ag-chart-settings-next">
+                    <button type="button" class="ag-chart-settings-next-button"></button>
                 </div>
             </div>
         </div>`;
@@ -114,7 +114,7 @@ export class ChartSettingsPanel extends Component {
 
     private addCardLink(paletteName: ChartPaletteName): void {
         const link = document.createElement('div');
-        _.addCssClass(link, 'ag-nav-card-item');
+        _.addCssClass(link, 'ag-chart-settings-card-item');
 
         if (paletteName === this.activePalette) {
             _.addCssClass(link, 'ag-selected');

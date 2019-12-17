@@ -83,6 +83,7 @@ export class ChartFormattingPanel extends Component {
     private addComponent(component: Component): void {
         this.wireBean(component);
         this.panels.push(component);
+         _.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     }
 

@@ -40,6 +40,7 @@ export class ChartMenu extends Component {
     private readonly chartController: ChartController;
     private tabbedMenu: TabbedChartMenu;
     private menuPanel: AgPanel | AgDialog | undefined;
+    private menuVisible = false;
 
     constructor(chartController: ChartController) {
         super(ChartMenu.TEMPLATE);
@@ -49,6 +50,7 @@ export class ChartMenu extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.createButtons();
+        this.refreshMenuClasses();
     }
 
     private getToolbarOptions(): ChartMenuOptions[] {
@@ -165,7 +167,7 @@ export class ChartMenu extends Component {
                     chartComp.getChartComponentsWrapper(),
                     'click',
                     () => {
-                        if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                        if (this.menuVisible) {
                             this.hideMenu();
                         }
                     }
@@ -180,7 +182,8 @@ export class ChartMenu extends Component {
 
         chartComp.slideDockedOut((this.menuPanel as AgPanel).getWidth());
         window.setTimeout(() => {
-            _.addCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
+            this.menuVisible = true;
+            this.refreshMenuClasses();
         }, 500);
     }
 
@@ -198,7 +201,14 @@ export class ChartMenu extends Component {
         const chartComp = this.getParentComponent() as GridChartComp;
 
         chartComp.slideDockedIn();
-        _.removeCssClass(this.getParentComponent()!.getGui(), 'ag-has-menu');
+        this.menuVisible = false;
+        this.refreshMenuClasses();
+    }
+
+    private refreshMenuClasses() {
+        const eParent = this.getParentComponent()!.getGui();
+        _.addOrRemoveCssClass(eParent, 'ag-chart-menu-visible', this.menuVisible);
+        _.addOrRemoveCssClass(eParent, 'ag-chart-menu-hidden', !this.menuVisible);
     }
 
     public destroy() {

@@ -1,14 +1,14 @@
 @import "./ag-grid-mixins";
 
-@mixin ag-grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color) {
+@mixin ag-grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color, $style: solid) {
     @if $ag-borders {
         @if $sides {
             @each $side in $sides {
-              border-#{$side}: solid $width $color;
+              border-#{$side}: $style $width $color;
             }
         }
         @else {
-            border: solid $width $color;
+            border: $style $width $color;
         }
         @if $radius {
           border-radius: $radius;

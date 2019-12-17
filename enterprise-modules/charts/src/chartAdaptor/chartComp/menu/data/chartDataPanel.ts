@@ -83,6 +83,7 @@ export class ChartDataPanel extends Component {
 
     private addComponent(parent: HTMLElement, component: AgGroupComponent): void {
         const eDiv = document.createElement('div');
+        eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
         parent.appendChild(eDiv);
     }
@@ -100,7 +101,7 @@ export class ChartDataPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-top-level'
+            cssIdentifier: 'charts-data'
         }));
 
         const inputName = `chartDimension${this.getCompId()}`;
@@ -126,7 +127,7 @@ export class ChartDataPanel extends Component {
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-top-level'
+            cssIdentifier: 'charts-data'
         }));
 
         if (this.chartController.isActiveXYChart()) {

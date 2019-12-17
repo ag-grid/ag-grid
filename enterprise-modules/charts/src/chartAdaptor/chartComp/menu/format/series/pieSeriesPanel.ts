@@ -50,7 +50,7 @@ export class PieSeriesPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-sub-level',
+            cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical'
         };
         this.setTemplate(PieSeriesPanel.TEMPLATE, {seriesGroup: groupParams});

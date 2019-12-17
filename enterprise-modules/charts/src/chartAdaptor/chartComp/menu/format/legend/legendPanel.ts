@@ -53,7 +53,7 @@ export class LegendPanel extends Component {
     @PostConstruct
     private init() {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-top-level',
+            cssIdentifier: 'charts-format-top-level',
             direction: 'vertical'
         };
         this.setTemplate(LegendPanel.TEMPLATE, {legendGroup: groupParams});
