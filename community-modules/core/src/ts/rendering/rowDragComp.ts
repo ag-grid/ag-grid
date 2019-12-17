@@ -15,7 +15,7 @@ export class RowDragComp extends Component {
     private readonly cellValue: string;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
-        super(`<div class="ag-row-drag"></div>`);
+        super(`<div class="ag-drag-handle ag-row-drag"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;

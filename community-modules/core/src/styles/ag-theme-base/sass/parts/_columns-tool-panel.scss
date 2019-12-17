@@ -45,21 +45,6 @@
     .ag-column-drop-vertical {
         padding-bottom: $ag-grid-size * 2;
 
-        // TODO nesting, naming
-        .ag-column-drop-empty-message {
-            color: $ag-disabled-foreground-color;
-            font-weight: $ag-secondary-font-weight;
-            font-size: $ag-secondary-font-size;
-            font-family: $ag-secondary-font-family;
-            margin-top: $ag-grid-size;
-        }
-
-        // TODO nesting, naming
-        .ag-column-drop-list {
-            cursor: default;
-            margin-top: $ag-grid-size;
-        }
-
         // TODO specificity
         > div:first-child > span:first-child {
             margin-left: $ag-grid-size;
@@ -70,6 +55,19 @@
         &.ag-last-column-drop {
             border-bottom-width: 0;
         }
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        color: $ag-disabled-foreground-color;
+        font-weight: $ag-secondary-font-weight;
+        font-size: $ag-secondary-font-size;
+        font-family: $ag-secondary-font-family;
+        margin-top: $ag-grid-size;
+    }
+
+    .ag-column-drop-vertical-list {
+        cursor: default;
+        margin-top: $ag-grid-size;
     }
 
     @include ag-auto-rtl(".ag-column-drop-vertical .ag-column-drop-empty-message", (

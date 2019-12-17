@@ -106,12 +106,6 @@
         margin-right: $ag-cell-horizontal-padding
     ));
 
-    // TODO rename ag-drag-handle
-    .ag-column-drag {
-        cursor: move; // IE fallback
-        cursor: grab;
-    }
-
     &.ag-dnd-ghost {
         @include ag-card();
 

@@ -28,7 +28,7 @@
                 "markers": [
                     {
                         "selector":
-                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag"
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-drag-handle"
                     },
                     {
                         "selector":
@@ -42,7 +42,7 @@
                 "markers": [
                     {
                         "selector":
-                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag"
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-drag-handle"
                     },
                     {
                         "selector":
@@ -157,7 +157,7 @@
                 "markers": [
                     {
                         "selector":
-                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-column-drag"
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(4) > span.ag-drag-handle"
                     },
                     {
                         "selector": "#myGrid > div > div:nth-child(1) > div.ag-column-drop.ag-font-style.ag-column-drop-horizontal.ag-column-drop-pivot.ag-width-half > span",
@@ -170,7 +170,7 @@
                 "markers": [
                     {
                         "selector":
-                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-column-drag"
+                            "#myGrid > div > div.ag-root-wrapper-body > div.ag-tool-panel > div.ag-column-panel > div.ag-column-panel-center > div.ag-column-select-panel > div.ag-column-container > div:nth-child(15) > span.ag-drag-handle"
                     },
                     {
                         "selector":

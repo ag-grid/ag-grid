@@ -457,20 +457,20 @@
 
     .ag-column-drop-cell {
         padding: 0;
+    }
 
-        .ag-column-drag {
-            margin-left: $ag-grid-size;
-            transform: translateY(1px);
-        }
+    .ag-column-drop-cell-drag-handle {
+        margin-left: $ag-grid-size;
+        transform: translateY(1px);
+    }
 
-        .ag-column-drop-cell-text {
-            transform: translateY(-1px);
-        }
+    .ag-column-drop-cell-text {
+        transform: translateY(-1px);
+    }
 
-        .ag-column-drop-cell-button {
-            min-width: auto;
-            transform: translateY(2px);
-        }
+    .ag-column-drop-cell-button {
+        min-width: auto;
+        transform: translateY(2px);
     }
 
     ////////////////////////////////////////
@@ -941,7 +941,7 @@
             }
         }
 
-        .ag-column-drop-cell .ag-column-drag {
+        .ag-column-drop-cell-drag-handle {
             margin-left: 0;
             margin-right: $ag-grid-size;
         }

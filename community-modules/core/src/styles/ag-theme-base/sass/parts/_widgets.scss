@@ -91,9 +91,12 @@
     // Selection checkbox
     ////////////////////////////////////////
     @include ag-auto-rtl(
-        ".ag-cell-wrapper .ag-row-drag"
+        ".ag-row-drag"
+        // TODO nesting
         ".ag-cell-wrapper .ag-selection-checkbox"
+        // TODO nesting
         ".ag-cell-wrapper .ag-group-expanded"
+        // TODO nesting
         ".ag-cell-wrapper .ag-group-contracted",
         ( margin-right: $ag-cell-widget-spacing )
     );

@@ -63,7 +63,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');

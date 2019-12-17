@@ -23,6 +23,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     opacity: 0.3;
 }
 
+.ag-drag-handle {
+    cursor: move; // IE fallback
+    cursor: grab;
+}
+
 .ag-width-half {
     display: inline-block;
     width: 50% !important;
@@ -483,49 +488,47 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     overflow: auto;
     width: 100%;
-
-    // TODO nesting
-    .ag-column-drop-list {
-        display: flex;
-        align-items: center;
-        .ag-column-drop-cell {
-            display: flex;
-            align-items: center;
-
-            .ag-column-drop-cell-text {
-                overflow: hidden;
-                flex: 1 1 auto;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-        }
-    }
 }
 
-// TODO nesting
-.ag-column-drop.ag-column-drop-vertical {
+.ag-column-drop-list {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell-text {
+    overflow: hidden;
+    flex: 1 1 auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     flex: 1 1 0;
     align-items: stretch;
+}
 
-    // TODO specificity
-    > div {
-        display: flex;
-        align-items: center;
-    }
+.ag-column-drop-vertical-title-bar {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-column-drop-list {
-        align-items: stretch;
-        flex-grow: 1;
-        flex-direction: column;
-        overflow-x: auto;
-    }
+.ag-column-drop-vertical-list {
+    align-items: stretch;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow-x: auto;
+}
 
-    .ag-column-drop-empty-message {
-        display: block;
-    }
+.ag-column-drop-vertical-empty-message {
+    display: block;
 }
 
 .ag-column-drop.ag-column-drop-horizontal {

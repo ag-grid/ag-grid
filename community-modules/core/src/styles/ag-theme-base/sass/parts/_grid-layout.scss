@@ -134,15 +134,7 @@
         padding-right: $ag-cell-horizontal-padding - 1px;
     }
 
-    .ag-row-drag {
-        // added 'move' as IE fallback
-        cursor: move;
-        cursor: grab;
-        min-width: $ag-icon-size + $ag-grid-size * 3 - $ag-cell-horizontal-padding;
-    }
-
-    .ag-row-dragging,
-    .ag-row-dragging .ag-row-drag {
+    .ag-row-dragging {
         cursor: move;
     }
 
