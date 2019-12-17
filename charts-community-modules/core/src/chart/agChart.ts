@@ -1,16 +1,16 @@
-import { CartesianChart } from "../../../../charts-community-modules/core/src/chart/cartesianChart";
-import { NumberAxis } from "../../../../charts-community-modules/core/src/chart/axis/numberAxis";
-import { CategoryAxis } from "../../../../charts-community-modules/core/src/chart/axis/categoryAxis";
-import { LineSeries } from "../../../../charts-community-modules/core/src/chart/series/cartesian/lineSeries";
-import { ColumnSeries } from "../../../../charts-community-modules/core/src/chart/series/cartesian/columnSeries";
-import { BarSeries } from "../../../../charts-community-modules/core/src/chart/series/cartesian/barSeries";
-import { ScatterSeries } from "../../../../charts-community-modules/core/src/chart/series/cartesian/scatterSeries";
-import { AreaSeries } from "../../../../charts-community-modules/core/src/chart/series/cartesian/areaSeries";
-import { PolarChart } from "../../../../charts-community-modules/core/src/chart/polarChart";
-import { PieSeries } from "../../../../charts-community-modules/core/src/chart/series/polar/pieSeries";
-import { Caption } from "../../../../charts-community-modules/core/src/caption";
-import { Circle } from "../../../../charts-community-modules/core/src/chart/marker/circle";
-import { Plus } from "../../../../charts-community-modules/core/src/chart/marker/plus";
+import { CartesianChart } from "./cartesianChart";
+import { NumberAxis } from "./axis/numberAxis";
+import { CategoryAxis } from "./axis/categoryAxis";
+import { LineSeries } from "./series/cartesian/lineSeries";
+import { ColumnSeries } from "./series/cartesian/columnSeries";
+import { BarSeries } from "./series/cartesian/barSeries";
+import { ScatterSeries } from "./series/cartesian/scatterSeries";
+import { AreaSeries } from "./series/cartesian/areaSeries";
+import { PolarChart } from "./polarChart";
+import { PieSeries } from "./series/polar/pieSeries";
+import { Caption } from "../caption";
+import { Circle } from "./marker/circle";
+import { Plus } from "./marker/plus";
 import { Legend } from "./legend";
 
 const typeMappings = {
@@ -172,7 +172,7 @@ export const agChart = {
         }
     },
 
-    reconfigure: function (component: any, options: any) {
+    reconfigure: function(component: any, options: any) {
         if (options.legend) {
             for (const key in Legend.defaults) {
                 if (key in options.legend) {
