@@ -609,6 +609,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     text-overflow: ellipsis;
 }
 
+// right-align numeric values in cells with wrappers
+@include ag-auto-rtl(".ag-numeric-cell .ag-cell-value", (
+    margin-left: auto
+));
+
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
