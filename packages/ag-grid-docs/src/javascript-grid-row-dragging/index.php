@@ -32,6 +32,28 @@ colDef = {
 }</snippet>
 
     <p>
+        When a RowDrag starts, a "floating" DOM element is created to indicate which row is being dragged. By default 
+        this DOM element will contain the same value as the cell that started the rowDrag. It's possible to override that 
+        text using the <code>colDef.rowDragText</code> callback.
+    </p>
+
+<snippet>// function for rowDragText
+function rowDragText(params: IRowDragItem) => string;
+
+// interface for params
+interface IRowDragItem {
+    rowNode: RowNode, // the current RowNode
+    columns: Column[], // an Array containing the column that initiated the drag
+    defaultTextValue: string // The default text that would be applied to this Drag Element
+}
+
+// example
+colDef.rowDragText = function(params) {
+    return params.defaultTextValue + ' being dragged...'
+}
+}</snippet>
+
+    <p>
         There are two ways in which row dragging works in the grid, managed and unmanaged:
     </p>
         <ul class="content">
@@ -70,6 +92,10 @@ colDef = {
                 If a sort (click on the header) or filter (open up the column menu) is
                 applied to the column, the draggable icon for row dragging is hidden.
                 This is consistent with the constraints explained after the example.
+            </li>
+            <li>
+                When you drag row of the year 2012, the <code>rowDragText</code> callback will add 
+                <strong>(London Olympics)</strong> to the floating Drag element.
             </li>
         </ul>
 

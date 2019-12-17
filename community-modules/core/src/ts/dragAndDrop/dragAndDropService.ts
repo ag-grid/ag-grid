@@ -95,8 +95,7 @@ export class DragAndDropService {
     public static GHOST_TEMPLATE =
         '<div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label">' +
-        '  </div>' +
+        '  <div class="ag-dnd-ghost-label"></div>' +
         '</div>';
 
     private logger: Logger;

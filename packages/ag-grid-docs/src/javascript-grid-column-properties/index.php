@@ -156,6 +156,13 @@ include '../documentation-main/documentation_header.php';
             <td>Boolean or Function. Set to true (or return true from function) to allow row dragging.</td>
         </tr>
         <tr>
+            <th>rowDragText</th>
+            <td>
+                A callback that takes (rowNode, columns, defaultTextValue) and returns a string displayed by the rowDragComp 
+                while dragging a row. If this callback is not set, the current cell value will be used.
+            </td>
+        </tr>
+        <tr>
             <th>dndSource</th>
             <td>Boolean or Function. Set to true (or return true from function) to allow dragging for native drag and drop.</td>
         </tr>

@@ -305,20 +305,17 @@ var gridOptions = {
         }
     },
     getBusinessKeyForNode: function(node) {
-        if (node.data) {
-            return node.data.name;
-        } else {
-            return '';
-        }
+        return node.data ? node.data.name : '';
     },
     defaultGroupSortComparator: function(nodeA, nodeB) {
         if (nodeA.key < nodeB.key) {
             return -1;
         } else if (nodeA.key > nodeB.key) {
             return 1;
-        } else {
-            return 0;
         }
+
+        return 0;
+
     },
     processCellFromClipboard: function(params) {
         var colIdUpperCase = params.column.getId().toUpperCase();
@@ -327,9 +324,9 @@ var gridOptions = {
 
         if (isMonth) {
             return sharedNumberParser(params.value);
-        } else {
-            return params.value;
         }
+
+        return params.value;
     },
     // rowHeight: 100,
     // suppressTabbing: true,
@@ -938,7 +935,7 @@ if (isSmall) {
     defaultColCount = 22;
 }
 
-var dataSize = '.1x' + defaultColCount;
+var dataSize;
 
 
 function filterDoubleClicked(event) {
@@ -986,6 +983,12 @@ var loadInstance = 0;
 function createData() {
     var eMessage = document.querySelector('#message');
     var eMessageText = document.querySelector('#messageText');
+    var dataSizeEl = document.querySelector('#data-size');
+
+    if (!dataSize) {
+        dataSize = dataSizeEl.value;
+    }
+
     loadInstance++;
 
     var loadInstanceCopy = loadInstance;

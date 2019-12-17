@@ -10,6 +10,7 @@ import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
+import { IRowDragItem } from "../rendering/rowDragComp";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -211,6 +212,9 @@ export interface ColDef extends AbstractColDef {
 
     /** For grid row dragging, set to true to enable row dragging within the grid */
     rowDrag?: boolean | ((params: any) => boolean);
+
+    /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
+    rowDragText?: ((params: IRowDragItem) => string);
 
     /** For native drag and drop, set to true to enable drag source */
     dndSource?: boolean | ((params: any) => boolean);

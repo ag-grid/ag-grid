@@ -8,6 +8,10 @@ import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { _ } from "../utils";
 
+export interface IRowDragItem extends DragItem {
+    defaultTextValue: string;
+}
+
 export class RowDragComp extends Component {
     private readonly beans: Beans;
     private readonly rowNode: RowNode;
@@ -51,14 +55,18 @@ export class RowDragComp extends Component {
     }
 
     private addDragSource(): void {
-        const dragItem: DragItem = {
-            rowNode: this.rowNode
+        const dragItem: IRowDragItem = {
+            rowNode: this.rowNode,
+            columns: [this.column],
+            defaultTextValue: this.cellValue
         };
+
+        const rowDragText = this.column.getColDef().rowDragText;
 
         const dragSource: DragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
-            dragItemName: this.cellValue,
+            dragItemName: rowDragText ? rowDragText(dragItem) : this.cellValue,
             getDragItem: () => dragItem,
             dragStartPixels: 0
         };
