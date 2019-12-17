@@ -55,3 +55,7 @@ packages/ag-grid-angular/exports.metadata.json
 packages/ag-grid-community/src/styles
 
 community-modules/core/typings
+
+charts-community-modules/react/lib
+charts-community-modules/react/umd
+
