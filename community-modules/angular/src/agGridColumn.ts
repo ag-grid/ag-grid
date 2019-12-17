@@ -119,6 +119,7 @@ export class AgGridColumn {
     @Input() public onCellClicked: any;
     @Input() public onCellDoubleClicked: any;
     @Input() public onCellContextMenu: any;
+    @Input() public rowDragText: any;
     @Input() public tooltip: any;
     @Input() public tooltipValueGetter: any;
     @Input() public cellRendererSelector: any;
