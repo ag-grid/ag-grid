@@ -11,6 +11,7 @@ import { PieSeries } from "../../../../charts-community-modules/core/src/chart/s
 import { Caption } from "../../../../charts-community-modules/core/src/caption";
 import { Circle } from "../../../../charts-community-modules/core/src/chart/marker/circle";
 import { Plus } from "../../../../charts-community-modules/core/src/chart/marker/plus";
+import { Legend } from "./legend";
 
 const typeMappings = {
     cartesian: {
@@ -65,6 +66,9 @@ const typeMappings = {
             area: {
                 fn: AreaSeries
             }
+        },
+        legend: {
+            fn: Legend
         }
     },
     polar: {
@@ -169,6 +173,14 @@ export const agChart = {
     },
 
     reconfigure: function (component: any, options: any) {
-
+        if (options.legend) {
+            for (const key in Legend.defaults) {
+                if (key in options.legend) {
+                    component.legend[key] = options.legend[key];
+                } else {
+                    component.legend[key] = (Legend.defaults as any)[key];
+                }
+            }
+        }
     }
 };
