@@ -641,7 +641,7 @@
             padding: $ag-grid-size $ag-cell-horizontal-padding;
 
             .ag-title-bar-buttons {
-                .ag-button {
+                .ag-panel-title-bar-button {
                     height: $ag-dialog-title-icon-size;
                     width: $ag-dialog-title-icon-size;
                     .ag-icon {
@@ -661,17 +661,6 @@
                     &:not(:last-child) {
                         margin-right: $ag-grid-size;
                     }
-                }
-            }
-        }
-
-        .ag-message-box {
-            .ag-message-box-button-bar {
-                height: 30px;
-                background-color: $ag-header-background-color;
-                padding: 2px;
-                button {
-                    border-radius: $ag-card-radius;
                 }
             }
         }
@@ -1034,7 +1023,7 @@
         }
     }
 
-    .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-button .ag-icon {
+    .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-panel-title-bar-button .ag-icon {
         font-size: $ag-icon-size;
     }
 

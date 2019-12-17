@@ -32,10 +32,10 @@ export class MenuItemComponent extends Component {
 
     private static TEMPLATE =
         `<div class="ag-menu-option">
-            <span ref="eIcon" class="ag-menu-option-icon"></span>
-            <span ref="eName" class="ag-menu-option-text"></span>
-            <span ref="eShortcut" class="ag-menu-option-shortcut"></span>
-            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer"></span>
+            <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"></span>
+            <span ref="eName" class="ag-menu-option-text ag-menu-option-part"></span>
+            <span ref="eShortcut" class="ag-menu-option-shortcut ag-menu-option-part"></span>
+            <span ref="ePopupPointer" class="ag-menu-option-popup-pointer ag-menu-option-part"></span>
         </div>`;
 
     @RefSelector('eIcon') private eIcon: HTMLElement;

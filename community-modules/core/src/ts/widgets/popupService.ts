@@ -366,6 +366,7 @@ export class PopupService {
 
         _.addCssClass(eWrapper, 'ag-popup');
         _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+        _.addCssClass(eChild, 'ag-popup-child');
 
         eWrapper.appendChild(eChild);
 

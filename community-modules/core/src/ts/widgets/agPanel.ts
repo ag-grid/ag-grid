@@ -23,9 +23,9 @@ export class AgPanel extends Component {
 
     private static TEMPLATE =
         `<div class="ag-panel" tabindex="-1">
-            <div ref="eTitleBar" class="ag-title-bar ag-unselectable">
-                <span ref="eTitle" class="ag-title-bar-title"></span>
-                <div ref="eTitleBarButtons" class="ag-title-bar-buttons"></div>
+            <div ref="eTitleBar" class="ag-panel-title-bar ag-unselectable">
+                <span ref="eTitle" class="ag-panel-title-bar-title"></span>
+                <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons"></div>
             </div>
             <div ref="eContentWrapper" class="ag-panel-content-wrapper"></div>
         </div>`;
@@ -385,7 +385,7 @@ export class AgPanel extends Component {
 
         const eGui = button.getGui();
 
-        _.addCssClass(eGui, 'ag-button');
+        _.addCssClass(eGui, 'ag-panel-title-bar-button');
 
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);

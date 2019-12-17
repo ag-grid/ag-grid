@@ -85,32 +85,31 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal {
         height: 100%;
     }
-    // TODO nesting
-    .ag-watermark {
-        position: absolute;
-        bottom: 10px;
-        right: 25px;
-        opacity: 0.5;
-        transition: opacity 1s ease-out 3s;
-        &:before {
-            content: '';
-            background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDk0cHgiIGhlaWdodD0iMjM5cHgiIHZpZXdCb3g9IjAgMCA0OTQgMjM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCA0Ny4xICg0NTQyMikgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+TG9nbzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPgogICAgICAgIDxwYXRoIGQ9Ik0wLjYxMjg0OTkzMSwxMDggTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgQzAuNjEyODQ5OTMxLDYyLjEwMDY1MzYgMy40NzE4MzM3OCw1Ny4xNDg3NDgzIDguMTEyODQ5OTMsNTQuNDY5MjU2NCBMOTguMzA2NDI1LDIuMzk1OTcxNTcgTDk4LjMwNjQyNSwyLjM5NTk3MTU3IEMxMDIuOTQ3NDQxLC0wLjI4MzUyMDM1OCAxMDguNjY1NDA5LC0wLjI4MzUyMDM1OCAxMTMuMzA2NDI1LDIuMzk1OTcxNTcgTDExMy4zMDY0MjUsMi4zOTU5NzE1NyBMMjAzLjUsNTQuNDY5MjU2NCBMMjAzLjUsNTQuNDY5MjU2NCBDMjA4LjE0MTAxNiw1Ny4xNDg3NDgzIDIxMSw2Mi4xMDA2NTM2IDIxMSw2Ny40NTk2Mzc0IEwyMTEsMTM4IEwxODEsMTM4IEwxODAuOTk3MDQxLDkzLjk5OTk5OTggTDE4MC45OTYwMzIsOTMuOTk5OTk5OSBDMTgwLjk5NTQ3NSw4NS43MTYxMjI2IDE3NC4yNzk5MDksNzkuMDAxMDA4NyAxNjUuOTk2MDMyLDc5LjAwMTAwODcgTDEyMiw3OC45OTk5OTk5IEMxMTMuNzE1NzI5LDc4Ljk5OTk5OTkgMTA3LDg1LjcxNTcyODYgMTA3LDkzLjk5OTk5OTkgTDEwNywxMzYuMDE1NjIzIEwxMDcsMTM2LjAxNTYyMyBDMTA3LDE0NC4yOTk4OTUgMTEzLjcxNTcyOSwxNTEuMDE1NjIzIDEyMiwxNTEuMDE1NjIzIEwxNjgsMTUxLjAxNTYyMyBMMTY4LDE2MyBDMTY4LDE2NC42NTY4NTQgMTY2LjY1Njg1NCwxNjYgMTY1LDE2NiBMMTIwLDE2NiBMMTIwLDE3OSBMMTY1Ljk5NjAzMiwxNzkgTDE2NS45OTYwMzIsMTc4Ljk5Nzg3NyBDMTc0LjI3OTQ3NCwxNzguOTk3ODc3IDE4MC45OTQ4NiwxNzIuMjgzNDQyIDE4MC45OTYwMzIsMTY0IEwxODEsMTUwLjk2MDU1NCBMMjExLDE1MC45NjA1NTQgTDIxMSwxNzEuNjA2MjA3IEwyMTEsMTcxLjYwNjIwNyBDMjExLDE3Ni45NjUxOTEgMjA4LjE0MTAxNiwxODEuOTE3MDk2IDIwMy41LDE4NC41OTY1ODggTDExMy4zMDY0MjUsMjM2LjY2OTg3MyBMMTEzLjMwNjQyNSwyMzYuNjY5ODczIEMxMDguNjY1NDA5LDIzOS4zNDkzNjUgMTAyLjk0NzQ0MSwyMzkuMzQ5MzY1IDk4LjMwNjQyNSwyMzYuNjY5ODczIEw4LjExMjg0OTkzLDE4NC41OTY1ODggTDguMTEyODQ5OTMsMTg0LjU5NjU4OCBDMy40NzE4MzM3OCwxODEuOTE3MDk2IDAuNjEyODQ5OTMxLDE3Ni45NjUxOTEgMC42MTI4NDk5MzEsMTcxLjYwNjIwNyBMMC42MTI4NDk5MzEsMTIxIEwyNywxMjEgTDI3LDEzNiBDMjcsMTQ0LjI4NDI3MSAzMy43MTU3Mjg3LDE1MSA0MiwxNTEgTDQyLDE1MSBMMTAwLDE1MSBMMTAwLDk0IEMxMDAsODUuNzE1NzI4OCA5My4yODQyNzEyLDc5IDg1LDc5IEwyNyw3OSBMMjcsOTIgTDg0LDkyIEM4NS42NTY4NTQyLDkyIDg3LDkzLjM0MzE0NTggODcsOTUgTDg3LDk1IEw4NywxMDggTDAuNjEyODQ5OTMxLDEwOCBaIiBpZD0icGF0aC0xIj48L3BhdGg+CiAgICA8L2RlZnM+CiAgICA8ZyBpZD0iU3ltYm9scyIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IkxvZ28iPgogICAgICAgICAgICA8cGF0aCBkPSJNNDc3LDU1IEw0OTQsNTUgTDQ5NCwxNTEgTDQzNSwxNTEgQzQyNi43MTU3MjksMTUxIDQyMCwxNDQuMjg0MjcxIDQyMCwxMzYgTDQyMCw5NiBDNDIwLDg3LjcxNTcyODggNDI2LjcxNTcyOSw4MSA0MzUsODEgTDQzNSw4MSBMNDc3LDgxIEw0NzcsNTUgWiBNNDQwLDk4IEM0MzguMzQzMTQ2LDk4IDQzNyw5OS4zNDMxNDU4IDQzNywxMDEgTDQzNywxMzEgQzQzNywxMzIuNjU2ODU0IDQzOC4zNDMxNDYsMTM0IDQ0MCwxMzQgTDQ3NywxMzQgTDQ3Nyw5OCBMNDQwLDk4IFoiIGlkPSJkIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOTYuMDAwMDAwLCA1NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJQYXRoLTYiIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iMCAyNiAxNyAyNiAxNyA5NiAwIDk2Ij48L3BvbHlnb24+CiAgICAgICAgICAgICAgICA8cG9seWdvbiBpZD0iUGF0aC03IiBmaWxsPSIjRTExRjIyIiBwb2ludHM9IjAgMS4xMzY4NjgzOGUtMTMgMTcgMS4xMzY4NjgzOGUtMTMgMTcgMTcgMCAxNyI+PC9wb2x5Z29uPgogICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zMzEsMTUxIEwzNDgsMTUxIEwzNDgsMTAxIEwzNDgsMTAxIEMzNDgsOTkuMzQzMTQ1OCAzNDkuMzQzMTQ2LDk4IDM1MSw5OCBMMzg5LDk4IEwzODksODEgTDM0Niw4MSBMMzQ2LDgxIEMzMzcuNzE1NzI5LDgxIDMzMSw4Ny43MTU3Mjg4IDMzMSw5NiBMMzMxLDE1MSBaIiBpZD0iciIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMzI0LDg2IEwzMjQsNzYgTDMyNCw3NiBDMzI0LDY3LjcxNTcyODggMzE3LjI4NDI3MSw2MSAzMDksNjEgTDI0OSw2MSBMMjQ5LDYxIEMyNDAuNzE1NzI5LDYxIDIzNCw2Ny43MTU3Mjg4IDIzNCw3NiBMMjM0LDEzNiBMMjM0LDEzNiBDMjM0LDE0NC4yODQyNzEgMjQwLjcxNTcyOSwxNTEgMjQ5LDE1MSBMMzA5LDE1MSBMMzA5LDE1MSBDMzE3LjI4NDI3MSwxNTEgMzI0LDE0NC4yODQyNzEgMzI0LDEzNiBMMzI0LDEwMCBMMjg3LDEwMCBMMjg3LDExNyBMMzA3LDExNyBMMzA3LDEzMSBMMzA3LDEzMSBDMzA3LDEzMi42NTY4NTQgMzA1LjY1Njg1NCwxMzQgMzA0LDEzNCBMMjU0LDEzNCBMMjU0LDEzNCBDMjUyLjM0MzE0NiwxMzQgMjUxLDEzMi42NTY4NTQgMjUxLDEzMSBMMjUxLDgxIEwyNTEsODEgQzI1MSw3OS4zNDMxNDU4IDI1Mi4zNDMxNDYsNzggMjU0LDc4IEwzMDQsNzggTDMwNCw3OCBDMzA1LjY1Njg1NCw3OCAzMDcsNzkuMzQzMTQ1OCAzMDcsODEgTDMwNyw4NiBMMzI0LDg2IFoiIGlkPSJHIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJhZyI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29tYmluZWQtU2hhcGUiPgogICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgICAgICA8L21hc2s+CiAgICAgICAgICAgICAgICAgICAgPHVzZSBmaWxsPSIjRTExRjIyIiB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJnIiBmaWxsPSIjRTExRjIyIiB4PSIxMjAiIHk9IjkyIiB3aWR0aD0iNDgiIGhlaWdodD0iNDYiIHJ4PSIzIj48L3JlY3Q+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNDAsMTIxIEw4NywxMjEgTDg3LDEzOCBMNDMsMTM4IEw0MywxMzggQzQxLjM0MzE0NTgsMTM4IDQwLDEzNi42NTY4NTQgNDAsMTM1IEw0MCwxMjEgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIiBmaWxsPSIjRTExRjIyIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
-            filter: invert(50%);
-            background-repeat: no-repeat;
-            background-size: 110px 60px;
-            display: block;
-            height: 60px;
-            width: 110px;
-        }
+}
 
-        // TODO nesting
-      .ag-watermark-text {
-        opacity: 0.5;
-        font-weight: bold;
-        font-family: Impact;
-        font-size: 19px;
-      }
+.ag-watermark {
+    position: absolute;
+    bottom: 10px;
+    right: 25px;
+    opacity: 0.5;
+    transition: opacity 1s ease-out 3s;
+    &:before {
+        content: '';
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDk0cHgiIGhlaWdodD0iMjM5cHgiIHZpZXdCb3g9IjAgMCA0OTQgMjM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCA0Ny4xICg0NTQyMikgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+TG9nbzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPgogICAgICAgIDxwYXRoIGQ9Ik0wLjYxMjg0OTkzMSwxMDggTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgQzAuNjEyODQ5OTMxLDYyLjEwMDY1MzYgMy40NzE4MzM3OCw1Ny4xNDg3NDgzIDguMTEyODQ5OTMsNTQuNDY5MjU2NCBMOTguMzA2NDI1LDIuMzk1OTcxNTcgTDk4LjMwNjQyNSwyLjM5NTk3MTU3IEMxMDIuOTQ3NDQxLC0wLjI4MzUyMDM1OCAxMDguNjY1NDA5LC0wLjI4MzUyMDM1OCAxMTMuMzA2NDI1LDIuMzk1OTcxNTcgTDExMy4zMDY0MjUsMi4zOTU5NzE1NyBMMjAzLjUsNTQuNDY5MjU2NCBMMjAzLjUsNTQuNDY5MjU2NCBDMjA4LjE0MTAxNiw1Ny4xNDg3NDgzIDIxMSw2Mi4xMDA2NTM2IDIxMSw2Ny40NTk2Mzc0IEwyMTEsMTM4IEwxODEsMTM4IEwxODAuOTk3MDQxLDkzLjk5OTk5OTggTDE4MC45OTYwMzIsOTMuOTk5OTk5OSBDMTgwLjk5NTQ3NSw4NS43MTYxMjI2IDE3NC4yNzk5MDksNzkuMDAxMDA4NyAxNjUuOTk2MDMyLDc5LjAwMTAwODcgTDEyMiw3OC45OTk5OTk5IEMxMTMuNzE1NzI5LDc4Ljk5OTk5OTkgMTA3LDg1LjcxNTcyODYgMTA3LDkzLjk5OTk5OTkgTDEwNywxMzYuMDE1NjIzIEwxMDcsMTM2LjAxNTYyMyBDMTA3LDE0NC4yOTk4OTUgMTEzLjcxNTcyOSwxNTEuMDE1NjIzIDEyMiwxNTEuMDE1NjIzIEwxNjgsMTUxLjAxNTYyMyBMMTY4LDE2MyBDMTY4LDE2NC42NTY4NTQgMTY2LjY1Njg1NCwxNjYgMTY1LDE2NiBMMTIwLDE2NiBMMTIwLDE3OSBMMTY1Ljk5NjAzMiwxNzkgTDE2NS45OTYwMzIsMTc4Ljk5Nzg3NyBDMTc0LjI3OTQ3NCwxNzguOTk3ODc3IDE4MC45OTQ4NiwxNzIuMjgzNDQyIDE4MC45OTYwMzIsMTY0IEwxODEsMTUwLjk2MDU1NCBMMjExLDE1MC45NjA1NTQgTDIxMSwxNzEuNjA2MjA3IEwyMTEsMTcxLjYwNjIwNyBDMjExLDE3Ni45NjUxOTEgMjA4LjE0MTAxNiwxODEuOTE3MDk2IDIwMy41LDE4NC41OTY1ODggTDExMy4zMDY0MjUsMjM2LjY2OTg3MyBMMTEzLjMwNjQyNSwyMzYuNjY5ODczIEMxMDguNjY1NDA5LDIzOS4zNDkzNjUgMTAyLjk0NzQ0MSwyMzkuMzQ5MzY1IDk4LjMwNjQyNSwyMzYuNjY5ODczIEw4LjExMjg0OTkzLDE4NC41OTY1ODggTDguMTEyODQ5OTMsMTg0LjU5NjU4OCBDMy40NzE4MzM3OCwxODEuOTE3MDk2IDAuNjEyODQ5OTMxLDE3Ni45NjUxOTEgMC42MTI4NDk5MzEsMTcxLjYwNjIwNyBMMC42MTI4NDk5MzEsMTIxIEwyNywxMjEgTDI3LDEzNiBDMjcsMTQ0LjI4NDI3MSAzMy43MTU3Mjg3LDE1MSA0MiwxNTEgTDQyLDE1MSBMMTAwLDE1MSBMMTAwLDk0IEMxMDAsODUuNzE1NzI4OCA5My4yODQyNzEyLDc5IDg1LDc5IEwyNyw3OSBMMjcsOTIgTDg0LDkyIEM4NS42NTY4NTQyLDkyIDg3LDkzLjM0MzE0NTggODcsOTUgTDg3LDk1IEw4NywxMDggTDAuNjEyODQ5OTMxLDEwOCBaIiBpZD0icGF0aC0xIj48L3BhdGg+CiAgICA8L2RlZnM+CiAgICA8ZyBpZD0iU3ltYm9scyIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IkxvZ28iPgogICAgICAgICAgICA8cGF0aCBkPSJNNDc3LDU1IEw0OTQsNTUgTDQ5NCwxNTEgTDQzNSwxNTEgQzQyNi43MTU3MjksMTUxIDQyMCwxNDQuMjg0MjcxIDQyMCwxMzYgTDQyMCw5NiBDNDIwLDg3LjcxNTcyODggNDI2LjcxNTcyOSw4MSA0MzUsODEgTDQzNSw4MSBMNDc3LDgxIEw0NzcsNTUgWiBNNDQwLDk4IEM0MzguMzQzMTQ2LDk4IDQzNyw5OS4zNDMxNDU4IDQzNywxMDEgTDQzNywxMzEgQzQzNywxMzIuNjU2ODU0IDQzOC4zNDMxNDYsMTM0IDQ0MCwxMzQgTDQ3NywxMzQgTDQ3Nyw5OCBMNDQwLDk4IFoiIGlkPSJkIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOTYuMDAwMDAwLCA1NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJQYXRoLTYiIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iMCAyNiAxNyAyNiAxNyA5NiAwIDk2Ij48L3BvbHlnb24+CiAgICAgICAgICAgICAgICA8cG9seWdvbiBpZD0iUGF0aC03IiBmaWxsPSIjRTExRjIyIiBwb2ludHM9IjAgMS4xMzY4NjgzOGUtMTMgMTcgMS4xMzY4NjgzOGUtMTMgMTcgMTcgMCAxNyI+PC9wb2x5Z29uPgogICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zMzEsMTUxIEwzNDgsMTUxIEwzNDgsMTAxIEwzNDgsMTAxIEMzNDgsOTkuMzQzMTQ1OCAzNDkuMzQzMTQ2LDk4IDM1MSw5OCBMMzg5LDk4IEwzODksODEgTDM0Niw4MSBMMzQ2LDgxIEMzMzcuNzE1NzI5LDgxIDMzMSw4Ny43MTU3Mjg4IDMzMSw5NiBMMzMxLDE1MSBaIiBpZD0iciIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMzI0LDg2IEwzMjQsNzYgTDMyNCw3NiBDMzI0LDY3LjcxNTcyODggMzE3LjI4NDI3MSw2MSAzMDksNjEgTDI0OSw2MSBMMjQ5LDYxIEMyNDAuNzE1NzI5LDYxIDIzNCw2Ny43MTU3Mjg4IDIzNCw3NiBMMjM0LDEzNiBMMjM0LDEzNiBDMjM0LDE0NC4yODQyNzEgMjQwLjcxNTcyOSwxNTEgMjQ5LDE1MSBMMzA5LDE1MSBMMzA5LDE1MSBDMzE3LjI4NDI3MSwxNTEgMzI0LDE0NC4yODQyNzEgMzI0LDEzNiBMMzI0LDEwMCBMMjg3LDEwMCBMMjg3LDExNyBMMzA3LDExNyBMMzA3LDEzMSBMMzA3LDEzMSBDMzA3LDEzMi42NTY4NTQgMzA1LjY1Njg1NCwxMzQgMzA0LDEzNCBMMjU0LDEzNCBMMjU0LDEzNCBDMjUyLjM0MzE0NiwxMzQgMjUxLDEzMi42NTY4NTQgMjUxLDEzMSBMMjUxLDgxIEwyNTEsODEgQzI1MSw3OS4zNDMxNDU4IDI1Mi4zNDMxNDYsNzggMjU0LDc4IEwzMDQsNzggTDMwNCw3OCBDMzA1LjY1Njg1NCw3OCAzMDcsNzkuMzQzMTQ1OCAzMDcsODEgTDMwNyw4NiBMMzI0LDg2IFoiIGlkPSJHIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJhZyI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29tYmluZWQtU2hhcGUiPgogICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgICAgICA8L21hc2s+CiAgICAgICAgICAgICAgICAgICAgPHVzZSBmaWxsPSIjRTExRjIyIiB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJnIiBmaWxsPSIjRTExRjIyIiB4PSIxMjAiIHk9IjkyIiB3aWR0aD0iNDgiIGhlaWdodD0iNDYiIHJ4PSIzIj48L3JlY3Q+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNDAsMTIxIEw4NywxMjEgTDg3LDEzOCBMNDMsMTM4IEw0MywxMzggQzQxLjM0MzE0NTgsMTM4IDQwLDEzNi42NTY4NTQgNDAsMTM1IEw0MCwxMjEgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIiBmaWxsPSIjRTExRjIyIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
+        filter: invert(50%);
+        background-repeat: no-repeat;
+        background-size: 110px 60px;
+        display: block;
+        height: 60px;
+        width: 110px;
     }
+}
+
+.ag-watermark-text {
+    opacity: 0.5;
+    font-weight: bold;
+    font-family: Impact;
+    font-size: 19px;
 }
 
 .ag-root-wrapper-body {
@@ -160,6 +159,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
 }
 
+.ag-body-viewport.ag-layout-print {
+    flex: none;
+}
+
 @media print {
   .ag-layout-normal {
     // hide grid if trying to print in non-print mode
@@ -189,11 +192,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-    }
-
-    // TODO specificity
-    &:not(.ag-layout-print).ag-force-vertical-scroll {
-        overflow-y: scroll;
     }
 }
 
@@ -236,28 +234,22 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-body-viewport {
-    // TODO nesting
-    .ag-center-cols-clipper {
-        min-height: 100%;
-    }
-    &.ag-layout-auto-height {
-        .ag-center-cols-clipper, .ag-center-cols-container {
-            min-height: 50px;
-        }
-    }
-    // TODO nesting
-    .ag-center-cols-container {
-        display: block;
-    }
+.ag-center-cols-clipper {
+    min-height: 100%;
+}
 
-    // TODO consider just putting ag-layout-print on the root and tooltips and using nesting rather than combination?
-    &.ag-layout-print {
-        flex: none;
-        .ag-center-cols-clipper {
-            min-width: 100%;
-        }
-    }
+.ag-center-cols-container {
+    display: block;
+}
+
+
+.ag-layout-print .ag-center-cols-clipper {
+    min-width: 100%;
+}
+
+.ag-layout-auto-height .ag-center-cols-clipper,
+.ag-layout-auto-height .ag-center-cols-container {
+    min-height: 50px;
 }
 
 .ag-pinned-right-cols-container {
@@ -322,6 +314,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-force-vertical-scroll {
+    overflow-y: scroll;
+
+    &.ag-layout-print {
+        overflow-y: visible;
+    }
+}
+
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
     height: 100%;
     min-width: 0;
@@ -379,20 +379,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-self: stretch;
 }
 
-.ag-header-cell-label {
-    // TODO nesting?
-    .ag-header-cell-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+.ag-header-cell-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.ag-numeric-header {
-    .ag-header-cell-label {
-        // TODO does this work with RTL?
-        flex-direction: row-reverse;
-    }
+.ag-numeric-header .ag-header-cell-label {
+    flex-direction: row-reverse;
 }
 
 .ag-header-group-text {
@@ -461,26 +455,24 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-grow: 4;
     flex-shrink: 1;
     flex-basis: 0;
+}
 
-    // TODO nesting
-    .ag-primary-cols-header-panel {
-        display: flex;
-        flex: none;
+.ag-primary-cols-header-panel {
+    display: flex;
+    flex: none;
+}
 
-        // TODO nesting
-        .ag-primary-cols-filter-wrapper {
-            flex: 1 1 auto;
-            input {
-                width: 100%;
-            }
-        }
-    }
+.ag-primary-cols-filter-wrapper {
+    flex: 1 1 auto;
+}
 
-    // TODO nesting?
-    .ag-primary-cols-list-panel {
-        flex: 1 1 auto;
-        overflow: auto;
-    }
+.ag-primary-cols-filter {
+    width: 100%;
+}
+
+.ag-primary-cols-list-panel {
+    flex: 1 1 auto;
+    overflow: auto;
 }
 
 .ag-column-drop {
@@ -608,10 +600,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 */
 .ag-cell {
     display: inline-block;
-    overflow: hidden;
     position: absolute;
-    text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.ag-cell-value, .ag-group-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ag-cell-wrapper {
@@ -619,24 +614,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     width: 100%;
     height: 100%;
-    &.ag-row-group {
-        align-items: flex-start;
-    }
-
-    // TODO nesting
-    .ag-cell-value, .ag-group-value {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }
 
-// TODO specificity?
-.ag-full-width-row.ag-row-group .ag-cell-wrapper {
-    align-items: center;
-}
-
-// TODO naming?
-.ag-cell-with-height {
+.ag-cell-auto-height {
     height: 100%;
 }
 
@@ -660,32 +640,27 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
     display: flex;
     align-items: center;
-    // TODO specificity
-    > {
-        div, span {
-            display: flex;
-        }
-    }
 }
 
-.ag-filter {
+.ag-set-filter-item-value {
+    display: flex;
+}
+
+.ag-set-filter-item-checkbox {
+    display: flex;
+
     // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
     // when you click on it when the quick filter has focus. this was a fix for AG-2258
-    // TODO specificity
-    .ag-filter-checkbox {
-        pointer-events: none;
-    }
+    pointer-events: none;
+}
 
-    // TODO specificity
-    .ag-filter-body-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
+.ag-filter-body-wrapper {
+    display: flex;
+    flex-direction: column;
+}
 
-    // TODO specificity
-    .ag-filter-filter {
-        flex: 1 1 auto;
-    }
+.ag-filter-filter {
+    flex: 1 1 auto;
 }
 
 /**
@@ -694,46 +669,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-.ag-floating-filter-full-body, .ag-floating-filter-body {
-    // TODO nesting?
-    .ag-react-container {
-        height: 100%;
-    }
-}
-
 .ag-floating-filter-body {
     display: flex;
     flex: 1 1 auto;
     height: 100%;
-
-    // TODO specificity
-    input {
-        margin: 0;
-        flex: 1 1 auto;
-        max-height: calc(100% - 1px);
-    }
 }
 
 .ag-floating-filter-full-body {
     display: flex;
-    align-items: center;
+    flex: 1 1 auto;
     height: 100%;
     width: 100%;
-
-    // TODO specificity
-    > div {
-        flex: 1 1 auto;
-    }
-
-    input {
-        margin: 0;
-        width: 100%;
-    }
-    // TODO specificity?
-    input[type="range"] {
-        height: 100%;
-    }
 }
+
 .ag-floating-filter {
     display: inline-block;
     position: absolute;
@@ -827,11 +775,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  * Popup
  ****************************
 */
-.ag-popup {
-    // TODO specificity
-    > div{
-        z-index: 5;
-    }
+.ag-popup-child {
+    z-index: 5;
 }
 
 .ag-popup-editor {
@@ -913,121 +858,97 @@ $ag-handleSize: 5px;
     flex-direction: column;
     position: relative;
     overflow: hidden;
+}
 
-    // TODO nesting, rename?
-    .ag-title-bar {
-        display: flex;
-        flex: none;
-        align-items: center;
-        cursor: default;
+.ag-panel-title-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    cursor: default;
+}
 
-        .ag-title-bar-title {
-            flex: 1 1 auto;
-        }
+.ag-panel-title-bar-title {
+    flex: 1 1 auto;
+}
 
-        .ag-title-bar-buttons {
-            display: flex;
-            .ag-button {
-                cursor: pointer;
-            }
-        }
-    }
+.ag-panel-title-bar-buttons {
+    display: flex;
+}
 
-    .ag-panel-content-wrapper {
-        display: flex;
-        flex: 1 1 auto;
-        position: relative;
-        overflow: hidden;
-        > div {
-            width: 100%;
-            height: 100%;
-        }
-    }
+.ag-panel-title-bar-button {
+    cursor: pointer;
+}
+
+.ag-panel-content-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
 }
 
 .ag-dialog {
     position: absolute;
+}
 
-    // TODO nesting, name
-    .ag-resizer {
-        position: absolute;
-        pointer-events: none;
-        z-index: 1;
-        // TODO specificity, name
-        &.ag-resizer-topLeft {
-            top: 0;
-            left: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nwse-resize;
-        }
-        &.ag-resizer-top {
-            top: 0;
-            left: $ag-handleSize;
-            right: $ag-handleSize;
-            height: $ag-handleSize;
-            cursor: ns-resize;
-        }
-        &.ag-resizer-topRight {
-            top: 0;
-            right: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nesw-resize;
-        }
-        &.ag-resizer-right {
-            top: $ag-handleSize;
-            right: 0;
-            bottom: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: ew-resize;
-        }
-        &.ag-resizer-bottomRight {
-            bottom: 0;
-            right: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nwse-resize;
-        }
-        &.ag-resizer-bottom {
-            bottom: 0;
-            left: $ag-handleSize;
-            right: $ag-handleSize;
-            height: $ag-handleSize;
-            cursor: ns-resize;
-        }
-        &.ag-resizer-bottomLeft {
-            bottom: 0;
-            left: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nesw-resize;
-        }
-        &.ag-resizer-left {
-            left: 0;
-            top: $ag-handleSize;
-            bottom: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: ew-resize;
-        }
+.ag-resizer {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    &.ag-resizer-topLeft {
+        top: 0;
+        left: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nwse-resize;
     }
-
-    // TODO may be safe to delete along with the class
-    .ag-message-box {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .ag-message-box-content {
-            display: flex;
-            flex: 1 1 auto;
-            justify-content: center;
-            align-items: center;
-        }
-        .ag-message-box-button-bar {
-            display: flex;
-            justify-content: center;
-        }
+    &.ag-resizer-top {
+        top: 0;
+        left: $ag-handleSize;
+        right: $ag-handleSize;
+        height: $ag-handleSize;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-topRight {
+        top: 0;
+        right: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-right {
+        top: $ag-handleSize;
+        right: 0;
+        bottom: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: ew-resize;
+    }
+    &.ag-resizer-bottomRight {
+        bottom: 0;
+        right: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nwse-resize;
+    }
+    &.ag-resizer-bottom {
+        bottom: 0;
+        left: $ag-handleSize;
+        right: $ag-handleSize;
+        height: $ag-handleSize;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-bottomLeft {
+        bottom: 0;
+        left: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-left {
+        left: 0;
+        top: $ag-handleSize;
+        bottom: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: ew-resize;
     }
 }
 
@@ -1135,11 +1056,11 @@ $ag-handleSize: 5px;
 
 .ag-menu-option, .ag-menu-separator {
     display: table-row;
-    // TODO specificity
-    > span {
-        display: table-cell;
-        vertical-align: middle;
-    }
+}
+
+.ag-menu-separator-cell, .ag-menu-option-part {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .ag-menu-option-text {
@@ -1150,7 +1071,6 @@ $ag-handleSize: 5px;
     height: 100%;
 }
 
-
 /**
  ****************************
  * Rich Select
@@ -1159,33 +1079,35 @@ $ag-handleSize: 5px;
 .ag-rich-select {
     cursor: default;
     outline: none;
+}
+
+.ag-rich-select-value {
+    display: flex;
+    align-items: center;
+}
+
+.ag-rich-select-value-icon {
+    flex: 1 1 auto;
+    order: 1;
+}
+
+@include ag-auto-rtl(".ag-rich-select-value-icon", (
+    text-align: right
+));
+
+.ag-rich-select-list {
+    position: relative;
     // TODO nesting
-    .ag-rich-select-value {
+    .ag-virtual-list-item {
         display: flex;
-        align-items: center;
-        // TODO specificity
-        > span {
-            flex: 1 1 auto;
-            &.ag-icon {
-                order: 1;
-                flex: none;
-            }
-        }
     }
-    // TODO nesting
-    .ag-rich-select-list {
-        position: relative;
-        // TODO nesting? Required?
-        .ag-virtual-list-item {
-            display: flex;
-            .ag-rich-select-row {
-                display: flex;
-                flex: 1 1 auto;
-                align-items: center;
-                white-space: nowrap;
-            }
-        }
-    }
+}
+
+.ag-rich-select-row {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    white-space: nowrap;
 }
 
 /**
@@ -1197,29 +1119,30 @@ $ag-handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
-    // TODO nesting
-    .ag-paging-row-summary-panel {
-        display: flex;
-        // TODO specificity
-        span {
-            // TODO visual styles
-            margin: 0 3px;
-        }
-    }
+}
+
+.ag-paging-row-summary-panel {
+    display: flex;
+}
+
+.ag-paging-row-summary-panel-separator {
+    margin: 0 3px;
 }
 
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
-    // TODO nesting
-    .ag-paging-button {
-        position: relative;
-        overflow: hidden;
-        button {
-            position: absolute;
-        }
-    }
 }
+
+.ag-paging-button-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.ag-paging-button {
+    position: absolute;
+}
+
 .ag-disabled .ag-paging-page-summary-panel {
     pointer-events: none;
 }

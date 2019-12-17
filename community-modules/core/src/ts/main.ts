@@ -210,7 +210,6 @@ export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
-export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";

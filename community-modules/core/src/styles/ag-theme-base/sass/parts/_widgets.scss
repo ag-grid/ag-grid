@@ -326,7 +326,7 @@
             padding-left: $ag-cell-horizontal-padding;
 
             .ag-title-bar-buttons {
-                .ag-button {
+                .ag-panel-title-bar-button {
                     height: $ag-dialog-title-icon-size;
                     width: $ag-dialog-title-icon-size;
                     .ag-icon {
@@ -341,17 +341,6 @@
                     &:not(:last-child) {
                         margin-right: 5px;
                     }
-                }
-            }
-        }
-
-        .ag-message-box {
-            .ag-message-box-button-bar {
-                height: 30px;
-                background-color: $ag-header-background-color;
-                padding: 2px;
-                button {
-                    border-radius: $ag-card-radius;
                 }
             }
         }

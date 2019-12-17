@@ -26,8 +26,8 @@ export class SetFilterListItem extends Component {
 
     private static TEMPLATE = 
         `<label class="ag-set-filter-item">
-            <div class="ag-filter-checkbox"></div>
-            <span class="ag-filter-value"></span>
+            <div class="ag-set-filter-item-checkbox"></div>
+            <span class="ag-set-filter-item-value"></span>
         </label>`;
 
     private eCheckbox: HTMLElement;
@@ -66,7 +66,7 @@ export class SetFilterListItem extends Component {
     private init(): void {
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-        this.eCheckbox = this.queryForHtmlElement('.ag-filter-checkbox');
+        this.eCheckbox = this.queryForHtmlElement('.ag-set-filter-item-checkbox');
 
         if (this.gridOptionsWrapper.useNativeCheckboxes()) {
             this.eNativeCheckbox = document.createElement('input');
@@ -117,7 +117,7 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-        const valueElement = this.queryForHtmlElement('.ag-filter-value');
+        const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
         const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
         const colDef = this.column.getColDef();

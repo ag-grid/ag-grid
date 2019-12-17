@@ -57,7 +57,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
-        this.eValue.appendChild(_.createIconNoSpan('smallDown', this.gridOptionsWrapper));
+        const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
+        _.addCssClass(icon, 'ag-rich-select-value-icon');
+        this.eValue.appendChild(icon);
 
         this.virtualList = new VirtualList();
         this.getContext().wireBean(this.virtualList);
