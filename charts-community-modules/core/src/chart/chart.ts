@@ -13,8 +13,6 @@ import { Observable, reactive, PropertyChangeEventListener } from "../util/obser
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
-
 export abstract class Chart extends Observable {
     readonly id: string = this.createId();
     readonly scene: Scene;

@@ -2,8 +2,8 @@ import { Node } from "../node";
 import { chainObjects } from "../../util/object";
 import { DropShadow } from "../dropShadow";
 
-export type ShapeLineCap = null | 'round' | 'square';  // null is for 'butt'
-export type ShapeLineJoin = null | 'round' | 'bevel';  // null is for 'miter'
+export type ShapeLineCap = undefined | 'round' | 'square';  // null is for 'butt'
+export type ShapeLineJoin = undefined | 'round' | 'bevel';  // null is for 'miter'
 
 export abstract class Shape extends Node {
     /**
@@ -44,8 +44,8 @@ export abstract class Shape extends Node {
         strokeWidth: 0,
         lineDash: undefined,
         lineDashOffset: 0,
-        lineCap: null as ShapeLineCap,
-        lineJoin: null as ShapeLineJoin,
+        lineCap: undefined as ShapeLineCap,
+        lineJoin: undefined as ShapeLineJoin,
         opacity: 1,
         fillShadow: undefined,
         strokeShadow: undefined

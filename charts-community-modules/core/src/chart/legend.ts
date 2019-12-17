@@ -3,7 +3,6 @@ import { Selection } from "../scene/selection";
 import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
-import { LegendPosition } from "./chart";
 import { Marker } from "./marker/marker";
 import { Square } from "./marker/square";
 import { reactive, Observable } from "../util/observable";
@@ -24,12 +23,37 @@ export interface LegendDatum {
     };
 }
 
-export enum Orientation {
+export enum LegendOrientation {
     Vertical,
     Horizontal
 }
 
+export enum LegendPosition {
+    Top = 'top',
+    Right = 'right',
+    Bottom = 'bottom',
+    Left = 'left'
+}
+
 export class Legend extends Observable {
+
+    static defaults = Object.freeze({
+        enabled: true,
+        orientation: LegendOrientation.Vertical,
+        position: LegendPosition.Right,
+        padding: 20,
+        itemPaddingX: 16,
+        itemPaddingY: 8,
+        markerType: undefined,
+        markerPadding: MarkerLabel.defaults.padding,
+        markerSize: MarkerLabel.defaults.markerSize,
+        markerStrokeWidth: 1,
+        labelColor: MarkerLabel.defaults.labelColor,
+        labelFontStyle: MarkerLabel.defaults.labelFontStyle,
+        labelFontWeight: MarkerLabel.defaults.labelFontWeight,
+        labelFontSize: MarkerLabel.defaults.labelFontSize,
+        labelFontFamily: MarkerLabel.defaults.labelFontFamily
+    });
 
     onLayoutChange?: () => void;
 
@@ -40,26 +64,26 @@ export class Legend extends Observable {
     private oldSize: [number, number] = [0, 0];
 
     @reactive(['layoutChange']) data: LegendDatum[] = [];
-    @reactive(['layoutChange']) enabled = true;
-    @reactive(['layoutChange']) orientation: Orientation = Orientation.Vertical;
-    @reactive(['layoutChange']) position: LegendPosition = 'right';
+    @reactive(['layoutChange']) enabled = Legend.defaults.enabled;
+    @reactive(['layoutChange']) orientation: LegendOrientation = Legend.defaults.orientation;
+    @reactive(['layoutChange']) position: LegendPosition = Legend.defaults.position;
 
-    @reactive(['layoutChange']) padding = 20;
-    @reactive(['layoutChange']) itemPaddingX = 16;
-    @reactive(['layoutChange']) itemPaddingY = 8;
+    @reactive(['layoutChange']) padding = Legend.defaults.padding;
+    @reactive(['layoutChange']) itemPaddingX = Legend.defaults.itemPaddingX;
+    @reactive(['layoutChange']) itemPaddingY = Legend.defaults.itemPaddingY;
 
     // If the marker type is set, the legend will always use that marker type for all its items,
     // regardless of the type that comes from the `data`.
-    @reactive(['layoutChange']) markerType?: new () => Marker;
-    @reactive(['layoutChange']) markerPadding = MarkerLabel.defaults.padding;
-    @reactive(['layoutChange']) markerSize = MarkerLabel.defaults.markerSize;
-    @reactive(['change']) markerStrokeWidth = 1;
+    @reactive(['layoutChange']) markerType?: new () => Marker = Legend.defaults.markerType;
+    @reactive(['layoutChange']) markerPadding = Legend.defaults.markerPadding;
+    @reactive(['layoutChange']) markerSize = Legend.defaults.markerSize;
+    @reactive(['change']) markerStrokeWidth = Legend.defaults.markerStrokeWidth;
 
-    @reactive(['change']) labelColor = MarkerLabel.defaults.labelColor;
-    @reactive(['layoutChange']) labelFontStyle?: FontStyle = MarkerLabel.defaults.labelFontStyle;
-    @reactive(['layoutChange']) labelFontWeight?: FontWeight = MarkerLabel.defaults.labelFontWeight;
-    @reactive(['layoutChange']) labelFontSize = MarkerLabel.defaults.labelFontSize;
-    @reactive(['layoutChange']) labelFontFamily = MarkerLabel.defaults.labelFontFamily;
+    @reactive(['change']) labelColor = Legend.defaults.labelColor;
+    @reactive(['layoutChange']) labelFontStyle?: FontStyle = Legend.defaults.labelFontStyle;
+    @reactive(['layoutChange']) labelFontWeight?: FontWeight = Legend.defaults.labelFontWeight;
+    @reactive(['layoutChange']) labelFontSize = Legend.defaults.labelFontSize;
+    @reactive(['layoutChange']) labelFontFamily = Legend.defaults.labelFontFamily;
 
     constructor() {
         super();
@@ -79,11 +103,11 @@ export class Legend extends Observable {
             switch (position) {
                 case 'right':
                 case 'left':
-                    legend.orientation = Orientation.Vertical;
+                    legend.orientation = LegendOrientation.Vertical;
                     break;
                 case 'bottom':
                 case 'top':
-                    legend.orientation = Orientation.Horizontal;
+                    legend.orientation = LegendOrientation.Horizontal;
                     break;
             }
         });
@@ -150,7 +174,7 @@ export class Legend extends Observable {
         let paddedItemsHeight = 0;
 
         switch (this.orientation) {
-            case Orientation.Horizontal:
+            case LegendOrientation.Horizontal:
 
                 if (!(isFinite(width) && width > 0)) {
                     return false;
@@ -192,7 +216,7 @@ export class Legend extends Observable {
 
                 break;
 
-            case Orientation.Vertical:
+            case LegendOrientation.Vertical:
 
                 if (!(isFinite(height) && height > 0)) {
                     return false;
