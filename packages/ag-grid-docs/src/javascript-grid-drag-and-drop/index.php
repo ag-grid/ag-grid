@@ -154,15 +154,14 @@ include '../documentation-main/documentation_header.php';
     <h2>Custom Drag Component</h2>
 
     <p>
-        Drag and drop is a complex application level requirement. As such it's not possible for once component
-        (the grid) to propose a drag and drop solution that is appropriate for all applications. For this reason
-        if the application has drag and drop requirements, it's probably you will implement a custom
-        <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a> for the application specific
-        dragging requirements.
+        Drag and drop is a complex application-level requirement. As such, a component (the grid) can't propose 
+        a drag and drop solution that is appropriate for all applications. For this reason, if the application has 
+        drag and drop requirements, you would likely want to implement a custom 
+        <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a> specifically for your needs.
     </p>
 
     <p>
-        The example below shows a customer drag and drop cell renderer. Note the following:
+        The example below shows a custom drag and drop cell renderer. Note the following:
     </p>
 
     <ul>
@@ -170,7 +169,7 @@ include '../documentation-main/documentation_header.php';
             The dragging works similar to before, rows are dragged from the left grid to the right drop zone.
         </li>
         <li>
-            The dragging is not provided by the grid, rather the drag logic is implemented in the examples cell renderer.
+            The grid does not provide the dragging. Instead, the example's cell renderer implements the drag logic.
         </li>
     </ul>
 
