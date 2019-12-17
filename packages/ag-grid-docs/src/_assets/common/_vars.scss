@@ -19,7 +19,7 @@ $white: #ffffff;
 $yellow: #FFFBD9;
 $teal: #00E7B1;
 
-$max-width: 1400px;
+$max-width: 2000px;
 
 $enable-gradients: true;
 $enable-shadows: true;
@@ -46,7 +46,7 @@ body {
     height: 1em;
     width: 1em;
     background-image: url('../svg/enterprise.svg');
-    text-indent: -10000px; 
+    text-indent: -10000px;
     background-position-y: center;
     background-repeat: no-repeat;
     content: 'e';
