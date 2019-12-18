@@ -33,6 +33,7 @@
     "buildCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildCommunityModules()'",
     "buildEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildEnterpriseModules()'",
     "buildModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildModules()'",
+    "buildChartsModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildChartsModules()'",
     "testCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testCommunityModules()'",
     "testEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testEnterpriseModules()'",
     "testModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testModules()'",
