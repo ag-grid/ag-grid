@@ -95,7 +95,7 @@ function getMapping(path: string) {
 }
 
 export const agChart = {
-    create(options: any, path?: string) {
+    create(options: any, path?: string, component?: any) {
         if (!(options && typeof options === 'object')) {
             return;
         }
@@ -145,7 +145,7 @@ export const agChart = {
         if (entry) {
             const params = entry.params || [];
             const paramValues = params.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            const component = new entry.fn(...paramValues);
+            component = component || new entry.fn(...paramValues);
             for (const key in options) {
                 if (key !== 'type' && params.indexOf(key) < 0) {
                     const value = options[key];
@@ -159,7 +159,7 @@ export const agChart = {
                             component[key] = subComponents;
                         } else {
                             if (entry[key] && component[key]) { // the instance property already exists on the component (e.g. chart.legend)
-                                agChart.create(entry[key], path + '.' + key);
+                                agChart.create(value, path + '.' + key, component[key]);
                             } else {
                                 const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
                                 if (subComponent) {
