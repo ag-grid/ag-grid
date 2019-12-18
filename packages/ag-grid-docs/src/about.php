@@ -52,20 +52,16 @@ gtm_data_layer('about');
                         <p>We give away what others charge for. <strong>ag-Grid Community</strong> provides all of the features of our competition. We only charge when we go above and beyond, with features that other grids don’t provide. </p>
                     </article>
                 </section>
-
-                <p> </p>
                 <section>
                     <h1 id="core-development-team"> Core Development Team</h1>
                     <article class="inline-container team">
-
                         <div class="row">
                             <div class="col-md-4">
                                 <div>
-                                    <img src='images/team/niall.jpg' alt="Niall Crosby, CEO / CTO" />
+                                    <img src='images/team/niall.jpg' alt="Niall Crosby, Founder / CEO / CTO" />
                                 </div>
                                 <h3>Niall Crosby</h3>
                                 <h4>CEO / CTO</h4>
-
                             </div>
                             <div class="col-md-4">
                                 <div>
@@ -73,7 +69,6 @@ gtm_data_layer('about');
                                 </div>
                                 <h3>Rob Clarke</h3>
                                 <h4>Head of Engineering</h4>
-
                             </div>
                             <div class="col-md-4">
                                 <div>
@@ -81,10 +76,8 @@ gtm_data_layer('about');
                                 </div>
                                 <h3>Sean Landsman</h3>
                                 <h4>Lead Developer, Frameworks</h4>
-
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-4">
                                 <div>
@@ -92,7 +85,6 @@ gtm_data_layer('about');
                                 </div>
                                 <h3>Guilherme Lopes</h3>
                                 <h4>Lead Developer, UI</h4>
-
                             </div>
                             <div class="col-md-4">
                                 <div>
@@ -100,9 +92,7 @@ gtm_data_layer('about');
                                 </div>
                                 <h3>Vitaly Kravchenko</h3>
                                 <h4>Lead Developer, Data Visualisation</h4>
-
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/adrian.jpg' alt="Adrian Lowdon, Lead Developer" />
@@ -110,7 +100,8 @@ gtm_data_layer('about');
                                 <h3>Adrian Lowdon</h3>
                                 <h4>Lead Developer, Grid Core</h4>
                             </div>
-
+                    </div>
+                    <div class="row">
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer" />
@@ -118,17 +109,14 @@ gtm_data_layer('about');
                                 <h3>Viqas Hussain</h3>
                                 <h4>Lead Developer, E-commerce</h4>
                             </div>
-
                         </div>
                     </article>
                 </section>
-                <p> </p>
+
                 <section>
                     <h1 id="customer_services_and_consultancy"> Customer Services & Consultancy</h1>
                     <article class="inline-container team">
-
                         <div class="row">
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services" />
@@ -143,8 +131,6 @@ gtm_data_layer('about');
                                 <h3>Davis Jaunbruns</h3>
                                 <h4>Developer</h4>
                             </div>
-
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/ahmed2.jpg' alt=" Ahmed Gadir, Support Engineer" />
@@ -152,7 +138,8 @@ gtm_data_layer('about');
                                 <h3>Ahmed Gadir</h3>
                                 <h4>Developer</h4>
                             </div>
-
+                          </div>
+                          <div class="row">
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/bam2.jpg' alt=" Bamdad Fard, Support Engineer" />
@@ -160,7 +147,6 @@ gtm_data_layer('about');
                                 <h3>Bamdad Fard</h3>
                                 <h4>Developer</h4>
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/shuheb.jpg' alt=" Shuheb Ahmed, Support Engineer" />
@@ -168,7 +154,6 @@ gtm_data_layer('about');
                                 <h3>Shuheb Ahmed</h3>
                                 <h4>Developer</h4>
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/louis.jpg' alt=" Louis Moore, Support Engineer" />
@@ -176,6 +161,8 @@ gtm_data_layer('about');
                                 <h3>Louis Moore</h3>
                                 <h4>Developer</h4>
                             </div>
+                          </div>
+                          <div class="row">
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/michael.jpg' alt=" Michael Adesina, Support Engineer" />
@@ -186,11 +173,9 @@ gtm_data_layer('about');
                         </div>
                     </article>
                 </section>
-                <p> </p>
                 <section>
                     <h1 id="operations_team"> The Operations Team</h1>
                     <article class="inline-container team">
-
                         <div class="row">
                             <div class="col-md-4">
                                 <div>
@@ -199,7 +184,6 @@ gtm_data_layer('about');
                                 <h3>Dimo Iliev</h3>
                                 <h4>Managing Director</h4>
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/alex.jpg' alt="Alex Price, COO" />
@@ -207,7 +191,6 @@ gtm_data_layer('about');
                                 <h3>Alex Price</h3>
                                 <h4>Operations Manager</h4>
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team" />
@@ -215,7 +198,8 @@ gtm_data_layer('about');
                                 <h3>Dimple Unalkat</h3>
                                 <h4>Customer Experience Manager</h4>
                             </div>
-
+                          </div>
+                          <div class="row">
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/ashley2.jpg' alt="Ashley Lam, Business Development Manager" />
@@ -223,7 +207,6 @@ gtm_data_layer('about');
                                 <h3>Ashley Lam</h3>
                                 <h4>Business Development Manager</h4>
                             </div>
-
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/najma.jpg' alt="Najma Mohamud, Customer Experience Manager" />
@@ -238,37 +221,38 @@ gtm_data_layer('about');
                                 <h3>Rob Dunkiert</h3>
                                 <h4>Customer Experience Manager</h4>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-4">
                                 <div>
                                     <img src='images/team/julia.jpg' alt="Julia O'Dell, Customer Experience Manager" />
                                 </div>
-                                <h3>Julia O'Dell</h3>
+                                <h3>Julia O&#39;Dell</h3>
                                 <h4>Customer Experience Manager</h4>
                             </div>
-                        </div>
-                    </article>
-
-                    <p> </p>
-
-                    <h1 id="marketing_team"> The Marketing Team</h1>
-                    <article class="inline-container team">
-
-                        <div class="row">
                             <div class="col-md-4">
                                 <div>
-                                    <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate and Content Marketer" />
+                                    <img src='images/team/simon.jpg' alt="Simon Kenny, Customer Experience Manager" />
                                 </div>
-                                <h3>Max Koretskyi</h3>
-                                <h4>Developer Advocate | Content Marketer</h4>
+                                <h3>Simon Kenny</h3>
+                                <h4>Sales Manager</h4>
                             </div>
                         </div>
                     </article>
                 </section>
                 <section>
-                    <Div calls='row'>
-                        <p></p>
-                    </Div>
-
+                    <h1 id="marketing_team"> The Marketing Team</h1>
+                    <article class="inline-container team">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div>
+                                    <img src='images/team/max.jpg' alt="Max Koretskyi, Developer Advocate" />
+                                </div>
+                                <h3>Max Koretskyi</h3>
+                                <h4>Developer Advocate</h4>
+                            </div>
+                        </div>
+                    </article>
                 </section>
 
                 <section>
