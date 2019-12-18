@@ -8,7 +8,8 @@ import {
     FontStyle,
     FontWeight,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {ShadowPanel} from "./shadowPanel";
@@ -48,7 +49,11 @@ export class PieSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(PieSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(PieSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.initGroup();
         this.initSeriesTooltips();

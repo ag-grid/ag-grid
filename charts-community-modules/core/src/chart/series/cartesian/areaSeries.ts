@@ -47,7 +47,7 @@ export class AreaSeries extends CartesianSeries {
      * The assumption is that the values will be reset (to `true`)
      * in the {@link yKeys} setter.
      */
-    private readonly yKeyEnabled = new Map<string, boolean>();
+    private readonly seriesItemEnabled = new Map<string, boolean>();
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -142,9 +142,9 @@ export class AreaSeries extends CartesianSeries {
         this._yKeys = values;
         this.yData = [];
 
-        const { yKeyEnabled } = this;
-        yKeyEnabled.clear();
-        values.forEach(key => yKeyEnabled.set(key, true));
+        const { seriesItemEnabled } = this;
+        seriesItemEnabled.clear();
+        values.forEach(key => seriesItemEnabled.set(key, true));
 
         this.scheduleData();
     }
@@ -220,8 +220,8 @@ export class AreaSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKeys, yKeyEnabled } = this;
-        const data = xKey && yKeys.length ? this.data : [];
+        const { xKey, yKeys, seriesItemEnabled } = this;
+        const data = xKey && yKeys.length && this.data ? this.data : [];
 
         // if (!(chart && chart.xAxis && chart.yAxis)) {
         //     return false;
@@ -258,7 +258,7 @@ export class AreaSeries extends CartesianSeries {
             }
             const value = datum[yKey];
 
-            return isFinite(value) && yKeyEnabled.get(yKey) ? Math.abs(value) : 0;
+            return isFinite(value) && seriesItemEnabled.get(yKey) ? Math.abs(value) : 0;
         }));
 
         // xData: ['Jan', 'Feb']
@@ -379,7 +379,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { fills, fillOpacity, yKeyEnabled, shadow } = this;
+        const { fills, fillOpacity, seriesItemEnabled, shadow } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
 
         updateAreas.exit.remove();
@@ -398,7 +398,7 @@ export class AreaSeries extends CartesianSeries {
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
             shape.fillShadow = shadow;
-            shape.visible = !!yKeyEnabled.get(datum.yKey);
+            shape.visible = !!seriesItemEnabled.get(datum.yKey);
 
             path.clear();
 
@@ -419,7 +419,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateStrokeSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { strokes, strokeWidth, strokeOpacity, data, yKeyEnabled } = this;
+        const { strokes, strokeWidth, strokeOpacity, data, seriesItemEnabled } = this;
         const updateStrokes = this.strokeSelection.setData(areaSelectionData);
 
         updateStrokes.exit.remove();
@@ -438,7 +438,7 @@ export class AreaSeries extends CartesianSeries {
 
             shape.stroke = strokes[index % strokes.length];
             shape.strokeWidth = strokeWidth;
-            shape.visible = !!yKeyEnabled.get(datum.yKey);
+            shape.visible = !!seriesItemEnabled.get(datum.yKey);
             shape.strokeOpacity = strokeOpacity;
 
             path.clear();
@@ -472,7 +472,7 @@ export class AreaSeries extends CartesianSeries {
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const markerSize = marker.size;
-        const { yKeyEnabled, highlightedNode } = this;
+        const { seriesItemEnabled, highlightedNode } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
 
@@ -511,7 +511,7 @@ export class AreaSeries extends CartesianSeries {
 
             node.translationX = datum.x;
             node.translationY = datum.y;
-            node.visible = marker.enabled && node.size > 0 && !!yKeyEnabled.get(datum.yKey);
+            node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
         });
 
         this.markerSelection = markerSelection;
@@ -543,26 +543,29 @@ export class AreaSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const title = text ? `<div class="title" ${titleStyle}>${text}</div>` : '';
+            const title = text ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${text}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            return `${title}<div class="content">${xString}: ${yString}</div>`;
+            return `${title}<div class="ag-chart-tooltip-content">${xString}: ${yString}</div>`;
         }
     }
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { id, xKey, yKeys, yNames, yKeyEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            data, id, xKey, yKeys, yNames, seriesItemEnabled,
+            marker, fills, strokes, fillOpacity, strokeOpacity
+        } = this;
 
-        if (this.data.length && xKey && yKeys.length) {
+        if (data && data.length && xKey && yKeys.length) {
             yKeys.forEach((yKey, index) => {
-                data.push({
+                legendData.push({
                     id,
                     itemId: yKey,
-                    enabled: yKeyEnabled.get(yKey) || false,
+                    enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
                         text: yNames[index] || yKeys[index]
                     },
@@ -579,7 +582,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        this.yKeyEnabled.set(itemId, enabled);
+        this.seriesItemEnabled.set(itemId, enabled);
         this.scheduleData();
     }
 }

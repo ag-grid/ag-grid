@@ -10,10 +10,11 @@ import {
     LegendPosition,
     PostConstruct,
     RefSelector,
+    AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
@@ -51,7 +52,11 @@ export class LegendPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(LegendPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LegendPanel.TEMPLATE, {legendGroup: groupParams});
 
         this.initLegendGroup();
         this.initLegendPosition();
@@ -73,7 +78,7 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPosition() {
-        const positions: LegendPosition[] = ["top", "right", "bottom", "left"];
+        const positions: LegendPosition[] = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
 
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))

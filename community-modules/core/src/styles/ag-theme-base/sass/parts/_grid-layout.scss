@@ -2,7 +2,7 @@
 @mixin ag-theme-base-part-grid-layout {
 
     .ag-root-wrapper {
-        @include grid-border($radius: $ag-grid-radius);
+        @include ag-grid-border($radius: $ag-grid-radius);
     }
     
     @for $i from 1 to 20 {
@@ -33,6 +33,7 @@
     }
 
     .ag-cell .ag-icon {
+        // TODO structural styles
         display: inline-block;
         vertical-align: middle;
     }
@@ -80,10 +81,10 @@
     .ag-row {
         height: $ag-row-height;
         &:not(.ag-row-first) {
-            @include grid-border(top, $color: $ag-row-border-color);
+            @include ag-grid-border(top, $color: $ag-row-border-color);
         }
         &.ag-row-last {
-            @include grid-border(bottom, $color: $ag-row-border-color);
+            @include ag-grid-border(bottom, $color: $ag-row-border-color);
         }
 
         &.ag-row-selected {
@@ -125,7 +126,7 @@
     ));
 
     .ag-cell {
-        @include grid-cell($ag-row-height - 2, $ag-cell-horizontal-padding);
+        @include ag-grid-cell($ag-row-height - 2, $ag-cell-horizontal-padding);
 
         // adjust for transparent border
         border: 1px solid transparent;
@@ -133,15 +134,7 @@
         padding-right: $ag-cell-horizontal-padding - 1px;
     }
 
-    .ag-row-drag {
-        // added 'move' as IE fallback
-        cursor: move;
-        cursor: grab;
-        min-width: $ag-icon-size + $ag-grid-size * 3 - $ag-cell-horizontal-padding;
-    }
-
-    .ag-row-dragging,
-    .ag-row-dragging .ag-row-drag {
+    .ag-row-dragging {
         cursor: move;
     }
 
@@ -162,14 +155,14 @@
             height: $ag-row-height + $ag-grid-size * 3;
         }
         &.ag-cell-inline-editing {
-            @include card();
+            @include ag-card();
 
             background-color: $ag-editor-background-color;
         }
     }
 
     .ag-popup-editor {
-        @include card();
+        @include ag-card();
         background-color: $ag-editor-background-color;
         padding: 0;
         .ag-large-textarea textarea {
@@ -235,7 +228,7 @@
     }
 
     .ag-overlay-loading-center {
-        @include card();
+        @include ag-card();
     }
 
 }

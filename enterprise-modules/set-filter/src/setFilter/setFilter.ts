@@ -28,7 +28,7 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eSelectAll') private eSelectAll: HTMLInputElement;
     @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: HTMLInputElement;
-    @RefSelector('ag-filter-loading') private eFilterLoading: HTMLInputElement;
+    @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
     
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('eventService') private eventService: EventService;
@@ -54,14 +54,14 @@ export class SetFilter extends ProvidedFilter {
     protected createBodyTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
+        return `<div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
                     <div class="ag-filter-header-container" role="presentation">
                         <div class="ag-input-wrapper" id="ag-mini-filter" role="presentation">
                             <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                         </div>
                         <label ref="eSelectAllContainer" class="ag-set-filter-item">
-                            <div ref="eSelectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll', 'Select All')})</span>
+                            <div ref="eSelectAll" class="ag-set-filter-item-checkbox"></div><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
                     </div>
                     <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>

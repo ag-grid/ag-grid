@@ -30,7 +30,6 @@ colDef = {
     },
     ...
 }</snippet>
-
     <p>
         There are two ways in which row dragging works in the grid, managed and unmanaged:
     </p>
@@ -57,21 +56,21 @@ colDef = {
     <p>
         The example below shows simple managed dragging. The following can be noted:
     </p>
-        <ul class="content">
-            <li>
-                The first column has <code>rowDrag=true</code> which results in a
-                draggable area included in the cell.
-            </li>
-            <li>
-                The property <code>rowDragManaged</code> is set, to tell the grid to move
-                the row as the row is dragged.
-            </li>
-            <li>
-                If a sort (click on the header) or filter (open up the column menu) is
-                applied to the column, the draggable icon for row dragging is hidden.
-                This is consistent with the constraints explained after the example.
-            </li>
-        </ul>
+    <ul class="content">
+        <li>
+            The first column has <code>rowDrag=true</code> which results in a
+            draggable area included in the cell.
+        </li>
+        <li>
+            The property <code>rowDragManaged</code> is set, to tell the grid to move
+            the row as the row is dragged.
+        </li>
+        <li>
+            If a sort (click on the header) or filter (open up the column menu) is
+            applied to the column, the draggable icon for row dragging is hidden.
+            This is consistent with the constraints explained after the example.
+        </li>
+    </ul>
 
     <?= example('Row Drag Simple Managed', 'simple-managed', 'generated', array('processVue' => true)) ?>
 
@@ -120,6 +119,43 @@ colDef = {
         </ul>
 
     <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated', array('processVue' => true)) ?>
+
+    <h2>Custom Row Drag Text</h2>
+
+    <p>
+        When a RowDrag starts, a "floating" DOM element is created to indicate which row is being dragged. By default 
+        this DOM element will contain the same value as the cell that started the rowDrag. It's possible to override that 
+        text using the <code>colDef.rowDragText</code> callback.
+    </p>
+
+<snippet>// function for rowDragText
+function rowDragText(params: IRowDragItem) => string;
+
+// interface for params
+interface IRowDragItem {
+    rowNode: RowNode, // the current RowNode
+    columns: Column[], // an Array containing the column that initiated the drag
+    defaultTextValue: string // The default text that would be applied to this Drag Element
+}
+
+// example
+colDef.rowDragText = function(params) {
+    return params.defaultTextValue + ' being dragged...'
+}
+}</snippet>
+
+    <p>
+        The example below shows dragging with custom text. The following can be noted:
+    </p>
+    <ul class="content">
+        <li>
+            When you drag row of the year 2012, the <code>rowDragText</code> callback will add 
+            <strong>(London Olympics)</strong> to the floating Drag element.
+        </li>
+    </ul>
+
+
+    <?= example('Row Drag With Custom Text', 'custom-drag-text', 'generated', array('processVue' => true)) ?>
 
     <h2>Unmanaged Dragging</h2>
 

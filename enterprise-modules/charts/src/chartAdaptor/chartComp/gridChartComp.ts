@@ -342,7 +342,7 @@ export class GridChartComp extends Component {
             this.chartMenu.destroy();
         }
 
-        // don't want to invoke destroy() on the Dialog / MessageBox (prevents destroy loop)
+        // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
             this.chartDialog.destroy();
         }

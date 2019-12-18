@@ -1,4 +1,4 @@
-import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector} from "@ag-grid-community/core";
+import {AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, AgGroupComponentParams} from "@ag-grid-community/core";
 import {ChartTranslator} from "../../../chartTranslator";
 import {ChartController} from "../../../chartController";
 
@@ -29,7 +29,11 @@ export class CalloutPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(CalloutPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(CalloutPanel.TEMPLATE, {calloutGroup: groupParams});
         this.initCalloutOptions();
     }
 

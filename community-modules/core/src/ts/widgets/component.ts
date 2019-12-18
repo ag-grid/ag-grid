@@ -45,31 +45,34 @@ export class Component extends BeanStub {
     }
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    private createChildComponentsFromTags(parentNode: Element): void {
+    private createChildComponentsFromTags(parentNode: Element, paramsMap?: any): void {
 
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
         childNodeList.forEach((childNode: Node) => {
-            const childComp = this.getContext().createComponentFromElement(childNode as Element, (childComp) => {
+            if (!(childNode instanceof HTMLElement)) {
+                return;
+            }
+            const childComp = this.getContext().createComponentFromElement(childNode, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                this.copyAttributesFromNode(childNode as Element, childComp.getGui());
-            });
+                this.copyAttributesFromNode(childNode, childComp.getGui());
+            }, paramsMap);
             if (childComp) {
-                if ((childComp as any).addItems && (childNode as Element).children.length) {
-                    this.createChildComponentsFromTags(childNode as Element);
+                if ((childComp as any).addItems && childNode.children.length) {
+                    this.createChildComponentsFromTags(childNode);
 
                     // converting from HTMLCollection to Array
-                    const items = Array.prototype.slice.call((childNode as Element).children);
+                    const items = Array.prototype.slice.call(childNode.children);
 
                     (childComp as any).addItems(items);
                 }
                 // replace the tag (eg ag-checkbox) with the proper HTMLElement (eg 'div') in the dom
                 this.swapComponentForNode(childComp, parentNode, childNode);
             } else if (childNode.childNodes) {
-                this.createChildComponentsFromTags(childNode as Element);
+                this.createChildComponentsFromTags(childNode);
             }
         });
     }
@@ -111,12 +114,12 @@ export class Component extends BeanStub {
         }
     }
 
-    public setTemplate(template: string): void {
+    public setTemplate(template: string, paramsMap?: any): void {
         const eGui = _.loadTemplate(template as string);
-        this.setTemplateFromElement(eGui);
+        this.setTemplateFromElement(eGui, paramsMap);
     }
 
-    public setTemplateFromElement(element: HTMLElement): void {
+    public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
         this.addAnnotatedEventListeners();
@@ -125,7 +128,7 @@ export class Component extends BeanStub {
         // context will not be available when user sets template in constructor
         const contextIsAvailable = !!this.getContext();
         if (contextIsAvailable) {
-            this.createChildComponentsFromTags(this.getGui());
+            this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     }
 

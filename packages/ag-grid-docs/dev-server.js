@@ -35,23 +35,6 @@ function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
         noInfo: true,
         quiet: true,
         stats: 'errors-only',
-        // stats: {
-        //     colors: true,
-        //     hash: false,
-        //     version: false,
-        //     timings: false,
-        //     assets: false,
-        //     chunks: false,
-        //     modules: false,
-        //     reasons: false,
-        //     children: false,
-        //     source: false,
-        //     errors: false,
-        //     errorDetails: false,
-        //     warnings: false,
-        //     publicPath: false
-        // },
-        // logLevel: 'trace',
         publicPath: '/'
     });
     instance.waitUntilValid(() => {
@@ -173,6 +156,13 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
                 rename: module.publishedName
             });
         });
+
+    lnk('../../charts-community-modules/react/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-react'
+    });
+
 }
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
@@ -543,6 +533,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
             serveFramework(app, '@ag-grid-community/angular');
             serveFramework(app, '@ag-grid-community/vue');
             serveFramework(app, '@ag-grid-community/react');
+            serveFramework(app, 'ag-charts-react');
 
             // build "packaged" landing page examples (for performance reasons)
             // these aren't watched and regenerated like the other examples

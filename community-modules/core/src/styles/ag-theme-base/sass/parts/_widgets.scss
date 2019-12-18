@@ -4,6 +4,7 @@
     .ag-checkbox,
     .ag-radio-button,
     .ag-toggle-button {
+        // TODO structural styles
         display: flex;
         align-items: center;
         cursor: default;
@@ -27,9 +28,10 @@
         input[type='tel'],
         input[type='date'],
         input[type='datetime-local'] {
-            @include textbox();
+            @include ag-textbox();
         }
 
+        // TODO structural styles
         input[type='date'] {
             flex: 1 1 auto;
         }
@@ -38,7 +40,7 @@
         }
 
         textarea {
-            @include textbox();
+            @include ag-textbox();
         }
     }
 
@@ -89,9 +91,12 @@
     // Selection checkbox
     ////////////////////////////////////////
     @include ag-auto-rtl(
-        ".ag-cell-wrapper .ag-row-drag"
+        ".ag-row-drag"
+        // TODO nesting
         ".ag-cell-wrapper .ag-selection-checkbox"
+        // TODO nesting
         ".ag-cell-wrapper .ag-group-expanded"
+        // TODO nesting
         ".ag-cell-wrapper .ag-group-contracted",
         ( margin-right: $ag-cell-widget-spacing )
     );
@@ -100,54 +105,35 @@
         ( margin-left: 2px )
     );
 
-    .ag-group-component {
-        background-color: $ag-group-component-background-color;
-        padding: 0px;
-        border: 0 solid $ag-group-component-border-color;
-        border-top-width: 1px;
-        &.ag-disabled > {
-            .ag-group-component-label .ag-group-component-title,
-            .ag-group-component-container {
-                opacity: 0.5;
-            }
+    .ag-group {
+        background-color: $ag-group-background-color;
+        @if $ag-group-border-color {
+            border-top: 1px solid $ag-group-border-color;
         }
-        &:not(.ag-collapsible) {
-            > {
-                div {
-                    margin-left: 0;
-                }
-                .ag-group-component-title-bar {
-                    margin-left: 0;
-                    padding: $ag-grid-size;
-                    .ag-column-group-icons {
-                        display: none;
-                    }
-                }
-            }
-        }
-    }
-    .ag-group-component-title-bar {
-        background-color: $ag-group-component-title-background-color;
-        height: $ag-icon-size;
-        font-size: $ag-font-size;
-        font-family: $ag-font-family;
-        height: 26px;
-    }
-    .ag-group-component-toolbar {
-        background-color: darken($ag-group-component-background-color, 2%);
-        padding: $ag-grid-size;
-        border: 0 solid $ag-border-color;
-    }
-    .ag-group-component-container {
-        margin-left: $ag-grid-size * 2;
-        padding: $ag-grid-size;
     }
 
     .ag-group-item {
+        margin-top: $ag-grid-size / 2;
+        margin-bottom: $ag-grid-size / 2;
+    }
+
+    .ag-group-title-bar {
+        background-color: $ag-group-title-background-color;
+        padding: $ag-grid-size;
+    }
+    
+    .ag-group-toolbar {
+        background-color: $ag-group-toolbar-background-color;
+        padding: $ag-grid-size;
+    }
+
+
+    .ag-disabled-group-title-bar, .ag-disabled-group-container {
+        opacity: 0.5
+    }
+
+    .group-item {
         margin: $ag-grid-size / 2 0;
-        .ag-group-component-title-bar {
-            height: 18px;
-        }
     }
 
     .ag-labeled {
@@ -195,6 +181,7 @@
     }
 
     .ag-toggle-button {
+        // TODO do this without reaching into input wrapper
         .ag-input-wrapper {
             height: $ag-icon-size;
             width: 40px;
@@ -210,6 +197,7 @@
             }
         }
         &.ag-selected {
+            // TODO do this without reaching into input wrapper
             .ag-input-wrapper {
                 background-color: $ag-accent-color;
                 .ag-icon {
@@ -293,17 +281,6 @@
             box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
         }
 
-        .ag-spectrum-text-value {
-            font-weight: bold;
-            line-height: 20px;
-            color: #333;
-        }
-
-        .ag-spectrum-text-value:focus {
-            border: 1px solid #0d77e4;
-            padding: 2px;
-        }
-
         .ag-recent-colors {
             > div {
                 margin: 0 3px;
@@ -349,7 +326,7 @@
             padding-left: $ag-cell-horizontal-padding;
 
             .ag-title-bar-buttons {
-                .ag-button {
+                .ag-panel-title-bar-button {
                     height: $ag-dialog-title-icon-size;
                     width: $ag-dialog-title-icon-size;
                     .ag-icon {
@@ -364,17 +341,6 @@
                     &:not(:last-child) {
                         margin-right: 5px;
                     }
-                }
-            }
-        }
-
-        .ag-message-box {
-            .ag-message-box-button-bar {
-                height: 30px;
-                background-color: $ag-header-background-color;
-                padding: 2px;
-                button {
-                    border-radius: $ag-card-radius;
                 }
             }
         }

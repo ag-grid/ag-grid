@@ -95,8 +95,7 @@ export class DragAndDropService {
     public static GHOST_TEMPLATE =
         '<div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label">' +
-        '  </div>' +
+        '  <div class="ag-dnd-ghost-label"></div>' +
         '</div>';
 
     private logger: Logger;
@@ -429,7 +428,11 @@ export class DragAndDropService {
             default: eIcon = this.eHiddenIcon; break;
         }
 
-        this.eGhostIcon.appendChild(eIcon);
+        // if we are dragging out of the grid but suppressDragLeaveHidesColumns
+        // is true then no icon should be added.
+        if (eIcon !== this.eHiddenIcon || !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            this.eGhostIcon.appendChild(eIcon);
+        }
 
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
     }

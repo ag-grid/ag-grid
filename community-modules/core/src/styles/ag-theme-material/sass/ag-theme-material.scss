@@ -108,6 +108,14 @@
         border-top: solid 1px $ag-secondary-border-color;
     }
 
+    .ag-group-title-bar {
+        padding: $ag-grid-size * 0.75 $ag-grid-size;
+    }
+
+    .ag-charts-format-sub-level-group-title-bar {
+        padding: $ag-grid-size * 0.5 $ag-grid-size;
+    }
+
     // TODO remove the need for this LTR/RTL selectors
     .ag-ltr .ag-side-bar {
         &.ag-side-bar-right {
@@ -166,12 +174,6 @@
                     }
                 }
             }
-        }
-    }
-
-    .ag-group-expanded {
-        .ag-icon-expanded:empty:before {
-            content: $ag-icon-tree-open;
         }
     }
 }

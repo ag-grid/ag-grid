@@ -13,8 +13,6 @@ import { Observable, reactive, PropertyChangeEventListener } from "../util/obser
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 
-export type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
-
 export abstract class Chart extends Observable {
     readonly id: string = this.createId();
     readonly scene: Scene;
@@ -171,6 +169,9 @@ export abstract class Chart extends Observable {
 
     protected initSeries(series: Series) {
         series.chart = this;
+        if (!series.data) {
+            series.data = this.data;
+        }
         series.addEventListener('layoutChange', this.scheduleLayout);
         series.addEventListener('dataChange', this.scheduleData);
         series.addEventListener('legendChange', this.updateLegend);
@@ -308,7 +309,7 @@ export abstract class Chart extends Observable {
                 return axis;
             } else if (directionKeys) {
                 for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
+                    if (axisKeys.indexOf(directionKeys[j]) >= 0 ) {
                         return axis;
                     }
                 }
@@ -629,7 +630,7 @@ export abstract class Chart extends Observable {
     private toggleTooltip(visible?: boolean) {
         const classList = [this.defaultTooltipClass, this._tooltipClass];
         if (visible) {
-            classList.push('visible');
+            classList.push('ag-chart-tooltip-visible');
         } else if (this.lastPick) {
             this.lastPick.series.dehighlightNode();
             this.lastPick = undefined;

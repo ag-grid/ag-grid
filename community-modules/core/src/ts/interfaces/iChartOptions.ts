@@ -71,7 +71,12 @@ export interface LegendOptions {
     item: LegendItemOptions;
 }
 
-export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export enum LegendPosition {
+    Top = 'top',
+    Right = 'right',
+    Bottom = 'bottom',
+    Left = 'left'
+}
 
 export interface LegendItemOptions {
     label: LegendLabelOptions;

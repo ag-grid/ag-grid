@@ -183,7 +183,7 @@ export class OHLCSeries extends CartesianSeries {
         //     return false;
         // }
 
-        const data = dateKey && openKey && highKey && lowKey && closeKey ? this.data : [];
+        const data = dateKey && openKey && highKey && lowKey && closeKey && this.data ? this.data : [];
 
         if (dirtyDateData) {
             this.xDomain = this.calculateDomain(this.dateData = data.map(d => d[dateKey]));
@@ -375,7 +375,7 @@ export class OHLCSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleHtml = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const dateValue = seriesDatum[dateKey];
             const openValue = seriesDatum[openKey];
@@ -392,20 +392,25 @@ export class OHLCSeries extends CartesianSeries {
                 contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
             }
 
-            return `${titleHtml}<div class="content">${contentHtml}</div>`;
+            return `${titleHtml}<div class="ag-chart-tooltip-content">${contentHtml}</div>`;
         }
     }
 
     tooltipRenderer?: (params: OHLCTooltipRendererParams) => string;
 
-    listSeriesItems(data: LegendDatum[]): void {
-        if (this.data.length && this.dateKey && this.closeKey) {
-            data.push({
-                id: this.id,
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            data, id, dateKey, closeKey,
+            title, visible
+        } = this;
+
+        if (data && data.length && dateKey && closeKey) {
+            legendData.push({
+                id,
                 itemId: undefined,
-                enabled: this.visible,
+                enabled: visible,
                 label: {
-                    text: this.title || this.closeKey
+                    text: title || closeKey
                 },
                 marker: {
                     fill: 'gray',

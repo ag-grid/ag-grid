@@ -32,10 +32,10 @@ export class DropZoneColumnComp extends Component {
     public static EVENT_COLUMN_REMOVE = 'columnRemove';
 
     private static TEMPLATE =
-        `<span class="ag-column-drop-cell">
-          <span ref="eDragHandle" class="ag-column-drag"></span>
+        `<span>
+          <span ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle"></span>
           <span ref="eText" class="ag-column-drop-cell-text"></span>
-          <span ref="btRemove" class="ag-column-drop-cell-button"></span>
+          <span ref="eButton" class="ag-column-drop-cell-button"></span>
         </span>`;
 
     @Autowired('dragAndDropService') dragAndDropService: DragAndDropService;
@@ -49,29 +49,26 @@ export class DropZoneColumnComp extends Component {
 
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
-    @RefSelector('btRemove') private btRemove: HTMLElement;
+    @RefSelector('eButton') private eButton: HTMLElement;
 
-    private column: Column;
-    private dragSourceDropTarget: DropTarget;
-    private ghost: boolean;
     private displayName: string | null;
-    private valueColumn: boolean;
 
     private popupShowing = false;
 
-    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean) {
+    constructor(private column: Column, private dragSourceDropTarget: DropTarget, private ghost: boolean, private valueColumn: boolean, private horizontal: boolean, private name: string) {
         super();
-        this.valueColumn = valueColumn;
-        this.column = column;
-        this.dragSourceDropTarget = dragSourceDropTarget;
-        this.ghost = ghost;
     }
 
     @PostConstruct
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
+        this.addElementClasses(this.getGui());
+        this.addElementClasses(this.eDragHandle, 'drag-handle');
+        this.addElementClasses(this.eText, 'text');
+        this.addElementClasses(this.eButton, 'button');
+
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
-        this.btRemove.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
+        this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
@@ -118,15 +115,15 @@ export class DropZoneColumnComp extends Component {
 
     private setupRemove(): void {
 
-        _.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        _.setDisplayed(this.eButton, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
-        this.addDestroyableEventListener(this.btRemove, 'click', (mouseEvent: MouseEvent) => {
+        this.addDestroyableEventListener(this.eButton, 'click', (mouseEvent: MouseEvent) => {
             const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
 
-        const touchListener = new TouchListener(this.btRemove);
+        const touchListener = new TouchListener(this.eButton);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent) => {
             const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
@@ -224,6 +221,14 @@ export class DropZoneColumnComp extends Component {
         const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
         return comp;
+    }
+
+    private addElementClasses(el: HTMLElement, suffix?: string) {
+        suffix = suffix ? `-${suffix}` : '';
+        _.addCssClass(el, `ag-column-drop-cell${suffix}`);
+        const direction = this.horizontal ? 'horizontal' : 'vertical';
+        _.addCssClass(el, `ag-column-drop-${direction}-cell${suffix}`);
+        _.addCssClass(el, `ag-column-drop-${this.name}-cell${suffix}`);
     }
 }
 

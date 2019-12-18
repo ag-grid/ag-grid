@@ -3,24 +3,25 @@
 $ag-checkbox-size: 15px;
 $ag-checkbox-border-radius: $ag-border-radius;
 
-@mixin active-invert {
+@mixin ag-active-invert {
     color: $ag-color-background;
     background-color: $ag-color-primary;
 }
 
-@mixin box-shadow($color) {
+@mixin ag-box-shadow($color) {
+    // TODO don't use rem
     box-shadow: 0 0 2px 0.1rem transparentize($color, 0.6);
 }
 
-@mixin primary-box-shadow {
-    @include box-shadow($ag-color-primary);
+@mixin ag-primary-box-shadow {
+    @include ag-box-shadow($ag-color-primary);
 }
 
-@mixin chrome-box-shadow {
+@mixin ag-chrome-box-shadow {
     box-shadow: 0 1px 4px 1px transparentize($ag-color-chrome-shadow, 0.6);
 }
 
-@mixin checkbox($color: $ag-color-secondary) {
+@mixin ag-checkbox($color: $ag-color-secondary) {
     -webkit-appearance: none;
     width: $ag-checkbox-size;
     height: $ag-checkbox-size;
@@ -33,7 +34,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     margin: 0;
 
     &:focus {
-        @include box-shadow($color);
+        @include ag-box-shadow($color);
         border-color: $color;
         outline: none;
     }
@@ -120,13 +121,13 @@ $ag-checkbox-border-radius: $ag-border-radius;
 
     &:focus {
         border-color: $ag-color-primary;
-        @include primary-box-shadow();
+        @include ag-primary-box-shadow();
     }
 }
 
 %custom-selection {
     &::selection {
-        @include active-invert();
+        @include ag-active-invert();
     }
     caret-color: $ag-color-primary;
 }
@@ -152,7 +153,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 }
 
 // TODO remove this and use icon font
-@mixin with-dropdown-arrow() {
+@mixin ag-with-dropdown-arrow() {
     background-image: $ag-url-data-image-dropdown-arrow !important;
     background-repeat: no-repeat;
     background-position: right $ag-grid-size top $ag-grid-size;
@@ -169,7 +170,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 }
 
 %select {
-    @include with-dropdown-arrow();
+    @include ag-with-dropdown-arrow();
     @extend %input-box;
 
     &::-ms-expand {
@@ -260,7 +261,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 $ag-toggle-button-height: 18px;
 $ag-toggle-button-width: 28px;
 
-@mixin toggle-button($color: $ag-color-primary) {
+@mixin ag-toggle-button($color: $ag-color-primary) {
     box-sizing: border-box;
     -webkit-appearance: none;
     width: $ag-toggle-button-width;
@@ -327,7 +328,7 @@ $ag-toggle-button-width: 28px;
     }
 }
 
-@mixin range-track {
+@mixin ag-range-track {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -336,7 +337,7 @@ $ag-toggle-button-width: 28px;
     border-radius: $ag-border-radius;
 }
 
-@mixin range-thumb {
+@mixin ag-range-thumb {
     margin: 0;
     padding: 0;
     background: blue;
@@ -348,16 +349,16 @@ $ag-toggle-button-width: 28px;
     border-radius: 12px;
 }
 
-@mixin ms-fill {
+@mixin ag-ms-fill {
 }
 
-@mixin focus-range-track {
+@mixin ag-focus-range-track {
     background: $ag-color-primary;
 }
 
-@mixin focus-range-thumb {
+@mixin ag-focus-range-thumb {
     border-color: $ag-color-primary;
-    @include primary-box-shadow();
+    @include ag-primary-box-shadow();
 }
 
 %range {
@@ -368,65 +369,65 @@ $ag-toggle-button-width: 28px;
         outline: none;
 
         &::-webkit-slider-runnable-track {
-            @include focus-range-track;
+            @include ag-focus-range-track;
         }
 
         &::-moz-range-track {
-            @include focus-range-track;
+            @include ag-focus-range-track;
         }
 
         &::-ms-track {
-            @include focus-range-track;
+            @include ag-focus-range-track;
         }
         &::-ms-fill-lower {
-            @include focus-range-track;
+            @include ag-focus-range-track;
         }
 
         &::-ms-fill-upper {
-            @include focus-range-track;
+            @include ag-focus-range-track;
         }
 
         &::-webkit-slider-thumb {
-            @include focus-range-thumb;
+            @include ag-focus-range-thumb;
         }
 
         &::-ms-thumb {
-            @include focus-range-thumb;
+            @include ag-focus-range-thumb;
         }
         &::-moz-range-thumb {
-            @include focus-range-thumb;
+            @include ag-focus-range-thumb;
         }
     }
 
     &::-webkit-slider-runnable-track {
-        @include range-track;
+        @include ag-range-track;
     }
 
     &::-moz-range-track {
-        @include range-track;
+        @include ag-range-track;
     }
 
     &::-ms-track {
-        @include range-track;
+        @include ag-range-track;
     }
 
     &::-webkit-slider-thumb {
-        @include range-thumb;
+        @include ag-range-thumb;
         transform: translateY(-4px);
     }
 
     &::-ms-thumb {
-        @include range-thumb;
+        @include ag-range-thumb;
         height: 8.4px;
     }
     &::-moz-range-thumb {
-        @include range-thumb;
+        @include ag-range-thumb;
     }
 
     &::-ms-fill-lower {
-        @include ms-fill;
+        @include ag-ms-fill;
     }
     &::-ms-fill-upper {
-        @include ms-fill;
+        @include ag-ms-fill;
     }
 }

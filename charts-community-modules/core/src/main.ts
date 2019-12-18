@@ -30,3 +30,4 @@ export * from "./scene/shape/shape";
 export * from "./util/angle";
 export * from "./util/array";
 export * from "./util/padding";
+export * from "./chart/agChart"

@@ -106,21 +106,28 @@ export class PaginationComp extends Component {
 
         return `<div class="ag-paging-panel ag-unselectable">
                 <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-                    <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
+                    <span ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-separator"></span>
+                    ${strTo}
+                    <span ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-separator"></span>
+                    ${strOf}
+                    <span ref="lbRecordCount" class="ag-paging-row-summary-panel-separator"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
-                    <div ref="btFirst" class="ag-paging-button">
-                        <button type="button">${strFirst}</button>
+                    <div ref="btFirst" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strFirst}</button>
                     </div>
-                    <div ref="btPrevious" class="ag-paging-button">
-                        <button type="button">${strPrevious}</button>
+                    <div ref="btPrevious" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strPrevious}</button>
                     </div>
-                    ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
-                    <div ref="btNext" class="ag-paging-button">
-                        <button type="button">${strNext}</button>
+                    ${strPage}
+                    <span ref="lbCurrent"></span>
+                    ${strOf}
+                    <span ref="lbTotal"></span>
+                    <div ref="btNext" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strNext}</button>
                     </div>
-                    <div ref="btLast" class="ag-paging-button">
-                        <button type="button">${strLast}</button>
+                    <div ref="btLast" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strLast}</button>
                     </div>
                 </span>
             </div>`;

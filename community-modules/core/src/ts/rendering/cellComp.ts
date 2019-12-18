@@ -332,7 +332,7 @@ export class CellComp extends Component {
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push('ag-cell-with-height');
+            cssClasses.push('ag-cell-auto-height');
         }
 
         const doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();

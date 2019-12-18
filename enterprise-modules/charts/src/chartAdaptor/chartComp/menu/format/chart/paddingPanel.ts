@@ -5,7 +5,8 @@ import {
     Component,
     PaddingOptions,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartController} from "../../../chartController";
 import {ChartTranslator} from "../../../chartTranslator";
@@ -39,7 +40,12 @@ export class PaddingPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(PaddingPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(PaddingPanel.TEMPLATE, {chartPaddingGroup: groupParams});
 
         this.initGroup();
         this.initChartPaddingItems();

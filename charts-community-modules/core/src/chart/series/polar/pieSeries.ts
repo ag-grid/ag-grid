@@ -72,7 +72,8 @@ export class PieSeries extends PolarSeries {
         return scale;
     })();
 
-    public dataEnabled: boolean[] = [];
+    // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
+    public seriesItemEnabled: boolean[] = [];
 
     private _title?: Caption;
     set title(value: Caption | undefined) {
@@ -143,7 +144,7 @@ export class PieSeries extends PolarSeries {
         this.label.addEventListener('dataChange', () => this.scheduleData());
 
         this.addPropertyListener('data', event => {
-            event.source.dataEnabled = event.value.map(() => true);
+            event.source.seriesItemEnabled = event.value.map(() => true);
         });
     }
 
@@ -422,9 +423,10 @@ export class PieSeries extends PolarSeries {
     }
 
     processData(): boolean {
-        const { data, dataEnabled } = this;
+        const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData } = this;
+        const data = angleKey && this.data ? this.data : [];
 
-        const angleData: number[] = data.map((datum, index) => dataEnabled[index] && +datum[this.angleKey] || 0);
+        const angleData: number[] = data.map((datum, index) => seriesItemEnabled[index] && +datum[angleKey] || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
 
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
@@ -436,7 +438,6 @@ export class PieSeries extends PolarSeries {
 
         const labelKey = this.label.enabled && this.labelKey;
         const labelData = labelKey ? data.map(datum => String(datum[labelKey])) : [];
-        const radiusKey = this.radiusKey;
         const useRadiusKey = !!radiusKey && !this.innerRadiusOffset;
         let radiusData: number[] = [];
 
@@ -446,8 +447,6 @@ export class PieSeries extends PolarSeries {
 
             radiusData = radii.map(value => value / maxDatum);
         }
-
-        const { angleScale, groupSelectionData } = this;
 
         groupSelectionData.length = 0;
 
@@ -516,7 +515,7 @@ export class PieSeries extends PolarSeries {
 
     update(): void {
         const { chart } = this;
-        const visible = this.group.visible = this.visible && this.dataEnabled.indexOf(true) >= 0;
+        const visible = this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
 
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
@@ -674,28 +673,28 @@ export class PieSeries extends PolarSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="title" ${titleStyle}>${text}</div>` : '';
+            const titleString = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${text}</div>` : '';
             const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
             const value = nodeDatum.seriesDatum[angleKey];
             const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
 
-            return `${titleString}<div class="content">${label}${formattedValue}</div>`;
+            return `${titleString}<div class="ag-chart-tooltip-content">${label}${formattedValue}</div>`;
         }
     }
 
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { labelKey } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const { labelKey, data } = this;
 
-        if (this.data.length && labelKey) {
+        if (data && data.length && labelKey) {
             const { fills, strokes, id } = this;
 
-            this.data.forEach((datum, index) => {
-                data.push({
+            data.forEach((datum, index) => {
+                legendData.push({
                     id,
                     itemId: index,
-                    enabled: this.dataEnabled[index],
+                    enabled: this.seriesItemEnabled[index],
                     label: {
                         text: String(datum[labelKey])
                     },
@@ -711,7 +710,7 @@ export class PieSeries extends PolarSeries {
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
-        this.dataEnabled[itemId] = enabled;
+        this.seriesItemEnabled[itemId] = enabled;
         this.scheduleData();
     }
 }

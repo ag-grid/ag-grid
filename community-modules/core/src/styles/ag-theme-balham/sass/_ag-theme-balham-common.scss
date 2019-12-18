@@ -158,12 +158,6 @@
         border-top: 1px solid $ag-border-color;
     }
 
-    .ag-group-expanded {
-        .ag-icon-expanded:empty:before {
-            content: $ag-icon-tree-open;
-        }
-    }
-
     // TODO move to base
     .ag-filter-toolpanel-body{
         background-color: $ag-background-color;

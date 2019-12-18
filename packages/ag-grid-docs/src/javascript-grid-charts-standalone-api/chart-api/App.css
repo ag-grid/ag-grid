@@ -1,0 +1,29 @@
+.chart {
+  width: calc(100% - 40px);
+  height: 400px;
+  padding: 20px;
+  text-align: center;
+}
+
+.options {
+  line-height: 1.4em;
+}
+
+.options, .code {
+  float: left;
+  width: calc(50% - 20px);
+  padding: 10px;
+  height: calc(100vh - 500px);
+  overflow-y: auto;
+}
+
+.options .section {
+  border: solid 1px black;
+  padding: 10px;
+  margin: 20px 0;
+}
+
+.code {
+  background-color: black;
+  color: yellow;
+}

@@ -13,8 +13,14 @@
             "enterprise": true
           },
           {
-            "title": "Modules",
-            "url": "javascript-grid-modules/"
+            "title": "Packages & Modules",
+            "url": "javascript-grid-packages/",
+            "items": [
+              {
+                "title": "Modules",
+                "url": "javascript-grid-modules/"
+              }
+            ]
           },
           {
             "title": "Supported Browsers",
@@ -981,15 +987,15 @@
               },
               {
                 "title": "Gallery",
-                "url": "javascript-grid-charts-standalone-gallery"
+                "url": "javascript-grid-charts-standalone-gallery/"
               },
               {
                 "title": "Features",
-                "url": "javascript-grid-charts-standalone-features"
+                "url": "javascript-grid-charts-standalone-features/"
               },
               {
                 "title": "API",
-                "url": "javascript-grid-charts-standalone-api"
+                "url": "javascript-grid-charts-standalone-api/"
               }
             ]
           },
@@ -1002,7 +1008,7 @@
               }
             ]
           }
-         ]
+        ]
       }
     ]
   },

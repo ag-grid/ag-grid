@@ -50,7 +50,7 @@ $ag-tooltip-border-color: lighten($ag-header-background-color, 10%) !default;
 $ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
 $ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 
-$ag-group-component-background-color: $ag-background-color !default;
-$ag-group-component-title-background-color: $ag-header-background-color !default;
+$ag-group-background-color: $ag-background-color !default;
+$ag-group-title-background-color: $ag-header-background-color !default;
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';

@@ -70,7 +70,8 @@ if (USE_LOCAL) {
 /* END OF MODULES DEV - DO NOT DELETE */
         "@ag-grid-community/react" => "$prefix/@ag-grid-community/react",
         "@ag-grid-community/angular" => "$prefix/@ag-grid-community/angular",
-        "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue"
+        "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue",
+        "ag-charts-react" => "$prefix/ag-charts-react"
     );
 
     $systemJsCommunityPaths = array(

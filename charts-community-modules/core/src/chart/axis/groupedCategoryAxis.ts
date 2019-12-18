@@ -145,7 +145,7 @@ export class GroupedCategoryAxis extends ChartAxis {
         width: number,
         /**
          * The color of the axis line.
-         * Use `null` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
+         * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the axis line invisible.
          */
         color?: string
     } = {

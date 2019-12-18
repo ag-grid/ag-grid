@@ -124,7 +124,7 @@ export class LineSeries extends CartesianSeries {
 
     processData(): boolean {
         const { xAxis, xKey, yKey, xData, yData } = this;
-        const data = xKey && yKey ? this.data : [];
+        const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis) {
             return false;
@@ -366,24 +366,27 @@ export class LineSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleString = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            return `${titleString}<div class="content">${xString}: ${yString}</div>`;
+            return `${titleString}<div class="ag-chart-tooltip-content">${xString}: ${yString}</div>`;
         }
     }
 
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { id, xKey, yKey, yName, title, visible, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            id, data, xKey, yKey, yName, visible,
+            title, marker, fill, stroke, fillOpacity, strokeOpacity
+        } = this;
 
-        if (this.data.length && xKey && yKey) {
-            data.push({
+        if (data && data.length && xKey && yKey) {
+            legendData.push({
                 id: id,
                 itemId: undefined,
                 enabled: visible,

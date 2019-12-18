@@ -17,7 +17,7 @@
             width: $ag-icon-size;
             height: $ag-icon-size;
         }
-        .ag-paging-button {
+        .ag-paging-button-wrapper {
             button {
                 cursor: pointer;
                 opacity: 0;
@@ -91,7 +91,7 @@
 
     .ag-status-bar {
         background: $ag-background-color;
-        @include grid-border(top);
+        @include ag-grid-border(top);
         color: $ag-disabled-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;

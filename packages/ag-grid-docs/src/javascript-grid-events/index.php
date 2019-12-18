@@ -285,8 +285,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>dragStarted, dragStopped</th>
-            <td>When column dragging starts or stops. Useful if you want to wait until after a drag
-                event before doing an action.
+            <td>
+                When dragging starts or stops. This could be any action that uses the grid's Drag and Drop
+                service, eg: Column Moving, Column Resizing, Range Selection, Fill Handle, etc.
             </td>
         </tr>
         <tr>

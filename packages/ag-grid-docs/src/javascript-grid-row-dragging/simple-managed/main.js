@@ -1,12 +1,12 @@
 var columnDefs = [
-    {field: "athlete", rowDrag: true},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"}
+    { field: "athlete", rowDrag: true },
+    { field: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" }
 ];
 
 var gridOptions = {

@@ -23,6 +23,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     opacity: 0.3;
 }
 
+.ag-drag-handle {
+    cursor: move; // IE fallback
+    cursor: grab;
+}
+
 .ag-width-half {
     display: inline-block;
     width: 50% !important;
@@ -80,30 +85,31 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     &.ag-layout-normal {
         height: 100%;
     }
-    .ag-watermark {
-        position: absolute;
-        bottom: 10px;
-        right: 25px;
-        opacity: 0.5;
-        transition: opacity 1s ease-out 3s;
-        &:before {
-            content: '';
-            background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDk0cHgiIGhlaWdodD0iMjM5cHgiIHZpZXdCb3g9IjAgMCA0OTQgMjM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCA0Ny4xICg0NTQyMikgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+TG9nbzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPgogICAgICAgIDxwYXRoIGQ9Ik0wLjYxMjg0OTkzMSwxMDggTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgQzAuNjEyODQ5OTMxLDYyLjEwMDY1MzYgMy40NzE4MzM3OCw1Ny4xNDg3NDgzIDguMTEyODQ5OTMsNTQuNDY5MjU2NCBMOTguMzA2NDI1LDIuMzk1OTcxNTcgTDk4LjMwNjQyNSwyLjM5NTk3MTU3IEMxMDIuOTQ3NDQxLC0wLjI4MzUyMDM1OCAxMDguNjY1NDA5LC0wLjI4MzUyMDM1OCAxMTMuMzA2NDI1LDIuMzk1OTcxNTcgTDExMy4zMDY0MjUsMi4zOTU5NzE1NyBMMjAzLjUsNTQuNDY5MjU2NCBMMjAzLjUsNTQuNDY5MjU2NCBDMjA4LjE0MTAxNiw1Ny4xNDg3NDgzIDIxMSw2Mi4xMDA2NTM2IDIxMSw2Ny40NTk2Mzc0IEwyMTEsMTM4IEwxODEsMTM4IEwxODAuOTk3MDQxLDkzLjk5OTk5OTggTDE4MC45OTYwMzIsOTMuOTk5OTk5OSBDMTgwLjk5NTQ3NSw4NS43MTYxMjI2IDE3NC4yNzk5MDksNzkuMDAxMDA4NyAxNjUuOTk2MDMyLDc5LjAwMTAwODcgTDEyMiw3OC45OTk5OTk5IEMxMTMuNzE1NzI5LDc4Ljk5OTk5OTkgMTA3LDg1LjcxNTcyODYgMTA3LDkzLjk5OTk5OTkgTDEwNywxMzYuMDE1NjIzIEwxMDcsMTM2LjAxNTYyMyBDMTA3LDE0NC4yOTk4OTUgMTEzLjcxNTcyOSwxNTEuMDE1NjIzIDEyMiwxNTEuMDE1NjIzIEwxNjgsMTUxLjAxNTYyMyBMMTY4LDE2MyBDMTY4LDE2NC42NTY4NTQgMTY2LjY1Njg1NCwxNjYgMTY1LDE2NiBMMTIwLDE2NiBMMTIwLDE3OSBMMTY1Ljk5NjAzMiwxNzkgTDE2NS45OTYwMzIsMTc4Ljk5Nzg3NyBDMTc0LjI3OTQ3NCwxNzguOTk3ODc3IDE4MC45OTQ4NiwxNzIuMjgzNDQyIDE4MC45OTYwMzIsMTY0IEwxODEsMTUwLjk2MDU1NCBMMjExLDE1MC45NjA1NTQgTDIxMSwxNzEuNjA2MjA3IEwyMTEsMTcxLjYwNjIwNyBDMjExLDE3Ni45NjUxOTEgMjA4LjE0MTAxNiwxODEuOTE3MDk2IDIwMy41LDE4NC41OTY1ODggTDExMy4zMDY0MjUsMjM2LjY2OTg3MyBMMTEzLjMwNjQyNSwyMzYuNjY5ODczIEMxMDguNjY1NDA5LDIzOS4zNDkzNjUgMTAyLjk0NzQ0MSwyMzkuMzQ5MzY1IDk4LjMwNjQyNSwyMzYuNjY5ODczIEw4LjExMjg0OTkzLDE4NC41OTY1ODggTDguMTEyODQ5OTMsMTg0LjU5NjU4OCBDMy40NzE4MzM3OCwxODEuOTE3MDk2IDAuNjEyODQ5OTMxLDE3Ni45NjUxOTEgMC42MTI4NDk5MzEsMTcxLjYwNjIwNyBMMC42MTI4NDk5MzEsMTIxIEwyNywxMjEgTDI3LDEzNiBDMjcsMTQ0LjI4NDI3MSAzMy43MTU3Mjg3LDE1MSA0MiwxNTEgTDQyLDE1MSBMMTAwLDE1MSBMMTAwLDk0IEMxMDAsODUuNzE1NzI4OCA5My4yODQyNzEyLDc5IDg1LDc5IEwyNyw3OSBMMjcsOTIgTDg0LDkyIEM4NS42NTY4NTQyLDkyIDg3LDkzLjM0MzE0NTggODcsOTUgTDg3LDk1IEw4NywxMDggTDAuNjEyODQ5OTMxLDEwOCBaIiBpZD0icGF0aC0xIj48L3BhdGg+CiAgICA8L2RlZnM+CiAgICA8ZyBpZD0iU3ltYm9scyIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IkxvZ28iPgogICAgICAgICAgICA8cGF0aCBkPSJNNDc3LDU1IEw0OTQsNTUgTDQ5NCwxNTEgTDQzNSwxNTEgQzQyNi43MTU3MjksMTUxIDQyMCwxNDQuMjg0MjcxIDQyMCwxMzYgTDQyMCw5NiBDNDIwLDg3LjcxNTcyODggNDI2LjcxNTcyOSw4MSA0MzUsODEgTDQzNSw4MSBMNDc3LDgxIEw0NzcsNTUgWiBNNDQwLDk4IEM0MzguMzQzMTQ2LDk4IDQzNyw5OS4zNDMxNDU4IDQzNywxMDEgTDQzNywxMzEgQzQzNywxMzIuNjU2ODU0IDQzOC4zNDMxNDYsMTM0IDQ0MCwxMzQgTDQ3NywxMzQgTDQ3Nyw5OCBMNDQwLDk4IFoiIGlkPSJkIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOTYuMDAwMDAwLCA1NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJQYXRoLTYiIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iMCAyNiAxNyAyNiAxNyA5NiAwIDk2Ij48L3BvbHlnb24+CiAgICAgICAgICAgICAgICA8cG9seWdvbiBpZD0iUGF0aC03IiBmaWxsPSIjRTExRjIyIiBwb2ludHM9IjAgMS4xMzY4NjgzOGUtMTMgMTcgMS4xMzY4NjgzOGUtMTMgMTcgMTcgMCAxNyI+PC9wb2x5Z29uPgogICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zMzEsMTUxIEwzNDgsMTUxIEwzNDgsMTAxIEwzNDgsMTAxIEMzNDgsOTkuMzQzMTQ1OCAzNDkuMzQzMTQ2LDk4IDM1MSw5OCBMMzg5LDk4IEwzODksODEgTDM0Niw4MSBMMzQ2LDgxIEMzMzcuNzE1NzI5LDgxIDMzMSw4Ny43MTU3Mjg4IDMzMSw5NiBMMzMxLDE1MSBaIiBpZD0iciIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMzI0LDg2IEwzMjQsNzYgTDMyNCw3NiBDMzI0LDY3LjcxNTcyODggMzE3LjI4NDI3MSw2MSAzMDksNjEgTDI0OSw2MSBMMjQ5LDYxIEMyNDAuNzE1NzI5LDYxIDIzNCw2Ny43MTU3Mjg4IDIzNCw3NiBMMjM0LDEzNiBMMjM0LDEzNiBDMjM0LDE0NC4yODQyNzEgMjQwLjcxNTcyOSwxNTEgMjQ5LDE1MSBMMzA5LDE1MSBMMzA5LDE1MSBDMzE3LjI4NDI3MSwxNTEgMzI0LDE0NC4yODQyNzEgMzI0LDEzNiBMMzI0LDEwMCBMMjg3LDEwMCBMMjg3LDExNyBMMzA3LDExNyBMMzA3LDEzMSBMMzA3LDEzMSBDMzA3LDEzMi42NTY4NTQgMzA1LjY1Njg1NCwxMzQgMzA0LDEzNCBMMjU0LDEzNCBMMjU0LDEzNCBDMjUyLjM0MzE0NiwxMzQgMjUxLDEzMi42NTY4NTQgMjUxLDEzMSBMMjUxLDgxIEwyNTEsODEgQzI1MSw3OS4zNDMxNDU4IDI1Mi4zNDMxNDYsNzggMjU0LDc4IEwzMDQsNzggTDMwNCw3OCBDMzA1LjY1Njg1NCw3OCAzMDcsNzkuMzQzMTQ1OCAzMDcsODEgTDMwNyw4NiBMMzI0LDg2IFoiIGlkPSJHIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJhZyI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29tYmluZWQtU2hhcGUiPgogICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgICAgICA8L21hc2s+CiAgICAgICAgICAgICAgICAgICAgPHVzZSBmaWxsPSIjRTExRjIyIiB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJnIiBmaWxsPSIjRTExRjIyIiB4PSIxMjAiIHk9IjkyIiB3aWR0aD0iNDgiIGhlaWdodD0iNDYiIHJ4PSIzIj48L3JlY3Q+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNDAsMTIxIEw4NywxMjEgTDg3LDEzOCBMNDMsMTM4IEw0MywxMzggQzQxLjM0MzE0NTgsMTM4IDQwLDEzNi42NTY4NTQgNDAsMTM1IEw0MCwxMjEgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIiBmaWxsPSIjRTExRjIyIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
-            filter: invert(50%);
-            background-repeat: no-repeat;
-            background-size: 110px 60px;
-            display: block;
-            height: 60px;
-            width: 110px;
-        }
+}
 
-      .ag-watermark-text {
-        opacity: 0.5;
-        font-weight: bold;
-        font-family: Impact;
-        font-size: 19px;
-      }
+.ag-watermark {
+    position: absolute;
+    bottom: 10px;
+    right: 25px;
+    opacity: 0.5;
+    transition: opacity 1s ease-out 3s;
+    &:before {
+        content: '';
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDk0cHgiIGhlaWdodD0iMjM5cHgiIHZpZXdCb3g9IjAgMCA0OTQgMjM5IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPCEtLSBHZW5lcmF0b3I6IFNrZXRjaCA0Ny4xICg0NTQyMikgLSBodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2ggLS0+CiAgICA8dGl0bGU+TG9nbzwvdGl0bGU+CiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4KICAgIDxkZWZzPgogICAgICAgIDxwYXRoIGQ9Ik0wLjYxMjg0OTkzMSwxMDggTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgTDAuNjEyODQ5OTMxLDY3LjQ1OTYzNzQgQzAuNjEyODQ5OTMxLDYyLjEwMDY1MzYgMy40NzE4MzM3OCw1Ny4xNDg3NDgzIDguMTEyODQ5OTMsNTQuNDY5MjU2NCBMOTguMzA2NDI1LDIuMzk1OTcxNTcgTDk4LjMwNjQyNSwyLjM5NTk3MTU3IEMxMDIuOTQ3NDQxLC0wLjI4MzUyMDM1OCAxMDguNjY1NDA5LC0wLjI4MzUyMDM1OCAxMTMuMzA2NDI1LDIuMzk1OTcxNTcgTDExMy4zMDY0MjUsMi4zOTU5NzE1NyBMMjAzLjUsNTQuNDY5MjU2NCBMMjAzLjUsNTQuNDY5MjU2NCBDMjA4LjE0MTAxNiw1Ny4xNDg3NDgzIDIxMSw2Mi4xMDA2NTM2IDIxMSw2Ny40NTk2Mzc0IEwyMTEsMTM4IEwxODEsMTM4IEwxODAuOTk3MDQxLDkzLjk5OTk5OTggTDE4MC45OTYwMzIsOTMuOTk5OTk5OSBDMTgwLjk5NTQ3NSw4NS43MTYxMjI2IDE3NC4yNzk5MDksNzkuMDAxMDA4NyAxNjUuOTk2MDMyLDc5LjAwMTAwODcgTDEyMiw3OC45OTk5OTk5IEMxMTMuNzE1NzI5LDc4Ljk5OTk5OTkgMTA3LDg1LjcxNTcyODYgMTA3LDkzLjk5OTk5OTkgTDEwNywxMzYuMDE1NjIzIEwxMDcsMTM2LjAxNTYyMyBDMTA3LDE0NC4yOTk4OTUgMTEzLjcxNTcyOSwxNTEuMDE1NjIzIDEyMiwxNTEuMDE1NjIzIEwxNjgsMTUxLjAxNTYyMyBMMTY4LDE2MyBDMTY4LDE2NC42NTY4NTQgMTY2LjY1Njg1NCwxNjYgMTY1LDE2NiBMMTIwLDE2NiBMMTIwLDE3OSBMMTY1Ljk5NjAzMiwxNzkgTDE2NS45OTYwMzIsMTc4Ljk5Nzg3NyBDMTc0LjI3OTQ3NCwxNzguOTk3ODc3IDE4MC45OTQ4NiwxNzIuMjgzNDQyIDE4MC45OTYwMzIsMTY0IEwxODEsMTUwLjk2MDU1NCBMMjExLDE1MC45NjA1NTQgTDIxMSwxNzEuNjA2MjA3IEwyMTEsMTcxLjYwNjIwNyBDMjExLDE3Ni45NjUxOTEgMjA4LjE0MTAxNiwxODEuOTE3MDk2IDIwMy41LDE4NC41OTY1ODggTDExMy4zMDY0MjUsMjM2LjY2OTg3MyBMMTEzLjMwNjQyNSwyMzYuNjY5ODczIEMxMDguNjY1NDA5LDIzOS4zNDkzNjUgMTAyLjk0NzQ0MSwyMzkuMzQ5MzY1IDk4LjMwNjQyNSwyMzYuNjY5ODczIEw4LjExMjg0OTkzLDE4NC41OTY1ODggTDguMTEyODQ5OTMsMTg0LjU5NjU4OCBDMy40NzE4MzM3OCwxODEuOTE3MDk2IDAuNjEyODQ5OTMxLDE3Ni45NjUxOTEgMC42MTI4NDk5MzEsMTcxLjYwNjIwNyBMMC42MTI4NDk5MzEsMTIxIEwyNywxMjEgTDI3LDEzNiBDMjcsMTQ0LjI4NDI3MSAzMy43MTU3Mjg3LDE1MSA0MiwxNTEgTDQyLDE1MSBMMTAwLDE1MSBMMTAwLDk0IEMxMDAsODUuNzE1NzI4OCA5My4yODQyNzEyLDc5IDg1LDc5IEwyNyw3OSBMMjcsOTIgTDg0LDkyIEM4NS42NTY4NTQyLDkyIDg3LDkzLjM0MzE0NTggODcsOTUgTDg3LDk1IEw4NywxMDggTDAuNjEyODQ5OTMxLDEwOCBaIiBpZD0icGF0aC0xIj48L3BhdGg+CiAgICA8L2RlZnM+CiAgICA8ZyBpZD0iU3ltYm9scyIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IkxvZ28iPgogICAgICAgICAgICA8cGF0aCBkPSJNNDc3LDU1IEw0OTQsNTUgTDQ5NCwxNTEgTDQzNSwxNTEgQzQyNi43MTU3MjksMTUxIDQyMCwxNDQuMjg0MjcxIDQyMCwxMzYgTDQyMCw5NiBDNDIwLDg3LjcxNTcyODggNDI2LjcxNTcyOSw4MSA0MzUsODEgTDQzNSw4MSBMNDc3LDgxIEw0NzcsNTUgWiBNNDQwLDk4IEM0MzguMzQzMTQ2LDk4IDQzNyw5OS4zNDMxNDU4IDQzNywxMDEgTDQzNywxMzEgQzQzNywxMzIuNjU2ODU0IDQzOC4zNDMxNDYsMTM0IDQ0MCwxMzQgTDQ3NywxMzQgTDQ3Nyw5OCBMNDQwLDk4IFoiIGlkPSJkIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJpIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOTYuMDAwMDAwLCA1NS4wMDAwMDApIj4KICAgICAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJQYXRoLTYiIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iMCAyNiAxNyAyNiAxNyA5NiAwIDk2Ij48L3BvbHlnb24+CiAgICAgICAgICAgICAgICA8cG9seWdvbiBpZD0iUGF0aC03IiBmaWxsPSIjRTExRjIyIiBwb2ludHM9IjAgMS4xMzY4NjgzOGUtMTMgMTcgMS4xMzY4NjgzOGUtMTMgMTcgMTcgMCAxNyI+PC9wb2x5Z29uPgogICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0zMzEsMTUxIEwzNDgsMTUxIEwzNDgsMTAxIEwzNDgsMTAxIEMzNDgsOTkuMzQzMTQ1OCAzNDkuMzQzMTQ2LDk4IDM1MSw5OCBMMzg5LDk4IEwzODksODEgTDM0Niw4MSBMMzQ2LDgxIEMzMzcuNzE1NzI5LDgxIDMzMSw4Ny43MTU3Mjg4IDMzMSw5NiBMMzMxLDE1MSBaIiBpZD0iciIgZmlsbD0iI0ZGRkZGRiI+PC9wYXRoPgogICAgICAgICAgICA8cGF0aCBkPSJNMzI0LDg2IEwzMjQsNzYgTDMyNCw3NiBDMzI0LDY3LjcxNTcyODggMzE3LjI4NDI3MSw2MSAzMDksNjEgTDI0OSw2MSBMMjQ5LDYxIEMyNDAuNzE1NzI5LDYxIDIzNCw2Ny43MTU3Mjg4IDIzNCw3NiBMMjM0LDEzNiBMMjM0LDEzNiBDMjM0LDE0NC4yODQyNzEgMjQwLjcxNTcyOSwxNTEgMjQ5LDE1MSBMMzA5LDE1MSBMMzA5LDE1MSBDMzE3LjI4NDI3MSwxNTEgMzI0LDE0NC4yODQyNzEgMzI0LDEzNiBMMzI0LDEwMCBMMjg3LDEwMCBMMjg3LDExNyBMMzA3LDExNyBMMzA3LDEzMSBMMzA3LDEzMSBDMzA3LDEzMi42NTY4NTQgMzA1LjY1Njg1NCwxMzQgMzA0LDEzNCBMMjU0LDEzNCBMMjU0LDEzNCBDMjUyLjM0MzE0NiwxMzQgMjUxLDEzMi42NTY4NTQgMjUxLDEzMSBMMjUxLDgxIEwyNTEsODEgQzI1MSw3OS4zNDMxNDU4IDI1Mi4zNDMxNDYsNzggMjU0LDc4IEwzMDQsNzggTDMwNCw3OCBDMzA1LjY1Njg1NCw3OCAzMDcsNzkuMzQzMTQ1OCAzMDcsODEgTDMwNyw4NiBMMzI0LDg2IFoiIGlkPSJHIiBmaWxsPSIjRkZGRkZGIj48L3BhdGg+CiAgICAgICAgICAgIDxnIGlkPSJhZyI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iQ29tYmluZWQtU2hhcGUiPgogICAgICAgICAgICAgICAgICAgIDxtYXNrIGlkPSJtYXNrLTIiIGZpbGw9IndoaXRlIj4KICAgICAgICAgICAgICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgICAgICA8L21hc2s+CiAgICAgICAgICAgICAgICAgICAgPHVzZSBmaWxsPSIjRTExRjIyIiB4bGluazpocmVmPSIjcGF0aC0xIj48L3VzZT4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxyZWN0IGlkPSJnIiBmaWxsPSIjRTExRjIyIiB4PSIxMjAiIHk9IjkyIiB3aWR0aD0iNDgiIGhlaWdodD0iNDYiIHJ4PSIzIj48L3JlY3Q+CiAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNDAsMTIxIEw4NywxMjEgTDg3LDEzOCBMNDMsMTM4IEw0MywxMzggQzQxLjM0MzE0NTgsMTM4IDQwLDEzNi42NTY4NTQgNDAsMTM1IEw0MCwxMjEgWiIgaWQ9IkNvbWJpbmVkLVNoYXBlIiBmaWxsPSIjRTExRjIyIj48L3BhdGg+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==);
+        filter: invert(50%);
+        background-repeat: no-repeat;
+        background-size: 110px 60px;
+        display: block;
+        height: 60px;
+        width: 110px;
     }
+}
+
+.ag-watermark-text {
+    opacity: 0.5;
+    font-weight: bold;
+    font-family: Impact;
+    font-size: 19px;
 }
 
 .ag-root-wrapper-body {
@@ -142,9 +148,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header-viewport,
 .ag-floating-top-viewport,
 .ag-body-viewport,
-.ag-pinned-left-cols-viewport,
 .ag-center-cols-viewport,
-.ag-pinned-right-cols-viewport,
 .ag-floating-bottom-viewport,
 .ag-body-horizontal-scroll-viewport,
 .ag-virtual-list-viewport {
@@ -153,6 +157,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 0px;
     overflow: hidden;
     flex: 1 1 auto;
+}
+
+.ag-body-viewport.ag-layout-print {
+    flex: none;
 }
 
 @media print {
@@ -185,14 +193,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
-
-    &:not(.ag-layout-print).ag-force-vertical-scroll {
-        overflow-y: scroll;
-    }
-}
-
-.ag-pinned-left-cols-viewport, .ag-pinned-right-cols-viewport {
-    flex-grow: 1000;
 }
 
 .ag-center-cols-viewport {
@@ -234,25 +234,22 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-body-viewport {
-    .ag-center-cols-clipper {
-        min-height: 100%;
-    }
-    &.ag-layout-auto-height {
-        .ag-center-cols-clipper, .ag-center-cols-container {
-            min-height: 50px;
-        }
-    }
-    .ag-center-cols-container {
-        display: block;
-    }
+.ag-center-cols-clipper {
+    min-height: 100%;
+}
 
-    &.ag-layout-print {
-        flex: none;
-        .ag-center-cols-clipper {
-            min-width: 100%;
-        }
-    }
+.ag-center-cols-container {
+    display: block;
+}
+
+
+.ag-layout-print .ag-center-cols-clipper {
+    min-width: 100%;
+}
+
+.ag-layout-auto-height .ag-center-cols-clipper,
+.ag-layout-auto-height .ag-center-cols-container {
+    min-height: 50px;
 }
 
 .ag-pinned-right-cols-container {
@@ -317,10 +314,17 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-force-vertical-scroll {
+    overflow-y: scroll;
+
+    &.ag-layout-print {
+        overflow-y: visible;
+    }
+}
+
 .ag-horizontal-left-spacer, .ag-horizontal-right-spacer {
     height: 100%;
     min-width: 0;
-    flex-grow: 1000;
     overflow-x: scroll;
     &.ag-scroller-corner {
         overflow-x: hidden;
@@ -335,6 +339,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
     display: inline-block;
     overflow: hidden;
+    // TODO nesting
     & .ag-header-cell-sortable {
         cursor: pointer;
     }
@@ -358,11 +363,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
 }
 
-.ag-header-overlay {
-    display: block;
-    position: absolute;
-}
-
 .ag-header-cell {
     display: inline-flex;
     align-items: center;
@@ -379,18 +379,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-self: stretch;
 }
 
-.ag-header-cell-label {
-    .ag-header-cell-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+.ag-header-cell-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-.ag-numeric-header {
-    .ag-header-cell-label {
-        flex-direction: row-reverse;
-    }
+.ag-numeric-header .ag-header-cell-label {
+    flex-direction: row-reverse;
 }
 
 .ag-header-group-text {
@@ -403,14 +399,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
     z-index: 1;
     height: 100%;
-    width: 20px;
+    width: 8px;
     cursor: col-resize;
 }
 
 @include ag-auto-rtl(".ag-header-cell-resize", (
-    right: -10px
+    right: -4px
 ));
 
+// TODO visual style
 @include ag-auto-rtl(".ag-header-expand-icon", (
     padding-left: 4px
 ));
@@ -458,26 +455,24 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-grow: 4;
     flex-shrink: 1;
     flex-basis: 0;
+}
 
-    .ag-primary-cols-header-panel {
-        display: flex;
-        flex: none;
+.ag-primary-cols-header-panel {
+    display: flex;
+    flex: none;
+}
 
-        .ag-column-name-filter {
-            flex: 1 1 auto;
-        }
-        .ag-primary-cols-filter-wrapper {
-            flex: 1 1 auto;
-            input {
-                width: 100%;
-            }
-        }
-    }
+.ag-primary-cols-filter-wrapper {
+    flex: 1 1 auto;
+}
 
-    .ag-primary-cols-list-panel {
-        flex: 1 1 auto;
-        overflow: auto;
-    }
+.ag-primary-cols-filter {
+    width: 100%;
+}
+
+.ag-primary-cols-list-panel {
+    flex: 1 1 auto;
+    overflow: auto;
 }
 
 .ag-column-drop {
@@ -485,45 +480,47 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     overflow: auto;
     width: 100%;
-
-    .ag-column-drop-list {
-        display: flex;
-        align-items: center;
-        .ag-column-drop-cell {
-            display: flex;
-            align-items: center;
-
-            .ag-column-drop-cell-text {
-                overflow: hidden;
-                flex: 1 1 auto;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-        }
-    }
 }
 
-.ag-column-drop.ag-column-drop-vertical {
+.ag-column-drop-list {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell {
+    display: flex;
+    align-items: center;
+}
+
+.ag-column-drop-cell-text {
+    overflow: hidden;
+    flex: 1 1 auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ag-column-drop-vertical {
     display: flex;
     flex-direction: column;
     overflow: hidden;
     flex: 1 1 0;
     align-items: stretch;
-    > div {
-        display: flex;
-        align-items: center;
-    }
+}
 
-    .ag-column-drop-list {
-        align-items: stretch;
-        flex-grow: 1;
-        flex-direction: column;
-        overflow-x: auto;
-    }
+.ag-column-drop-vertical-title-bar {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-column-drop-empty-message {
-        display: block;
-    }
+.ag-column-drop-vertical-list {
+    align-items: stretch;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow-x: auto;
+}
+
+.ag-column-drop-vertical-empty-message {
+    display: block;
 }
 
 .ag-column-drop.ag-column-drop-horizontal {
@@ -535,17 +532,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    .ag-filter-toolpanel-header {
-        display: flex;
-        div:not(.ag-input-wrapper) {
-            display: flex;
-            align-items: center;
-        }
-    }
+}
 
-    .ag-group-item {
-        flex-direction: column;
-    }
+.ag-filter-toolpanel-header {
+    display: flex;
+}
+
+.ag-filter-toolpanel-header-expand {
+    display: flex;
+    align-items: center;
+}
+
+.ag-filter-toolpanel-instance {
+    flex-direction: column;
 }
 
 /**
@@ -601,57 +600,30 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 */
 .ag-cell {
     display: inline-block;
-    overflow: hidden;
     position: absolute;
-    text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+.ag-cell-value, .ag-group-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// right-align numeric values in cells with wrappers
+@include ag-auto-rtl(".ag-numeric-cell .ag-cell-value", (
+    margin-left: auto
+));
 
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
     width: 100%;
     height: 100%;
-    &.ag-row-group {
-        align-items: flex-start;
-    }
-
-    .ag-cell-value, .ag-group-value {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }
 
-.ag-full-width-row.ag-row-group .ag-cell-wrapper {
-    align-items: center;
-}
-
-.ag-cell-with-height {
+.ag-cell-auto-height {
     height: 100%;
 }
-
-
-
-.ag-group-cell-entire-row {
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
-.ag-footer-cell-entire-row {
-    display: inline-block;
-    height: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    //position: absolute // took this out because of https://github.com/ag-grid/angular-grid/issues/115
-    width: 100%;
-}
-
 
 .ag-cell-inline-editing {
     z-index: 1;
@@ -673,28 +645,27 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
     display: flex;
     align-items: center;
-    > {
-        div, span {
-            display: flex;
-        }
-    }
 }
 
-.ag-filter {
+.ag-set-filter-item-value {
+    display: flex;
+}
+
+.ag-set-filter-item-checkbox {
+    display: flex;
+
     // for focus reasons, we need this for IE, otherwise for the set filter, the 'selectAll' click doesn't work
     // when you click on it when the quick filter has focus. this was a fix for AG-2258
-    .ag-filter-checkbox {
-        pointer-events: none;
-    }
+    pointer-events: none;
+}
 
-    .ag-filter-body-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
+.ag-filter-body-wrapper {
+    display: flex;
+    flex-direction: column;
+}
 
-    .ag-filter-filter {
-        flex: 1 1 auto;
-    }
+.ag-filter-filter {
+    flex: 1 1 auto;
 }
 
 /**
@@ -703,41 +674,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-.ag-floating-filter-full-body, .ag-floating-filter-body {
-    .ag-react-container {
-        height: 100%;
-    }
-}
-
 .ag-floating-filter-body {
     display: flex;
     flex: 1 1 auto;
     height: 100%;
-
-    input {
-        margin: 0;
-        flex: 1 1 auto;
-        max-height: calc(100% - 1px);
-    }
 }
 
 .ag-floating-filter-full-body {
     display: flex;
-    align-items: center;
+    flex: 1 1 auto;
     height: 100%;
     width: 100%;
-    > div {
-        flex: 1 1 auto;
-    }
-
-    input {
-        margin: 0;
-        width: 100%;
-    }
-    input[type="range"] {
-        height: 100%;
-    }
 }
+
 .ag-floating-filter {
     display: inline-block;
     position: absolute;
@@ -748,12 +697,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-floating-filter-input:read-only {
+    // TODO visual styles
     background-color: #eee;
-}
-
-.ag-floating-filter-menu {
-    position: absolute;
-    user-select: none;
 }
 
 .ag-floating-filter-button {
@@ -772,10 +717,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-dnd-ghost {
     display: flex;
     align-items: center;
-    // TODO remove visual styles, move to base
-    background: #e5e5e5;
-    border: 1px solid black;
     cursor: move;
+    // TODO visual styles
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     overflow: hidden;
@@ -786,6 +729,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     z-index: 10;
 }
 
+// TODO visual styles
 .ag-dnd-ghost-icon {
     padding: 2px;
 }
@@ -820,6 +764,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     justify-content: center;
     text-align: center;
+    // TODO required?
     &.ag-overlay-loading-wrapper {
         pointer-events: all;
     }
@@ -835,19 +780,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  * Popup
  ****************************
 */
-.ag-popup {
-    > div{
-        z-index: 5;
-    }
-
-}
-
-.ag-popup-backdrop {
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    width: 100%;
+.ag-popup-child {
+    z-index: 5;
 }
 
 .ag-popup-editor {
@@ -864,10 +798,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
-
-    span:empty:not(.ag-icon) {
-        border-left: 1px solid transparent;
-    }
 }
 
 /**
@@ -886,17 +816,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-pinned-left-floating-top {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-top {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-floating-bottom {
@@ -910,17 +838,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-pinned-left-floating-bottom {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 .ag-pinned-right-floating-bottom {
     display: inline-block;
     overflow: hidden;
-    position: relative; // otherwise the % width of children is not relative to this element
+    position: relative;
     min-width: 0px;
-    flex-grow: 1000;
 }
 
 
@@ -937,117 +863,97 @@ $ag-handleSize: 5px;
     flex-direction: column;
     position: relative;
     overflow: hidden;
+}
 
-    .ag-title-bar {
-        display: flex;
-        flex: none;
-        align-items: center;
-        cursor: default;
+.ag-panel-title-bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    cursor: default;
+}
 
-        .ag-title-bar-title {
-            flex: 1 1 auto;
-        }
+.ag-panel-title-bar-title {
+    flex: 1 1 auto;
+}
 
-        .ag-title-bar-buttons {
-            display: flex;
-            .ag-button {
-                cursor: pointer;
-            }
-        }
-    }
+.ag-panel-title-bar-buttons {
+    display: flex;
+}
 
-    .ag-panel-content-wrapper {
-        display: flex;
-        flex: 1 1 auto;
-        position: relative;
-        overflow: hidden;
-        > div {
-            width: 100%;
-            height: 100%;
-        }
-    }
+.ag-panel-title-bar-button {
+    cursor: pointer;
+}
+
+.ag-panel-content-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
 }
 
 .ag-dialog {
     position: absolute;
+}
 
-    .ag-resizer {
-        position: absolute;
-        pointer-events: none;
-        z-index: 1;
-        &.ag-resizer-topLeft {
-            top: 0;
-            left: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nwse-resize;
-        }
-        &.ag-resizer-top {
-            top: 0;
-            left: $ag-handleSize;
-            right: $ag-handleSize;
-            height: $ag-handleSize;
-            cursor: ns-resize;
-        }
-        &.ag-resizer-topRight {
-            top: 0;
-            right: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nesw-resize;
-        }
-        &.ag-resizer-right {
-            top: $ag-handleSize;
-            right: 0;
-            bottom: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: ew-resize;
-        }
-        &.ag-resizer-bottomRight {
-            bottom: 0;
-            right: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nwse-resize;
-        }
-        &.ag-resizer-bottom {
-            bottom: 0;
-            left: $ag-handleSize;
-            right: $ag-handleSize;
-            height: $ag-handleSize;
-            cursor: ns-resize;
-        }
-        &.ag-resizer-bottomLeft {
-            bottom: 0;
-            left: 0;
-            height: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: nesw-resize;
-        }
-        &.ag-resizer-left {
-            left: 0;
-            top: $ag-handleSize;
-            bottom: $ag-handleSize;
-            width: $ag-handleSize;
-            cursor: ew-resize;
-        }
+.ag-resizer {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    &.ag-resizer-topLeft {
+        top: 0;
+        left: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nwse-resize;
     }
-
-    .ag-message-box {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .ag-message-box-content {
-            display: flex;
-            flex: 1 1 auto;
-            justify-content: center;
-            align-items: center;
-        }
-        .ag-message-box-button-bar {
-            display: flex;
-            justify-content: center;
-        }
+    &.ag-resizer-top {
+        top: 0;
+        left: $ag-handleSize;
+        right: $ag-handleSize;
+        height: $ag-handleSize;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-topRight {
+        top: 0;
+        right: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-right {
+        top: $ag-handleSize;
+        right: 0;
+        bottom: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: ew-resize;
+    }
+    &.ag-resizer-bottomRight {
+        bottom: 0;
+        right: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nwse-resize;
+    }
+    &.ag-resizer-bottom {
+        bottom: 0;
+        left: $ag-handleSize;
+        right: $ag-handleSize;
+        height: $ag-handleSize;
+        cursor: ns-resize;
+    }
+    &.ag-resizer-bottomLeft {
+        bottom: 0;
+        left: 0;
+        height: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: nesw-resize;
+    }
+    &.ag-resizer-left {
+        left: 0;
+        top: $ag-handleSize;
+        bottom: $ag-handleSize;
+        width: $ag-handleSize;
+        cursor: ew-resize;
     }
 }
 
@@ -1070,38 +976,40 @@ $ag-handleSize: 5px;
     pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
+    opacity: 0;
+    transition-property: opacity;
+
+    // TODO visual styles
     font: 12px Verdana, sans-serif;
     color: black;
     background: rgb(244, 244, 244);
     border-radius: 5px;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-
-    opacity: 0;
     transform: scale(0.90);
     transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
     transition-property: opacity, transform;
+}
 
-    // TODO add ag prefix
-    &.visible {
-        opacity: 1;
-        transform: scale(1);
-    }
+.ag-chart-tooltip-visible {
+    opacity: 1;
+    // TODO visual style
+    transform: scale(1);
+}
 
-    // TODO add ag prefix
-    .title {
-        font-weight: bold;
-        padding: 7px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        color: white;
-        background-color: #888888;
-    }
+.ag-chart-tooltip-title {
+    // TODO visual style
+    font-weight: bold;
+    padding: 7px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: white;
+    background-color: #888888;
+}
 
-    // TODO add ag prefix
-    .content {
-        padding: 7px;
-        line-height: 1.7em;
-    }
+.ag-chart-tooltip-content {
+    // TODO visual style
+    padding: 7px;
+    line-height: 1.7em;
 }
 
 /**
@@ -1153,10 +1061,11 @@ $ag-handleSize: 5px;
 
 .ag-menu-option, .ag-menu-separator {
     display: table-row;
-    > span {
-        display: table-cell;
-        vertical-align: middle;
-    }
+}
+
+.ag-menu-separator-cell, .ag-menu-option-part {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .ag-menu-option-text {
@@ -1167,7 +1076,6 @@ $ag-handleSize: 5px;
     height: 100%;
 }
 
-
 /**
  ****************************
  * Rich Select
@@ -1176,29 +1084,35 @@ $ag-handleSize: 5px;
 .ag-rich-select {
     cursor: default;
     outline: none;
-    .ag-rich-select-value {
+}
+
+.ag-rich-select-value {
+    display: flex;
+    align-items: center;
+}
+
+.ag-rich-select-value-icon {
+    flex: 1 1 auto;
+    order: 1;
+}
+
+@include ag-auto-rtl(".ag-rich-select-value-icon", (
+    text-align: right
+));
+
+.ag-rich-select-list {
+    position: relative;
+    // TODO nesting
+    .ag-virtual-list-item {
         display: flex;
-        align-items: center;
-        > span {
-            flex: 1 1 auto;
-            &.ag-icon {
-                order: 1;
-                flex: none;
-            }
-        }
     }
-    .ag-rich-select-list {
-        position: relative;
-        .ag-virtual-list-item {
-            display: flex;
-            .ag-rich-select-row {
-                display: flex;
-                flex: 1 1 auto;
-                align-items: center;
-                white-space: nowrap;
-            }
-        }
-    }
+}
+
+.ag-rich-select-row {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    white-space: nowrap;
 }
 
 /**
@@ -1210,27 +1124,32 @@ $ag-handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
-    .ag-paging-row-summary-panel {
-        display: flex;
-        span {
-            margin: 0 3px;
-        }
-    }
+}
+
+.ag-paging-row-summary-panel {
+    display: flex;
+}
+
+.ag-paging-row-summary-panel-separator {
+    margin: 0 3px;
 }
 
 .ag-paging-page-summary-panel {
     display: flex;
     align-items: center;
-    .ag-disabled {
-        pointer-events: none;
-    }
-    .ag-paging-button {
-        position: relative;
-        overflow: hidden;
-        button {
-            position: absolute;
-        }
-    }
+}
+
+.ag-paging-button-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.ag-paging-button {
+    position: absolute;
+}
+
+.ag-disabled .ag-paging-page-summary-panel {
+    pointer-events: none;
 }
 
 /**
@@ -1255,6 +1174,7 @@ $ag-handleSize: 5px;
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    // TODO nesting
     .ag-column-tool-panel-column,
     .ag-column-tool-panel-column-group {
         flex: 1 1 auto;
@@ -1284,8 +1204,8 @@ $ag-handleSize: 5px;
     left: -3px
 ));
 
-// TODO ad ag prefix
-.loading-filter {
+.ag-filter-loading {
+    // TODO visual styles
     background-color: #e6e6e6;
     height: 100%;
     padding: 5px;
@@ -1332,23 +1252,16 @@ $ag-handleSize: 5px;
 .ag-side-bar {
     display: flex;
     flex-direction: row-reverse;
-
-    // TODO add ag- prefix
-    .panel-container {
-        width: 180px;
-    }
-
-    &.full-width .panel-container {
-        width: 200px;
-    }
 }
 
 .ag-side-bar-left {
+    // TODO required? This might be positioned absolutely now
     order: -1;
     flex-direction: row;
 }
 
 .ag-side-buttons {
+    // TODO nesting, class name
     button {
         display: flex;
         flex-direction: column;
@@ -1360,6 +1273,7 @@ $ag-handleSize: 5px;
         cursor: pointer;
     }
 
+    // TODO visual styles
     .ag-icon {
         margin-bottom: 3px;
     }
@@ -1379,10 +1293,12 @@ $ag-handleSize: 5px;
     justify-content: space-between;
     overflow: hidden;
 
+    // TODO nesting
     .ag-status-panel {
         display: inline-flex;
     }
 
+    // TODO nesting, name?
     .ag-name-value {
         white-space: nowrap;
     }
@@ -1413,70 +1329,69 @@ $ag-handleSize: 5px;
     speak: none;
 }
 
-.ag-group-component {
+.ag-group {
     position: relative;
-    flex: 1 1 100%;
+    width: 100%;
+}
 
-    .ag-group-component-title-bar,
-    .ag-group-component-title {
-        display: flex;
-        align-items: center;
-    }
+.ag-group-title-bar,
+.ag-group-title {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-group-component-toolbar {
-        display: flex;
-        align-items: center;
-    }
+.ag-group-toolbar {
+    display: flex;
+    align-items: center;
+}
 
-    .ag-group-component-container {
-        display: flex;
-        flex-direction: column;
-        .ag-group-subgroup {
-            display: flex;
-            align-self: stretch;
-        }
-    }
+.ag-group-container {
+    display: flex;
+}
 
-    .ag-column-group-icons {
-        > span {
-            display: block;
-        }
-    }
+.ag-disabled .ag-group-container {
+    pointer-events: none;
+}
 
-    .ag-group-item {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: center;
-    }
+.ag-group-container-horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
 
-    &.ag-alignment-stretch .ag-group-item {
-        align-items: stretch;
-    }
+.ag-group-container-vertical {
+    flex-direction: column;
+}
 
-    &.ag-alignment-start .ag-group-item {
-        align-items: flex-start;
-    }
+.ag-charts-font-size-color {
+    display: flex;
+    align-self: stretch;
+    justify-content: space-between;
+}
 
-    &.ag-alignment-end .ag-group-item {
-        align-items: flex-end;
-    }
+.ag-column-group-icons {
+    display: block;
+}
 
-    &.ag-disabled {
-        .ag-group-component-container {
-            pointer-events: none;
-        }
-    }
+.ag-group-item {
+    display: flex;
+}
 
-    &.ag-collapsed {
-        .ag-group-component-toolbar, .ag-group-component-container {
-            display: none;
-        }
-    }
+.ag-group-item-alignment-stretch .ag-group-item {
+    align-items: stretch;
+}
+
+.ag-group-item-alignment-start .ag-group-item {
+    align-items: flex-start;
+}
+
+.ag-group-item-alignment-end .ag-group-item {
+    align-items: flex-end;
 }
 
 .ag-toggle-button {
     .ag-input-wrapper {
         .ag-icon {
+            // TODO nesting, required?
             transition: right 0.3s;
             position: absolute;
             top: -1px;
@@ -1486,6 +1401,7 @@ $ag-handleSize: 5px;
 
 
 .ag-input-field {
+    // TODO flex required here?
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1502,6 +1418,7 @@ $ag-handleSize: 5px;
 }
 
 .ag-picker-field, .ag-slider, .ag-angle-select {
+    // TODO specificity, nesting
     > .ag-wrapper {
         display: flex;
         > div {
@@ -1513,7 +1430,9 @@ $ag-handleSize: 5px;
 .ag-angle-select {
     display: flex;
     align-items: center;
+    // TODO nesting
     .ag-angle-select-field {
+        // TODO nesting, name?
         .ag-parent-circle {
             display: block;
             position: relative;
@@ -1527,7 +1446,9 @@ $ag-handleSize: 5px;
 .ag-picker-field {
     display: flex;
     align-items: center;
+    // TODO specificity, name?
     > .ag-wrapper {
+        // TODO class
         > button {
             display: flex;
             border: 0;
@@ -1538,16 +1459,19 @@ $ag-handleSize: 5px;
 }
 
 .ag-color-picker {
+    // TODO nesting, specificity, name?
     > .ag-wrapper {
         align-items: stretch;
         overflow: hidden;
     }
+    // TODO class
     button {
         cursor: pointer;
     }
 }
 
 .ag-labeled {
+    // TODO nesting, specificity
     &.ag-label-align-right {
         label {
             order: 1;
@@ -1557,6 +1481,7 @@ $ag-handleSize: 5px;
         }
     }
 
+    // TODO nesting
     &.ag-label-align-top {
         flex-direction: column;
         align-items: flex-start;
@@ -1566,11 +1491,13 @@ $ag-handleSize: 5px;
     }
 }
 
+// TODO add color picker to regression before changing this
 .ag-color-panel {
     display: flex;
     flex-direction: column;
     text-align: center;
 
+    // TODO nesting
     .ag-spectrum-color {
         flex: 1 1 auto;
         position: relative;
@@ -1578,6 +1505,7 @@ $ag-handleSize: 5px;
         cursor: default;
     }
 
+    // TODO nesting, naming
     .ag-fill {
         position: absolute;
         top: 0;
@@ -1630,18 +1558,6 @@ $ag-handleSize: 5px;
         pointer-events: none;
     }
 
-    .ag-spectrum-text-value {
-        display: inline-block;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
-    .ag-spectrum-text-value:focus {
-        outline: none;
-        outline-offset: 0;
-    }
-
     .ag-recent-colors {
         display: flex;
         > div {
@@ -1651,6 +1567,7 @@ $ag-handleSize: 5px;
 }
 
 
+// TODO can be removed if we merge themes
 $ag-toolpanel-indent-size: 10px !default;
 $ag-row-group-indent-size: 10px !default;
 
@@ -1684,6 +1601,7 @@ $ag-row-group-indent-size: 10px !default;
     }
 }
 
+// TODO merge with other print styles (move to new file?)
 @media print {
     .ag-body-viewport {
         display: block;

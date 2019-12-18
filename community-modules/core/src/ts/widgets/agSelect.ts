@@ -1,4 +1,5 @@
 import { AgAbstractInputField } from "./agAbstractInputField";
+import { _ } from "../utils";
 
 interface SelectOption {
     value: string;
@@ -13,6 +14,17 @@ export class AgSelect extends AgAbstractInputField<HTMLSelectElement, string> {
     constructor() {
         super();
         this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
+    }
+
+    protected addInputListeners() {
+        const isIE = _.isBrowserIE();
+        const eventName = isIE ? 'change' : 'input';
+
+        this.addDestroyableEventListener(this.eInput, eventName, (e) => {
+            const value = e.target.value;
+
+            this.setValue(value);
+        });
     }
 
     public addOptions(options: SelectOption[]): this {

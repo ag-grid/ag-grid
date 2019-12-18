@@ -1,6 +1,7 @@
 import "./docs.scss";
 import "../../example-runner/example-runner.ts";
-import { $, lazyload, AnchorJS, Prism, initCookieDisclaimer } from "../common/vendor";
+import "../../react-runner/react-runner";
+import { $, lazyload, AnchorJS } from "../common/vendor";
 
 declare const autocomplete: any;
 declare const algoliasearch: any;
@@ -26,7 +27,7 @@ $(function() {
         autoselect: true,
         keyboardShortcuts: ["s", "/"]
     };
-    
+
     autocomplete("input.search-input", autocompleteConfig, [
         {
             source: autocomplete.sources.hits(index, searchConfig),
@@ -49,8 +50,6 @@ $(function() {
 });
 
 $(function() {
-    var $currentlyExpanded = $("#side-nav-container li.expanded > ul");
-
     $("#side-nav-container > ul > li span").on("click", function() {
         var $parent = $(this).parent();
         var $otherCats = $parent
@@ -59,14 +58,10 @@ $(function() {
             .not($parent);
 
         $otherCats.removeClass("expanded");
-
-        var ul = $(this).next("ul");
         $parent.toggleClass("expanded");
     });
 
     var docNav = $("#doc-nav");
-    var level = 1;
-    var prevLink = null;
     var list = $("<ul></ul>");
     var breakpoints = [];
 
@@ -91,6 +86,6 @@ $(function() {
         })();
     }
 
-    var imgs = document.querySelectorAll("#feature-roadshow img, .lazy-load")
+    var imgs = document.querySelectorAll("#feature-roadshow img, .lazy-load");
     new lazyload((imgs && imgs.length) ? imgs : [], {});
 });

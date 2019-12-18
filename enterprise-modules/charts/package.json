@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/charts",
-  "version": "22.1.0",
+  "version": "22.1.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -42,16 +42,16 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-community": "~22.1.0",
-    "@ag-grid-community/core": "~22.1.0",
-    "@ag-grid-enterprise/core": "~22.1.0",
-    "@ag-grid-enterprise/range-selection": "~22.1.0"
+    "ag-charts-community": "~22.1.1",
+    "@ag-grid-community/core": "~22.1.1",
+    "@ag-grid-enterprise/core": "~22.1.1",
+    "@ag-grid-enterprise/range-selection": "~22.1.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
-    "typescript": "3.6.3"
+    "typescript": "3.7.2"
   },
   "publishConfig": {
     "access": "public"

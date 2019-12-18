@@ -83,6 +83,7 @@ export class ChartDataPanel extends Component {
 
     private addComponent(parent: HTMLElement, component: AgGroupComponent): void {
         const eDiv = document.createElement('div');
+        eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
         parent.appendChild(eDiv);
     }
@@ -99,7 +100,8 @@ export class ChartDataPanel extends Component {
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
 
         const inputName = `chartDimension${this.getCompId()}`;
@@ -124,7 +126,8 @@ export class ChartDataPanel extends Component {
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
 
         if (this.chartController.isActiveXYChart()) {
@@ -177,7 +180,8 @@ export class ChartDataPanel extends Component {
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
         const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
 
-        _.addCssClass(eDragHandle, 'ag-column-drag');
+        _.addCssClass(eDragHandle, 'ag-drag-handle');
+        _.addCssClass(eDragHandle, 'ag-chart-data-column-drag-handle');
 
         comp.getGui().insertAdjacentElement('beforeend', eDragHandle);
 

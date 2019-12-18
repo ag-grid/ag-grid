@@ -18,18 +18,10 @@
     .ag-tool-panel-wrapper {
         border-right: 0;
     }
-
+ 
     .ag-side-bar {
         background-color: $ag-tool-panel-background-color;
         position: relative;
-
-        .ag-panel-container {
-            border-right: 1px solid $ag-border-color;
-        }
-
-        &.full-width .ag-panel-container {
-            border-right: 0;
-        }
     }
 
     .ag-side-buttons {
@@ -65,9 +57,9 @@
     }
 
     %side-bar-left {
-        @include grid-border(right);
+        @include ag-grid-border(right);
         .ag-tool-panel-wrapper {
-            @include grid-border(left);
+            @include ag-grid-border(left);
         }
 
         .ag-side-button.ag-selected button {
@@ -77,10 +69,10 @@
     }
     
     %side-bar-right {
-        @include grid-border(left);
+        @include ag-grid-border(left);
         
         .ag-tool-panel-wrapper {
-            @include grid-border(right);
+            @include ag-grid-border(right);
         }
 
         .ag-side-button.ag-selected button {
@@ -115,7 +107,7 @@
     }
 
     .ag-column-drop-vertical {
-        @include grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
 
         min-height: 50px;
     }

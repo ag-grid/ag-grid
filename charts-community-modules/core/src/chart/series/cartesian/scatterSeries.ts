@@ -145,7 +145,7 @@ export class ScatterSeries extends CartesianSeries {
             sizeKey
         } = this;
 
-        const data = xKey && yKey ? this.data : [];
+        const data = xKey && yKey && this.data ? this.data : [];
 
         this.xData = data.map(d => d[xKey]);
         this.yData = data.map(d => d[yKey]);
@@ -313,7 +313,7 @@ export class ScatterSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="title" ${titleStyle}>${title}</div>` : '';
+            const titleHtml = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
@@ -327,15 +327,18 @@ export class ScatterSeries extends CartesianSeries {
                 contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
             }
 
-            return `${titleHtml}<div class="content">${contentHtml}</div>`;
+            return `${titleHtml}<div class="ag-chart-tooltip-content">${contentHtml}</div>`;
         }
     }
 
-    listSeriesItems(data: LegendDatum[]): void {
-        const { id, title, visible, xKey, yKey, yName, marker, fill, stroke, fillOpacity, strokeOpacity } = this;
+    listSeriesItems(legendData: LegendDatum[]): void {
+        const {
+            id, data, xKey, yKey, yName,
+            title, visible, marker, fill, stroke, fillOpacity, strokeOpacity
+        } = this;
 
-        if (this.data.length && xKey && yKey) {
-            data.push({
+        if (data && data.length && xKey && yKey) {
+            legendData.push({
                 id,
                 itemId: undefined,
                 enabled: visible,

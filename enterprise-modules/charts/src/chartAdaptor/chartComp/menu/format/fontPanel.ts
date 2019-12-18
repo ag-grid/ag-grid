@@ -8,7 +8,8 @@ import {
     FontStyle,
     FontWeight,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import {ChartTranslator} from "../../chartTranslator";
 
@@ -32,11 +33,11 @@ export interface FontPanelParams {
 export class FontPanel extends Component {
 
     public static TEMPLATE =
-        `<div>
+        `<div class="ag-font-panel">
             <ag-group-component ref="fontGroup">
                 <ag-select ref="familySelect"></ag-select>
                 <ag-select ref="weightStyleSelect"></ag-select>
-                <div class="ag-group-subgroup">
+                <div class="ag-charts-font-size-color">
                     <ag-select ref="sizeSelect"></ag-select>
                     <ag-color-picker ref="colorPicker"></ag-color-picker>
                 </div>
@@ -61,7 +62,12 @@ export class FontPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(FontPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(FontPanel.TEMPLATE, {fontGroup: groupParams});
 
         this.initGroup();
         this.initFontFamilySelect();
@@ -113,7 +119,7 @@ export class FontPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif',
+            'Verdana, sans-serif'
         ];
 
         const { family } = this.params.initialFont;

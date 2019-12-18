@@ -59,7 +59,7 @@ export abstract class Series extends Observable {
 
     tooltipEnabled: boolean = false;
 
-    @reactive(['dataChange']) data: any[] = [];
+    @reactive(['dataChange']) data?: any[];
     @reactive(['dataChange']) visible = true;
     @reactive(['layoutChange']) showInLegend = true;
 

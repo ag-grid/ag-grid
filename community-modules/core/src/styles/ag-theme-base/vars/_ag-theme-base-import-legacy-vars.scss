@@ -123,6 +123,18 @@
     $ag-group-component-title-background-color: $group-component-title-background-color !global;
   }
 
+  @if (variable-exists("ag-group-component-background-color") and not variable-exists("ag-group-background-color")) {
+    $ag-group-background-color: $ag-group-component-background-color !global;
+  }
+
+  @if (variable-exists("ag-group-component-border-color") and not variable-exists("ag-group-border-color")) {
+    $ag-group-border-color: $ag-group-component-border-color !global;
+  }
+
+  @if (variable-exists("ag-group-component-title-background-color") and not variable-exists("ag-group-title-background-color")) {
+    $ag-group-title-background-color: $ag-group-component-title-background-color !global;
+  }
+
   @if (variable-exists("header-background-color") and not variable-exists("ag-header-background-color")) {
     $ag-header-background-color: $header-background-color !global;
   }
