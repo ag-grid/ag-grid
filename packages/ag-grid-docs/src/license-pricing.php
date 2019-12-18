@@ -91,7 +91,9 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <h3>ag-Grid Community</h3>
                         <p>
-                            ag-Grid Community is a free to use product distributed under the MIT license. We regularly contribute to the
+                            ag-Grid Community is a free to use product distributed under the
+                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            We regularly contribute to the
                             project and community support is available via Stack Overflow.
                         </p>
                     </div>
@@ -104,7 +106,8 @@ gtm_data_layer('community-enterprise');
                     <h3>ag-Grid Enterprise</h3>
 
                         <p>
-                            ag-Grid Enterprise is a commercial product distributed under our EULA and supported by our
+                            ag-Grid Enterprise is a commercial product distributed under our
+                            <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
                             Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>.
                         </p>
