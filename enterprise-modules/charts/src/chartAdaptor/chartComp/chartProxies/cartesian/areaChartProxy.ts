@@ -154,7 +154,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 width: 3,
             },
             marker: {
-                type: 'circle',
+                shape: 'circle',
                 enabled: true,
                 size: 6,
                 strokeWidth: 1,

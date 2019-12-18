@@ -9,16 +9,14 @@ import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
 import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
-import { Circle } from "./marker/circle";
-import { Plus } from "./marker/plus";
 import { Legend } from "./legend";
 
-const typeMappings = {
+const chartTypes = {
     cartesian: {
-        fn: CartesianChart,
-        params: ['document'],
-        exclude: ['parent', 'data'],
-        defaults: {
+        fn: CartesianChart, // constructor function for the type
+        params: ['document'], // constructor parameters
+        exclude: ['parent', 'data'], // properties that should be set on the component as is (without pre-processing)
+        defaults: { // these values will be used if properties in question are not in the config object
             parent: document.body,
             axes: [{
                 type: 'category',
@@ -36,19 +34,20 @@ const typeMappings = {
         },
         axes: {
             number: {
-                fn: NumberAxis
+                fn: NumberAxis,
+                label: {},
+                tick: {}
             },
             category: {
-                fn: CategoryAxis
+                fn: CategoryAxis,
+                label: {},
+                tick: {}
             }
         },
         series: {
             line: {
                 fn: LineSeries,
-                marker: {
-                    circle: Circle,
-                    plus: Plus
-                }
+                marker: {}
             },
             column: {
                 fn: ColumnSeries
@@ -58,13 +57,11 @@ const typeMappings = {
             },
             scatter: {
                 fn: ScatterSeries,
-                marker: {
-                    circle: Circle,
-                    plus: Plus
-                }
+                marker: {}
             },
             area: {
-                fn: AreaSeries
+                fn: AreaSeries,
+                marker: {}
             }
         },
         legend: {
@@ -87,7 +84,7 @@ const typeMappings = {
 
 function getMapping(path: string) {
     const parts = path.split('.');
-    let value = typeMappings;
+    let value = chartTypes;
     parts.forEach(part => {
         value = value[part];
     });
@@ -95,7 +92,7 @@ function getMapping(path: string) {
 }
 
 export const agChart = {
-    create(options: any, path?: string) {
+    create(options: any, path?: string, component?: any) {
         if (!(options && typeof options === 'object')) {
             return;
         }
@@ -145,21 +142,17 @@ export const agChart = {
         if (entry) {
             const params = entry.params || [];
             const paramValues = params.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            const component = new entry.fn(...paramValues);
+            component = component || new entry.fn(...paramValues);
             for (const key in options) {
                 if (key !== 'type' && params.indexOf(key) < 0) {
                     const value = options[key];
-                    if (entry.exclude && entry.exclude.indexOf(key) >= 0) {
-                        component[key] = value;
-                        continue;
-                    }
-                    if (key in entry) {
+                    if (key in entry && !(entry.exclude && entry.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
                             const subComponents = value.map(config => agChart.create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
                         } else {
                             if (entry[key] && component[key]) { // the instance property already exists on the component (e.g. chart.legend)
-                                agChart.create(entry[key], path + '.' + key);
+                                agChart.create(value, path + '.' + key, component[key]);
                             } else {
                                 const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
                                 if (subComponent) {

@@ -23,9 +23,9 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
-if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
-    process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
-}
+// if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
+    // process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
+// }
 
 function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
@@ -519,6 +519,10 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
                 // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
                 addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
             }
+
+            // for js examples that just require charts community functionality (landing pages, vanilla enterprise examples etc)
+            // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
+            addWebpackMiddleware(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
 
             // for the actual site - php, css etc
             addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');

@@ -6,7 +6,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 
     this.visible = true;
     this.eGui = document.createElement('div');
-    this.eGui.className = 'ag-name-value';
+    this.eGui.className = 'ag-status-name-value';
 
     var label = document.createElement('span');
     label.innerText = 'Status Bar Component  ';

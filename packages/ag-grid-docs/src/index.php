@@ -14,7 +14,7 @@ $title = 'ag-Grid: Datagrid packed with features that your users need with the p
 $description = 'ag-Grid is feature rich datagrid designed for the major JavaScript Frameworks. Version 19 is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source or take a 2 month trial of ag-Grid Enterprise.';
 meta_and_links($title, $keywords, $description, false);
 ?>
-<?= globalAgGridScript(true, false) ?>
+<?= globalAgGridScript(true) ?>
 
 </head>
 
@@ -157,11 +157,11 @@ meta_and_links($title, $keywords, $description, false);
     <!-- Start Alexa Certify Javascript -->
     <script type="text/javascript">
         _atrk_opts = { atrk_acct:"AhBRt1DTcA20Ug", domain:"ag-grid.com",dynamic: true};
-        (function() { 
+        (function() {
             var as = document.createElement('script');
-            as.type = 'text/javascript'; 
-            as.async = true; 
-            as.src = "https://certify-js.alexametrics.com/atrk.js"; 
+            as.type = 'text/javascript';
+            as.async = true;
+            as.src = "https://certify-js.alexametrics.com/atrk.js";
             var s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(as, s);
         })();

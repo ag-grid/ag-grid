@@ -1,4 +1,4 @@
-import {Autowired, Component, PostConstruct} from "@ag-grid-community/core";
+import {Autowired, Component, PostConstruct, _} from "@ag-grid-community/core";
 import {ChartTranslator} from "../../../chartTranslator";
 import {Group, Scene} from "ag-charts-community";
 
@@ -15,6 +15,7 @@ export abstract class MiniChart extends Component {
         super();
 
         const scene = new Scene();
+        _.addCssClass(scene.canvas.element, 'ag-chart-mini-thumbnail-canvas');
         scene.width = this.size;
         scene.height = this.size;
 

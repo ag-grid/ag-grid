@@ -88,10 +88,10 @@ export interface LegendItemOptions {
 export interface LegendLabelOptions extends FontOptions {
 }
 
-export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
+export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 
 export interface LegendMarkerOptions {
-    type: MarkerType;
+    shape: MarkerShape;
     size: number;
     padding: number;
     strokeWidth: number;
@@ -206,7 +206,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 
 export interface MarkerOptions {
     enabled: boolean;
-    type: MarkerType;
+    shape: MarkerShape;
     size: number;
     strokeWidth: number;
 }

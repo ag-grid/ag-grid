@@ -123,7 +123,7 @@
         }
     }
 
-    .ag-tab-header {
+    .ag-tabs-header {
         min-width: 15rem;
         border-bottom: 1px solid $ag-border-color;
         justify-content: center;
@@ -150,7 +150,7 @@
     }
 
     // resets from the main theme
-    .ag-tab-body {
+    .ag-tabs-body {
         padding: 0;
 
         .ag-menu-list {
@@ -484,15 +484,15 @@
         padding-left: $ag-cell-horizontal-padding;
         padding-right: $ag-cell-horizontal-padding;
 
-        div.ag-name-value:first-child {
+        div.ag-status-name-value:first-child {
             margin-left: 0;
         }
 
-        div.ag-name-value:last-child {
+        div.ag-status-name-value:last-child {
             margin-right: 0;
         }
 
-        .ag-name-value-value {
+        .ag-status-name-value-value {
             font-weight: 600;
         }
     }
@@ -630,7 +630,7 @@
     // Dialog
     ////////////////////////////////////////
     .ag-panel {
-        .ag-title-bar {
+        .ag-panel-title-bar {
             background-color: $ag-dialog-title-background-color;
             border-bottom: 1px solid $ag-border-color;
             color: $ag-dialog-title-foreground-color;
@@ -640,7 +640,7 @@
             font-family: $ag-dialog-title-font-family;
             padding: $ag-grid-size $ag-cell-horizontal-padding;
 
-            .ag-title-bar-buttons {
+            .ag-panel-title-bar-buttons {
                 .ag-panel-title-bar-button {
                     height: $ag-dialog-title-icon-size;
                     width: $ag-dialog-title-icon-size;
@@ -687,7 +687,7 @@
             }
         }
 
-        .ag-tab-body {
+        .ag-tabs-body {
             background-color: $ag-color-background-alt;
         }
 
@@ -819,7 +819,7 @@
         }
     }
 
-    .ag-picker-button:hover .ag-icon {
+    .ag-picker-field-button:hover .ag-icon {
         color: $ag-color-primary;
     }
 
@@ -844,10 +844,10 @@
 
     .ag-angle-select {
         .ag-angle-select-field {
-            .ag-parent-circle {
+            .ag-angle-select-parent-circle {
                 background-color: $ag-color-border-form-element;
             }
-            .ag-child-circle {
+            .ag-angle-select-child-circle {
                 background-color: $ag-color-background;
             }
         }
@@ -1023,7 +1023,7 @@
         }
     }
 
-    .ag-panel .ag-title-bar .ag-title-bar-buttons .ag-panel-title-bar-button .ag-icon {
+    .ag-panel .ag-panel-title-bar .ag-panel-title-bar-buttons .ag-panel-title-bar-button .ag-icon {
         font-size: $ag-icon-size;
     }
 

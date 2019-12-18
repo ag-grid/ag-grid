@@ -896,7 +896,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.aggFuncs;
     }
 
-    public getSortingOrder(): string[] | undefined {
+    public getSortingOrder(): (string | null)[] | undefined {
         return this.gridOptions.sortingOrder;
     }
 

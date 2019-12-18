@@ -21,7 +21,6 @@ export class HdpiCanvas {
         this.document = document;
         this.tempCanvas = document.createElement('canvas')!;
         this.element = document.createElement('canvas');
-        this.element.className = 'ag-charts-canvas';
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);

@@ -61,7 +61,7 @@
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
-    .ag-tab-header {
+    .ag-tabs-header {
         background: $ag-panel-background-color;
         min-width: 220px;
         width: 100%;
@@ -90,7 +90,7 @@
         }
     }
 
-    .ag-tab-body {
+    .ag-tabs-body {
         padding: $ag-grid-size / 2 0;
 
         .ag-menu-list {

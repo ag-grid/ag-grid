@@ -15,7 +15,7 @@ import {
     AxisOptions,
     SeriesLabelOptions,
     MarkerOptions,
-    MarkerType,
+    MarkerShape,
     HighlightOptions,
     AxisType,
 } from "./chartOptions";
@@ -529,7 +529,7 @@ export class ChartBuilder {
         return series;
     }
 
-    private static markerTypes: Map<MarkerType, new () => Marker> = convertToMap([
+    private static markerShapes: Map<MarkerShape, new () => Marker> = convertToMap([
         ['circle', Circle],
         ['cross', Cross],
         ['diamond', Diamond],
@@ -538,8 +538,8 @@ export class ChartBuilder {
         ['triangle', Triangle]
     ]);
 
-    private static getMarkerFromType(type?: MarkerType): new () => Marker {
-        return this.markerTypes.get(type) || Circle;
+    private static getMarkerByName(name?: MarkerShape): new () => Marker {
+        return this.markerShapes.get(name) || Square;
     }
 
     static initLegend(legend: Legend, options: LegendOptions): void {
@@ -560,7 +560,7 @@ export class ChartBuilder {
             }
 
             if (marker) {
-                this.setValueIfExists(legend, 'markerType', ChartBuilder.getMarkerFromType(marker.type));
+                this.setValueIfExists(legend, 'markerShape', ChartBuilder.getMarkerByName(marker.shape));
                 this.setValueIfExists(legend, 'markerStrokeWidth', marker.strokeWidth);
                 this.setValueIfExists(legend, 'markerSize', marker.size);
                 this.setValueIfExists(legend, 'markerPadding', marker.padding);
@@ -572,7 +572,7 @@ export class ChartBuilder {
     }
 
     static initMarker(marker: SeriesMarker, options: MarkerOptions): void {
-        marker.type = ChartBuilder.getMarkerFromType(options.type);
+        marker.shape = ChartBuilder.getMarkerByName(options.shape);
         this.setValueIfExists(marker, 'enabled', options.enabled);
         this.setValueIfExists(marker, 'size', options.size);
         this.setValueIfExists(marker, 'minSize', options.minSize);

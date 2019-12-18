@@ -10,6 +10,7 @@ export class AgToggleButton extends AgRadioButton {
         super.postConstruct();
         if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
             _.addCssClass(this.eIconEl, 'ag-icon');
+            _.addCssClass(this.eIconEl, 'ag-toggle-button-icon');
         }
     }
 

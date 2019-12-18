@@ -164,26 +164,29 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 @media print {
-  .ag-layout-normal {
-    // hide grid if trying to print in non-print mode
-    display: none;
-  }
-  .ag-root-wrapper,
-  .ag-root-wrapper-body,
-  .ag-root,
-  .ag-body-viewport,
-  .ag-center-cols-container,
-  .ag-center-cols-viewport,
-  .ag-center-cols-clipper,
-  .ag-body-horizontal-scroll-viewport,
-  .ag-virtual-list-viewport {
-    // 100% height elements with overflow hidden cause printing issues in IE and Edge
-    height: auto !important;
-    overflow: visible !important;
-    // flex elements cause printing issues in Firefox
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
-    display: block !important;
-  }
+    .ag-layout-normal {
+        // hide grid if trying to print in non-print mode
+        display: none;
+    }
+    .ag-root-wrapper,
+    .ag-root-wrapper-body,
+    .ag-root,
+    .ag-body-viewport,
+    .ag-center-cols-container,
+    .ag-center-cols-viewport,
+    .ag-center-cols-clipper,
+    .ag-body-horizontal-scroll-viewport,
+    .ag-virtual-list-viewport {
+        // 100% height elements with overflow hidden cause printing issues in IE and Edge
+        height: auto !important;
+        overflow: visible !important;
+        // flex elements cause printing issues in Firefox
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
+        display: block !important;
+    }
+    .ag-row {
+        page-break-inside: avoid;
+    }
 }
 
 .ag-body-viewport {
@@ -1173,14 +1176,6 @@ $ag-handleSize: 5px;
     flex-wrap: nowrap;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    // TODO nesting
-    .ag-column-tool-panel-column,
-    .ag-column-tool-panel-column-group {
-        flex: 1 1 auto;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
 }
 
 .ag-column-select-checkbox {
@@ -1255,32 +1250,27 @@ $ag-handleSize: 5px;
 }
 
 .ag-side-bar-left {
-    // TODO required? This might be positioned absolutely now
     order: -1;
     flex-direction: row;
 }
 
-.ag-side-buttons {
-    // TODO nesting, class name
-    button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: nowrap;
-        white-space: nowrap;
-        outline: none;
-        cursor: pointer;
-    }
-
-    // TODO visual styles
-    .ag-icon {
-        margin-bottom: 3px;
-    }
+.ag-side-button-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    outline: none;
+    cursor: pointer;
 }
 
 .ag-side-button-label {
     writing-mode: vertical-lr;
+}
+
+.ag-side-button-icon-wrapper {
+    margin-bottom: 3px;
 }
 
 /**
@@ -1292,17 +1282,14 @@ $ag-handleSize: 5px;
     display: flex;
     justify-content: space-between;
     overflow: hidden;
+}
 
-    // TODO nesting
-    .ag-status-panel {
-        display: inline-flex;
-    }
+.ag-status-panel {
+    display: inline-flex;
+}
 
-    // TODO nesting, name?
-    .ag-name-value {
-        white-space: nowrap;
-    }
-
+.ag-status-name-value {
+    white-space: nowrap;
 }
 
 .ag-status-bar-left {
@@ -1388,28 +1375,22 @@ $ag-handleSize: 5px;
     align-items: flex-end;
 }
 
-.ag-toggle-button {
-    .ag-input-wrapper {
-        .ag-icon {
-            // TODO nesting, required?
-            transition: right 0.3s;
-            position: absolute;
-            top: -1px;
-        }
-    }
+.ag-toggle-button-icon {
+    transition: right 0.3s;
+    position: absolute;
+    top: -1px;
 }
 
-
 .ag-input-field {
-    // TODO flex required here?
     display: flex;
     flex-direction: row;
     align-items: center;
-    input, select, textarea {
-        flex: 1 1 auto;
-        width: 100%;
-        min-width: 0;
-    }
+}
+
+.ag-input-field-input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
 }
 
 .ag-range-field {
@@ -1417,153 +1398,150 @@ $ag-handleSize: 5px;
     align-items: center;
 }
 
-.ag-picker-field, .ag-slider, .ag-angle-select {
-    // TODO specificity, nesting
-    > .ag-wrapper {
-        display: flex;
-        > div {
-            flex: 1 1 auto;
-        }
-    }
-}
+
 
 .ag-angle-select {
     display: flex;
     align-items: center;
-    // TODO nesting
-    .ag-angle-select-field {
-        // TODO nesting, name?
-        .ag-parent-circle {
-            display: block;
-            position: relative;
-        }
-        .ag-child-circle {
-            position: absolute;
-        }
+}
+
+.ag-angle-select-wrapper {
+    display: flex;
+}
+
+.ag-angle-select-parent-circle {
+    display: block;
+    position: relative;
+}
+.ag-angle-select-child-circle {
+    position: absolute;
+}
+
+
+
+.ag-picker-field-wrapper, .ag-slider-wrapper {
+    display: flex;
+}
+
+.ag-slider-wrapper {
+    .ag-input-field {
+        flex: 1 1 auto;
     }
+}
+
+.ag-picker-field-display {
+    flex: 1 1 auto;
 }
 
 .ag-picker-field {
     display: flex;
     align-items: center;
-    // TODO specificity, name?
-    > .ag-wrapper {
-        // TODO class
-        > button {
-            display: flex;
-            border: 0;
-            padding: 0;
-            margin: 0;
-        }
+}
+
+.ag-picker-field-button {
+    display: flex;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.ag-picker-field-wrapper {
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.ag-label-align-right {
+    // TODO on hold pending ag-wrapper / input refactor
+    label {
+        order: 1;
+    }
+    > div {
+        flex: none;
     }
 }
 
-.ag-color-picker {
-    // TODO nesting, specificity, name?
-    > .ag-wrapper {
-        align-items: stretch;
-        overflow: hidden;
-    }
-    // TODO class
-    button {
-        cursor: pointer;
+.ag-label-align-top {
+    // TODO on hold pending ag-wrapper / input refactor
+    flex-direction: column;
+    align-items: flex-start;
+    > div {
+        align-self: stretch;
     }
 }
 
-.ag-labeled {
-    // TODO nesting, specificity
-    &.ag-label-align-right {
-        label {
-            order: 1;
-        }
-        > div {
-            flex: none;
-        }
-    }
-
-    // TODO nesting
-    &.ag-label-align-top {
-        flex-direction: column;
-        align-items: flex-start;
-        > div {
-            align-self: stretch;
-        }
-    }
-}
-
-// TODO add color picker to regression before changing this
 .ag-color-panel {
+    width: 100%;
     display: flex;
     flex-direction: column;
     text-align: center;
+}
 
-    // TODO nesting
-    .ag-spectrum-color {
-        flex: 1 1 auto;
-        position: relative;
-        overflow: hidden;
-        cursor: default;
-    }
+.ag-spectrum-color {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+}
 
-    // TODO nesting, naming
-    .ag-fill {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
+.ag-spectrum-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 
-    .ag-spectrum-val {
-       cursor: pointer;
-    }
+.ag-spectrum-val {
+    cursor: pointer;
+}
 
-    .ag-spectrum-dragger {
-        position: absolute;
-        pointer-events: none;
-        cursor: pointer;
-    }
+.ag-spectrum-dragger {
+    position: absolute;
+    pointer-events: none;
+    cursor: pointer;
+}
 
-    .ag-spectrum-hue {
-        cursor: default;
-        background: linear-gradient(to left,
-            #ff0000 3%, #ffff00 17%,
-            #00ff00 33%, #00ffff 50%,
-            #0000ff 67%, #ff00ff 83%,
-            #ff0000 100%
-        );
-    }
+.ag-spectrum-hue {
+    cursor: default;
+    background: linear-gradient(to left,
+        #ff0000 3%, #ffff00 17%,
+        #00ff00 33%, #00ffff 50%,
+        #0000ff 67%, #ff00ff 83%,
+        #ff0000 100%
+    );
+}
 
-    .ag-spectrum-alpha {
-        cursor: default;
-    }
+.ag-spectrum-alpha {
+    cursor: default;
+}
 
-    .ag-spectrum-hue-background {
-        width: 100%;
-        height: 100%;
-    }
+.ag-spectrum-hue-background {
+    width: 100%;
+    height: 100%;
+}
 
-    .ag-spectrum-alpha-background {
-        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
-        width: 100%;
-        height: 100%;
-    }
+.ag-spectrum-alpha-background {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgb(0, 0, 0));
+    width: 100%;
+    height: 100%;
+}
 
-    .ag-hue-alpha {
-        cursor: pointer;
-    }
+.ag-spectrum-tool {
+    cursor: pointer;
+}
 
-    .ag-spectrum-slider {
-        position: absolute;
-        pointer-events: none;
-    }
+.ag-spectrum-slider {
+    position: absolute;
+    pointer-events: none;
+}
 
-    .ag-recent-colors {
-        display: flex;
-        > div {
-            cursor: pointer;
-        }
-    }
+.ag-recent-colors {
+    display: flex;
+}
+
+.ag-recent-color {
+    cursor: pointer;
 }
 
 
@@ -1601,14 +1579,5 @@ $ag-row-group-indent-size: 10px !default;
     }
 }
 
-// TODO merge with other print styles (move to new file?)
-@media print {
-    .ag-body-viewport {
-        display: block;
-    }
-    .ag-row {
-        page-break-inside: avoid;
-    }
-}
 @import "./ag-grid-mobile";
 @import "./ag-grid-charts";

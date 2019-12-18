@@ -17,7 +17,6 @@ if ($multi) {
 }
 
 $files = getDirContents($path);
-
 $scripts = array();
 $styles = array();
 
@@ -36,46 +35,43 @@ foreach ($files as $file) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<?php if ($preview) { ?>
-<script> var __basePath = ''; </script>
-<?php } else { ?>
-<script> var __basePath = "<?php echo $path?>/"</script>
-<?php } ?>
-<style media="only screen">
-    html, body {
+  <head>
+    <script>var __basePath = '<?= $preview ? "" : $path ?>';</script>
+    <style media="only screen">
+      html, body {
         height: 100%;
         width: 100%;
         margin: 0;
         box-sizing: border-box;
         -webkit-overflow-scrolling: touch;
-    }
-    html {
+      }
+      html {
         position: absolute;
         top: 0;
         left: 0;
         padding: 0;
         overflow: auto;
-    }
-    body {
+      }
+      body {
         padding: 1rem;
         overflow: auto;
-    }
-</style>
+      }
+    </style>
 <?php renderExampleExtras($_GET) ?>
-<?= globalAgGridScript(isset($_GET["enterprise"])) ?>
+<?= globalAgGridScript(isset($_GET["enterprise"])) . "\n" ?>
 <?php renderStyles($styles); ?>
-</head>
-<body>
+  </head>
+
+  <body>
 
 <?php
 include path_combine($path, 'index.html');
 echo "\n";
 foreach ($scripts as $script) {
     if ($script !== 'worker.js') {
-        echo '    <script src="'.$script.'"></script>' . "\n";
+        echo "    <script src=\"$script\"></script>\n";
     }
 }
 ?>
-</body>
+  </body>
 </html>

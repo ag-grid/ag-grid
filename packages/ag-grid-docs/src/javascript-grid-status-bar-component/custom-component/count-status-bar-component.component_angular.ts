@@ -5,9 +5,9 @@ import { IStatusPanelParams } from "@ag-grid-community/all-modules";
 @Component({
     selector: 'status-component',
     template: `
-        <div class="ag-name-value">
+        <div class="ag-status-name-value">
             <span>Row Count Component&nbsp;:</span>
-            <span class="ag-name-value-value">{{count}}</span>
+            <span class="ag-status-name-value-value">{{count}}</span>
         </div>
     `
 })

@@ -11,6 +11,7 @@ import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
+import { getMarker } from "../../marker/util";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -122,7 +123,7 @@ export class ScatterSeries extends CartesianSeries {
         super();
 
         const { marker } = this;
-        marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addEventListener('change', () => this.update());
 
         this.addPropertyListener('xKey', () => this.xData = []);
@@ -130,7 +131,7 @@ export class ScatterSeries extends CartesianSeries {
         this.addPropertyListener('sizeKey', () => this.sizeData = []);
     }
 
-    onMarkerTypeChange() {
+    onMarkerShapeChange() {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();
@@ -216,7 +217,7 @@ export class ScatterSeries extends CartesianSeries {
             highlightedNode
         } = this;
 
-        const Marker = marker.type;
+        const MarkerShape = getMarker(marker.shape);
         const markerFormatter = marker.formatter;
 
         this.sizeScale.range = [marker.minSize, marker.size];
@@ -232,13 +233,13 @@ export class ScatterSeries extends CartesianSeries {
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Marker);
+        enterGroups.append(MarkerShape);
 
         const groupSelection = updateGroups.merge(enterGroups);
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
-        groupSelection.selectByClass(Marker)
+        groupSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
                 const isHighlightedNode = node === highlightedNode;
                 const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
@@ -346,7 +347,7 @@ export class ScatterSeries extends CartesianSeries {
                     text: title || yName || yKey
                 },
                 marker: {
-                    type: marker.type,
+                    shape: marker.shape,
                     fill: marker.fill || fill,
                     stroke: marker.stroke || stroke,
                     fillOpacity,

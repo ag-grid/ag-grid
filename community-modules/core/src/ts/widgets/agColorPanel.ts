@@ -28,18 +28,18 @@ export class AgColorPanel extends Component {
     private static TEMPLATE =
         `<div class="ag-color-panel">
             <div ref="spectrumColor" class="ag-spectrum-color">
-                <div class="ag-spectrum-sat ag-fill">
-                    <div ref="spectrumVal" class="ag-spectrum-val ag-fill">
+                <div class="ag-spectrum-sat ag-spectrum-fill">
+                    <div ref="spectrumVal" class="ag-spectrum-val ag-spectrum-fill">
                         <div ref="spectrumDragger" class="ag-spectrum-dragger"></div>
                     </div>
                 </div>
             </div>
             <div class="ag-spectrum-tools">
-                <div ref="spectrumHue" class="ag-spectrum-hue ag-hue-alpha">
+                <div ref="spectrumHue" class="ag-spectrum-hue ag-spectrum-tool">
                     <div class="ag-spectrum-hue-background"></div>
                     <div ref="spectrumHueSlider" class="ag-spectrum-slider"></div>
                 </div>
-                <div ref="spectrumAlpha" class="ag-spectrum-alpha ag-hue-alpha">
+                <div ref="spectrumAlpha" class="ag-spectrum-alpha ag-spectrum-tool">
                     <div class="ag-spectrum-alpha-background"></div>
                     <div ref="spectrumAlphaSlider" class="ag-spectrum-slider"></div>
                 </div>

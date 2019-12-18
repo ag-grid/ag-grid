@@ -3,12 +3,7 @@ include dirname(__FILE__) . '/../config.php';
 
 define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
 $archiveMatch = '/archive\/\d+.\d+.\d+/';
-
-if (isset($_SERVER['HTTP_X_PROXY_HTTP_HOST'])) {
-    $host = $_SERVER['HTTP_X_PROXY_HTTP_HOST'];
-} else {
-    $host = $_SERVER['HTTP_HOST'];
-}
+$host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'];
 
 if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
@@ -33,6 +28,7 @@ if (USE_LOCAL) {
     ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js");
+    define('AG_GRID_CHARTS_SCRIPT_PATH', "$prefix/ag-charts-community/dist/ag-charts-community.js");
 
     $systemJsMap = array(
 /* START OF CSS DEV - DO NOT DELETE */
@@ -173,24 +169,27 @@ function getLocalCssIfApplicable()
     $result = '';
     if (AG_GRID_CSS_PATHS) {
         foreach (AG_GRID_CSS_PATHS as $cssLink) {
-            $result = $result."<link rel='stylesheet' href='$cssLink'>";
+            $result = $result . "    <link rel=\"stylesheet\" href=\"$cssLink\">\n";
         }
     }
     return $result;
 }
 
-function globalAgGridScript($enterprise = false, $lazyLoad = false)
+function globalAgGridScript($enterprise = false)
 {
     $localCss = getLocalCssIfApplicable();
-    echo $localCss;
+    echo $localCss; // this is important
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
-    if ($lazyLoad) {
-        return "<script id='ag-grid-script' src='$path' defer='true' async='true'></script>";//.$localCss;
-    } else {
-        return "<script src='$path'></script>";//.$localCss;
-    }
+
+    return "    <script src=\"$path\"></script>";
 }
 
+function globalAgChartsScript($enterprise = false)
+{
+    $path = AG_GRID_CHARTS_SCRIPT_PATH;
+
+    return "    <script src=\"$path\"></script>";
+}
 
 function path_combine(...$parts)
 {
@@ -274,6 +273,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     $options['skipDirs'] = $options['skipDirs'] ? $options['skipDirs'] : array();
 
     $packaged = strrpos($type, "-packaged") !== false;
+
     if ($packaged) {
         $type = 'as-is';
         array_push($options['skipDirs'], 'prebuilt');
@@ -284,7 +284,6 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $multi = $type === 'multi';
     $generated = $type === 'generated';
-
 
     $config = array(
         'type' => $type,
@@ -596,15 +595,8 @@ function getExampleInfo($boilerplatePrefix)
 
 function renderExampleExtras($config)
 {
-
-
-    // bootstrap script wants jQuery
-    if ($config['bootstrap']) {
-        $config['jquery'] = 1;
-    }
-
-    // jQuery UI wants jQuery
-    if ($config['jqueryui']) {
+    if ($config['bootstrap'] || $config['jqueryui']) {
+        // bootstrap and jQuery UI require jQuery
         $config['jquery'] = 1;
     }
 

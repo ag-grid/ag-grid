@@ -4,63 +4,50 @@ $example = getExampleInfo('vue');
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <title>ag-Grid Vue Example</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <title>Vue example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style media="only screen">
-        html, body {
+      html, body {
         height: 100%;
         width: 100%;
         margin: 0;
         box-sizing: border-box;
         -webkit-overflow-scrolling: touch;
-    }
-    html {
+      }
+      html {
         position: absolute;
         top: 0;
         left: 0;
         padding: 0;
         overflow: auto;
-    }
-    body {
+      }
+      body {
         padding: 1rem;
         overflow: auto;
-    }
+      }
     </style>
 <?php renderExampleExtras($_GET) ?>
 <?php renderStyles($example['styles']); ?>
-<?php //renderNonGeneratedScripts($example['scripts'], TRUE); ?>
-</head>
-<body>
+  </head>
+  <body>
     <div id="app" style="height: 100%">
-        <my-component></my-component>
+        <my-component>Loading Vue example&hellip;</my-component>
     </div>
-    
+
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
-        var systemJsMap = <?= json_encode($systemJsMap) ?>;
-        <?php
-        // only used in archives/production
-        if ($example['gridSettings']['enterprise']) {
-        ?>
-        var systemJsPaths = <?= json_encode($systemJsEnterprisePaths) ?>;
-        <?php
-        } else {
-        ?>
-        var systemJsPaths = <?= json_encode($systemJsCommunityPaths) ?>;
-        <?php
-        }
-        ?>
+        var systemJsMap = <?= json_encode($systemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+        var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-    <!-- leave the next line as is - is replaced when deploying to archives or production -->
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
     <script>
-      System.import('<?=$example['appLocation']?>main.js').catch( function(err) { console.error(err); })
+      System.import('<?=$example['appLocation']?>main.js').catch(function(err) { console.error(err); })
     </script>
-</body>
+  </body>
 </html>

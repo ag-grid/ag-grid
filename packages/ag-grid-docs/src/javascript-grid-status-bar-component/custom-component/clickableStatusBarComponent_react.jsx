@@ -13,7 +13,7 @@ export default class ClickableStatusBarComponent extends Component {
 
     render() {
         return (
-            <div className="ag-name-value">
+            <div className="ag-status-name-value">
                 <span>Status Bar Component&nbsp;
                     <input type="button" onClick={this.onClick} value="Click Me"/>
                 </span>

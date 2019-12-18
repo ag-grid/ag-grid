@@ -351,7 +351,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                         ...fontOptions,
                     },
                     marker: {
-                        type: 'square',
+                        shape: 'square',
                         size: 15,
                         padding: 8,
                         strokeWidth: 1,

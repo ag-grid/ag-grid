@@ -46,25 +46,25 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
-    .ag-tab-header {
-        flex: none;
-        user-select: none;
-        cursor: default;
-    }
-    .ag-tab-body {
-        display: flex;
-        flex: 1 1 auto;
-        align-items: stretch;
-        > div {
-            width: 100%;
-            overflow: hidden;
-            overflow-y: auto;
-        }
-        overflow: hidden;
-    }
 }
 
+.ag-chart-tabbed-menu-header {
+    flex: none;
+    user-select: none;
+    cursor: default;
+}
+.ag-chart-tabbed-menu-body {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.ag-chart-tab {
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+}
 
 .ag-chart-settings {
     overflow-x: hidden;
@@ -138,7 +138,6 @@
     width: 100%;
     min-height: 100%;
     overflow: hidden;
-    &.ag-animating,
     &.ag-animating {
         transition: left 0.3s;
         transition-timing-function: ease-in-out;
@@ -147,9 +146,10 @@
 
 .ag-chart-mini-thumbnail {
     cursor: pointer;
-    canvas {
-        display: block;
-    }
+}
+
+.ag-chart-mini-thumbnail-canvas {
+    display: block;
 }
 
 .ag-chart-data-wrapper,
@@ -170,17 +170,8 @@
     justify-content: space-between;
 }
 
-.ag-chart-empty {
-    .ag-chart-empty-canvas {
-        visibility: hidden;
-    }
-    .ag-chart-empty-text {
-        display: flex;
-    }
-}
-
 .ag-chart-empty-text {
-    display: none;
+    display: flex;
     position: absolute;
     top: 0;
     width: 100%;
@@ -204,14 +195,7 @@
     pointer-events: all;
 }
 
-.ag-chart-tabbed-menu {
-    .ag-tab-body {
-        padding: 0;
-    }
-}
-
 .ag-chart-settings-nav-bar {
     padding: 0 10px;
     user-select: none;
 }
-

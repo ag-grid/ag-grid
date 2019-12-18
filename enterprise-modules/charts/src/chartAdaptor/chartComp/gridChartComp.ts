@@ -45,8 +45,8 @@ export class GridChartComp extends Component {
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChartComponentsWrapper" tabindex="-1" class="ag-chart-components-wrapper">
                 <div ref="eChart" class="ag-chart-canvas-wrapper">
-                    <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
                 </div>
+                <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
             <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
         </div>`;
@@ -145,6 +145,7 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart type changes
         this.chartType = chartType;
         this.chartProxy = this.createChartProxy(chartProxyParams);
+        _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     }
 
@@ -277,7 +278,9 @@ export class GridChartComp extends Component {
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (parent) {
-            _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
+            const isEmpty = pivotModeDisabled || isEmptyChart;
+            _.setVisible(this.eChart, !isEmpty);
+            _.setVisible(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {

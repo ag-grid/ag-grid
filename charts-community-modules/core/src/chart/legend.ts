@@ -4,15 +4,15 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { Square } from "./marker/square";
 import { reactive, Observable } from "../util/observable";
+import { getMarker } from "./marker/util";
 
 export interface LegendDatum {
     id: string;       // component ID
     itemId: any;      // sub-component ID
     enabled: boolean; // the current state of the sub-component
     marker: {
-        type?: new () => Marker;
+        shape?: string | (new () => Marker);
         fill: string;
         stroke: string;
         fillOpacity: number;
@@ -44,7 +44,7 @@ export class Legend extends Observable {
         padding: 20,
         itemPaddingX: 16,
         itemPaddingY: 8,
-        markerType: undefined,
+        markerShape: undefined,
         markerPadding: MarkerLabel.defaults.padding,
         markerSize: MarkerLabel.defaults.markerSize,
         markerStrokeWidth: 1,
@@ -74,7 +74,7 @@ export class Legend extends Observable {
 
     // If the marker type is set, the legend will always use that marker type for all its items,
     // regardless of the type that comes from the `data`.
-    @reactive(['layoutChange']) markerType?: new () => Marker = Legend.defaults.markerType;
+    @reactive(['layoutChange']) markerShape?: string | (new () => Marker) = Legend.defaults.markerShape;
     @reactive(['layoutChange']) markerPadding = Legend.defaults.markerPadding;
     @reactive(['layoutChange']) markerSize = Legend.defaults.markerSize;
     @reactive(['change']) markerStrokeWidth = Legend.defaults.markerStrokeWidth;
@@ -133,17 +133,16 @@ export class Legend extends Observable {
      * @param height
      */
     performLayout(width: number, height: number) {
-        const { markerType } = this;
+        const { markerShape } = this;
         const updateSelection = this.itemSelection.setData(this.data, (_, datum) => {
-            const itemMarkerType = markerType || datum.marker.type;
-            const itemMarkerName = itemMarkerType ? itemMarkerType.name : 'Square';
-            return datum.id + '-' + datum.itemId + '-' + itemMarkerName;
+            const MarkerShape = getMarker(markerShape || datum.marker.shape);
+            return datum.id + '-' + datum.itemId + '-' + MarkerShape.name;
         });
         updateSelection.exit.remove();
 
         const enterSelection = updateSelection.enter.append(MarkerLabel).each((node, datum) => {
-            const Marker = markerType || datum.marker.type || Square;
-            node.marker = new Marker();
+            const MarkerShape = getMarker(markerShape || datum.marker.shape);
+            node.marker = new MarkerShape();
         });
         const itemSelection = this.itemSelection = updateSelection.merge(enterSelection);
 
