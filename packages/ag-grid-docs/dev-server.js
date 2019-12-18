@@ -23,9 +23,9 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
-if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
-    process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
-}
+// if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
+    // process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
+// }
 
 function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
