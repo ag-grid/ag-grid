@@ -61,6 +61,10 @@
             app: {
                 defaultExtension: 'jsx'
             },
+            'ag-charts-react': {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/react': {
                 main: './main.js',
                 defaultExtension: 'js'

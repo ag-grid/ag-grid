@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { agChart } from "ag-charts-community";
+import { AgChartsReact } from "ag-charts-react";
 
 const indexHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -252,6 +253,40 @@ class Chart extends React.Component {
     }
 }
 
+const ReactChart = (props) => {
+    return (
+        <AgChartsReact
+            options={{
+                data: [{
+                    month: 'Jan',
+                    revenue: 155000,
+                    profit: 33000
+                }, {
+                    month: 'Feb',
+                    revenue: 123000,
+                    profit: 35500
+                }, {
+                    month: 'Mar',
+                    revenue: 172500,
+                    profit: 41000
+                }, {
+                    month: 'Apr',
+                    revenue: 185000,
+                    profit: 50000
+                }],
+                series: [{
+                    xKey: 'month',
+                    yKey: 'revenue'
+                }],
+                legend: {
+                    markerSize: 25
+                }
+            }}
+        />
+    )
+};
+
+
 export class App extends React.Component {
     state = {
         options: {
@@ -444,6 +479,7 @@ export class App extends React.Component {
         }
 
         return <div className="app">
+            <ReactChart/>
             <div className="chart"><Chart options={this.state.options} /></div>
             <div className="options">
                 {generateOptionConfig(this.config, '')}
