@@ -67,15 +67,14 @@
         background: $ag-background-color;
         height: $ag-grid-size * 5 * 3.5;
         padding: 0;
+    }
 
-        // TODO nesting, naming
-        .ag-virtual-list-item {
-            cursor: default;
-            line-height: $ag-grid-size * 5;
-            padding-left: $ag-grid-size * 2;
-        }
+    .ag-select-agg-func-virtual-list-item {
+        cursor: default;
+        line-height: $ag-grid-size * 5;
+        padding-left: $ag-grid-size * 2;
 
-        .ag-virtual-list-item:hover {
+        &:hover {
             background-color: $ag-menu-option-active-color;
         }
     }

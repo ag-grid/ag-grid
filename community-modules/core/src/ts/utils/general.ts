@@ -965,6 +965,8 @@ export class Utils {
             // a read-only assignment error on some browsers (IE/Edge).
             element.setAttribute('class', className);
         }
+
+        return element;
     }
 
     static removeCssClass(element: HTMLElement, className: string) {

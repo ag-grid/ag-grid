@@ -92,10 +92,7 @@
         padding-bottom: $ag-grid-size * 0.5;
     }
 
-    .ag-chart-docked-container {
-        // TODO naming, nesting
-        .ag-panel {
-            border-width: 0 0 0 1px;
-        }
+    .ag-chart-menu-panel {
+        border-width: 0 0 0 1px;
     }
 }

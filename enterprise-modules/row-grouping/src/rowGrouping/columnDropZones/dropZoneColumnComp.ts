@@ -156,7 +156,7 @@ export class DropZoneColumnComp extends Component {
 
         this.popupShowing = true;
 
-        const virtualList = new VirtualList();
+        const virtualList = new VirtualList('select-agg-func');
 
         const rows = this.aggFuncService.getFuncNames(this.column);
 

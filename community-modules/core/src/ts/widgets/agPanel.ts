@@ -15,20 +15,12 @@ export interface PanelOptions {
     minHeight?: number;
     height?: number | string;
     centered?: boolean;
+    cssIdentifier?: string;
     x?: number;
     y?: number;
 }
 
 export class AgPanel extends Component {
-
-    private static TEMPLATE =
-        `<div class="ag-panel" tabindex="-1">
-            <div ref="eTitleBar" class="ag-panel-title-bar ag-unselectable">
-                <span ref="eTitle" class="ag-panel-title-bar-title"></span>
-                <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons"></div>
-            </div>
-            <div ref="eContentWrapper" class="ag-panel-content-wrapper"></div>
-        </div>`;
 
     protected static CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
 
@@ -67,8 +59,19 @@ export class AgPanel extends Component {
     @RefSelector('eTitle') protected eTitle: HTMLElement;
 
     constructor(config?: PanelOptions) {
-        super(AgPanel.TEMPLATE);
+        super(AgPanel.getTemplate(config));
         this.config = config;
+    }
+
+    private static getTemplate(config?: PanelOptions) {
+        const cssIdentifier = (config && config.cssIdentifier) || 'default';
+        return `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
+            <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
+                <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
+                <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
+            </div>
+            <div ref="eContentWrapper" class="ag-panel-content-wrapper ag-${cssIdentifier}-panel-content-wrapper"></div>
+        </div>`;
     }
 
     @PostConstruct
@@ -355,7 +358,10 @@ export class AgPanel extends Component {
             this.getContext().wireBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            eGui.appendChild(_.createIconNoSpan('close', this.gridOptionsWrapper));
+            eGui.appendChild(_.addCssClass(
+                _.createIconNoSpan('close', this.gridOptionsWrapper),
+                'ag-panel-title-bar-button-icon')
+            );
 
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));

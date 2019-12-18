@@ -215,7 +215,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initialiseFilterBodyUi(): void {
-        this.virtualList = new VirtualList();
+        this.virtualList = new VirtualList('filter');
         this.getContext().wireBean(this.virtualList);
         const eSetFilterList = this.getRefElement('eSetFilterList');
 

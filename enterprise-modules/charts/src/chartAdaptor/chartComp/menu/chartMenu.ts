@@ -139,7 +139,8 @@ export class ChartMenu extends Component {
             width: this.gridOptionsWrapper.chartMenuPanelWidth(),
             height: '100%',
             closable: true,
-            hideTitleBar: true
+            hideTitleBar: true,
+            cssIdentifier: 'chart-menu'
         });
 
         context.wireBean(this.menuPanel);

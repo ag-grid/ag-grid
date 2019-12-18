@@ -11,11 +11,6 @@ export interface VirtualListModel {
 
 export class VirtualList extends Component {
 
-    private static TEMPLATE =
-        `<div class="ag-virtual-list-viewport">
-            <div class="ag-virtual-list-container"></div>
-        </div>`;
-
     private model: VirtualListModel;
 
     private eListContainer: HTMLElement;
@@ -28,20 +23,22 @@ export class VirtualList extends Component {
     @Autowired('environment') private environment: Environment;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor() {
-        super(undefined);
+    constructor(private cssIdentifier = 'default') {
+        super(VirtualList.getTemplate(cssIdentifier));
     }
 
     @PostConstruct
     private init(): void {
-        this.setTemplate(VirtualList.TEMPLATE);
-
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
-        const item = document.createElement('div');
-        _.addCssClass(item, 'ag-virtual-list-item');
         this.rowHeight = this.getItemHeight();
+    }
+
+    private static getTemplate(cssIdentifier: string) {
+        return `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+        </div>`;
     }
 
     private getItemHeight(): number {
@@ -154,6 +151,7 @@ export class VirtualList extends Component {
 
         const eDiv = document.createElement('div');
         _.addCssClass(eDiv, 'ag-virtual-list-item');
+        _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
         const rowComponent = this.componentCreator(value);
