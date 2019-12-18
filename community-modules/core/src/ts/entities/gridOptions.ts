@@ -122,7 +122,7 @@ export interface GridOptions {
     suppressCellSelection?: boolean;
     suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
-    sortingOrder?: string[];
+    sortingOrder?: (string | null)[];
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;
