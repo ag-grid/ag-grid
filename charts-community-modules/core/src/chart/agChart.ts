@@ -158,9 +158,13 @@ export const agChart = {
                             const subComponents = value.map(config => agChart.create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
                         } else {
-                            const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
-                            if (subComponent) {
-                                component[key] = subComponent;
+                            if (entry[key] && component[key]) { // the instance property already exists on the component (e.g. chart.legend)
+                                agChart.create(entry[key], path + '.' + key);
+                            } else {
+                                const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
+                                if (subComponent) {
+                                    component[key] = subComponent;
+                                }
                             }
                         }
                     } else {
