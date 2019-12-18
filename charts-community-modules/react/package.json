@@ -7,7 +7,7 @@
   "scripts": {
     "build": "gulp",
     "umd": "rollup -c",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
