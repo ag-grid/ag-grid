@@ -11,10 +11,10 @@ export class AgAngleSelect extends AgAbstractLabel {
     private static TEMPLATE =
         `<div class="ag-angle-select">
             <label ref="eLabel"></label>
-            <div class="ag-wrapper">
+            <div class="ag-wrapper ag-angle-select-wrapper">
                 <div ref="eAngleSelectField" class="ag-angle-select-field">
-                    <div ref="eParentCircle" class="ag-parent-circle">
-                        <div ref="eChildCircle" class="ag-child-circle"></div>
+                    <div ref="eParentCircle" class="ag-angle-select-parent-circle">
+                        <div ref="eChildCircle" class="ag-angle-select-child-circle"></div>
                     </div>
                 </div>
                 <ag-input-number-field ref="eAngleValue"></ag-input-number-field>

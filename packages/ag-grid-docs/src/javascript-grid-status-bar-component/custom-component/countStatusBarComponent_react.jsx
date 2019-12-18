@@ -17,9 +17,9 @@ export default class CountStatusBarComponent extends Component {
 
     render() {
         return (
-            <div className="ag-name-value">
+            <div className="ag-status-name-value">
                 <span className="component">Row Count Component&nbsp;</span>
-                <span className="ag-name-value-value">{this.state.count}</span>
+                <span className="ag-status-name-value-value">{this.state.count}</span>
             </div>
         );
     }

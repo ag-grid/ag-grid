@@ -5,9 +5,9 @@ export class NameValueComp extends Component {
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE =
-        `<div class="ag-name-value">  
+        `<div class="ag-status-name-value">  
             <span ref="eLabel"></span>:&nbsp;
-            <span ref="eValue" class="ag-name-value-value"></span>
+            <span ref="eValue" class="ag-status-name-value-value"></span>
         </div>`;
 
     @RefSelector('eLabel') private eLabel: HTMLElement;

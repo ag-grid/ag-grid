@@ -5,14 +5,14 @@ CountStatusBarComponent.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('div');
-    this.eGui.className = 'ag-name-value';
+    this.eGui.className = 'ag-status-name-value';
 
     var label = document.createElement('span');
     label.innerText = 'Row Count Component: ';
     this.eGui.appendChild(label);
 
     this.eCount = document.createElement('span');
-    this.eCount.className = 'ag-name-value-value';
+    this.eCount.className = 'ag-status-name-value-value';
 
     this.eGui.appendChild(this.eCount);
 

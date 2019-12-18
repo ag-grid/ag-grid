@@ -160,14 +160,14 @@
 
     .ag-angle-select {
         .ag-angle-select-field {
-            .ag-parent-circle {
+            .ag-angle-select-parent-circle {
                 width: 24px;
                 height: 24px;
                 border-radius: 12px;
                 box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
                 background-color: #ffffff;
             }
-            .ag-child-circle {
+            .ag-angle-select-child-circle {
                 top: 4px;
                 left: 12px;
                 width: 6px;
@@ -266,7 +266,7 @@
             border-radius: 2px;
         }
 
-        .ag-hue-alpha {
+        .ag-spectrum-tool {
             margin-bottom: 10px;
             height: 11px;
             border-radius: 2px;
@@ -314,7 +314,7 @@
             pointer-events: none;
         }
 
-        .ag-title-bar {
+        .ag-panel-title-bar {
             background-color: $ag-dialog-title-background-color;
             border-bottom: 1px solid lighten($ag-border-color, 10%);
             color: $ag-dialog-title-foreground-color;
@@ -325,7 +325,7 @@
             padding: $ag-dialog-title-padding;
             padding-left: $ag-cell-horizontal-padding;
 
-            .ag-title-bar-buttons {
+            .ag-panel-title-bar-buttons {
                 .ag-panel-title-bar-button {
                     height: $ag-dialog-title-icon-size;
                     width: $ag-dialog-title-icon-size;

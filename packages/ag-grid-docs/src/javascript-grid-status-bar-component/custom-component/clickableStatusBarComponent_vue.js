@@ -2,7 +2,7 @@ import Vue from "vue";
 
 export default Vue.extend({
     template: `
-            <div class="ag-name-value">
+            <div class="ag-status-name-value">
                 <span>Status Bar Component&nbsp; 
                     <input type="button" v-on:click="onClick" value="Click Me"/>
                 </span>

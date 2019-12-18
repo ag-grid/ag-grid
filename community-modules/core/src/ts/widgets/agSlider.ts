@@ -9,7 +9,7 @@ export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE =
         `<div class="ag-slider">
             <label ref="eLabel"></label>
-            <div class="ag-wrapper">
+            <div class="ag-wrapper ag-slider-wrapper">
                 <ag-input-range ref="eSlider"></ag-input-range>
                 <ag-input-number-field ref="eText"></ag-input-number-field>
             </div>

@@ -8,9 +8,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE =
         `<div class="ag-picker-field">
             <label ref="eLabel"></label>
-            <div ref="eWrapper" class="ag-wrapper">
-                <%displayField% ref="eDisplayField"></%displayField%>
-                <button ref="eButton" class="ag-picker-button"> </button>
+            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper">
+                <%displayField% ref="eDisplayField" class="ag-picker-field-display"></%displayField%>
+                <button ref="eButton" class="ag-picker-field-button"> </button>
             </div>
         </div>`;
 

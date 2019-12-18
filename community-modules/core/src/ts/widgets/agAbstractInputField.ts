@@ -19,7 +19,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         `<div class="ag-input-field" role="presentation">
             <label ref="eLabel"></label>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
-                <%displayField% ref="eInput"></%displayField%>
+                <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>
             </div>
         </div>`;
 

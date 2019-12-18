@@ -5,7 +5,7 @@ import {IStatusPanelParams} from "@ag-grid-community/all-modules";
 @Component({
     selector: 'status-component',
     template: `
-        <div class="ag-name-value">
+        <div class="ag-status-name-value">
             <span class="component">Status Bar Component <input type="button" (click)="onClick()"
                                                                 value="Click Me"/></span>
         </div>
