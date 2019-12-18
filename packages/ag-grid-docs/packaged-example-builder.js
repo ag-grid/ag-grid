@@ -19,7 +19,7 @@ module.exports = (final, scope = '*') => {
     const workQueue = [];
     glob(`src/${scope}/*.php`, {}, (er, files) => {
         files.forEach(file => {
-            const contents = fs.readFileSync(file, {encoding: 'utf8'});
+            const contents = fs.readFileSync(file, { encoding: 'utf8' });
             const section = path.dirname(file).replace('src/', '');
             const exampleRegEx = /example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g;
 
@@ -42,7 +42,7 @@ module.exports = (final, scope = '*') => {
                 const absoluteRoot = path.resolve(__dirname, exampleRoot);
 
                 webpackConfig.entry = `${absoluteRoot}/${SUPPORTED_TYPES[type].main}`;
-                webpackConfig.output = { path: `${absoluteRoot}/prebuilt/`, filename: `bundle.js`};
+                webpackConfig.output = { path: `${absoluteRoot}/prebuilt/`, filename: `bundle.js` };
 
                 const workItem = new Promise((resolve) => {
                     const compiler = webpack(webpackConfig);
@@ -64,13 +64,10 @@ module.exports = (final, scope = '*') => {
 
                         // add any required extras (fontawesome etc)
                         const extras = getExtras(config.extras, fs.existsSync(`${absoluteRoot}/style.css`));
-
                         const htmlFile = `${exampleRoot}/prebuilt/index.html`;
                         const html = fs.readFileSync(htmlFile).toString();
 
-                        fs.writeFileSync(htmlFile,
-                            html.replace(/<!--EXTRAS-->/g, extras),
-                            'utf8');
+                        fs.writeFileSync(htmlFile, html.replace(/<!--EXTRAS-->/g, extras), 'utf8');
 
                         resolve();
                     });
@@ -79,22 +76,19 @@ module.exports = (final, scope = '*') => {
                 workQueue.push(workItem);
             }
         });
+
         Promise.all(workQueue).then(final);
     });
 };
 
 function getExtras(extras, hasAppStyle) {
-    if(!extras) {
+    if (!extras) {
         return "";
     }
 
-    if(extras.bootstrap) {
+    if (extras.bootstrap || extras.jqueryui) {
         extras.jquery = true;
     }
-    if(extras.jqueryui) {
-        extras.jquery = true;
-    }
-
 
     const stylesheets = [];
     const scripts = [];
@@ -105,14 +99,15 @@ function getExtras(extras, hasAppStyle) {
                 stylesheets.push(`<link rel="stylesheet" href="${stylesheet}"/>`);
             }
         }
-        if(EXTRAS[extra].scripts) {
+
+        if (EXTRAS[extra].scripts) {
             for (const script of EXTRAS[extra].scripts) {
                 scripts.push(`<script src="${script}"></script>`);
             }
         }
     }
 
-    if(hasAppStyle) {
+    if (hasAppStyle) {
         stylesheets.push('<link rel="stylesheet" href="style.css"/>');
     }
 
