@@ -3,7 +3,7 @@ include '../example-runner/utils.php';
 include 'utils.php';
 $example = getReactExampleInfo('react');
 $generated = isset($_GET['generated']);
-if ($generated) { 
+if ($generated) {
     echo "<!DOCTYPE html>\n";
 };
 ?>
@@ -37,24 +37,13 @@ if ($generated) {
 <?php renderNonGeneratedScripts($example['scripts']); ?>
 </head>
 <body>
-    <div id="root">Loading ag-Grid React example&hellip;</div>
-    
+    <div id="root">Loading&hellip;</div>
+
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
         var systemJsMap = <?= json_encode($systemJsMap); ?>;
-        <?php
-        // only used in archives/production
-        if ($example['gridSettings']['enterprise']) {
-        ?>
-        var systemJsPaths = <?= json_encode($systemJsEnterprisePaths) ?>;
-        <?php
-        } else {
-        ?>
-        var systemJsPaths = <?= json_encode($systemJsCommunityPaths) ?>;
-        <?php
-        }
-        ?>
+        var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths) ?>;
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>

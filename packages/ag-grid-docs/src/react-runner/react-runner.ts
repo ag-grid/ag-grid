@@ -1,8 +1,8 @@
 import * as angular from "angular";
 import * as jQuery from "jquery";
 
-import {trackIfInViewPort, whenInViewPort} from "./lib/viewport";
-import {highlight} from "./lib/highlight";
+import { trackIfInViewPort, whenInViewPort } from "./lib/viewport";
+import { highlight } from "./lib/highlight";
 
 const docs: angular.IModule = angular.module("documentation");
 
@@ -18,8 +18,8 @@ function resetIndent(str) {
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function ($document) {
-        return function (url, newWindow, fields) {
+    function($document) {
+        return function(url, newWindow, fields) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
              * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
@@ -29,7 +29,7 @@ docs.factory("formPostData", [
              */
             var target = newWindow ? "_blank" : "_self";
             var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-            angular.forEach(fields, function (value, name) {
+            angular.forEach(fields, function(value, name) {
                 var input = angular.element('<input type="hidden" name="' + name + '">');
                 input.attr("value", value);
                 form.append(input);
@@ -65,7 +65,7 @@ class ReactRunner {
     private boilerplatePath: string;
     sourcePrefix: string;
 
-    private titles: { [key: string]: string };
+    private titles: { [key: string]: string; };
 
     private options: {
         showResult?: boolean;
@@ -188,7 +188,7 @@ class ReactRunner {
 
         const files = typeConfig.files ?
             typeConfig.files.filter((file) => {
-                return file.indexOf('node_modules') === -1
+                return file.indexOf('node_modules') === -1;
             }) :
             typeConfig.files;
 
@@ -258,7 +258,7 @@ class ReactRunner {
         }
     }
 
-    getSource(file: string): string | { sources: string[]; process: (string) => string } {
+    getSource(file: string): string | { sources: string[]; process: (string) => string; } {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join("/");
         }
@@ -305,7 +305,7 @@ class ReactRunner {
         if (context.files) {
             Object.keys(context.files).forEach(file => {
                 postData[`files[${file}]`] = context.files[file];
-            })
+            });
         }
 
         this.formPostData("//plnkr.co/edit/?p=preview", true, postData);
@@ -320,23 +320,23 @@ ReactRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$elem
 
 
 docs.component("reactRunner", {
-    template: ` 
+    template: `
         <div ng-class='["example-runner"]'>
 
         <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
             <span> Example version: </span>
             <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
 
-    <button type="button" 
-    ng-click="$ctrl.toggleFwDropdown()" 
+    <button type="button"
+    ng-click="$ctrl.toggleFwDropdown()"
     ng-blur="$ctrl.hideFwDropdown()"
-    class="btn btn-default dropdown-toggle" 
-    data-toggle="dropdown" 
-    aria-haspopup="true" 
-    aria-expanded="false"> 
+    class="btn btn-default dropdown-toggle"
+    data-toggle="dropdown"
+    aria-haspopup="true"
+    aria-expanded="false">
 
     <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
-    <span class="caret"></span> 
+    <span class="caret"></span>
 
     </button>
 
@@ -355,12 +355,12 @@ docs.component("reactRunner", {
                 <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
             </li>
 
-            <example-tab 
-                value="'result'" 
-                current-value="$ctrl.selectedTab" 
+            <example-tab
+                value="'result'"
+                current-value="$ctrl.selectedTab"
                 title="'Result'"
                 tooltip="'Live Result of the Example'"
-                icon="'fa-play'" 
+                icon="'fa-play'"
                 on-click="$ctrl.selectedTab = 'result'">
             </example-tab>
 
@@ -382,16 +382,16 @@ docs.component("reactRunner", {
 
             <example-tab
                 ng-hide="$ctrl.noPlunker"
-                value="'plunker'" 
-                current-value="$ctrl.selectedTab" 
+                value="'plunker'"
+                current-value="$ctrl.selectedTab"
                 title="'Plunker'"
                 tooltip="'Open Example in Plunker'"
                 id="$ctrl.id"
-                icon="'fa-external-link'" 
+                icon="'fa-external-link'"
                 on-click="$ctrl.openPlunker($event);">
             </example-tab>
 
-        </ul>  
+        </ul>
 
         <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -412,12 +412,12 @@ docs.component("reactRunner", {
                          App
                     </li>
 
-                    <example-tab 
+                    <example-tab
                         ng-repeat="file in $ctrl.files"
-                        value="file" 
-                        current-value="$ctrl.selectedFile" 
+                        value="file"
+                        current-value="$ctrl.selectedFile"
                         title="file"
-                        icon="'fa-file-code-o'" 
+                        icon="'fa-file-code-o'"
                         on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                     </example-tab>
 
@@ -464,11 +464,11 @@ docs.component("preview", {
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
             </li>
 
-            <example-tab 
-                value="'result'" 
-                current-value="'result'" 
+            <example-tab
+                value="'result'"
+                current-value="'result'"
                 title="'Result'"
-                icon="'fa-play'" 
+                icon="'fa-play'"
                 >
             </example-tab>
 
@@ -478,7 +478,7 @@ docs.component("preview", {
                 </a>
             </li>
 
-        </ul>  
+        </ul>
 
         <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
@@ -500,10 +500,10 @@ docs.component("preview", {
     controller: [
         "$timeout",
         "$element",
-        function ($timeout, $element) {
+        function($timeout, $element) {
             this.ready = false;
 
-            this.$onInit = function () {
+            this.$onInit = function() {
                 this.iframeStyle = {};
 
                 if (this.options.exampleHeight) {
@@ -518,7 +518,7 @@ docs.component("preview", {
     ]
 });
 
-let removeFilenameFromPath = function (pathname) {
+let removeFilenameFromPath = function(pathname) {
     if (pathname.lastIndexOf("/") === 0) {
         // only the root slash present
         return pathname;
@@ -526,21 +526,21 @@ let removeFilenameFromPath = function (pathname) {
     return pathname.slice(0, pathname.lastIndexOf("/"));
 };
 
-let getPathWithTrailingSlash = function () {
+let getPathWithTrailingSlash = function() {
     let pathname = removeFilenameFromPath(window.location.pathname);
     let trailingSlash = pathname.indexOf("/", 1) === pathname.length - 1;
     pathname += trailingSlash ? "" : "/";
     return pathname;
 };
 
-docs.directive("showSources", function () {
+docs.directive("showSources", function() {
     const ShowComplexScriptExampleController = [
         "$scope",
         "$http",
         "$attrs",
         "$sce",
         "HighlightService",
-        function ($scope, $http, $attrs, $sce, HighlightService) {
+        function($scope, $http, $attrs, $sce, HighlightService) {
             const pathname = getPathWithTrailingSlash();
 
             $scope.source = $scope.sourcesOnly ? $attrs["example"] : pathname + $attrs["example"];
@@ -548,7 +548,7 @@ docs.directive("showSources", function () {
             $scope.extraPages = [];
 
             const sources = eval($attrs.sources);
-            sources.forEach(function (source) {
+            sources.forEach(function(source) {
                 let root = source.root;
                 root = root === "./" ? pathname : root;
                 const files = source.files.split(",");
@@ -556,15 +556,15 @@ docs.directive("showSources", function () {
                 $scope.extraPages = $scope.extraPages.concat(files);
 
                 $scope.extraPageContent = {};
-                files.forEach(function (file) {
+                files.forEach(function(file) {
                     $http
                         .get(root + file)
-                        .then(function (response) {
+                        .then(function(response) {
                             const language = $attrs.language ? $attrs.language : "js";
                             const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
                             $scope.extraPageContent[file] = $sce.trustAsHtml('<pre class="language-' + language + '"><code>' + content + "</code></pre>");
                         })
-                        .catch(function (response) {
+                        .catch(function(response) {
                             $scope.extraPageContent[file] = response.data;
                         });
                 });
@@ -572,15 +572,15 @@ docs.directive("showSources", function () {
             });
 
             if ($attrs.exampleheight) {
-                $scope.iframeStyle = {height: $attrs.exampleheight};
+                $scope.iframeStyle = { height: $attrs.exampleheight };
             } else {
-                $scope.iframeStyle = {height: "500px"};
+                $scope.iframeStyle = { height: "500px" };
             }
 
-            $scope.isActivePage = function (item) {
+            $scope.isActivePage = function(item) {
                 return $scope.extraPage == item;
             };
-            $scope.setActivePage = function (item) {
+            $scope.setActivePage = function(item) {
                 $scope.extraPage = item;
             };
         }
