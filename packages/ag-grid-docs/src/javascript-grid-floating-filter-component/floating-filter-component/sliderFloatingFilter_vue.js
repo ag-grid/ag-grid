@@ -23,8 +23,8 @@ export default Vue.extend({
     methods: {
         valueChanged(event) {
             this.currentValue = event.target.value;
-            let valueToUse = (this.currentValue === 0) ? null : this.currentValue;
-            this.params.parentFilterInstance( function(instance) {
+            let valueToUse = (this.currentValue === "0") ? null : this.currentValue;
+            this.params.parentFilterInstance(function (instance) {
                 instance.onFloatingFilterChanged('greaterThan', valueToUse);
             });
         },
@@ -33,18 +33,6 @@ export default Vue.extend({
             // note that the filter could be anything here, but our purposes we're assuming a greater than filter only,
             // so just read off the value and use that
             this.currentValue = !parentModel ? 0 : parentModel.filter
-        },
-
-        buildModel() {
-            if (this.currentValue === 0) {
-                return null;
-            }
-            return {
-                filterType: 'number',
-                type: 'greaterThan',
-                filter: this.currentValue,
-                filterTo: null
-            };
         }
     }
 });

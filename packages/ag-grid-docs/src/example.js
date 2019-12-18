@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     gridDiv = document.querySelector('#myGrid');
 
+    onThemeChanged();
+
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
 
@@ -165,7 +167,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
-    popupParent: document.body,
+    popupParent: document.querySelector('#example-wrapper'),
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {
@@ -214,14 +216,17 @@ var gridOptions = {
     // suppressDragLeaveHidesColumns: true,
     // suppressMakeColumnVisibleAfterUnGroup: true,
     // unSortIcon: true,
-    // enableRtl: true,
+    enableRtl: /[?&]rtl=true/.test(window.location.search),
     enableCharts: true,
     multiSortKey: 'ctrl',
     animateRows: true,
 
     enableRangeSelection: true,
     enableRangeHandle: false,
-    enableFillHandle: false,
+    enableFillHandle: true,
+    undoRedoCellEditing: true,
+    undoRedoCellEditingLimit: 50,
+
     suppressClearOnFillReduction: false,
 
     rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
@@ -411,7 +416,7 @@ var gridOptions = {
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                var value = formatThousands(Math.round(params.datum[params.angleKey]));
                 return title + '<div class="content">' + '$' + value + '</div>';
             };
         } else {
@@ -445,7 +450,7 @@ var gridOptions = {
 
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var formatCurrency = function(value) {
-                        return '$' + String(value).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                        return '$' + formatThousands(value);
                     }
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -463,7 +468,7 @@ var gridOptions = {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
-                    var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+                    var value = formatThousands(Math.round(params.datum[params.yKey]));
                     return title + '<div class="content">' + '$' + value + '</div>';
                 };
             }
@@ -649,7 +654,7 @@ var desktopDefaultCols = [
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 }
             },
             {
@@ -700,7 +705,7 @@ var desktopDefaultCols = [
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
-                    clearButton: true,
+                    resetButton: true,
                     // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
@@ -723,7 +728,7 @@ var desktopDefaultCols = [
                 },
                 filterParams: {
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -747,7 +752,7 @@ var desktopDefaultCols = [
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     newRowsAction: 'keep',
-                    clearButton: true
+                    resetButton: true
                 }
             }
         ]
@@ -811,7 +816,8 @@ var desktopDefaultCols = [
         cellClassRules: {
             'currencyCell': 'typeof x == "number"'
         },
-        valueFormatter: currencyFormatter, cellStyle: currencyCssFunc,
+        valueFormatter: currencyFormatter,
+        cellStyle: currencyCssFunc,
         icons: {
             sortAscending: '<i class="fa fa-sort-amount-up"/>',
             sortDescending: '<i class="fa fa-sort-amount-down"/>'
@@ -914,7 +920,7 @@ months.forEach(function(month) {
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams: {
-            clearButton: true
+            resetButton: true
         }
     });
 });
@@ -1090,16 +1096,24 @@ function rowSelected(event) {
     }
 }
 
-function onThemeChanged(newTheme) {
+function onThemeChanged() {
+    var newTheme = document.querySelector('#grid-theme').value;
     gridDiv.className = newTheme;
-    gridOptions.api.resetRowHeights();
-    gridOptions.api.redrawRows();
-    gridOptions.api.refreshHeader();
-    gridOptions.api.refreshToolPanel();
+
+    if (gridOptions.api) {
+        gridOptions.api.resetRowHeights();
+        gridOptions.api.redrawRows();
+        gridOptions.api.refreshHeader();
+        gridOptions.api.refreshToolPanel();
+    }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+    if (isDark) {
+        document.body.classList.add('dark');
+    } else {
+        document.body.classList.remove('dark');
+    }
 
-    document.body.classList.toggle('dark', isDark);
 }
 
 var filterCount = 0;
@@ -1349,7 +1363,7 @@ function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
         return { "color": "red", "font-weight": "bold" };
     } else {
-        return {};
+        return { color: "black", "font-weight": "normal" };
     }
 }
 
@@ -1375,6 +1389,10 @@ function ratingRendererGeneral(value, forFilter) {
     return result;
 }
 
+var formatThousands = function(value) {
+    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
 function currencyRenderer(params) {
     if (params.value === null || params.value === undefined) {
         return null;
@@ -1385,7 +1403,7 @@ function currencyRenderer(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '&pound;' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            return '&pound;' + formatThousands(Math.floor(params.value));
         }
     }
 }
@@ -1400,7 +1418,11 @@ function currencyFormatter(params) {
         if (params.node.group && params.column.aggFunc === 'count') {
             return params.value;
         } else {
-            return '$' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+            var result = '$' + formatThousands(Math.floor(Math.abs(params.value)));
+            if (params.value < 0) {
+                result = '(' + result + ')';
+            }
+            return result;
         }
     }
 }

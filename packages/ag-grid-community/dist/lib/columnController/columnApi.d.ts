@@ -72,9 +72,9 @@ export declare class ColumnApi {
     getCenterDisplayedColumnGroups(): ColumnGroupChild[];
     getRightDisplayedColumnGroups(): ColumnGroupChild[];
     getAllDisplayedColumnGroups(): ColumnGroupChild[];
-    autoSizeColumn(key: string | Column): void;
-    autoSizeColumns(keys: (string | Column)[]): void;
-    autoSizeAllColumns(): void;
+    autoSizeColumn(key: string | Column, skipHeader?: boolean): void;
+    autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void;
+    autoSizeAllColumns(skipHeader?: boolean): void;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
     getSecondaryColumns(): Column[];
     getPrimaryColumns(): Column[];

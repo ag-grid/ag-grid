@@ -14,6 +14,7 @@ export declare class CellComp extends Component {
     private static CELL_RENDERER_TYPE_NORMAL;
     private static CELL_RENDERER_TYPE_PINNED;
     private eCellWrapper;
+    private eCellValue;
     private eParentOfValue;
     private beans;
     private column;
@@ -30,6 +31,7 @@ export declare class CellComp extends Component {
     private editingCell;
     private cellEditorInPopup;
     private hideEditorPopup;
+    private createCellRendererFunc;
     private lastIPadMouseClickEvent;
     private usingCellRenderer;
     private cellRendererType;
@@ -64,6 +66,8 @@ export declare class CellComp extends Component {
     private setupColSpan;
     getColSpanningList(): Column[];
     private onDisplayColumnsChanged;
+    private getAriaColumnIndex;
+    private refreshAriaIndex;
     private getInitialCssClasses;
     getInitialValueToRender(): string;
     getRenderedRow(): RowComp;
@@ -155,6 +159,7 @@ export declare class CellComp extends Component {
     private getInitialRangeClasses;
     onRowIndexChanged(): void;
     onRangeSelectionChanged(): void;
+    private getHasChartRange;
     private shouldHaveSelectionHandle;
     private addSelectionHandle;
     updateRangeBordersIfRangeCount(): void;
@@ -168,6 +173,7 @@ export declare class CellComp extends Component {
     private addDndSource;
     private addSelectionCheckbox;
     private addDomData;
+    private isSingleCell;
     onCellFocused(event?: any): void;
     stopRowOrCellEdit(cancel?: boolean): void;
     stopEditing(cancel?: boolean): void;

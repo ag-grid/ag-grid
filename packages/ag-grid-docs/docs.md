@@ -147,6 +147,5 @@
  - [ ] javascript-grid-graphing/
  - [ ] change-log/changeLogIndex.php
  - [ ] ag-grid-tutorials/
- - [ ] javascript-grid-responsiveness/
  - [ ] javascript-grid-testing/
  - [ ] javascript-grid-rxjs/

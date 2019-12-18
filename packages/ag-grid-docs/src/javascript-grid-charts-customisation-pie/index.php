@@ -18,10 +18,12 @@ include '../documentation-main/documentation_header.php';
 <snippet>
 interface PieChartOptions {
     seriesDefaults: {
-        title?: CaptionOptions;
+        title: CaptionOptions;
+        fill: FillOptions;
+        stroke: StrokeOptions;
 
         // The style to apply to a slice when it is hovered over or tapped
-        highlightStyle?: HighlightStyle;
+        highlightStyle: HighlightStyle;
 
         shadow: DropShadowOptions;
         label: PieSeriesLabelOptions;
@@ -31,21 +33,37 @@ interface PieChartOptions {
 }
 
 interface CaptionOptions {
-    enabled?: boolean;
+    enabled: boolean; // default: false (pie), true (doughnut)
     text?: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number;
-    fontFamily?: string;
-    color?: string;
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'bold'
+    fontSize: number; // default: 12
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
 }
 
 type FontStyle = 'normal' | 'italic' | 'oblique';
 
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
+interface FillOptions {
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
+
+    // Valid range from 0 (transparent) to 1 (opaque)
+    opacity: number; // default: 1
+}
+
+interface StrokeOptions {
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
+
+    // Valid range from 0 (transparent) to 1 (opaque)
+    opacity: number; // default: 1
+
+    width: number; // default: 1
+}
+
 interface HighlightStyle {
-    fill?: string;
+    fill: string; // default: 'yellow'
     stroke?: string;
 }
 
@@ -59,11 +77,11 @@ interface DropShadowOptions {
 
 interface PieSeriesLabelOptions {
     enabled: boolean; // default: false
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number; // default: 12
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: dependent on light/dark mode
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 12
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
     minRequiredAngle: number; // default: 0
     offset: number; // default: 3
 }
@@ -71,7 +89,7 @@ interface PieSeriesLabelOptions {
 interface PieSeriesCalloutOptions {
     length: number; // default: 10
     strokeWidth: number; // default: 2
-    colors: string[]; // default: from selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 }
 
 interface PieTooltipRendererParams {

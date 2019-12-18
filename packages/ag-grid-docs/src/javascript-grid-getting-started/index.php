@@ -54,7 +54,6 @@ include '../documentation-main/documentation_header.php';
 <ul>
     <li><a href="../angular-grid/">Start with AngularJS</a></li>
     <li><a href="../polymer-getting-started/">Start with Polymer</a></li>
-    <li><a href="../best-web-component-data-grid/">Start with Web Components</a></li>
 </ul>
 
 

@@ -1,0 +1,22 @@
+<style>
+.page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.grid-wrapper {
+    flex-grow: 1;
+}
+</style>
+
+<div class="page-wrapper">
+
+<div style="margin: 10px 0">
+    <button onclick="onBtnExportDataAsExcel()">api.exportDataAsExcel(params)</button>
+</div>
+        
+<div class="grid-wrapper">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-balham"></div>
+</div>
+
+</div>

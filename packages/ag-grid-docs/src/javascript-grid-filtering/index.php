@@ -127,7 +127,8 @@ gridOptions = {
 
     <p>
         Below shows configuring the text filter on an Athlete column and providing extra filter parameters
-        (what <code>clearButton</code> and <code>applyButton</code> do are explained later).
+        (what <code>resetButton</code> and <code>applyButton</code> do are explained in 
+        <a href="../javascript-grid-filter-provided/#apply-clear-and-reset-buttons">Apply, Clear and Reset Buttons</a>).
     </p>
 
     <snippet>
@@ -140,16 +141,11 @@ columnDefinition = {
 
     // pass in additional parameters to the text filter
     filterParams: {
-        clearButton: true,
+        resetButton: true,
         applyButton: true,
         debounceMs: 200
     }
 }</snippet>
-
-
-
-
-
 
     <h2>Filter Events</h2>
 

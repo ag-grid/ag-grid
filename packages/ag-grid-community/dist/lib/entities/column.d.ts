@@ -49,6 +49,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private rowGroupActive;
     private pivotActive;
     private aggregationActive;
+    private flex;
     private readonly primary;
     private parent;
     private originalParent;
@@ -124,6 +125,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isGreaterThanMax(width: number): boolean;
     getMinWidth(): number;
     getMaxWidth(): number;
+    getFlex(): number;
     setMinimum(source?: ColumnEventType): void;
     setRowGroupActive(rowGroup: boolean, source?: ColumnEventType): void;
     isRowGroupActive(): boolean;

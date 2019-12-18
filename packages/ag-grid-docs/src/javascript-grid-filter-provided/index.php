@@ -9,11 +9,30 @@ include '../documentation-main/documentation_header.php';
 <h1 class="first-h1" id="pagination">Provided Filters</h1>
 
 <p class="lead">
-    Provided filters are the filters that come as part of the grid. In total there are four
-    provided filters, three simple filters (Text, Number and Date Filters) and one advanced
-    filter (Set Filter). The simple filters are available in the community version of ag-Grid.
-    The advanced Set filter is only available in ag-Grid Enterprise.
+    This section describes the functionality common to all filters that are provided in the grid.
 </p>
+
+<p>
+   The grid provides four filters out of the box; three <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> (Text, Number and Date), and an advanced 
+   <a href="../javascript-grid-filter-set/">Set Filter</a> which is available in the enterprise version of the grid.    
+</p>
+
+<p>
+    Follow the links below to learn more about each specific filter:
+</p>
+
+<ul>
+    <li><a href="../javascript-grid-filter-text">Text</a></li>
+    <li><a href="../javascript-grid-filter-number">Number</a></li>
+    <li><a href="../javascript-grid-filter-date">Date</a></li>
+    <li><a href="../javascript-grid-filter-set/">Set Filter</a><span class="enterprise-icon">e</span></li>  
+</ul>
+
+<p>
+    The rest of this section will cover concepts that are common to each provided filter.
+</p>
+
+<h2>Structure of Provided Filters</h2>
 
 <p>
     The diagram below outlines the structure of the filters. Each box represents a filter type
@@ -27,13 +46,6 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     <img src="./providedFilters.png" style="width: 100%; margin-top: 10px; margin-bottom: 60px;"/>
-</p>
-
-<p>
-    This page describes the functionality common to all provided filters.
-    See <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> for additional information
-    relative to simple filters. See <a href="../javascript-grid-filter-set/">Set Filter</a> for additional information
-    on the Set filter.
 </p>
 
 <h2>Provided Filter UI</h2>
@@ -71,7 +83,12 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td class="parameter-key">clearButton</td>
         <td>Set to <code>true</code> to have the filter use a Clear button. The Clear button will clear the
-            details of the filter thus resetting it.</td>
+            (form) details of the filter without removing any active filters on the column.</td>
+    </tr>
+    <tr>
+        <td class="parameter-key">resetButton</td>
+        <td>Set to <code>true</code> to have the filter use a Reset button. The Reset button will clear the
+            details of the filter and any active filters on that column.</td>
     </tr>
     <tr>
         <td class="parameter-key">debounceMs</td>
@@ -129,11 +146,12 @@ include '../documentation-main/documentation_header.php';
     </tr>
 </table>
 
-<h2>Apply & Clear Buttons</h2>
+<h2>Apply, Clear and Reset Buttons</h2>
 
 <p>
-    Each of the provided filters can have an Apply and / or Clear button.
+    Each of the provided filters can optionally include Apply, Clear and Reset buttons.
 </p>
+
 <p>
     When the Apply button is active, the filter is only applied after the Apply button is pressed.
     This is useful if the filtering operation will take a long time because the dataset is large,
@@ -141,7 +159,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The Clear button clears the filters UI.
+    The Clear button just clears the filters UI whereas the Reset button clears the filters UI and removes any active Filters
+    for that column.
 </p>
 
 <p>
@@ -149,7 +168,8 @@ include '../documentation-main/documentation_header.php';
     the Apply button and filter events. Note the following:
 </p>
 <ul class="content">
-    <li>The Athlete, Age and Country columns have filters with Apply and Clear buttons.</li>
+    <li>The Athlete and Age columns have filters with Apply and Reset buttons.</li>
+    <li>The Country column has a filter with Apply and Clear buttons.</li>
     <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
     <li>onFilterChanged gets called after a new filter is applied.</li>
     <li>Looking at the console, it can be noted when a filter is changed, the result of getModel()

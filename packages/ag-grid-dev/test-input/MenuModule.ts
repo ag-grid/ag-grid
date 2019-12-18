@@ -1,4 +1,3 @@
-import '@ag-grid-enterprise/menu';
-import 'ag-grid-enterprise';
+import {MenuModule as GridModule} from '@ag-grid-enterprise/menu';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

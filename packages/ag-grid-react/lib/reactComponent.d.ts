@@ -1,8 +1,9 @@
-// ag-grid-react v22.0.0
+// ag-grid-react v22.1.1
 import { Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
 export declare class ReactComponent extends BaseReactComponent {
+    static REACT_MEMO_TYPE: number | symbol;
     private eParentElement;
     private componentInstance;
     private reactComponent;
@@ -21,5 +22,6 @@ export declare class ReactComponent extends BaseReactComponent {
     private addParentContainerStyleAndClasses;
     private createParentElement;
     statelessComponentRendered(): boolean;
+    private static hasSymbol;
     private static isStateless;
 }

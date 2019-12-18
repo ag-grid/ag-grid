@@ -1,3 +1,37 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_22_1_0">
+    <p>Release 22.1.0 (6th Dec 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-1630 - Add Excel-like Fill Handle
+            (see <a href="/javascript-grid-range-selection-fill-handle/">Fill Handle</a>).
+        </li>
+        <li>
+            AG-2566 - Allow specifying column width as reminder viewport view
+            (see <a href="/javascript-grid-resizing/#column-flex">Column Flex</a>).
+        </li>
+        <li>
+            AG-169 - Allow Undo / Redo of Cell Editing
+            (see <a href="/javascript-grid-undo-redo-edits/">Undo / Redo Edits</a>).
+        </li>
+        <li>
+            AG-3318	- Allow charts to be saved and restored
+            (see <a href="/javascript-grid-charts-chart-range-api/#saving-and-restoring-charts">Saving and Restoring Charts</a>).
+        </li>
+        <li>
+            AG-2819 - Add support for Time Series charts
+            (see <a href="/javascript-grid-charts-customisation-cartesian/#example-time-series-chart">Time Series Charting</a>).
+        </li>
+        <li>
+            AG-332 - Allow exporting Master Detail to Excel
+            (see <a href="/javascript-grid-master-detail/#exporting-master-detail-data">Exporting Master / Detail Data</a>).
+        </li>
+    </ul>
+</div>
+
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_22_0_0">
     <p>Release 22.0.0 (11th Nov 2019)</p>
 
@@ -5,13 +39,20 @@
 
     <ul>
         <li>
+            Charts is now out of Beta! 
+            (see <a href="/javascript-grid-charts-overview/">Charts</a>).
+        </li>
+        
+        <li>
             AG-1329 - Modularise Grid Features to reduce grid bundle size
             (see <a href="/javascript-grid-modules/">Modularisation</a>).
         </li>
+
         <li>
             AG-3269 - A new pivotChart API has been added to charts.
             (see <a href="/javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a>).
         </li>
+
         <li>
             AG-2200 - Allow filters to be arranged using column groups in the filters tool panel
             (see <a href="/javascript-grid-tool-panel-filters/">Filters Tool Panel</a>).
@@ -38,10 +79,18 @@
             AG-1026	- Allow sidebar to be placed in the left or right position of the grid
             (see <a href="/javascript-grid-side-bar/#sidebardef-configuration">Side Bar Configuration</a>).
         </li>
+        <li>
+            AG-907 - Rollup Support Added
+            (see <a href="/ag-grid-building-rollup/">Rollup</a>).
+        </li>
     </ul>
 
     <p>Breaking Changes:</p>
     <ul>
+         <li>
+            In taking Charts out of Beta it was neccessary to to make numourous interface / chart option changes
+            (see <a href="/javascript-grid-charts-chart-range-api/">Chart API</a> and <a href="/javascript-grid-charts-customisation/">Chart Customisation</a>).
+        </li>
         <li>
             AG-3316 - agGridReact needs to be updated to use the updated react lifecycle hooks.
             React 16.3 is now the minimum version supported by AgGridReact.
@@ -53,8 +102,7 @@
             AG-3369 - syncValuesLikeExcel is enabled by default.
         </li>
         <li>
-            AG-3345 / AG-3347 - tool panels are now kept in sync with the column order in the grid. Enable 'suppressSyncLayoutWithGrid'
-            on the tool panels to revert this behaviour.
+            AG-3345 / AG-3347 - tool panels are now kept in sync with the column order in the grid. To revert enable the following Tool Panel property: 'suppressSyncLayoutWithGrid'.
         </li>
 </div>
 

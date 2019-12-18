@@ -76,9 +76,6 @@ var gridOptions = {
         var eButton = eDiv.querySelector('button');
         eButton.addEventListener('click', function() {
             alert('button clicked');
-            console.log('setting');
-            // params.node.setRowHeight(500);
-            // params.api.onRowHeightChanged();
         });
 
         return eDiv.firstChild;

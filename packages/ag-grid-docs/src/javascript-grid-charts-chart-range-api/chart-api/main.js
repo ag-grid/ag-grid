@@ -43,10 +43,12 @@ function onChart1() {
             columns: ['country', 'gold', 'silver']
         },
         chartType: 'groupedColumn',
+        chartPalette: 'bright',
         processChartOptions: function(params) {
             var opts = params.options;
 
-            opts.title = { text: "Top 5 Medal Winners" };
+            opts.title.enabled = true;
+            opts.title.text = "Top 5 Medal Winners";
 
             if (opts.xAxis) {
                 opts.xAxis.label.rotation = 30;
@@ -56,6 +58,7 @@ function onChart1() {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
@@ -72,16 +75,19 @@ function onChart2() {
             columns: ['country', 'bronze']
         },
         chartType: 'groupedBar',
+        chartPalette: 'pastel',
         processChartOptions: function(params) {
             var opts = params.options;
             opts.seriesDefaults.showInLegend = false;
 
-            opts.title = { text: "Bronze Medal by Country" };
+            opts.title.enabled = true;
+            opts.title.text = "Bronze Medal by Country";
 
             opts.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 

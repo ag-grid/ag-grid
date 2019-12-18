@@ -359,6 +359,10 @@ colDef = {
                 The applications does NOT rearrange the rows as the drag is happening. Instead it
                 waits for the <code>onRowDragEnd</code> event before updating the data.
             </li>
+            <li>
+                The expanded/contracted state of a folder and all of its child folders is preserved when
+                the folder is is moved to a new parent.
+            </li>
         </ul>
 
         <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'processVue'=> true, 'extras' => array('fontawesome')) ) ?>

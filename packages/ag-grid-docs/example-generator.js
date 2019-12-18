@@ -141,7 +141,7 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
             const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             try {
                 source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'), isDev, communityModules, enterpriseModules);
-                indexJSX = prettier.format(source, {parser: 'babylon', printWidth: 120});
+                indexJSX = prettier.format(source, {parser: 'babel', printWidth: 120});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
@@ -169,7 +169,7 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
                 // when all examples have been tested this check can be removed
                 if(options.processVue || options.processVue === undefined) {
                     source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'), isDev, communityModules, enterpriseModules);
-                    mainApp = prettier.format(source, {parser: 'babylon', printWidth: 120});
+                    mainApp = prettier.format(source, {parser: 'babel', printWidth: 120});
                 }
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
@@ -222,6 +222,15 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
                 {ignore: ['**/*_angular.js', '**/*_react.js', '**/*_vue.js']}
             );
             moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
+
+            // allow developers to override the example theme with an environment variable
+            const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
+            if (themeOverride) {
+                const indexFile = path.join(_gen, 'vanilla', 'index.html');
+                let content = fs.readFileSync(indexFile, {encoding: 'utf8'});
+                content = content.replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`)
+                fs.writeFileSync(indexFile, content, 'utf8');
+            }
         },
         () => {
             console.log(`// ${count} examples generated`);

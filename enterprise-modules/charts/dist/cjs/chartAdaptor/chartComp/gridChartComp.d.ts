@@ -1,0 +1,54 @@
+import { CellRange, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams, ChartModel } from "@ag-grid-community/core";
+import { ChartPaletteName } from "../../charts/chart/palettes";
+export interface GridChartParams {
+    pivotChart: boolean;
+    cellRange: CellRange;
+    chartType: ChartType;
+    chartPaletteName: ChartPaletteName;
+    insideDialog: boolean;
+    suppressChartRanges: boolean;
+    aggFunc?: string | IAggFunc;
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+}
+export declare class GridChartComp extends Component {
+    private static TEMPLATE;
+    private eChart;
+    private eChartComponentsWrapper;
+    private eDockedContainer;
+    private eEmpty;
+    private resizeObserverService;
+    private gridOptionsWrapper;
+    private environment;
+    private chartTranslator;
+    private eventService;
+    private chartMenu;
+    private chartDialog;
+    private model;
+    private chartController;
+    private chartProxy;
+    private chartType;
+    private chartGroupingActive;
+    private readonly params;
+    constructor(params: GridChartParams);
+    init(): void;
+    private createChart;
+    private getChartPaletteName;
+    private createChartProxy;
+    private addDialog;
+    private addMenu;
+    private refresh;
+    private shouldRecreateChart;
+    getChartComponentsWrapper: () => HTMLElement;
+    getDockedContainer: () => HTMLElement;
+    slideDockedOut(width: number): void;
+    slideDockedIn(): void;
+    getCurrentChartType: () => ChartType;
+    getChartModel(): ChartModel;
+    updateChart(): void;
+    private handleEmptyChart;
+    private downloadChart;
+    refreshCanvasSize(): void;
+    private addResizeListener;
+    private setActiveChartCellRange;
+    destroy(): void;
+}

@@ -1,8 +1,8 @@
 {
   "name": "ag-grid-community",
-  "version": "22.0.0",
+  "version": "22.1.1",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-  "main": "./main.js",
+  "main": "./dist/ag-grid-community.cjs.js",
   "typings": "./main.d.ts",
   "repository": {
     "type": "git",
@@ -15,12 +15,11 @@
     "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
     "init": "npm run initLatest && npm run updateAndRebuild",
-    "initFullBuild": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna clean --yes",
-    "bootstrap": "npx lerna bootstrap --no-ci",
+    "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
-    "package": "npx lerna run package --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
+    "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "test": "npx lerna run test",
     "cleanCoreDependencies": "npx lerna clean --yes --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
     "bootstrapCoreDependencies": "npx lerna bootstrap --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
@@ -46,6 +45,8 @@
     "buildReact": "npx lerna run build --scope @ag-grid-community/core --scope ag-grid-react",
     "docs": "cd packages/ag-grid-docs && npx gulp serve",
     "docs-source-mod-only": "cd packages/ag-grid-docs && npx gulp serve-source-mod-only",
+    "docs-beta": "cd packages/ag-grid-docs && npx gulp serve-beta",
+    "docs-running-check": "cd packages/ag-grid-docs && npx gulp serve-check",
     "updateAndRebuild": "npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild"
   },
@@ -55,13 +56,14 @@
     "commander": "^3.0.2",
     "execa": "^3.2.0",
     "inquirer": "^7.0.0",
-    "lerna": "^3.18.1",
+    "lerna": "^3.18.3",
     "lighthouse": "^5.4.0",
-    "walk": "^2.3.14",
     "rollup": "^1.21.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "terser-webpack-plugin": "^2.0.1"
+    "terser": "^4.3.9",
+    "typescript": "^3.7.2",
+    "walk": "^2.3.14"
   },
   "dependencies": {
     "fs-extra": "^8.1.0"

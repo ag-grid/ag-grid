@@ -28,6 +28,8 @@ export declare class Constants {
     static KEY_C: number;
     static KEY_V: number;
     static KEY_D: number;
+    static KEY_Z: number;
+    static KEY_Y: number;
     static KEY_F2: number;
     static KEY_PAGE_UP: number;
     static KEY_PAGE_DOWN: number;

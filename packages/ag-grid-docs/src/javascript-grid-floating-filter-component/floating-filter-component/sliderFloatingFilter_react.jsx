@@ -15,7 +15,7 @@ export default class SliderFloatingFilter extends Component {
                 currentValue: event.target.value
             },
             () => {
-                let valueToUse = (this.state.currentValue === 0) ? null : this.state.currentValue;
+                let valueToUse = (this.state.currentValue === "0") ? null : this.state.currentValue;
                 this.props.parentFilterInstance( function(instance) {
                     instance.onFloatingFilterChanged('greaterThan', valueToUse);
                 });

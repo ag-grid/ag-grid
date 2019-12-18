@@ -26,6 +26,7 @@ interface CreateRangeChartParams {
 {
     cellRange: CellRangeParams;
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -92,7 +93,11 @@ interface ProcessChartOptionsParams {
             <code>'groupedColumn', 'stackedColumn', 'normalizedColumn', 'groupedBar', 'stackedBar', 'normalizedBar', 'line', 'scatter', 'bubble', 'pie', 'doughnut', 'area', 'stackedArea', 'normalizedArea'</code>
         </li>
         <li>
-            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container 
+            <code>chartPalette</code>: The default palette to use for charts. The options are
+            <code>'borneo', 'material', 'pastel', 'bright', 'flat'</code>
+        </li>
+        <li>
+            <code>chartContainer</code>: If the chart is to be displayed outside of the grid then a chart container
             should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as <code>undefined</code>.
         </li>
         <li>
@@ -163,9 +168,9 @@ interface ProcessChartOptionsParams {
     <?= example('Charts in Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
 
     <h2>Pivot Charts</h2>
-    
+
     <p>
-        You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always 
+        You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always
         generated from all data in the grid:
     </p>
 
@@ -174,6 +179,7 @@ function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
 
 interface CreatePivotChartParams {
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions;
 }</snippet>
@@ -185,6 +191,41 @@ interface CreatePivotChartParams {
     <p>This is an example showing the pivot chart API in action, using a specified chart container.</p>
 
     <?= example('Pivot Chart', 'pivot-chart-api', 'generated', array("enterprise" => true, "exampleHeight" => 900)) ?>
+
+    <h2>Saving and Restoring Charts</h2>
+
+<p>
+    You can access models that represent rendered charts using the <code>getChartModels()</code> API. The models are returned in a format that can be
+    easily used with the other API methods to later recreate the chart.
+</p>
+
+<snippet>
+function getChartModels(): ChartModel[];
+
+interface ChartModel {
+    chartId: string;
+    cellRange: CellRangeParams;
+    chartType: ChartType;
+    chartPalette: string;
+    chartOptions: ChartOptions;
+}</snippet>
+
+    <h3>Example: Saving and restoring charts</h3>
+
+    <p>
+        The example below demonstrates how you can save and then later restore a chart. You can make changes to the chart type,
+        palette, data and formatting options and note how the restored chart mirrors the chart that was saved.
+    </p>
+
+    <ul>
+        <li>Create a range chart from the grid, which will be shown in a container below the grid</li>
+        <li>Make changes to the chart type, palette, data and/or formatting in order to see the changes restored later</li>
+        <li>Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.</li>
+        <li>Click "Clear chart" to destroy the existing chart</li>
+        <li>Click "Restore chart" to restore the chart from the saved model (if one exists), and clear the local variable</li>
+    </ul>
+
+    <?= example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', array("exampleHeight" => 800,"enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 

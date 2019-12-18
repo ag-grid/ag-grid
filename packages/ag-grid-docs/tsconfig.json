@@ -16,6 +16,5 @@
         "./_dev/@ag-grid-community/angular/src/**/*.ts",
         "./_dev/@ag-grid-community/react/src/**/*.ts"
     ],
-
     "exclude": [ "node_modules" ]
 }

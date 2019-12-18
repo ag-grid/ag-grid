@@ -10,7 +10,6 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     The grid provides three simple filters for filtering numbers, strings and dates respectively.
-
 </p>
 
 <style>
@@ -125,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         <th>Supported Filters</th>
     </tr>
     <tr>
-        <td class="parameter-key">applyButton<br/>clearButton<br/>debounceMs<br/>newRowsAction</td>
+        <td class="parameter-key">applyButton<br/>clearButton<br/>resetButton<br/>debounceMs<br/>newRowsAction</td>
         <td>See <a href="../javascript-grid-filter-provided/#providedFilterParams">Provided Filter Params</a>.</td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>

@@ -35,13 +35,36 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
             <div>
                 <label for="grid-theme">Theme:</label>
 
-                <select onchange="onThemeChanged(this.value)" id="grid-theme">
+                <select onchange="onThemeChanged()" id="grid-theme">
                     <option value="">-none-</option>
-                    <option value="ag-theme-balham" selected>Balham</option>
-                    <option value="ag-theme-balham-dark">Balham (dark)</option>
+<!--
+                    // spl alpine exclusion
+                    <option value="ag-theme-alpine">Alpine (Beta)</option>
+                    <option value="ag-theme-alpine-dark">Alpine Dark (Beta)</option>
+-->                    <option value="ag-theme-balham" selected>Balham</option>
+                    <option value="ag-theme-balham-dark">Balham Dark</option>
                     <option value="ag-theme-material">Material</option>
                 </select>
-            </div>
+
+<!--
+                // spl alpine exclusion
+                <script>
+                    (function() {
+                        var themeDropdown = document.querySelector('#grid-theme');
+                        var match = document.location.search.match(/[?&]theme=([^?&]+)/);
+                        if (match) {
+                            var theme = match[1];
+                            themeDropdown.value = match[1];
+                            if (!themeDropdown.querySelector('option[value="' + theme + '"]')) {
+                                themeDropdown.insertAdjacentHTML('beforeend', '<option>' + theme + '</option>');
+                            }
+                            themeDropdown.value = theme;
+                        } else if (document.location.port == '8080') {
+                            themeDropdown.value = 'ag-theme-alpine';
+                        }
+                    })();
+                </script>
+-->            </div>
             <div>
                 <label for="global-filter">Filter:</label>
                 <input 
@@ -66,6 +89,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
     <!-- The table div -->
     <div id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
+        <!-- // spl alpine exclusion -->
         <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
     </div>
 </div> <!-- example wrapper -->
