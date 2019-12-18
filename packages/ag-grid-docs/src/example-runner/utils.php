@@ -33,6 +33,7 @@ if (USE_LOCAL) {
     ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js");
+    define('AG_GRID_CHARTS_SCRIPT_PATH', "$prefix/ag-charts-community/dist/ag-charts-community.js");
 
     $systemJsMap = array(
 /* START OF CSS DEV - DO NOT DELETE */
@@ -182,15 +183,25 @@ function getLocalCssIfApplicable()
 function globalAgGridScript($enterprise = false, $lazyLoad = false)
 {
     $localCss = getLocalCssIfApplicable();
-    echo $localCss;
+    echo $localCss; // this is important
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     if ($lazyLoad) {
-        return "<script id='ag-grid-script' src='$path' defer='true' async='true'></script>";//.$localCss;
+        return "<script id='ag-grid-script' src='$path' defer='true' async='true'></script>";
     } else {
-        return "<script src='$path'></script>";//.$localCss;
+        return "<script src='$path'></script>";
     }
 }
 
+function globalAgChartsScript($enterprise = false, $lazyLoad = false)
+{
+    $path = AG_GRID_CHARTS_SCRIPT_PATH;
+//    $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
+    if ($lazyLoad) {
+        return "<script id='ag-grid-script' src='$path' defer='true' async='true'></script>";
+    } else {
+        return "<script src='$path'></script>";
+    }
+}
 
 function path_combine(...$parts)
 {

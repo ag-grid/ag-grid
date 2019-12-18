@@ -520,6 +520,10 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
                 addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
             }
 
+            // for js examples that just require charts community functionality (landing pages, vanilla enterprise examples etc)
+            // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
+            addWebpackMiddleware(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
+
             // for the actual site - php, css etc
             addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');
 
