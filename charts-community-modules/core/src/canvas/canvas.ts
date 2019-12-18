@@ -38,7 +38,6 @@ function makeHdpiOverrides(dpr: number): any {
  */
 export function createHdpiCanvas(width = 300, height = 150): HTMLCanvasElement {
     const canvas = document.createElement('canvas');
-    canvas.className = 'ag-charts-canvas';
     canvas.width = width;
     canvas.height = height;
     applyHdpiOverrides(canvas);

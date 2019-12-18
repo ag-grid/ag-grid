@@ -1,35 +1,31 @@
 import { Promise, _ } from '../utils';
 import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
 
 export class TabbedLayout extends Component {
 
-    private eHeader: HTMLElement;
-    private eBody: HTMLElement;
+    @RefSelector('eHeader') private eHeader: HTMLElement;
+    @RefSelector('eBody') private eBody: HTMLElement;
     private params: TabbedLayoutParams;
 
     private afterAttachedParams: any;
-
-    private static TEMPLATE =
-        '<div>' +
-            '<div ref="tabHeader" class="ag-tab-header"></div>' +
-            '<div ref="tabBody" class="ag-tab-body"></div>' +
-        '</div>';
 
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
 
     constructor(params: TabbedLayoutParams) {
-        super(TabbedLayout.TEMPLATE);
+        super(TabbedLayout.getTemplate(params.cssClass));
         this.params = params;
-
-        this.eHeader = this.getGui().querySelector('[ref="tabHeader"]') as HTMLElement;
-        this.eBody = this.getGui().querySelector('[ref="tabBody"]') as HTMLElement;
-
-        _.addCssClass(this.getGui(), params.cssClass);
-
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
         }
+    }
+
+    private static getTemplate(cssClass?: string) {
+        return `<div class="ag-tabs ${cssClass}">
+            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+        </div>`;
     }
 
     public setAfterAttachedParams(params: any): void {
@@ -39,7 +35,7 @@ export class TabbedLayout extends Component {
     public getMinDimensions(): {width: number, height: number} {
 
         const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
-        const eDummyBody = eDummyContainer.querySelector('[ref="tabBody"]') as HTMLElement;
+        const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
 
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
