@@ -1,6 +1,7 @@
 import { Marker } from "../marker/marker";
 import { Observable, reactive } from "../../util/observable";
 import { Circle } from "../marker/circle";
+import { Square } from "../marker/square";
 
 export class SeriesMarker extends Observable {
 
@@ -9,7 +10,7 @@ export class SeriesMarker extends Observable {
     /**
      * Marker constructor function. A series will create one marker instance per data point.
      */
-    @reactive(['change']) type: new () => Marker = Circle;
+    @reactive(['change']) type: new () => Marker = Square;
 
     @reactive(['change']) size = 8;
 
