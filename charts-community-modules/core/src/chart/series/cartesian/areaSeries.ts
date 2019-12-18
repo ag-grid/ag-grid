@@ -12,6 +12,7 @@ import palette from "../../palettes";
 import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { getMarker } from "../../marker/util";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -55,11 +56,11 @@ export class AreaSeries extends CartesianSeries {
         super();
 
         this.marker.enabled = false;
-        this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        this.marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         this.marker.addEventListener('change', () => this.update());
     }
 
-    onMarkerTypeChange() {
+    onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
         this.update();
@@ -463,12 +464,12 @@ export class AreaSeries extends CartesianSeries {
 
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
         const { marker, xKey } = this;
-        const Marker = marker.type;
 
-        if (!Marker) {
+        if (!marker.shape) {
             return;
         }
 
+        const MarkerShape = getMarker(marker.shape);
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const markerSize = marker.size;
@@ -478,7 +479,7 @@ export class AreaSeries extends CartesianSeries {
 
         updateMarkers.exit.remove();
 
-        const enterMarkers = updateMarkers.enter.append(Marker);
+        const enterMarkers = updateMarkers.enter.append(MarkerShape);
         const markerSelection = updateMarkers.merge(enterMarkers);
 
         markerSelection.each((node, datum) => {
@@ -570,7 +571,7 @@ export class AreaSeries extends CartesianSeries {
                         text: yNames[index] || yKeys[index]
                     },
                     marker: {
-                        type: marker.type,
+                        shape: marker.shape,
                         fill: marker.fill || fills[index % fills.length],
                         stroke: marker.stroke || strokes[index % strokes.length],
                         fillOpacity,

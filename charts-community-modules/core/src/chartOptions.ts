@@ -21,7 +21,7 @@ export {
     GridStyleOptions,
 };
 
-export type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
+export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
 export type PolarSeriesType = 'pie';
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
@@ -89,7 +89,7 @@ export interface LegendLabelOptions extends FontOptions {
 }
 
 export interface LegendMarkerOptions {
-    type?: MarkerType;
+    shape?: MarkerShape;
     size?: number;
     padding?: number;
     strokeWidth?: number;
@@ -213,7 +213,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 
 export interface MarkerOptions {
-    type?: MarkerType;
+    shape?: MarkerShape;
     enabled?: boolean;
     size?: number;
     minSize?: number;

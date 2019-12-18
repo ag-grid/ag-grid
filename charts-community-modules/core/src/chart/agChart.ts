@@ -12,13 +12,26 @@ import { Caption } from "../caption";
 import { Circle } from "./marker/circle";
 import { Plus } from "./marker/plus";
 import { Legend } from "./legend";
+import { Cross } from "./marker/cross";
+import { Diamond } from "./marker/diamond";
+import { Square } from "./marker/square";
+import { Triangle } from "./marker/triangle";
 
-const typeMappings = {
+const markerTypes = {
+    circle: Circle,
+    cross: Cross,
+    diamond: Diamond,
+    plus: Plus,
+    square: Square,
+    triangle: Triangle
+};
+
+const chartTypes = {
     cartesian: {
-        fn: CartesianChart,
-        params: ['document'],
-        exclude: ['parent', 'data'],
-        defaults: {
+        fn: CartesianChart, // constructor function for the type
+        params: ['document'], // constructor parameters
+        exclude: ['parent', 'data'], // properties that should be set on the component as is (without pre-processing)
+        defaults: { // these values will be used if properties in question are not in the config object
             parent: document.body,
             axes: [{
                 type: 'category',
@@ -45,10 +58,7 @@ const typeMappings = {
         series: {
             line: {
                 fn: LineSeries,
-                marker: {
-                    circle: Circle,
-                    plus: Plus
-                }
+                marker: {}
             },
             column: {
                 fn: ColumnSeries
@@ -58,13 +68,11 @@ const typeMappings = {
             },
             scatter: {
                 fn: ScatterSeries,
-                marker: {
-                    circle: Circle,
-                    plus: Plus
-                }
+                marker: {}
             },
             area: {
-                fn: AreaSeries
+                fn: AreaSeries,
+                marker: {}
             }
         },
         legend: {
@@ -87,7 +95,7 @@ const typeMappings = {
 
 function getMapping(path: string) {
     const parts = path.split('.');
-    let value = typeMappings;
+    let value = chartTypes;
     parts.forEach(part => {
         value = value[part];
     });
@@ -149,11 +157,7 @@ export const agChart = {
             for (const key in options) {
                 if (key !== 'type' && params.indexOf(key) < 0) {
                     const value = options[key];
-                    if (entry.exclude && entry.exclude.indexOf(key) >= 0) {
-                        component[key] = value;
-                        continue;
-                    }
-                    if (key in entry) {
+                    if (key in entry && !(entry.exclude && entry.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
                             const subComponents = value.map(config => agChart.create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
