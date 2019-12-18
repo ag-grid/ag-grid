@@ -70,7 +70,16 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     }
 
     componentDidMount() {
-        this.chart = agChart.create(this.props.options);
+        const options = this.applyParentIfNotSet(this.props.options);
+        this.chart = agChart.create(options);
+    }
+
+    private applyParentIfNotSet(propsOptions: any) {
+        const options = {...propsOptions};
+        if (!options.parent) {
+            options.parent = this.eChartDiv;
+        }
+        return options;
     }
 
     shouldComponentUpdate(nextProps: any) {
@@ -89,7 +98,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     processPropsChanges(prevProps: any, nextProps: any) {
         const changeDetectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
         if (!changeDetectionStrategy.areEqual(prevProps.options, nextProps.options)) {
-            agChart.reconfigure(this.chart, nextProps.options);
+            agChart.reconfigure(this.chart, this.applyParentIfNotSet(nextProps.options));
         }
     }
 
