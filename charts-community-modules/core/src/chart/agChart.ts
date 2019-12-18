@@ -9,22 +9,7 @@ import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
 import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
-import { Circle } from "./marker/circle";
-import { Plus } from "./marker/plus";
 import { Legend } from "./legend";
-import { Cross } from "./marker/cross";
-import { Diamond } from "./marker/diamond";
-import { Square } from "./marker/square";
-import { Triangle } from "./marker/triangle";
-
-const markerTypes = {
-    circle: Circle,
-    cross: Cross,
-    diamond: Diamond,
-    plus: Plus,
-    square: Square,
-    triangle: Triangle
-};
 
 const chartTypes = {
     cartesian: {
