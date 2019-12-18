@@ -34,10 +34,14 @@ const chartTypes = {
         },
         axes: {
             number: {
-                fn: NumberAxis
+                fn: NumberAxis,
+                label: {},
+                tick: {}
             },
             category: {
-                fn: CategoryAxis
+                fn: CategoryAxis,
+                label: {},
+                tick: {}
             }
         },
         series: {
