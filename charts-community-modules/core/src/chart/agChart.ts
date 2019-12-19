@@ -11,12 +11,17 @@ import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
 import { Legend } from "./legend";
 
-const chartTypes = {
+const mappings = {
     cartesian: {
-        fn: CartesianChart, // constructor function for the type
-        params: ['document'], // constructor parameters
-        exclude: ['parent', 'data'], // properties that should be set on the component as is (without pre-processing)
-        defaults: { // these values will be used if properties in question are not in the config object
+        constructor: CartesianChart, // Constructor function for the `cartesian` type.
+        // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
+        // is configured the same way, via the properties, and makes the factory patter work well) but the charts
+        // themselves are the exceptions.
+        // If a chart config has the (optional) `document` property, it will be passed to the constructor.
+        // There is no actual `document` property on the chart, it can only be supplied during instantiation.
+        constructorParamKeys: ['document'], // Config object properties to be used as constructor parameters, in that order.
+        exclude: ['parent', 'data'], // Properties that should be set on the component as is (without pre-processing).
+        defaults: { // These values will be used if properties in question are not in the config object.
             parent: document.body,
             axes: [{
                 type: 'category',
@@ -27,56 +32,56 @@ const chartTypes = {
             }]
         },
         title: {
-            fn: Caption
+            constructor: Caption
         },
         subtitle: {
-            fn: Caption
+            constructor: Caption
         },
         axes: {
             number: {
-                fn: NumberAxis,
+                constructor: NumberAxis,
                 label: {},
                 tick: {}
             },
             category: {
-                fn: CategoryAxis,
+                constructor: CategoryAxis,
                 label: {},
                 tick: {}
             }
         },
         series: {
             line: {
-                fn: LineSeries,
+                constructor: LineSeries,
                 marker: {}
             },
             column: {
-                fn: ColumnSeries
+                constructor: ColumnSeries
             },
             bar: {
-                fn: BarSeries
+                constructor: BarSeries
             },
             scatter: {
-                fn: ScatterSeries,
+                constructor: ScatterSeries,
                 marker: {}
             },
             area: {
-                fn: AreaSeries,
+                constructor: AreaSeries,
                 marker: {}
             }
         },
         legend: {
-            fn: Legend
+            constructor: Legend
         }
     },
     polar: {
-        fn: PolarChart,
-        params: ['document'],
+        constructor: PolarChart,
+        constructorParamKeys: ['document'],
         defaults: {
             parent: document.body
         },
         series: {
             pie: {
-                fn: PieSeries
+                constructor: PieSeries
             }
         }
     }
@@ -84,7 +89,7 @@ const chartTypes = {
 
 function getMapping(path: string) {
     const parts = path.split('.');
-    let value = chartTypes;
+    let value = mappings;
     parts.forEach(part => {
         value = value[part];
     });
@@ -98,10 +103,11 @@ export const agChart = {
         }
 
         if (!path) {
+            // We are at the root. Avoid mutating original object.
             options = Object.create(options);
-        }
 
-        if (!path) {
+            // If chart type is not specified, try to infer it from the type
+            // of the first series.
             if (!options.type) {
                 const series = options.series && options.series[0];
                 if (series && series.type === 'pie') {
@@ -112,15 +118,16 @@ export const agChart = {
             }
         }
 
+        // Default series type for cartesian charts.
         if (path === 'cartesian.series' && !options.type) {
             options.type = 'line';
         }
 
+        // Default series type for polar charts.
         if (path === 'polar.series' && !options.type) {
             options.type = 'pie';
         }
 
-        // path = (path ? path + '.' : '') + options.type;
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -129,29 +136,37 @@ export const agChart = {
             path = options.type;
         }
 
-        const entry = getMapping(path);
+        const mapping = getMapping(path);
 
-        if (entry.defaults) {
-            for (const key in entry.defaults) {
+        // If certain options are not provided, use the defaults from the mapping.
+        const { defaults } = mapping;
+        if (defaults) {
+            for (const key in defaults) {
                 if (!options[key]) {
-                    options[key] = entry.defaults[key];
+                    options[key] = defaults[key];
                 }
             }
         }
 
-        if (entry) {
-            const params = entry.params || [];
-            const paramValues = params.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            component = component || new entry.fn(...paramValues);
+        if (mapping) {
+            const constructorParamKeys = mapping.constructorParamKeys || [];
+            // Constructor params processing could be improved, but it's good enough for current params.
+            const constructorParams = constructorParamKeys.map((param: any) => options[param]).filter((value: any) => value !== undefined);
+            component = component || new mapping.constructor(...constructorParams);
+
             for (const key in options) {
-                if (key !== 'type' && params.indexOf(key) < 0) {
+                // Process every non-special key in the config object.
+                if (key !== 'type' && constructorParamKeys.indexOf(key) < 0) {
                     const value = options[key];
-                    if (key in entry && !(entry.exclude && entry.exclude.indexOf(key) >= 0)) {
+
+                    if (key in mapping && !(mapping.exclude && mapping.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
                             const subComponents = value.map(config => agChart.create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
                         } else {
-                            if (entry[key] && component[key]) { // the instance property already exists on the component (e.g. chart.legend)
+                            if (mapping[key] && component[key]) {
+                                // The instance property already exists on the component (e.g. chart.legend).
+                                // Simply configure the existing instance, without creating a new one.
                                 agChart.create(value, path + '.' + key, component[key]);
                             } else {
                                 const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
