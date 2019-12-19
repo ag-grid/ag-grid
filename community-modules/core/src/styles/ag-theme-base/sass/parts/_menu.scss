@@ -198,40 +198,20 @@
     }
     
 
-    .ag-column-select-panel {
-        .ag-column-tool-panel-column-group,
-        .ag-column-tool-panel-column {
-            height: $ag-grid-size * 4;
-
-            .ag-column-select-checkbox,
-            .ag-column-tool-panel-column-label,
-            .ag-column-group-icons {
-                margin-left: $ag-grid-size;
-                margin-right: $ag-grid-size;
-            }
-        }
-        // TODO move up level
-        .ag-primary-cols-list-panel {
-            @include ag-grid-border(top, $color: $ag-secondary-border-color);
-            padding-top: $ag-grid-size;
-            // TODO  add className in code
-            > div {
-                cursor: pointer;
-            }
-        }
+    .ag-column-tool-panel-column-group,
+    .ag-column-tool-panel-column {
+        height: $ag-grid-size * 4;
     }
 
-    .ag-rtl {
-        .ag-column-select-panel {
-            .ag-column-tool-panel-column-group,
-            .ag-column-tool-panel-column {
-                .ag-column-select-checkbox,
-                .ag-column-group-icons {
-                    margin-left: $ag-grid-size;
-                    margin-right: $ag-grid-size;
-                }
-            }
+    .ag-column-select-checkbox,
+    .ag-column-tool-panel-column-label,
+    .ag-column-group-icons {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
+    }
 
-        }
+    .ag-column-select-list {
+        @include ag-grid-border(top, $color: $ag-secondary-border-color);
+        padding-top: $ag-grid-size;
     }
 }

@@ -933,6 +933,11 @@
                 "enterprise": true
               },
               {
+                "title": "Chart Events",
+                "url": "javascript-grid-charts-integrated-chart-events/",
+                "enterprise": true
+              },
+              {
                 "title": "Chart Container",
                 "url": "javascript-grid-charts-integrated-container/",
                 "enterprise": true

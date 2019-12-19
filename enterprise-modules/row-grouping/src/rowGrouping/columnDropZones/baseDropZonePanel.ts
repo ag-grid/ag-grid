@@ -40,7 +40,6 @@ export abstract class BaseDropZonePanel extends Component {
 
     private state = BaseDropZonePanel.STATE_NOT_DRAGGING;
 
-    private logger: Logger;
     private dropTarget: DropTarget;
 
     // when we are considering a drop from a dnd event,
@@ -69,7 +68,7 @@ export abstract class BaseDropZonePanel extends Component {
 
     protected abstract getIconName(): string;
 
-    constructor(private horizontal: boolean, private valueColumn: boolean, private name: string) {
+    constructor(private horizontal: boolean, private valueColumn: boolean) {
         super(`<div class="ag-unselectable"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
@@ -100,7 +99,6 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
-        this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
         this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
 
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
@@ -117,7 +115,6 @@ export abstract class BaseDropZonePanel extends Component {
         _.addCssClass(el, `ag-column-drop${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         _.addCssClass(el, `ag-column-drop-${direction}${suffix}`);
-        _.addCssClass(el, `ag-column-drop-${this.name}${suffix}`);
     }
 
     private setupDropTarget(): void {
@@ -382,7 +379,7 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private createColumnComponent(column: Column, ghost: boolean): DropZoneColumnComp {
-        const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal, this.name);
+        const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
 
         this.beans.context.wireBean(columnComponent);

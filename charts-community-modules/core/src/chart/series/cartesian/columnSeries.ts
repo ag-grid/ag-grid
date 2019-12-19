@@ -5,7 +5,11 @@ import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
 import palette from "../../palettes";
-import { HighlightStyle, SeriesNodeDatum, CartesianTooltipRendererParams as ColumnTooltipRendererParams } from "../series";
+import {
+    HighlightStyle,
+    SeriesNodeDatum,
+    CartesianTooltipRendererParams as ColumnTooltipRendererParams
+} from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { sumPositiveValues } from "../../../util/array";
@@ -15,6 +19,7 @@ import { Shape } from "../../../scene/shape/shape";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
+import { chainObjects } from "../../../util/object";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yKey: string;
@@ -59,6 +64,22 @@ export class ColumnSeries extends CartesianSeries {
 
     static className = 'ColumnSeries';
 
+    static defaults = chainObjects(CartesianSeries.defaults, {
+        flipXY: false,
+        fills: palette.fills,
+        strokes: palette.strokes,
+        fillOpacity: 1,
+        strokeOpacity: 1,
+        xKey: '',
+        xName: '',
+        yKeys: [] as string[],
+        yNames: [] as string[],
+        grouped: false,
+        normalizedTo: undefined,
+        strokeWidth: 1,
+        shadow: undefined
+    });
+
     // Need to put column and label nodes into separate groups, because even though label nodes are
     // created after the column nodes, this only guarantees that labels will always be on top of columns
     // on the first run. If on the next run more columns are added, they might clip the labels
@@ -83,11 +104,13 @@ export class ColumnSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: ColumnTooltipRendererParams) => string;
 
-    @reactive(['dataChange']) fills: string[] = palette.fills;
-    @reactive(['dataChange']) strokes: string[] = palette.strokes;
+    @reactive(['layoutChange']) flipXY = ColumnSeries.defaults.flipXY;
 
-    @reactive(['layoutChange']) fillOpacity = 1;
-    @reactive(['layoutChange']) strokeOpacity = 1;
+    @reactive(['dataChange']) fills: string[] = ColumnSeries.defaults.fills;
+    @reactive(['dataChange']) strokes: string[] = ColumnSeries.defaults.strokes;
+
+    @reactive(['layoutChange']) fillOpacity = ColumnSeries.defaults.fillOpacity;
+    @reactive(['layoutChange']) strokeOpacity = ColumnSeries.defaults.strokeOpacity;
 
     constructor() {
         super();
@@ -105,8 +128,6 @@ export class ColumnSeries extends CartesianSeries {
         [ChartAxisDirection.X]: ['xKey'],
         [ChartAxisDirection.Y]: ['yKeys']
     };
-
-    @reactive(['layoutChange']) flipXY = false;
 
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
@@ -130,7 +151,7 @@ export class ColumnSeries extends CartesianSeries {
         return values;
     }
 
-    protected _xKey: string = '';
+    protected _xKey: string = ColumnSeries.defaults.xKey;
     set xKey(value: string) {
         if (this._xKey !== value) {
             this._xKey = value;
@@ -142,7 +163,7 @@ export class ColumnSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    protected _xName: string = '';
+    protected _xName: string = ColumnSeries.defaults.xName;
     set xName(value: string) {
         if (this._xName !== value) {
             this._xName = value;
@@ -159,7 +180,7 @@ export class ColumnSeries extends CartesianSeries {
      * If the {@link grouped} set to `true`, we get the grouped column series.
      * @param values
      */
-    protected _yKeys: string[] = [];
+    protected _yKeys: string[] = ColumnSeries.defaults.yKeys;
     set yKeys(values: string[]) {
         this._yKeys = values;
         this.yData = [];
@@ -179,7 +200,7 @@ export class ColumnSeries extends CartesianSeries {
         return this._yKeys;
     }
 
-    protected _yNames: string[] = [];
+    protected _yNames: string[] = ColumnSeries.defaults.yNames;
     set yNames(values: string[]) {
         this._yNames = values;
         this.update();
@@ -188,23 +209,14 @@ export class ColumnSeries extends CartesianSeries {
         return this._yNames;
     }
 
-    private _grouped: boolean = false;
-    set grouped(value: boolean) {
-        if (this._grouped !== value) {
-            this._grouped = value;
-            this.scheduleData();
-        }
-    }
-    get grouped(): boolean {
-        return this._grouped;
-    }
+    @reactive(['dataChange']) grouped = ColumnSeries.defaults.grouped;
 
     /**
      * The value to normalize the stacks to, when {@link grouped} is `false`.
      * Should be a finite positive value or `undefined`.
      * Defaults to `undefined` - stacks are not normalized.
      */
-    private _normalizedTo?: number;
+    private _normalizedTo?: number = ColumnSeries.defaults.normalizedTo;
     set normalizedTo(value: number | undefined) {
         const absValue = value ? Math.abs(value) : undefined;
 
@@ -217,7 +229,7 @@ export class ColumnSeries extends CartesianSeries {
         return this._normalizedTo;
     }
 
-    private _strokeWidth: number = 1;
+    private _strokeWidth: number = ColumnSeries.defaults.strokeWidth;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -228,7 +240,7 @@ export class ColumnSeries extends CartesianSeries {
         return this._strokeWidth;
     }
 
-    private _shadow?: DropShadow;
+    private _shadow?: DropShadow = ColumnSeries.defaults.shadow;
     set shadow(value: DropShadow | undefined) {
         if (this._shadow !== value) {
             this._shadow = value;
