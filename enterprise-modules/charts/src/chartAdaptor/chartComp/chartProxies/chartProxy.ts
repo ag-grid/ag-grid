@@ -12,6 +12,8 @@ import {
     PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
+    GridApi,
+    ColumnApi,
 } from "@ag-grid-community/core";
 import {
     AreaSeries,
@@ -20,7 +22,7 @@ import {
     Chart,
     ChartPalette,
     ChartPaletteName,
-    ColumnSeries as BarSeries,
+    ColumnSeries,
     DropShadow,
     Padding,
     palettes,
@@ -28,17 +30,20 @@ import {
 } from "ag-charts-community";
 
 export interface ChartProxyParams {
+    chartId: string;
     chartType: ChartType;
     width?: number;
     height?: number;
     parentElement: HTMLElement;
-    eventService: EventService;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartPaletteName: () => ChartPaletteName;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    eventService: EventService;
+    gridApi: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface FieldDefinition {
@@ -57,15 +62,22 @@ export interface UpdateChartParams {
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+    protected readonly chartId: string;
+    protected readonly chartType: ChartType;
+    protected readonly eventService: EventService;
+    private readonly gridApi: GridApi;
+    private readonly columnApi: ColumnApi;
+
     protected chart: TChart;
-    protected chartProxyParams: ChartProxyParams;
     protected customPalette: ChartPalette;
-    protected chartType: ChartType;
     protected chartOptions: TOptions;
 
-    protected constructor(chartProxyParams: ChartProxyParams) {
-        this.chartProxyParams = chartProxyParams;
+    protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
+        this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
+        this.eventService = chartProxyParams.eventService;
+        this.gridApi = chartProxyParams.gridApi;
+        this.columnApi = chartProxyParams.columnApi;
     }
 
     protected abstract createChart(options?: TOptions): TChart;
@@ -184,7 +196,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public setSeriesOption(expression: string, value: any): void {
         _.set(this.chartOptions.seriesDefaults, expression, value);
 
-        const mappings: { [key: string]: string } = {
+        const mappings: { [key: string]: string; } = {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
@@ -257,7 +269,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         seriesDefaults.shadow[property] = value;
 
-        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
+        const series = this.getChart().series as (ColumnSeries | AreaSeries | PieSeries)[];
 
         series.forEach(s => {
             if (!s.shadow) {
@@ -276,15 +288,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
-    protected raiseChartOptionsChangedEvent(): void {
+    public raiseChartOptionsChangedEvent(): void {
         const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartId: this.chartId,
             chartType: this.chartType,
             chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
+            api: this.gridApi,
+            columnApi: this.columnApi,
         });
 
-        this.chartProxyParams.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);
     }
 
     protected getDefaultFontOptions(): FontOptions {

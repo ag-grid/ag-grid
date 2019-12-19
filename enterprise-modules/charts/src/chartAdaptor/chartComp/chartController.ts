@@ -3,22 +3,20 @@ import {
     AgEvent,
     Autowired,
     BeanStub,
-    CellRangeParams,
     ChartModel,
-    ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
     ColumnApi,
     Events,
     EventService,
-    GetChartImageDataUrlParams,
     GridApi,
     IRangeController,
     PostConstruct,
+    GetChartImageDataUrlParams,
 } from "@ag-grid-community/core";
-import {ChartDataModel, ColState} from "./chartDataModel";
-import {ChartPalette, ChartPaletteName, palettes} from "ag-charts-community";
-import {ChartProxy} from "./chartProxies/chartProxy";
+import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartPalette, ChartPaletteName, palettes } from "ag-charts-community";
+import { ChartProxy } from "./chartProxies/chartProxy";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -89,7 +87,7 @@ export class ChartController extends BeanStub {
             chartType: this.model.getChartType(),
             chartPalette: this.getPaletteName(),
             chartOptions: this.chartProxy.getChartOptions(),
-            cellRange: this.getCurrentCellRangeParams(),
+            cellRange: this.model.getCellRangeParams(),
             getChartImageDataURL: (params: GetChartImageDataUrlParams): string => {
                 return this.chartProxy.getChartImageDataURL(params.type);
             }
@@ -138,7 +136,7 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getColStateForMenu(): { dimensionCols: ColState[], valueCols: ColState[] } {
+    public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[]; } {
         return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     }
 
@@ -183,19 +181,6 @@ export class ChartController extends BeanStub {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     }
 
-    private getCurrentCellRangeParams(): CellRangeParams {
-        const cellRanges = this.model.getCellRanges();
-        const firstCellRange = cellRanges[0];
-
-        return {
-            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
-            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
-        };
-    }
-
     private raiseChartUpdatedEvent(): void {
         const event: ChartModelUpdatedEvent = Object.freeze({
             type: ChartController.EVENT_CHART_UPDATED
@@ -205,21 +190,15 @@ export class ChartController extends BeanStub {
     }
 
     private raiseChartOptionsChangedEvent(): void {
-        const event: ChartOptionsChanged = Object.freeze({
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
-            chartType: this.getChartType(),
-            chartPalette: this.chartPaletteName,
-            chartOptions: this.getChartProxy().getChartOptions(),
-        });
-
-        this.eventService.dispatchEvent(event);
+        this.chartProxy.raiseChartOptionsChangedEvent();
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
         const event: ChartRangeSelectionChanged = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.getChartId(),
-            cellRange: this.getCurrentCellRangeParams(),
+            chartId: this.model.getChartId(),
+            cellRange: this.model.getCellRangeParams(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

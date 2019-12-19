@@ -14,20 +14,25 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService
+    ResizeObserverService,
+    GridApi,
+    ColumnApi,
+    ChartCreated,
+    ChartDestroyed,
+    Events
 } from "@ag-grid-community/core";
-import {ChartMenu} from "./menu/chartMenu";
-import {ChartController} from "./chartController";
-import {ChartDataModel, ChartModelParams} from "./chartDataModel";
-import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
-import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
-import {ChartProxy, ChartProxyParams, UpdateChartParams} from "./chartProxies/chartProxy";
-import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "./chartProxies/polar/doughnutChartProxy";
-import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {ChartPaletteName} from "ag-charts-community";
-import {ChartTranslator} from "./chartTranslator";
+import { ChartMenu } from "./menu/chartMenu";
+import { ChartController } from "./chartController";
+import { ChartDataModel, ChartModelParams } from "./chartDataModel";
+import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
+import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
+import { ChartProxy, ChartProxyParams, UpdateChartParams } from "./chartProxies/chartProxy";
+import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
+import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
+import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { ChartPaletteName } from "ag-charts-community";
+import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -61,6 +66,8 @@ export class GridChartComp extends Component {
     @Autowired('environment') private environment: Environment;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
@@ -71,11 +78,8 @@ export class GridChartComp extends Component {
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
 
-    private readonly params: GridChartParams;
-
-    constructor(params: GridChartParams) {
+    constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
-        this.params = params;
     }
 
     @PostConstruct
@@ -106,6 +110,7 @@ export class GridChartComp extends Component {
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
+        this.raiseChartCreatedEvent();
     }
 
     private createChart(): void {
@@ -129,6 +134,7 @@ export class GridChartComp extends Component {
         const isGrouping = this.model.isGrouping();
 
         const chartProxyParams: ChartProxyParams = {
+            chartId: this.model.getChartId(),
             chartType,
             processChartOptions: processChartOptionsFunc,
             getChartPaletteName: this.getChartPaletteName.bind(this),
@@ -137,9 +143,11 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             width,
             height,
-            eventService: this.eventService,
             grouping: isGrouping,
-            document: this.gridOptionsWrapper.getDocument()
+            document: this.gridOptionsWrapper.getDocument(),
+            eventService: this.eventService,
+            gridApi: this.gridApi,
+            columnApi: this.columnApi,
         };
 
         // set local state used to detect when chart type changes
@@ -330,6 +338,30 @@ export class GridChartComp extends Component {
         this.chartController.setChartRange(true);
     }
 
+    private raiseChartCreatedEvent(): void {
+        const chartModel = this.chartController.getChartModel();
+        const event: ChartCreated = Object.freeze({
+            type: Events.EVENT_CHART_CREATED,
+            chartId: chartModel.chartId,
+            chartModel,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private raiseChartDestroyedEvent(): void {
+        const event: ChartDestroyed = Object.freeze({
+            type: Events.EVENT_CHART_DESTROYED,
+            chartId: this.model.getChartId(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
+    }
+
     public destroy(): void {
         super.destroy();
 
@@ -356,5 +388,7 @@ export class GridChartComp extends Component {
         _.clearElement(eGui);
         // remove from parent, so if user provided container, we detach from the provided dom element
         _.removeFromParent(eGui);
+
+        this.raiseChartDestroyedEvent();
     }
 }

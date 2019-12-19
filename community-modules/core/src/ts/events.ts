@@ -8,6 +8,7 @@ import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
+import { ChartModel } from "./interfaces/IChartService";
 
 export { Events } from './eventKeys';
 
@@ -174,15 +175,26 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
     started: boolean;
 }
 
+export interface ChartCreated extends AgGridEvent {
+    chartId: string;
+    chartModel: ChartModel;
+}
+
 export interface ChartRangeSelectionChanged extends AgGridEvent {
     id: string;
+    chartId: string;
     cellRange: CellRangeParams;
 }
 
-export interface ChartOptionsChanged extends AgEvent {
+export interface ChartOptionsChanged extends AgGridEvent {
+    chartId: string;
     chartType: ChartType;
     chartPalette: string;
     chartOptions: ChartOptions<any>;
+}
+
+export interface ChartDestroyed extends AgGridEvent {
+    chartId: string;
 }
 
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
