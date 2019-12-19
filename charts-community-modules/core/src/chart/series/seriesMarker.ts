@@ -7,7 +7,8 @@ export class SeriesMarker extends Observable {
     @reactive(['change']) enabled = true;
 
     /**
-     * Marker constructor function. A series will create one marker instance per data point.
+     * One of the predefined marker names, or a marker constructor function (for user-defined markers).
+     * A series will create one marker instance per data point.
      */
     @reactive(['change']) shape: string | (new () => Marker) = Circle;
 
