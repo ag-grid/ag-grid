@@ -142,6 +142,7 @@ export class PieSeries extends PolarSeries {
     constructor() {
         super();
 
+        this.addEventListener('update', () => this.update());
         this.label.addEventListener('change', () => this.scheduleLayout());
         this.label.addEventListener('dataChange', () => this.scheduleData());
 
@@ -166,27 +167,8 @@ export class PieSeries extends PolarSeries {
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    private _angleKey: string = PieSeries.defaults.angleKey;
-    set angleKey(value: string) {
-        if (this._angleKey !== value) {
-            this._angleKey = value;
-            this.scheduleData();
-        }
-    }
-    get angleKey(): string {
-        return this._angleKey;
-    }
-
-    private _angleName: string = PieSeries.defaults.angleName;
-    set angleName(value: string) {
-        if (this._angleName !== value) {
-            this._angleName = value;
-            this.update();
-        }
-    }
-    get angleName(): string {
-        return this._angleName;
-    }
+    @reactive(['dataChange']) angleKey = PieSeries.defaults.angleKey;
+    @reactive(['update']) angleName = PieSeries.defaults.angleName;
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -194,49 +176,11 @@ export class PieSeries extends PolarSeries {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    private _radiusKey?: string = PieSeries.defaults.radiusKey;
-    set radiusKey(value: string | undefined) {
-        if (this._radiusKey !== value) {
-            this._radiusKey = value;
-            this.scheduleData();
-        }
-    }
-    get radiusKey(): string | undefined {
-        return this._radiusKey;
-    }
+    @reactive(['dataChange']) radiusKey = PieSeries.defaults.radiusKey;
+    @reactive(['update']) radiusName = PieSeries.defaults.radiusName;
 
-    private _radiusName?: string = PieSeries.defaults.radiusName;
-    set radiusName(value: string | undefined) {
-        if (this._radiusName !== value) {
-            this._radiusName = value;
-            this.update();
-        }
-    }
-    get radiusName(): string | undefined {
-        return this._radiusName;
-    }
-
-    private _labelKey?: string = PieSeries.defaults.labelKey;
-    set labelKey(value: string | undefined) {
-        if (this._labelKey !== value) {
-            this._labelKey = value;
-            this.scheduleData();
-        }
-    }
-    get labelKey(): string | undefined {
-        return this._labelKey;
-    }
-
-    private _labelName?: string = PieSeries.defaults.labelName;
-    set labelName(value: string | undefined) {
-        if (this._labelName !== value) {
-            this._labelName = value;
-            this.update();
-        }
-    }
-    get labelName(): string | undefined {
-        return this._labelName;
-    }
+    @reactive(['dataChange']) labelKey = PieSeries.defaults.labelKey;
+    @reactive(['update']) labelName = PieSeries.defaults.labelName;
 
     private _fills: string[] = PieSeries.defaults.fills;
     set fills(values: string[]) {
@@ -258,41 +202,13 @@ export class PieSeries extends PolarSeries {
         return this._strokes;
     }
 
-    private _fillOpacity: number = PieSeries.defaults.fillOpacity;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
-
-    private _strokeOpacity: number = PieSeries.defaults.strokeOpacity;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
+    @reactive(['layoutChange']) fillOpacity = PieSeries.defaults.fillOpacity;
+    @reactive(['layoutChange']) strokeOpacity = PieSeries.defaults.strokeOpacity;
 
     /**
      * The series rotation in degrees.
      */
-    private _rotation: number = PieSeries.defaults.rotation;
-    set rotation(value: number) {
-        if (this._rotation !== value) {
-            this._rotation = value;
-            this.scheduleData();
-        }
-    }
-    get rotation(): number {
-        return this._rotation;
-    }
+    @reactive(['dataChange']) rotation = PieSeries.defaults.rotation;
 
     @reactive(['layoutChange']) outerRadiusOffset = PieSeries.defaults.outerRadiusOffset;
 
