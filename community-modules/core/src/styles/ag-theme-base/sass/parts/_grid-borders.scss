@@ -3,9 +3,9 @@
 
     // Refactor this file, clean it up, use mixin, add vars to cater for alpine selection colors
 
-    @include ag-auto-rtl(".ag-cell", (
-        border-right: $ag-cell-horizontal-border
-    ));
+    .ag-cell {
+        @include ag-theme-rtl(( border-right: $ag-cell-horizontal-border ));
+    }
 
     // TODO clean up how selections happen, maybe move to new file or section
     .ag-ltr {

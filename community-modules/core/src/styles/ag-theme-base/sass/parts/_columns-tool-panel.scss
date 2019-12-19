@@ -29,11 +29,9 @@
         display: flex;
         align-items: center;
         margin-left: $ag-grid-size;
-    }
 
-    @include ag-auto-rtl(".ag-pivot-mode-select", (
-        margin-left: $ag-grid-size
-    ));
+        @include ag-theme-rtl(( margin-left: $ag-grid-size ));
+    }
 
     .ag-column-panel {
         // needs nesting because ag-column-select-panel is also used in header menu
@@ -45,16 +43,14 @@
     .ag-column-drop-vertical {
         padding-bottom: $ag-grid-size * 2;
 
-        // TODO specificity
-        > div:first-child > span:first-child {
-            margin-left: $ag-grid-size;
-            margin-right: $ag-grid-size;
-        }
-
-        // TODO nesting, naming
         &.ag-last-column-drop {
             border-bottom-width: 0;
         }
+    }
+
+    .ag-column-drop-vertical-icon {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
     }
 
     .ag-column-drop-vertical-empty-message {
@@ -63,15 +59,15 @@
         font-size: $ag-secondary-font-size;
         font-family: $ag-secondary-font-family;
         margin-top: $ag-grid-size;
+
+        @include ag-theme-rtl((
+            padding-left: $ag-icon-size + $ag-grid-size * 2,
+            padding-right: $ag-grid-size
+        ));
     }
 
     .ag-column-drop-vertical-list {
         cursor: default;
         margin-top: $ag-grid-size;
     }
-
-    @include ag-auto-rtl(".ag-column-drop-vertical .ag-column-drop-empty-message", (
-        padding-left: $ag-icon-size + $ag-grid-size * 2,
-        padding-right: $ag-grid-size
-    ));
 }

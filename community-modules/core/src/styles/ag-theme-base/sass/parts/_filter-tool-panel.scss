@@ -27,6 +27,8 @@
 
     .ag-filter-toolpanel-header-expand {
         margin: 0 $ag-grid-size / 2;
+
+        @include ag-theme-rtl(( padding-left: $ag-grid-size / 2 ));
     }
 
     .ag-filter-list-panel {
@@ -107,42 +109,34 @@
         @include ag-grid-border(top, $color: $ag-secondary-border-color)
     }
 
-    @include ag-auto-rtl(".ag-filter-panel-group-title", (
-        margin-left: $ag-grid-size
-    ));
+    .ag-filter-panel-group-title {
+        @include ag-theme-rtl(( margin-left: $ag-grid-size ));
+    }
 
     .ag-filter-toolpanel-instance {
         margin: $ag-grid-size 0;
     }
 
-    @include ag-auto-rtl(
-        ".ag-filter-toolpanel-header-expand",
-        (
-            padding-left: $ag-grid-size / 2
-        )
-    );
-
-    @include ag-auto-rtl(
-        ".ag-filter-panel .ag-group-item",
-        (
+    .ag-filter-panel-group-item {
+        @include ag-theme-rtl((
             margin-right: $ag-grid-size / 2,
             margin-left: 0
-        )
-    );
+        ));
+    }
 
     @for $i from 1 through 5 {
-        @include ag-auto-rtl(
-            ".ag-filter-panel-group-level-#{$i} .ag-group-title-bar",
-            (
+        // TODO nesting. This can be achieved without the level-n using padding
+        .ag-filter-panel-group-level-#{$i} .ag-group-title-bar {
+            @include ag-theme-rtl((
                 // TODO use a variable instead of rem
-                    padding-left: 1rem * ($i - 1)
-            )
-        );
-        @include ag-auto-rtl(
-            ".ag-filter-panel-group-level-#{$i} .ag-filter-toolpanel-header",
-            (
+                padding-left: 1rem * ($i - 1)
+            ));
+        }
+        .ag-filter-panel-group-level-#{$i} .ag-filter-toolpanel-header {
+            @include ag-theme-rtl((
+                // TODO use a variable instead of rem
                 padding-left: 1rem * $i
-            )
-        );
+            ));
+        }
     }
 }

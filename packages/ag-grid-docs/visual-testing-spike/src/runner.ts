@@ -87,6 +87,12 @@ const initInBrowser = (theme: string) => {
                     `
                     * {
                         transition: none !important;
+                    }
+                    ` +
+                    // disable subpixel antialiasing because it causes variations between monitors
+                    `
+                    * {
+                        -webkit-font-smoothing: antialiased; !important;
                     }`;
                 document.head.appendChild(style);
             }

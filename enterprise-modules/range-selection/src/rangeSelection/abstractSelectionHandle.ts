@@ -60,6 +60,8 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
                 this.onDragEnd(e);
                 this.clearValues();
                 this.rangeController.autoScrollService.ensureCleared();
+                // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
+                // be affected by a drag on any. Move it to the root element.
                 _.removeCssClass(document.body, `ag-dragging-${this.type}-handle`);
                 if (this.shouldDestroyOnEndDragging) {
                     this.destroy();

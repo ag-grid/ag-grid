@@ -400,8 +400,7 @@ export abstract class BaseDropZonePanel extends Component {
         const eGroupIcon = this.params.icon;
         const eTitleBar = document.createElement('div');
         this.addElementClasses(eTitleBar, 'title-bar');
-
-        _.addCssClass(eGroupIcon, 'ag-column-drop-icon');
+        this.addElementClasses(eGroupIcon, 'icon');
         _.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
 
         eTitleBar.appendChild(eGroupIcon);

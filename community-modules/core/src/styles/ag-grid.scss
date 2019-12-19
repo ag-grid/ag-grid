@@ -404,16 +404,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     height: 100%;
     width: 8px;
     cursor: col-resize;
+
+    @include ag-top-level-rtl((
+        right: -4px
+    ));
 }
 
-@include ag-auto-rtl(".ag-header-cell-resize", (
-    right: -4px
-));
-
 // TODO visual style
-@include ag-auto-rtl(".ag-header-expand-icon", (
-    padding-left: 4px
-));
+.ag-header-expand-icon {
+    @include ag-top-level-rtl(( padding-left: 4px ));
+}
 
 .ag-header-select-all {
     display: flex;
@@ -611,11 +611,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-// right-align numeric values in cells with wrappers
-@include ag-auto-rtl(".ag-numeric-cell .ag-cell-value", (
-    margin-left: auto
-));
 
 .ag-cell-wrapper {
     display: flex;
@@ -1097,11 +1092,9 @@ $ag-handleSize: 5px;
 .ag-rich-select-value-icon {
     flex: 1 1 auto;
     order: 1;
+    @include ag-top-level-rtl(( text-align: right ));
 }
 
-@include ag-auto-rtl(".ag-rich-select-value-icon", (
-    text-align: right
-));
 
 .ag-rich-select-list {
     position: relative;
@@ -1191,13 +1184,13 @@ $ag-handleSize: 5px;
     z-index: 1;
 }
 
-@include ag-auto-rtl(".ag-side-bar-left .ag-tool-panel-horizontal-resize", (
-    right: -3px
-));
+.ag-side-bar-left .ag-tool-panel-horizontal-resize {
+    @include ag-top-level-rtl(( right: -3px ));
+}
 
-@include ag-auto-rtl(".ag-side-bar-right .ag-tool-panel-horizontal-resize", (
-    left: -3px
-));
+.ag-side-bar-right .ag-tool-panel-horizontal-resize {
+    @include ag-top-level-rtl(( left: -3px ));
+}
 
 .ag-filter-loading {
     // TODO visual styles
@@ -1551,12 +1544,13 @@ $ag-row-group-indent-size: 10px !default;
 
 // Default values for themes that do not use the mixins
 @for $i from 1 to 20 {
-    @include ag-auto-rtl(".ag-ltr .ag-toolpanel-indent-#{$i}", (
-        padding-left: $i * $ag-toolpanel-indent-size
-    ));
-    @include ag-auto-rtl(".ag-ltr .ag-row-group-indent-#{$i}", (
-        padding-left: $i * $ag-row-group-indent-size
-    ));
+    .ag-ltr .ag-toolpanel-indent-#{$i} {
+        @include ag-top-level-rtl(( padding-left: $i * $ag-toolpanel-indent-size ));
+    }
+    
+    .ag-ltr .ag-row-group-indent-#{$i} {
+        @include ag-top-level-rtl(( padding-left: $i * $ag-row-group-indent-size ));
+    }
 }
 
 .ag-ltr {

@@ -11,9 +11,9 @@
         }
     }
 
-    @include ag-auto-rtl(".ag-toolpanel-add-group-indent", (
-        margin-left: $ag-toolpanel-indent-size + $ag-grid-size
-    ));
+    .ag-toolpanel-add-group-indent {
+        @include ag-theme-rtl(( margin-left: $ag-toolpanel-indent-size + $ag-grid-size ));
+    }
 
     .ag-tool-panel-wrapper {
         border-right: 0;

@@ -91,20 +91,18 @@
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
-    @include ag-auto-rtl(
-        ".ag-row-drag"
-        // TODO nesting
-        ".ag-cell-wrapper .ag-selection-checkbox"
-        // TODO nesting
-        ".ag-cell-wrapper .ag-group-expanded"
-        // TODO nesting
-        ".ag-cell-wrapper .ag-group-contracted",
-        ( margin-right: $ag-cell-widget-spacing )
-    );
-    @include ag-auto-rtl(
-        ".ag-group-child-count",
-        ( margin-left: 2px )
-    );
+
+    // TODO nesting, over-long selector list
+    .ag-row-drag,
+    .ag-cell-wrapper .ag-selection-checkbox,
+    .ag-cell-wrapper .ag-group-expanded,
+    .ag-cell-wrapper .ag-group-contracted {
+        @include ag-theme-rtl(( margin-right: $ag-cell-widget-spacing ));
+    }
+    
+    .ag-group-child-count {
+        @include ag-theme-rtl(( margin-left: 2px ));
+    }
 
     .ag-group {
         background-color: $ag-group-background-color;

@@ -1,60 +1,131 @@
+/**
+    Automatically generate rtl styles from provided ltr styles by flipping "left" and "right"
+    in property names and values.
 
-/*
-Helper to define a style in LTR form and generate the RTL form
-For example, this scss:
+    For example:
 
-@include ag-auto-rtl(".foo", (
-    padding-right: 2px,
-    border-left-width: 0
-));
+    .foo {
+        @include ag-top-level-rtl((margin-left: 10px));
+    }
 
-Will emit:
+    Will emit:
 
-.ag-ltr .foo {
-  padding-right: 2px;
-  border-left-width: 0; }
-
-.ag-rtl .foo {
-  padding-left: 2px;
-  border-right-width: 0; }
+    .ag-ltr .foo {
+      margin-left: 10px;
+    }
+    .ag-rtl .foo {
+      margin-right: 10px;
+    }
 */
-@mixin ag-auto-rtl($selectors, $rules) {
-    @each $selector in $selectors {
-        $rtl-rules: ();
-        .ag-ltr #{$selector} {
+@mixin ag-top-level-rtl($rules) {
+    @if length(nth(&, 1)) < 1 {
+        @error "ag-top-level-rtl() can't be used at the top level of a css file, only nested in a selector.";
+    }
+    @if str-index(nth(nth(&, 1), 1), ".ag-theme-") != null {
+        @error "ag-top-level-rtl() should not be used in a theme, use ag-theme-rtl() instead.";
+    }
+    .ag-ltr & {
+        @each $property, $value in $rules {
+            #{$property}: $value;
+        }
+    }
+    .ag-rtl & {
+        @each $property, $value in ag-get-rtl-rules($rules) {
+            #{$property}: $value;
+        }
+    }
+}
+
+/**
+    Like ag-top-level-rtl, automatically generate rtl styles from provided ltr styles by flipping
+    "left" and "right" in property names and values. However this mixin is for use in themes. Because the
+    div with the theme class is outside the div with the .ag-rtl class, we need to keep the theme class
+    higher than the .ag-rtl.
+
+    For example:
+
+    .ag-theme-balham {
+        .foo {
+            @include ag-theme-rtl((margin-left: 10px));
+        }
+    }
+
+    Will emit:
+
+    .ag-theme-balham .ag-ltr .foo {
+      margin-left: 10px;
+    }
+    .ag-theme-balham .ag-rtl .foo {
+      margin-right: 10px;
+    }
+
+    Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
+*/
+@mixin ag-theme-rtl($rules) {
+    @if length(nth(&, 1)) < 2 {
+        @error "ag-theme-rtl() can't be used at the top level of a theme, only nested in a selector.";
+    }
+    @at-root {
+        #{ag-insert-class-after-theme(&, ".ag-ltr")} {
             @each $property, $value in $rules {
-                @if str-index($property, "-right") {
-                    $rtl-property: ag-str-replace($property, "-right", "-left");
-                    $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
-                }
-                @else if str-index($property, "-left") {
-                    $rtl-property: ag-str-replace($property, "-left", "-right");
-                    $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
-                }
-                @else if $property == "right" {
-                    $rtl-rules: map-merge($rtl-rules, (left: $value));
-                }
-                @else if $property == "left" {
-                    $rtl-rules: map-merge($rtl-rules, (right: $value));
-                }
-                @else if $value == "right" {
-                    $rtl-rules: map-merge($rtl-rules, ($property: left));
-                }
-                @else if $value == "left" {
-                    $rtl-rules: map-merge($rtl-rules, (property: right));
-                }
-                @else {
-                    @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
-                }
                 #{$property}: $value;
             }
         }
-        .ag-rtl #{$selector} {
-            @each $property, $value in $rtl-rules {
+        #{ag-insert-class-after-theme(&, ".ag-rtl")} {
+            @each $property, $value in ag-get-rtl-rules($rules) {
                 #{$property}: $value;
             }
         }
     }
+}
+
+@function ag-get-rtl-rules($ltr-rules) {
+    $rtl-rules: ();
+    @each $property, $value in $ltr-rules {
+        @if str-index($property, "-right") {
+            $rtl-property: ag-str-replace($property, "-right", "-left");
+            $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if str-index($property, "-left") {
+            $rtl-property: ag-str-replace($property, "-left", "-right");
+            $rtl-rules: map-merge($rtl-rules, ($rtl-property: $value));
+        }
+        @else if $property == "right" {
+            $rtl-rules: map-merge($rtl-rules, (left: $value));
+        }
+        @else if $property == "left" {
+            $rtl-rules: map-merge($rtl-rules, (right: $value));
+        }
+        @else if $value == "right" {
+            $rtl-rules: map-merge($rtl-rules, ($property: left));
+        }
+        @else if $value == "left" {
+            $rtl-rules: map-merge($rtl-rules, (property: right));
+        }
+        @else {
+            @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
+        }
+    }
+    @return $rtl-rules;
+}
+
+@function ag-insert-class-after-theme($selectors, $class) {
+    // this needs to do a 2-level loop, because the selector list returned by & in Sass is a 2D list,
+    // e.g.  .foo .bar, .foo .baz { ... } is ((".foo", ".bar"), (".foo", ".baz"))
+    $selector-list: ();
+    @each $selector in $selectors {
+        $result: ();
+        @for $i from 1 through length($selector) {
+            $item: nth($selector, $i);
+            $result: append($result, $item);
+            $is-theme-class: str-index($item, ".ag-theme-");
+            @if $is-theme-class {
+                $result: append($result, $class);
+            }
+        }
+        $selector-list: append($selector-list, $result, comma);
+    }
+    @return $selector-list;
 }
 
 @function ag-str-replace($string, $search, $replace: '') {

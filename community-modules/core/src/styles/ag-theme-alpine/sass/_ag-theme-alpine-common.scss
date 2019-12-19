@@ -350,18 +350,17 @@
     ////////////////////////////////////////
     // Rich Select
     ////////////////////////////////////////
-    .ag-rich-select {
-        .ag-rich-select-value {
-            border-bottom: 1px solid $ag-secondary-border-color;
-        }
+    
+    .ag-rich-select-value {
+        border-bottom: 1px solid $ag-secondary-border-color;
+    }
 
-        .ag-virtual-list-item {
-            height: $ag-grid-size * 5;
-        }
+    .ag-rich-select-virtual-list-item {
+        height: $ag-grid-size * 5;
+    }
 
-        .ag-rich-select-row-selected {
-            @include ag-active-invert;
-        }
+    .ag-rich-select-row-selected {
+        @include ag-active-invert;
     }
 
     ////////////////////////////////////////
@@ -450,9 +449,6 @@
     .ag-column-drop-horizontal {
         // Align the first pill to the header
         font: $ag-font-chrome;
-        .ag-icon-group {
-            margin-right: $ag-grid-size * 2;
-        }
     }
 
     .ag-column-drop-cell {
@@ -518,28 +514,29 @@
 
     .ag-column-drop-vertical {
         padding-top: 0;
+    }
 
-        & > div:first-child {
-            background-color: $ag-color-background;
-            padding: $ag-grid-size * 2 $ag-grid-size * 2;
-            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
-            & > span:first-child {
-                margin-left: 0px;
-                // display: none;
-            }
-        }
+    .ag-column-drop-vertical-title-bar {
+        background-color: $ag-color-background;
+        padding: $ag-grid-size * 2 $ag-grid-size * 2;
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+    }
 
-        .ag-column-drop-list {
-            padding: $ag-grid-size;
-        }
+    .ag-column-drop-vertical-icon {
+        margin-left: 0px;
+        // display: none;
+    }
 
-        .ag-column-drop-empty-message {
-            font-weight: inherit;
-            opacity: 0.5;
-            border: 1px dashed $ag-border-color;
-            margin: $ag-grid-size * 2;
-            padding: $ag-grid-size * 2;
-        }
+    .ag-column-drop-vertical-list {
+        padding: $ag-grid-size;
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        font-weight: inherit;
+        opacity: 0.5;
+        border: 1px dashed $ag-border-color;
+        margin: $ag-grid-size * 2;
+        padding: $ag-grid-size * 2;
     }
 
     // filter panel
@@ -868,7 +865,7 @@
     }
 
     // RTL Overrides
-    // TODO simplify this a lot, use ag-auto-rtl, and move stuff to the base
+    // TODO simplify this a lot, use ag-theme-rtl, and move stuff to the base
     .ag-rtl {
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;

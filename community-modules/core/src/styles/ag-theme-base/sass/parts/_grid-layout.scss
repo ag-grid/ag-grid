@@ -6,19 +6,17 @@
     }
     
     @for $i from 1 to 20 {
-        @include ag-auto-rtl(".ag-row-group-indent-#{$i}", (
-            padding-left: $i * $ag-row-group-indent-size
-        ));
+        .ag-row-group-indent-#{$i} {
+            @include ag-theme-rtl(( padding-left: $i * $ag-row-group-indent-size ));
+        }
     }
 
-
-    @include ag-auto-rtl(".ag-row-group-leaf-indent", (
-        margin-left: $ag-row-group-indent-size
-    ));
+    .ag-row-group-leaf-indent {
+        @include ag-theme-rtl(( margin-left: $ag-row-group-indent-size ));
+    }
 
     .ag-rtl {
         text-align: right;
-        
 
         .ag-cell:not(.ag-cell-focus),
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
@@ -41,8 +39,6 @@
     .ag-cell {
         -webkit-font-smoothing: subpixel-antialiased;
     }
-
-
 
     .ag-value-change-delta {
         padding-right: 2px;
@@ -121,9 +117,14 @@
         background-color: $ag-hover-color;
     }
 
-    @include ag-auto-rtl(".ag-numeric-cell", (
-        text-align: right
-    ));
+    .ag-numeric-cell {
+        @include ag-theme-rtl(( text-align: right ));
+    }
+
+    // right-align numeric values in cells with wrappers
+    .ag-numeric-cell .ag-cell-value {
+        @include ag-theme-rtl(( margin-left: auto ));
+    }
 
     .ag-cell {
         @include ag-grid-cell($ag-row-height - 2, $ag-cell-horizontal-padding);

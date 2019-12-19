@@ -5,6 +5,8 @@
         background-color: $ag-panel-background-color;
         height: $ag-row-height;
         @include ag-grid-border(bottom);
+
+        @include ag-theme-rtl(( padding-left: $ag-cell-horizontal-padding ));
     }
 
     .ag-column-drop-horizontal-cell-separator {
@@ -16,13 +18,9 @@
         opacity: $ag-disabled-foreground-color-opacity;
     }
 
-    @include ag-auto-rtl(".ag-column-drop-horizontal", (
-        padding-left: $ag-cell-horizontal-padding
-    ));
-
-    @include ag-auto-rtl(".ag-column-drop-horizontal .ag-column-drop-icon", (
-        margin-right: $ag-cell-horizontal-padding
-    ));
+    .ag-column-drop-horizontal-icon {
+        @include ag-theme-rtl(( margin-right: $ag-cell-horizontal-padding ));
+    }
 
     .ag-column-drop-cell {
         background: $ag-chip-background-color;
