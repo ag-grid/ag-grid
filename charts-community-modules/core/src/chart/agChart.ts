@@ -15,7 +15,7 @@ const mappings = {
     cartesian: {
         constructor: CartesianChart, // Constructor function for the `cartesian` type.
         // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
-        // is configured the same way, via the properties, and makes the factory patter work well) but the charts
+        // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
         // themselves are the exceptions.
         // If a chart config has the (optional) `document` property, it will be passed to the constructor.
         // There is no actual `document` property on the chart, it can only be supplied during instantiation.
