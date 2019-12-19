@@ -54,6 +54,8 @@ class PieSeriesLabel extends Label {
 
 export class PieSeries extends PolarSeries {
 
+    static className = 'PieSeries';
+
     static defaults = chainObjects(PolarSeries.defaults, {
         title: undefined,
         calloutColors: palette.strokes,
@@ -81,8 +83,6 @@ export class PieSeries extends PolarSeries {
         strokeWidth: 1,
         shadow: undefined
     });
-
-    static className = 'PieSeries';
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
