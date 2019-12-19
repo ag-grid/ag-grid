@@ -1,21 +1,16 @@
 
 @mixin ag-theme-base-part-columns-tool-panel {
     
-    .ag-primary-cols-header-panel {
+    // TODO move to widgets
+    .ag-column-select-header {
         border-top: 1px solid $ag-border-color;
         height: $ag-header-height;
         align-items: center;
+    }
 
-        // TODO specificity
-        > div {
-            cursor: pointer;
-            margin: 0 $ag-grid-size;
-        }
-
-        .ag-filter-body {
-            margin-left: $ag-grid-size;
-            margin-right: $ag-grid-size;
-        }
+    .ag-column-select-header-icon {
+        cursor: pointer;
+        margin: 0 $ag-grid-size;
     }
 
     .ag-pivot-mode-panel {
@@ -33,11 +28,8 @@
         @include ag-theme-rtl(( margin-left: $ag-grid-size ));
     }
 
-    .ag-column-panel {
-        // needs nesting because ag-column-select-panel is also used in header menu
-        .ag-column-select-panel {
-            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
-        }
+    .ag-column-panel-column-select {
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
     }
 
     .ag-column-drop-vertical {

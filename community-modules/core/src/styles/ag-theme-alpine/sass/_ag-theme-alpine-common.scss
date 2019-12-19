@@ -366,56 +366,54 @@
     ////////////////////////////////////////
     // Column Chooser
     ////////////////////////////////////////
-    .ag-column-select-panel {
-        .ag-primary-cols-header-panel {
-            border-top: 0;
-            padding-left: $ag-grid-size * 1;
-            padding-top: $ag-grid-size * 2;
-            padding-bottom: $ag-grid-size * 2;
-            height: auto;
+    .ag-column-select-header {
+        border-top: 0;
+        padding-left: $ag-grid-size * 1;
+        padding-top: $ag-grid-size * 2;
+        padding-bottom: $ag-grid-size * 2;
+        height: auto;
 
-            & > [ref='eExpand'] {
-                margin-left: $ag-grid-size;
-            }
-
-            & > [ref='eExpand'].ag-hidden + div {
-                margin-left: $ag-grid-size * 2;
-            }
-
-            .ag-checkbox {
-                @include ag-checkbox($ag-color-primary);
-            }
-
-            .ag-input-wrapper {
-                margin-right: $ag-grid-size * 2;
-            }
+        & > [ref='eExpand'] {
+            margin-left: $ag-grid-size;
         }
 
-        .ag-primary-cols-list-panel {
+        & > [ref='eExpand'].ag-hidden + div {
             margin-left: $ag-grid-size * 2;
-            margin-right: $ag-grid-size * 2;
-            padding-left: 0;
         }
 
-        .ag-primary-cols-list-panel .ag-checkbox input {
+        .ag-checkbox {
             @include ag-checkbox($ag-color-primary);
         }
 
-        .ag-primary-cols-list-panel .ag-column-group-icons {
-            margin-left: 0;
+        .ag-input-wrapper {
+            margin-right: $ag-grid-size * 2;
         }
+    }
 
-        .ag-primary-cols-list-panel > div {
-            height: $ag-grid-size * 5;
-        }
+    .ag-column-select-list {
+        margin-left: $ag-grid-size * 2;
+        margin-right: $ag-grid-size * 2;
+        padding-left: 0;
+    }
 
-        .ag-primary-cols-filter-wrapper.ag-input-wrapper {
-            overflow: visible;
-        }
+    .ag-column-select-list .ag-checkbox input {
+        @include ag-checkbox($ag-color-primary);
+    }
 
-        .ag-primary-cols-filter {
-            @extend %input-box;
-        }
+    .ag-column-select-list .ag-column-group-icons {
+        margin-left: 0;
+    }
+
+    .ag-column-select-list > div {
+        height: $ag-grid-size * 5;
+    }
+
+    .ag-column-select-header-filter-wrapper.ag-input-wrapper {
+        overflow: visible;
+    }
+
+    .ag-column-select-header-filter {
+        @extend %input-box;
     }
 
     ////////////////////////////////////////
@@ -911,19 +909,17 @@
         ////////////////////////////////////////
         // Column Chooser
         ////////////////////////////////////////
-        .ag-column-select-panel {
-            .ag-primary-cols-header-panel {
-                padding-right: $ag-grid-size * 1;
+        .ag-column-select-header {
+            padding-right: $ag-grid-size * 1;
 
-                & > [ref='eExpand'] {
-                    margin-right: $ag-grid-size;
-                    margin-left: 0;
-                }
+            & > [ref='eExpand'] {
+                margin-right: $ag-grid-size;
+                margin-left: 0;
+            }
 
-                & > [ref='eExpand'].ag-hidden + div {
-                    margin-right: $ag-grid-size * 2;
-                    margin-left: 0;
-                }
+            & > [ref='eExpand'].ag-hidden + div {
+                margin-right: $ag-grid-size * 2;
+                margin-left: 0;
             }
         }
 
@@ -967,16 +963,16 @@
             }
         }
 
-        .ag-column-select-panel .ag-primary-cols-header-panel .ag-input-wrapper {
+        .ag-column-select .ag-column-select-header .ag-input-wrapper {
             margin-left: $ag-grid-size;
             margin-right: $ag-grid-size;
         }
 
-        .ag-column-select-panel .ag-column-tool-panel-column-group .ag-column-group-icons {
+        .ag-column-select .ag-column-tool-panel-column-group .ag-column-group-icons {
             margin: 0;
         }
 
-        .ag-column-select-panel .ag-column-tool-panel-column .ag-column-select-checkbox {
+        .ag-column-select .ag-column-tool-panel-column .ag-column-select-checkbox {
             margin: 0;
             margin-left: $ag-grid-size;
         }

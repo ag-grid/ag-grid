@@ -73,7 +73,7 @@
 
     // tool panel
     .ag-tool-panel-wrapper {
-        .ag-column-select-panel {
+        .ag-column-select {
             .ag-column-tool-panel-column-group,
             .ag-column-tool-panel-column {
                 min-height: $ag-grid-size * 5;
@@ -86,7 +86,7 @@
         height: $ag-grid-size * 7;
     }
 
-    .ag-column-select-panel {
+    .ag-column-select {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
             height: $ag-grid-size * 5;

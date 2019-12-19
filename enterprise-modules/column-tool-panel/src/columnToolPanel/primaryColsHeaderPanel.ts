@@ -49,11 +49,11 @@ export class PrimaryColsHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-            `<div class="ag-primary-cols-header-panel" role="presentation">
-                <div ref="eExpand"></div>
-                <div ref="eSelect"></div>
-                <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                    <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate(
+            `<div class="ag-column-select-header" role="presentation">
+                <div ref="eExpand" class="ag-column-select-header-icon"></div>
+                <div ref="eSelect" class="ag-column-select-header-icon"></div>
+                <div class="ag-input-wrapper ag-column-select-header-filter-wrapper" ref="eFilterWrapper" role="presentation">
+                    <input class="ag-column-select-header-filter" ref="eFilterTextField" type="text" placeholder="${translate(
                     "SearchOoo",
                     "Search..."
                     )}">

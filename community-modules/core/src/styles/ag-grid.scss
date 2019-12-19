@@ -451,7 +451,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
 }
 
-.ag-column-select-panel {
+.ag-column-select {
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -460,20 +460,20 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex-basis: 0;
 }
 
-.ag-primary-cols-header-panel {
+.ag-column-select-header {
     display: flex;
     flex: none;
 }
 
-.ag-primary-cols-filter-wrapper {
+.ag-column-select-header-filter-wrapper {
     flex: 1 1 auto;
 }
 
-.ag-primary-cols-filter {
+.ag-column-select-header-filter {
     width: 100%;
 }
 
-.ag-primary-cols-list-panel {
+.ag-column-select-list {
     flex: 1 1 auto;
     overflow: auto;
 }
@@ -1070,7 +1070,7 @@ $ag-handleSize: 5px;
     white-space: nowrap;
 }
 
-.ag-menu-column-select-wrapper .ag-column-select-panel {
+.ag-menu-column-select-wrapper .ag-column-select {
     height: 100%;
 }
 

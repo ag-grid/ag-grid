@@ -25,7 +25,7 @@ export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
+    public static TEMPLATE = `<div class="ag-column-select-list"></div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;

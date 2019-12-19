@@ -56,7 +56,7 @@ export const specs: SpecDefinition[] = [
                     // group some rows (first drag handle is a group of 3 rows which will all be grouped when we drag it to the drop zone)
                     await drag({
                         page,
-                        from: '.ag-primary-cols-list-panel .ag-drag-handle',
+                        from: '.ag-column-select-list .ag-drag-handle',
                         to: '.ag-column-drop-empty-message'
                     });
                     await page.click('[row-index="0"] .ag-icon-tree-closed');

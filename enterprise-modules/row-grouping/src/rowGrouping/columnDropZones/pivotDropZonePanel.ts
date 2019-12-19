@@ -27,7 +27,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     @Autowired('gridApi') private gridApi: GridApi;
 
     constructor(horizontal: boolean) {
-        super(horizontal, false, 'pivot');
+        super(horizontal, false);
     }
 
     @PostConstruct

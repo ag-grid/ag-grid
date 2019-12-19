@@ -55,7 +55,7 @@ export class DropZoneColumnComp extends Component {
 
     private popupShowing = false;
 
-    constructor(private column: Column, private dragSourceDropTarget: DropTarget, private ghost: boolean, private valueColumn: boolean, private horizontal: boolean, private name: string) {
+    constructor(private column: Column, private dragSourceDropTarget: DropTarget, private ghost: boolean, private valueColumn: boolean, private horizontal: boolean) {
         super();
     }
 
@@ -228,7 +228,6 @@ export class DropZoneColumnComp extends Component {
         _.addCssClass(el, `ag-column-drop-cell${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         _.addCssClass(el, `ag-column-drop-${direction}-cell${suffix}`);
-        _.addCssClass(el, `ag-column-drop-${this.name}-cell${suffix}`);
     }
 }
 
