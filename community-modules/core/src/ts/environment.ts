@@ -9,10 +9,19 @@ interface HardCodedSize {
         [key in SASS_PROPERTIES]?: number;
     };
 }
+
+const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
 
 const HARD_CODED_SIZES: HardCodedSize = {
+    // this item is required for custom themes
+    'ag-theme-custom': {
+        headerHeight: 25,
+        virtualItemHeight: BASE_GRID_SIZE * 5,
+        rowHeight: 25,
+        chartMenuPanelWidth: 220
+    },
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
         virtualItemHeight: MAT_GRID_SIZE * 5,
@@ -56,7 +65,7 @@ export class Environment {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'classic');
+        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
 
@@ -85,7 +94,8 @@ export class Environment {
 
             if (document.body) {
                 document.body.appendChild(div);
-                calculatedValue = parseInt(window.getComputedStyle(el).height, 10);
+                const sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
                 document.body.removeChild(div);
             }
         }
@@ -106,7 +116,8 @@ export class Environment {
     }
 
     public chartMenuPanelWidth() {
-        return HARD_CODED_SIZES[this.getTheme().themeFamily].chartMenuPanelWidth;
+        const theme = this.getTheme().themeFamily;
+        return this.getSassVariable(theme, 'chartMenuPanelWidth');
     }
 
     public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
