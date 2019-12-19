@@ -14,6 +14,7 @@ import {SetFilterModule} from "@ag-grid-enterprise/set-filter";
 import {SideBarModule} from "@ag-grid-enterprise/side-bar";
 import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
 import {ViewportRowModelModule} from "@ag-grid-enterprise/viewport-row-model";
+import {ClipboardModule} from "@ag-grid-enterprise/clipboard";
 
 ModuleRegistry.register(ColumnsToolPanelModule as any);
 ModuleRegistry.register(ExcelExportModule as any);
@@ -29,6 +30,7 @@ ModuleRegistry.register(SetFilterModule as any);
 ModuleRegistry.register(SideBarModule as any);
 ModuleRegistry.register(StatusBarModule as any);
 ModuleRegistry.register(ViewportRowModelModule as any);
+ModuleRegistry.register(ClipboardModule as any);
 
 export {LicenseManager} from "@ag-grid-enterprise/core";
 export {SetFilter} from "@ag-grid-enterprise/set-filter";
