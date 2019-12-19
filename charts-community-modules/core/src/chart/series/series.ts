@@ -4,6 +4,7 @@ import { Shape } from "../../scene/shape/shape";
 import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
+import { chainObjects } from "../../util/object";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -43,6 +44,12 @@ export interface HighlightStyle {
 
 export abstract class Series extends Observable {
 
+    static defaults = chainObjects({}, {
+        data: undefined,
+        visible: true,
+        showInLegend: true
+    });
+
     readonly id: string = this.createId();
 
     /**
@@ -50,6 +57,7 @@ export abstract class Series extends Observable {
      */
     readonly group: Group = new Group();
 
+    // Package-level visibility, not meant to be set by the user.
     chart?: Chart;
     xAxis: ChartAxis;
     yAxis: ChartAxis;
@@ -59,9 +67,9 @@ export abstract class Series extends Observable {
 
     tooltipEnabled: boolean = false;
 
-    @reactive(['dataChange']) data?: any[];
-    @reactive(['dataChange']) visible = true;
-    @reactive(['layoutChange']) showInLegend = true;
+    @reactive(['dataChange']) data?: any[] = Series.defaults.data;
+    @reactive(['dataChange']) visible = Series.defaults.visible;
+    @reactive(['layoutChange']) showInLegend = Series.defaults.showInLegend;
 
     /**
      * Returns the actual keys used (to fetch the values from `data` items) for the given direction.

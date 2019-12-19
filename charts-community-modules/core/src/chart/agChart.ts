@@ -83,6 +83,9 @@ const mappings = {
             pie: {
                 constructor: PieSeries
             }
+        },
+        legend: {
+            constructor: Legend
         }
     }
 } as any;

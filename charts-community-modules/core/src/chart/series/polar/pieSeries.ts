@@ -18,6 +18,7 @@ import { Shape } from "../../../scene/shape/shape";
 import { reactive } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { chainObjects } from "../../../util/object";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -53,6 +54,34 @@ class PieSeriesLabel extends Label {
 
 export class PieSeries extends PolarSeries {
 
+    static defaults = chainObjects(PolarSeries.defaults, {
+        title: undefined,
+        calloutColors: palette.strokes,
+        calloutStrokeWidth: 1,
+        calloutLength: 10,
+        labelOffset: 3,
+        labelFontStyle: undefined,
+        labelFontWeight: undefined,
+        labelFontSize: 12,
+        labelFontFamily: 'Verdana, sans-serif',
+        labelColor: 'black',
+        angleKey: '',
+        angleName: '',
+        radiusKey: undefined,
+        radiusName: undefined,
+        labelKey: undefined,
+        labelName: undefined,
+        fills: palette.fills,
+        strokes: palette.strokes,
+        fillOpacity: 1,
+        strokeOpacity: 1,
+        rotation: 0,
+        outerRadiusOffset: 0,
+        innerRadiusOffset: 0,
+        strokeWidth: 1,
+        shadow: undefined
+    });
+
     static className = 'PieSeries';
 
     private radiusScale: LinearScale = new LinearScale();
@@ -75,7 +104,7 @@ export class PieSeries extends PolarSeries {
     // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
     public seriesItemEnabled: boolean[] = [];
 
-    private _title?: Caption;
+    private _title?: Caption = PieSeries.defaults.title;
     set title(value: Caption | undefined) {
         const oldTitle = this._title;
 
@@ -102,38 +131,11 @@ export class PieSeries extends PolarSeries {
     /**
      * Defaults to make the callout colors the same as {@link strokeStyle}.
      */
-    private _calloutColors: string[] = palette.strokes;
-    set calloutColors(value: string[]) {
-        if (this._calloutColors !== value) {
-            this._calloutColors = value;
-            this.scheduleLayout();
-        }
-    }
-    get calloutColors(): string[] {
-        return this._calloutColors;
-    }
+    @reactive(['layoutChange']) calloutColors = PieSeries.defaults.calloutColors;
 
-    private _calloutStrokeWidth: number = 1;
-    set calloutStrokeWidth(value: number) {
-        if (this._calloutStrokeWidth !== value) {
-            this._calloutStrokeWidth = value;
-            this.scheduleLayout();
-        }
-    }
-    get calloutStrokeWidth(): number {
-        return this._calloutStrokeWidth;
-    }
+    @reactive(['layoutChange']) calloutStrokeWidth = PieSeries.defaults.calloutStrokeWidth;
 
-    private _calloutLength: number = 10;
-    set calloutLength(value: number) {
-        if (this._calloutLength !== value) {
-            this._calloutLength = value;
-            this.scheduleLayout();
-        }
-    }
-    get calloutLength(): number {
-        return this._calloutLength;
-    }
+    @reactive(['layoutChange']) calloutLength = PieSeries.defaults.calloutLength;
 
     readonly label = new PieSeriesLabel();
 
@@ -148,77 +150,23 @@ export class PieSeries extends PolarSeries {
         });
     }
 
-    private _labelOffset: number = 3; // from the callout line
-    set labelOffset(value: number) {
-        if (this._labelOffset !== value) {
-            this._labelOffset = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelOffset(): number {
-        return this._labelOffset;
-    }
+    @reactive(['layoutChange']) labelOffset = PieSeries.defaults.labelOffset; // from the callout line
 
-    private _labelFontStyle?: FontStyle;
-    set labelFontStyle(value: FontStyle | undefined) {
-        if (this._labelFontStyle !== value) {
-            this._labelFontStyle = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelFontStyle(): FontStyle | undefined {
-        return this._labelFontStyle;
-    }
+    @reactive(['layoutChange']) labelFontStyle?: FontStyle = PieSeries.defaults.labelFontStyle;
 
-    private _labelFontWeight?: FontWeight;
-    set labelFontWeight(value: FontWeight | undefined) {
-        if (this._labelFontWeight !== value) {
-            this._labelFontWeight = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelFontWeight(): FontWeight | undefined {
-        return this._labelFontWeight;
-    }
+    @reactive(['layoutChange']) labelFontWeight?: FontWeight = PieSeries.defaults.labelFontWeight;
 
-    private _labelFontSize: number = 12;
-    set labelFontSize(value: number) {
-        if (this._labelFontSize !== value) {
-            this._labelFontSize = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelFontSize(): number {
-        return this._labelFontSize;
-    }
+    @reactive(['layoutChange']) labelFontSize = PieSeries.defaults.labelFontSize;
 
-    private _labelFontFamily: string = 'Verdana, sans-serif';
-    set labelFontFamily(value: string) {
-        if (this._labelFontFamily !== value) {
-            this._labelFontFamily = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelFontFamily(): string {
-        return this._labelFontFamily;
-    }
+    @reactive(['layoutChange']) labelFontFamily = PieSeries.defaults.labelFontFamily;
 
-    private _labelColor: string = 'black';
-    set labelColor(value: string) {
-        if (this._labelColor !== value) {
-            this._labelColor = value;
-            this.scheduleLayout();
-        }
-    }
-    get labelColor(): string {
-        return this._labelColor;
-    }
+    @reactive(['layoutChange']) labelColor = PieSeries.defaults.labelColor;
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    private _angleKey: string = '';
+    private _angleKey: string = PieSeries.defaults.angleKey;
     set angleKey(value: string) {
         if (this._angleKey !== value) {
             this._angleKey = value;
@@ -229,7 +177,7 @@ export class PieSeries extends PolarSeries {
         return this._angleKey;
     }
 
-    private _angleName: string = '';
+    private _angleName: string = PieSeries.defaults.angleName;
     set angleName(value: string) {
         if (this._angleName !== value) {
             this._angleName = value;
@@ -246,7 +194,7 @@ export class PieSeries extends PolarSeries {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    private _radiusKey?: string;
+    private _radiusKey?: string = PieSeries.defaults.radiusKey;
     set radiusKey(value: string | undefined) {
         if (this._radiusKey !== value) {
             this._radiusKey = value;
@@ -257,7 +205,7 @@ export class PieSeries extends PolarSeries {
         return this._radiusKey;
     }
 
-    private _radiusName?: string;
+    private _radiusName?: string = PieSeries.defaults.radiusName;
     set radiusName(value: string | undefined) {
         if (this._radiusName !== value) {
             this._radiusName = value;
@@ -268,7 +216,7 @@ export class PieSeries extends PolarSeries {
         return this._radiusName;
     }
 
-    private _labelKey?: string;
+    private _labelKey?: string = PieSeries.defaults.labelKey;
     set labelKey(value: string | undefined) {
         if (this._labelKey !== value) {
             this._labelKey = value;
@@ -279,7 +227,7 @@ export class PieSeries extends PolarSeries {
         return this._labelKey;
     }
 
-    private _labelName?: string;
+    private _labelName?: string = PieSeries.defaults.labelName;
     set labelName(value: string | undefined) {
         if (this._labelName !== value) {
             this._labelName = value;
@@ -290,7 +238,7 @@ export class PieSeries extends PolarSeries {
         return this._labelName;
     }
 
-    private _fills: string[] = palette.fills;
+    private _fills: string[] = PieSeries.defaults.fills;
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -300,7 +248,7 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = palette.strokes;
+    private _strokes: string[] = PieSeries.defaults.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
         this.calloutColors = values;
@@ -310,7 +258,7 @@ export class PieSeries extends PolarSeries {
         return this._strokes;
     }
 
-    private _fillOpacity: number = 1;
+    private _fillOpacity: number = PieSeries.defaults.fillOpacity;
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
@@ -321,7 +269,7 @@ export class PieSeries extends PolarSeries {
         return this._fillOpacity;
     }
 
-    private _strokeOpacity: number = 1;
+    private _strokeOpacity: number = PieSeries.defaults.strokeOpacity;
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
@@ -335,7 +283,7 @@ export class PieSeries extends PolarSeries {
     /**
      * The series rotation in degrees.
      */
-    private _rotation: number = 0;
+    private _rotation: number = PieSeries.defaults.rotation;
     set rotation(value: number) {
         if (this._rotation !== value) {
             this._rotation = value;
@@ -346,49 +294,13 @@ export class PieSeries extends PolarSeries {
         return this._rotation;
     }
 
-    private _outerRadiusOffset: number = 0;
-    set outerRadiusOffset(value: number) {
-        if (this._outerRadiusOffset !== value) {
-            this._outerRadiusOffset = value;
-            this.scheduleLayout();
-        }
-    }
-    get outerRadiusOffset(): number {
-        return this._outerRadiusOffset;
-    }
+    @reactive(['layoutChange']) outerRadiusOffset = PieSeries.defaults.outerRadiusOffset;
 
-    private _innerRadiusOffset: number = 0;
-    set innerRadiusOffset(value: number) {
-        if (this._innerRadiusOffset !== value) {
-            this._innerRadiusOffset = value;
-            this.scheduleData();
-        }
-    }
-    get innerRadiusOffset(): number {
-        return this._innerRadiusOffset;
-    }
+    @reactive(['dataChange']) innerRadiusOffset = PieSeries.defaults.innerRadiusOffset;
 
-    private _strokeWidth: number = 1;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
+    @reactive(['layoutChange']) strokeWidth = PieSeries.defaults.strokeWidth;
 
-    private _shadow?: DropShadow;
-    set shadow(value: DropShadow | undefined) {
-        if (this._shadow !== value) {
-            this._shadow = value;
-            this.scheduleLayout();
-        }
-    }
-    get shadow(): DropShadow | undefined {
-        return this._shadow;
-    }
+    @reactive(['layoutChange']) shadow?: DropShadow = PieSeries.defaults.shadow;
 
     highlightStyle: {
         fill?: string,
