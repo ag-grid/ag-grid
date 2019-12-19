@@ -299,7 +299,7 @@ class ReactRunner {
             "tags[1]": "example",
             "tags[2]": "ag-charts",
             private: true,
-            description: this.title
+            description: this.title || 'React example',
         };
 
         if (context.files) {

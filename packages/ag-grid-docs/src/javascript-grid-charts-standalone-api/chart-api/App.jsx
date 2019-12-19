@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { agChart } from "ag-charts-community";
+import { data, series, getTemplates } from "./templates.jsx";
 
 const OptionsCode = ({ options }) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
 
@@ -151,33 +152,11 @@ class Chart extends React.Component {
     componentDidUpdate() {
         this.chart.current.innerHTML = "";
 
-        const data = [{
-            month: 'Jan',
-            revenue: 155000,
-            profit: 33000
-        }, {
-            month: 'Feb',
-            revenue: 123000,
-            profit: 35500
-        }, {
-            month: 'Mar',
-            revenue: 172500,
-            profit: 41000
-        }, {
-            month: 'Apr',
-            revenue: 185000,
-            profit: 50000
-        }];
-
         agChart.create({
             ...this.props.options,
             data,
             parent: this.chart.current,
-            series: [{
-                type: 'column',
-                xKey: 'month',
-                yKeys: ['revenue', 'profit'],
-            }],
+            series,
         });
     }
 
@@ -188,6 +167,7 @@ class Chart extends React.Component {
 
 export class App extends React.Component {
     state = {
+        framework: 'react',
         options: {
         }
     };
@@ -343,79 +323,9 @@ export class App extends React.Component {
     }
 
     componentDidUpdate() {
-        const indexHtml = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <style media="only screen">
-      html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-        -webkit-overflow-scrolling: touch;
-      }
-      html {
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 0;
-        overflow: auto;
-      }
-      body {
-        padding: 1rem;
-        overflow: auto;
-      }
-    </style>
-    <script src='//localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js'></script>
-  </head>
-
-  <body>
-    <div id="myChart"></div>
-
-    <script src="main.js"></script>
-  </body>
-</html>
-`;
-
-        const mainJs = `var data = [{
-    month: 'Jan',
-    revenue: 155000,
-    profit: 33000
-}, {
-    month: 'Feb',
-    revenue: 123000,
-    profit: 35500
-}, {
-    month: 'Mar',
-    revenue: 172500,
-    profit: 41000
-}, {
-    month: 'Apr',
-    revenue: 185000,
-    profit: 50000
-}];
-
-var options = ${JSON.stringify(this.state.options, null, 2)};
-
-options.data = data;
-options.series = [{
-    type: 'column',
-    xKey: 'month',
-    yKeys: ['revenue', 'profit'],
-}];
-
-document.addEventListener('DOMContentLoaded', function() {
-    options.parent = document.querySelector('#myChart');
-
-    agCharts.agChart.create(options);
-});`;
-
         window.parent.document.getElementById('chart-api').setAttribute('data-context',
             JSON.stringify({
-                files: {
-                    'index.html': indexHtml,
-                    'main.js': mainJs
-                }
+                files: getTemplates(this.state.framework, this.state.options)
             })
         );
     }
