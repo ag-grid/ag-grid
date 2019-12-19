@@ -97,6 +97,8 @@ function getMapping(path: string) {
 }
 
 export const agChart = {
+    // Only the `options` object is to be provided by the user.
+    // The other parameters are used internally on recursive invocations.
     create(options: any, path?: string, component?: any) {
         if (!(options && typeof options === 'object')) {
             return;
