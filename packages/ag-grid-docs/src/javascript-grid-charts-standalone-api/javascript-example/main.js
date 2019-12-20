@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     var parent = document.getElementById('charts');
     agCharts.agChart.create(
         {

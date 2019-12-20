@@ -7,7 +7,7 @@
     "start": "gulp serve",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
-    "testx": "npm run validate-es5"
+    "test": "npm run validate-es5"
   },
   "repository": {
     "type": "git",
