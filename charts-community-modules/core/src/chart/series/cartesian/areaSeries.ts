@@ -13,6 +13,8 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
+import { chainObjects } from "../../../util/object";
+import { reactive } from "../../../util/observable";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -32,7 +34,22 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
 export { AreaTooltipRendererParams };
 
 export class AreaSeries extends CartesianSeries {
+
     static className = 'AreaSeries';
+
+    static defaults = chainObjects(CartesianSeries.defaults, {
+        xKey: '',
+        xName: '',
+        yKeys: [] as string[],
+        yNames: [] as string[],
+        normalizedTo: undefined,
+        fills: palette.fills,
+        strokes: palette.strokes,
+        fillOpacity: 1,
+        strokeOpacity: 1,
+        strokeWidth: 2,
+        shadow: undefined
+    });
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 
@@ -50,10 +67,27 @@ export class AreaSeries extends CartesianSeries {
      */
     private readonly seriesItemEnabled = new Map<string, boolean>();
 
+    private xData: string[] = [];
+    private yData: number[][] = [];
+    private yDomain: any[] = [];
+
+    directionKeys = {
+        x: ['xKey'],
+        y: ['yKeys']
+    };
+
     readonly marker = new CartesianSeriesMarker();
+
+    @reactive(['dataChange']) fills: string[] = AreaSeries.defaults.fills;
+    @reactive(['dataChange']) strokes: string[] = AreaSeries.defaults.strokes;
+
+    @reactive(['update']) fillOpacity = AreaSeries.defaults.fillOpacity;
+    @reactive(['update']) strokeOpacity = AreaSeries.defaults.strokeOpacity;
 
     constructor() {
         super();
+
+        this.addEventListener('update', () => this.update());
 
         this.marker.enabled = false;
         this.marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
@@ -68,56 +102,7 @@ export class AreaSeries extends CartesianSeries {
         this.fireEvent({type: 'legendChange'});
     }
 
-    private _fills: string[] = palette.fills;
-    set fills(values: string[]) {
-        this._fills = values;
-        this.scheduleData();
-    }
-    get fills(): string[] {
-        return this._fills;
-    }
-
-    private _strokes: string[] = palette.strokes;
-    set strokes(values: string[]) {
-        this._strokes = values;
-        this.scheduleData();
-    }
-    get strokes(): string[] {
-        return this._strokes;
-    }
-
-    private _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
-
-    private _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
-    }
-
-    private xData: string[] = [];
-    private yData: number[][] = [];
-    private yDomain: any[] = [];
-
-    directionKeys = {
-        x: ['xKey'],
-        y: ['yKeys']
-    };
-
-    protected _xKey: string = '';
+    protected _xKey: string = AreaSeries.defaults.xKey;
     set xKey(value: string) {
         if (this._xKey !== value) {
             this._xKey = value;
@@ -129,16 +114,9 @@ export class AreaSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    protected _xName: string = '';
-    set xName(value: string) {
-        this._xName = value;
-        this.update();
-    }
-    get xName(): string {
-        return this._xName;
-    }
+    @reactive(['update']) xName: string = AreaSeries.defaults.xName;
 
-    protected _yKeys: string[] = [];
+    protected _yKeys: string[] = AreaSeries.defaults.yKeys;
     set yKeys(values: string[]) {
         this._yKeys = values;
         this.yData = [];
@@ -153,16 +131,9 @@ export class AreaSeries extends CartesianSeries {
         return this._yKeys;
     }
 
-    protected _yNames: string[] = [];
-    set yNames(values: string[]) {
-        this._yNames = values;
-        this.update();
-    }
-    get yNames(): string[] {
-        return this._yNames;
-    }
+    @reactive(['update']) yNames: string[] = AreaSeries.defaults.yNames;
 
-    private _normalizedTo?: number;
+    private _normalizedTo?: number = AreaSeries.defaults.normalizedTo;
     set normalizedTo(value: number | undefined) {
         const absValue = value ? Math.abs(value) : undefined;
 
@@ -175,27 +146,8 @@ export class AreaSeries extends CartesianSeries {
         return this._normalizedTo;
     }
 
-    private _strokeWidth: number = 2;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.update();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
-    private _shadow?: DropShadow;
-    set shadow(value: DropShadow | undefined) {
-        if (this._shadow !== value) {
-            this._shadow = value;
-            this.update();
-        }
-    }
-    get shadow(): DropShadow | undefined {
-        return this._shadow;
-    }
+    @reactive(['update']) strokeWidth = AreaSeries.defaults.strokeWidth;
+    @reactive(['update']) shadow?: DropShadow = AreaSeries.defaults.shadow;
 
     highlightStyle: {
         fill?: string,
