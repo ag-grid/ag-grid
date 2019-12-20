@@ -301,7 +301,7 @@ export class ChartBuilder {
             this.setValueIfExists(series, 'fill', fill.color);
 
             // default marker to same fill as series
-            this.setValueIfExists(series.marker, 'fill', fill.color);
+            // this.setValueIfExists(series.marker, 'fill', fill.color);
         }
 
         if (stroke) {
@@ -309,8 +309,8 @@ export class ChartBuilder {
             this.setValueIfExists(series, 'strokeWidth', stroke.width);
 
             // default marker to same stroke as series
-            this.setValueIfExists(series.marker, 'stroke', stroke.color);
-            this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
+            // this.setValueIfExists(series.marker, 'stroke', stroke.color);
+            // this.setValueIfExists(series.marker, 'strokeWidth', stroke.width);
         }
 
         if (highlightStyle) {
