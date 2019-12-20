@@ -8,7 +8,6 @@ import {
     Events,
     EventService,
     FilterOpenedEvent,
-    GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     PostConstruct,
@@ -22,13 +21,12 @@ export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp
 
 export class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE =
-        `<div class="ag-filter-toolpanel-group">
+        `<div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component ref="filterGroupComp"></ag-group-component>
          </div>`;
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
 
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
@@ -50,7 +48,7 @@ export class ToolPanelFilterGroupComp extends Component {
     @PreConstruct
     private preConstruct(): void {
         const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'filter-panel',
+            cssIdentifier: 'filter-toolpanel',
             direction: 'vertical'
         };
         this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, {filterGroupComp: groupParams});
@@ -61,9 +59,13 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 
-        _.addCssClass(this.filterGroupComp.getGui(), `ag-filter-panel-group-level-${this.depth}`);
+        _.addCssClass(this.filterGroupComp.getGui(), `ag-filter-toolpanel-group-level-${this.depth}`);
+        this.filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth}-header`)
 
-        this.childFilterComps.forEach(filterComp => this.filterGroupComp.addItem(filterComp as Component));
+        this.childFilterComps.forEach(filterComp => {
+            this.filterGroupComp.addItem(filterComp as Component);
+            filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth+1}-header`);
+        });
 
         if (!this.isColumnGroup()) {
             this.addTopLevelColumnGroupExpandListener();
@@ -79,6 +81,10 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         this.addFilterChangedListeners();
+    }
+
+    public addCssClassToTitleBar(cssClass: string) {
+        this.filterGroupComp.addCssClassToTitleBar(cssClass);
     }
 
     public refreshFilters() {

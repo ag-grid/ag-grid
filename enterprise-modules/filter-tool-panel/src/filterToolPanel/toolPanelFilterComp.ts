@@ -17,9 +17,9 @@ import {
 
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =
-        `<div class="ag-filter-toolpanel-instance" >
-            <div class="ag-filter-toolpanel-header ag-header-cell-label" ref="eFilterToolPanelHeader">
-                <div ref="eExpand" class="ag-filter-toolpanel-header-expand"></div>
+        `<div class="ag-filter-toolpanel-instance">
+            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader">
+                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>
@@ -80,6 +80,10 @@ export class ToolPanelFilterComp extends Component {
 
     public getColumnFilterName(): string {
         return this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
+    }
+
+    public addCssClassToTitleBar(cssClass: string) {
+        _.addCssClass(this.eFilterToolPanelHeader, cssClass);
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {

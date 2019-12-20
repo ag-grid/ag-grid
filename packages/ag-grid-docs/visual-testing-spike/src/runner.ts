@@ -6,7 +6,7 @@ import { promises as fs, existsSync } from 'fs';
 import { launch, Browser, Page } from 'puppeteer';
 import PromisePool from 'es6-promise-pool';
 import resemble from 'resemblejs';
-import { Spec, SpecResults, SpecDefinition, SpecStep } from './types';
+import { Spec, SpecResult, SpecDefinition, SpecStep } from './types';
 import { getReportHtml } from './reporting';
 import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
@@ -115,8 +115,8 @@ const initInBrowser = (theme: string) => {
 
 const getTestCaseName = (spec: Spec, step: SpecStep) => `${spec.name}-${step.name}`;
 
-const getTestCaseImagePath = (params: RunSuiteParams, testCaseName: string) =>
-    path.join(params.folder, `${testCaseName}.png`);
+const getTestCaseImagePath = (folder: string, testCaseName: string) =>
+    path.join(folder, `${testCaseName}.png`);
 
 export const runSpec = async (spec: Spec, context: RunContext) => {
     let page: Page | null = null;
@@ -255,7 +255,7 @@ const pngBufferToDataUri = (image: Buffer): string =>
 
 export interface RunSuiteParams {
     specs: SpecDefinition[];
-    mode: 'compare' | 'update';
+    mode: 'compare' | 'update' | 'view';
     folder: string;
     server: string;
     reportFile: string;
@@ -270,7 +270,6 @@ type Filter = (testCaseName: string) => boolean;
 
 export const runSuite = async (params: RunSuiteParams) => {
     const log = console.error.bind(console);
-    log('Running suite...');
 
     if (params.mode === 'update') {
         await ensureEmptyFolder(params.folder, params.clean);
@@ -328,7 +327,7 @@ export const runSuite = async (params: RunSuiteParams) => {
         // skip specs where the images are already present
         specs = specs.filter(spec => {
             const testCaseNames = spec.steps.map(step => getTestCaseName(spec, step));
-            const imagePaths = testCaseNames.map(name => getTestCaseImagePath(params, name));
+            const imagePaths = testCaseNames.map(name => getTestCaseImagePath(params.folder, name));
             const anyStepsMissingImage = !!imagePaths.find(path => !existsSync(path));
             if (!anyStepsMissingImage) {
                 ++specsAlreadyCreated;
@@ -347,11 +346,36 @@ export const runSuite = async (params: RunSuiteParams) => {
         );
     }
 
-    const results: SpecResults[] = [];
+    const results: SpecResult[] = [];
     const writeReportFile = async (inProgress: boolean) => {
         const html = getReportHtml(results, inProgress);
         await fs.writeFile(params.reportFile, html);
     };
+
+    if (params.mode === 'view') {
+        log('Generating view of existing images...');
+        for (const spec of specs) {
+            for (const step of spec.steps) {
+                const name = getTestCaseName(spec, step);
+                if (nameMatchesFilter(name)) {
+                    const imageFile = getTestCaseImagePath(params.folder, name);
+                    const imageBuffer = await fs.readFile(imageFile);
+                    const dataUru = pngBufferToDataUri(imageBuffer);
+                    results.push({
+                        type: 'view',
+                        name,
+                        originalUri: dataUru
+                    });
+                }
+            }
+        }
+        await writeReportFile(false);
+        log(`✨  report written to ${chalk.bold(path.relative('.', params.reportFile))}`);
+        return;
+    }
+
+    log('Running suite...');
+
     let reportIteration = -1;
     const reportGenerationInterval = 2500;
     const startTime = Date.now();
@@ -376,7 +400,7 @@ export const runSuite = async (params: RunSuiteParams) => {
         server: params.server,
         handler: async (screenshot, testCaseName) => {
             ++testCasesRun;
-            const file = getTestCaseImagePath(params, testCaseName);
+            const file = getTestCaseImagePath(params.folder, testCaseName);
             if (params.mode === 'update') {
                 await fs.writeFile(file, screenshot);
                 process.stdout.clearLine(0);
@@ -390,6 +414,7 @@ export const runSuite = async (params: RunSuiteParams) => {
                 const differenceUri =
                     result.rawMisMatchPercentage > 0 ? result.getImageDataUrl() : null;
                 results.push({
+                    type: 'test',
                     name: testCaseName,
                     differenceUri,
                     newUri: pngBufferToDataUri(screenshot),

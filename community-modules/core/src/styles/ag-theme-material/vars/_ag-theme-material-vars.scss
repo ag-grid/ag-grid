@@ -25,6 +25,8 @@ $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-virtual-item-height: $ag-grid-size * 5;
 $ag-header-icon-size: 14px !default;
+$filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
+$filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default; // legacy: font

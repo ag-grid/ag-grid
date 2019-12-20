@@ -531,23 +531,18 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow: hidden;
 }
 
-.ag-filter-panel {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
+.ag-filter-toolpanel {
+    flex: 1;
 }
 
 .ag-filter-toolpanel-header {
     display: flex;
-}
-
-.ag-filter-toolpanel-header-expand {
-    display: flex;
     align-items: center;
-}
 
-.ag-filter-toolpanel-instance {
-    flex-direction: column;
+    > * {
+        display: flex;
+        align-items: center;
+    }
 }
 
 /**
@@ -1350,10 +1345,6 @@ $ag-handleSize: 5px;
 
 .ag-column-group-icons {
     display: block;
-}
-
-.ag-group-item {
-    display: flex;
 }
 
 .ag-group-item-alignment-stretch .ag-group-item {

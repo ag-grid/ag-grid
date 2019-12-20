@@ -18,12 +18,27 @@ var columnDefs = [
     },
     { colId: 'sport', field: "sport", width: 110 },
     {
-        headerName: 'Medals',
+        headerName: 'Nesting level 1',
         children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
+            {
+                headerName: 'Nesting level 2',
+                children: [
+                    {
+                        headerName: 'Nesting level 3',
+                        children: [
+                            {
+                                headerName: 'Nesting level 4',
+                                children: [
+                                    { field: "gold", width: 100 },
+                                    { field: "silver", width: 100 },
+                                    { field: "bronze", width: 100 },
+                                    { field: "total", width: 100 }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
     }
 ];

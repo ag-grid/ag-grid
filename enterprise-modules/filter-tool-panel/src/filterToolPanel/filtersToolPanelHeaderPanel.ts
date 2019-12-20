@@ -21,7 +21,6 @@ export class FiltersToolPanelHeaderPanel extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
     @RefSelector('eFilterTextField') private eSearchTextField: HTMLInputElement;
 
     private eExpandChecked: HTMLElement;
@@ -39,11 +38,9 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-        `<div class="ag-filter-toolpanel-header ag-filter-header" role="presentation">
-            <div ref="eExpand" class="ag-filter-toolpanel-header-expand"></div>
-            <div class="ag-input-wrapper ag-filters-tool-panel-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                <input ref="eFilterTextField" type="text" placeholder="${translate('searchOoo', 'Search...')}">        
-            </div>
+        `<div class="ag-filter-toolpanel-header ag-filter-toolpanel-search" role="presentation">
+            <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+            <input ref="eFilterTextField" class="ag-filter-toolpanel-search-input" type="text" placeholder="${translate('searchOoo', 'Search...')}">
         </div>`);
     }
 
@@ -79,7 +76,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
 
-        _.setDisplayed(this.eFilterWrapper, showFilterSearch);
+        _.setDisplayed(this.eSearchTextField, showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 

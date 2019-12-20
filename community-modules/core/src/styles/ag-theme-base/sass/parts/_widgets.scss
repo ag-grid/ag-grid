@@ -21,28 +21,25 @@
         }
     }
 
-    .ag-input-wrapper {
-        // TODO on hold pending ag-wrapper / input refactor
-        input:not([type]),
-        input[type='text'],
-        input[type='number'],
-        input[type='tel'],
-        input[type='date'],
-        input[type='datetime-local'] {
-            @include ag-textbox();
-        }
+    input:not([type]),
+    input[type='text'],
+    input[type='number'],
+    input[type='tel'],
+    input[type='date'],
+    input[type='datetime-local'] {
+        @include ag-textbox();
+    }
 
-        // TODO structural styles
-        input[type='date'] {
-            flex: 1 1 auto;
-        }
-        input[type='range'] {
-            padding: 0;
-        }
+    // TODO structural styles
+    input[type='date'] {
+        flex: 1 1 auto;
+    }
+    input[type='range'] {
+        padding: 0;
+    }
 
-        textarea {
-            @include ag-textbox();
-        }
+    textarea {
+        @include ag-textbox();
     }
 
     ////////////////////////////////////////
@@ -106,9 +103,6 @@
 
     .ag-group {
         background-color: $ag-group-background-color;
-        @if $ag-group-border-color {
-            border-top: 1px solid $ag-group-border-color;
-        }
     }
 
     .ag-group-item {
@@ -117,7 +111,6 @@
     }
 
     .ag-group-title-bar {
-        background-color: $ag-group-title-background-color;
         padding: $ag-grid-size;
     }
     

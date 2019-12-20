@@ -1,5 +1,5 @@
 @mixin ag-theme-base-part-filter-tool-panel {
-    .ag-filter-panel {
+    .ag-filter-toolpanel {
         color: $ag-header-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
@@ -7,136 +7,50 @@
     }
 
     .ag-filter-toolpanel-header {
-        // TODO specificity
-        &.ag-filter-header {
-            min-height: $ag-header-height;
-            height: $ag-header-height;
-            border-bottom: 1px solid $ag-border-color;
-            box-sizing: content-box;
-        }
-
-        // TODO do this without reaching into input wrapper
-        .ag-input-wrapper {
-            padding-left: $ag-grid-size;
-            padding-right: $ag-grid-size;
-            input {
-                width: 100%;
-            }
-        }
+        height: $filter-tool-panel-sub-level-row-height;
+        @include ag-theme-rtl(( padding-left: $ag-grid-size ));
+    }
+    .ag-filter-toolpanel-group-level-0-header {
+        height: $filter-tool-panel-top-level-row-height;
     }
 
-    .ag-filter-toolpanel-header-expand {
-        margin: 0 $ag-grid-size / 2;
-
-        @include ag-theme-rtl(( padding-left: $ag-grid-size / 2 ));
+    .ag-filter-toolpanel-search {
+        height: $ag-header-height;
     }
 
-    .ag-filter-list-panel {
-        // TODO structural styles
-        flex: 1 1 auto;
-        overflow: auto;
-
-        // TODO nesting
-        .ag-first-group-visible {
-            .ag-group-title-bar {
-                border-top: none;
-                min-height: calc(#{$ag-header-height} - 1px);
-            }
-        }
+    .ag-filter-toolpanel-search-input {
+        flex-grow: 1;
+        height: $ag-grid-size * 4;
+        @include ag-theme-rtl(( margin-right: $ag-grid-size ));
     }
 
-    .ag-filter-panel {
-        .ag-group {
-            border: none;
-            background-color: $ag-header-background-color;
-            .ag-group-title-bar {
-                min-height: $ag-header-height;
-                .ag-group-title {
-                    white-space: nowrap;
-                }
-
-                .ag-column-group-icons {
-                    margin: 0 $ag-grid-size;
-                }
-            }
-
-            &.ag-has-filter {
-                > .ag-group-title-bar {
-                    .ag-group-title:after {
-                        content: $ag-icon-filter;
-                        font-family: $ag-icon-font-family;
-                        font-size: $ag-icon-size;
-                        margin-left: $ag-grid-size;
-                        color: $ag-icon-color;
-                        font-weight: normal;
-                    }
-                }
-            }
-        }
-
-        .ag-group-container {
-            margin-left: 0;
-            padding: 0;
-            .ag-group-item {
-                &:not(.ag-filter-toolpanel-instance) {
-                    margin-top: 0;
-                }
-                .ag-group-title-bar {
-                    background-color: $ag-group-background-color;
-                }
-                .ag-filter-toolpanel-header {
-                    padding-top: $ag-grid-size / 2;
-                    padding-bottom: $ag-grid-size / 2;
-                }
-                .ag-filter-toolpanel-body {
-                    &:not(:empty) {
-                        margin: $ag-grid-size 0;
-                    }
-                    .ag-filter-air {
-                        border: 1px solid $ag-border-color;
-                        padding-top: $ag-grid-size;
-                        color: $ag-foreground-color;
-                        font-weight: $ag-font-weight;
-                        font-size: $ag-font-size;
-                        font-family: $ag-font-family;
-                    }
-                }
-            }
-        }
+    .ag-group-title-bar.ag-filter-toolpanel-group-level-0-header {
+        background-color: $ag-group-title-background-color;
     }
 
-    .ag-filter-panel-group-title-bar {
-        @include ag-grid-border(top, $color: $ag-secondary-border-color)
+    .ag-filter-toolpanel-group-level-0 {
+        @include ag-grid-border(top, $color: $ag-group-border-color);
     }
 
-    .ag-filter-panel-group-title {
-        @include ag-theme-rtl(( margin-left: $ag-grid-size ));
+    .ag-filter-toolpanel-expand,
+    .ag-filter-toolpanel-group-title-bar-icon {
+        @include ag-theme-rtl(( margin-right: $ag-grid-size ));
     }
 
-    .ag-filter-toolpanel-instance {
-        margin: $ag-grid-size 0;
-    }
-
-    .ag-filter-panel-group-item {
-        @include ag-theme-rtl((
-            margin-right: $ag-grid-size / 2,
-            margin-left: 0
-        ));
-    }
-
-    @for $i from 1 through 5 {
-        // TODO nesting. This can be achieved without the level-n using padding
-        .ag-filter-panel-group-level-#{$i} .ag-group-title-bar {
+    @for $i from 1 through 10 {
+        .ag-filter-toolpanel-group-level-#{$i}-header {
             @include ag-theme-rtl((
-                // TODO use a variable instead of rem
-                padding-left: 1rem * ($i - 1)
+                padding-left: $filter-tool-panel-group-indent * ($i - 1) + $ag-grid-size
             ));
         }
-        .ag-filter-panel-group-level-#{$i} .ag-filter-toolpanel-header {
-            @include ag-theme-rtl((
-                // TODO use a variable instead of rem
-                padding-left: 1rem * $i
-            ));
-        }
+    }
+
+    .ag-filter-air {
+        @include ag-grid-border((top, bottom));
+        padding-top: $ag-grid-size;
+        color: $ag-foreground-color;
+        font-weight: $ag-font-weight;
+        font-size: $ag-font-size;
+        font-family: $ag-font-family;
     }
 }

@@ -31,6 +31,9 @@ $ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
 $ag-header-icon-size: 14px !default;
 $ag-input-height: null !default;
+$filter-tool-panel-group-indent: 16px !default;
+$filter-tool-panel-top-level-row-height: $ag-grid-size * 8 !default;
+$filter-tool-panel-sub-level-row-height: $ag-grid-size * 6 !default;
 
 // Fonts
 $ag-font-family: 'Helvetica Neue', sans-serif !default;

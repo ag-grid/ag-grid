@@ -35,6 +35,17 @@ export const tickCheckBoxWithin = async (page: Page, parentSelector: string) => 
     );
 };
 
+export const clickElementByText = async (page: Page, text: string) => {
+    const elements = await page.$x(`//button[contains(., ${JSON.stringify(text)})]`);
+    if (elements.length === 0) {
+        throw new Error(`No elements with text "${text}"`);
+    } else if (elements.length > 1) {
+        throw new Error(`Too many (${elements.length}) elements with text "${text}"`);
+    } else {
+        await elements[0].click();
+    }
+}
+
 export const untickCheckBoxWithin = async (page: Page, parentSelector: string) => {
     // support native and legacy style checkbox
     await page.click(

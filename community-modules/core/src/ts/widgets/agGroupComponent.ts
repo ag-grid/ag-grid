@@ -199,6 +199,10 @@ export class AgGroupComponent extends Component {
         return this;
     }
 
+    public addCssClassToTitleBar(cssClass: string) {
+        _.addCssClass(this.eTitleBar, cssClass);
+    }
+
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
         this.enabled = enabled;
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);

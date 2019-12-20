@@ -21,6 +21,9 @@ const args: any = yargs
                 .option('update', {
                     describe: 'Save generated images instead of comparing'
                 })
+                .option('view', {
+                    describe: 'View existing images instead of comparing'
+                })
                 .option('server', {
                     describe: 'ag-grid-docs server to run against',
                     default: 'http://localhost:8080'
@@ -77,7 +80,7 @@ export const runCli = async (baseFolder: string) => {
     try {
         await runSuite({
             folder,
-            mode: args.update ? 'update' : 'compare',
+            mode: args.update ? 'update' : (args.view ? 'view' : 'compare'),
             specs,
             defaultThemes: args.themes.split(","),
             server: args.server,

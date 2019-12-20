@@ -142,6 +142,7 @@ export class FiltersToolPanelListPanel extends Component {
                 new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
 
             this.getContext().wireBean(filterGroupComp);
+            filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
         }));
@@ -163,7 +164,7 @@ export class FiltersToolPanelListPanel extends Component {
             new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
 
         this.getContext().wireBean(filterGroupComp);
-
+        filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
     }
 

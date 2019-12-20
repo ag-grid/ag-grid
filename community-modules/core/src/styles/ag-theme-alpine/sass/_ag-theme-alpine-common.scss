@@ -227,7 +227,7 @@
     ////////////////////////////////////////
     // Floating Filter
     ////////////////////////////////////////
-    .ag-input-wrapper input:not([type]) {
+    input:not([type]) {
         @extend %input-text;
         border-color: $ag-color-border-form-element;
         font-size: smaller;
@@ -538,7 +538,7 @@
     }
 
     // filter panel
-    .ag-filter-panel {
+    .ag-filter-toolpanel {
         .ag-filter-body-wrapper {
             padding: $ag-grid-size * 2;
             padding-top: $ag-grid-size;

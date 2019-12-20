@@ -41,10 +41,19 @@ export type SpecStep = {
     prepare?: (page: Page) => Promise<void>;
 };
 
-export interface SpecResults {
+export interface ViewSpecResult {
+    type: 'view';
     name: string;
-    differenceUri: string | null;
+    originalUri: string;
+}
+
+export interface TestSpecResult {
+    type: 'test';
+    name: string;
+    differenceUri?: string | null;
     originalUri: string;
     newUri: string;
     area: { top: number; left: number; bottom: number; right: number };
 }
+
+export type SpecResult = ViewSpecResult | TestSpecResult;

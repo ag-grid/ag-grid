@@ -57,6 +57,17 @@
         margin-left: $ag-grid-size;
     }
 
+    .ag-charts-minichart-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-top-level-group-title-bar {
+        background-color: $ag-group-title-background-color;
+        @include ag-grid-border(top, $color: $ag-group-border-color);
+    }
+    
+    .ag-charts-format-sub-level-group-title-bar {
+        background-color: $ag-group-title-background-color;
+    }
+
 
     .ag-charts-minichart-group-container {
         padding: $ag-grid-size;

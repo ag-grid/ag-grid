@@ -1,5 +1,5 @@
 import { SpecDefinition, SpecStep } from './types';
-import { wait, dragFromTo as drag, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin } from './utils';
+import { wait, dragFromTo as drag, cellSelector, untickCheckBoxWithin, tickCheckBoxWithin, clickElementByText } from './utils';
 
 export const specs: SpecDefinition[] = [
     {
@@ -201,6 +201,19 @@ export const specs: SpecDefinition[] = [
                 name: 'default',
                 prepare: async page => {
                     await page.click('button'); // first button on page is "Printer Friendly Layout"
+                }
+            }
+        ]
+    },
+    {
+        exampleSection: 'tool-panel-filters',
+        exampleId: 'expand-collapse-groups',
+        defaultViewport: { width: 400, height: 800 },
+        steps: [
+            {
+                name: 'default',
+                prepare: async page => {
+                    await clickElementByText(page, 'Expand All');
                 }
             }
         ]
