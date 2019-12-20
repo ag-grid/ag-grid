@@ -1,7 +1,7 @@
-import { Component, createElement, createRef, RefObject } from "react";
+import {Component, createElement, createRef, RefObject} from "react";
 import * as PropTypes from "prop-types";
-import { agChart, Chart } from "ag-charts-community";
-import { ChangeDetectionService, ChangeDetectionStrategyType } from "./changeDetectionService";
+import {agChart, Chart} from "ag-charts-community";
+import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
 
 export interface AgLegendProps {
     enabled?: boolean;
@@ -41,7 +41,6 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     private chart!: Chart;
 
     protected chartRef: RefObject<HTMLElement>;
-    protected eChartDiv!: HTMLElement;
 
     constructor(public props: any, public state: any) {
         super(props, state);
@@ -56,12 +55,10 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     }
 
     createStyleForDiv() {
-        const style = {
+        return {
             height: "100%",
             ...this.props.containerStyle
         };
-
-        return style;
     }
 
     componentDidMount() {
@@ -95,6 +92,12 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
 
         if (!changeDetectionStrategy.areEqual(prevProps.options, nextProps.options)) {
             agChart.reconfigure(this.chart, this.applyParentIfNotSet(nextProps.options));
+        }
+    }
+
+    componentWillUnmount() {
+        if(this.chart) {
+            this.chart.destroy();
         }
     }
 }

@@ -314,7 +314,7 @@ export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./entities/colDef";
 export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
-export { IsColumnFunc } from "./entities/colDef";
+export { IsColumnFunc, IsColumnFuncParams } from "./entities/colDef";
 export { ColumnApi } from "./columnController/columnApi";
 export { IHeader } from "./headerRendering/header/headerComp";
 export { ICellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
