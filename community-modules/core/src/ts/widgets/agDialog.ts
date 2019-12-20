@@ -88,6 +88,7 @@ export class AgDialog extends AgPanel {
 
     protected postConstruct() {
         const eGui = this.getGui();
+        debugger;
         const { movable, resizable, maximizable } = this.config;
 
         _.addCssClass(eGui, 'ag-dialog');

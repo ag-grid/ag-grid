@@ -120,9 +120,9 @@ export class PaginationComp extends Component {
                         <button type="button" class="ag-paging-button">${strPrevious}</button>
                     </div>
                     ${strPage}
-                    <span ref="lbCurrent"></span>
+                    <span ref="lbCurrent" class="ag-paging-number"></span>
                     ${strOf}
-                    <span ref="lbTotal"></span>
+                    <span ref="lbTotal" class="ag-paging-number"></span>
                     <div ref="btNext" class="ag-paging-button-wrapper">
                         <button type="button" class="ag-paging-button">${strNext}</button>
                     </div>

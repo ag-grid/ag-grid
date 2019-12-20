@@ -1,14 +1,29 @@
 
 @mixin ag-theme-base-part-grid-borders {
 
-    // Refactor this file, clean it up, use mixin, add vars to cater for alpine selection colors
+    // TODO refactor the code behind selections and borders so that we don't need these complicated selectors
+    //      while doing that, consider improving the look and feel. Borders and selections don't overlap well
+    //      because theyre' based on flat colours. If we rendered borders using semi-transparent overlays
+    //      whenthen they would combine over whatever background colour they're above
 
     .ag-cell {
         @include ag-theme-rtl(( border-right: $ag-cell-horizontal-border ));
     }
 
-    // TODO clean up how selections happen, maybe move to new file or section
     .ag-ltr {
+        .ag-cell:not(.ag-cell-focus),
+        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+        .ag-root:not(.ag-has-focus) .ag-cell {
+            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+                border-left: 1px solid $ag-border-color;
+            }
+            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+                border-right: 1px solid $ag-border-color;
+            }
+        }
+    }
+
+    .ag-rtl {
         .ag-cell:not(.ag-cell-focus),
         .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
         .ag-root:not(.ag-has-focus) .ag-cell {
@@ -25,22 +40,19 @@
         background-color: $ag-selected-color;
     }
 
-    .ag-ltr,
-    .ag-rtl {
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-            border: 1px solid transparent;
-            &.ag-cell-range-top {
-                border-top-color: $ag-primary-color;
-            }
-            &.ag-cell-range-right {
-                border-right-color: $ag-primary-color;
-            }
-            &.ag-cell-range-bottom {
-                border-bottom-color: $ag-primary-color;
-            }
-            &.ag-cell-range-left {
-                border-left-color: $ag-primary-color;
-            }
+    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+        border: 1px solid transparent;
+        &.ag-cell-range-top {
+            border-top-color: $ag-primary-color;
+        }
+        &.ag-cell-range-right {
+            border-right-color: $ag-primary-color;
+        }
+        &.ag-cell-range-bottom {
+            border-bottom-color: $ag-primary-color;
+        }
+        &.ag-cell-range-left {
+            border-left-color: $ag-primary-color;
         }
     }
 

@@ -2,6 +2,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { Constants } from "../../constants";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { _ } from "../../utils";
+import { RefSelector } from "../../widgets/componentAnnotations";
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
@@ -11,13 +12,12 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
 
 export class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE =
-        // tab index is needed so we can focus, which is needed for keyboard events
-        '<div class="ag-large-text" tabindex="0">' +
-        '<div class="ag-large-textarea"></div>' +
-        '</div>';
+        `<div class="ag-large-text" tabindex="0">
+            <textarea ref="eTextArea" class="ag-large-text-input"></textarea>
+        </div>`;
 
     private params: ILargeTextEditorParams;
-    private textarea: any;
+    @RefSelector("eTextArea") private eTextArea: HTMLTextAreaElement;
     private focusAfterAttached: boolean;
 
     constructor() {
@@ -29,16 +29,13 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
 
         this.focusAfterAttached = params.cellStartedEdit;
 
-        this.textarea = document.createElement("textarea");
-        this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
-        this.textarea.cols = params.cols ? params.cols : "60";
-        this.textarea.rows = params.rows ? params.rows : "10";
+        this.eTextArea.maxLength = params.maxLength ? params.maxLength : 200;
+        this.eTextArea.cols = params.cols ? params.cols : 60;
+        this.eTextArea.rows = params.rows ? params.rows : 10;
 
         if (_.exists(params.value)) {
-            this.textarea.value = params.value.toString();
+            this.eTextArea.value = params.value.toString();
         }
-
-        this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     }
@@ -56,11 +53,11 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
 
     public afterGuiAttached(): void {
         if (this.focusAfterAttached) {
-            this.textarea.focus();
+            this.eTextArea.focus();
         }
     }
 
     public getValue(): any {
-        return this.params.parseValue(this.textarea.value);
+        return this.params.parseValue(this.eTextArea.value);
     }
 }

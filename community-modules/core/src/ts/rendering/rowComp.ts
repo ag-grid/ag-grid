@@ -959,6 +959,10 @@ export class RowComp extends Component {
 
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
 
+        if (rowNode.isRowPinned()) {
+            classes.push('ag-row-pinned');
+        }
+
         if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }

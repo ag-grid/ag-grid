@@ -5,88 +5,38 @@
         border-top: 1px solid $ag-border-color;
         color: $ag-secondary-foreground-color;
         height: $ag-header-height;
-        padding: 0 $ag-cell-horizontal-padding;
+        // padding: 0 $ag-cell-horizontal-padding;
 
-        & > span {
-            margin-left: $ag-grid-size * 4;
+        > * {
+            margin: 0 $ag-cell-horizontal-padding;
         }
     }
 
-    .ag-paging-page-summary-panel {
-        .ag-icon {
-            width: $ag-icon-size;
-            height: $ag-icon-size;
-        }
-        .ag-paging-button-wrapper {
-            button {
-                cursor: pointer;
-                opacity: 0;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                padding: 0;
-            }
-            &.ag-disabled {
-                .ag-icon {
-                    color: $ag-disabled-foreground-color;
-                    opacity: $ag-disabled-foreground-color-opacity;
-                }
-                button {
-                    cursor: default;
-                }
-            }
-        }
-
-        span {
-            margin: 0 $ag-grid-size;
-        }
+    .ag-paging-button {
+        cursor: pointer;
+        opacity: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 0;
+    }
+    .ag-disabled .ag-paging-button {
+        cursor: default;
     }
 
+    .ag-paging-button-wrapper.ag-disabled {
+        color: $ag-disabled-foreground-color;
+        opacity: $ag-disabled-foreground-color-opacity;
+        cursor: default;
+    }
+
+    .ag-paging-number, .ag-paging-button-wrapper {
+        margin: 0 $ag-grid-size;
+    }
 
     .ag-row-stub {
         background-color: $ag-row-stub-background-color;
-    }
-
-    .ag-stub-cell {
-        padding-left: $ag-cell-horizontal-padding;
-        padding-top: $ag-grid-size;
-        .ag-loading-icon {
-            animation-name: spin;
-            animation-duration: 1000ms;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
-        }
-
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .ag-loading-text {
-            margin-left: $ag-grid-size;
-            margin-top: $ag-grid-size;
-        }
-    }
-
-    .ag-floating-top {
-        border-bottom: 1px solid $ag-border-color;
-    }
-    .ag-floating-bottom {
-        border-top: 1px solid $ag-border-color;
-    }
-
-    .ag-floating-top,
-    .ag-floating-bottom {
-        background-color: $ag-row-floating-background-color;
-
-        .ag-row {
-            background-color: $ag-row-floating-background-color;
-        }
     }
 
     .ag-status-bar {

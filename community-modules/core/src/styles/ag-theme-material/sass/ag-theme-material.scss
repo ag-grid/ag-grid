@@ -44,6 +44,11 @@
         transition: background-color 1s;
     }
 
+    .ag-cell-inline-editing {
+        padding: $ag-grid-size;
+        height: $ag-row-height + $ag-grid-size * 3;
+    }
+
     .ag-menu-option {
         height: $ag-grid-size * 5 - 2;
     }
