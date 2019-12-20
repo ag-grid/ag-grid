@@ -13,6 +13,8 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
+import { reactive } from "../../../util/observable";
+import { chainObjects } from "../../../util/object";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -24,6 +26,19 @@ export { LineTooltipRendererParams };
 export class LineSeries extends CartesianSeries {
 
     static className = 'LineSeries';
+
+    static defaults = chainObjects(CartesianSeries.defaults, {
+        title: undefined,
+        xKey: '',
+        xName: '',
+        yKey: '',
+        yName: '',
+        fill: palette.fills[0],
+        stroke: palette.strokes[0],
+        strokeWidth: 2,
+        fillOpacity: 1,
+        strokeOpacity: 1
+    });
 
     private xDomain: any[] = [];
     private yDomain: any[] = [];
@@ -38,6 +53,16 @@ export class LineSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
+    @reactive(['layoutChange']) title?: string = LineSeries.defaults.title;
+
+    @reactive(['update']) fill: string = LineSeries.defaults.fill;
+    @reactive(['update']) stroke: string = LineSeries.defaults.stroke;
+    @reactive(['update']) strokeWidth: number = LineSeries.defaults.strokeWidth;
+    @reactive(['update']) fillOpacity: number = LineSeries.defaults.fillOpacity;
+    @reactive(['update']) strokeOpacity: number = LineSeries.defaults.strokeOpacity;
+
+    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
+
     constructor() {
         super();
 
@@ -47,6 +72,9 @@ export class LineSeries extends CartesianSeries {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
+        const update = () => this.update();
+        this.addEventListener('update', update);
+
         const { marker } = this;
         marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addPropertyListener('enabled', event => {
@@ -55,7 +83,7 @@ export class LineSeries extends CartesianSeries {
                 this.groupSelection.exit.remove();
             }
         });
-        marker.addEventListener('change', () => this.update());
+        marker.addEventListener('change', update);
     }
 
     onMarkerShapeChange() {
@@ -66,18 +94,7 @@ export class LineSeries extends CartesianSeries {
         this.fireEvent({type: 'legendChange'});
     }
 
-    protected _title?: string;
-    set title(value: string | undefined) {
-        if (this._title !== value) {
-            this._title = value;
-            this.scheduleLayout();
-        }
-    }
-    get title(): string | undefined {
-        return this._title;
-    }
-
-    protected _xKey: string = '';
+    protected _xKey: string = LineSeries.defaults.xKey;
     set xKey(value: string) {
         if (this._xKey !== value) {
             this._xKey = value;
@@ -89,18 +106,9 @@ export class LineSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    protected _xName: string = '';
-    set xName(value: string) {
-        if (this._xName !== value) {
-            this._xName = value;
-            this.update();
-        }
-    }
-    get xName(): string {
-        return this._xName;
-    }
+    @reactive(['update']) xName: string = LineSeries.defaults.xName;
 
-    protected _yKey: string = '';
+    protected _yKey: string = LineSeries.defaults.yKey;
     set yKey(value: string) {
         if (this._yKey !== value) {
             this._yKey = value;
@@ -112,16 +120,7 @@ export class LineSeries extends CartesianSeries {
         return this._yKey;
     }
 
-    protected _yName: string = '';
-    set yName(value: string) {
-        if (this._yName !== value) {
-            this._yName = value;
-            this.update();
-        }
-    }
-    get yName(): string {
-        return this._yName;
-    }
+    @reactive(['update']) yName: string = LineSeries.defaults.yName;
 
     processData(): boolean {
         const { xAxis, xKey, yKey, xData, yData } = this;
@@ -161,61 +160,6 @@ export class LineSeries extends CartesianSeries {
         } else {
             return this.yDomain;
         }
-    }
-
-    private _fill: string = palette.fills[0];
-    set fill(value: string) {
-        if (this._fill !== value) {
-            this._fill = value;
-            this.scheduleData();
-        }
-    }
-    get fill(): string {
-        return this._fill;
-    }
-
-    private _stroke: string = palette.strokes[0];
-    set stroke(value: string) {
-        if (this._stroke !== value) {
-            this._stroke = value;
-            this.scheduleData();
-        }
-    }
-    get stroke(): string {
-        return this._stroke;
-    }
-
-    private _strokeWidth: number = 2;
-    set strokeWidth(value: number) {
-        if (this._strokeWidth !== value) {
-            this._strokeWidth = value;
-            this.update();
-        }
-    }
-    get strokeWidth(): number {
-        return this._strokeWidth;
-    }
-
-    private _fillOpacity: number = 1;
-    set fillOpacity(value: number) {
-        if (this._fillOpacity !== value) {
-            this._fillOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get fillOpacity(): number {
-        return this._fillOpacity;
-    }
-
-    private _strokeOpacity: number = 1;
-    set strokeOpacity(value: number) {
-        if (this._strokeOpacity !== value) {
-            this._strokeOpacity = value;
-            this.scheduleLayout();
-        }
-    }
-    get strokeOpacity(): number {
-        return this._strokeOpacity;
     }
 
     highlightStyle: {
@@ -287,6 +231,7 @@ export class LineSeries extends CartesianSeries {
 
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
+        lineNode.strokeOpacity = this.strokeOpacity;
 
         this.updateGroupSelection(groupSelectionData);
     }
@@ -377,8 +322,6 @@ export class LineSeries extends CartesianSeries {
             return `${titleString}<div class="ag-chart-tooltip-content">${xString}: ${yString}</div>`;
         }
     }
-
-    tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
