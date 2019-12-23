@@ -9,9 +9,9 @@ export interface ExcelTable {
     rows: ExcelRow[];
 }
 export interface ExcelColumn {
-    min: number;
-    max: number;
-    width: number;
+    min?: number;
+    max?: number;
+    width?: number;
     s?: number;
     hidden?: boolean;
     bestFit?: boolean;

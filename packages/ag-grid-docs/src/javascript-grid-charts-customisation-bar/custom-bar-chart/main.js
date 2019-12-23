@@ -42,6 +42,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
     console.log('chart options:', options);
 
     // we are only interested in processing bar type.
@@ -49,96 +50,36 @@ function processChartOptions(params) {
     // we ignore it.
     if (['stackedBar', 'groupedBar', 'normalizedBar', 'stackedColumn', 'groupedColumn', 'normalizedColumn'].indexOf(params.type) < 0) {
         console.log('chart type is ' + params.type + ', making no changes.');
-        return params.options;
+        return options;
     }
 
-    var xAxis = options.xAxis;
+    options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
+    options.seriesDefaults.fill.opacity = 0.8;
 
-    xAxis.line.width = 2;
-    xAxis.line.color = 'gray';
-    xAxis.tick.width = 2;
-    xAxis.tick.size = 10;
-    xAxis.tick.color = 'gray';
-    xAxis.label.fontStyle = 'italic';
-    xAxis.label.fontWeight = 'bold';
-    xAxis.label.fontSize = 15;
-    xAxis.label.fontFamily = 'Arial, sans-serif';
-    xAxis.label.padding = 10;
-    xAxis.label.color = '#de7b73';
-    xAxis.label.rotation = 20;
-    xAxis.label.formatter = function(params) {
-        return params.value.toString().toUpperCase();
-    };
-    xAxis.gridStyle = [
-        {
-            stroke: 'rgba(94,100,178,0.5)'
-        }
-    ];
+    options.seriesDefaults.stroke.colors = ['black', '#ff0000'];
+    options.seriesDefaults.stroke.opacity = 0.8;
+    options.seriesDefaults.stroke.width = 2;
 
-    var yAxis = options.yAxis;
+    options.seriesDefaults.shadow.enabled = true;
+    options.seriesDefaults.shadow.color = 'rgba(0, 0, 0, 0.3)';
+    options.seriesDefaults.shadow.xOffset = 10;
+    options.seriesDefaults.shadow.yOffset = 5;
+    options.seriesDefaults.shadow.blur = 8;
 
-    yAxis.title = {
-        enabled: true,
-        text: 'Country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
-        color: 'blue'
-    };
-    yAxis.line.width = 2;
-    yAxis.line.color = 'blue';
-    yAxis.tick.width = 2;
-    yAxis.tick.size = 10;
-    yAxis.tick.color = 'blue';
-    yAxis.label.fontStyle = 'italic';
-    yAxis.label.fontWeight = 'bold';
-    yAxis.label.fontSize = 15;
-    yAxis.label.fontFamily = 'Arial, sans-serif';
-    yAxis.label.padding = 10;
-    yAxis.label.color = '#de7b73';
-    yAxis.label.rotation = -20;
-    yAxis.label.formatter = function(params) {
-        var value = String(params.value);
-        return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
-    };
-    yAxis.gridStyle = [
-        {
-            stroke: '#80808044',
-            lineDash: undefined
-        },
-        {
-            stroke: '#80808044',
-            lineDash: [6, 3]
-        }
-    ];
-
-    var seriesDefaults = options.seriesDefaults;
-
-    seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
-    seriesDefaults.fill.opacity = 0.8;
-    seriesDefaults.stroke.colors = ['black', '#ff0000'];
-    seriesDefaults.stroke.opacity = 0.8;
-    seriesDefaults.stroke.width = 2;
-    seriesDefaults.highlightStyle = {
-        fill: 'red',
-        stroke: 'yellow'
+    options.seriesDefaults.label.enabled = true;
+    options.seriesDefaults.label.fontStyle = 'italic';
+    options.seriesDefaults.label.fontWeight = 'bold';
+    options.seriesDefaults.label.fontSize = 15;
+    options.seriesDefaults.label.fontFamily = 'Arial, sans-serif';
+    options.seriesDefaults.label.color = 'green';
+    options.seriesDefaults.label.formatter = function(params) {
+        return '<' + params.value + '>';
     };
 
-    seriesDefaults.shadow = {
-        color: 'rgba(0, 0, 0, 0.3)',
-        offset: [5, 5],
-        blur: 8
-    };
+    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
-    seriesDefaults.label.fontStyle = 'italic';
-    seriesDefaults.label.fontWeight = 'bold';
-    seriesDefaults.label.fontSize = 15;
-    seriesDefaults.label.fontFamily = 'Arial, sans-serif';
-    seriesDefaults.label.padding = { x: 10, y: 10 };
-    seriesDefaults.label.color = 'green';
-
-    seriesDefaults.tooltip.renderer = function(params) {
+    options.seriesDefaults.tooltip.renderer = function(params) {
         var x = params.datum[params.xKey];
         var y = params.datum[params.yKey];
         return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;

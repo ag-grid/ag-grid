@@ -1,25 +1,25 @@
 @import '../../ag-theme-base/sass/ag-theme-base';
 
 @mixin ag-theme-classic($params) {
-    $border-color: map-get($params, "border-color");
+    $ag-border-color: map-get($params, "border-color");
     $editor-background-color: map-get($params, "editor-background-color");
     $tab-background-color: map-get($params, "tab-background-color");
-    $grid-size: map-get($params, "grid-size");
+    $ag-grid-size: map-get($params, "grid-size");
     $header-background-image: map-get($params, "header-background-image");
-    $header-height: map-get($params, "header-height");
-    $cell-horizontal-border: map-get($params, "cell-horizontal-border");
+    $ag-header-height: map-get($params, "header-height");
+    $ag-cell-horizontal-border: map-get($params, "cell-horizontal-border");
     $focused-cell-border-color: map-get($params, "focused-cell-border-color");
     $menu-option-active-color: map-get($params, "menu-option-active-color");
     $chip-background-color: map-get($params, "chip-background-color");
-    $input-disabled-background-color: map-get($params, "input-disabled-background-color");
+    $ag-input-disabled-background-color: map-get($params, "input-disabled-background-color");
     $ag-range-selected-color-1: map-get($params, "ag-range-selected-color-1");
     $ag-range-selected-color-2: map-get($params, "ag-range-selected-color-2");
     $ag-range-selected-color-3: map-get($params, "ag-range-selected-color-3");
     $ag-range-selected-color-4: map-get($params, "ag-range-selected-color-4");
     $cell-highlight-border: map-get($params, "cell-highlight-border");
-    $row-height: map-get($params, "row-height");
-    $row-border-width: map-get($params, "row-border-width");
-    $icon-size: map-get($params, "icon-size");
+    $ag-row-height: map-get($params, "row-height");
+    $ag-row-border-width: map-get($params, "row-border-width");
+    $ag-icon-size: map-get($params, "icon-size");
 
     .ag-body-viewport {
         background-color: map-get($params, "panel-background-color");
@@ -27,21 +27,21 @@
 
     %card {
         background-color: $editor-background-color;
-        border: 1px solid $border-color;
+        border: 1px solid $ag-border-color;
     }
 
     %tab {
         border: 1px solid transparent;
         border-bottom-width: 0;
-        margin: $grid-size;
+        margin: $ag-grid-size;
         margin-bottom: 0;
-        padding: $grid-size $grid-size * 2;
+        padding: $ag-grid-size $ag-grid-size * 2;
     }
 
     %selected-tab {
         background-color: $editor-background-color;
         border-bottom: 2px solid $editor-background-color !important;
-        border-color: $border-color;
+        border-color: $ag-border-color;
     }
 
     @include ag-grid-theme($params);
@@ -55,7 +55,7 @@
     }
 
     .ag-column-drop-horizontal.ag-column-drop {
-        border: 1px solid $border-color;
+        border: 1px solid $ag-border-color;
         border-bottom: 0;
     }
 
@@ -64,32 +64,32 @@
     }
 
     .ag-header-cell-resize::after {
-        height: $header-height;
+        height: $ag-header-height;
         margin-top: 0;
     }
 
     .ag-header-cell {
-        border-right: 1px solid $border-color;
+        border-right: 1px solid $ag-border-color;
     }
 
     .ag-header-group-cell {
-        border-right: 1px solid $border-color;
+        border-right: 1px solid $ag-border-color;
     }
 
     .ag-root {
-        border: 1px solid $border-color;
+        border: 1px solid $ag-border-color;
     }
 
     .ag-tool-panel-wrapper {
-        border-right: 1px solid $border-color;
+        border-right: 1px solid $ag-border-color;
     }
 
     .ag-floating-filter-button {
-        margin-top: $grid-size * 2;
+        margin-top: $ag-grid-size * 2;
     }
 
     .ag-filter .ag-filter-apply-panel {
-        border-top: 1px solid $border-color;
+        border-top: 1px solid $ag-border-color;
         justify-content: flex-start;
     }
 
@@ -104,7 +104,7 @@
     }
 
     .ag-menu .ag-menu-option {
-        line-height: $grid-size * 6;
+        line-height: $ag-grid-size * 6;
     }
 
     .ag-column-drop-cell {
@@ -112,17 +112,17 @@
         @if $header-background-image {
             background-image: $header-background-image;
         }
-        border: 1px solid $border-color;
+        border: 1px solid $ag-border-color;
         border-radius: 0;
-        min-height: $grid-size * 4.5;
+        min-height: $ag-grid-size * 4.5;
 
         .ag-column-drop-cell-button {
-            margin-bottom: $grid-size / 2;
-            margin-top: $grid-size / 2;
+            margin-bottom: $ag-grid-size / 2;
+            margin-top: $ag-grid-size / 2;
         }
 
         .ag-column-drop-cell-button:hover {
-            border: 1px solid $border-color;
+            border: 1px solid $ag-border-color;
         }
     }
 
@@ -136,14 +136,14 @@
     }
 
     .ag-cell.ag-cell-inline-editing {
-        height: $row-height;
+        height: $ag-row-height;
         padding: 0;
     }
 
     .ag-column-select-panel {
         .ag-column-tool-panel-column-group,
         .ag-column-tool-panel-column {
-            height: $grid-size * 5;
+            height: $ag-grid-size * 5;
         }
     }
 
@@ -158,7 +158,7 @@
     }
 
     .ag-rich-select-value {
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $ag-border-color;
     }
 
     .ag-header-cell-moving .ag-header-cell-label {
@@ -175,13 +175,13 @@
 
     .ag-overlay-loading-center {
         background-color: #fff;
-        border: 1px solid $border-color;
+        border: 1px solid $ag-border-color;
         border-radius: 10px;
         color: black;
         padding: 10px;
     }
 
     .ag-column-name-filter {
-        height: $grid-size * 4;
+        height: $ag-grid-size * 4;
     }
 }

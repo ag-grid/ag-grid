@@ -54,6 +54,7 @@ export declare class AgGridColumn {
     pinned: any;
     chartDataType: any;
     sortedAt: any;
+    flex: any;
     width: any;
     minWidth: any;
     maxWidth: any;

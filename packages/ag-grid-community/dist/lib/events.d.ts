@@ -7,6 +7,7 @@ import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
+import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -110,6 +111,12 @@ export interface PasteStartEvent extends AgGridEvent {
 export interface PasteEndEvent extends AgGridEvent {
     source: string;
 }
+export interface FillStartEvent extends AgGridEvent {
+}
+export interface FillEndEvent extends AgGridEvent {
+    initialRange: CellRange;
+    finalRange: CellRange;
+}
 export interface ViewportChangedEvent extends AgGridEvent {
     firstRow: number;
     lastRow: number;
@@ -119,13 +126,17 @@ export interface FirstDataRenderedEvent extends AgGridEvent {
     lastRow: number;
 }
 export interface RangeSelectionChangedEvent extends AgGridEvent {
+    id?: string;
     finished: boolean;
     started: boolean;
 }
 export interface ChartRangeSelectionChanged extends AgGridEvent {
+    id: string;
+    cellRange: CellRangeParams;
 }
 export interface ChartOptionsChanged extends AgEvent {
     chartType: ChartType;
+    chartPalette: string;
     chartOptions: ChartOptions<any>;
 }
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
@@ -161,7 +172,7 @@ export interface ExpandCollapseAllEvent extends AgGridEvent {
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
-export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "api" | "pivotChart";
+export declare type ColumnEventType = "sizeColumnsToFit" | "autosizeColumns" | "alignedGridChanged" | "filterChanged" | "filterDestroyed" | "gridOptionsChanged" | "gridInitializing" | "toolPanelDragAndDrop" | "toolPanelUi" | "uiColumnMoved" | "uiColumnResized" | "uiColumnDragged" | "uiColumnExpanded" | "uiColumnSorted" | "contextMenu" | "columnMenu" | "rowModelUpdated" | "api" | "flex" | "pivotChart";
 export interface ColumnEvent extends AgGridEvent {
     column: Column | null;
     columns: Column[] | null;

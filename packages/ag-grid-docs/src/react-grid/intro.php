@@ -13,10 +13,10 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 class App extends Component {
   constructor(props) {
@@ -51,7 +51,7 @@ render(&lt;App /&gt;, document.getElementById('root'));
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <snippet>
 &lt;div id="root"&gt;&lt;/div&gt;
-</snippet>  
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

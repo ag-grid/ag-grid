@@ -8,8 +8,8 @@ import NumericEditor from "./numeric-editor.js";
 class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
-            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-grid.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css">
           
             <ag-grid-polymer style="width: 100%; height: 420px; "
                              class="ag-theme-balham"

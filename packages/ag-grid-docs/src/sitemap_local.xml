@@ -451,12 +451,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost:8080/javascript-grid-responsiveness/</loc>
-    <lastmod>2018-01-24</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
     <loc>http://localhost:8080/angular-grid/</loc>
     <lastmod>2018-01-24</lastmod>
     <changefreq>daily</changefreq>

@@ -1,4 +1,3 @@
-const autoprefixer = require('autoprefixer');
 const path = require('path');
 
 module.exports = {
@@ -13,7 +12,7 @@ module.exports = {
         // we prioritise main (cjs) vs module (es6) as when doing dev we only rebuild cjs for performance reasons
         mainFields: ["main", "module"],
         alias: {
-            "@ag-grid-community/grid-core": path.resolve(__dirname, "../_dev/@ag-grid-community/grid-core")
+            "@ag-grid-community/core": path.resolve(__dirname, "../_dev/@ag-grid-community/core")
         },
         extensions: ['.js']
     },
@@ -25,23 +24,8 @@ module.exports = {
                 enforce: "pre"
             },
             {
-                test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    {loader: 'css-loader', options: {sourceMap: true}},
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: true,
-                            syntax: 'postcss-scss',
-                            plugins: [autoprefixer({
-                                overrideBrowserslist: ["last 2 version"],
-                                flexbox: true
-                            })]
-                        }
-                    },
-                    {loader: 'sass-loader', options: {sourceMap: true}}
-                ]
+                test: /\.css$/,
+                loader: "style-loader!css-loader"
             },
             {
                 test: /\.(svg)$/,

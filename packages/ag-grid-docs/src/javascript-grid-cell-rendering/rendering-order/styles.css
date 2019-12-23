@@ -1,0 +1,8 @@
+.infoLabel {
+    padding-bottom: 5px;
+    display: inline-block;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #3131cb;
+}

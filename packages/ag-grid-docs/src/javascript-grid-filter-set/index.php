@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
         <th>Description</th>
     </tr>
     <tr>
-        <td class="parameter-key">applyButton<br/>clearButton<br/>debounceMs<br/>newRowsAction</td>
+        <td class="parameter-key">applyButton<br/>clearButton<br/>resetButton<br/>debounceMs<br/>newRowsAction</td>
         <td>See <a href="../javascript-grid-filter-provided/#providedFilterParams">Provided Filter Params</a>.</td>
     </tr>
     <tr>

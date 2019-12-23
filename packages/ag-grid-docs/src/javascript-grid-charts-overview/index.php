@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>
             <a href="../javascript-grid-charts-overview/#user-created-charts">User Created Charts</a>: A user creates a
-            chart using the grid's UI by selecting a range of cells or entering pivot mode and then selecting to chart
+            chart using the grid's UI by selecting a range of cells or entering pivot mode and then creating a chart
             via the context menu.
         </li>
         <li>
@@ -44,12 +44,21 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         To minimise bundle sizes for applications that do not require charting, charts are contained in a separate
-        module, which can be imported as follows:
+        <a href="../javascript-grid-modules/">module</a>, which can be imported as follows:
     </p>
 
     <snippet>
-        import '@ag-grid-enterprise/range-selection';
-        import '@ag-grid-enterprise/charts';
+// import all Enterprise modules
+import { ModuleRegistry, AllModules } from '@ag-grid-enterprise/all-modules';
+
+ModuleRegistry.registerModules(AllModules);
+
+// or only import minimal modules required for charts
+import { ModuleRegistry } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { ChartsModule } from "@ag-grid-enterprise/charts";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
     </snippet>
 
     <p>

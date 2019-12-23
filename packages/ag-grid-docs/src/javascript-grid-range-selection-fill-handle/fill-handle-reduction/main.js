@@ -15,7 +15,10 @@ var gridOptions = {
     enableRangeSelection: true,
     enableFillHandle: true,
     suppressClearOnFillReduction: true,
-    rowData: null
+    rowData: null,
+    defaultColDef: {
+        editable: true
+    }
 };
 
 // setup the grid after the page has finished loading

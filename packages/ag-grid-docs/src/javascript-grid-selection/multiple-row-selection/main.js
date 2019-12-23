@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    { headerName: "Athlete", field: "athlete", width: 150 },
+    { headerName: "Age", field: "age", width: 90 },
+    { headerName: "Country", field: "country", width: 120 },
+    { headerName: "Year", field: "year", width: 90 },
+    { headerName: "Date", field: "date", width: 110 },
+    { headerName: "Sport", field: "sport", width: 110 },
+    { headerName: "Gold", field: "gold", width: 100 },
+    { headerName: "Silver", field: "silver", width: 100 },
+    { headerName: "Bronze", field: "bronze", width: 100 },
+    { headerName: "Total", field: "total", width: 100 }
 ];
 
 var gridOptions = {
@@ -20,18 +20,23 @@ var gridOptions = {
 function onSelectionChanged() {
     var selectedRows = gridOptions.api.getSelectedRows();
     var selectedRowsString = '';
-    selectedRows.forEach( function(selectedRow, index) {
-        if (index>5) {
+    var maxToShow = 5;
+
+    selectedRows.forEach(function(selectedRow, index) {
+        if (index >= maxToShow) {
             return;
         }
-        if (index!==0) {
+
+        if (index > 0) {
             selectedRowsString += ', ';
         }
+
         selectedRowsString += selectedRow.athlete;
     });
 
-    if (selectedRows.length>=5) {
-        selectedRowsString += (' - and ' + (selectedRows.length - 5) + ' others');
+    if (selectedRows.length > maxToShow) {
+        var othersCount = selectedRows.length - maxToShow;
+        selectedRowsString += ' and ' + othersCount + ' other' + (othersCount !== 1 ? 's' : '');
     }
 
     document.querySelector('#selectedRows').innerHTML = selectedRowsString;

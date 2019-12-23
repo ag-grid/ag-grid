@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         Range selection allows Excel-like range selection of cells.
         Range selections are useful for visually highlighting data, copying data to the
-        <a href="../javascript-grid-clipboard/">Clipboard</a>
+        <a href="../javascript-grid-clipboard/">Clipboard</a>,
         or for doing aggregations using the <a href="../javascript-grid-status-bar/">Status Bar</a>.
     </p>
 
@@ -28,12 +28,12 @@ include '../documentation-main/documentation_header.php';
                 A range will be created between the two cells and clear any existing ranges.
             </li>
             <li>
-                <b>Ctrl & Mouse Drag:</b> Holding <b>Control</b> key while creating a range using mouse drag
+                <b>Ctrl & Mouse Drag:</b> Holding <b>Ctrl</b> key while creating a range using mouse drag
                 will create a new range selection and keep any existing ranges.
             </li>
             <li>
-                <b>Shift & Click:</b> Clicking on one cell to focus that cell, then hold down <b>Shift</b>
-                while clicking another cell will create a range between both cells.
+                <b>Shift & Click:</b> Clicking on one cell to focus that cell, then holding down <b>Shift</b>
+                while clicking another cell, will create a range between both cells.
             </li>
             <li>
                 <b>Shift & Arrow Keys:</b> Focusing a cell and then holding down <b>Shift</b> and using
@@ -43,14 +43,23 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h2>Range Selection Example</h2>
+    <h3>Example: Range Selection</h2>
 
     <p>
-        The example below demonstrates simple range selection. Ranges can be selected in all ways
+        The example below demonstrates simple range selection. Ranges can be selected in all the ways
         described above.
     </p>
 
     <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+    <h3>Example: Suppress Multi Range Selection</h3>
+
+    <p>
+        This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows
+        one range selection even if the <b>Ctrl</b> key is held down.
+    </p>
+
+    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -71,10 +80,10 @@ include '../documentation-main/documentation_header.php';
         The above two (pinning and floating) can be thought of as follows: if you have a grid
         with pinning and / or floating, then 'flatten out' the grid in your head so that all
         rows and columns are visible, then the range selection will work as you would expect
-        in the flattened out version with only full rectangles can be selectable.
+        in the flattened out version where only full rectangles can be selectable.
     </p>
 
-    <h2>Range Changed Event</h2>
+    <h2>Range Selection Changed Event</h2>
 
     <p>
         The <code>rangeSelectionChanged</code> event tells you that the range selection has changed.
@@ -108,7 +117,7 @@ api.addEventListener('rangeSelectionChanged', function(event) {
 interface CellRange {
     startRow: RowPosition; // the start row of the range
     endRow: RowPosition; // the end row of the range
-    columns: Column[] // the columns in the range
+    columns: Column[]; // the columns in the range
 }
 
 interface RowPosition {
@@ -132,8 +141,8 @@ interface RowPosition {
     <h3><code>api.addCellRange(rangeSelection)</code></h3>
 
     <p>
-        Adds a range to the selection. This keeps any previous ranges. If you wish to have this range
-    exclusively, then call <code>clearRangeSelection()</code> first. The method takes the following params:
+        Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range
+        selected, then call <code>clearRangeSelection()</code> first. The method takes the following params:
     </p>
 
         <snippet>
@@ -192,7 +201,7 @@ interface AddCellRangeParams {
         the range down.
     </p>
 
-    <h2>Advanced Range Selection Example</h2>
+    <h2>Example: Advanced Range Selection</h2>
 
     <p>
         The example below demonstrates a more complex range selection scenario. The example listens
@@ -209,14 +218,6 @@ interface AddCellRangeParams {
 
     <?= example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Range Selection Example - Suppress Multi</h2>
-
-    <p>
-        This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows
-        one range selection even if the Ctrl key is held down.
-    </p>
-
-    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 </div>
 

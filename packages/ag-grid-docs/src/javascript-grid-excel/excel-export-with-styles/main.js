@@ -238,70 +238,48 @@ function getBooleanValue(cssSelector) {
     return document.querySelector(cssSelector).checked === true;
 }
 
+function getTextValue(cssSelector) {
+    return document.querySelector(cssSelector).value;
+}
+
+function getNumericValue(cssSelector) {
+    var value = parseFloat(getTextValue(cssSelector));
+    if (isNaN(value)) {
+        var message = "Invalid number entered in " + cssSelector + " field";
+        alert(message);
+        throw new Error(message);
+    }
+    return value;
+}
+
+function myColumnWidthCallback(params) {
+    var originalWidth = params.column.getActualWidth();
+    if (params.index < 7) {
+        return originalWidth;
+    }
+    return 30;
+}
+
 function onBtExport() {
+    var columnWidth = getBooleanValue('#columnWidth') ? getTextValue('#columnWidthValue') : undefined;
     var params = {
-        skipHeader: getBooleanValue('#skipHeader'),
-        columnGroups: getBooleanValue('#columnGroups'),
-        skipFooters: getBooleanValue('#skipFooters'),
-        skipGroups: getBooleanValue('#skipGroups'),
-        skipPinnedTop: getBooleanValue('#skipPinnedTop'),
-        skipPinnedBottom: getBooleanValue('#skipPinnedBottom'),
-        allColumns: getBooleanValue('#allColumns'),
-        onlySelected: getBooleanValue('#onlySelected'),
-        fileName: document.querySelector('#fileName').value,
-        sheetName: document.querySelector('#sheetName').value,
-        exportMode: document.querySelector('input[name="mode"]:checked').value
+        columnWidth: columnWidth === 'myColumnWidthCallback' ? myColumnWidthCallback : parseFloat(columnWidth),
+        sheetName: getBooleanValue('#sheetName') && getTextValue('#sheetNameValue'),
+        exportMode: getBooleanValue('#exportModeXml') ? "xml" : undefined,
+        suppressTextAsCDATA: getBooleanValue('#suppressTextAsCDATA'),
+        rowHeight: getBooleanValue('#rowHeight') ? getNumericValue('#rowHeightValue') : undefined,
+        headerRowHeight: getBooleanValue('#headerRowHeight') ? getNumericValue('#headerRowHeightValue') : undefined,
+        customHeader: [
+            [],
+            [{styleId: 'bigHeader', data: {type: 'String', value: 'content appended with customHeader'}, mergeAcross: 3}],
+            [{data: {type: 'String', value: 'Numeric value'}, mergeAcross: 2}, {data: {type: 'Number', value: '3695.36'}}],
+            []
+        ],
+        customFooter: [
+            [],
+            [{styleId: 'bigHeader', data: {type: 'String', value: 'content appended with customFooter'}}]
+        ]
     };
-
-    if (getBooleanValue('#skipGroupR')) {
-        params.shouldRowBeSkipped = function(params) {
-            return params.node.data.country.charAt(0) === 'R';
-        };
-    }
-
-    if (getBooleanValue('#useCellCallback')) {
-        params.processCellCallback = function(params) {
-            if (params.value && params.value.toUpperCase) {
-                return params.value.toUpperCase();
-            } else {
-                return params.value;
-            }
-        };
-    }
-
-    if (getBooleanValue('#useSpecificColumns')) {
-        params.columnKeys = ['country', 'bronze'];
-    }
-
-    if (getBooleanValue('#processHeaders')) {
-        params.processHeaderCallback = function(params) {
-            return params.column.getColDef().headerName.toUpperCase();
-        };
-    }
-
-    if (getBooleanValue('#processGroupHeaders')) {
-        params.processGroupHeaderCallback  = function(params) {
-            return params.columnGroup.getColGroupDef().headerName.toUpperCase();
-        };
-    }
-
-    if (getBooleanValue('#appendHeader')) {
-        params.customHeader = [
-            [],
-            [{styleId: 'bigHeader', data: {type: 'String', value: 'Summary'}}],
-            [{data: {type: 'String', value: 'Sales'}, mergeAcross: 2}, {data: {type: 'Number', value: '3695.36'}}],
-            []
-        ];
-    }
-
-    if (getBooleanValue('#appendFooter')) {
-        params.customFooter = [
-            [],
-            [{styleId: 'bigHeader', data: {type: 'String', value: 'Footer'}}],
-            [{data: {type: 'String', value: 'Purchases'}, mergeAcross: 2}, {data: {type: 'Number', value: '7896.35'}}],
-            []
-        ];
-    }
 
     gridOptions.api.exportDataAsExcel(params);
 }

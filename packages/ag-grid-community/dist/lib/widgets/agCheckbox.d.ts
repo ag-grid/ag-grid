@@ -1,11 +1,13 @@
-import { AgEvent } from "../events";
-import { AgAbstractInputField } from "./agAbstractInputField";
-import { LabelAlignment } from "./agAbstractLabel";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { AgEvent } from '../events';
+import { AgAbstractInputField } from './agAbstractInputField';
+import { LabelAlignment } from './agAbstractLabel';
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
 export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
     protected className: string;
+    protected nativeInputClassName: string;
     protected displayTag: string;
     protected inputType: string;
     protected labelAlignment: LabelAlignment;
@@ -14,7 +16,7 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
         unselected: string;
         indeterminate?: string;
     };
-    private gridOptionsWrapper;
+    protected gridOptionsWrapper: GridOptionsWrapper;
     private selected;
     private readOnly;
     private passive;
@@ -22,17 +24,19 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     constructor();
     protected postConstruct(): void;
     protected addInputListeners(): void;
-    private addIconsPlaceholder;
-    private onClick;
     getNextValue(): boolean;
     setPassive(passive: boolean): void;
-    setReadOnly(readOnly: boolean): void;
     isReadOnly(): boolean;
-    protected isSelected(): boolean;
+    setReadOnly(readOnly: boolean): void;
     toggle(): void;
+    getValue(): boolean;
+    setValue(value: boolean | undefined, silent?: boolean): this;
+    protected isSelected(): boolean;
     protected setSelected(selected?: boolean, silent?: boolean): void;
     protected getIconName(): string;
     protected updateIcons(): void;
-    getValue(): boolean;
-    setValue(value: boolean | undefined, silent?: boolean): this;
+    private dispatchChange;
+    private addIconsPlaceholder;
+    private onClick;
+    private onCheckboxClick;
 }

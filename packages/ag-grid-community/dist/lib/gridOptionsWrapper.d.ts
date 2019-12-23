@@ -1,16 +1,16 @@
-import { RowNode } from "./entities/rowNode";
-import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams } from "./entities/gridOptions";
-import { GridApi } from "./gridApi";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./entities/colDef";
-import { ColumnApi } from "./columnController/columnApi";
-import { IViewportDatasource } from "./interfaces/iViewportDatasource";
-import { IDatasource } from "./interfaces/iDatasource";
-import { CellPosition } from "./entities/cellPosition";
-import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
-import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "./interfaces/exportParams";
-import { AgEvent } from "./events";
-import { SideBarDef } from "./entities/sideBar";
-import { ChartOptions } from "./interfaces/iChartOptions";
+import { RowNode } from './entities/rowNode';
+import { ChartRef, FillOperationParams, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, IsRowSelectable, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessChartOptionsParams, ProcessDataFromClipboardParams, TabToNextCellParams } from './entities/gridOptions';
+import { GridApi } from './gridApi';
+import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from './entities/colDef';
+import { ColumnApi } from './columnController/columnApi';
+import { IViewportDatasource } from './interfaces/iViewportDatasource';
+import { IDatasource } from './interfaces/iDatasource';
+import { CellPosition } from './entities/cellPosition';
+import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
+import { BaseExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
+import { AgEvent } from './events';
+import { SideBarDef } from './entities/sideBar';
+import { ChartOptions } from './interfaces/iChartOptions';
 export interface PropertyChangedEvent extends AgEvent {
     currentValue: any;
     previousValue: any;
@@ -113,6 +113,8 @@ export declare class GridOptionsWrapper {
     isSuppressMenuHide(): boolean;
     isEnterMovesDownAfterEdit(): boolean;
     isEnterMovesDown(): boolean;
+    isUndoRedoCellEditing(): boolean;
+    getUndoRedoCellEditingLimit(): number;
     getRowStyle(): any;
     getRowClass(): string | string[];
     getRowStyleFunc(): Function;
@@ -263,6 +265,7 @@ export declare class GridOptionsWrapper {
     addEventListener(key: string, listener: Function): void;
     static checkEventDeprecation(eventName: string): void;
     removeEventListener(key: string, listener: Function): void;
+    isSkipHeaderOnAutoSize(): boolean;
     getAutoSizePadding(): number;
     getHeaderHeight(): number;
     getFloatingFiltersHeight(): number;
@@ -290,6 +293,8 @@ export declare class GridOptionsWrapper {
     };
     isDynamicRowHeight(): boolean;
     getVirtualItemHeight(): number;
+    useNativeCheckboxes(): boolean;
+    chartMenuPanelWidth(): number;
     private isNumeric;
     private specialForNewMaterial;
     private getDefaultRowHeight;

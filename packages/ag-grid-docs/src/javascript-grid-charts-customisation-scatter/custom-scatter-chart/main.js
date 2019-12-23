@@ -1,12 +1,9 @@
 var columnDefs = [
     { field: "country", width: 150, chartDataType: 'category' },
+    { field: "total", chartDataType: 'series' },
     { field: "gold", chartDataType: 'series' },
     { field: "silver", chartDataType: 'series' },
     { field: "bronze", chartDataType: 'series' },
-    { headerName: "A", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "B", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "C", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' },
-    { headerName: "D", valueGetter: 'Math.floor(Math.random()*1000)', chartDataType: 'series' }
 ];
 
 function createRowData() {
@@ -17,12 +14,16 @@ function createRowData() {
     ];
 
     return countries.map(function(country, index) {
-        return {
+        var datum = {
             country: country,
             gold: Math.floor(((index + 1 / 7) * 333) % 100),
             silver: Math.floor(((index + 1 / 3) * 555) % 100),
             bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
         };
+
+        datum.total = datum.gold + datum.silver + datum.bronze;
+
+        return datum;
     });
 }
 
@@ -42,6 +43,7 @@ var gridOptions = {
 
 function processChartOptions(params) {
     var options = params.options;
+
     console.log('chart options:', options);
 
     // we are only interested in processing scatter or bubble type.
@@ -52,90 +54,36 @@ function processChartOptions(params) {
         return params.options;
     }
 
-    var xAxis = options.xAxis;
-    xAxis.title = {
-        enabled: true,
-        text: 'Gold medal count',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        fontFamily: 'Impact, sans-serif',
-        color: 'gray'
-    };
-    xAxis.line.width = 2;
-    xAxis.line.color = 'gray';
-    xAxis.tick.width = 2;
-    xAxis.tick.size = 10;
-    xAxis.tick.color = 'gray';
-    xAxis.label.fontStyle = 'italic';
-    xAxis.label.fontWeight = 'bold';
-    xAxis.label.fontSize = 15;
-    xAxis.label.fontFamily = 'Arial, sans-serif';
-    xAxis.label.padding = 10;
-    xAxis.label.color = '#de7b73';
-    xAxis.label.rotation = 20;
-    xAxis.label.formatter = function(params) {
-        var value = params.value;
+    options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
+    options.seriesDefaults.fill.opacity = 0.7;
 
-        return value % 10 === 0 ? value : '(' + value + ')';
-    };
-    xAxis.gridStyle = [
-        {
-            stroke: 'rgba(94,100,178,0.5)'
-        }
-    ];
+    options.seriesDefaults.stroke.colors = ['black', '#ff0000'];
+    options.seriesDefaults.stroke.opacity = 0.6;
+    options.seriesDefaults.stroke.width = 2;
 
-    var yAxis = options.yAxis;
-    yAxis.line.width = 2;
-    yAxis.line.color = 'blue';
-    yAxis.tick.width = 2;
-    yAxis.tick.size = 10;
-    yAxis.tick.color = 'blue';
-    yAxis.label.fontStyle = 'italic';
-    yAxis.label.fontWeight = 'bold';
-    yAxis.label.fontSize = 15;
-    yAxis.label.fontFamily = 'Arial, sans-serif';
-    yAxis.label.padding = 10;
-    yAxis.label.color = '#de7b73';
-    yAxis.label.rotation = 20;
-    yAxis.label.formatter = function(params) {
-        return params.value.toString().toUpperCase();
-    };
-    yAxis.gridStyle = [
-        {
-            stroke: '#80808044',
-            lineDash: undefined
-        },
-        {
-            stroke: '#80808044',
-            lineDash: [6, 3]
-        }
-    ];
+    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
-    var seriesDefaults = options.seriesDefaults;
+    options.seriesDefaults.marker.enabled = true;
+    options.seriesDefaults.marker.type = 'square';
+    options.seriesDefaults.marker.size = 12;
+    options.seriesDefaults.marker.minSize = 5;
+    options.seriesDefaults.marker.strokeWidth = 4;
 
-    seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
-    seriesDefaults.stroke.colors = ['black', '#ff0000'];
-    seriesDefaults.stroke.width = 2;
-    seriesDefaults.highlightStyle = {
-        fill: 'red',
-        stroke: 'yellow'
-    };
-
-    seriesDefaults.marker.enabled = true;
-    seriesDefaults.marker.size = 12;
-    seriesDefaults.marker.minSize = 5;
-    seriesDefaults.marker.strokeWidth = 4;
-
-    seriesDefaults.tooltipRenderer = function(params) {
+    options.seriesDefaults.tooltip.renderer = function(params) {
         var x = params.datum[params.xKey];
         var y = params.datum[params.yKey];
         var label = params.datum[params.labelKey];
+        var size = params.datum[params.sizeKey];
+
         return '<u style="color: ' + params.color + '">' + params.title + '</u><br/><br/>' +
-            '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' +
+            (label != null ? '<b>' + params.labelName.toUpperCase() + ':</b> ' + label + '<br/>' : '') +
             '<b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/>' +
-            '<b>' + params.yName.toUpperCase() + ':</b> ' + y;
+            '<b>' + params.yName.toUpperCase() + ':</b> ' + y +
+            (size != null ? '<br/><b>' + params.sizeName.toUpperCase() + ':</b> ' + size : '');
     };
+
+    options.seriesDefaults.paired = true;
 
     return options;
 }
@@ -144,7 +92,7 @@ function onFirstDataRendered(params) {
     var cellRange = {
         rowStartIndex: 0,
         rowEndIndex: 4,
-        columns: ['country', 'gold', 'silver', 'bronze']
+        columns: ['country', 'total', 'gold', 'silver', 'bronze']
     };
 
     var createRangeChartParams = {

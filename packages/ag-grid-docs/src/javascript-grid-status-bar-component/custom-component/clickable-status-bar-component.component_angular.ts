@@ -1,24 +1,24 @@
-import {Component, ViewChild, ViewContainerRef} from "@angular/core";
+import {Component} from "@angular/core";
 
-import {IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusBarItem, IStatusBarItemParams} from "@ag-grid-community/all-modules";
-import {IFilterAngularComp} from "@ag-grid-community/angular";
+import {IStatusPanelParams} from "@ag-grid-community/all-modules";
 
 @Component({
     selector: 'status-component',
     template: `
         <div class="ag-name-value">
-            <span class="component">Status Bar Component <input type="button" (click)="onClick()" value="Click Me"/></span>
+            <span class="component">Status Bar Component <input type="button" (click)="onClick()"
+                                                                value="Click Me"/></span>
         </div>
     `
 })
 export class ClickableStatusBarComponent {
-    private params: IStatusBarItemParams;
+    private params: IStatusPanelParams;
 
-    agInit(params: IStatusBarItemParams): void {
+    agInit(params: IStatusPanelParams): void {
         this.params = params;
     }
 
-    onClick() : void {
+    onClick(): void {
         alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
     }
 }

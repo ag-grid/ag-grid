@@ -77,6 +77,7 @@ function onFirstDataRendered(event) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
@@ -102,6 +103,7 @@ function onFirstDataRendered(event) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 
@@ -123,10 +125,11 @@ function onFirstDataRendered(event) {
             params.options.legend.position = 'bottom';
             params.options.padding = { top: 20, left: 10, bottom: 30, right: 10 };
 
-            params.options.seriesDefaults.tooltipRenderer = function(params) {
+            params.options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="title"' + titleStyle + '>' + params.title + '</div>' : '';
                 var value = params.datum[params.angleKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+
                 return title + '<div class="content" style="text-align: center">' + value + '</div>';
             };
 

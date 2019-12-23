@@ -1,0 +1,1 @@
+{"version":3,"file":"mergeCell.js","sourceRoot":"","sources":["../../../../../src/excelExport/files/ooxml/mergeCell.ts"],"names":[],"mappings":";;AAEA,IAAM,SAAS,GAAuB;IAClC,WAAW,EAAX,UAAY,GAAW;QACnB,OAAO;YACH,IAAI,EAAE,WAAW;YACjB,UAAU,EAAE;gBACR,MAAM,EAAE;oBACJ,GAAG,EAAE,GAAG;iBACX;aACJ;SACJ,CAAC;IACN,CAAC;CACJ,CAAC;AAEF,kBAAe,SAAS,CAAC"}

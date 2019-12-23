@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    { headerName: "Athlete", field: "athlete", width: 150 },
+    { headerName: "Age", field: "age", width: 90 },
+    { headerName: "Country", field: "country", width: 120 },
+    { headerName: "Year", field: "year", width: 90 },
+    { headerName: "Date", field: "date", width: 110 },
+    { headerName: "Sport", field: "sport", width: 110 },
+    { headerName: "Gold", field: "gold", width: 100 },
+    { headerName: "Silver", field: "silver", width: 100 },
+    { headerName: "Bronze", field: "bronze", width: 100 },
+    { headerName: "Total", field: "total", width: 100 }
 ];
 
 var gridOptions = {
@@ -20,14 +20,14 @@ var gridOptions = {
     rowData: null,
     onRangeSelectionChanged: onRangeSelectionChanged,
     processCellForClipboard: function(params) {
-        if (params.column.getColId()==='athlete' && params.value && params.value.toUpperCase) {
+        if (params.column.getColId() === 'athlete' && params.value && params.value.toUpperCase) {
             return params.value.toUpperCase();
         } else {
             return params.value;
         }
     },
     processCellFromClipboard: function(params) {
-        if (params.column.getColId()==='athlete' && params.value && params.value.toLowerCase) {
+        if (params.column.getColId() === 'athlete' && params.value && params.value.toLowerCase) {
             return params.value.toLowerCase();
         } else {
             return params.value;
@@ -49,15 +49,13 @@ function onClearRange() {
 }
 
 function onRangeSelectionChanged(event) {
-
     var lbRangeCount = document.querySelector('#lbRangeCount');
     var lbEagerSum = document.querySelector('#lbEagerSum');
     var lbLazySum = document.querySelector('#lbLazySum');
-
     var cellRanges = gridOptions.api.getCellRanges();
 
     // if no selection, clear all the results and do nothing more
-    if (!cellRanges || cellRanges.length===0) {
+    if (!cellRanges || cellRanges.length === 0) {
         lbRangeCount.innerHTML = '0';
         lbEagerSum.innerHTML = '-';
         lbLazySum.innerHTML = '-';
@@ -69,7 +67,6 @@ function onRangeSelectionChanged(event) {
 
     // consider the first range only. if doing multi select, disregard the others
     var firstRange = cellRanges[0];
-
     var sum = 0;
 
     // get starting and ending row, remember rowEnd could be before rowStart
@@ -77,8 +74,8 @@ function onRangeSelectionChanged(event) {
     var endRow = Math.max(firstRange.startRow.rowIndex, firstRange.endRow.rowIndex);
 
     var api = gridOptions.api;
-    for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
-        firstRange.columns.forEach( function(column) {
+    for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
+        firstRange.columns.forEach(function(column) {
             var rowModel = api.getModel();
             var rowNode = rowModel.getRow(rowIndex);
             var value = api.getValue(column, rowNode);

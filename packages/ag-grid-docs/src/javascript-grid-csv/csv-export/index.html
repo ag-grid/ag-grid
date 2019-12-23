@@ -1,0 +1,86 @@
+<style>
+label, .row {
+    box-sizing: border-box;
+    display: block;
+    padding: 2px;
+}
+.row label {
+    display: inline;
+    padding: 0;
+}
+button {
+    display: inline-block;
+    font-weight: bold;
+}
+#myGrid {
+    height: 100%;
+    width: 47%;
+    display: block;
+}
+#csvResult {
+    height: 100%;
+    width: 47%;
+    margin-left: 5%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 1em;
+}
+#customValue {
+    width: 300px;
+}
+</style>
+
+<div style="display: flex; flex-direction: column; height: 100%;">
+
+<div style="display: flex;">
+    <div>
+        <div class="row"> 
+            <label>suppressQuotes = </label>
+            <select id="suppressQuotes">
+                <option value="none">(default)</option>
+                <option value="true">true</option>
+            </select>
+        </div>
+        <div class="row"> 
+            <label>columnSeparator = </label>
+            <select id="columnSeparator">
+                <option value="none">(default)</option>
+                <option value="tab">tab</option>
+                <option value="|">bar (|)</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="margin-left: 10px;">
+        <div class="row"> 
+            <label>customHeader = </label>
+            <select id="customHeader">
+                <option>none</option>
+                <option value="array">ExcelCell[][] (recommended format)</option>
+                <option value="string">string (legacy format)</option>
+            </select>
+        </div>
+        <div class="row"> 
+            <label>customFooter = </label>
+            <select id="customFooter">
+                <option>none</option>
+                <option value="array">ExcelCell[][] (recommended format)</option>
+                <option value="string">string (legacy format)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div style="margin: 10px 0;">
+    <button onclick="onBtnUpdate()">Show api.getDataAsCsv() text</button>
+    <button onclick="onBtnExport()">Download file (api.exportDataAsCsv())</button>
+</div>
+
+
+<div style="flex: 1; position: relative;">
+    <div id="myGrid" class="ag-theme-balham"></div>
+    <textarea id="csvResult">Press the api.getDataAsCsv() button to view exported CSV here</textarea>
+</div>
+</div>
+

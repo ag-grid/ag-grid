@@ -11,6 +11,10 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Accessing Data</h1>
 
+    <p class="lead">
+        This section covers the ways data can be accessed once it has been supplied to the grid.
+    </p>
+
     <p>
         Each time you pass data to the grid, the grid wraps each data item
         with a <a href="../javascript-grid-row-node/">rowNode</a> object.

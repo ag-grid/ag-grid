@@ -96,6 +96,7 @@ var AgGridAngular = /** @class */ (function () {
         this.batchUpdateWaitMillis = undefined;
         this.blockLoadDebounceMillis = undefined;
         this.keepDetailRowsCount = undefined;
+        this.undoRedoCellEditingLimit = undefined;
         this.localeTextFunc = undefined;
         this.groupRowInnerRenderer = undefined;
         this.groupRowInnerRendererFramework = undefined;
@@ -195,6 +196,7 @@ var AgGridAngular = /** @class */ (function () {
         this.suppressLoadingOverlay = undefined;
         this.suppressNoRowsOverlay = undefined;
         this.suppressAutoSize = undefined;
+        this.skipHeaderOnAutoSize = undefined;
         this.suppressParentsInRowNodes = undefined;
         this.showToolPanel = undefined;
         this.suppressColumnMoveAnimation = undefined;
@@ -287,6 +289,8 @@ var AgGridAngular = /** @class */ (function () {
         this.keepDetailRows = undefined;
         this.paginateChildRows = undefined;
         this.preventDefaultOnContextMenu = undefined;
+        this.undoRedoCellEditing = undefined;
+        this.allowDragFromColumnsToolPanel = undefined;
         this.columnEverythingChanged = new core_1.EventEmitter();
         this.newColumnsLoaded = new core_1.EventEmitter();
         this.columnPivotModeChanged = new core_1.EventEmitter();
@@ -313,6 +317,8 @@ var AgGridAngular = /** @class */ (function () {
         this.modelUpdated = new core_1.EventEmitter();
         this.pasteStart = new core_1.EventEmitter();
         this.pasteEnd = new core_1.EventEmitter();
+        this.fillStart = new core_1.EventEmitter();
+        this.fillEnd = new core_1.EventEmitter();
         this.cellClicked = new core_1.EventEmitter();
         this.cellDoubleClicked = new core_1.EventEmitter();
         this.cellMouseDown = new core_1.EventEmitter();
@@ -546,6 +552,7 @@ var AgGridAngular = /** @class */ (function () {
         'batchUpdateWaitMillis': [{ type: core_1.Input },],
         'blockLoadDebounceMillis': [{ type: core_1.Input },],
         'keepDetailRowsCount': [{ type: core_1.Input },],
+        'undoRedoCellEditingLimit': [{ type: core_1.Input },],
         'localeTextFunc': [{ type: core_1.Input },],
         'groupRowInnerRenderer': [{ type: core_1.Input },],
         'groupRowInnerRendererFramework': [{ type: core_1.Input },],
@@ -645,6 +652,7 @@ var AgGridAngular = /** @class */ (function () {
         'suppressLoadingOverlay': [{ type: core_1.Input },],
         'suppressNoRowsOverlay': [{ type: core_1.Input },],
         'suppressAutoSize': [{ type: core_1.Input },],
+        'skipHeaderOnAutoSize': [{ type: core_1.Input },],
         'suppressParentsInRowNodes': [{ type: core_1.Input },],
         'showToolPanel': [{ type: core_1.Input },],
         'suppressColumnMoveAnimation': [{ type: core_1.Input },],
@@ -737,6 +745,8 @@ var AgGridAngular = /** @class */ (function () {
         'keepDetailRows': [{ type: core_1.Input },],
         'paginateChildRows': [{ type: core_1.Input },],
         'preventDefaultOnContextMenu': [{ type: core_1.Input },],
+        'undoRedoCellEditing': [{ type: core_1.Input },],
+        'allowDragFromColumnsToolPanel': [{ type: core_1.Input },],
         'columnEverythingChanged': [{ type: core_1.Output },],
         'newColumnsLoaded': [{ type: core_1.Output },],
         'columnPivotModeChanged': [{ type: core_1.Output },],
@@ -763,6 +773,8 @@ var AgGridAngular = /** @class */ (function () {
         'modelUpdated': [{ type: core_1.Output },],
         'pasteStart': [{ type: core_1.Output },],
         'pasteEnd': [{ type: core_1.Output },],
+        'fillStart': [{ type: core_1.Output },],
+        'fillEnd': [{ type: core_1.Output },],
         'cellClicked': [{ type: core_1.Output },],
         'cellDoubleClicked': [{ type: core_1.Output },],
         'cellMouseDown': [{ type: core_1.Output },],

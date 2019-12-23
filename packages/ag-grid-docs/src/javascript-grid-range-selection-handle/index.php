@@ -18,10 +18,10 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Enabling the Range Handle</h2>
     <p>
-        To enable the Range Handle, simply set <code>enableRangeHandle</code> to true in the <strong>gridOptions</strong>.
+        To enable the Range Handle, simply set <code>enableRangeHandle</code> to <code>true</code> in the <code>gridOptions</code>.
     </p>
 
-    <h3>Example - Range Selection with Range Handle</h3>
+    <h3>Example: Range Selection with Range Handle</h3>
     <p>
         The example below demonstrates simple range selection with a range handle.
     </p>
