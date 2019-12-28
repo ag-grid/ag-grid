@@ -1,0 +1,28 @@
+{
+  "extends": "./module-build/tsconfig.json",
+  "references": [
+    { "path" :  "community-modules/core" },
+    { "path" :  "community-modules/client-side-row-model" },
+    { "path" :  "community-modules/csv-export" },
+    { "path" :  "community-modules/infinite-row-model" },
+    { "path" :  "community-modules/all-modules" },
+    { "path" :  "enterprise-modules/core" },
+    { "path" :  "enterprise-modules/clipboard" },
+    { "path" :  "enterprise-modules/menu" },
+    { "path" :  "enterprise-modules/side-bar" },
+    { "path" :  "enterprise-modules/status-bar" },
+    { "path" :  "enterprise-modules/range-selection" },
+    { "path" :  "enterprise-modules/charts" },
+    { "path" :  "enterprise-modules/row-grouping" },
+    { "path" :  "enterprise-modules/column-tool-panel" },
+    { "path" :  "enterprise-modules/excel-export" },
+    { "path" :  "enterprise-modules/filter-tool-panel" },
+    { "path" :  "enterprise-modules/master-detail" },
+    { "path" :  "enterprise-modules/rich-select" },
+    { "path" :  "enterprise-modules/server-side-row-model" },
+    { "path" :  "enterprise-modules/set-filter" },
+    { "path" :  "enterprise-modules/viewport-row-model" },
+    { "path" :  "enterprise-modules/all-modules" }
+  ],
+  "files": []
+}

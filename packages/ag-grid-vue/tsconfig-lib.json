@@ -20,6 +20,6 @@
   ],
   "exclude": [
     "node_modules",
-    "src/main.ts"
+    "src/main.d.ts"
   ]
 }

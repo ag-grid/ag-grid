@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/ts/iLogger.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iLogger.js","sourcesContent":["//Interface provided to break circular dependency between context and Logger.\n// Context will take an ILogger instead of a logger.\nexport interface ILogger {\n    log(message: string):void;\n}"]}

@@ -168,6 +168,21 @@ interface ITooltipParams {
 
 <?= example('Header Custom Tooltip', 'header-tooltip', 'generated') ?>
 
+<h2>Example: Tooltips with RowGroups</h2>
+
+<p>
+    The example below shows how to use the default Tooltip component with Group Columns.
+</p>
+
+<ul>
+    <li>
+        Because the group column has no real field assigned to it, the <code>tooltipValueGetter</code> function
+        must be used.
+    </li>
+</ul>
+
+<?= example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', array("enterprise" => 1, 'processVue' => true) ) ?>
+
 <h2>Example: Using Browser Tooltips</h2>
 
 <p>

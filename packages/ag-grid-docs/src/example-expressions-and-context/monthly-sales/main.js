@@ -95,7 +95,7 @@ onChangeMonth = function(i) {
     gridOptions.context.month = newMonth;
     document.querySelector('#monthName').innerHTML = monthNames[newMonth + 1];
     gridOptions.api.refreshClientSideRowModel('aggregate');
-    gridOptions.api.refreshView();
+    gridOptions.api.refreshCells();
 };
 
 function onQuickFilterChanged(value) {

@@ -153,6 +153,23 @@ meta_and_links($title, $keywords, $description, false);
     <script src="dist/homepage.js"></script>
     <script src="example-rich-grid/data.js"></script>
     <script src="example-rich-grid/example.js"></script>
+
+    <!-- Start Alexa Certify Javascript -->
+    <script type="text/javascript">
+        _atrk_opts = { atrk_acct:"AhBRt1DTcA20Ug", domain:"ag-grid.com",dynamic: true};
+        (function() { 
+            var as = document.createElement('script');
+            as.type = 'text/javascript'; 
+            as.async = true; 
+            as.src = "https://certify-js.alexametrics.com/atrk.js"; 
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(as, s);
+        })();
+    </script>
+    <noscript>
+        <img src="https://certify.alexametrics.com/atrk.gif?account=AhBRt1DTcA20Ug" style="display:none" height="1" width="1" alt="" />
+    </noscript>
+    <!-- End Alexa Certify Javascript -->
         <?php include 'includes/footer.php' ?>
     </div>
 </body>

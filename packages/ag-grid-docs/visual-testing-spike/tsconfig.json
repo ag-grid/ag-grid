@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "target": "es2019",
+        "strict": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "forceConsistentCasingInFileNames": true
+    }
+}

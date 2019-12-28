@@ -49,6 +49,8 @@ export declare class Events {
     static EVENT_MODEL_UPDATED: string;
     static EVENT_PASTE_START: string;
     static EVENT_PASTE_END: string;
+    static EVENT_FILL_START: string;
+    static EVENT_FILL_END: string;
     static EVENT_CELL_CLICKED: string;
     static EVENT_CELL_DOUBLE_CLICKED: string;
     static EVENT_CELL_MOUSE_DOWN: string;

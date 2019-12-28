@@ -6,15 +6,13 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
-    <h1 id="resizing">Column Resizing</h1>
+    <h1 id="resizing">Column Sizing</h1>
 
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
     </p>
-
-    <h2>Enable Resizing</h2>
+    
+    <h2>Enable Sizing</h2>
 
     <p>
         Turn column resizing on for the grid by setting <code>resizable=true</code> for each column.
@@ -101,6 +99,12 @@ gridOptions: {
         </p>
     </note>
 
+    <note>
+        It's important to point out that <code>autoSizeColumns(skipHeaders)</code> can receive <code>true</code> as parameter to indicate that
+        the header content (headerName) should not be considered when calculating the width of the column. You can also set this behavior to be
+        the default by setting <code>skipHeaderOnAutoSize: true</code> in the <code>gridOptions</code>.
+    </note>
+
     <h2>Resizing Example</h2>
 
     <p>
@@ -110,7 +114,8 @@ gridOptions: {
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
             right side of its header.</li>
         <li>The button 'Size to Fit' calls <code>api.sizeColumnsToFit()</code></li>
-        <li>The button 'Auto-Size All' calls <code>columnApi.autoSizeColumns()</code></li>
+        <li>The button 'Auto-Size All' calls <code>columnApi.autoSizeColumns([columnIds])</code></li>
+        <li>The button 'Auto-Size All (Skip Header)' calls <code>columnApi.autoSizeColumns([columnIds], true)</code></li>
         <li>The first column is fixed with (ie <code>suppressSizeToFit = true</code>),
             which means its size does not change when <code>sizeColumnsToFit</code> is called.</li>
         <li>The 'age' column has both a min and max size set, so resizing the column
@@ -142,6 +147,49 @@ gridOptions: {
     </p>
 
     <?= example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
+
+    <h2>Column Flex</h1>
+
+    <p>
+        It's often required that one or more columns fill the entire available space in
+        the grid. For this scenario, it is possible to use the <code>flex</code> config.
+        Some columns could be set with a regular <code>width</code> config, while other 
+        columns would have a flex config.
+    </p>
+
+    <p>
+        Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
+        their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
+        the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
+        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
+        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
+    </p>
+
+    <note>
+        The flex config does <strong>not</strong> work with the <code>width</code> config
+        in same column. If you need to provide a minimum width for a column. 
+        You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
+        into account.
+    </note>
+
+    <note>
+        If you manually resize a column with flex either via API or dragging the resize handle, 
+        flex will be automatically disabled for that column.
+    </note>
+
+    <p>
+        The example below shows flex in action. Things to note are as follows:
+    </p>
+    <ul>
+        <li>Column A is fixed size. You can resize it with the drag handle and the other two columns will adjust to fill
+            the available space</li>
+        <li>Columns B has <code>flex: 2</code>, <code>minWidth: 200</code> and <code>maxWidth: 350</code>, so it should
+            be constrained to this max/min width.</li>
+        <li>Column C has <code>flex: 1</code> so should be half the size of column B, unless column B is being constrained
+            by its minWidth/maxWidth rules, in which case it should take up the remaining available space.</li>
+    </ul>
+
+    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 

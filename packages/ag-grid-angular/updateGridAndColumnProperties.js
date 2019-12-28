@@ -70,8 +70,8 @@ function getJavascript(filename) {
 }
 
 function getGridPropertiesAndEventsTs() {
-    const eventsSrc = getJavascript('../../community-modules/grid-core/src/ts/eventKeys.ts');
-    const propertyKeysSrc = getJavascript('../../community-modules/grid-core/src/ts/propertyKeys.ts');
+    const eventsSrc = getJavascript('../../community-modules/core/src/ts/eventKeys.ts');
+    const propertyKeysSrc = getJavascript('../../community-modules/core/src/ts/propertyKeys.ts');
 
     eval(eventsSrc);
     eval(propertyKeysSrc);
@@ -103,7 +103,7 @@ function getGridPropertiesAndEventsTs() {
 }
 
 function getGridColumnPropertiesTs() {
-    const js = getJavascript('../../community-modules/grid-core/src/ts/components/colDefUtil.ts');
+    const js = getJavascript('../../community-modules/core/src/ts/components/colDefUtil.ts');
     eval(js);
 
     // colDef properties that dont make sense in an angular context (or are private)

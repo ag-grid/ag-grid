@@ -2429,10 +2429,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
           opacity: 0.2; }
           .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-nav-card-selector .ag-nav-card-item.ag-selected {
             opacity: 1; }
-      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn {
+      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn,
+      .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn {
         position: relative;
         flex: none; }
-        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn button, .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn button {
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-prev-btn button,
+        .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-nav-bar .ag-chart-settings-next-btn button {
           position: absolute;
           top: 0;
           left: 0;
@@ -2469,16 +2471,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
           .ag-chart-tabbed-menu .ag-chart-settings .ag-chart-settings-wrapper .ag-chart-settings-mini-charts-container .ag-chart-settings-mini-wrapper .ag-chart-mini-thumbnail canvas {
             display: block; }
 
-.ag-chart-tabbed-menu .ag-chart-data-wrapper, .ag-chart-tabbed-menu .ag-chart-format-wrapper {
+.ag-chart-tabbed-menu .ag-chart-data-wrapper,
+.ag-chart-tabbed-menu .ag-chart-format-wrapper {
   display: flex;
   flex-direction: column;
   position: relative;
   user-select: none; }
-  .ag-chart-tabbed-menu .ag-chart-data-wrapper > div, .ag-chart-tabbed-menu .ag-chart-format-wrapper > div {
+  .ag-chart-tabbed-menu .ag-chart-data-wrapper > div,
+  .ag-chart-tabbed-menu .ag-chart-format-wrapper > div {
     display: flex;
     margin: 0;
     padding-bottom: 2px; }
-    .ag-chart-tabbed-menu .ag-chart-data-wrapper > div:not(:first-child), .ag-chart-tabbed-menu .ag-chart-format-wrapper > div:not(:first-child) {
+    .ag-chart-tabbed-menu .ag-chart-data-wrapper > div:not(:first-child),
+    .ag-chart-tabbed-menu .ag-chart-format-wrapper > div:not(:first-child) {
       margin-top: 0; }
 
 .ag-chart-tabbed-menu .ag-chart-format-wrapper {

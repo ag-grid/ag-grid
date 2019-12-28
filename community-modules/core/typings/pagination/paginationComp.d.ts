@@ -1,0 +1,33 @@
+import { Component } from "../widgets/component";
+export declare class PaginationComp extends Component {
+    private gridOptionsWrapper;
+    private eventService;
+    private paginationProxy;
+    private rowRenderer;
+    private rowModel;
+    private btFirst;
+    private btPrevious;
+    private btNext;
+    private btLast;
+    private lbRecordCount;
+    private lbFirstRowOnPage;
+    private lbLastRowOnPage;
+    private eSummaryPanel;
+    private lbCurrent;
+    private lbTotal;
+    private serverSideRowModel;
+    constructor();
+    private postConstruct;
+    private onPaginationChanged;
+    private setCurrentPageLabel;
+    private formatNumber;
+    private getTemplate;
+    private onBtNext;
+    private onBtPrevious;
+    private onBtFirst;
+    private onBtLast;
+    private enableOrDisableButtons;
+    private updateRowLabels;
+    private isZeroPagesToDisplay;
+    private setTotalLabels;
+}

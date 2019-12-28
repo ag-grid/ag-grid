@@ -43,7 +43,7 @@ var gridOptions = {
     onFirstDataRendered: function(params) {
         var createRangeChartParams = {
             cellRange: {
-                columns: [ 'product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx' ]
+                columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
             },
             chartType: 'groupedColumn',
             chartContainer: document.querySelector('#myChart'),
@@ -59,11 +59,11 @@ var gridOptions = {
         opts.legend.position = 'bottom';
         opts.yAxis.label.formatter = yAxisLabelFormatter;
         opts.seriesDefaults.tooltip.enabled = true;
-        opts.seriesDefaults.fills = [ '#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1' ];
-        opts.seriesDefaults.strokes = [ '#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692' ];
+        opts.seriesDefaults.fill.colors = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
+        opts.seriesDefaults.stroke.colors = ['#874349', '#718661', '#a48f5f', '#5a7088', '#7f637a', '#5d8692'];
 
         opts.seriesDefaults.tooltip.renderer = function(params) {
-            var value = '$' + params.datum[ params.yKey ].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+            var value = '$' + params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
             return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
         };
 
@@ -75,7 +75,6 @@ var gridOptions = {
 };
 
 function createChart(type) {
-
     // destroy existing chart
     if (chartRef) {
         chartRef.destroyChart();
@@ -83,7 +82,7 @@ function createChart(type) {
 
     var params = {
         cellRange: {
-            columns: [ 'product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx' ]
+            columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx']
         },
         chartContainer: document.querySelector('#myChart'),
         chartType: type,

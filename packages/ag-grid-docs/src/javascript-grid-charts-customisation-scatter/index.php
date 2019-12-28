@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Scatter/Bubble Chart Customisation</h1>
 
 <p class="lead">
-    In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a>, you can also
+In addition to the <a href="../javascript-grid-charts-customisation-general">general chart customisations</a> and
+    <a href="../javascript-grid-charts-customisation-cartesian">cartesian chart customisations</a>, you can also
     use these customisations for scatter/bubble charts.
 </p>
 
@@ -17,9 +18,6 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 interface ScatterChartOptions {
-    xAxis: AxisOptions;
-    yAxis: AxisOptions;
-
     seriesDefaults: {
         // The fill colours used by the series' markers
         fill: FillOptions;
@@ -28,85 +26,30 @@ interface ScatterChartOptions {
         stroke: StrokeOptions;
 
         // The style to apply to a marker when it is hovered over or tapped
-        highlightStyle?: HighlightOptions;
+        highlightStyle: HighlightOptions;
 
         marker: MarkerOptions;
 
         // Configures the tooltip for bars when they are hovered over or tapped
         tooltip: TooltipOptions;
+
+        // Whether the scatter/bubble chart should operate in paired mode, where columns
+        // alternate between being X and Y (and size for bubble), or standard mode, where
+        // the first column is used for X and every other column is treated as Y
+        // (or alternates between Y and size for bubble)
+        paired: boolean;
     };
 }
 
-interface AxisOptions {
-    title?: CaptionOptions;
-    line: AxisLineOptions;
-    tick: AxisTickOptions;
-    label: AxisLabelOptions;
-
-    // The styles of the grid lines. These are repeated. If only a single style is provided,
-    // it will be used for all grid lines, if two styles are provided, every style will be
-    // used by every other line, and so on.
-    gridStyle: GridStyle[];
-}
-
-interface CaptionOptions {
-    enabled?: boolean;
-    text?: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number;
-    fontFamily?: string;
-    color?: string;
-}
-
-type FontStyle = 'normal' | 'italic' | 'oblique';
-
-type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-
-interface AxisLineOptions {
-    width: number; // default: 1
-    color: string; // default: 'rgba(195, 195, 195, 1)'
-}
-
-interface AxisTickOptions {
-    width: number; // default: 1
-    size: number; // default: 6
-    color: string; // default: 'rgba(195, 195, 195, 1)'
-}
-
-interface AxisLabelOptions {
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number; // default: 12
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: 'black'
-    padding: number; // default: 5
-    rotation?: number; // default: dependent on chart type. Overridden for default category
-
-    // A custom formatter function for the axis labels.
-    // The value is either a category name or a number. If it's the latter, the number
-    // of fractional digits used by the axis step will be provided as well.
-    formatter?: (value: any, fractionDigits?: number) => string;
-}
-
-interface GridStyle {
-    stroke: string; // default: dependent on light/dark mode
-
-    // The line dash array. Every number in the array specifies the length of alternating
-    // dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.
-    // If undefined, a solid line will be used.
-    lineDash?: number[]; // default: [4, 2]
-}
-
 interface FillOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1 (scatter), 0.7 (bubble)
 }
 
 interface StrokeOptions {
-    colors: string[]; // default: dependent on selected palette
+    colors: string[]; // default: &lt;dependent on selected palette&gt;
 
     // Valid range from 0 (transparent) to 1 (opaque)
     opacity: number; // default: 1
@@ -115,12 +58,13 @@ interface StrokeOptions {
 }
 
 interface HighlightOptions {
-    fill?: string;
+    fill: string; // default: 'yellow'
     stroke?: string;
 }
 
 interface MarkerOptions {
     enabled: boolean; // default: true
+    type: MarkerType; // default: 'circle'
 
     // In bubble charts the marker size is determined by data. In this case, `size`
     // is the maximum size a marker can be and `minSize` is the minimum. For scatter
@@ -130,6 +74,8 @@ interface MarkerOptions {
 
     strokeWidth: number; // default: 1
 }
+
+type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 
 interface TooltipOptions {
     enabled: boolean; // default: true
@@ -147,10 +93,10 @@ interface ScatterTooltipRendererParams {
     yKey: string;
     // The name of the column that the Y value is from
     yName: string;
-    // The key of the datum object that contains the radius value
-    radiusKey?: string;
-    // The name of the column that the radius value is from
-    radiusName?: string;
+    // The key of the datum object that contains the size value
+    sizeKey?: string;
+    // The name of the column that the size value is from
+    sizeName?: string;
     // The key of the datum object that contains the label
     labelKey?: string;
     // The name of the column that the label is from

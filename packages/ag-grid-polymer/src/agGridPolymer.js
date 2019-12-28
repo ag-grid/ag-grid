@@ -7,6 +7,7 @@ export default class AgGridPolymer extends PolymerElement {
     static get properties() {
         const properties = {};
 
+        this.addProperties(properties, agGrid.ComponentUtil.NUMBER_PROPERTIES, Number);
         this.addProperties(properties, agGrid.ComponentUtil.BOOLEAN_PROPERTIES, Boolean);
         this.addProperties(properties, agGrid.ComponentUtil.STRING_PROPERTIES, String);
         this.addProperties(properties, agGrid.ComponentUtil.OBJECT_PROPERTIES, Object);

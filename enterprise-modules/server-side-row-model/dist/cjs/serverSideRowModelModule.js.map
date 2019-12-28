@@ -1,0 +1,1 @@
+{"version":3,"file":"serverSideRowModelModule.js","sourceRoot":"","sources":["../../src/serverSideRowModelModule.ts"],"names":[],"mappings":";;AAAA,gDAA4D;AAC5D,iDAA8D;AAC9D,8EAA2E;AAE9D,QAAA,wBAAwB,GAAW;IAC5C,UAAU,EAAE,kBAAW,CAAC,wBAAwB;IAChD,SAAS,EAAE,EAAC,YAAY,EAAE,uCAAkB,EAAC;IAC7C,gBAAgB,EAAE;QACd,2BAAoB;KACvB;CACJ,CAAC"}

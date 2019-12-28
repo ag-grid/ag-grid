@@ -39,18 +39,18 @@ interface PaddingOptions {
 }
 
 interface BackgroundOptions {
-    fill: string; // default: dependent on light/dark mode
+    fill: string; // default: &lt;dependent on light/dark mode&gt;
     visible: boolean; // default: true
 }
 
 interface CaptionOptions {
-    enabled: boolean;
+    enabled: boolean; // default: false
     text?: string;
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight; // default: 'bold' for title, `undefined` for subtitle
-    fontSize?: number; // default: 16 (for title), 12 (for subtitle)
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: 'black'
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'bold' for title, 'normal' for subtitle
+    fontSize: number; // default: 16 (for title), 12 (for subtitle)
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
 }
 
 type FontStyle = 'normal' | 'italic' | 'oblique';
@@ -74,18 +74,21 @@ interface LegendItemOptions {
 }
 
 interface LegendLabelOptions {
-    fontStyle?: FontStyle;
-    fontWeight?: FontWeight;
-    fontSize?: number; // default: 12
-    fontFamily?: string; // default: 'Verdana, sans-serif'
-    color?: string; // default: dependent on light/dark mode
+    fontStyle: FontStyle; // default: 'normal'
+    fontWeight: FontWeight; // default: 'normal'
+    fontSize: number; // default: 12
+    fontFamily: string; // default: 'Verdana, sans-serif'
+    color: string; // default: &lt;dependent on light/dark mode&gt;
 }
 
 interface LegendMarkerOptions {
-    size: number; // default: 14
-    padding: number; // default: 4
+    type: MarkerType; // default: 'square'
+    size: number; // default: 15
+    padding: number; // default: 8
     strokeWidth: number; // default: 1
 }
+
+type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 </snippet>
 
 <h3>Example: General Chart Customisations</h3>

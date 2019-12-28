@@ -1,16 +1,16 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50, cellRenderer:  'rowNodeIdRenderer'},
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, enablePivot: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
-    {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", width: 100, enableValue:true},
-    {headerName: "Silver", field: "silver", width: 100, enableValue:true},
-    {headerName: "Bronze", field: "bronze", width: 100, enableValue:true},
-    {headerName: "Total", field: "total", width: 100, enableValue:true}
+    { headerName: "#", width: 50, cellRenderer: 'rowNodeIdRenderer' },
+    { headerName: "Athlete", field: "athlete", width: 150 },
+    { headerName: "Age", field: "age", width: 90, enablePivot: true },
+    { headerName: "Country", field: "country", width: 120, enableRowGroup: true },
+    { headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter' },
+    { headerName: "Date", field: "date", width: 110 },
+    { headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter' },
+    { headerName: "Gold", field: "gold", width: 100, enableValue: true },
+    { headerName: "Silver", field: "silver", width: 100, enableValue: true },
+    { headerName: "Bronze", field: "bronze", width: 100, enableValue: true },
+    { headerName: "Total", field: "total", width: 100, enableValue: true }
 ];
 
 var gridOptions = {
@@ -20,14 +20,14 @@ var gridOptions = {
         filter: true
     },
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
-    components:{
+    components: {
         rowNodeIdRenderer: function(params) {
             return params.node.id + 1;
         }
     },
     columnDefs: columnDefs,
     sideBar: true,
-    pagination:true,
+    pagination: true,
     rowGroupPanelShow: 'always',
     statusBar: {
         statusPanels: [
@@ -97,6 +97,7 @@ var gridOptions = {
 
         // other
         noRowsToShow: 'la no rows',
+        enabled: 'laEnabled',
 
         // enterprise menu
         pinColumn: 'laPin Column',
@@ -176,6 +177,8 @@ var gridOptions = {
         format: 'laFormat',
         categories: 'laCategories',
         series: 'laSeries',
+        xyValues: 'laX Y Values',
+        paired: 'laPaired Mode',
         axis: 'laAxis',
         color: 'laColor',
         thickness: 'laThickness',
@@ -187,6 +190,7 @@ var gridOptions = {
         padding: 'laPadding',
         chart: 'laChart',
         title: 'laTitle',
+        background: 'laBackground',
         font: 'laFont',
         top: 'laTop',
         right: 'laRight',
@@ -194,6 +198,8 @@ var gridOptions = {
         left: 'laLeft',
         labels: 'laLabels',
         size: 'laSize',
+        minSize: 'laMinimum Size',
+        maxSize: 'laMaximum Size',
         legend: 'laLegend',
         position: 'laPosition',
         markerSize: 'laMarker Size',
@@ -203,8 +209,8 @@ var gridOptions = {
         itemPaddingY: 'laItem Padding Y',
         strokeWidth: 'laStroke Width',
         offset: 'laOffset',
-        tooltips: 'laTooltips',
         offsets: 'laOffsets',
+        tooltips: 'laTooltips',
         callout: 'laCallout',
         markers: 'laMarkers',
         shadow: 'laShadow',
@@ -216,6 +222,7 @@ var gridOptions = {
         bold: 'laBold',
         italic: 'laItalic',
         boldItalic: 'laBold Italic',
+        predefined: 'laPredefined',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
         columnGroup: 'laColumn',
@@ -246,12 +253,12 @@ var gridOptions = {
 function setDataSource(allOfTheData) {
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        getRows: function (params) {
+        getRows: function(params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, and a timer is used to give the expereince of
             // an asynchronous call
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            setTimeout( function() {
+            setTimeout(function() {
                 // take a chunk of the array, matching the start and finish times
                 var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
                 var lastRow = -1;

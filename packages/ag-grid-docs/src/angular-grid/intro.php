@@ -40,10 +40,12 @@ export class AppComponent  {
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <snippet>
 &lt;ag-grid-angular
+    style="width: 500px; height: 150px;"
+    class="ag-theme-balham"
     [rowData]="rowData"
     [columnDefs]="columnDefs">
 &lt;/ag-grid-angular>
-</snippet>  
+</snippet>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

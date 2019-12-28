@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.es5.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "skipLibCheck": true
-  }
-}

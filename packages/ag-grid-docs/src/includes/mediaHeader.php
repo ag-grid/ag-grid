@@ -25,7 +25,7 @@ gtm_data_layer('blogs');
 
 <!DOCTYPE html>
 <html lang="en">
-<head lang="en">
+<head>
 <?php
 meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 ?>
@@ -41,7 +41,7 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
     include dirname(__FILE__) . '/navbar.php';
 ?>
 </header>
-
-<div class="info-page">
-    <div class="row">
-        <section class="blog-section">
+<div class="page-content">
+    <div class="media-page">
+        <div class="row">
+            <section class="blog-section">

@@ -81,7 +81,9 @@ export declare class ColumnController {
     private bodyWidthDirty;
     private viewportLeft;
     private viewportRight;
+    private flexViewportWidth;
     private columnDefs;
+    private flexActive;
     init(): void;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     isAutoRowHeightActive(): boolean;
@@ -96,9 +98,9 @@ export declare class ColumnController {
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null;
     private setBeans;
     private setFirstRightAndLastLeftPinned;
-    autoSizeColumns(keys: (string | Column)[], source?: ColumnEventType): void;
-    autoSizeColumn(key: string | Column | null, source?: ColumnEventType): void;
-    autoSizeAllColumns(source?: ColumnEventType): void;
+    autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean, source?: ColumnEventType): void;
+    autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source?: ColumnEventType): void;
+    autoSizeAllColumns(skipHeader?: boolean, source?: ColumnEventType): void;
     private getColumnsFromTree;
     getAllDisplayedColumnGroups(): ColumnGroupChild[] | null;
     getPrimaryColumnTree(): OriginalColumnGroupChild[];
@@ -251,7 +253,9 @@ export declare class ColumnController {
     private updateDisplayedVirtualGroups;
     private updateVirtualSets;
     private filterOutColumnsWithinViewport;
-    sizeColumnsToFit(gridWidth: any, source?: ColumnEventType): void;
+    refreshFlexedColumns(updatedFlexViewportWidth?: number, source?: ColumnEventType): void;
+    sizeColumnsToFit(gridWidth: any, source?: ColumnEventType, silent?: boolean): void;
+    private fireResizedEventForColumns;
     private buildDisplayedTrees;
     private updateOpenClosedVisibilityInColumnGroups;
     getGroupAutoColumns(): Column[] | null;

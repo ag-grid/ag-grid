@@ -146,8 +146,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If none of the above <code>ColDef</code> properties are present then the grid will infer the charting column
-        type based on the data contained in the cells of the first row. Columns containing <code>string</code> values
-        will map to 'categories' and columns containing <code>number</code> values will map to 'series' charting columns.
+        type based on the data contained in the cells of the first row. Columns containing <code>number</code> values
+        will map to <code>'series'</code> charting columns, and columns containing anything else will map to <code>'category'</code>.
     </p>
 
     <h3>Example: Defining categories and series</h3>

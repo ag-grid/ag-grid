@@ -1,9 +1,9 @@
 import {AfterViewInit, Component} from "@angular/core";
 
-import {AllModules, GridOptions} from "@ag-grid-enterprise/all-modules";
+import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
 
 import {MatSliderComponent} from "./mat-slider.component";
 import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";
@@ -18,7 +18,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
     public onOffColumnAlignment: string = "left";
 
-    modules = AllModules;
+    modules = AllCommunityModules;
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
         this.gridOptions = <GridOptions>{

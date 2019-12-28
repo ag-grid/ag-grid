@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could 
-            override via the <code<$icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is 
+            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is 
             the best way to allow icon theming.
         </p>
 
@@ -70,7 +70,7 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 // The "~" path prefix below relies on Webpack's sass-loader -
 // https://github.com/webpack-contrib/sass-loader. 
 
-$icon-font-family: "Font Awesome 5 Free";
+$ag-icon-font-family: "Font Awesome 5 Free";
 
 $ag-icon-aggregation: "\f247";
 $ag-icon-arrows: "\f0b2";
@@ -283,7 +283,7 @@ unlinked
 </p>
 <note>
     <p>
-        SVG Icons will not use the <code>$icon-color</code>, <code>$alt-icon-color</code> and <code>$accent-color</code> 
+        SVG Icons will not use the <code>$ag-icon-color</code>, <code>$ag-alt-icon-color</code> and <code>$ag-accent-color</code> 
         variables to colorize icons. This means you will need to add the colors you want to the SVG icons code.
     </p>
 </note>

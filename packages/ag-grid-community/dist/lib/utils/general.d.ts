@@ -30,6 +30,7 @@ export declare class Utils {
      * @param {string} key
      */
     static doOnce(func: () => void, key: string): void;
+    static getMaxSafeInteger(): number;
     static isEventSupported: (eventName: any) => boolean;
     /**
      * Checks if event was issued by a left click
@@ -105,7 +106,7 @@ export declare class Utils {
      */
     static copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any): void;
     static getAllKeysInObjects(objects: any[]): string[];
-    static mergeDeep(dest: any, source: any): void;
+    static mergeDeep(dest: any, source: any, copyUndefined?: boolean): void;
     static assign(object: any, ...sources: any[]): any;
     static flatten(arrayOfArrays: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
@@ -200,7 +201,7 @@ export declare class Utils {
     static getElementAttribute(element: any, attributeName: string): string | null;
     static offsetHeight(element: HTMLElement): number;
     static offsetWidth(element: HTMLElement): number;
-    static sortNumberArray(numberArray: number[]): void;
+    static sortNumerically(array: number[]): number[];
     static removeRepeatsFromArray<T>(array: T[], object: T): void;
     static removeFromArray<T>(array: T[], object: T): void;
     static removeAllFromArray<T>(array: T[], toRemove: T[]): void;
@@ -516,6 +517,8 @@ export declare class Utils {
      * @param {HTMLElement} eTarget
      */
     static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): void;
+    static convertToSet<T>(list: T[]): Set<T>;
+    static deepFreeze(object: any): any;
 }
 export declare class NumberSequence {
     private nextValue;

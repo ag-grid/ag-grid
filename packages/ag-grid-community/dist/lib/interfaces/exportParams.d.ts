@@ -20,12 +20,22 @@ export interface BaseExportParams {
     processCellCallback?(params: ProcessCellForExportParams): string;
     processHeaderCallback?(params: ProcessHeaderForExportParams): string;
     processGroupHeaderCallback?(params: ProcessGroupHeaderForExportParams): string;
+    processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
 }
 export interface ExportParams<T> extends BaseExportParams {
     customHeader?: T;
     customFooter?: T;
+    getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }
-export interface CsvExportParams extends ExportParams<string> {
+export interface CsvCell {
+    data: CsvCellData;
+    mergeAcross?: number;
+}
+export interface CsvCellData {
+    value: string | null;
+}
+export declare type CsvCustomContent = CsvCell[][] | string;
+export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     columnSeparator?: string;
 }
 export interface ShouldRowBeSkippedParams {
@@ -50,6 +60,12 @@ export interface ProcessHeaderForExportParams {
 }
 export interface ProcessGroupHeaderForExportParams {
     columnGroup: ColumnGroup;
+    api: GridApi | null | undefined;
+    columnApi: ColumnApi | null | undefined;
+    context: any;
+}
+export interface ProcessRowGroupForExportParams {
+    node: RowNode;
     api: GridApi | null | undefined;
     columnApi: ColumnApi | null | undefined;
     context: any;

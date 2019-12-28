@@ -1,0 +1,85 @@
+{
+  "name": "@ag-grid-community/all-modules",
+  "version": "22.1.1",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/es6/main.js",
+  "types": "./dist/es6/main.d.ts",
+  "scripts": {
+    "build-cjs": "tsc -p tsconfig.json",
+    "build-es6": "tsc -p tsconfig.es6.json",
+    "build-css": "npx gulp copy-grid-core-styles",
+    "build": "npm run build-cjs && npm run build-es6 && npm run build-css",
+    "watchWebpack": "webpack --watch",
+    "webpack-updater": "node webpackUpdater.js",
+    "rollup": "node ../../module-build/rollup/build.js ag-grid-community",
+    "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
+    "test:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
+    "start-server": "http-server .",
+    "e2e": "protractor protractor.conf.js",
+    "update-webdriver": "webdriver-manager update --gecko false",
+    "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
+    "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "ag",
+    "ag-grid",
+    "datagrid",
+    "data-grid",
+    "datatable",
+    "data-table",
+    "grid",
+    "table",
+    "react",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0"
+  ],
+  "homepage": "http://www.ag-grid.com/",
+  "dependencies": {
+    "@ag-grid-community/client-side-row-model": "~22.1.1",
+    "@ag-grid-community/core": "~22.1.1",
+    "@ag-grid-community/csv-export": "~22.1.1",
+    "@ag-grid-community/infinite-row-model": "~22.1.1"
+  },
+  "devDependencies": {
+    "css-loader": "^3.2.0",
+    "cssnano": "^4.1.0",
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-header": "^2.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "http-server": "^0.11.1",
+    "postcss-loader": "^3.0.0",
+    "protractor": "^5.4.0",
+    "start-server-and-test": "^1.10.0",
+    "style-loader": "^1.0.0",
+    "terser-webpack-plugin": "^2.0.1",
+    "typescript": "^3.6.3",
+    "webpack": "^4.39.0",
+    "webpack-stream": "5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

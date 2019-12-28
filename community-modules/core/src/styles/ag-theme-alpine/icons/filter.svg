@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>filter</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="filter" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M20,23 L12,23 L12,21 L20,21 L20,23 Z M24,17 L8,17 L8,15 L24,15 L24,17 Z M26,11 L6,11 L6,9 L26,9 L26,11 Z" id="Shape" fill="#000000" fill-rule="nonzero"></path>
+    </g>
+</svg>

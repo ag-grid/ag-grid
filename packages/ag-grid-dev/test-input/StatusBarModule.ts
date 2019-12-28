@@ -1,4 +1,3 @@
-import '@ag-grid-enterprise/status-bar';
-import 'ag-grid-enterprise';
+import {StatusBarModule as GridModule} from '@ag-grid-enterprise/status-bar';
 import {SimpleGrid} from "./grid/SimpleGrid";
-new SimpleGrid('#myGrid');
+new SimpleGrid('#myGrid', GridModule);

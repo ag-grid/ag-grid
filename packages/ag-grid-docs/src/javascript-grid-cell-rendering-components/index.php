@@ -104,7 +104,7 @@ MyCellRenderer.prototype.init = function(params) {
     this.eButton.addEventListener('click', this.eventListener);
 };
 
-// gets called once when grid ready to insert the element
+// gets called once (assuming destroy hasn't been called first) when grid ready to insert the element
 MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
@@ -120,7 +120,10 @@ MyCellRenderer.prototype.refresh = function(params) {
 // gets called when the cell is removed from the grid
 MyCellRenderer.prototype.destroy = function() {
     // do cleanup, remove event listener from button
-    this.eButton.removeEventListener('click', this.eventListener);
+    if (this.eButton) {
+        // check that the button element exists as destroy() can be called before getGui()
+        this.eButton.removeEventListener('click', this.eventListener);
+    }    
 };
 </snippet>
 
@@ -208,19 +211,24 @@ All of the above will result in the component getting destroyed and recreated.
 <ul class="content">
     <li><code>new</code> is called on the class.</li>
     <li><code>init()</code> is called once.</li>
-    <li><code>getGui()</code> is called once.</li>
-    <li><code>refresh()</code> is called 0..n times (ie it may never be called, or called multiple times)</li>
+    <li><code>getGui()</code> is called 0 or 1 times (destroy could get called first, i.e. when scrolling quickly)</li>
+    <li><code>refresh()</code> is called 0..n times (i.e. it may never be called, or called multiple times)</li>
     <li><code>destroy()</code> is called once.</li>
 </ul>
 
 <p>
-In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> and
-<code>destroy()</code> are always called exactly once.
+In other words, <code>new()</code>, <code>init()</code> and
+<code>destroy()</code> are always called exactly once. <code>getGui()</code> will typically get called once unless <code>destroy()</code> is called first.
 <code>refresh()</code> is optionally called multiple times.
 </p>
 
+<note>
+    When implementing <code>destroy()</code> it is important to check that any elements created in <code>getGui()</code> exist, as when scrolling quickly 
+    <code>destroy()</code> can get called first. Calling <code>getGui()</code> unnecessarily would negatively affect scroll performance.
+</note>
+
 <p>
-    If you are doing <code>refresh()</code>, remember that <code>getGui()</code> is only called once, so be sure
+    If you are doing <code>refresh()</code>, remember that <code>getGui()</code> is only called once (assuming the cell renderer hasn't been destroyed first), so be sure
     to update the existing GUI in your refresh, do not think that the grid is going to call <code>getGui()</code>
     again to get a new version of the GUI.
 </p>

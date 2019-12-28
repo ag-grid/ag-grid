@@ -1,4 +1,4 @@
-import { Component } from "../widgets/component";
+import { Component } from '../widgets/component';
 export declare class CheckboxSelectionComponent extends Component {
     private gridOptionsWrapper;
     private eventService;
@@ -7,6 +7,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private eCheckedIcon;
     private eUncheckedIcon;
     private eIndeterminateIcon;
+    private checkbox;
     private rowNode;
     private column;
     private isRowSelectableFunc;
@@ -18,6 +19,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private onCheckedClicked;
     private onUncheckedClicked;
     private onIndeterminateClicked;
+    private onCheckboxClicked;
     init(params: any): void;
     private showOrHideSelect;
     private checkboxCallbackExists;

@@ -20,6 +20,7 @@ import { ICellEditorComp } from "./interfaces/iCellEditor";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
+import { ChartModel } from "./interfaces/IChartService";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -51,6 +52,7 @@ export interface RedrawRowsParams {
 export interface CreateRangeChartParams {
     cellRange: CellRangeParams;
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
@@ -58,6 +60,7 @@ export interface CreateRangeChartParams {
 }
 export interface CreatePivotChartParams {
     chartType: ChartType;
+    chartPalette?: string;
     chartContainer?: HTMLElement;
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
@@ -94,6 +97,7 @@ export declare class GridApi {
     private animationFrameService;
     private statusBarService;
     private chartService;
+    private undoRedoService;
     private gridPanel;
     private gridCore;
     private headerRootComp;
@@ -269,6 +273,9 @@ export declare class GridApi {
     addRangeSelection(deprecatedNoLongerUsed: any): void;
     addCellRange(params: CellRangeParams): void;
     clearRangeSelection(): void;
+    undoCellEditing(): void;
+    redoCellEditing(): void;
+    getChartModels(): ChartModel[];
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
     createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
     copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void;
