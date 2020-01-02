@@ -243,7 +243,7 @@ interface GetChartImageDataUrlParams {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to: <a href="../javascript-grid-charts-integrated-container/">Provide a Chart Container</a>.
+    Continue to the next section to learn about: <a href="../javascript-grid-charts-integrated-chart-events/">Chart Events</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
