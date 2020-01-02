@@ -5,13 +5,13 @@ import { Component } from "./component";
 import { _ } from "../utils";
 
 export type ResizableSides = 'topLeft' |
-                      'top' |
-                      'topRight' |
-                      'right' |
-                      'bottomRight' |
-                      'bottom' |
-                      'bottomLeft' |
-                      'left';
+    'top' |
+    'topRight' |
+    'right' |
+    'bottomRight' |
+    'bottom' |
+    'bottomLeft' |
+    'left';
 
 export type ResizableStructure = {
     [key in ResizableSides]?: boolean;
@@ -88,7 +88,6 @@ export class AgDialog extends AgPanel {
 
     protected postConstruct() {
         const eGui = this.getGui();
-        debugger;
         const { movable, resizable, maximizable } = this.config;
 
         _.addCssClass(eGui, 'ag-dialog');
@@ -264,7 +263,7 @@ export class AgDialog extends AgPanel {
 
     private toggleMaximize() {
         if (this.isMaximized) {
-            const {x, y, width, height } = this.lastPosition;
+            const { x, y, width, height } = this.lastPosition;
 
             this.setWidth(width);
             this.setHeight(height);

@@ -169,6 +169,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setChartOption(expression: string, value: any): void {
+        if (value === _.get(this.chartOptions, expression, undefined)) {
+            // option is already set to the specified value
+            return;
+        }
+
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {

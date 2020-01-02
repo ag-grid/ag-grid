@@ -10,12 +10,12 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {PaddingPanel} from "./paddingPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {CaptionOptions} from "ag-charts-community";
-import {BackgroundPanel} from "./backgroundPanel";
+import { ChartController } from "../../../chartController";
+import { PaddingPanel } from "./paddingPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { CaptionOptions } from "ag-charts-community";
+import { BackgroundPanel } from "./backgroundPanel";
 
 export class ChartPanel extends Component {
 
@@ -45,7 +45,7 @@ export class ChartPanel extends Component {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical'
         };
-        this.setTemplate(ChartPanel.TEMPLATE, {chartGroup: groupParams});
+        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: groupParams });
 
         this.initGroup();
         this.initTitles();

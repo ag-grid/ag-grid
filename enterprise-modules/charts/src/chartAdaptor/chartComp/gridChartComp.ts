@@ -48,17 +48,17 @@ export interface GridChartParams {
 export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
-            <div ref="eChartComponentsWrapper" tabindex="-1" class="ag-chart-components-wrapper">
+            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
                 <div ref="eChart" class="ag-chart-canvas-wrapper">
                 </div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
-            <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
+            <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
     @RefSelector('eChart') private eChart: HTMLElement;
-    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
-    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
+    @RefSelector('eChartContainer') private eChartContainer: HTMLElement;
+    @RefSelector('eMenuContainer') private eMenuContainer: HTMLElement;
     @RefSelector('eEmpty') private eEmpty: HTMLElement;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -205,11 +205,8 @@ export class GridChartComp extends Component {
     }
 
     private addMenu(): void {
-        this.chartMenu = new ChartMenu(this.chartController);
-        this.chartMenu.setParentComponent(this);
-        this.getContext().wireBean(this.chartMenu);
-
-        this.eChartComponentsWrapper.appendChild(this.chartMenu.getGui());
+        this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+        this.eChartContainer.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
@@ -222,22 +219,6 @@ export class GridChartComp extends Component {
 
     private shouldRecreateChart(): boolean {
         return this.chartType !== this.model.getChartType();
-    }
-
-    public getChartComponentsWrapper(): HTMLElement {
-        return this.eChartComponentsWrapper;
-    }
-
-    public getDockedContainer(): HTMLElement {
-        return this.eDockedContainer;
-    }
-
-    public slideDockedOut(width: number): void {
-        this.eDockedContainer.style.minWidth = `${width}px`;
-    }
-
-    public slideDockedIn(): void {
-        this.eDockedContainer.style.minWidth = '0';
     }
 
     public getCurrentChartType(): ChartType {
@@ -311,8 +292,16 @@ export class GridChartComp extends Component {
     public refreshCanvasSize(): void {
         const { chartProxy, eChart } = this;
 
-        chartProxy.setChartOption('width', _.getInnerWidth(eChart));
-        chartProxy.setChartOption('height', _.getInnerHeight(eChart));
+        if (this.chartMenu.isVisible()) {
+            // we don't want the menu showing to affect the chart options
+            const chart = this.chartProxy.getChart();
+
+            chart.height = _.getInnerHeight(eChart);
+            chart.width = _.getInnerWidth(eChart);
+        } else {
+            chartProxy.setChartOption('width', _.getInnerWidth(eChart));
+            chartProxy.setChartOption('height', _.getInnerHeight(eChart));
+        }
     }
 
     private addResizeListener(): void {
