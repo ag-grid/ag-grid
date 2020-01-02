@@ -17,7 +17,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
     protected TEMPLATE =
         `<div class="ag-input-field" role="presentation">
-            <label ref="eLabel"></label>
+            <label ref="eLabel" class="ag-input-field-label"></label>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
                 <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>
             </div>
@@ -31,6 +31,9 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         super.postConstruct();
         this.setInputType();
         _.addCssClass(this.getGui(), this.className);
+        _.addCssClass(this.eLabel, `${this.className}-label`);
+        _.addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
+        _.addCssClass(this.eInput, `${this.className}-input`);
 
         const { width, value } = this.config;
 

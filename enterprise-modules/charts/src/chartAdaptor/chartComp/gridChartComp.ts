@@ -92,6 +92,9 @@ export class GridChartComp extends Component {
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
+
         this.model = this.wireBean(new ChartDataModel(modelParams));
         this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 

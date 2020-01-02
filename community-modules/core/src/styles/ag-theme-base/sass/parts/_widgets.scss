@@ -8,17 +8,10 @@
         display: flex;
         align-items: center;
         cursor: default;
-        label {
-            cursor: default;
-            &:empty {
-                margin: 0;
-            }
-        }
-        &:not(.ag-label-align-left) {
-            label {
-                margin-left: $ag-grid-size;
-            }
-        }
+    }
+
+    .ag-label-align-right .ag-label {
+        @include ag-theme-rtl((margin-left: $ag-grid-size));
     }
 
     input:not([type]),
@@ -26,20 +19,13 @@
     input[type='number'],
     input[type='tel'],
     input[type='date'],
-    input[type='datetime-local'] {
-        @include ag-textbox();
-    }
-
-    // TODO structural styles
-    input[type='date'] {
-        flex: 1 1 auto;
-    }
-    input[type='range'] {
-        padding: 0;
-    }
-
+    input[type='datetime-local'],
     textarea {
         @include ag-textbox();
+    }
+
+    input[type='range'] {
+        padding: 0;
     }
 
     ////////////////////////////////////////
@@ -89,11 +75,11 @@
     // Selection checkbox
     ////////////////////////////////////////
 
-    // TODO nesting, over-long selector list
+
     .ag-row-drag,
-    .ag-cell-wrapper .ag-selection-checkbox,
-    .ag-cell-wrapper .ag-group-expanded,
-    .ag-cell-wrapper .ag-group-contracted {
+    .ag-selection-checkbox,
+    .ag-group-expanded,
+    .ag-group-contracted {
         @include ag-theme-rtl(( margin-right: $ag-cell-widget-spacing ));
     }
     
@@ -119,7 +105,6 @@
         padding: $ag-grid-size;
     }
 
-
     .ag-disabled-group-title-bar, .ag-disabled-group-container {
         opacity: 0.5
     }
@@ -128,92 +113,77 @@
         margin: $ag-grid-size / 2 0;
     }
 
-    .ag-labeled {
-        label {
-            margin-right: $ag-grid-size;
-            white-space: nowrap;
-        }
+    .ag-label {
+        white-space: nowrap;
+        @include ag-theme-rtl((margin-right: $ag-grid-size));
     }
 
-    .ag-labeled.ag-label-align-top {
-        label {
-            margin-bottom: $ag-grid-size / 2;
-        }
+    .ag-label-align-top .ag-label {
+        margin-bottom: $ag-grid-size / 2;
     }
 
-    .ag-slider,
-    .ag-angle-select {
-        > .ag-wrapper {
-            > div:not(:first-of-type) {
-                margin-left: $ag-grid-size * 2;
-            }
-        }
+    .ag-slider-field,
+    .ag-angle-select-field {
+        @include ag-theme-rtl((margin-right: $ag-grid-size * 2));
     }
 
-    .ag-angle-select {
-        .ag-angle-select-field {
-            .ag-angle-select-parent-circle {
-                width: 24px;
-                height: 24px;
-                border-radius: 12px;
-                box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
-                background-color: #ffffff;
-            }
-            .ag-angle-select-child-circle {
-                top: 4px;
-                left: 12px;
-                width: 6px;
-                height: 6px;
-                margin-left: -3px;
-                margin-top: -4px;
-                border-radius: 3px;
-                background-color: #4c4c4c;
-            }
-        }
+    .ag-angle-select-parent-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
+        background-color: #ffffff;
+    }
+    .ag-angle-select-child-circle {
+        top: 4px;
+        left: 12px;
+        width: 6px;
+        height: 6px;
+        margin-left: -3px;
+        margin-top: -4px;
+        border-radius: 3px;
+        background-color: #4c4c4c;
     }
 
-    .ag-toggle-button {
-        // TODO do this without reaching into input wrapper
-        .ag-input-wrapper {
+    .ag-toggle-button-input-wrapper {
+        height: $ag-icon-size;
+        width: 40px;
+        background-color: $ag-background-color;
+        border: 1px solid $ag-icon-color;
+        border-radius: 500rem;
+
+        .ag-icon {
+            width: $ag-icon-size;
             height: $ag-icon-size;
-            width: 40px;
-            background-color: $ag-background-color;
             border: 1px solid $ag-icon-color;
             border-radius: 500rem;
-            .ag-icon {
-                width: $ag-icon-size;
-                height: $ag-icon-size;
-                border: 1px solid $ag-icon-color;
-                border-radius: 500rem;
-                right: calc(100% - #{$ag-icon-size});
-            }
-        }
-        &.ag-selected {
-            // TODO do this without reaching into input wrapper
-            .ag-input-wrapper {
-                background-color: $ag-accent-color;
-                .ag-icon {
-                    background: $ag-background-color;
-                    right: -1px;
-                }
-            }
+            right: calc(100% - #{$ag-icon-size});
         }
     }
 
-    .ag-color-picker {
-        > .ag-wrapper {
-            border: 1px solid $ag-border-color;
-            border-radius: 5px;
-            > div {
-                width: $ag-icon-size;
-                height: $ag-icon-size;
-            }
-            button {
-                background-color: $ag-background-color;
-            }
-            button:hover {
-                background-color: $ag-hover-color;
-            }
+    .ag-selected .ag-toggle-button-input-wrapper {
+        background-color: $ag-accent-color;
+        .ag-icon {
+            background: $ag-background-color;
+            right: -1px;
+        }
+    }
+
+    .ag-picker-field-wrapper {
+        border: 1px solid $ag-border-color;
+        border-radius: 5px;
+    }
+
+    .ag-picker-field-display {
+        width: $ag-icon-size;
+        height: $ag-icon-size;
+    }
+    
+    .ag-picker-field-button {
+        background-color: $ag-background-color;
+
+        &:hover {
+            background-color: $ag-hover-color;
         }
     }
 
@@ -223,74 +193,71 @@
 
     .ag-color-panel {
         padding: $ag-grid-size;
-
-        .ag-spectrum-color {
-            background-color: rgb(255, 0, 0);
-            border-radius: 2px;
-        }
-
-        .ag-spectrum-tools {
-            padding: 10px;
-        }
-
-        .ag-spectrum-sat {
-            background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
-        }
-
-        .ag-spectrum-val {
-            background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
-        }
-
-        .ag-spectrum-dragger {
-            border-radius: 12px;
-            height: 12px;
-            width: 12px;
-            border: 1px solid white;
-            background: black;
-            box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
-        }
-
-        .ag-spectrum-hue-background {
-            border-radius: 2px;
-        }
-
-        .ag-spectrum-alpha-background {
-            border-radius: 2px;
-        }
-
-        .ag-spectrum-tool {
-            margin-bottom: 10px;
-            height: 11px;
-            border-radius: 2px;
-        }
-
-        .ag-spectrum-slider {
-            margin-top: -12px;
-            width: 13px;
-            height: 13px;
-            border-radius: 13px;
-            background-color: rgb(248, 248, 248);
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .ag-recent-colors {
-            > div {
-                margin: 0 3px;
-                &:first-child {
-                    margin-left: 0;
-                }
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
-        }
     }
 
+    .ag-spectrum-color {
+        background-color: rgb(255, 0, 0);
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tools {
+        padding: 10px;
+    }
+
+    .ag-spectrum-sat {
+        background-image: linear-gradient(to right, white, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-val {
+        background-image: linear-gradient(to top, black, rgba(204, 154, 129, 0));
+    }
+
+    .ag-spectrum-dragger {
+        border-radius: 12px;
+        height: 12px;
+        width: 12px;
+        border: 1px solid white;
+        background: black;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.24);
+    }
+
+    .ag-spectrum-hue-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-alpha-background {
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-tool {
+        margin-bottom: 10px;
+        height: 11px;
+        border-radius: 2px;
+    }
+
+    .ag-spectrum-slider {
+        margin-top: -12px;
+        width: 13px;
+        height: 13px;
+        border-radius: 13px;
+        background-color: rgb(248, 248, 248);
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .ag-recent-color {
+        margin: 0 3px;
+        &:first-child {
+            margin-left: 0;
+        }
+        &:last-child {
+            margin-right: 0;
+        }
+    }
 
     ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////
-    &.ag-popup > div:not(.ag-tooltip-custom) {
+    .ag-popup-child:not(.ag-tooltip-custom) {
         box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
     }
 
@@ -356,22 +323,6 @@
             opacity: 0;
         }
     }
-
-    .ag-rtl {
-        .ag-checkbox,
-        .ag-radio-button,
-        .ag-toggle-button {
-            &:not(.ag-label-align-left) {
-                label {
-                    margin-right: $ag-grid-size;
-                    margin-left: 0;
-                }
-            }
-        }
-    }
-
-
-
 
     .ag-column-select-header {
         border-top: 1px solid $ag-border-color;

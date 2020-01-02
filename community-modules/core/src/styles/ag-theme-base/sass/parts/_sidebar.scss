@@ -50,7 +50,7 @@
             @include ag-grid-border(left);
         }
 
-        .ag-side-button.ag-selected button {
+        .ag-selected .ag-side-button-button {
             margin-right: -1px;
             padding-right: 1px;
         }
@@ -65,7 +65,7 @@
             @include ag-grid-border(right);
         }
 
-        .ag-side-button.ag-selected button {
+        .ag-selected .ag-side-button-button {
             margin-left: -1px;
             padding-left: 1px;
         }
@@ -83,4 +83,3 @@
     }
     
 }
-

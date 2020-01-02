@@ -166,7 +166,7 @@
     ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////
-    &.ag-popup > div:not(.ag-tooltip-custom) {
+    .ag-popup-child:not(.ag-tooltip-custom) {
         @include ag-chrome-box-shadow();
         border: 1px solid $ag-secondary-border-color;
         border-radius: $ag-border-radius;
