@@ -169,7 +169,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setChartOption(expression: string, value: any): void {
-        if (value === _.get(this.chartOptions, expression, undefined)) {
+        if (_.get(this.chartOptions, expression, undefined) === value) {
             // option is already set to the specified value
             return;
         }
@@ -199,6 +199,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setSeriesOption(expression: string, value: any): void {
+        if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         _.set(this.chartOptions.seriesDefaults, expression, value);
 
         const mappings: { [key: string]: string; } = {
@@ -218,6 +223,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setTitleOption(property: keyof CaptionOptions, value: any) {
+        if (_.get(this.chartOptions.title, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         (this.chartOptions.title as any)[property] = value;
 
         if (!this.chart.title) {
@@ -237,6 +247,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
         let { padding } = this.chartOptions;
+
+        if (_.get(padding, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
 
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -261,6 +276,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
         const { seriesDefaults } = this.chartOptions;
+
+        if (_.get(seriesDefaults.shadow, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
 
         if (!seriesDefaults.shadow) {
             seriesDefaults.shadow = {
