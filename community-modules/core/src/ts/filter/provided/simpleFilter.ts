@@ -314,11 +314,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         const andOrTemplate =
             `<div class="ag-filter-condition" ref="eJoinOperatorPanel">
                     <label>
-                        <input ref="eJoinOperatorAnd" type="radio" class="and" name="${uniqueGroupId}" value="AND")} checked="checked" />
+                        <input ref="eJoinOperatorAnd" type="radio" class="ag-filter-condition-option-button" name="${uniqueGroupId}" value="AND")} checked="checked" />
                         ${translate('andCondition', 'AND')}
                     </label>
                     <label>
-                        <input ref="eJoinOperatorOr" type="radio" class="or" name="${uniqueGroupId}" value="OR" />
+                        <input ref="eJoinOperatorOr" type="radio" class="ag-filter-condition-option-button" name="${uniqueGroupId}" value="OR" />
                         ${translate('orCondition', 'OR')}
                     </label>
                 </div>`;

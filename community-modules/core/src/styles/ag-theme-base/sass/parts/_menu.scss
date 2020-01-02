@@ -13,15 +13,11 @@
 
     .ag-menu-list {
         cursor: default;
-        margin-bottom: $ag-grid-size;
-        margin-top: $ag-grid-size;
         width: 100%;
     }
 
-    @if $ag-hover-color {
-        .ag-menu-option-active {
-            background-color: $ag-hover-color;
-        }
+    .ag-menu-option-active {
+        background-color: $ag-hover-color;
     }
 
     .ag-menu-option-disabled {
@@ -45,11 +41,12 @@
 
     .ag-menu-separator {
         height: $ag-grid-size * 2;
-        & > span:after {
-            content: "";
-            display: block;
-            @include ag-grid-border(top, $color: $ag-secondary-border-color);
-        }
+    }
+
+    .ag-menu-separator-cell:after {
+        content: "";
+        display: block;
+        @include ag-grid-border(top, $color: $ag-secondary-border-color);
     }
 
     .ag-menu-option-popup-pointer {
@@ -67,7 +64,6 @@
         width: 100%;
         // TODO structural style
         display: flex;
-
     }
     
     .ag-tab {
@@ -93,111 +89,73 @@
 
     .ag-tabs-body {
         padding: $ag-grid-size / 2 0;
-
-        .ag-menu-list {
-            margin-bottom: 0;
-            margin-top: 0;
-
-            & > div:first-child > span {
-                padding-top: 0;
-            }
-
-            & > div:last-child > span {
-                padding-bottom: 0;
-            }
-
-            & > div:last-child > .ag-menu-option-popup-pointer {
-                background-position-y: 0;
-            }
-        }
     }
 
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////
-    .ag-filter {
-        .ag-filter-select,
-        .ag-filter-body {
-            margin-bottom: $ag-grid-size;
-        }
 
-        .ag-filter-body {
-            margin-top: 0;
-        }
+    .ag-filter-condition-option-button {
+        margin: 0 3px 0 6px;
+        width: 12px;
+        height: 17px;
+        vertical-align: top;
+    }
 
-        .ag-filter-filter {
-            margin-left: $ag-grid-size;
-            margin-right: $ag-grid-size;
-        }
+    .ag-filter-select,
+    .ag-filter-body {
+        margin-bottom: $ag-grid-size;
+    }
 
-        // string filter type
-        .ag-filter-select {
-            margin: $ag-grid-size;
-        }
+    .ag-filter-body {
+        margin-top: 0;
+    }
 
-        input[type='radio'] {
-            margin: 0 3px 0 6px;
-            width: 12px;
-            height: 17px;
-            vertical-align: top;
-        }
+    .ag-filter-filter {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
 
-        input[type='text'],
-        input[type='date'] {
-            padding-left: $ag-grid-size;
-        }
+        @include ag-theme-rtl((padding-left: $ag-grid-size));
+    }
 
-        .ag-set-filter-list {
-            height: $ag-virtual-item-height * 6;
-        }
+    // string filter type
+    .ag-filter-select {
+        margin: $ag-grid-size;
+    }
 
-        .ag-set-filter-item {
-            height: $ag-virtual-item-height;
-            // TODO specific selectors
-            > {
-                div,
-                span {
-                    margin-left: 5px;
-                }
-            }
-        }
+    .ag-set-filter-list {
+        height: $ag-virtual-item-height * 6;
+    }
 
-        .ag-rtl {
-            .ag-set-filter-item {
-                > {
-                    div,
-                    span {
-                        margin-left: 0;
-                        margin-right: 5px;
-                    }
-                }
-            }
-        }
+    .ag-set-filter-item {
+        height: $ag-virtual-item-height;
+    }
 
-        .ag-filter-header-container {
-            @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
-            padding-bottom: $ag-grid-size / 2;
-        }
+    .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
+        @include ag-theme-rtl((margin-left: 5px));
+    }
 
-        .ag-filter-apply-panel {
-            // TODO structural styles
-            display: flex;
-            justify-content: flex-end;
-            padding: $ag-grid-size;
-            padding-top: $ag-grid-size * 2;
-            button {
-                line-height: 1.5;
-                @if $ag-customize-buttons {
-                    @include ag-regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
-                }
-            }
+    .ag-filter-header-container {
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        padding-bottom: $ag-grid-size / 2;
+    }
 
-            button + button {
-                margin-left: $ag-grid-size * 2;
-            }
-        }
+    .ag-filter-apply-panel {
+        // TODO structural styles
+        display: flex;
+        justify-content: flex-end;
+        padding: $ag-grid-size;
+        padding-top: $ag-grid-size * 2;
     }
     
+    .ag-filter-apply-panel-button {
+        line-height: 1.5;
+        @if $ag-customize-buttons {
+            @include ag-regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
+        }
+
+        @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
+    }
 
     .ag-column-select-column-group,
     .ag-column-select-column {

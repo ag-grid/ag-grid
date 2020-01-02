@@ -405,14 +405,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 8px;
     cursor: col-resize;
 
-    @include ag-top-level-rtl((
+    @include ag-unthemed-rtl((
         right: -4px
     ));
 }
 
 // TODO visual style
 .ag-header-expand-icon {
-    @include ag-top-level-rtl(( padding-left: 4px ));
+    @include ag-unthemed-rtl(( padding-left: 4px ));
 }
 
 .ag-header-select-all {
@@ -1087,7 +1087,7 @@ $ag-handleSize: 5px;
 .ag-rich-select-value-icon {
     flex: 1 1 auto;
     order: 1;
-    @include ag-top-level-rtl(( text-align: right ));
+    @include ag-unthemed-rtl(( text-align: right ));
 }
 
 
@@ -1180,11 +1180,11 @@ $ag-handleSize: 5px;
 }
 
 .ag-side-bar-left .ag-tool-panel-horizontal-resize {
-    @include ag-top-level-rtl(( right: -3px ));
+    @include ag-unthemed-rtl(( right: -3px ));
 }
 
 .ag-side-bar-right .ag-tool-panel-horizontal-resize {
-    @include ag-top-level-rtl(( left: -3px ));
+    @include ag-unthemed-rtl(( left: -3px ));
 }
 
 .ag-filter-loading {
@@ -1532,11 +1532,11 @@ $ag-row-group-indent-size: 10px !default;
 // Default values for themes that do not use the mixins
 @for $i from 1 to 20 {
     .ag-ltr .ag-toolpanel-indent-#{$i} {
-        @include ag-top-level-rtl(( padding-left: $i * $ag-toolpanel-indent-size ));
+        @include ag-unthemed-rtl(( padding-left: $i * $ag-toolpanel-indent-size ));
     }
     
     .ag-ltr .ag-row-group-indent-#{$i} {
-        @include ag-top-level-rtl(( padding-left: $i * $ag-row-group-indent-size ));
+        @include ag-unthemed-rtl(( padding-left: $i * $ag-row-group-indent-size ));
     }
 }
 
