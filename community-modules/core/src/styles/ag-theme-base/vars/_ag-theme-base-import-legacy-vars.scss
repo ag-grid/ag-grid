@@ -231,8 +231,8 @@
     $ag-tool-panel-background-color: $tool-panel-background-color !global;
   }
 
-  @if (variable-exists("toolpanel-indent-size") and not variable-exists("ag-toolpanel-indent-size")) {
-    $ag-toolpanel-indent-size: $toolpanel-indent-size !global;
+  @if (variable-exists("toolpanel-indent-size") and not variable-exists("ag-column-select-indent-size")) {
+    $ag-column-select-indent-size: $toolpanel-indent-size !global;
   }
 
   @if (variable-exists("tooltip-background-color") and not variable-exists("ag-tooltip-background-color")) {
@@ -277,5 +277,9 @@
 
   @if (variable-exists("ag-card-background-color") and not variable-exists("ag-card-background")) {
     $ag-card-background: $ag-card-background-color !global;
+  }
+
+  @if (variable-exists("ag-toolpanel-indent-size") and not variable-exists("ag-column-select-indent-size")) {
+    $ag-column-select-indent-size: $ag-toolpanel-indent-size !global;
   }
 }

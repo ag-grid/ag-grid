@@ -83,7 +83,7 @@ $ag-row-border-width: 0 !default;
 $ag-transition-speed: 120ms !default;
 $ag-cell-horizontal-border: 1px solid transparent !default;
 
-$ag-toolpanel-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 
 $ag-header-cell-moving-background-color: rgb(190, 190, 190) !default;

@@ -1,19 +1,5 @@
 
 @mixin ag-theme-base-part-sidebar {
-    
-    @for $i from 1 to 20 {
-        .ag-ltr .ag-toolpanel-indent-#{$i} {
-            padding-left: $i * $ag-toolpanel-indent-size;
-        }
-    
-        .ag-rtl .ag-toolpanel-indent-#{$i} {
-            padding-right: $i * $ag-toolpanel-indent-size;
-        }
-    }
-
-    .ag-toolpanel-add-group-indent {
-        @include ag-theme-rtl(( margin-left: $ag-toolpanel-indent-size + $ag-grid-size ));
-    }
 
     .ag-tool-panel-wrapper {
         border-right: 0;
@@ -29,38 +15,36 @@
         background: $ag-background-color;
         width: $ag-icon-size + 4;
         position: relative;
+    }
 
-        .ag-side-button {
-            button {
-                background: transparent;
-                border: 0;
-                color: $ag-foreground-color;
-                padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-                width: calc(100% + 1px);
-                margin: 0;
-                min-height: $ag-grid-size * 18;
-                border-width: 1px 0 1px 0;
-                border-style: solid;
-                border-color: transparent;
-                background-position-y: center;
-                background-position-x: center;
-                background-repeat: no-repeat;
-            }
-        }
+    .ag-side-button-button {
+        background: transparent;
+        border: 0;
+        color: $ag-foreground-color;
+        padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
+        width: calc(100% + 1px);
+        margin: 0;
+        min-height: $ag-grid-size * 18;
+        border-width: 1px 0 1px 0;
+        border-style: solid;
+        border-color: transparent;
+        background-position-y: center;
+        background-position-x: center;
+        background-repeat: no-repeat;
+    }
 
-        .ag-selected {
-            button {
-                background-color: $ag-tool-panel-background-color;
-                border-color: $ag-border-color;
-            }
-        }
+    .ag-selected .ag-side-button-button {
+        background-color: $ag-tool-panel-background-color;
+        border-color: $ag-border-color;
     }
 
     .ag-side-button-icon-wrapper {
         margin-bottom: 3px;
     }
 
-    %side-bar-left {
+    // sidebar visually on left
+    .ag-ltr .ag-side-bar-left,
+    .ag-rtl .ag-side-bar-right {
         @include ag-grid-border(right);
         .ag-tool-panel-wrapper {
             @include ag-grid-border(left);
@@ -71,8 +55,10 @@
             padding-right: 1px;
         }
     }
-    
-    %side-bar-right {
+
+    // sidebar visually on right
+    .ag-rtl .ag-side-bar-left,
+    .ag-ltr .ag-side-bar-right {
         @include ag-grid-border(left);
         
         .ag-tool-panel-wrapper {
@@ -82,26 +68,6 @@
         .ag-side-button.ag-selected button {
             margin-left: -1px;
             padding-left: 1px;
-        }
-    }
-
-    .ag-ltr {
-        .ag-side-bar-left {
-            @extend %side-bar-left;
-        }
-
-        .ag-side-bar-right {
-            @extend %side-bar-right;
-        }
-    }
-    
-    .ag-rtl {
-        .ag-side-bar-left {
-            @extend %side-bar-right;
-        }
-
-        .ag-side-bar-right {
-            @extend %side-bar-left;
         }
     }
 

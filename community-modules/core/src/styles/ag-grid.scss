@@ -1526,13 +1526,13 @@ $ag-handleSize: 5px;
 
 
 // TODO can be removed if we merge themes
-$ag-toolpanel-indent-size: 10px !default;
+$ag-column-select-indent-size: 10px !default;
 $ag-row-group-indent-size: 10px !default;
 
 // Default values for themes that do not use the mixins
 @for $i from 1 to 20 {
-    .ag-ltr .ag-toolpanel-indent-#{$i} {
-        @include ag-unthemed-rtl(( padding-left: $i * $ag-toolpanel-indent-size ));
+    .ag-ltr .ag-column-select-indent-#{$i} {
+        @include ag-unthemed-rtl(( padding-left: $i * $ag-column-select-indent-size ));
     }
     
     .ag-ltr .ag-row-group-indent-#{$i} {

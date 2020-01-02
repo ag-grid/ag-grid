@@ -369,4 +369,28 @@
             }
         }
     }
+
+
+
+
+    .ag-column-select-header {
+        border-top: 1px solid $ag-border-color;
+        height: $ag-header-height;
+        align-items: center;
+    }
+    
+    @for $i from 1 to 20 {
+        .ag-column-select-indent-#{$i} {
+            @include ag-theme-rtl((padding-left: $i * $ag-column-select-indent-size));
+        }
+    }
+
+    .ag-column-select-add-group-indent {
+        @include ag-theme-rtl(( margin-left: $ag-column-select-indent-size + $ag-grid-size ));
+    }
+
+    .ag-column-select-header-icon {
+        cursor: pointer;
+        margin: 0 $ag-grid-size;
+    }
 }

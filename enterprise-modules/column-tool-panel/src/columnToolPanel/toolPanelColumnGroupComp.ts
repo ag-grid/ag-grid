@@ -84,7 +84,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
-        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
+        this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
 

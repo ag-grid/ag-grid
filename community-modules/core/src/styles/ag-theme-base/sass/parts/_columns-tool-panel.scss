@@ -1,17 +1,6 @@
 
 @mixin ag-theme-base-part-columns-tool-panel {
     
-    // TODO move to widgets
-    .ag-column-select-header {
-        border-top: 1px solid $ag-border-color;
-        height: $ag-header-height;
-        align-items: center;
-    }
-
-    .ag-column-select-header-icon {
-        cursor: pointer;
-        margin: 0 $ag-grid-size;
-    }
 
     .ag-pivot-mode-panel {
         height: $ag-header-height;
