@@ -110,7 +110,7 @@
     }
 
     .ag-cell {
-        @include ag-grid-cell($ag-row-height - 2, $ag-cell-horizontal-padding);
+        line-height: $ag-row-height - 2;
 
         // adjust for transparent border
         border: 1px solid transparent;

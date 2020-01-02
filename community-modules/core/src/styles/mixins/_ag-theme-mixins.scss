@@ -16,16 +16,6 @@
     }
 }
 
-@mixin ag-grid-header-cell($padding) {
-    padding-left: $padding;
-    padding-right: $padding;
-}
-
-@mixin ag-grid-cell($height, $padding) {
-    line-height: $height;
-    @include ag-grid-header-cell($padding);
-}
-
 @mixin ag-card() {
     @extend %card !optional;
 

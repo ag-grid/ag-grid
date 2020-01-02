@@ -29,34 +29,32 @@
         height: $ag-header-height;
     }
 
-    .ag-header-cell-label {
-        .ag-header-icon {
-            margin-left: $ag-grid-size;
-            opacity: $ag-foreground-opacity;
-        }
+    .ag-header-label-icon {
+        margin-left: $ag-grid-size;
+        opacity: $ag-foreground-opacity;
     }
 
     .ag-header-cell,
     .ag-header-group-cell {
-        border: solid 0 $ag-border-color;
-        @include ag-grid-header-cell($ag-cell-horizontal-padding);
+        padding-left: $ag-cell-horizontal-padding;
+        padding-right: $ag-cell-horizontal-padding;
         @if $ag-header-cell-moving-background-color {
             &.ag-header-cell-moving {
                 background-color: $ag-header-cell-moving-background-color;
             }
         }
-        &:not(.ag-header-group-cell-no-group) {
-            border-top-width: 1px;
-        }
     }
 
-    .ag-header-row:first-child {
+    .ag-header-row:not(:first-child) {
         .ag-header-cell,
-        .ag-header-group-cell {
-            border-top-width: 0;
+        .ag-header-group-cell.ag-header-group-cell-with-group {
+            border-top: solid 1px $ag-border-color;
         }
     }
 
+    // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect
+    // being applied to the adjacent cell as the user resizes a cell, because
+    // during a resize, the mouse will momentarily move over the neighbouring cell
     .ag-header-group-cell:not(.ag-column-resizing) + .ag-header-group-cell,
     .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
     .ag-header-group-cell:first-of-type,
@@ -118,31 +116,26 @@
         margin: 0;
         padding: 0 $ag-grid-size * 2;
         transform: translateY($ag-grid-size * 2);
-
-        span,
-        div {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .ag-dnd-ghost-icon {
-            margin-right: $ag-grid-size;
-            opacity: $ag-foreground-opacity;
-        }
     }
 
+    .ag-dnd-ghost-icon {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        margin-right: $ag-grid-size;
+        opacity: $ag-foreground-opacity;
+    }
     
     .ag-floating-filter-button {
-        button {
-            appearance: none;
-            background: transparent;
-            border: 0;
-            height: $ag-icon-size;
-            padding: 0;
-            width: $ag-icon-size;
-        }
-        
         @include ag-theme-rtl(( margin-left: $ag-grid-size * 3 ));
+    }
+
+    .ag-floating-filter-button-button {
+        appearance: none;
+        background: transparent;
+        border: 0;
+        height: $ag-icon-size;
+        padding: 0;
+        width: $ag-icon-size;
     }
 }

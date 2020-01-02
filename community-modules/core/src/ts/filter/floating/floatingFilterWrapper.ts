@@ -42,7 +42,7 @@ export class FloatingFilterWrapper extends Component {
         `<div class="ag-header-cell" role="presentation">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
-                <button type="button" ref="eButtonShowMainFilter"></button>
+                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 

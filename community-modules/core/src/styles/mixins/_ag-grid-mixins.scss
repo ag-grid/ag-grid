@@ -103,7 +103,7 @@
             $rtl-rules: map-merge($rtl-rules, (property: right));
         }
         @else {
-            @error "ag-auto-rtl doesn't know how to process the \"#{$property}\" property"
+            @error "ag-get-rtl-rules doesn't know how to process the \"#{$property}\" property"
         }
     }
     @return $rtl-rules;
