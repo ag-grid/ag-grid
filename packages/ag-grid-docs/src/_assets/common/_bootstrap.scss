@@ -4,6 +4,8 @@
 @import "~bootstrap/scss/mixins";
 
 // Optional
+// prevent bootstrap from applying a default margin to all
+$label-margin-bottom: null;
 @import "~bootstrap/scss/reboot";
 @import "~bootstrap/scss/type";
 @import "~bootstrap/scss/images";

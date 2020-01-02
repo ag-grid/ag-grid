@@ -68,25 +68,26 @@
         // TODO structural style
         display: flex;
 
-        .ag-tab {
-            @extend %tab !optional;
+    }
+    
+    .ag-tab {
+        @extend %tab !optional;
 
-            // TODO structural styles
-            display: flex;
-            border-bottom: 2px solid transparent;
-            height: $ag-grid-size * 4;
-            // TODO structural styles
-            flex: none;
-            align-items: center;
-            justify-content: center;
+        // TODO structural styles
+        display: flex;
+        border-bottom: 2px solid transparent;
+        height: $ag-grid-size * 4;
+        // TODO structural styles
+        flex: none;
+        align-items: center;
+        justify-content: center;
 
-            @if $ag-full-width-tabs {
-                flex: 1 1 auto;
-            }
+        @if $ag-full-width-tabs {
+            flex: 1 1 auto;
+        }
 
-            &.ag-tab-selected {
-                @extend %selected-tab !optional;
-            }
+        &.ag-tab-selected {
+            @extend %selected-tab !optional;
         }
     }
 
@@ -198,13 +199,13 @@
     }
     
 
-    .ag-column-tool-panel-column-group,
-    .ag-column-tool-panel-column {
+    .ag-column-select-column-group,
+    .ag-column-select-column {
         height: $ag-grid-size * 4;
     }
 
     .ag-column-select-checkbox,
-    .ag-column-tool-panel-column-label,
+    .ag-column-select-column-label,
     .ag-column-group-icons {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;

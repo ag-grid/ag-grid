@@ -42,65 +42,54 @@
 
     .ag-column-drop-cell {
         min-height: $ag-grid-size * 6;
-
-        .ag-column-drop-cell-button {
-            margin-bottom: $ag-grid-size / 2;
-            margin-top: $ag-grid-size / 2;
-        }
-
-        .ag-column-drop-cell-button:hover {
-            opacity: 1;
-        }
     }
 
-    .ag-column-drop-vertical .ag-column-drop-cell {
+    .ag-column-drop-cell-button {
+        margin-bottom: $ag-grid-size / 2;
+        margin-top: $ag-grid-size / 2;
+    }
+
+    .ag-column-drop-cell-button:hover {
+        opacity: 1;
+    }
+
+    .ag-column-drop-vertical-cell {
         margin-left: $ag-grid-size * 2;
         margin-right: $ag-grid-size * 2;
+    }
 
-        .ag-column-drop-cell-text {
-            margin-left: $ag-grid-size * 2;
-        }
+    .ag-column-drop-vertical-cell-text {
+        margin-left: $ag-grid-size * 2;
     }
 
     .ag-column-drop-horizontal {
         background-color: $ag-panel-background-color;
         height: $ag-header-height;
-
-        .ag-column-drop-cell-text {
-            margin-left: $ag-grid-size * 2;
-        }
     }
 
-    // tool panel
-    .ag-tool-panel-wrapper {
-        .ag-column-select {
-            .ag-column-tool-panel-column-group,
-            .ag-column-tool-panel-column {
-                min-height: $ag-grid-size * 5;
-            }
-        }
+    .ag-column-drop-horizontal-cell-text {
+        margin-left: $ag-grid-size * 2;
     }
 
-    // context menu spacing
+    // TODO add variable for all themes
     .ag-menu-option {
         height: $ag-grid-size * 7;
     }
 
-    .ag-column-select {
-        .ag-column-tool-panel-column-group,
-        .ag-column-tool-panel-column {
-            height: $ag-grid-size * 5;
-        }
+    // TODO add variable for all themes
+    .ag-column-select-column-group,
+    .ag-column-select-column {
+        height: $ag-grid-size * 5;
     }
 
     .ag-tabs-header {
         border-bottom: 1px solid $ag-border-color;
+    }
 
-        .ag-tab {
-            margin-bottom: -2px;
-        }
+    .ag-tab {
+        margin-bottom: -2px;
 
-        .ag-tab.ag-tab-selected {
+        &.ag-tab-selected {
             background-color: $ag-default-background;
             border-bottom-color: transparent;
         }
@@ -128,23 +117,6 @@
         padding: $ag-grid-size * 4;
     }
 
-    // we do not want to color the range color when the cell is also focused
-    .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-1;
-    }
-
-    .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-2;
-    }
-
-    .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-3;
-    }
-
-    .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-4;
-    }
-
     .ag-rich-select-value {
         border-bottom: 1px solid $ag-border-color;
     }
@@ -154,7 +126,7 @@
     }
 
     // TODO move to base
-    .ag-filter-toolpanel-body{
+    .ag-filter-toolpanel-body {
         background-color: $ag-background-color;
     }
 }

@@ -1156,8 +1156,8 @@ $ag-handleSize: 5px;
     width: 200px;
 }
 
-.ag-column-tool-panel-column,
-.ag-column-tool-panel-column-group {
+.ag-column-select-column,
+.ag-column-select-column-group {
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -1255,10 +1255,6 @@ $ag-handleSize: 5px;
 
 .ag-side-button-label {
     writing-mode: vertical-lr;
-}
-
-.ag-side-button-icon-wrapper {
-    margin-bottom: 3px;
 }
 
 /**

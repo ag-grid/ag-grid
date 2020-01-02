@@ -65,14 +65,7 @@
 
     .ag-row {
         height: $ag-row-height;
-        // TODO revert me
-        // @include ag-grid-border(bottom, $color: $ag-row-border-color);
-        &:not(.ag-row-first) {
-            @include ag-grid-border(top, $color: $ag-row-border-color);
-        }
-        &.ag-row-last {
-            @include ag-grid-border(bottom, $color: $ag-row-border-color);
-        }
+        @include ag-grid-border(bottom, $color: $ag-row-border-color);
 
         &.ag-row-selected {
             border-color: $ag-selected-color;

@@ -25,9 +25,9 @@ import { BaseColumnItem } from "./primaryColsPanel";
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
-        `<div class="ag-column-tool-panel-column">
+        `<div class="ag-column-select-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

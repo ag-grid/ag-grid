@@ -1,22 +1,12 @@
 
 @mixin ag-theme-base-part-reset {
-    
-    * {
-        box-sizing: border-box;
-        &:focus,
-        *:before,
-        *:after {
-            outline: none;
-            box-sizing: border-box;
-        }
-    }
 
-    label {
-        margin-bottom: 0;
+    *, *:focus, *:after, *:before {
+        box-sizing: border-box;
+        outline: none;
     }
 
     ::-ms-clear {
         display: none;
     }
-
 }

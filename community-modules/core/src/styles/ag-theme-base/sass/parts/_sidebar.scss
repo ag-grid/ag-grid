@@ -56,6 +56,10 @@
         }
     }
 
+    .ag-side-button-icon-wrapper {
+        margin-bottom: 3px;
+    }
+
     %side-bar-left {
         @include ag-grid-border(right);
         .ag-tool-panel-wrapper {
