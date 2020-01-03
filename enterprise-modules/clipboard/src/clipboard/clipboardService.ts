@@ -42,7 +42,7 @@ import {
 } from "@ag-grid-community/core";
 
 interface RowCallback {
-    (gridRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, rangeIndex: number, isLastRow?: boolean): void;
+    (gridRow: RowPosition, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
 }
 
 interface ColumnCallback {
@@ -188,7 +188,7 @@ export class ClipboardService implements IClipboardService {
 
         let indexOffset = 0, dataRowIndex = 0;
 
-        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, index: number, _?: boolean) => {
+        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[], index: number) => {
             const atEndOfClipboardData = index - indexOffset >= clipboardData.length;
 
             if (atEndOfClipboardData) {
@@ -202,12 +202,12 @@ export class ClipboardService implements IClipboardService {
             const currentRowData = clipboardData[index - indexOffset];
 
             // otherwise we are not the first row, so copy
-            updatedRowNodes.push(rowNode!);
+            updatedRowNodes.push(rowNode);
 
             const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
 
-            columns!.forEach((column, idx) => {
-                if (!column.isCellEditable(rowNode!) || column.isSuppressPaste(rowNode)) { return; }
+            columns.forEach((column, idx) => {
+                if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                 // repeat data for columns we don't have data for - happens when to range is bigger than copied data range
                 if (idx >= currentRowData.length) {
@@ -217,10 +217,10 @@ export class ClipboardService implements IClipboardService {
                 const newValue = this.processCell(
                     rowNode, column, currentRowData[idx], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                this.valueService.setValue(rowNode!, column, newValue, Constants.SOURCE_PASTE);
+                this.valueService.setValue(rowNode, column, newValue, Constants.SOURCE_PASTE);
 
                 if (changedPath) {
-                    changedPath.addParentNode(rowNode!.parent, [column]);
+                    changedPath.addParentNode(rowNode.parent, [column]);
                 }
 
                 const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
@@ -279,11 +279,11 @@ export class ClipboardService implements IClipboardService {
             const processCellForClipboardFunc = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
             const processCellFromClipboardFunc = this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
 
-            const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, _: number, _2?: boolean) => {
+            const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
                 // take reference of first row, this is the one we will be using to copy from
                 if (!firstRowValues.length) {
                     // two reasons for looping through columns
-                    columns!.forEach(column => {
+                    columns.forEach(column => {
                         // get the initial values to copy down
                         const value = this.processCell(
                             rowNode,
@@ -296,17 +296,17 @@ export class ClipboardService implements IClipboardService {
                     });
                 } else {
                     // otherwise we are not the first row, so copy
-                    updatedRowNodes.push(rowNode!);
-                    columns!.forEach((column, index) => {
-                        if (!column.isCellEditable(rowNode!)) { return; }
+                    updatedRowNodes.push(rowNode);
+                    columns.forEach((column, index) => {
+                        if (!column.isCellEditable(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
                             rowNode, column, firstRowValues[index], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
 
-                        this.valueService.setValue(rowNode!, column, firstRowValue, Constants.SOURCE_PASTE);
+                        this.valueService.setValue(rowNode, column, firstRowValue, Constants.SOURCE_PASTE);
 
                         if (changedPath) {
-                            changedPath.addParentNode(rowNode!.parent, [column]);
+                            changedPath.addParentNode(rowNode.parent, [column]);
                         }
 
                         const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
@@ -370,9 +370,10 @@ export class ClipboardService implements IClipboardService {
 
     private pasteSingleValue(parsedData: string[][], updatedRowNodes: RowNode[], cellsToFlash: any, changedPath: ChangedPath | undefined) {
         const value = parsedData[0][0];
-        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null) => {
-            updatedRowNodes.push(rowNode!);
-            columns!.forEach((column) =>
+
+        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[]) => {
+            updatedRowNodes.push(rowNode);
+            columns.forEach(column =>
                 this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, Constants.EXPORT_TYPE_CLIPBOARD, changedPath));
         };
 
@@ -495,16 +496,17 @@ export class ClipboardService implements IClipboardService {
         };
 
         // adds cell values to the data
-        const rowCallback = (currentRow: RowPosition, rowNode: RowNode | null, columns: Column[] | null, _2: number, isLastRow?: boolean) => {
+        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[], _2: number, isLastRow?: boolean) => {
             const processCellForClipboardFunc = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
 
-            columns!.forEach((column, index) => {
+            columns.forEach((column, index) => {
                 const value = this.valueService.getValue(column, rowNode);
                 const processedValue = this.processCell(rowNode, column, value, Constants.EXPORT_TYPE_CLIPBOARD, processCellForClipboardFunc);
 
                 if (index != 0) {
                     data += deliminator;
                 }
+
                 if (_.exists(processedValue)) {
                     data += processedValue;
                 }
