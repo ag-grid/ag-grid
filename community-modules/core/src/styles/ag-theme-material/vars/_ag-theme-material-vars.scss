@@ -19,12 +19,10 @@ $ag-grid-size: 8px !default;
 $ag-icon-size: 18px !default;
 $ag-header-height: $ag-grid-size * 7 !default;
 $ag-row-height: $ag-grid-size * 6 !default;
-$ag-row-border-width: 1px !default;
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-virtual-item-height: $ag-grid-size * 5;
-$ag-header-icon-size: 14px !default;
 $filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
 $filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 
@@ -106,5 +104,3 @@ $ag-full-width-tabs: true !default;
 
 // Icons
 @import "./font-vars";
-
-@import "../../ag-theme-base/vars/ag-theme-base-vars";

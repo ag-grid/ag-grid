@@ -151,10 +151,6 @@
     $ag-header-height: $header-height !global;
   }
 
-  @if (variable-exists("header-icon-size") and not variable-exists("ag-header-icon-size")) {
-    $ag-header-icon-size: $header-icon-size !global;
-  }
-
   @if (variable-exists("icon-color") and not variable-exists("ag-icon-color")) {
     $ag-icon-color: $icon-color !global;
   }
@@ -193,10 +189,6 @@
 
   @if (variable-exists("rich-select-item-height") and not variable-exists("ag-rich-select-item-height")) {
     $ag-rich-select-item-height: $rich-select-item-height !global;
-  }
-
-  @if (variable-exists("row-border-width") and not variable-exists("ag-row-border-width")) {
-    $ag-row-border-width: $row-border-width !global;
   }
 
   @if (variable-exists("row-group-indent-size") and not variable-exists("ag-row-group-indent-size")) {
@@ -261,10 +253,6 @@
 
   @if (variable-exists("tooltip-padding") and not variable-exists("ag-tooltip-padding")) {
     $ag-tooltip-padding: $tooltip-padding !global;
-  }
-
-  @if (variable-exists("transition-speed") and not variable-exists("ag-transition-speed")) {
-    $ag-transition-speed: $transition-speed !global;
   }
 
   @if (variable-exists("virtual-item-height") and not variable-exists("ag-virtual-item-height")) {

@@ -6,14 +6,29 @@ $ag-disabled-foreground-color-opacity: 0.5 !default;
 
 $ag-borders: true !default;
 
+
+// Optionals TODO move elsewhere
+// TODO See if we can default the values here and remove the overrides from derived themes
+$ag-header-background-image: null !default;
+$ag-header-background-color: null !default;
+$ag-full-width-tabs: null !default;
+$ag-odd-row-background-color: null !default;
+$ag-value-change-delta-up-color: null !default;
+$ag-value-change-delta-down-color: null !default;
+$ag-menu-option-active-color: null !default;
+$ag-row-stub-background-color: null !default;
+$ag-value-change-value-highlight-background-color: null !default;
+$ag-row-floating-background-color: null !default;
+$ag-primary-color: null !default;
+
 // Colors
 // Apply a border around the grid and between elements
 $ag-foreground-color: #000 !default;
 $ag-background-color: #fff !default;
+$ag-card-background: $ag-background-color !default;
 $ag-border-color: $ag-foreground-color !default;
 $ag-secondary-border-color: $ag-border-color !default;
 $ag-row-border-color: $ag-secondary-border-color !default;
-$ag-header-background-color: $ag-background-color !default;
 $ag-header-foreground-color: $ag-foreground-color !default;
 $ag-icon-color: lightgray !default;
 $ag-alt-icon-color: $ag-background-color !default;
@@ -22,8 +37,10 @@ $ag-range-selection-background-color: $ag-icon-color !default;
 $ag-selected-color: null !default;
 $ag-hover-color: null !default;
 
+
 // Sizing
 $ag-grid-size: 4px !default;
+@debug $ag-grid-size;
 $ag-icon-size: 12px !default;
 $ag-header-height: $ag-grid-size * 6 + 1 !default;
 $ag-row-height: ($ag-grid-size * 6 + 1) !default;
@@ -31,8 +48,6 @@ $ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
-$ag-header-icon-size: 14px !default;
-$ag-input-height: null !default;
 $filter-tool-panel-group-indent: 16px !default;
 $filter-tool-panel-top-level-row-height: $ag-grid-size * 8 !default;
 $filter-tool-panel-sub-level-row-height: $ag-grid-size * 6 !default;
@@ -79,8 +94,6 @@ $ag-grid-radius: null !default;
 // radius applied to popup elements
 $ag-card-radius: $ag-grid-radius !default;
 $ag-card-shadow: none !default;
-$ag-row-border-width: 0 !default;
-$ag-transition-speed: 120ms !default;
 $ag-cell-horizontal-border: 1px solid transparent !default;
 
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
@@ -115,25 +128,37 @@ $ag-group-toolbar-background-color: null !default;
 $ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
 $ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
 
-// Optionals TODO move elsewhere
-// TODO See if we can default the values here and remove the overrides from derived themes
-$ag-card-background: $ag-background-color !default;
-$ag-header-background-image: null !default;
-$ag-header-background-color: null !default;
-$ag-full-width-tabs: null !default;
-$ag-odd-row-background-color: null !default;
-$ag-value-change-delta-up-color: null !default;
-$ag-value-change-delta-down-color: null !default;
-$ag-menu-option-active-color: null !default;
-$ag-row-stub-background-color: null !default;
-$ag-value-change-value-highlight-background-color: null !default;
-$ag-row-floating-background-color: null !default;
-$ag-primary-color: null !default;
 
 // Flags
 
 $ag-customize-buttons: false !default;
+    // variables used when $ag-customize-buttons is true
+    // TODO replace with %placeholder%
+    $ag-button-background-color: null !default;
+    $ag-button-text-transform: null !default;
+
+
 $ag-customize-inputs: false !default;
+    // variables used when $ag-customize-inputs is true
+    // TODO replace with %placeholder%
+    $ag-disabled-foreground-color: null !default;
+    $ag-focused-textbox-border-bottom: null !default;
+    $ag-input-border-width: null !default;
+    $ag-input-bottom-border: null !default;
+    $ag-input-bottom-border-disabled: null !default;
+    $ag-input-height: null !default;
 
 // Icons
 @import "./font-vars";
+
+
+// TODO imported optionals, can they have sensible defaults? Can definitions be removed from derived themes?
+$ag-chip-background-color: null !default;
+$ag-editor-background-color: null !default;
+$ag-header-cell-hover-background-color: null !default;
+$ag-panel-background-color: null !default;
+$ag-range-selected-color-1: null !default;
+$ag-range-selected-color-2: null !default;
+$ag-range-selected-color-3: null !default;
+$ag-range-selected-color-4: null !default;
+$ag-secondary-foreground-color: null !default;

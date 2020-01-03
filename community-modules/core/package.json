@@ -15,7 +15,8 @@
     "package": "node ../../module-build/rollup/build.js",
     "build-es6": "npx gulp tsc-no-clean-es6",
     "build-cjs": "npx gulp tsc-no-clean-es5",
-    "build-css": "npx gulp scss-no-clean"
+    "build-css": "npx gulp scss-no-clean",
+    "check-scss-vars": "ts-node scripts/check-scss-vars.ts"
   },
   "repository": {
     "type": "git",
@@ -90,6 +91,7 @@
     "postcss-svgo": "^4.0.0",
     "sass-loader": "^8.0.0",
     "stylus": "^0.54.0",
+    "ts-node": "^8.5.4",
     "tslint": "^5.19.0",
     "typescript": "^3.6.3",
     "url-loader": "^2.1.0",

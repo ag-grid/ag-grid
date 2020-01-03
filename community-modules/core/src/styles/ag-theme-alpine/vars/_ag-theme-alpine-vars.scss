@@ -173,14 +173,12 @@ $ag-row-floating-background-color: inherit !default;
 
 $ag-header-height: $ag-grid-size * 8 !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
-$ag-row-border-width: 1px !default;
 
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2;
 
-$ag-header-icon-size: 14px !default;
 $ag-border-radius: 3px !default;
 
 $ag-grid-radius: 2px !default;
@@ -220,5 +218,3 @@ $ag-use-icons-for-pager-buttons: true !default;
 
 // Icons
 @import "./font-vars";
-
-@import '../../ag-theme-base/vars/ag-theme-base-vars';

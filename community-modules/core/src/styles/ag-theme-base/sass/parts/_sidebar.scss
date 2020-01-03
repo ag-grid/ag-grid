@@ -22,7 +22,9 @@
         border: 0;
         color: $ag-foreground-color;
         padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-        width: calc(100% + 1px);
+        @if $ag-borders {
+            width: calc(100% + 1px);
+        }
         margin: 0;
         min-height: $ag-grid-size * 18;
         border-width: 1px 0 1px 0;
@@ -50,9 +52,12 @@
             @include ag-grid-border(left);
         }
 
-        .ag-selected .ag-side-button-button {
-            margin-right: -1px;
-            padding-right: 1px;
+        // TODO more specific variable
+        @if $ag-borders {
+            .ag-selected .ag-side-button-button {
+                margin-right: -1px;
+                padding-right: 1px;
+            }
         }
     }
 
@@ -65,9 +70,12 @@
             @include ag-grid-border(right);
         }
 
-        .ag-selected .ag-side-button-button {
-            margin-left: -1px;
-            padding-left: 1px;
+        // TODO more specific variable
+        @if $ag-borders {
+            .ag-selected .ag-side-button-button {
+                margin-left: -1px;
+                padding-left: 1px;
+            }
         }
     }
 

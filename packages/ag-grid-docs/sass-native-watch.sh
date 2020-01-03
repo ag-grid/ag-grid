@@ -6,6 +6,7 @@
 command="./node_modules/.bin/node-sass --watch "
 srcFolder="../../community-modules/core/src/styles"
 destFolder="../../community-modules/all-modules/dist/styles"
+specificFile="$1"
 
 build_sass() {
     # build first, because --watch doesn't do an initial build
@@ -14,19 +15,28 @@ build_sass() {
     PID_LIST+=" $pid"
 }
 
-for themeDir in $srcFolder/ag-theme-*
-do
-    themeName=`basename "$themeDir"`
+if [ "$specificFile" = "" ]
+then
 
-    source="$srcFolder/$themeName/sass/$themeName.scss"
-    dest=
-    if [ -f "$source" ]
-    then
-        build_sass "$source"
-    fi
-done
+    for themeDir in $srcFolder/ag-theme-*
+    do
+        themeName=`basename "$themeDir"`
 
-build_sass "$srcFolder/ag-grid.scss"
+        source="$srcFolder/$themeName/sass/$themeName.scss"
+        dest=
+        if [ -f "$source" ]
+        then
+            build_sass "$source"
+        fi
+    done
+
+    build_sass "$srcFolder/ag-grid.scss"
+
+else
+
+    build_sass "$specificFile";
+
+fi
 
 # kill watch processes on Ctrl+C
 trap "kill $PID_LIST" SIGINT

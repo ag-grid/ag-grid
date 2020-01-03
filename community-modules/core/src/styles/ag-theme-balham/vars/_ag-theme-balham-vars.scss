@@ -72,13 +72,11 @@ $ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) 
 
 $ag-header-height: $ag-grid-size * 8 !default;
 $ag-virtual-item-height: $ag-grid-size * 7 !default;
-$ag-row-border-width: 1px !default;
 
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 
-$ag-header-icon-size: 14px !default;
 $ag-border-radius: 2px !default;
 
 // Fonts
@@ -104,5 +102,3 @@ $ag-use-icons-for-pager-buttons: true !default;
 
 // Icons
 @import "./font-vars";
-
-@import '../../ag-theme-base/vars/ag-theme-base-vars';

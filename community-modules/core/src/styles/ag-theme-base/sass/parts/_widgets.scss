@@ -294,7 +294,10 @@
         border-radius: 5px;
         &:hover,
         &.ag-has-popup {
-            background-color: darken($ag-dialog-title-background-color, 10%);
+            @if $ag-dialog-title-background-color {
+                // TODO this darken should happen in vars file
+                background-color: darken($ag-dialog-title-background-color, 10%);
+            }
         }
         &:not(:last-child) {
             margin-right: 5px;

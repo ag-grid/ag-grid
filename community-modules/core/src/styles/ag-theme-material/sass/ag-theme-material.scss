@@ -1,14 +1,7 @@
 @import "../vars/ag-theme-material-vars";
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-@if $ag-icon-font-family == 'agGridMaterial' {
-    @font-face {
-        font-family: $ag-icon-font-family;
-        src: $ag-icons-data;
-        font-weight: normal;
-        font-style: normal;
-    }
-}
+@include ag-icons-font-face();
 
 .ag-theme-material {
     %selected-tab {
@@ -56,28 +49,31 @@
     .ag-side-bar {
         border-bottom: none;
         border-top: none;
+    }
 
-        .ag-side-buttons {
-            z-index: 1;
-            .ag-side-button {
-                button {
-                    color: $ag-secondary-foreground-color;
-                    font-family: $ag-secondary-font-family;
-                    font-size: $ag-secondary-font-size;
-                    font-weight: $ag-secondary-font-weight;
-                    background-color: transparent;
-                    border-width: 0;
-                    width: calc(100% + 2px);
-                }
-                &.ag-selected {
-                    background-color: $ag-tool-panel-background-color;
-                }
-            } 
-        }
+    .ag-side-button-button {
+        color: $ag-secondary-foreground-color;
+        font-family: $ag-secondary-font-family;
+        font-size: $ag-secondary-font-size;
+        font-weight: $ag-secondary-font-weight;
+        background-color: transparent;
+        border: solid 0px transparent;
+    }
 
-        .ag-filter-toolpanel-body {
-            background-color: $ag-background-color;
-        }
+    .ag-selected .ag-side-button-button {
+        border-color: $ag-primary-color;
+    }
+
+    .ag-side-bar-right .ag-side-button-button {
+        @include ag-theme-rtl((border-left-width: 2px));
+    }
+    
+    .ag-side-bar-left .ag-side-button-button {
+        @include ag-theme-rtl((border-right-width: 2px));
+    }
+
+    .ag-filter-toolpanel-body {
+        background-color: $ag-background-color;
     }
 
     .ag-column-drop-vertical {
@@ -94,11 +90,11 @@
     .ag-row {
         height: $ag-row-height;
         &:not(.ag-row-first) {
-            // TOOD move to base theme, needs another flag other than $ag-borders
+            // TODO move to base theme, needs another flag other than $ag-borders
             border-top: solid 1px $ag-row-border-color;
         }
         &.ag-row-last {
-            // TOOD move to base theme, needs another flag other than $ag-borders
+            // TODO move to base theme, needs another flag other than $ag-borders
             border-bottom: solid 1px $ag-row-border-color;
         }
     }
@@ -119,66 +115,5 @@
 
     .ag-charts-format-sub-level-group-title-bar {
         padding: $ag-grid-size * 0.5 $ag-grid-size;
-    }
-
-    // TODO remove the need for this LTR/RTL selectors
-    .ag-ltr .ag-side-bar {
-        &.ag-side-bar-right {
-            border-right: solid 1px $ag-border-color;
-            .ag-side-buttons .ag-side-button {
-                button {
-                    border-left: 2px solid transparent;
-                }
-                &.ag-selected {
-                    button {
-                        border-left-color: $ag-primary-color;
-                    }
-                }
-            }
-        }
-        
-        &.ag-side-bar-left {
-            border-left: solid 1px $ag-border-color;
-            .ag-side-buttons .ag-side-button {
-                button {
-                    border-right: 2px solid transparent;
-                }
-                &.ag-selected {
-                    button {
-                        border-right-color: $ag-primary-color;
-                    }
-                }
-            }
-        }
-    }
-
-    .ag-rtl .ag-side-bar {
-        &.ag-side-bar-right {
-            border-left: solid 1px $ag-border-color;
-            .ag-side-buttons .ag-side-button {
-                button {
-                    border-right: 2px solid transparent;
-                }
-                &.ag-selected {
-                    button {
-                        border-right-color: $ag-primary-color;
-                    }
-                }
-            }
-        }
-        
-        &.ag-side-bar-left {
-            border-right: solid 1px $ag-border-color;
-            .ag-side-buttons .ag-side-button {
-                button {
-                    border-left: 2px solid transparent;
-                }
-                &.ag-selected {
-                    button {
-                        border-left-color: $ag-primary-color;
-                    }
-                }
-            }
-        }
     }
 }
