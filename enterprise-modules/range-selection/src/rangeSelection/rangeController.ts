@@ -203,9 +203,7 @@ export class RangeController implements IRangeController {
         if (cellRange) {
             // we need it at the end of the list, as the dragStart picks the last created
             // range as the start point for the drag
-            const atEndOfList = _.last(this.cellRanges) === cellRange;
-
-            if (!atEndOfList) {
+            if (_.last(this.cellRanges) !== cellRange) {
                 _.removeFromArray(this.cellRanges, cellRange);
                 this.cellRanges.push(cellRange);
             }
@@ -221,8 +219,9 @@ export class RangeController implements IRangeController {
         }
 
         this.newestRangeStartCell = cell;
+
         this.onDragStop();
-        this.dispatchChangedEvent(false, true, cellRange.id);
+        this.dispatchChangedEvent(true, true, cellRange.id);
     }
 
     public extendLatestRangeToCell(cellPosition: CellPosition): void {
@@ -235,11 +234,11 @@ export class RangeController implements IRangeController {
         this.updateRangeEnd(cellRange, cellPosition);
     }
 
-    public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean) {
+    public updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent = false): void {
         const endColumn = cellPosition.column;
         const colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
 
-        if (!colsToAdd) {
+        if (!colsToAdd || this.isLastCellOfRange(cellRange, cellPosition)) {
             return;
         }
 
@@ -247,7 +246,7 @@ export class RangeController implements IRangeController {
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
 
         if (!silent) {
-            this.dispatchChangedEvent(false, true, cellRange.id);
+            this.dispatchChangedEvent(true, true, cellRange.id);
         }
     }
 
@@ -281,7 +280,7 @@ export class RangeController implements IRangeController {
         }
     }
 
-    public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column } {
+    public getRangeEdgeColumns(cellRange: CellRange): { left: Column, right: Column; } {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allIndices = cellRange.columns
             .map(c => allColumns.indexOf(c))
@@ -469,7 +468,7 @@ export class RangeController implements IRangeController {
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        const isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions)
+        const isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
         const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
 
         return isLastColumn && isLastRow;

@@ -8,7 +8,6 @@ import {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEvent,
-    CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
     Events,
@@ -418,7 +417,7 @@ export class CellComp extends Component {
     // + rowComp: event dataChanged {animate: update, newData: !update}
     // + rowComp: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean }) {
+    public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean; }) {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell || this.editingCell) { return; }
 
@@ -1473,30 +1472,23 @@ export class CellComp extends Component {
     }
 
     private onMouseDown(mouseEvent: MouseEvent): void {
-        // we only need to pass true to focusCell in when the browser is IE
-        // and we are trying to focus a cell (has ag-cell class), otherwise
-        // we pass false, as we don't want the cell to focus also get the browser
-        // focus. if we did, then the cellRenderer could have a text field in it,
-        // for example, and as the user clicks on the text field, the text field,
-        // the focus doesn't get to the text field, instead to goes to the div
-        // behind, making it impossible to select the text field.
-        let forceBrowserFocus = false;
-        const { button, ctrlKey, metaKey, shiftKey, target } = mouseEvent;
+        const { ctrlKey, metaKey, shiftKey } = mouseEvent;
+        const target = mouseEvent.target as HTMLElement;
         const { eventService, rangeController } = this.beans;
 
-        if (rangeController) {
-            const cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
-
-            if (cellInRange && button === 2) {
-                return;
-            }
-        }
-
-        if ((_.isBrowserIE() || _.isBrowserEdge()) && this.getGui().contains(target as HTMLElement)) {
-            forceBrowserFocus = true;
+        // do not change the range for right-clicks inside an existing range
+        if (this.isRightClickInExistingRange(mouseEvent)) {
+            return;
         }
 
         if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
+            /* We only need to pass true to focusCell when the browser is IE/Edge and we are trying to focus a cell
+            (element with ag-cell class), otherwise we pass false, as we don't want the cell to get the browser focus.
+            If we did, then the cellRenderer could have a text field in it, for example, and as the user clicks on the
+            text field, the focus would not go to the text field but instead to the div behind, making it impossible to
+            select the text field. */
+            const forceBrowserFocus = (_.isBrowserIE() || _.isBrowserEdge()) && this.getGui().contains(target);
+
             this.focusCell(forceBrowserFocus);
         } else {
             // if a range is being changed, we need to make sure the focused cell does not change.
@@ -1505,17 +1497,13 @@ export class CellComp extends Component {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (_.isElementChildOfClass(target as HTMLElement, 'ag-selection-checkbox', 3)) {
+        if (this.containsCheckbox(target)) {
             return;
         }
 
-        // if it's a right click, then if the cell is already in range,
-        // don't change the range, however if the cell is not in a range,
-        // we set a new range
-        const leftMouseButtonClick = _.isLeftClick(mouseEvent);
-
-        if (leftMouseButtonClick && rangeController) {
+        if (rangeController) {
             const thisCell = this.cellPosition;
+
             if (shiftKey) {
                 rangeController.extendLatestRangeToCell(thisCell);
             } else {
@@ -1524,8 +1512,25 @@ export class CellComp extends Component {
             }
         }
 
-        const cellMouseDownEvent: CellMouseDownEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN);
-        eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_DOWN));
+    }
+
+    private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
+        const { rangeController } = this.beans;
+
+        if (rangeController) {
+            const cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
+
+            if (cellInRange && mouseEvent.button === 2) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private containsCheckbox(target: HTMLElement): boolean {
+        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms
@@ -1548,18 +1553,20 @@ export class CellComp extends Component {
             return;
         }
 
+        const { eventService, gridOptionsWrapper } = this.beans;
+
         const cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
-        this.beans.eventService.dispatchEvent(cellClickedEvent);
+        eventService.dispatchEvent(cellClickedEvent);
 
         const colDef = this.getComponentHolder();
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellClicked as any)(cellClickedEvent), 0);
+            window.setTimeout(() => colDef.onCellClicked(cellClickedEvent), 0);
         }
 
-        const editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
-            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
+        const editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
+            && !gridOptionsWrapper.isSuppressClickEdit();
 
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
@@ -1654,7 +1661,7 @@ export class CellComp extends Component {
         top: boolean,
         right: boolean,
         bottom: boolean,
-        left: boolean
+        left: boolean;
     } {
         const isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
 
@@ -1664,17 +1671,17 @@ export class CellComp extends Component {
         let left = false;
 
         const thisCol = this.cellPosition.column;
-        const rangeController = this.beans.rangeController;
+        const { rangeController, columnController } = this.beans;
 
         let leftCol: Column;
         let rightCol: Column;
 
         if (isRtl) {
-            leftCol = this.beans.columnController.getDisplayedColAfter(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+            leftCol = columnController.getDisplayedColAfter(thisCol);
+            rightCol = columnController.getDisplayedColBefore(thisCol);
         } else {
-            leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+            leftCol = columnController.getDisplayedColBefore(thisCol);
+            rightCol = columnController.getDisplayedColAfter(thisCol);
         }
 
         const ranges = rangeController.getCellRanges().filter(

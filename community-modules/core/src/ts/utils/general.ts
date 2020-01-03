@@ -16,7 +16,7 @@ const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 /**
  * HTML Escapes.
  */
-const HTML_ESCAPES: { [id: string]: string } = {
+const HTML_ESCAPES: { [id: string]: string; } = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -48,8 +48,8 @@ export class Utils {
     private static NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
     private static NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
 
-    private static doOnceFlags: { [key: string]: boolean } = {};
-    private static supports: { [key: string]: boolean } = {};
+    private static doOnceFlags: { [key: string]: boolean; } = {};
+    private static supports: { [key: string]: boolean; } = {};
 
     /**
      * If the key was passed before, then doesn't execute the func
@@ -179,7 +179,7 @@ export class Utils {
 
     static areEqual = <T>(a: T[], b: T[]): boolean => {
         return a.length === b.length && a.every((value, index) => b[index] === value);
-    }
+    };
 
     static keys = <T>(map: Map<T, any>): T[] => {
         const keys: T[] = [];
@@ -187,9 +187,9 @@ export class Utils {
         map.forEach((_, key) => keys.push(key));
 
         return keys;
-    }
+    };
 
-    static values = <T>(object: { [key: string]: T }): T[] => Object.keys(object).map(key => object[key]);
+    static values = <T>(object: { [key: string]: T; }): T[] => Object.keys(object).map(key => object[key]);
 
     static includes = <T>(array: T[], value: T): boolean => array.indexOf(value) > -1;
 
@@ -229,7 +229,7 @@ export class Utils {
         marginRight: number,
         marginBottom: number,
         marginLeft: number,
-        boxSizing: string
+        boxSizing: string;
     } {
         const {
             height,
@@ -331,7 +331,7 @@ export class Utils {
         }
 
         return hex;
-    }
+    };
 
     /**
      * It encodes any string in UTF-8 format
@@ -414,7 +414,7 @@ export class Utils {
             byteString += encodeCodePoint(codePoint);
         }
         return byteString;
-    }
+    };
 
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
         if (rtl) {
@@ -440,7 +440,7 @@ export class Utils {
         }
     }
 
-    static iterateObject<T>(object: { [p: string]: T } | T[] | undefined, callback: (key: string, value: T) => void) {
+    static iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
         if (!object || this.missing(object)) {
             return;
         }
@@ -593,7 +593,7 @@ export class Utils {
         }
     }
 
-    static find<T>(collection: T[] | { [id: string]: T }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
+    static find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
         if (collection === null || collection === undefined) {
             return null;
         }
@@ -1110,7 +1110,6 @@ export class Utils {
                     return doQuickCompare(valueA, valueB);
                 }
             }
-
         }
 
         if (valueA < valueB) {
@@ -1306,7 +1305,7 @@ export class Utils {
     // in multiple places.
     //
 
-    static iconNameClassMap: { [key: string]: string } = {
+    static iconNameClassMap: { [key: string]: string; } = {
         // header column group shown when expanded (click to contract)
         columnGroupOpened: 'expanded',
         // header column group shown when contracted (click to expand)
@@ -2324,7 +2323,7 @@ export class Utils {
      * @param {RowNode[]} rowNodes
      * @param {Object} rowNodeOrder
      */
-    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): void {
         if (!rowNodes) {
             return;
         }
@@ -2381,8 +2380,8 @@ export class Utils {
 
     public static fuzzyCheckStrings(inputValues: string[],
         validValues: string[],
-        allSuggestions: string[]): { [p: string]: string[] } {
-        const fuzzyMatches: { [p: string]: string[] } = {};
+        allSuggestions: string[]): { [p: string]: string[]; } {
+        const fuzzyMatches: { [p: string]: string[]; } = {};
         const invalidInputs: string[] = inputValues.filter(inputValue =>
             !validValues.some(
                 (validValue) => validValue === inputValue
@@ -2413,7 +2412,7 @@ export class Utils {
         weighted?: true
     ): string[] {
         const search = weighted ? _.string_weighted_distances : _.string_distances;
-        let thisSuggestions: { value: string, relevance: number }[] = allSuggestions.map((text) => ({
+        let thisSuggestions: { value: string, relevance: number; }[] = allSuggestions.map((text) => ({
             value: text,
             relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
         }));

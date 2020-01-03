@@ -22,6 +22,7 @@ export interface IRangeController {
     addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
     registerGridComp(gridPanel: GridPanel): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;
