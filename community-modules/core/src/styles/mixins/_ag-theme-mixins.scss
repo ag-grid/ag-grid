@@ -104,7 +104,7 @@
     }
 }
 
-@mixin ag-icons-webfont() {
+@mixin ag-icons-webfont($nativeCheckboxes: false) {
   .ag-icon {
       font-family: '#{$ag-icon-font-family}';
       font-size: $ag-icon-size;
@@ -124,9 +124,6 @@
   @include ag-icon-element('asc', $ag-icon-asc);
   @include ag-icon-element('cancel', $ag-icon-cancel);
   @include ag-icon-element('chart', $ag-icon-chart);
-  @include ag-icon-element('checkbox-checked', $ag-icon-checkbox-checked);
-  @include ag-icon-element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
-  @include ag-icon-element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
   @include ag-icon-element('color-picker', $ag-icon-color-picker);
   @include ag-icon-element('column', $ag-icon-column);
   @include ag-icon-element('columns', $ag-icon-columns);
@@ -160,8 +157,6 @@
   @include ag-icon-element('pivot', $ag-icon-pivot);
   @include ag-icon-element('plus', $ag-icon-plus);
   @include ag-icon-element('previous', $ag-icon-previous);
-  @include ag-icon-element('radio-button-off', $ag-icon-radio-button-off);
-  @include ag-icon-element('radio-button-on', $ag-icon-radio-button-on);
   @include ag-icon-element('right', $ag-icon-right);
   @include ag-icon-element('save', $ag-icon-save);
   @include ag-icon-element('small-down', $ag-icon-small-down);
@@ -173,30 +168,6 @@
   @include ag-icon-element('tree-indeterminate', $ag-icon-tree-indeterminate);
   @include ag-icon-element('tree-open', $ag-icon-tree-open);
   @include ag-icon-element('unlinked', $ag-icon-unlinked);
-
-  .ag-icon-checkbox-checked,
-  .ag-icon-checkbox-indeterminate,
-  .ag-icon-checkbox-unchecked {
-      background-color: $ag-alt-icon-color;
-      line-height: $ag-icon-size;
-      border-radius: 3px;
-      &-readonly {
-          cursor: default;
-          opacity: $ag-disabled-foreground-color-opacity;
-      }
-  }
-  .ag-icon-checkbox-checked {
-      color: $ag-accent-color;
-      &-readonly:before {
-          content: $ag-icon-checkbox-checked;
-      }
-  }
-  .ag-icon-checkbox-indeterminate-readonly:before {
-      content: $ag-icon-checkbox-indeterminate;
-  }
-  .ag-icon-checkbox-unchecked-readonly:before  {
-      content: $ag-icon-checkbox-unchecked; 
-  }
 
   .ag-icon-row-drag:before {
       content: $ag-icon-grip;
@@ -212,5 +183,38 @@
 
   .ag-right-arrow:before {
       content: $ag-icon-right;
+  }
+
+
+  @if not $nativeCheckboxes {
+    @include ag-icon-element('checkbox-checked', $ag-icon-checkbox-checked);
+    @include ag-icon-element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
+    @include ag-icon-element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
+    @include ag-icon-element('radio-button-off', $ag-icon-radio-button-off);
+    @include ag-icon-element('radio-button-on', $ag-icon-radio-button-on);
+
+    .ag-icon-checkbox-checked,
+    .ag-icon-checkbox-indeterminate,
+    .ag-icon-checkbox-unchecked {
+        background-color: $ag-alt-icon-color;
+        line-height: $ag-icon-size;
+        border-radius: 3px;
+        &-readonly {
+            cursor: default;
+            opacity: $ag-disabled-foreground-color-opacity;
+        }
+    }
+    .ag-icon-checkbox-checked {
+        color: $ag-accent-color;
+        &-readonly:before {
+            content: $ag-icon-checkbox-checked;
+        }
+    }
+    .ag-icon-checkbox-indeterminate-readonly:before {
+        content: $ag-icon-checkbox-indeterminate;
+    }
+    .ag-icon-checkbox-unchecked-readonly:before  {
+        content: $ag-icon-checkbox-unchecked; 
+    }
   }
 }

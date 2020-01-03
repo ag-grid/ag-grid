@@ -40,7 +40,6 @@ $ag-hover-color: null !default;
 
 // Sizing
 $ag-grid-size: 4px !default;
-@debug $ag-grid-size;
 $ag-icon-size: 12px !default;
 $ag-header-height: $ag-grid-size * 6 + 1 !default;
 $ag-row-height: ($ag-grid-size * 6 + 1) !default;

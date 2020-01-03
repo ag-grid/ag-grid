@@ -30,6 +30,11 @@ then
         fi
     done
 
+    for fontFile in $srcFolder/webfont/*.scss
+    do
+        build_sass "$fontFile"
+    done
+
     build_sass "$srcFolder/ag-grid.scss"
 
 else
