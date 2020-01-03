@@ -539,9 +539,8 @@ export class ClipboardService implements IClipboardService {
             rowNode, column, value, Constants.EXPORT_TYPE_CLIPBOARD, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
 
         if (_.missing(processedValue)) {
-            // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
-            // this behaviour is consistent with how Excel works!
-            processedValue = '\t';
+            // copy the newline character to clipboard instead of an empty string, as the 'execCommand' would ignore that
+            processedValue = '\n';
         }
 
         let data = '';
@@ -629,8 +628,7 @@ export class ClipboardService implements IClipboardService {
         const userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
 
         if (userProvidedFunc) {
-            const params = { data: data };
-            userProvidedFunc(params);
+            userProvidedFunc({ data });
         } else {
             this.executeOnTempElement(element => {
                 element.value = data;
@@ -681,85 +679,63 @@ export class ClipboardService implements IClipboardService {
         }
     }
 
-    // From http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
+    // Based on https://stackoverflow.com/a/14991797
     // This will parse a delimited string into an array of arrays.
-    // Note: this code fixes an issue with the example posted on stack overflow where it doesn't correctly handle
-    // empty values in the first cell.
     private dataToArray(strData: string): string[][] {
         const delimiter = this.gridOptionsWrapper.getClipboardDeliminator();
+        const data: any[][] = [];
+        let insideQuotedField = false;
 
-        // Create a regular expression to parse the CSV values.
-        const objPattern = new RegExp(
-            (
-                // Delimiters.
-                `(\\${delimiter}|\\r?\\n|\\r|^)` +
-                // Quoted fields.
-                '(?:"([^\"]*(?:""[^\"]*)*)"|' +
-                // Standard fields.
-                `([^\\${delimiter}\\r\\n]*))`
-            ),
-            "gi"
-        );
+        // iterate over each character, keep track of current row and column (of the returned array)
+        for (let row = 0, column = 0, char = 0; char < strData.length; char++) {
+            const currentChar = strData[char], nextCharacter = strData[char + 1];
 
-        // Create an array to hold our data. Give the array
-        // a default empty first row.
-        const arrData: string[][] = [[]];
-
-        // Create an array to hold our individual pattern matching groups.
-        let arrMatches: RegExpExecArray | null;
-
-        // Required for handling edge case on first row copy
-        let atFirstRow = true;
-
-        // Keep looping over the regular expression matches
-        // until we can no longer find a match.
-        while (arrMatches = objPattern.exec(strData)) {
-
-            // Get the delimiter that was found.
-            const strMatchedDelimiter = arrMatches[1];
-
-            // Handles case when first row is an empty cell, insert an empty string before delimiter
-            if ((atFirstRow && strMatchedDelimiter) || !arrMatches.index && arrMatches[0].charAt(0) === delimiter) {
-                arrData[0].push('');
+            if (!data[row]) {
+                // create row if it doesn't exist
+                data[row] = [];
             }
 
-            // Check to see if the given delimiter has a length
-            // (is not the start of string) and if it matches
-            // field delimiter. If id does not, then we know
-            // that this delimiter is a row delimiter.
-            if (strMatchedDelimiter.length && strMatchedDelimiter !== delimiter) {
-                // Since we have reached a new row of data,
-                // add an empty row to our data array.
-                arrData.push([]);
+            if (!data[row][column]) {
+                // create column if it doesn't exist
+                data[row][column] = '';
             }
 
-            let strMatchedValue: string;
+            if (currentChar === '"') {
+                if (insideQuotedField && nextCharacter === '"') {
+                    // double quote inside quoted field
+                    data[row][column] += '"';
+                    char++;
+                } else {
+                    // enter/leave quoted field
+                    insideQuotedField = !insideQuotedField;
+                }
 
-            // Now that we have our delimiter out of the way,
-            // let's check to see which kind of value we
-            // captured (quoted or unquoted).
-            if (arrMatches[2]) {
-                // We found a quoted value. When we capture
-                // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[2].replace(new RegExp('""', 'g'), '"');
-            } else {
-                // We found a non-quoted value.
-                strMatchedValue = arrMatches[3];
+                continue;
             }
 
-            // Now that we have our value string, let's add
-            // it to the data array.
-            const lastItem = _.last(arrData);
+            if (!insideQuotedField) {
+                if (currentChar === delimiter) {
+                    // move to next column
+                    column++;
+                    continue;
+                } else if (currentChar === '\r' || currentChar === '\n') {
+                    // newline, move to next row
+                    column = 0;
+                    row++;
 
-            if (lastItem) {
-                lastItem.push(strMatchedValue);
+                    if (currentChar === '\r' && nextCharacter === '\n') {
+                        // skip over second newline character if it exists
+                        char++;
+                    }
+
+                    continue;
+                }
             }
 
-            atFirstRow = false;
+            data[row][column] += currentChar;
         }
 
-        // Return the parsed data.
-        return arrData;
+        return data;
     }
 
     private getRangeSize(): number {
