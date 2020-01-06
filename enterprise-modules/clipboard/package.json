@@ -9,7 +9,8 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js",
-    "build": "npm run build-cjs && npm run build-es6"
+    "build": "npm run build-cjs && npm run build-es6",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,9 @@
     "@ag-grid-enterprise/core": "~22.1.1"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.25",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0",
     "typescript": "^3.6.3"
   },
   "publishConfig": {

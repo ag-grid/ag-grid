@@ -40,6 +40,7 @@ import {
     IRangeController,
     Optional
 } from "@ag-grid-community/core";
+import { dataToArray } from "./dataToArray";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -97,7 +98,8 @@ export class ClipboardService implements IClipboardService {
 
                 if (_.missingOrEmpty(data)) { return; }
 
-                let parsedData = this.dataToArray(data);
+                let parsedData = dataToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+
                 const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
 
                 if (userFunc) {
@@ -440,7 +442,7 @@ export class ClipboardService implements IClipboardService {
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
         if (!this.rangeController || this.rangeController.isEmpty()) { return; }
 
-        const cellRanges = this.rangeController.getCellRanges();
+        const cellRanges = this.rangeController.getCellRanges() as CellRange[];
 
         if (onlyFirst) {
             this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);
@@ -540,19 +542,16 @@ export class ClipboardService implements IClipboardService {
         let processedValue = this.processCell(
             rowNode, column, value, Constants.EXPORT_TYPE_CLIPBOARD, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
 
-        if (_.missing(processedValue)) {
-            // copy the newline character to clipboard instead of an empty string, as the 'execCommand' would ignore that
-            processedValue = '\n';
-        }
+        processedValue = _.missing(processedValue) ? '' : processedValue.toString();
 
-        let data = '';
+        let data: string;
 
         if (includeHeaders) {
             const headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
-            data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n';
+            data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n' + processedValue;
+        } else {
+            data = processedValue;
         }
-
-        data += processedValue.toString();
 
         this.copyDataToClipboard(data);
         this.dispatchFlashCells({ [cellId]: true });
@@ -633,7 +632,7 @@ export class ClipboardService implements IClipboardService {
             userProvidedFunc({ data });
         } else {
             this.executeOnTempElement(element => {
-                element.value = data;
+                element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
                 element.select();
                 element.focus();
 
@@ -679,65 +678,6 @@ export class ClipboardService implements IClipboardService {
         } else {
             guiRoot.removeChild(eTempInput);
         }
-    }
-
-    // Based on https://stackoverflow.com/a/14991797
-    // This will parse a delimited string into an array of arrays.
-    private dataToArray(strData: string): string[][] {
-        const delimiter = this.gridOptionsWrapper.getClipboardDeliminator();
-        const data: any[][] = [];
-        let insideQuotedField = false;
-
-        // iterate over each character, keep track of current row and column (of the returned array)
-        for (let row = 0, column = 0, char = 0; char < strData.length; char++) {
-            const currentChar = strData[char], nextCharacter = strData[char + 1];
-
-            if (!data[row]) {
-                // create row if it doesn't exist
-                data[row] = [];
-            }
-
-            if (!data[row][column]) {
-                // create column if it doesn't exist
-                data[row][column] = '';
-            }
-
-            if (currentChar === '"') {
-                if (insideQuotedField && nextCharacter === '"') {
-                    // double quote inside quoted field
-                    data[row][column] += '"';
-                    char++;
-                } else {
-                    // enter/leave quoted field
-                    insideQuotedField = !insideQuotedField;
-                }
-
-                continue;
-            }
-
-            if (!insideQuotedField) {
-                if (currentChar === delimiter) {
-                    // move to next column
-                    column++;
-                    continue;
-                } else if (currentChar === '\r' || currentChar === '\n') {
-                    // newline, move to next row
-                    column = 0;
-                    row++;
-
-                    if (currentChar === '\r' && nextCharacter === '\n') {
-                        // skip over second newline character if it exists
-                        char++;
-                    }
-
-                    continue;
-                }
-            }
-
-            data[row][column] += currentChar;
-        }
-
-        return data;
     }
 
     private getRangeSize(): number {
