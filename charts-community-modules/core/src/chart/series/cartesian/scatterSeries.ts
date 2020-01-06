@@ -12,6 +12,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
+import { chainObjects } from "../../../util/object";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -31,6 +32,27 @@ export class ScatterSeries extends CartesianSeries {
 
     static className = 'ScatterSeries';
 
+    static defaults = chainObjects(CartesianSeries.defaults, {
+        title: undefined,
+        xKey: '',
+        yKey: '',
+        sizeKey: undefined,
+        labelKey: undefined,
+        xName: 'X',
+        yName: 'Y',
+        sizeName: 'Size',
+        labelName: 'Label',
+        fill: palette.fills[0],
+        stroke: palette.strokes[0],
+        strokeWidth: 2,
+        fillOpacity: 1,
+        strokeOpacity: 1,
+        highlightStyle: {
+            fill: 'yellow'
+        },
+        tooltipRenderer: undefined
+    });
+
     private xDomain: number[] = [];
     private yDomain: number[] = [];
     private xData: any[] = [];
@@ -44,7 +66,7 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string = palette.fills[0];
+    private _fill: string = ScatterSeries.defaults.fill;
     set fill(value: string) {
         if (this._fill !== value) {
             this._fill = value;
@@ -55,7 +77,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._fill;
     }
 
-    private _stroke: string = palette.strokes[0];
+    private _stroke: string = ScatterSeries.defaults.stroke;
     set stroke(value: string) {
         if (this._stroke !== value) {
             this._stroke = value;
@@ -66,7 +88,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._stroke;
     }
 
-    private _strokeWidth: number = 2;
+    private _strokeWidth: number = ScatterSeries.defaults.strokeWidth;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -77,7 +99,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._strokeWidth;
     }
 
-    private _fillOpacity: number = 1;
+    private _fillOpacity: number = ScatterSeries.defaults.fillOpacity;
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
@@ -88,7 +110,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._fillOpacity;
     }
 
-    private _strokeOpacity: number = 1;
+    private _strokeOpacity: number = ScatterSeries.defaults.strokeOpacity;
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
@@ -102,22 +124,20 @@ export class ScatterSeries extends CartesianSeries {
     highlightStyle: {
         fill?: string,
         stroke?: string
-    } = {
-        fill: 'yellow'
-    };
+    } = ScatterSeries.defaults.highlightStyle;
 
-    @reactive(['layoutChange']) title?: string;
-    @reactive(['dataChange']) xKey: string = '';
-    @reactive(['dataChange']) yKey: string = '';
-    @reactive(['dataChange']) sizeKey?: string;
-    @reactive(['dataChange']) labelKey?: string;
+    @reactive(['layoutChange']) title?: string = ScatterSeries.defaults.title;
+    @reactive(['dataChange']) xKey: string = ScatterSeries.defaults.xKey;
+    @reactive(['dataChange']) yKey: string = ScatterSeries.defaults.yKey;
+    @reactive(['dataChange']) sizeKey?: string = ScatterSeries.defaults.sizeKey;
+    @reactive(['dataChange']) labelKey?: string = ScatterSeries.defaults.labelKey;
 
-    xName: string = 'X';
-    yName: string = 'Y';
-    sizeName?: string = 'Size';
-    labelName?: string = 'Label';
+    xName: string = ScatterSeries.defaults.xName;
+    yName: string = ScatterSeries.defaults.yName;
+    sizeName?: string = ScatterSeries.defaults.sizeName;
+    labelName?: string = ScatterSeries.defaults.labelName;
 
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string = ScatterSeries.defaults.tooltipRenderer;
 
     constructor() {
         super();
