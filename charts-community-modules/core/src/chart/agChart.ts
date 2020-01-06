@@ -101,15 +101,11 @@ function getMapping(path: string) {
 
 export abstract class AgChart {
     static create(options: any) {
-        options = Object.create(options); // avoid mutating user provided options
-        AgChart.setChartType(options);
-        return AgChart._create(options);
+        return AgChart._create(Object.create(options)); // avoid mutating user provided options
     }
 
     static update(chart: any, options: any) {
-        options = Object.create(options);
-        AgChart.setChartType(options);
-        return AgChart._update(chart, options);
+        return AgChart._update(chart, Object.create(options));
     }
 
     private static setChartType(options: any) {
@@ -133,9 +129,9 @@ export abstract class AgChart {
         }
     }
 
-    private static _create(options: any, path?: string, component?: any) {
-        if (!(options && typeof options === 'object')) {
-            return;
+    private static setComponentType(options: any, path?: string) {
+        if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
+            AgChart.setChartType(options);
         }
 
         // Default series type for cartesian charts.
@@ -147,6 +143,27 @@ export abstract class AgChart {
         if (path === 'polar.series' && !options.type) {
             options.type = 'pie';
         }
+    }
+
+    private static setComponentDefaults(options: any, mapping: any) {
+        const { defaults } = mapping;
+
+        // If certain options were not provided by the user, use the defaults from the mapping.
+        if (defaults) {
+            for (const key in defaults) {
+                if (!options[key]) {
+                    options[key] = defaults[key];
+                }
+            }
+        }
+    }
+
+    private static _create(options: any, path?: string, component?: any) {
+        if (!(options && typeof options === 'object')) {
+            return;
+        }
+
+        AgChart.setComponentType(options, path);
 
         if (path) {
             if (options.type) {
@@ -158,15 +175,7 @@ export abstract class AgChart {
 
         const mapping = getMapping(path);
 
-        // If certain options are not provided, use the defaults from the mapping.
-        const { defaults } = mapping;
-        if (defaults) {
-            for (const key in defaults) {
-                if (!options[key]) {
-                    options[key] = defaults[key];
-                }
-            }
-        }
+        AgChart.setComponentDefaults(options, mapping);
 
         if (mapping) {
             const constructorParams = mapping.constructorParams || [];
@@ -205,9 +214,23 @@ export abstract class AgChart {
     }
 
     private static _update(component: any, options: any, path?: string) {
-        if (!path) {
-            AgChart.setChartType(options);
+        if (!(options && typeof options === 'object')) {
+            return;
         }
+
+        AgChart.setComponentType(options, path);
+
+        if (path) {
+            if (options.type) {
+                path = path + '.' + options.type;
+            }
+        } else {
+            path = options.type;
+        }
+
+        const mapping = getMapping(path);
+
+        AgChart.setComponentDefaults(options, mapping);
 
         if (options.legend) {
             for (const key in Legend.defaults) {
