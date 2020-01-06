@@ -19,7 +19,7 @@ const mappings = {
         // themselves are the exceptions.
         // If a chart config has the (optional) `document` property, it will be passed to the constructor.
         // There is no actual `document` property on the chart, it can only be supplied during instantiation.
-        constructorParamKeys: ['document'], // Config object properties to be used as constructor parameters, in that order.
+        constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
         exclude: ['parent', 'data'], // Properties that should be set on the component as is (without pre-processing).
         defaults: { // These values will be used if properties in question are not in the config object.
             parent: document.body,
@@ -75,7 +75,7 @@ const mappings = {
     },
     polar: {
         constructor: PolarChart,
-        constructorParamKeys: ['document'],
+        constructorParams: ['document'],
         defaults: {
             parent: document.body
         },
@@ -100,24 +100,35 @@ function getMapping(path: string) {
 }
 
 export const agChart = {
-    // Only the `options` object is to be provided by the user.
-    // The other parameters are used internally on recursive invocations.
-    create(options: any, path?: string, component?: any) {
+    create(options: any) {
+        return this._create(Object.create(options)); // avoid mutating user provided options
+    },
+
+    update(chart: any, options: any) {
+        return this._update(chart, options);
+    },
+
+    _create(options: any, path?: string, component?: any) {
         if (!(options && typeof options === 'object')) {
             return;
         }
 
-        if (!path) {
-            // We are at the root. Avoid mutating original object.
-            options = Object.create(options);
-
-            // If chart type is not specified, try to infer it from the type
-            // of the first series.
+        if (!path) { // root level
+            // If chart type is not specified, try to infer it from the type of first series.
             if (!options.type) {
                 const series = options.series && options.series[0];
-                if (series && series.type === 'pie') {
-                    options.type = 'polar';
-                } else {
+
+                if (series && series.type) {
+                    outerLoop: for (const chartType in mappings) {
+                        for (const seriesType in mappings[chartType].series) {
+                            if (series.type === seriesType) {
+                                options.type = chartType;
+                                break outerLoop;
+                            }
+                        }
+                    }
+                }
+                if (!options.type) {
                     options.type = 'cartesian';
                 }
             }
@@ -154,27 +165,27 @@ export const agChart = {
         }
 
         if (mapping) {
-            const constructorParamKeys = mapping.constructorParamKeys || [];
-            // Constructor params processing could be improved, but it's good enough for current params.
-            const constructorParams = constructorParamKeys.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            component = component || new mapping.constructor(...constructorParams);
+            const constructorParams = mapping.constructorParams || [];
+            // TODO: Constructor params processing could be improved, but it's good enough for current params.
+            const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
+            component = component || new mapping.constructor(...constructorParamValues);
 
             for (const key in options) {
                 // Process every non-special key in the config object.
-                if (key !== 'type' && constructorParamKeys.indexOf(key) < 0) {
+                if (key !== 'type' && constructorParams.indexOf(key) < 0) {
                     const value = options[key];
 
                     if (key in mapping && !(mapping.exclude && mapping.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
-                            const subComponents = value.map(config => agChart.create(config, path + '.' + key)).filter(config => !!config);
+                            const subComponents = value.map(config => agChart._create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
                         } else {
                             if (mapping[key] && component[key]) {
                                 // The instance property already exists on the component (e.g. chart.legend).
                                 // Simply configure the existing instance, without creating a new one.
-                                agChart.create(value, path + '.' + key, component[key]);
+                                agChart._create(value, path + '.' + key, component[key]);
                             } else {
-                                const subComponent = agChart.create(value, value.type ? path : path + '.' + key);
+                                const subComponent = agChart._create(value, value.type ? path : path + '.' + key);
                                 if (subComponent) {
                                     component[key] = subComponent;
                                 }
@@ -189,7 +200,7 @@ export const agChart = {
         }
     },
 
-    reconfigure: function(component: any, options: any) {
+    _update: function (component: any, options: any, path?: string) {
         if (options.legend) {
             for (const key in Legend.defaults) {
                 if (key in options.legend) {

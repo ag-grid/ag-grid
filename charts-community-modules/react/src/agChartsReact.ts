@@ -91,7 +91,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
         const changeDetectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
 
         if (!changeDetectionStrategy.areEqual(prevProps.options, nextProps.options)) {
-            agChart.reconfigure(this.chart, this.applyParentIfNotSet(nextProps.options));
+            agChart.update(this.chart, this.applyParentIfNotSet(nextProps.options));
         }
     }
 
