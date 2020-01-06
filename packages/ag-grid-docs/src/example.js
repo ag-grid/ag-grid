@@ -1102,7 +1102,7 @@ function rowSelected(event) {
 function onThemeChanged() {
     var newTheme = document.querySelector('#grid-theme').value;
     var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
-    themedElements.forEach(el => {
+    themedElements.forEach(function (el) {
         el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
     });
 
