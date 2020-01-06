@@ -1,6 +1,6 @@
 @mixin ag-theme-base-part-charts {
     .ag-chart-menu {
-        border-radius: 5px;
+        border-radius: $ag-card-radius;
         background: $ag-background-color;
     }
 
@@ -12,9 +12,7 @@
         height: 24px;
         margin: 2px 0;
         cursor: pointer;
-        &:hover {
-            border-radius: 5px;
-        }
+        border-radius: $ag-card-radius;
     }
 
     .ag-chart-menu-icon:hover {
@@ -26,17 +24,21 @@
         border-radius: 5px;
         margin: 5px;
 
-        // this section covers wrapping and justification logic for mini chart rows of 1, 2 or 3 items in length
-        &:nth-child(2n + 2):not(:last-child) {
+        // specific style to apply when there are 3 items in the row
+        &:nth-last-child(3),
+        &:nth-last-child(3) ~ .ag-chart-mini-thumbnail {
             margin-left: auto;
             margin-right: auto;
         }
-        &:nth-child(3n + 1) {
-            margin-left: 2px;
+
+        &:first-child {
+            @include ag-theme-rtl((margin-left: 0));
         }
-        &:nth-child(3n) {
-            margin-right: 2px;
+
+        &:last-child {
+            @include ag-theme-rtl((margin-right: 0));
         }
+
         &.ag-selected {
             border-color: $ag-primary-color;
         }

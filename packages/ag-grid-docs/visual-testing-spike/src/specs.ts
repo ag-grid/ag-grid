@@ -8,12 +8,6 @@ export const specs: SpecDefinition[] = [
         defaultViewport: { width: 1000, height: 600 },
         steps: [
             {
-                name: 'context-menu',
-                prepare: async page => {
-                    await page.click(cellSelector('language', 1), { button: 'right' });
-                }
-            },
-            {
                 name: 'column-tool-panel',
                 prepare: async page => {
                     await page.click('.ag-side-button:nth-child(1)');
@@ -30,6 +24,12 @@ export const specs: SpecDefinition[] = [
                 viewport: { width: 2000, height: 1000 },
                 prepare: async page => {
                     await page.click('.ag-side-button:nth-child(2)');
+                }
+            },
+            {
+                name: 'context-menu',
+                prepare: async page => {
+                    await page.click(cellSelector('language', 1), { button: 'right' });
                 }
             },
             {

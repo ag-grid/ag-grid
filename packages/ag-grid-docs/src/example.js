@@ -1101,7 +1101,10 @@ function rowSelected(event) {
 
 function onThemeChanged() {
     var newTheme = document.querySelector('#grid-theme').value;
-    gridDiv.className = newTheme;
+    var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
+    themedElements.forEach(el => {
+        el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
+    });
 
     if (gridOptions.api) {
         gridOptions.api.resetRowHeights();
@@ -1116,7 +1119,6 @@ function onThemeChanged() {
     } else {
         document.body.classList.remove('dark');
     }
-
 }
 
 var filterCount = 0;
