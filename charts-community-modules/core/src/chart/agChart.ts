@@ -99,39 +99,43 @@ function getMapping(path: string) {
     return value;
 }
 
-export const agChart = {
-    create(options: any) {
-        return this._create(Object.create(options)); // avoid mutating user provided options
-    },
+export abstract class AgChart {
+    static create(options: any) {
+        options = Object.create(options); // avoid mutating user provided options
+        AgChart.setChartType(options);
+        return AgChart._create(options);
+    }
 
-    update(chart: any, options: any) {
-        return this._update(chart, options);
-    },
+    static update(chart: any, options: any) {
+        options = Object.create(options);
+        AgChart.setChartType(options);
+        return AgChart._update(chart, options);
+    }
 
-    _create(options: any, path?: string, component?: any) {
-        if (!(options && typeof options === 'object')) {
-            return;
-        }
+    private static setChartType(options: any) {
+        // If chart type is not specified, try to infer it from the type of first series.
+        if (!options.type) {
+            const series = options.series && options.series[0];
 
-        if (!path) { // root level
-            // If chart type is not specified, try to infer it from the type of first series.
-            if (!options.type) {
-                const series = options.series && options.series[0];
-
-                if (series && series.type) {
-                    outerLoop: for (const chartType in mappings) {
-                        for (const seriesType in mappings[chartType].series) {
-                            if (series.type === seriesType) {
-                                options.type = chartType;
-                                break outerLoop;
-                            }
+            if (series && series.type) {
+                outerLoop: for (const chartType in mappings) {
+                    for (const seriesType in mappings[chartType].series) {
+                        if (series.type === seriesType) {
+                            options.type = chartType;
+                            break outerLoop;
                         }
                     }
                 }
-                if (!options.type) {
-                    options.type = 'cartesian';
-                }
             }
+            if (!options.type) {
+                options.type = 'cartesian';
+            }
+        }
+    }
+
+    private static _create(options: any, path?: string, component?: any) {
+        if (!(options && typeof options === 'object')) {
+            return;
         }
 
         // Default series type for cartesian charts.
@@ -177,15 +181,15 @@ export const agChart = {
 
                     if (key in mapping && !(mapping.exclude && mapping.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
-                            const subComponents = value.map(config => agChart._create(config, path + '.' + key)).filter(config => !!config);
+                            const subComponents = value.map(config => AgChart._create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
                         } else {
                             if (mapping[key] && component[key]) {
                                 // The instance property already exists on the component (e.g. chart.legend).
                                 // Simply configure the existing instance, without creating a new one.
-                                agChart._create(value, path + '.' + key, component[key]);
+                                AgChart._create(value, path + '.' + key, component[key]);
                             } else {
-                                const subComponent = agChart._create(value, value.type ? path : path + '.' + key);
+                                const subComponent = AgChart._create(value, value.type ? path : path + '.' + key);
                                 if (subComponent) {
                                     component[key] = subComponent;
                                 }
@@ -198,9 +202,13 @@ export const agChart = {
             }
             return component;
         }
-    },
+    }
 
-    _update: function (component: any, options: any, path?: string) {
+    private static _update(component: any, options: any, path?: string) {
+        if (!path) {
+            AgChart.setChartType(options);
+        }
+
         if (options.legend) {
             for (const key in Legend.defaults) {
                 if (key in options.legend) {
