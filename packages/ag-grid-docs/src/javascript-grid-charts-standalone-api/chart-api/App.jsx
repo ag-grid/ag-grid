@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import { AgChart } from "ag-charts-community";
-import { data, series, getTemplates } from "./templates.jsx";
-import Cookies from 'universal-cookie';
+import {AgChart} from "ag-charts-community";
+import {data, getTemplates, series} from "./templates.jsx";
 
-const OptionsCode = ({ options }) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
+const OptionsCode = ({options}) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
 
-const ApiCode = ({ options }) => {
+const ApiCode = ({options}) => {
     const lines = [];
     const extractLines = (prefix, object) => {
         Object.keys(object).forEach(key => {
@@ -24,16 +23,16 @@ const ApiCode = ({ options }) => {
     return <pre>{lines.join("\n")}</pre>;
 }
 
-const Option = ({ name, description, value, updateValue, options, Editor }) => {
+const Option = ({name, description, value, updateValue, options, Editor}) => {
     return <div>
-        <hr />
-        <strong>{name}</strong>: {description}<br />
-        Default: {value ? value.toString() : "N/A"}<br />
-        Value: <Editor value={value} onChange={updateValue} options={options} />
+        <hr/>
+        <strong>{name}</strong>: {description}<br/>
+        Default: {value ? value.toString() : "N/A"}<br/>
+        Value: <Editor value={value} onChange={updateValue} options={options}/>
     </div>;
 }
 
-const NumberEditor = ({ value, onChange }) => {
+const NumberEditor = ({value, onChange}) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = parseInt(event.target.value);
@@ -41,10 +40,10 @@ const NumberEditor = ({ value, onChange }) => {
         onChange(newValue);
     }
 
-    return <input type="number" value={stateValue} onChange={inputOnChange} />
+    return <input type="number" value={stateValue} onChange={inputOnChange}/>
 }
 
-const StringEditor = ({ value, onChange }) => {
+const StringEditor = ({value, onChange}) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.value;
@@ -52,10 +51,10 @@ const StringEditor = ({ value, onChange }) => {
         onChange(newValue);
     }
 
-    return <input type="text" value={stateValue} onChange={inputOnChange} />
+    return <input type="text" value={stateValue} onChange={inputOnChange}/>
 }
 
-const CheckboxEditor = ({ value, onChange }) => {
+const CheckboxEditor = ({value, onChange}) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.checked;
@@ -63,10 +62,10 @@ const CheckboxEditor = ({ value, onChange }) => {
         onChange(newValue);
     }
 
-    return <input type="checkbox" checked={stateValue} onChange={inputOnChange} />
+    return <input type="checkbox" checked={stateValue} onChange={inputOnChange}/>
 }
 
-const DropDownEditor = ({ value, options, onChange }) => {
+const DropDownEditor = ({value, options, onChange}) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.value;
@@ -79,7 +78,7 @@ const DropDownEditor = ({ value, options, onChange }) => {
     </select>;
 }
 
-const ColourEditor = ({ value, onChange }) => {
+const ColourEditor = ({value, onChange}) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = color => {
         setValueChange(color);
@@ -90,8 +89,14 @@ const ColourEditor = ({ value, onChange }) => {
     const onClick = () => setIsShown(!isShown);
 
     return <React.Fragment>
-        <span style={{ display: "inline-block", "backgroundColor": stateValue, width: "15px", height: "15px", border: "solid 1px black" }} onClick={onClick}></span>
-        {isShown && <ChromePicker color={stateValue} onChangeComplete={color => inputOnChange(color.hex)} />}
+        <span style={{
+            display: "inline-block",
+            "backgroundColor": stateValue,
+            width: "15px",
+            height: "15px",
+            border: "solid 1px black"
+        }} onClick={onClick}></span>
+        {isShown && <ChromePicker color={stateValue} onChangeComplete={color => inputOnChange(color.hex)}/>}
     </React.Fragment>
 }
 
@@ -169,9 +174,8 @@ class Chart extends React.Component {
 export class App extends React.Component {
     state = {
         framework: 'react',
-        currentFramework: null, // just for demo purposes - presumably this would be on state.framework instead
-        options: {
-        }
+        currentFramework: this.getCurrentFramework(), // just for demo purposes - presumably this would be on state.framework instead
+        options: {}
     };
 
     config = {
@@ -281,27 +285,8 @@ export class App extends React.Component {
         },
     };
 
-    watchCookie = (callback) => {
-        return () => {
-            const cookies = new Cookies(document.cookies);
-            if (cookies.get('agGridRunnerVersion') !== this.state.currentFramework) {
-                callback(cookies.get('agGridRunnerVersion'));
-            }
-        };
-    };
-
-    constructor() {
-        super();
-
-        setInterval(this.watchCookie((value) => {
-            this.setState({
-                currentFramework: value
-            })
-        }), 100);
-    }
-
     updateOptions = (expression, value, defaultValue) => {
-        const newOptions = { ...this.state.options };
+        const newOptions = {...this.state.options};
         const keys = expression.split(".");
         const objects = [];
         let objectToUpdate = newOptions;
@@ -336,11 +321,27 @@ export class App extends React.Component {
             objectToUpdate[key] = value;
         }
 
-        this.setState({ options: newOptions });
+        this.setState({options: newOptions});
+    }
+
+    getCurrentFramework() {
+        const frameworkDropdownElement = window.parent.document.querySelector("[data-framework-dropdown=chart-api]");
+        return frameworkDropdownElement.getAttribute('data-current-framework');
     }
 
     componentDidMount() {
         this.componentDidUpdate();
+
+        const frameworkDropdownElement = window.parent.document.querySelector("[data-framework-dropdown=chart-api]");
+        frameworkDropdownElement.addEventListener('click', () => {
+            window.parent.document.querySelectorAll("[data-framework-item=chart-api]").forEach(element => {
+                element.addEventListener('click', () => {
+                    this.setState({
+                        currentFramework: this.getCurrentFramework()
+                    });
+                })
+            });
+        })
     }
 
     componentDidUpdate() {
@@ -381,13 +382,13 @@ export class App extends React.Component {
 
         return <div className="app">
             <div>Current Framework: {this.state.currentFramework}</div>
-            <div className="chart"><Chart options={this.state.options} /></div>
+            <div className="chart"><Chart options={this.state.options}/></div>
             <div className="options">
                 {generateOptionConfig(this.config, '')}
             </div>
             <div className="code">
-                <OptionsCode options={this.state.options} />
-                <ApiCode options={this.state.options} />
+                <OptionsCode options={this.state.options}/>
+                <ApiCode options={this.state.options}/>
             </div>
         </div>;
     }
