@@ -32,7 +32,6 @@ test('reactive', async () => {
     const c = new Component();
 
     expect(c.john).toBe('smith');
-    expect(c.foo).toBe('bar');
 
     const johnListenerPromise = new Promise((resolve, reject) => {
         c.addPropertyListener('john', event => {
