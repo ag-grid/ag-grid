@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { agChart } from "ag-charts-community";
+import { AgChart } from "ag-charts-community";
 import { data, series, getTemplates } from "./templates.jsx";
 
 const OptionsCode = ({ options }) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
@@ -152,7 +152,7 @@ class Chart extends React.Component {
     componentDidUpdate() {
         this.chart.current.innerHTML = "";
 
-        agChart.create({
+        AgChart.create({
             ...this.props.options,
             data,
             parent: this.chart.current,
