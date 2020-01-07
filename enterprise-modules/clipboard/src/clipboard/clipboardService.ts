@@ -13,6 +13,7 @@ import {
     ColumnController,
     Constants,
     CsvExportParams,
+    CsvUtils,
     Events,
     EventService,
     FlashCellsEvent,
@@ -40,7 +41,6 @@ import {
     IRangeController,
     Optional
 } from "@ag-grid-community/core";
-import { dataToArray } from "./dataToArray";
 
 interface RowCallback {
     (gridRow: RowPosition, rowNode: RowNode, columns: Column[], rangeIndex: number, isLastRow?: boolean): void;
@@ -98,7 +98,7 @@ export class ClipboardService implements IClipboardService {
 
                 if (_.missingOrEmpty(data)) { return; }
 
-                let parsedData = dataToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+                let parsedData = CsvUtils.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
 
                 const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
 

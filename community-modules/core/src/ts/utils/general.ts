@@ -10,7 +10,6 @@ import { Promise } from "./promise";
 
 const FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 const FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
-
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 
 /**
@@ -177,17 +176,17 @@ export class Utils {
         return results && results.length > 1 ? results[1] : "";
     }
 
-    static areEqual = <T>(a: T[], b: T[]): boolean => {
+    static areEqual<T>(a: T[], b: T[]): boolean {
         return a.length === b.length && a.every((value, index) => b[index] === value);
-    };
+    }
 
-    static keys = <T>(map: Map<T, any>): T[] => {
+    static keys<T>(map: Map<T, any>): T[] {
         const keys: T[] = [];
 
         map.forEach((_, key) => keys.push(key));
 
         return keys;
-    };
+    }
 
     static values = <T>(object: { [key: string]: T; }): T[] => Object.keys(object).map(key => object[key]);
 
@@ -296,6 +295,7 @@ export class Utils {
 
     static getScrollLeft(element: HTMLElement, rtl: boolean): number {
         let scrollLeft = element.scrollLeft;
+
         if (rtl) {
             // Absolute value - for FF that reports RTL scrolls in negative numbers
             scrollLeft = Math.abs(scrollLeft);
@@ -305,6 +305,7 @@ export class Utils {
                 scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
             }
         }
+
         return scrollLeft;
     }
 
@@ -320,9 +321,11 @@ export class Utils {
         return value;
     }
 
-    static compose = (...fns: Function[]) => (arg: any) => fns.reduce((composed, f) => f(composed), arg);
+    static compose(...fns: Function[]) {
+        return (arg: any) => fns.reduce((composed, f) => f(composed), arg);
+    }
 
-    static decToHex = (number: number, bytes: number): string => {
+    static decToHex(number: number, bytes: number): string {
         let hex = '';
 
         for (let i = 0; i < bytes; i++) {
@@ -331,7 +334,7 @@ export class Utils {
         }
 
         return hex;
-    };
+    }
 
     /**
      * It encodes any string in UTF-8 format
@@ -339,7 +342,7 @@ export class Utils {
      * @param {string} s
      * @returns {string}
      */
-    static utf8_encode = (s: string): string => {
+    static utf8_encode(s: string): string {
         const stringFromCharCode = String.fromCharCode;
 
         function ucs2decode(string: string) {
@@ -413,8 +416,9 @@ export class Utils {
             codePoint = codePoints[index];
             byteString += encodeCodePoint(codePoint);
         }
+
         return byteString;
-    };
+    }
 
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void {
         if (rtl) {
@@ -463,7 +467,9 @@ export class Utils {
         return copy;
     }
 
-    static deepCloneObject = <T>(object: T): T => JSON.parse(JSON.stringify(object));
+    static deepCloneObject<T>(object: T): T {
+        return JSON.parse(JSON.stringify(object));
+    }
 
     static getProperty = <T, K extends keyof T>(object: T, key: K): any => object[key];
     static setProperty = <T, K extends keyof T>(object: T, key: K, value: any): void => object[key] = value;
@@ -2541,31 +2547,6 @@ export class Utils {
         });
 
         return object;
-    }
-}
-
-export class NumberSequence {
-
-    private nextValue: number;
-    private step: number;
-
-    constructor(initValue = 0, step = 1) {
-        this.nextValue = initValue;
-        this.step = step;
-    }
-
-    public next(): number {
-        const valToReturn = this.nextValue;
-        this.nextValue += this.step;
-        return valToReturn;
-    }
-
-    public peek(): number {
-        return this.nextValue;
-    }
-
-    public skip(count: number): void {
-        this.nextValue += count;
     }
 }
 
