@@ -21,6 +21,8 @@ beforeEach(() => {
                     drawImage: () => ({}),
                     $save: () => ({}),
                     $setTransform: () => ({}),
+                    getImageData: () => {},
+                    putImageData: () => {}
                 }),
                 addEventListener: () => ({}),
             };
