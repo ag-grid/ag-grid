@@ -26,7 +26,6 @@ $ag-color-background-range-selected-4: lighten($ag-color-background-range-select
 
 $ag-border-color: $ag-alpine-gray-3 !default;
 $ag-secondary-border-color: transparentize($ag-alpine-gray-2, 0.5) !default;
-$ag-color-icon: $ag-alpine-gray-3 !default;
 
 $ag-color-row-hover: transparentize($ag-color-primary, 0.8) !default;
 
@@ -41,3 +40,4 @@ $ag-color-background-toggle-button: $ag-alpine-gray-3 !default;
 // shadow should be darker (instead of inverted) for a natural look
 $ag-color-chrome-shadow: $ag-alpine-black !default;
 
+@import "../../ag-theme-alpine/vars/ag-theme-alpine-vars";

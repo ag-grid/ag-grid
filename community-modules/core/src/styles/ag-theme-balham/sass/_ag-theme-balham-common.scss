@@ -4,11 +4,9 @@
 
 @mixin ag-theme-balham() {
 
-    %card {
-        border: 1px solid $ag-border-color;
-    }
+    @include ag-grid-theme();
 
-    %tab {
+    .ag-tab {
         border: 1px solid transparent;
         border-bottom-width: 0;
         margin: $ag-grid-size;
@@ -16,30 +14,15 @@
         padding: $ag-grid-size $ag-grid-size * 2;
     }
 
-    %selected-tab {
+    .ag-tab-selected {
         background-color: $ag-default-background;
         border-bottom: 2px solid $ag-primary-color;
         border-bottom: 2px solid $ag-default-background;
         border-color: $ag-border-color;
     }
 
-    @include ag-grid-theme();
-
-    .ag-cell-highlight {
-        background-color: $ag-range-selection-highlight-color !important;
-    }
-
-    .ag-column-drop-horizontal.ag-width-half:first-child {
-        @include ag-theme-rtl(( border-right: 0 ));   
-    }
-
     .ag-column-drop-cell {
         min-height: $ag-grid-size * 6;
-    }
-
-    .ag-column-drop-cell-button {
-        margin-bottom: $ag-grid-size / 2;
-        margin-top: $ag-grid-size / 2;
     }
 
     .ag-column-drop-cell-button:hover {

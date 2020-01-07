@@ -69,19 +69,19 @@
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-1;
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 1);
     }
 
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-2;
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 2);
     }
 
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-3;
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 3);
     }
 
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        background-color: $ag-range-selected-color-4;
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 4);
     }
 
     .ag-ltr,
@@ -132,5 +132,9 @@
     .ag-range-handle {
         @extend %selection-handle;
         cursor: nwse-resize;
+    }
+
+    .ag-cell-highlight {
+        background-color: $ag-range-selection-highlight-color !important;
     }
 }

@@ -1,10 +1,5 @@
 
 @mixin ag-theme-base-part-menu {
-    
-
-    .ag-tab {
-        box-sizing: content-box;
-    }
 
     .ag-menu {
         @include ag-card();
@@ -67,13 +62,9 @@
     }
     
     .ag-tab {
-        @extend %tab !optional;
-
+        border-bottom: 2px solid transparent;
         // TODO structural styles
         display: flex;
-        border-bottom: 2px solid transparent;
-        height: $ag-grid-size * 4;
-        // TODO structural styles
         flex: none;
         align-items: center;
         justify-content: center;
@@ -81,14 +72,14 @@
         @if $ag-full-width-tabs {
             flex: 1 1 auto;
         }
-
-        &.ag-tab-selected {
-            @extend %selected-tab !optional;
-        }
     }
 
     .ag-tabs-body {
         padding: $ag-grid-size / 2 0;
+    }
+
+    .ag-menu-header {
+        color: $ag-secondary-foreground-color;
     }
 
     ////////////////////////////////////////

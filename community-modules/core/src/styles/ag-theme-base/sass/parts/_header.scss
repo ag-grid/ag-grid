@@ -9,11 +9,14 @@
             background-image: $ag-header-background-image;
         }
 
+        border-bottom: 1px solid $ag-border-color;
+    }
+    
+    .ag-header-row {
         color: $ag-header-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
         font-family: $ag-secondary-font-family;
-        border-bottom: 1px solid $ag-border-color;
     }
 
     .ag-pinned-right-header {
@@ -31,7 +34,6 @@
 
     .ag-header-label-icon {
         margin-left: $ag-grid-size;
-        opacity: $ag-foreground-opacity;
     }
 
     .ag-header-cell,
@@ -59,7 +61,7 @@
     .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
     .ag-header-group-cell:first-of-type,
     .ag-header-cell:first-of-type {
-        @if ($ag-header-background-color != $ag-header-cell-hover-background-color) {
+        @if ($ag-header-cell-hover-background-color and $ag-header-background-color != $ag-header-cell-hover-background-color) {
             &:hover,
             &.ag-column-resizing {
                 background-color: $ag-header-cell-hover-background-color;
@@ -123,7 +125,7 @@
         margin: 0;
         padding: 0;
         margin-right: $ag-grid-size;
-        opacity: $ag-foreground-opacity;
+        color: $ag-foreground-color;
     }
     
     .ag-floating-filter-button {

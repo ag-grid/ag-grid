@@ -125,6 +125,7 @@
         .ag-tab {
             padding: $ag-grid-size $ag-grid-size * 4;
             padding-bottom: $ag-grid-size - 2;
+            height: $ag-grid-size * 6;
 
             .ag-icon {
                 display: block;

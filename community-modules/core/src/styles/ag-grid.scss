@@ -28,7 +28,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     cursor: grab;
 }
 
-.ag-width-half {
+.ag-column-drop-horizontal-half-width {
     display: inline-block;
     width: 50% !important;
 }
@@ -529,6 +529,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-column-drop.ag-column-drop-horizontal {
     white-space: nowrap;
     overflow: hidden;
+}
+
+.ag-column-drop-cell-button {
+    cursor: pointer;
 }
 
 .ag-filter-toolpanel {
