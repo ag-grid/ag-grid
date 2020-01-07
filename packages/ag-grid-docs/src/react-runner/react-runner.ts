@@ -335,14 +335,14 @@ docs.component("reactRunner", {
     aria-haspopup="true"
     aria-expanded="false">
 
-    <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
+    <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]" data-current-framework="{{$ctrl.currentType}}" data-framework-dropdown="{{$ctrl.id}}">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
     <span class="caret"></span>
 
     </button>
 
                 <ul class="dropdown-menu">
     <li ng-repeat="type in $ctrl.availableTypes">
-        <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]">{{$ctrl.typeTitle(type)}}</a>
+        <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]" data-framework-item="{{$ctrl.id}}">{{$ctrl.typeTitle(type)}}</a>
     </li>
                 </ul>
             </div>
