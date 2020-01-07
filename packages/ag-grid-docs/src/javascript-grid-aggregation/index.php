@@ -257,6 +257,67 @@ var columnB = {
         the grand total aggregation for the top level.
     </p>
 
+    <h2>Example 3 - Multi-Column Aggregation</h2>
+
+    <p>
+        The next example shows a ratio calculation to demonstrate how to create an <code>aggFunc</code> that uses values
+        from multiple columns.
+    </p>
+
+    <p>
+        When values from multiple columns are required, a value object containing all the required values across multiple
+        columns should be passed around instead of a simple value. This value object should also contain a
+        <code>toString()</code> method so it can also be resolved by the grid to a single value. This is shown in
+        the code snippet below:
+    </p>
+
+<snippet>
+
+var columnDefs = [
+  { field: 'gold', aggFunc: 'sum' },
+  { field: 'silver', aggFunc: 'sum' },
+  { headerName: 'Ratio', colId: 'ratio', valueGetter: ratioValueGetter, aggFunc: ratioAggFunc}
+];
+
+function ratioValueGetter(params) {
+    if (!params.node.group) {
+        // no need to handle group levels - calculated in the 'ratioAggFunc'
+        return createValueObject(params.data.gold, params.data.silver);
+    }
+}
+
+function ratioAggFunc(values) {
+    var goldSum = 0;
+    var silverSum = 0;
+    values.forEach(function(value) {
+        if (value && value.gold) {
+            goldSum += value.gold;
+        }
+        if (value && value.silver) {
+            silverSum += value.silver;
+        }
+    });
+    return createValueObject(goldSum, silverSum);
+}
+
+function createValueObject(gold, silver) {
+    return {
+        gold: gold,
+        silver: silver,
+        toString: function() {
+            return (gold && silver) ? gold / silver : 0;
+        }
+    }
+}
+
+</snippet>
+
+    <p>
+        The following example demonstrates this approach in action:
+    </p>
+
+    <?= example('Multi-Column Aggregation', 'multi-column-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
     <h2 id="aggregationApi">Aggregation API</h2>
 
     <p>
