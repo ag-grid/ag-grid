@@ -41,23 +41,23 @@ export abstract class Chart extends Observable {
     private pendingSize?: [number, number];
 
     set width(value: number) {
-        if (this.scene.width !== value) {
-            this.pendingSize = [value, this.scene.height];
+        if (this.width !== value) {
+            this.pendingSize = [value, this.height];
             this.fireEvent({ type: 'layoutChange' });
         }
     }
     get width(): number {
-        return this.scene.width;
+        return this.pendingSize ? this.pendingSize[0] : this.scene.width;
     }
 
     set height(value: number) {
-        if (this.scene.height !== value) {
-            this.pendingSize = [this.scene.width, value];
+        if (this.height !== value) {
+            this.pendingSize = [this.width, value];
             this.fireEvent({ type: 'layoutChange' });
         }
     }
     get height(): number {
-        return this.scene.height;
+        return this.pendingSize ? this.pendingSize[1] : this.scene.height;
     }
 
     set parent(value: HTMLElement | undefined) {
