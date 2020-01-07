@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -33,6 +33,13 @@
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types',
+                // 'js-cookie': 'npm:js-cookie',
+                // 'react-cookie': 'npm:react-cookie',
+                // 'hoist-non-react-statics': 'npm:hoist-non-react-statics',
+                'universal-cookie': 'npm:universal-cookie',
+                'object-assign': 'npm:object-assign',
+                'cookie': 'npm:cookie',
+                // 'react-is': 'npm:react-is',
 
                 app: appLocation + 'app'
             },
@@ -58,6 +65,18 @@
                 main: './dist/react-redux.min.js',
                 defaultExtension: 'js'
             },
+            // 'js-cookie': {
+            //     main: './src/js.cookie.js',
+            //     defaultExtension: 'js'
+            // },
+            // 'react-cookie': {
+            //     main: './cjs/index.js',
+            //     defaultExtension: 'js'
+            // },
+            'universal-cookie': {
+                main: './cjs/index.js',
+                defaultExtension: 'js'
+            },
             app: {
                 defaultExtension: 'jsx'
             },
@@ -65,113 +84,10 @@
                 main: './main.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-community/react': {
-                main: './main.js',
+            'ag-charts-community': {
+                main: './dist/cjs/main.js',
                 defaultExtension: 'js'
-            },
-            // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            '@ag-grid-community/core/dist/cjs/utils': {
-                main: './index.js',
-                defaultExtension: 'js'
-            },
-            '@ag-grid-enterprise/charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
-                main: './index.js',
-                defaultExtension: 'js'
-            },
-            /* START OF MODULES - DO NOT DELETE */
-           '@ag-grid-community/all-modules': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-community/client-side-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-community/core': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-community/csv-export': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-community/infinite-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           'ag-charts-community': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/all-modules': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/charts': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/clipboard': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/column-tool-panel': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/core': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/excel-export': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/filter-tool-panel': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/master-detail': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/menu': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/range-selection': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/rich-select': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/row-grouping': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/server-side-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/set-filter': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/side-bar': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/status-bar': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-           '@ag-grid-enterprise/viewport-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-/* END OF MODULES - DO NOT DELETE */
+            }
         },
         meta: {
             '*.jsx': {

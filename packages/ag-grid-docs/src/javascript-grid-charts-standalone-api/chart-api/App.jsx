@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { AgChart } from "ag-charts-community";
 import { data, series, getTemplates } from "./templates.jsx";
+import Cookies from 'universal-cookie';
 
 const OptionsCode = ({ options }) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
 
@@ -168,6 +169,7 @@ class Chart extends React.Component {
 export class App extends React.Component {
     state = {
         framework: 'react',
+        currentFramework: null, // just for demo purposes - presumably this would be on state.framework instead
         options: {
         }
     };
@@ -279,6 +281,25 @@ export class App extends React.Component {
         },
     };
 
+    watchCookie = (callback) => {
+        return () => {
+            const cookies = new Cookies(document.cookies);
+            if (cookies.get('agGridRunnerVersion') !== this.state.currentFramework) {
+                callback(cookies.get('agGridRunnerVersion'));
+            }
+        };
+    };
+
+    constructor() {
+        super();
+
+        setInterval(this.watchCookie((value) => {
+            this.setState({
+                currentFramework: value
+            })
+        }), 100);
+    }
+
     updateOptions = (expression, value, defaultValue) => {
         const newOptions = { ...this.state.options };
         const keys = expression.split(".");
@@ -359,6 +380,7 @@ export class App extends React.Component {
         }
 
         return <div className="app">
+            <div>Current Framework: {this.state.currentFramework}</div>
             <div className="chart"><Chart options={this.state.options} /></div>
             <div className="options">
                 {generateOptionConfig(this.config, '')}

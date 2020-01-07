@@ -13,6 +13,6 @@ define("skipInPageNav", true);
     This section introduces the standalone charts API.
 </p>
 
-<?= reactApp('chart-api', 'chart-api', array("exampleHeight" => 1000, "enterprise" => true)) ?>
+<?= reactApp('chart-api', 'chart-api', array("exampleHeight" => 1000, "enterprise" => true, "frameworks" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

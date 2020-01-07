@@ -119,8 +119,8 @@ class ReactRunner {
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
-        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
-        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
+        this.showFrameworksDropdown = options.frameworks || false;
+        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : this.config.types;
 
         this.titles = {
             vanilla: "JavaScript",

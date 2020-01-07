@@ -43,6 +43,8 @@ function reactApp($dir, $id, $options = array())
         'options' => $options
     );
 
+    $config['types'] = array('vanilla', 'angular', 'react', 'vue');
+
     $query = array(
         "section" => $section,
         "example" => $dir
