@@ -5,16 +5,15 @@ class SubComponent {
 }
 
 class Component extends Observable {
-    subComponent = new SubComponent();
-    @reactive(['name', 'misc']) john = 'smith';
-    @reactive(['name', 'misc']) bob = 'marley';
-    @reactive(['change'], 'subComponent.foo') foo: string;
+    @reactive('name', 'misc') john = 'smith';
+    @reactive('name', 'misc') bob = 'marley';
+    @reactive('change') foo: string;
     @reactive() arr: [] | undefined | null = [];
     @reactive() obj: {} | undefined | null = {};
 }
 
 class BaseClass extends Observable {
-    @reactive(['layout']) foo = 5;
+    @reactive('layout') foo = 5;
 
     layoutTriggered = false;
 
@@ -26,7 +25,7 @@ class BaseClass extends Observable {
 }
 
 class SubClass extends BaseClass {
-    @reactive(['layout']) bar = 10;
+    @reactive('layout') bar = 10;
 }
 
 test('reactive', async () => {
@@ -56,7 +55,6 @@ test('reactive', async () => {
     c.foo = 'blah';
 
     expect(c.foo).toBe('blah');
-    expect(c.subComponent.foo).toBe('blah');
 
     return Promise.all([johnListenerPromise, nameCategoryListenerPromise]);
 }, 100);

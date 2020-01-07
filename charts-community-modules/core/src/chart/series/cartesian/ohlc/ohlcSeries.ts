@@ -88,7 +88,7 @@ export class OHLCSeries extends CartesianSeries {
         this.update();
     }
 
-    @reactive(['layoutChange']) title?: string;
+    @reactive('layoutChange') title?: string;
 
     protected _dateKey: string = 'date';
     set dateKey(value: string) {
@@ -429,16 +429,16 @@ export class OHLCSeriesMarker extends Observable {
      */
     @reactive() type: new () => OHLC = Candlestick;
 
-    @reactive(['styleChange']) upFill?: string = '#33ae5b';
-    @reactive(['styleChange']) downFill?: string = '#ff4734';
-    @reactive(['styleChange']) noChangeFill?: string = '#b9bdc5';
+    @reactive('styleChange') upFill?: string = '#33ae5b';
+    @reactive('styleChange') downFill?: string = '#ff4734';
+    @reactive('styleChange') noChangeFill?: string = '#b9bdc5';
 
-    @reactive(['styleChange']) upStroke?: string = 'black';
-    @reactive(['styleChange']) downStroke?: string = 'black';
-    @reactive(['styleChange']) noChangeStroke?: string = 'black';
+    @reactive('styleChange') upStroke?: string = 'black';
+    @reactive('styleChange') downStroke?: string = 'black';
+    @reactive('styleChange') noChangeStroke?: string = 'black';
 
 
-    @reactive(['styleChange']) strokeWidth = 1;
-    @reactive(['styleChange']) fillOpacity = 1;
-    @reactive(['styleChange']) strokeOpacity = 1;
+    @reactive('styleChange') strokeWidth = 1;
+    @reactive('styleChange') fillOpacity = 1;
+    @reactive('styleChange') strokeOpacity = 1;
 }

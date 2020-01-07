@@ -63,11 +63,11 @@ export interface FontOptions {
     fontWeight?: FontWeight;
     fontSize?: number;
     fontFamily?: string;
-    color?: string;
 }
 
 export interface CaptionOptions extends FontOptions {
     enabled?: boolean;
+    color?: string;
     text?: string;
 }
 

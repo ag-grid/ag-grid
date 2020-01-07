@@ -60,10 +60,16 @@ export abstract class Chart extends Observable {
         return this.scene.height;
     }
 
-    @reactive([], 'scene.parent') parent?: HTMLElement;
-    @reactive(['layoutChange']) title?: Caption;
-    @reactive(['layoutChange']) subtitle?: Caption;
-    @reactive(['layoutChange']) padding = new Padding(20);
+    set parent(value: HTMLElement | undefined) {
+        this.scene.parent = value;
+    }
+    get parent(): HTMLElement | undefined {
+        return this.scene.parent;
+    }
+
+    @reactive('layoutChange') padding = new Padding(20);
+    @reactive('layoutChange') title?: Caption;
+    @reactive('layoutChange') subtitle?: Caption;
 
     protected constructor(document = window.document) {
         super();

@@ -12,5 +12,5 @@ export class BarSeries extends ColumnSeries {
         flipXY: true
     });
 
-    @reactive(['layoutChange']) flipXY = BarSeries.defaults.flipXY;
+    @reactive('layoutChange') flipXY = BarSeries.defaults.flipXY;
 }

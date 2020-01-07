@@ -63,27 +63,27 @@ export class Legend extends Observable {
 
     private oldSize: [number, number] = [0, 0];
 
-    @reactive(['layoutChange']) data: LegendDatum[] = [];
-    @reactive(['layoutChange']) enabled = Legend.defaults.enabled;
-    @reactive(['layoutChange']) orientation: LegendOrientation = Legend.defaults.orientation;
-    @reactive(['layoutChange']) position: LegendPosition = Legend.defaults.position;
+    @reactive('layoutChange') data: LegendDatum[] = [];
+    @reactive('layoutChange') enabled = Legend.defaults.enabled;
+    @reactive('layoutChange') orientation: LegendOrientation = Legend.defaults.orientation;
+    @reactive('layoutChange') position: LegendPosition = Legend.defaults.position;
 
-    @reactive(['layoutChange']) padding = Legend.defaults.padding;
-    @reactive(['layoutChange']) itemPaddingX = Legend.defaults.itemPaddingX;
-    @reactive(['layoutChange']) itemPaddingY = Legend.defaults.itemPaddingY;
+    @reactive('layoutChange') padding = Legend.defaults.padding;
+    @reactive('layoutChange') itemPaddingX = Legend.defaults.itemPaddingX;
+    @reactive('layoutChange') itemPaddingY = Legend.defaults.itemPaddingY;
 
     // If the marker type is set, the legend will always use that marker type for all its items,
     // regardless of the type that comes from the `data`.
-    @reactive(['layoutChange']) markerShape?: string | (new () => Marker) = Legend.defaults.markerShape;
-    @reactive(['layoutChange']) markerPadding = Legend.defaults.markerPadding;
-    @reactive(['layoutChange']) markerSize = Legend.defaults.markerSize;
-    @reactive(['change']) markerStrokeWidth = Legend.defaults.markerStrokeWidth;
+    @reactive('layoutChange') markerShape?: string | (new () => Marker) = Legend.defaults.markerShape;
+    @reactive('layoutChange') markerPadding = Legend.defaults.markerPadding;
+    @reactive('layoutChange') markerSize = Legend.defaults.markerSize;
+    @reactive('change') markerStrokeWidth = Legend.defaults.markerStrokeWidth;
 
-    @reactive(['change']) labelColor = Legend.defaults.labelColor;
-    @reactive(['layoutChange']) labelFontStyle?: FontStyle = Legend.defaults.labelFontStyle;
-    @reactive(['layoutChange']) labelFontWeight?: FontWeight = Legend.defaults.labelFontWeight;
-    @reactive(['layoutChange']) labelFontSize = Legend.defaults.labelFontSize;
-    @reactive(['layoutChange']) labelFontFamily = Legend.defaults.labelFontFamily;
+    @reactive('change') labelColor = Legend.defaults.labelColor;
+    @reactive('layoutChange') labelFontStyle?: FontStyle = Legend.defaults.labelFontStyle;
+    @reactive('layoutChange') labelFontWeight?: FontWeight = Legend.defaults.labelFontWeight;
+    @reactive('layoutChange') labelFontSize = Legend.defaults.labelFontSize;
+    @reactive('layoutChange') labelFontFamily = Legend.defaults.labelFontFamily;
 
     constructor() {
         super();

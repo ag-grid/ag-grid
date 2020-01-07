@@ -78,11 +78,11 @@ export class AreaSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive(['dataChange']) fills: string[] = AreaSeries.defaults.fills;
-    @reactive(['dataChange']) strokes: string[] = AreaSeries.defaults.strokes;
+    @reactive('dataChange') fills: string[] = AreaSeries.defaults.fills;
+    @reactive('dataChange') strokes: string[] = AreaSeries.defaults.strokes;
 
-    @reactive(['update']) fillOpacity = AreaSeries.defaults.fillOpacity;
-    @reactive(['update']) strokeOpacity = AreaSeries.defaults.strokeOpacity;
+    @reactive('update') fillOpacity = AreaSeries.defaults.fillOpacity;
+    @reactive('update') strokeOpacity = AreaSeries.defaults.strokeOpacity;
 
     constructor() {
         super();
@@ -114,7 +114,7 @@ export class AreaSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    @reactive(['update']) xName: string = AreaSeries.defaults.xName;
+    @reactive('update') xName: string = AreaSeries.defaults.xName;
 
     protected _yKeys: string[] = AreaSeries.defaults.yKeys;
     set yKeys(values: string[]) {
@@ -131,7 +131,7 @@ export class AreaSeries extends CartesianSeries {
         return this._yKeys;
     }
 
-    @reactive(['update']) yNames: string[] = AreaSeries.defaults.yNames;
+    @reactive('update') yNames: string[] = AreaSeries.defaults.yNames;
 
     private _normalizedTo?: number = AreaSeries.defaults.normalizedTo;
     set normalizedTo(value: number | undefined) {
@@ -146,8 +146,8 @@ export class AreaSeries extends CartesianSeries {
         return this._normalizedTo;
     }
 
-    @reactive(['update']) strokeWidth = AreaSeries.defaults.strokeWidth;
-    @reactive(['update']) shadow?: DropShadow = AreaSeries.defaults.shadow;
+    @reactive('update') strokeWidth = AreaSeries.defaults.strokeWidth;
+    @reactive('update') shadow?: DropShadow = AreaSeries.defaults.shadow;
 
     highlightStyle: {
         fill?: string,

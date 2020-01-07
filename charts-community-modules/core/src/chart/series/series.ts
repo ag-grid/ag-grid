@@ -67,9 +67,9 @@ export abstract class Series extends Observable {
 
     tooltipEnabled: boolean = false;
 
-    @reactive(['dataChange']) data?: any[] = Series.defaults.data;
-    @reactive(['dataChange']) visible = Series.defaults.visible;
-    @reactive(['layoutChange']) showInLegend = Series.defaults.showInLegend;
+    @reactive('dataChange') data?: any[] = Series.defaults.data;
+    @reactive('dataChange') visible = Series.defaults.visible;
+    @reactive('layoutChange') showInLegend = Series.defaults.showInLegend;
 
     /**
      * Returns the actual keys used (to fetch the values from `data` items) for the given direction.

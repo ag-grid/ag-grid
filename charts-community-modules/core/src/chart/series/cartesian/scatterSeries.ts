@@ -126,11 +126,11 @@ export class ScatterSeries extends CartesianSeries {
         stroke?: string
     } = ScatterSeries.defaults.highlightStyle;
 
-    @reactive(['layoutChange']) title?: string = ScatterSeries.defaults.title;
-    @reactive(['dataChange']) xKey: string = ScatterSeries.defaults.xKey;
-    @reactive(['dataChange']) yKey: string = ScatterSeries.defaults.yKey;
-    @reactive(['dataChange']) sizeKey?: string = ScatterSeries.defaults.sizeKey;
-    @reactive(['dataChange']) labelKey?: string = ScatterSeries.defaults.labelKey;
+    @reactive('layoutChange') title?: string = ScatterSeries.defaults.title;
+    @reactive('dataChange') xKey: string = ScatterSeries.defaults.xKey;
+    @reactive('dataChange') yKey: string = ScatterSeries.defaults.yKey;
+    @reactive('dataChange') sizeKey?: string = ScatterSeries.defaults.sizeKey;
+    @reactive('dataChange') labelKey?: string = ScatterSeries.defaults.labelKey;
 
     xName: string = ScatterSeries.defaults.xName;
     yName: string = ScatterSeries.defaults.yName;

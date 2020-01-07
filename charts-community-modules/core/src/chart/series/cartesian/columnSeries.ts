@@ -57,7 +57,7 @@ enum ColumnSeriesNodeTag {
 }
 
 class ColumnSeriesLabel extends Label {
-    @reactive(['change']) formatter?: ColumnLabelFormatter;
+    @reactive('change') formatter?: ColumnLabelFormatter;
 }
 
 export class ColumnSeries extends CartesianSeries {
@@ -104,13 +104,13 @@ export class ColumnSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: ColumnTooltipRendererParams) => string;
 
-    @reactive(['layoutChange']) flipXY = ColumnSeries.defaults.flipXY;
+    @reactive('layoutChange') flipXY = ColumnSeries.defaults.flipXY;
 
-    @reactive(['dataChange']) fills: string[] = ColumnSeries.defaults.fills;
-    @reactive(['dataChange']) strokes: string[] = ColumnSeries.defaults.strokes;
+    @reactive('dataChange') fills: string[] = ColumnSeries.defaults.fills;
+    @reactive('dataChange') strokes: string[] = ColumnSeries.defaults.strokes;
 
-    @reactive(['layoutChange']) fillOpacity = ColumnSeries.defaults.fillOpacity;
-    @reactive(['layoutChange']) strokeOpacity = ColumnSeries.defaults.strokeOpacity;
+    @reactive('layoutChange') fillOpacity = ColumnSeries.defaults.fillOpacity;
+    @reactive('layoutChange') strokeOpacity = ColumnSeries.defaults.strokeOpacity;
 
     constructor() {
         super();
@@ -209,7 +209,7 @@ export class ColumnSeries extends CartesianSeries {
         return this._yNames;
     }
 
-    @reactive(['dataChange']) grouped = ColumnSeries.defaults.grouped;
+    @reactive('dataChange') grouped = ColumnSeries.defaults.grouped;
 
     /**
      * The value to normalize the stacks to, when {@link grouped} is `false`.

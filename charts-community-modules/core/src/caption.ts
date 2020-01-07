@@ -12,15 +12,68 @@ export class Caption extends Observable {
         padding: new Padding(10)
     };
 
-    @reactive(['change']) enabled = Caption.defaults.enabled;
-    @reactive(['change']) padding = Caption.defaults.padding;
+    @reactive('change') enabled = Caption.defaults.enabled;
+    @reactive('change') padding = Caption.defaults.padding;
 
-    @reactive(['change'], 'node.text') text: string;
-    @reactive(['change'], 'node.fontStyle') fontStyle: FontStyle | undefined;
-    @reactive(['change'], 'node.fontWeight') fontWeight: FontWeight | undefined;
-    @reactive(['change'], 'node.fontSize') fontSize: number;
-    @reactive(['change'], 'node.fontFamily') fontFamily: string;
-    @reactive(['change'], 'node.fill') color: string;
+    set text(value: string) {
+        if (this.node.text !== value) {
+            this.node.text = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get text(): string {
+        return this.node.text;
+    }
+
+    set fontStyle(value: FontStyle | undefined) {
+        if (this.node.fontStyle !== value) {
+            this.node.fontStyle = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get fontStyle(): FontStyle | undefined {
+        return this.node.fontStyle;
+    }
+
+    set fontWeight(value: FontWeight | undefined) {
+        if (this.node.fontWeight !== value) {
+            this.node.fontWeight = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get fontWeight(): FontWeight | undefined {
+        return this.node.fontWeight;
+    }
+
+    set fontSize(value: number) {
+        if (this.node.fontSize !== value) {
+            this.node.fontSize = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get fontSize(): number {
+        return this.node.fontSize;
+    }
+
+    set fontFamily(value: string) {
+        if (this.node.fontFamily !== value) {
+            this.node.fontFamily = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get fontFamily(): string {
+        return this.node.fontFamily;
+    }
+
+    set color(value: string | undefined) {
+        if (this.node.fill !== value) {
+            this.node.fill = value;
+            this.fireEvent({ type: 'change' });
+        }
+    }
+    get color(): string | undefined {
+        return this.node.fill;
+    }
 
     constructor() {
         super();
