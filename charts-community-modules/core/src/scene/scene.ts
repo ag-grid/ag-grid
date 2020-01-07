@@ -34,30 +34,16 @@ export class Scene {
         return this.canvas.getDataURL(type);
     }
 
-    set width(value: number) {
-        this.size = [value, this.height];
-    }
     get width(): number {
         return this.canvas.width;
     }
 
-    set height(value: number) {
-        this.size = [this.width, value];
-    }
     get height(): number {
         return this.canvas.height;
     }
 
-    set size(value: [number, number]) {
-        const [width, height] = value;
-
-        if (this.width !== width || this.height !== height) {
-            this.canvas.resize(width, height);
-            this.dirty = true;
-        }
-    }
-    get size(): [number, number] {
-        return [this.width, this.height];
+    resize(width: number, height: number) {
+        this.canvas.resize(width, height);
     }
 
     private _dirty = false;

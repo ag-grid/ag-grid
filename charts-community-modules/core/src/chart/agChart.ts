@@ -22,7 +22,6 @@ const mappings = {
         constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
         exclude: ['parent', 'data'], // Properties that should be set on the component as is (without pre-processing).
         defaults: { // These values will be used if properties in question are not in the config object.
-            parent: document.body,
             axes: [{
                 type: 'category',
                 position: 'bottom'
@@ -175,9 +174,8 @@ export abstract class AgChart {
 
         const mapping = getMapping(path);
 
-        AgChart.setComponentDefaults(options, mapping);
-
         if (mapping) {
+            AgChart.setComponentDefaults(options, mapping);
             const constructorParams = mapping.constructorParams || [];
             // TODO: Constructor params processing could be improved, but it's good enough for current params.
             const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
@@ -230,7 +228,9 @@ export abstract class AgChart {
 
         const mapping = getMapping(path);
 
-        AgChart.setComponentDefaults(options, mapping);
+        if (mapping) {
+            AgChart.setComponentDefaults(options, mapping);
+        }
 
         if (options.legend) {
             for (const key in Legend.defaults) {

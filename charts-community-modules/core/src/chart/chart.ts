@@ -12,9 +12,20 @@ import { Caption } from "../caption";
 import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
+import { chainObjects } from "../util/object";
 
 export abstract class Chart extends Observable {
     readonly id: string = this.createId();
+
+    static defaults = chainObjects({}, {
+        parent: undefined,
+        title: undefined,
+        subtitle: undefined,
+        padding: new Padding(20),
+        width: 600,
+        height: 300
+    });
+
     readonly scene: Scene;
     readonly background: Rect = new Rect();
 
@@ -25,15 +36,34 @@ export abstract class Chart extends Observable {
     private defaultTooltipClass = 'ag-chart-tooltip';
 
     legend = new Legend();
-    tooltipOffset = [20, 20];
+    tooltipOffset: [number, number] = [20, 20];
+
+    private pendingSize?: [number, number];
+
+    set width(value: number) {
+        if (this.scene.width !== value) {
+            this.pendingSize = [value, this.scene.height];
+            this.fireEvent({ type: 'layoutChange' });
+        }
+    }
+    get width(): number {
+        return this.scene.width;
+    }
+
+    set height(value: number) {
+        if (this.scene.height !== value) {
+            this.pendingSize = [this.scene.width, value];
+            this.fireEvent({ type: 'layoutChange' });
+        }
+    }
+    get height(): number {
+        return this.scene.height;
+    }
 
     @reactive([], 'scene.parent') parent?: HTMLElement;
     @reactive(['layoutChange']) title?: Caption;
     @reactive(['layoutChange']) subtitle?: Caption;
     @reactive(['layoutChange']) padding = new Padding(20);
-    @reactive(['layoutChange'], 'scene.size') size: [number, number];
-    @reactive(['layoutChange'], 'scene.height') height: number; // in CSS pixels
-    @reactive(['layoutChange'], 'scene.width') width: number;   // in CSS pixels
 
     protected constructor(document = window.document) {
         super();
@@ -366,6 +396,11 @@ export abstract class Chart extends Observable {
 
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
+        if (this.pendingSize) {
+            this.scene.resize(...this.pendingSize);
+            this.pendingSize = undefined;
+        }
+
         this.background.width = this.width;
         this.background.height = this.height;
 
