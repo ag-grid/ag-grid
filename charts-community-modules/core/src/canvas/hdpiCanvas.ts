@@ -9,17 +9,10 @@ export class HdpiCanvas {
     readonly element: HTMLCanvasElement;
     readonly context: CanvasRenderingContext2D;
 
-    /**
-     * The canvas flickers on size changes in Safari.
-     * A temporary canvas is used (during resize only) to prevent that.
-     */
-    private tempCanvas: HTMLCanvasElement;
-
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
     constructor(document = window.document) {
         this.document = document;
-        this.tempCanvas = document.createElement('canvas')!;
         this.element = document.createElement('canvas');
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
@@ -166,25 +159,20 @@ export class HdpiCanvas {
     }
 
     resize(width: number, height: number) {
-        const canvas = this.element;
-        const context = this.context;
-        const tempCanvas = this.tempCanvas;
+        const { element: canvas, context, pixelRatio } = this;
 
         this._width = width;
         this._height = height;
 
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-        const tempContext = tempCanvas.getContext('2d')!;
+        const imageData = context.getImageData(0, 0, canvas.width * pixelRatio, canvas.height * pixelRatio);
 
-        tempContext.drawImage(context.canvas, 0, 0);
-
-        canvas.width = Math.round(width * this.pixelRatio);
-        canvas.height = Math.round(height * this.pixelRatio);
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
         canvas.style.width = Math.round(width) + 'px';
         canvas.style.height = Math.round(height) + 'px';
 
-        context.drawImage(tempContext.canvas, 0, 0);
+        // prevent flickering on resize
+        context.putImageData(imageData, 0, 0);
 
         context.resetTransform();
     }
@@ -238,11 +226,10 @@ export class HdpiCanvas {
         return svgText;
     }
 
-    private _has?: Readonly<{
+    private _has?: {
         textMetrics: boolean,
-        getTransform: boolean,
-        flicker: boolean
-    }>;
+        getTransform: boolean
+    };
     get has() {
         if (this._has) {
             return this._has;
@@ -250,8 +237,7 @@ export class HdpiCanvas {
         return this._has = Object.freeze({
             textMetrics: this.textMeasuringContext.measureText('test')
                 .actualBoundingBoxDescent !== undefined,
-            getTransform: this.textMeasuringContext.getTransform !== undefined,
-            flicker: !!(window as any).safari
+            getTransform: this.textMeasuringContext.getTransform !== undefined
         });
     }
 
