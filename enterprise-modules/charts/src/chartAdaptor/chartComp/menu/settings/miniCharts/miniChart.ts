@@ -16,8 +16,7 @@ export abstract class MiniChart extends Component {
 
         const scene = new Scene();
         _.addCssClass(scene.canvas.element, 'ag-chart-mini-thumbnail-canvas');
-        scene.width = this.size;
-        scene.height = this.size;
+        scene.resize(this.size, this.size);
 
         scene.root = this.root;
         scene.parent = parent;
