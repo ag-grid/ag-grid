@@ -9,10 +9,10 @@ module.exports = merge(common, {
 
     entry: {
         '@ag-grid-community/all-modules':
-            glob.sync("../../community-modules/core/src/ts/**/*.ts")
-                .concat(glob.sync("../../community-modules/client-side-row-model/src/**/*.ts"))
-                .concat(glob.sync("../../community-modules/csv-export/src/**/*.ts"))
-                .concat(glob.sync("../../community-modules/infinite-row-model/src/**/*.ts"))
+            glob.sync("../../community-modules/core/src/ts/**/*.ts", { nodir: true, ignore: "../../community-modules/core/src/ts/**/*.test.ts" })
+                .concat(glob.sync("../../community-modules/client-side-row-model/src/**/*.ts", { nodir: true, ignore: "../../community-modules/client-side-row-model/src/**/*.test.ts" }))
+                .concat(glob.sync("../../community-modules/csv-export/src/**/*.ts", { nodir: true, ignore: "../../community-modules/csv-export/src/**/*.test.ts" }))
+                .concat(glob.sync("../../community-modules/infinite-row-model/src/**/*.ts", { nodir: true, ignore: "../../community-modules/infinite-row-model/src/**/*.test.ts" }))
                 .concat(['./src/_assets/ts/community-grid-all-modules-umd-beta.js'])
     },
 
