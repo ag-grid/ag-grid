@@ -34,16 +34,11 @@ $ag-border-color: $ag-alpine-gray-4 !default;
 // borders between body cells
 $ag-secondary-border-color: #dde2eb !default;
 
-$ag-color-icon: $ag-alpine-gray-3 !default;
+$ag-selection-border-color: $ag-color-secondary !default;
+$ag-selection-background-color: rgba($ag-color-secondary, 0.2) !default;
 
-// range selection
-$ag-color-selected: lighten($ag-color-secondary, 40) !default;
-$ag-color-background-range-selection: transparentize($ag-color-selected, 0.8) !default;
-$ag-color-background-range-selected-1: opacify($ag-color-background-range-selection, 0.2) !default;
-$ag-color-background-range-selected-2: opacify($ag-color-background-range-selection, 0.4) !default;
-$ag-color-background-range-selected-3: opacify($ag-color-background-range-selection, 0.6) !default;
-$ag-color-background-range-selected-4: opacify($ag-color-background-range-selection, 0.8) !default;
-
+$ag-selected-tab-underline-color: $ag-color-primary !default;
+$ag-selected-tab-underline-width: 2px !default;
 
 $ag-header-column-separator: false !default;
 $ag-header-column-resize-handle: true !default;
@@ -122,9 +117,12 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 //
 //
 
-$ag-foreground-opacity: 1 !default;
-$ag-secondary-foreground-color-opacity: 1 !default;
-$ag-disabled-foreground-color-opacity: 1 !default;
+$ag-borders-side-button: false;
+        
+$ag-selected-tab-underline-transition-speed: 0.3s;
+
+$ag-checkbox-color: $ag-alpine-gray-3 !default;
+$ag-checkbox-checked-color: $ag-color-primary !default;
 
 // Sizing
 $ag-grid-size: 6px !default;
@@ -136,24 +134,18 @@ $ag-row-height: $ag-grid-size * 7 !default;
 $ag-default-background: $ag-color-background !default;
 $ag-background-color: $ag-default-background !default;
 
-$ag-icon-color: $ag-color-icon !default;
-$ag-alt-icon-color: $ag-default-background !default;
+$ag-checkbox-background-color: $ag-default-background !default;
 $ag-header-cell-moving-background-color: $ag-default-background !default;
 
 // Derived from above
-$ag-secondary-foreground-color: rgba($ag-color-foreground, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
-$ag-disabled-foreground-color: rgba($ag-color-foreground, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
+$ag-secondary-foreground-color: $ag-color-foreground !default; // foreground-secondary
+$ag-disabled-foreground-color: $ag-color-foreground; // foreground-disabled
 $ag-input-border-color: $ag-color-border-form-element !default;
 $ag-input-disabled-background-color: $ag-color-background-form-element-disabled !default;
 
 $ag-range-selection-highlight-color: $ag-color-secondary !default;
 
-$ag-selected-color: $ag-color-selected !default;
-$ag-range-selection-background-color: $ag-color-background-range-selection !default;
-$ag-range-selected-color-1: $ag-color-background-range-selected-1 !default;
-$ag-range-selected-color-2: $ag-color-background-range-selected-2 !default;
-$ag-range-selected-color-3: $ag-color-background-range-selected-3 !default;
-$ag-range-selected-color-4: $ag-color-background-range-selected-4 !default;
+$ag-selection-background-color: $ag-color-background-range-selection !default;
 
 $ag-range-selection-chart-category-background-color: transparentize($ag-color-background-chart-range-selection-category, 0.9) !default;
 $ag-range-selection-chart-background-color: transparentize($ag-color-background-chart-range-selection, 0.9) !default;
@@ -162,8 +154,6 @@ $ag-editor-background-color: $ag-chrome-background !default;
 $ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
-$ag-header-cell-hover-background-color: $ag-header-background-color !default;
-$ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
 $ag-hover-color: $ag-color-row-hover !default;
 $ag-chip-background-color: $ag-color-background-chip !default;
@@ -199,22 +189,15 @@ $ag-secondary-font-family: $ag-font-family-secondary !default;
 $ag-secondary-font-size: $ag-size-font-secondary !default;
 $ag-secondary-font-weight: $ag-weight-font-secondary !default;
 $ag-accent-color: $ag-color-primary !default;
-$ag-primary-color: $ag-color-primary !default;
 $ag-foreground-color: $ag-color-foreground !default;
-$ag-card-background-color: $ag-background-color !default;
 $ag-cell-data-changed-color: $ag-color-cell-data-changed !default;
 $ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;
 $ag-value-change-delta-down-color: $ag-color-value-change-delta-down !default;
 $ag-value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background !default;
-$ag-icon-color: $ag-color-icon !default;
-$ag-icon-opacity: $ag-foreground-opacity !default;
-$ag-ag-range-selected-color-1: $ag-range-selected-color-1 !default;
-$ag-ag-range-selected-color-2: $ag-range-selected-color-2 !default;
-$ag-ag-range-selected-color-3: $ag-range-selected-color-3 !default;
-$ag-ag-range-selected-color-4: $ag-range-selected-color-4 !default;
 $ag-input-height: $ag-grid-size * 4 !default;
 $ag-button-text-transform: uppercase !default;
 $ag-use-icons-for-pager-buttons: true !default;
 
 // Icons
 @import "./font-vars";
+@import "../../ag-theme-base/vars/_ag-theme-base-vars";

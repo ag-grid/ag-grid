@@ -1,4 +1,3 @@
-@import '../vars/ag-theme-alpine-vars';
 
 $ag-checkbox-size: 15px;
 $ag-checkbox-border-radius: $ag-border-radius;
@@ -11,10 +10,6 @@ $ag-checkbox-border-radius: $ag-border-radius;
 @mixin ag-box-shadow($color) {
     // TODO don't use rem
     box-shadow: 0 0 2px 0.1rem transparentize($color, 0.6);
-}
-
-@mixin ag-primary-box-shadow {
-    @include ag-box-shadow($ag-color-primary);
 }
 
 @mixin ag-chrome-box-shadow {
@@ -121,7 +116,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 
     &:focus {
         border-color: $ag-color-primary;
-        @include ag-primary-box-shadow();
+        @include ag-box-shadow($ag-color-primary);
     }
 }
 
@@ -358,7 +353,7 @@ $ag-toggle-button-width: 28px;
 
 @mixin ag-focus-range-thumb {
     border-color: $ag-color-primary;
-    @include ag-primary-box-shadow();
+    @include ag-box-shadow($ag-color-primary);
 }
 
 %range {

@@ -67,8 +67,8 @@ export class GridHeaderDropZones extends Component {
 
     private onDropPanelVisible(): void {
         const bothDisplayed = this.rowGroupComp.isDisplayed() && this.pivotComp.isDisplayed();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
+        this.rowGroupComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
+        this.pivotComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
     }
 
     private onRowGroupChanged(): void {

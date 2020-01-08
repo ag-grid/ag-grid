@@ -27,6 +27,10 @@
         padding: 0;
     }
 
+    .ag-drag-handle {
+        color: $ag-secondary-foreground-color;
+    }
+
     ////////////////////////////////////////
     // Virtual List
     ////////////////////////////////////////
@@ -80,6 +84,12 @@
     .ag-group-expanded,
     .ag-group-contracted {
         @include ag-theme-rtl(( margin-right: $ag-cell-widget-spacing ));
+
+        color: $ag-secondary-foreground-color;
+    }
+    
+    .ag-group-title-bar-icon {
+        color: $ag-secondary-foreground-color;
     }
     
     .ag-group-child-count {
@@ -148,13 +158,13 @@
         height: $ag-icon-size;
         width: 40px;
         background-color: $ag-background-color;
-        border: 1px solid $ag-icon-color;
+        border: 1px solid $ag-foreground-color;
         border-radius: 500rem;
 
         .ag-icon {
             width: $ag-icon-size;
             height: $ag-icon-size;
-            border: 1px solid $ag-icon-color;
+            border: 1px solid $ag-foreground-color;
             border-radius: 500rem;
             right: calc(100% - #{$ag-icon-size});
         }
@@ -180,6 +190,7 @@
     
     .ag-picker-field-button {
         background-color: $ag-background-color;
+        color: $ag-secondary-foreground-color;
 
         &:hover {
             background-color: $ag-hover-color;

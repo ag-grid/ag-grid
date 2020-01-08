@@ -17,7 +17,6 @@ $ag-chrome-background: $ag-alpine-gray-1 !default;
 $ag-odd-row-background-color: $ag-alpine-gray-1 !default;
 
 // selection
-$ag-color-selected: darken($ag-color-secondary, 25) !default;
 $ag-color-background-range-selection: darken($ag-color-secondary, 34) !default;
 $ag-color-background-range-selected-1: lighten($ag-color-background-range-selection, 10) !default;
 $ag-color-background-range-selected-2: lighten($ag-color-background-range-selection, 20) !default;
@@ -26,7 +25,6 @@ $ag-color-background-range-selected-4: lighten($ag-color-background-range-select
 
 $ag-border-color: $ag-alpine-gray-3 !default;
 $ag-secondary-border-color: transparentize($ag-alpine-gray-2, 0.5) !default;
-$ag-color-icon: $ag-alpine-gray-3 !default;
 
 $ag-color-row-hover: transparentize($ag-color-primary, 0.8) !default;
 
@@ -41,3 +39,4 @@ $ag-color-background-toggle-button: $ag-alpine-gray-3 !default;
 // shadow should be darker (instead of inverted) for a natural look
 $ag-color-chrome-shadow: $ag-alpine-black !default;
 
+@import "../../ag-theme-alpine/vars/ag-theme-alpine-vars";

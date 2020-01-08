@@ -65,6 +65,7 @@
 
     .ag-row {
         height: $ag-row-height;
+        color: $ag-data-color;
         @include ag-grid-border(bottom, $color: $ag-row-border-color);
 
         &.ag-row-selected {
@@ -129,7 +130,7 @@
     .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
     .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
     .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-        border: 1px solid $ag-primary-color;
+        border: 1px solid $ag-selection-border-color;
         outline: initial;
     }
 

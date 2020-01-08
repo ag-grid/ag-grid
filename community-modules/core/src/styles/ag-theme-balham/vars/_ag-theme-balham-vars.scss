@@ -1,9 +1,5 @@
 @import './ag-theme-balham-import-legacy-vars';
 
-$ag-foreground-opacity: 0.87 !default;
-$ag-secondary-foreground-color-opacity: 0.54 !default;
-$ag-disabled-foreground-color-opacity: 0.38 !default;
-
 // Sizing
 $ag-grid-size: 4px !default;
 $ag-icon-size: 16px !default;
@@ -13,12 +9,13 @@ $ag-row-height: $ag-grid-size * 7 !default;
 // theme shortcuts
 $ag-default-background: white !default;
 $ag-chrome-background: lighten(#ECF0F1, 3) !default;
-$ag-active: #0091EA !default;
+$ag-balham-active: #0091EA !default;
 $ag-foreground-color: #000 !default;
+$ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
+$ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
 $ag-border-color: #BDC3C7 !default;
 $ag-row-border-color: #D9DCDE !default;
-$ag-icon-color: #7F8C8D !default;
-$ag-alt-icon-color: $ag-default-background !default;
+$ag-checkbox-background-color: $ag-default-background !default;
 $ag-alt-background: #ECF0F1 !default;
 $ag-odd-row-background-color: rgb(252, 253, 254) !default;
 $ag-header-cell-moving-background-color: $ag-default-background !default;
@@ -26,23 +23,20 @@ $ag-header-cell-moving-background-color: $ag-default-background !default;
 $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
 
 // Derived from above
-$ag-foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity) !default; // foreground
-$ag-secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
-$ag-disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
 $ag-input-border-color: #95A5A6 !default;
 $ag-input-disabled-background-color: #ebebeb !default;
 
-$ag-primary-color: $ag-active !default;
-$ag-accent-color: $ag-active !default;
-$ag-range-selection-background-color: transparentize($ag-active, 0.8) !default;
+$ag-accent-color: $ag-balham-active !default;
+$ag-selection-background-color: rgba($ag-balham-active, 0.2) !default;
+$ag-selection-border-color: $ag-balham-active;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
-$ag-range-selected-color-1: opacify($ag-range-selection-background-color, 0.1) !default;
-$ag-range-selected-color-2: opacify($ag-range-selection-background-color, 0.2) !default;
-$ag-range-selected-color-3: opacify($ag-range-selection-background-color, 0.3) !default;
-$ag-range-selected-color-4: opacify($ag-range-selection-background-color, 0.4) !default;
-$ag-range-selection-highlight-color: $ag-active !default;
-$ag-selected-color: lighten($ag-active, 40) !default;
+$ag-range-selection-highlight-color: $ag-balham-active !default;
+$ag-selected-color: lighten($ag-balham-active, 40) !default;
+
+
+$ag-checkbox-color: #7F8C8D !default;
+$ag-checkbox-checked-color: $ag-balham-active !default;
 
 $ag-background-color: $ag-default-background !default;
 
@@ -50,8 +44,6 @@ $ag-editor-background-color: $ag-chrome-background !default;
 $ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
-$ag-header-cell-hover-background-color: $ag-header-background-color !default;
-$ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
 $ag-hover-color: $ag-alt-background !default;
 $ag-chip-background-color: darken($ag-alt-background, 5) !default;
@@ -102,3 +94,4 @@ $ag-use-icons-for-pager-buttons: true !default;
 
 // Icons
 @import "./font-vars";
+@import "../../ag-theme-base/vars/_ag-theme-base-vars";

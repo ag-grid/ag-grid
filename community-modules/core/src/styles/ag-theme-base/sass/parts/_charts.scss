@@ -13,6 +13,7 @@
         margin: 2px 0;
         cursor: pointer;
         border-radius: $ag-card-radius;
+        color: $ag-secondary-foreground-color;
     }
 
     .ag-chart-menu-icon:hover {
@@ -40,7 +41,7 @@
         }
 
         &.ag-selected {
-            border-color: $ag-primary-color;
+            border-color: $ag-selection-border-color;
         }
     }
 
@@ -51,7 +52,7 @@
         border-radius: 4px;
 
         &.ag-selected {
-            background: $ag-primary-color;
+            background-color: $ag-selection-border-color;
         }
     }
 

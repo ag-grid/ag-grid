@@ -51,4 +51,9 @@
         cursor: default;
         margin-top: $ag-grid-size;
     }
+
+    .ag-column-group-icons,
+    .ag-column-select-header-icon {
+        color: $ag-icon-button-color;
+    }
 }

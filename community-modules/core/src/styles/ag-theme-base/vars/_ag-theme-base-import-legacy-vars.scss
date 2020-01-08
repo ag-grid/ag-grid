@@ -151,10 +151,6 @@
     $ag-header-height: $header-height !global;
   }
 
-  @if (variable-exists("icon-color") and not variable-exists("ag-icon-color")) {
-    $ag-icon-color: $icon-color !global;
-  }
-
   @if (variable-exists("icon-font-family") and not variable-exists("ag-icon-font-family")) {
     $ag-icon-font-family: $icon-font-family !global;
   }
@@ -259,15 +255,31 @@
     $ag-virtual-item-height: $virtual-item-height !global;
   }
 
-  @if (variable-exists("card-background-color") and not variable-exists("ag-card-background-color")) {
-    $ag-card-background-color: $card-background-color !global;
-  }
-
-  @if (variable-exists("ag-card-background-color") and not variable-exists("ag-card-background")) {
-    $ag-card-background: $ag-card-background-color !global;
-  }
-
   @if (variable-exists("ag-toolpanel-indent-size") and not variable-exists("ag-column-select-indent-size")) {
     $ag-column-select-indent-size: $ag-toolpanel-indent-size !global;
+  }
+
+  @if (variable-exists("ag-foreground-opacity") and not variable-exists("ag-foreground-color-opacity")) {
+    $ag-foreground-color-opacity: $ag-foreground-opacity !global;
+  }
+
+  @if (variable-exists("ag-alt-icon-color") and not variable-exists("ag-checkbox-background-color")) {
+    $ag-checkbox-background-color: $ag-alt-icon-color !global;
+  }
+
+  @if (variable-exists("ag-range-selection-background-color") and not variable-exists("ag-selection-background-color")) {
+    $ag-selection-background-color: $ag-range-selection-background-color !global;
+  }
+
+  @if (variable-exists("ag-range-selection-border-color") and not variable-exists("ag-selection-border-color")) {
+    $ag-selection-border-color: $ag-range-selection-border-color !global;
+  }
+
+  @if (variable-exists("ag-primary-color") and not variable-exists("ag-selection-border-color")) {
+    $ag-selection-border-color: $ag-primary-color !global;
+  }
+
+  @if (variable-exists("ag-primary-color") and not variable-exists("ag-selected-tab-underline-color")) {
+    $ag-selected-tab-underline-color: $ag-primary-color !global;
   }
 }

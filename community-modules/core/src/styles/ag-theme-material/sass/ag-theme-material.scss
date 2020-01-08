@@ -4,11 +4,12 @@
 @include ag-icons-font-face();
 
 .ag-theme-material {
-    %selected-tab {
-        border-bottom: 2px solid $ag-primary-color;
-    }
 
     @include ag-grid-theme();
+
+    .ag-tab {
+        height: $ag-grid-size * 4.5;
+    }
 
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-checked-readonly,
@@ -27,10 +28,6 @@
     .ag-header-cell, .ag-header-group-cell {
         background-color: $ag-header-background-color;
         transition: background-color 0.5s;
-    }
-
-    .ag-cell-highlight {
-        background-color: $ag-range-selection-highlight-color !important;
     }
 
     .ag-cell-highlight-animation {
@@ -57,11 +54,6 @@
         font-size: $ag-secondary-font-size;
         font-weight: $ag-secondary-font-weight;
         background-color: transparent;
-        border: solid 0px transparent;
-    }
-
-    .ag-selected .ag-side-button-button {
-        border-color: $ag-primary-color;
     }
 
     .ag-side-bar-right .ag-side-button-button {

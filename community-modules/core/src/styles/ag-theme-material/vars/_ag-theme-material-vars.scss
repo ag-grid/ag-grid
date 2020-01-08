@@ -5,11 +5,6 @@
 
 $ag-borders: false;
 
-// opacity values used for black values, taken from material spec
-$ag-foreground-opacity: 0.87 !default;
-$ag-secondary-foreground-color-opacity: 0.54 !default;
-$ag-disabled-foreground-color-opacity: 0.38 !default;
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,6 +21,8 @@ $ag-virtual-item-height: $ag-grid-size * 5;
 $filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
 $filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 
+$ag-selected-tab-underline-width: 2px;
+
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default; // legacy: font
 $ag-font-size: 13px !default;
@@ -36,34 +33,29 @@ $ag-secondary-font-size: 12px !default; // font-secondary-size
 $ag-secondary-font-weight: 700 !default; // font-secondary-weight
 
 // Colors
+$ag-foreground-color: rgba(#000, 0.87) !default;
+$ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
+$ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
 $ag-background-color: #fff !default;
-$ag-foreground-color: rgba(#000, $ag-foreground-opacity) !default; // foreground
-$ag-secondary-foreground-color: rgba(#000, $ag-secondary-foreground-color-opacity) !default; // foreground-secondary
-$ag-disabled-foreground-color: rgba(#000, $ag-disabled-foreground-color-opacity) !default; // foreground-disabled
 $ag-header-background-color: $ag-background-color !default;
 $ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
 $ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
-$ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
 $ag-border-color: #e2e2e2 !default;
-$ag-primary-color: #3f51b5 !default;
 $ag-accent-color: #ff4081 !default;
-$ag-icon-color: #333 !default;
-$ag-alt-icon-color: transparent !default;
+
+$ag-checkbox-checked-color: $ag-accent-color !default;
+$ag-checkbox-background-color: transparent !default;
 
 $ag-editor-background-color: #fafafa !default;
 $ag-panel-background-color: #eee !default;
 $ag-tool-panel-background-color: #fafafa !default;
 $ag-chip-background-color: #e2e2e2 !default;
 
-$ag-range-selection-background-color: rgba(122, 134, 203, 0.1) !default;
+$ag-selection-background-color: rgba(122, 134, 203, 0.1) !default;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
 $ag-range-selection-highlight-color: #fce4ec !default;
-$ag-range-selected-color-1: opacify($ag-range-selection-background-color, 0.1) !default;
-$ag-range-selected-color-2: opacify($ag-range-selection-background-color, 0.2) !default;
-$ag-range-selected-color-3: opacify($ag-range-selection-background-color, 0.3) !default;
-$ag-range-selected-color-4: opacify($ag-range-selection-background-color, 0.4) !default;
 
 $ag-hover-color: #fafafa !default;
 $ag-selected-color: #eee !default;
@@ -77,15 +69,13 @@ $ag-group-toolbar-background-color: darken($ag-group-background-color, 2%);
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;
 
-$ag-focused-textbox-border-bottom: 2px solid $ag-primary-color !default;
+$ag-focused-textbox-border-bottom: 2px solid #3f51b5 !default;
 $ag-input-bottom-border: 2px solid $ag-border-color !default;
 $ag-input-bottom-border-disabled: 1px solid $ag-border-color !default;
+$ag-button-color: #3f51b5 !default;
+$ag-selected-tab-underline-color: #3f51b5;
+$ag-selection-border-color: #3f51b5;
 $ag-button-background-color: transparent !default;
-$ag-card-background-color: $ag-background-color !default;
-$ag-ag-range-selected-color-1: $ag-range-selected-color-1 !default;
-$ag-ag-range-selected-color-2: $ag-range-selected-color-2 !default;
-$ag-ag-range-selected-color-3: $ag-range-selected-color-3 !default;
-$ag-ag-range-selected-color-4: $ag-range-selected-color-4 !default;
 $ag-input-height: $ag-grid-size * 5 !default;
 $ag-input-border-width: 0 !default;
 $ag-button-text-transform: uppercase !default;
@@ -104,3 +94,4 @@ $ag-full-width-tabs: true !default;
 
 // Icons
 @import "./font-vars";
+@import "../../ag-theme-base/vars/_ag-theme-base-vars";
