@@ -10,6 +10,7 @@ import { PolarChart } from "./polarChart";
 import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
 import { Legend } from "./legend";
+import { Padding } from "../util/padding";
 
 const mappings = {
     cartesian: {
@@ -29,6 +30,9 @@ const mappings = {
                 type: 'number',
                 position: 'left'
             }]
+        },
+        padding: {
+            constructor: Padding
         },
         title: {
             constructor: Caption
@@ -229,6 +233,10 @@ export abstract class AgChart {
         const mapping = getMapping(path);
 
         if (mapping) {
+            if (!(component instanceof mapping.constructor)) {
+                return;
+            }
+
             AgChart.setComponentDefaults(options, mapping);
         }
 
