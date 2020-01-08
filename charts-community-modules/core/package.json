@@ -42,11 +42,17 @@
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
   },
+  "jest": {
+    "setupFiles": ["jest-canvas-mock"]
+  },
   "devDependencies": {
-    "@types/jest": "^24.0.0",
+    "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
-    "ts-jest": "^24.0.0",
-    "typescript": "^3.6.3"
+    "ts-jest": "^24.1.0",
+    "typescript": "3.6.3",
+    "raf": "3.4.1",
+    "canvas": "2.6.1",
+    "jest-canvas-mock": "2.2.0"
   },
   "publishConfig": {
     "access": "public"

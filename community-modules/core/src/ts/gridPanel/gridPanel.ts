@@ -722,7 +722,7 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             this.clipboardService.pasteFromClipboard();
         }
     }

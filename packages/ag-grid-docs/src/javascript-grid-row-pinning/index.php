@@ -56,20 +56,23 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pinned rows are not part of the main row model. For this reason, the following is not possible:
-        <ul>
-            <li>
-                <b>Sorting</b>: Pinned rows cannot be sorted.
-            </li>
-            <li>
-                <b>Filtering</b>: Pinned rows are not filtered.
-            </li>
-            <li>
-                <b>Row Grouping</b>: Pinned rows cannot be grouped.
-            </li>
-            <li>
-                <b>Row Selection</b>: Pinned rows cannot be selected.
-            </li>
-        </ul>
+       <ul>
+         <li>
+            <b>Sorting</b>: Pinned rows cannot be sorted.
+         </li>
+         <li>
+            <b>Filtering</b>: Pinned rows are not filtered.
+         </li>
+         <li>
+            <b>Row Grouping</b>: Pinned rows cannot be grouped.
+         </li>
+         <li>
+            <b>Row Selection</b>: Pinned rows cannot be selected.
+         </li>
+        <li>
+            <b>domLayout='print'</b>: Pinned rows cannot be printed.
+        </li>
+       </ul>
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

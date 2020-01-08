@@ -9,28 +9,7 @@ import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { ColumnSeries } from "./chart/series/cartesian/columnSeries";
-
-beforeEach(() => {
-    const createElement = document.createElement.bind(document);
-
-    document.createElement = (tagName: string) => {
-        if (tagName === 'canvas') {
-            return {
-                style: {},
-                getContext: () => ({
-                    drawImage: () => ({}),
-                    $save: () => ({}),
-                    $setTransform: () => ({}),
-                    getImageData: () => {},
-                    putImageData: () => {}
-                }),
-                addEventListener: () => ({}),
-            };
-        }
-
-        return createElement(tagName);
-    };
-});
+import 'jest-canvas-mock';
 
 describe('createAxis', () => {
     it('returns category axis when specified in options', () => {

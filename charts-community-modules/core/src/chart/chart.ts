@@ -18,6 +18,7 @@ export abstract class Chart extends Observable {
     readonly id: string = this.createId();
 
     static defaults = chainObjects({}, {
+        data: [],
         parent: undefined,
         title: undefined,
         subtitle: undefined,
@@ -169,6 +170,15 @@ export abstract class Chart extends Observable {
     }
     get series(): Series[] {
         return this._series;
+    }
+
+    private _data: any[] = Chart.defaults.data;
+    set data(data: any[]) {
+        this._data = data;
+        this.series.forEach(series => series.data = data);
+    }
+    get data(): any[] {
+        return this._data;
     }
 
     private readonly scheduleLayout = () => {
@@ -351,15 +361,6 @@ export abstract class Chart extends Observable {
                 }
             }
         }
-    }
-
-    private _data: any[] = [];
-    set data(data: any[]) {
-        this._data = data;
-        this.series.forEach(series => series.data = data);
-    }
-    get data(): any[] {
-        return this._data;
     }
 
     protected _axesChanged = false;
