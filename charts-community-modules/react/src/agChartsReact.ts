@@ -1,6 +1,6 @@
 import {Component, createElement, createRef, RefObject} from "react";
 import * as PropTypes from "prop-types";
-import {AgChart, Chart} from "ag-charts-community";
+import {agChart, Chart} from "ag-charts-community";
 import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
 
 export interface AgLegendProps {
@@ -63,7 +63,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
 
     componentDidMount() {
         const options = this.applyParentIfNotSet(this.props.options);
-        this.chart = AgChart.create(options);
+        this.chart = agChart.create(options);
     }
 
     private applyParentIfNotSet(propsOptions: any) {
@@ -91,7 +91,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
         const changeDetectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
 
         if (!changeDetectionStrategy.areEqual(prevProps.options, nextProps.options)) {
-            AgChart.update(this.chart, this.applyParentIfNotSet(nextProps.options));
+            agChart.update(this.chart, this.applyParentIfNotSet(nextProps.options));
         }
     }
 
