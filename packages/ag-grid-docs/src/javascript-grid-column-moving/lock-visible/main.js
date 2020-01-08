@@ -31,10 +31,10 @@ var gridOptions = {
             iconKey: 'columns',
             toolPanel: 'agColumnsToolPanel',
             toolPanelParams: {
-                toolPanelSuppressRowGroups: true,
-                toolPanelSuppressValues: true,
-                toolPanelSuppressPivots: true,
-                toolPanelSuppressPivotMode: true
+                suppressRowGroups: true,
+                suppressValues: true,
+                suppressPivots: true,
+                suppressPivotMode: true
             }
         }]
     },
