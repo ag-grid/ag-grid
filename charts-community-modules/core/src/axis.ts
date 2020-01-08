@@ -10,6 +10,7 @@ import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
+import { chainObjects } from "./util/object";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {
@@ -23,21 +24,28 @@ export interface GridStyle {
 }
 
 export class AxisTick {
+    static defaults = chainObjects({}, {
+        width: 1,
+        size: 6,
+        color: 'rgba(195, 195, 195, 1)',
+        count: 10
+    });
+
     /**
      * The line width to be used by axis ticks.
      */
-    width: number = 1;
+    width: number = AxisTick.defaults.width;
 
     /**
      * The line length to be used by axis ticks.
      */
-    size: number = 6;
+    size: number = AxisTick.defaults.size;
 
     /**
      * The color of the axis ticks.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    color?: string = 'rgba(195, 195, 195, 1)';
+    color?: string = AxisTick.defaults.color;
 
     /**
      * A hint of how many ticks to use (the exact number of ticks might differ),
@@ -48,28 +56,39 @@ export class AxisTick {
      *     axis.tick.count = year;
      *     axis.tick.count = month.every(6);
      */
-    count: any = 10;
+    count: any = AxisTick.defaults.count;
 }
 
 export class AxisLabel {
-    fontStyle?: FontStyle;
 
-    fontWeight?: FontWeight;
+    static defaults = chainObjects({}, {
+        fontStyle: undefined,
+        fontWeight: undefined,
+        fontSize: 12,
+        fontFamily: 'Verdana, sans-serif',
+        padding: 5,
+        color: 'rgba(87, 87, 87, 1)',
+        formatter: undefined
+    });
 
-    fontSize: number = 12;
+    fontStyle?: FontStyle = AxisLabel.defaults.fontStyle;
 
-    fontFamily: string = 'Verdana, sans-serif';
+    fontWeight?: FontWeight = AxisLabel.defaults.fontWeight;
+
+    fontSize: number = AxisLabel.defaults.fontSize;
+
+    fontFamily: string = AxisLabel.defaults.fontFamily;
 
     /**
      * The padding between the labels and the ticks.
      */
-    padding: number = 5;
+    padding: number = AxisLabel.defaults.padding;
 
     /**
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    color?: string = 'rgba(87, 87, 87, 1)';
+    color?: string = AxisLabel.defaults.color;
 
     /**
      * Custom label rotation in degrees.
@@ -108,7 +127,8 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
+    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string
+        = AxisLabel.defaults.formatter;
 
     onFormatChange?: (format?: string) => void;
 
@@ -147,6 +167,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
     //     rect.strokeOpacity = 0.2;
     //     return rect;
     // })();
+
+    static defaults = chainObjects({}, {
+    });
 
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
