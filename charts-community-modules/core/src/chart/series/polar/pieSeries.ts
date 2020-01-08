@@ -254,7 +254,7 @@ export class PieSeries extends PolarSeries {
         const { angleKey, radiusKey, seriesItemEnabled, angleScale, groupSelectionData } = this;
         const data = angleKey && this.data ? this.data : [];
 
-        const angleData: number[] = data.map((datum, index) => seriesItemEnabled[index] && +datum[angleKey] || 0);
+        const angleData: number[] = data.map((datum, index) => seriesItemEnabled[index] && Math.abs(+datum[angleKey]) || 0);
         const angleDataTotal = angleData.reduce((a, b) => a + b, 0);
 
         // The ratios (in [0, 1] interval) used to calculate the end angle value for every pie slice.
