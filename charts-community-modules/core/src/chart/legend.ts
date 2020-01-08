@@ -6,6 +6,7 @@ import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
 import { reactive, Observable } from "../util/observable";
 import { getMarker } from "./marker/util";
+import { createId } from "../util/id";
 
 export interface LegendDatum {
     id: string;       // component ID
@@ -54,6 +55,10 @@ export class Legend extends Observable {
         labelFontSize: MarkerLabel.defaults.labelFontSize,
         labelFontFamily: MarkerLabel.defaults.labelFontFamily
     });
+
+    static className = 'Legend';
+
+    readonly id = createId(this);
 
     onLayoutChange?: () => void;
 

@@ -10,6 +10,7 @@ import { BandScale } from "../../scale/bandScale";
 import { ticksToTree, TreeLayout, treeLayout } from "../../layout/tree";
 import { AxisLabel } from "../../axis";
 import { ChartAxis } from "../chartAxis";
+import { createId } from "../../util/id";
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     grid: boolean = false;
@@ -36,7 +37,7 @@ export class GroupedCategoryAxis extends ChartAxis {
     // })();
 
     static className = 'GroupedCategoryAxis';
-    readonly id: string = this.createId();
+    readonly id = createId(this);
     // Label scale (labels are positionsed between ticks, tick count = label count + 1).
     // We don't call is `labelScale` for consistency with other axes.
     readonly scale: BandScale<string | number>;
@@ -67,15 +68,6 @@ export class GroupedCategoryAxis extends ChartAxis {
         this.separatorSelection = Selection.select(group).selectAll<Line>();
         this.labelSelection = Selection.select(group).selectAll<Text>();
         // this.group.append(this.bboxRect); // debug (bbox)
-    }
-
-    private createId(): string {
-        const constructor = this.constructor as any;
-        const className = constructor.className;
-        if (!className) {
-            throw new Error(`The ${constructor} is missing the 'className' property.`);
-        }
-        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
     set domain(value: any[]) {

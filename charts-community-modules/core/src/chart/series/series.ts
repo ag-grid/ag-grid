@@ -5,6 +5,7 @@ import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { chainObjects } from "../../util/object";
+import { createId } from "../../util/id";
 
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
@@ -50,7 +51,7 @@ export abstract class Series extends Observable {
         showInLegend: true
     });
 
-    readonly id: string = this.createId();
+    readonly id = createId(this);
 
     /**
      * The group node that contains all the nodes used to render this series.
@@ -94,17 +95,6 @@ export abstract class Series extends Observable {
         }
 
         return values;
-    }
-
-    private createId(): string {
-        const constructor = this.constructor as any;
-        const className = constructor.className;
-
-        if (!className) {
-            throw new Error(`The ${constructor} is missing the 'className' property.`);
-        }
-
-        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
     abstract getDomain(direction: ChartAxisDirection): any[];

@@ -13,18 +13,19 @@ import { Observable, reactive, PropertyChangeEventListener } from "../util/obser
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { chainObjects } from "../util/object";
+import { createId } from "../util/id";
 
 export abstract class Chart extends Observable {
-    readonly id: string = this.createId();
+    readonly id = createId(this);
 
     static defaults = chainObjects({}, {
         data: [],
         parent: undefined,
-        title: undefined,
-        subtitle: undefined,
-        padding: new Padding(20),
         width: 600,
-        height: 300
+        height: 300,
+        padding: new Padding(20),
+        title: undefined,
+        subtitle: undefined
     });
 
     readonly scene: Scene;
@@ -111,17 +112,6 @@ export abstract class Chart extends Observable {
         this.addPropertyListener('title', captionListener);
         this.addPropertyListener('subtitle', captionListener);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
-    }
-
-    private createId(): string {
-        const constructor = this.constructor as any;
-        const className = constructor.className;
-
-        if (!className) {
-            throw new Error(`The ${constructor} is missing the 'className' property.`);
-        }
-
-        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
     }
 
     destroy() {

@@ -1,15 +1,13 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
 import { Path2D } from "./path2D";
+import { createId } from "../util/id";
 
 export class Scene {
 
-    private static id = 1;
-    readonly id: string = this.createId();
+    static className = 'Scene';
 
-    private createId(): string {
-        return (this.constructor as any).name + '-' + (Scene.id++);
-    }
+    readonly id = createId(this);
 
     readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;

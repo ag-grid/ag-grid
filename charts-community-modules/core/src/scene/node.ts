@@ -1,6 +1,7 @@
 import { Scene } from "./scene";
 import { Matrix } from "./matrix";
 import { BBox } from "./bbox";
+import { createId } from "../util/id";
 
 export enum PointerEvents {
     All,
@@ -13,20 +14,10 @@ export enum PointerEvents {
  */
 export abstract class Node { // Don't confuse with `window.Node`.
 
-    // Uniquely identify nodes (to check for duplicates, for example).
-    private createId(): string {
-        const constructor = this.constructor as any;
-        const className = constructor.className;
-        if (!className) {
-            throw new Error(`The ${constructor} is missing the 'className' property.`);
-        }
-        return className + '-' + (constructor.id = (constructor.id || 0) + 1);
-    }
-
     /**
      * Unique node ID in the form `ClassName-NaturalNumber`.
      */
-    readonly id: string = this.createId();
+    readonly id = createId(this);
 
     /**
      * Some arbitrary data bound to the node.
