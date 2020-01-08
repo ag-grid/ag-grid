@@ -1,4 +1,4 @@
-(function (global) {
+(function(global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -40,6 +40,12 @@
                 'object-assign': 'npm:object-assign',
                 'cookie': 'npm:cookie',
                 // 'react-is': 'npm:react-is',
+                'react-color': 'npm:react-color@2.17.3',
+                'reactcss': 'npm:reactcss@1.2.3',
+                'lodash': 'npm:lodash@4.17.15',
+                'material-colors': 'npm:material-colors@1.2.6',
+                '@icons/material': 'npm:@icons/material@0.2.4',
+                'tinycolor2': 'npm:tinycolor2@1.4.1',
 
                 app: appLocation + 'app'
             },
@@ -64,6 +70,24 @@
             'react-redux': {
                 main: './dist/react-redux.min.js',
                 defaultExtension: 'js'
+            },
+            'react-color': {
+                main: './lib/index.js',
+                map: {
+                    './lib/components/common': './lib/components/common/index.js'
+                }
+            },
+            'reactcss': {
+                main: './lib/index.js',
+            },
+            'lodash': {
+                main: './lodash.min.js',
+            },
+            'material-colors': {
+                main: './dist/colors.js',
+            },
+            'tinycolor2': {
+                main: './dist/tinycolor-min.js',
             },
             // 'js-cookie': {
             //     main: './src/js.cookie.js',
@@ -95,7 +119,7 @@
                     react: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);
