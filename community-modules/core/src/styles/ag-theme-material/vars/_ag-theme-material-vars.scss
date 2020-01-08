@@ -42,9 +42,8 @@ $ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) 
 $ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
 
 $ag-border-color: #e2e2e2 !default;
-$ag-accent-color: #ff4081 !default;
 
-$ag-checkbox-checked-color: $ag-accent-color !default;
+$ag-checkbox-checked-color: #ff4081 !default;
 $ag-checkbox-background-color: transparent !default;
 
 $ag-editor-background-color: #fafafa !default;
@@ -57,8 +56,8 @@ $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !def
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
 $ag-range-selection-highlight-color: #fce4ec !default;
 
-$ag-hover-color: #fafafa !default;
-$ag-selected-color: #eee !default;
+$ag-row-hover-color: #fafafa !default;
+$ag-selected-row-background-color: #eee !default;
 $ag-cell-data-changed-color: #fce4ec !default;
 
 $ag-group-background-color: lighten($ag-tool-panel-background-color, 1%) !default;

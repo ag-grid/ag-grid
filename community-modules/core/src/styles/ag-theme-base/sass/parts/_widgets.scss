@@ -62,7 +62,7 @@
         height: $ag-rich-select-item-height;
 
         &:hover {
-            background-color: $ag-hover-color;
+            background-color: $ag-row-hover-color;
         }
     }
 
@@ -71,7 +71,7 @@
     }
 
     .ag-rich-select-row-selected {
-        background-color: $ag-selected-color;
+        background-color: $ag-selected-row-background-color;
     }
 
     ////////////////////////////////////////
@@ -158,25 +158,25 @@
         height: $ag-icon-size;
         width: 40px;
         background-color: $ag-background-color;
-        border: 1px solid $ag-foreground-color;
+        border: 1px solid $ag-checkbox-color;
         border-radius: 500rem;
-
-        .ag-icon {
-            width: $ag-icon-size;
-            height: $ag-icon-size;
-            border: 1px solid $ag-foreground-color;
-            border-radius: 500rem;
-            right: calc(100% - #{$ag-icon-size});
-        }
     }
-
     .ag-selected .ag-toggle-button-input-wrapper {
-        background-color: $ag-accent-color;
-        .ag-icon {
-            background: $ag-background-color;
-            right: -1px;
-        }
+        background-color: $ag-checkbox-checked-color;
     }
+
+    .ag-toggle-button-icon {
+        width: $ag-icon-size;
+        height: $ag-icon-size;
+        border: 1px solid $ag-checkbox-color;
+        border-radius: 500rem;
+        right: calc(100% - #{$ag-icon-size} + 1px);
+    }
+    .ag-selected .ag-toggle-button-icon {
+        background: $ag-background-color;
+        right: -1px;
+    }
+
 
     .ag-picker-field-wrapper {
         border: 1px solid $ag-border-color;
@@ -191,10 +191,6 @@
     .ag-picker-field-button {
         background-color: $ag-background-color;
         color: $ag-secondary-foreground-color;
-
-        &:hover {
-            background-color: $ag-hover-color;
-        }
     }
 
     .ag-dialog.ag-color-dialog {
@@ -323,13 +319,11 @@
     // Tooltip
     ////////////////////////////////////////
     .ag-tooltip {
-        background-color: $ag-tooltip-background-color;
-        color: $ag-tooltip-foreground-color;
-        border-radius: $ag-tooltip-border-radius;
-        padding: $ag-tooltip-padding;
-        border-width: $ag-tooltip-border-width;
-        border-style: $ag-tooltip-border-style;
-        border-color: $ag-tooltip-border-color;
+        background-color: $ag-background-color;
+        color: $ag-foreground-color;
+        border-radius: 2px;
+        padding: 5px;
+        @include ag-grid-border();
         transition: opacity 1s;
 
         &.ag-tooltip-hiding {

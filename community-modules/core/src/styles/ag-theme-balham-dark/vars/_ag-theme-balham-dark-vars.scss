@@ -16,7 +16,7 @@ $ag-odd-row-background-color: $ag-alt-background !default;
 $ag-input-border-color: #ecf0f1 !default;
 $ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
 
-$ag-selected-color: darken($ag-balham-active, 25) !default;
+$ag-selected-row-background-color: darken($ag-balham-active, 25) !default;
 
 $ag-checkbox-color: #ecf0f1 !default;
 
@@ -27,7 +27,7 @@ $ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
 
-$ag-hover-color: lighten($ag-alt-background, 10) !default;
+$ag-row-hover-color: lighten($ag-alt-background, 10) !default;
 $ag-chip-background-color: lighten($ag-alt-background, 5) !default;
 
 // delta changes
@@ -35,9 +35,6 @@ $ag-cell-data-changed-color: #fce4ec !default;
 $ag-value-change-delta-up-color: #43a047 !default;
 $ag-value-change-delta-down-color: #e53935 !default;
 $ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
-
-$ag-tooltip-background-color: $ag-header-background-color !default;
-$ag-tooltip-border-color: lighten($ag-header-background-color, 10%) !default;
 
 $ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
 $ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;

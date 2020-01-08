@@ -69,7 +69,7 @@
         @include ag-grid-border(bottom, $color: $ag-row-border-color);
 
         &.ag-row-selected {
-            border-color: $ag-selected-color;
+            border-color: $ag-selected-row-background-color;
         }
     }
 
@@ -98,7 +98,7 @@
     }
 
     .ag-row-hover {
-        background-color: $ag-hover-color;
+        background-color: $ag-row-hover-color;
     }
 
     .ag-numeric-cell {

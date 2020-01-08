@@ -170,8 +170,8 @@
     ////////////////////////////////////////
     // Header Checkbox
     ////////////////////////////////////////
-    &.ag-popup .ag-tooltip {
-        font-size: $ag-tooltip-font-size;
+    .ag-tooltip {
+        font-size: $ag-size-font-tooltip;
         padding: $ag-grid-size / 2 $ag-grid-size;
     }
 

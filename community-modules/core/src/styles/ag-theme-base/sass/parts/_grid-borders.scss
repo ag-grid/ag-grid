@@ -22,7 +22,7 @@
     }
     
     .ag-row-selected {
-        background-color: $ag-selected-color;
+        background-color: $ag-selected-row-background-color;
     }
 
     // we do not want to color the range color when the cell is also focused

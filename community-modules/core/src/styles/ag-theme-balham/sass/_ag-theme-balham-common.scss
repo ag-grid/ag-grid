@@ -105,4 +105,9 @@
     .ag-filter-toolpanel-body {
         background-color: $ag-background-color;
     }
+
+    .ag-tooltip {
+        border-radius: 2px;
+        background-color: $ag-border-color;
+    }
 }

@@ -26,13 +26,12 @@ $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !defaul
 $ag-input-border-color: #95A5A6 !default;
 $ag-input-disabled-background-color: #ebebeb !default;
 
-$ag-accent-color: $ag-balham-active !default;
 $ag-selection-background-color: rgba($ag-balham-active, 0.2) !default;
 $ag-selection-border-color: $ag-balham-active;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
 $ag-range-selection-highlight-color: $ag-balham-active !default;
-$ag-selected-color: lighten($ag-balham-active, 40) !default;
+$ag-selected-row-background-color: lighten($ag-balham-active, 40) !default;
 
 
 $ag-checkbox-color: #7F8C8D !default;
@@ -45,7 +44,7 @@ $ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
 
-$ag-hover-color: $ag-alt-background !default;
+$ag-row-hover-color: $ag-alt-background !default;
 $ag-chip-background-color: darken($ag-alt-background, 5) !default;
 
 $ag-row-stub-background-color: inherit !default;
@@ -69,8 +68,6 @@ $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 
-$ag-border-radius: 2px !default;
-
 // Fonts
 $ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
 
@@ -82,11 +79,6 @@ $ag-secondary-font-size: 12px !default; // font-secondary-size
 $ag-secondary-font-weight: 600 !default; // font-secondary-weight
 $ag-card-radius: 2px !default;
 $ag-card-shadow: none !default;
-
-$ag-tooltip-background-color: lighten(#BDC3C7, 5%) !default;
-$ag-tooltip-foreground-color: $ag-foreground-color !default;
-$ag-tooltip-border-radius: $ag-border-radius !default;
-$ag-tooltip-border-color: $ag-tooltip-background-color !default;
 
 $ag-input-height: $ag-grid-size * 4 !default;
 $ag-button-text-transform: uppercase !default;

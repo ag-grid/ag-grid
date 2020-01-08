@@ -12,10 +12,6 @@
     $ag-alt-background: $alt-background !global;
   }
   
-  @if (variable-exists("border-radius") and not variable-exists("ag-border-radius")) {
-    $ag-border-radius: $border-radius !global;
-  }
-  
   @if (variable-exists("cell-data-changed-color") and not variable-exists("ag-cell-data-changed-color")) {
     $ag-cell-data-changed-color: $cell-data-changed-color !global;
   }
@@ -45,7 +41,7 @@
   }
   
   @if (variable-exists("hover-color") and not variable-exists("ag-hover-color")) {
-    $ag-hover-color: $hover-color !global;
+    $ag-row-hover-color: $hover-color !global;
   }
   
   @if (variable-exists("odd-row-background-color") and not variable-exists("ag-odd-row-background-color")) {
@@ -73,7 +69,7 @@
   }
   
   @if (variable-exists("selected-color") and not variable-exists("ag-selected-color")) {
-    $ag-selected-color: $selected-color !global;
+    $ag-selected-row-background-color: $selected-color !global;
   }
   
   @if (variable-exists("value-change-delta-down-color") and not variable-exists("ag-value-change-delta-down-color")) {

@@ -36,6 +36,7 @@ $ag-secondary-border-color: #dde2eb !default;
 
 $ag-selection-border-color: $ag-color-secondary !default;
 $ag-selection-background-color: rgba($ag-color-secondary, 0.2) !default;
+$ag-selected-row-background-color: mix($ag-color-secondary, $ag-color-background, 30%);
 
 $ag-selected-tab-underline-color: $ag-color-primary !default;
 $ag-selected-tab-underline-width: 2px !default;
@@ -147,6 +148,7 @@ $ag-range-selection-highlight-color: $ag-color-secondary !default;
 
 $ag-selection-background-color: $ag-color-background-range-selection !default;
 
+
 $ag-range-selection-chart-category-background-color: transparentize($ag-color-background-chart-range-selection-category, 0.9) !default;
 $ag-range-selection-chart-background-color: transparentize($ag-color-background-chart-range-selection, 0.9) !default;
 
@@ -155,7 +157,7 @@ $ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
 
-$ag-hover-color: $ag-color-row-hover !default;
+$ag-row-hover-color: $ag-color-row-hover !default;
 $ag-chip-background-color: $ag-color-background-chip !default;
 
 $ag-row-stub-background-color: inherit !default;
@@ -176,11 +178,6 @@ $ag-grid-radius: 2px !default;
 $ag-card-radius: 2px !default;
 $ag-card-shadow: none !default;
 
-$ag-tooltip-background-color: $ag-color-background-alt !default;
-$ag-tooltip-foreground-color: $ag-color-foreground !default;
-$ag-tooltip-border-radius: $ag-border-radius !default;
-$ag-tooltip-border-color: $ag-color-background-alt !default;
-$ag-tooltip-font-size: $ag-size-font-tooltip !default;
 
 $ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
 $ag-font-size: $ag-size-font-default !default;
@@ -188,7 +185,6 @@ $ag-font-weight: $ag-weight-font-default !default;
 $ag-secondary-font-family: $ag-font-family-secondary !default;
 $ag-secondary-font-size: $ag-size-font-secondary !default;
 $ag-secondary-font-weight: $ag-weight-font-secondary !default;
-$ag-accent-color: $ag-color-primary !default;
 $ag-foreground-color: $ag-color-foreground !default;
 $ag-cell-data-changed-color: $ag-color-cell-data-changed !default;
 $ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;

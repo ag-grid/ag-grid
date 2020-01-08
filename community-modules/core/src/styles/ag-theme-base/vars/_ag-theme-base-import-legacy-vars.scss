@@ -223,34 +223,6 @@
     $ag-column-select-indent-size: $toolpanel-indent-size !global;
   }
 
-  @if (variable-exists("tooltip-background-color") and not variable-exists("ag-tooltip-background-color")) {
-    $ag-tooltip-background-color: $tooltip-background-color !global;
-  }
-
-  @if (variable-exists("tooltip-border-color") and not variable-exists("ag-tooltip-border-color")) {
-    $ag-tooltip-border-color: $tooltip-border-color !global;
-  }
-
-  @if (variable-exists("tooltip-border-radius") and not variable-exists("ag-tooltip-border-radius")) {
-    $ag-tooltip-border-radius: $tooltip-border-radius !global;
-  }
-
-  @if (variable-exists("tooltip-border-style") and not variable-exists("ag-tooltip-border-style")) {
-    $ag-tooltip-border-style: $tooltip-border-style !global;
-  }
-
-  @if (variable-exists("tooltip-border-width") and not variable-exists("ag-tooltip-border-width")) {
-    $ag-tooltip-border-width: $tooltip-border-width !global;
-  }
-
-  @if (variable-exists("tooltip-foreground-color") and not variable-exists("ag-tooltip-foreground-color")) {
-    $ag-tooltip-foreground-color: $tooltip-foreground-color !global;
-  }
-
-  @if (variable-exists("tooltip-padding") and not variable-exists("ag-tooltip-padding")) {
-    $ag-tooltip-padding: $tooltip-padding !global;
-  }
-
   @if (variable-exists("virtual-item-height") and not variable-exists("ag-virtual-item-height")) {
     $ag-virtual-item-height: $virtual-item-height !global;
   }
@@ -281,5 +253,21 @@
 
   @if (variable-exists("ag-primary-color") and not variable-exists("ag-selected-tab-underline-color")) {
     $ag-selected-tab-underline-color: $ag-primary-color !global;
+  }
+
+  @if (variable-exists("ag-primary-color") and not variable-exists("ag-selected-tab-underline-color")) {
+    $ag-selected-tab-underline-color: $ag-primary-color !global;
+  }
+
+  @if (variable-exists("ag-selected-color") and not variable-exists("ag-selected-row-background-color")) {
+    $ag-selected-row-background-color: $ag-selected-color !global;
+  }
+
+  @if (variable-exists("ag-accent-color") and not variable-exists("ag-checkbox-checked-color")) {
+    $ag-checkbox-checked-color: $ag-accent-color !global;
+  }
+
+  @if (variable-exists("ag-hover-color") and not variable-exists("ag-row-hover-color")) {
+    $ag-row-hover-color: $ag-hover-color !global;
   }
 }
