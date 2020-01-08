@@ -5,7 +5,7 @@
 @if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 
   @if (variable-exists("active") and not variable-exists("ag-active")) {
-    $ag-active: $active !global;
+    $ag-balham-active: $active !global;
   }
   
   @if (variable-exists("alt-background") and not variable-exists("ag-alt-background")) {
@@ -54,10 +54,6 @@
   
   @if (variable-exists("panel-background-color") and not variable-exists("ag-panel-background-color")) {
     $ag-panel-background-color: $panel-background-color !global;
-  }
-  
-  @if (variable-exists("primary-color") and not variable-exists("ag-primary-color")) {
-    $ag-primary-color: $primary-color !global;
   }
   
   @if (variable-exists("range-selection-highlight-color") and not variable-exists("ag-range-selection-highlight-color")) {

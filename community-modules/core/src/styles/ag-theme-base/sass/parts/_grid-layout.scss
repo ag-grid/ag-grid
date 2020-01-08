@@ -130,7 +130,7 @@
     .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
     .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
     .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-        border: 1px solid $ag-primary-color;
+        border: 1px solid $ag-selection-border-color;
         outline: initial;
     }
 

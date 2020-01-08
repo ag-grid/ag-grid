@@ -21,6 +21,8 @@ $ag-virtual-item-height: $ag-grid-size * 5;
 $filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
 $filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 
+$ag-selected-tab-underline-width: 2px;
+
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default; // legacy: font
 $ag-font-size: 13px !default;
@@ -40,7 +42,6 @@ $ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) 
 $ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
 
 $ag-border-color: #e2e2e2 !default;
-$ag-primary-color: #3f51b5 !default;
 $ag-accent-color: #ff4081 !default;
 
 $ag-checkbox-checked-color: $ag-accent-color !default;
@@ -51,7 +52,7 @@ $ag-panel-background-color: #eee !default;
 $ag-tool-panel-background-color: #fafafa !default;
 $ag-chip-background-color: #e2e2e2 !default;
 
-$ag-range-selection-background-color: rgba(122, 134, 203, 0.1) !default;
+$ag-selection-background-color: rgba(122, 134, 203, 0.1) !default;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
 $ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
 $ag-range-selection-highlight-color: #fce4ec !default;
@@ -68,9 +69,12 @@ $ag-group-toolbar-background-color: darken($ag-group-background-color, 2%);
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;
 
-$ag-focused-textbox-border-bottom: 2px solid $ag-primary-color !default;
+$ag-focused-textbox-border-bottom: 2px solid #3f51b5 !default;
 $ag-input-bottom-border: 2px solid $ag-border-color !default;
 $ag-input-bottom-border-disabled: 1px solid $ag-border-color !default;
+$ag-button-color: #3f51b5 !default;
+$ag-selected-tab-underline-color: #3f51b5;
+$ag-selection-border-color: #3f51b5;
 $ag-button-background-color: transparent !default;
 $ag-input-height: $ag-grid-size * 5 !default;
 $ag-input-border-width: 0 !default;

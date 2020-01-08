@@ -10,29 +10,14 @@
         @include ag-theme-rtl(( border-right: $ag-cell-horizontal-border ));
     }
 
-    .ag-ltr {
-        .ag-cell:not(.ag-cell-focus),
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-        .ag-root:not(.ag-has-focus) .ag-cell {
-            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-                border-left: 1px solid $ag-border-color;
-            }
-            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-                border-right: 1px solid $ag-border-color;
-            }
+    .ag-cell:not(.ag-cell-focus),
+    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
+    .ag-root:not(.ag-has-focus) .ag-cell {
+        &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
+            @include ag-theme-rtl((border-left: 1px solid $ag-border-color));
         }
-    }
-
-    .ag-rtl {
-        .ag-cell:not(.ag-cell-focus),
-        .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-        .ag-root:not(.ag-has-focus) .ag-cell {
-            &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-                border-left: 1px solid $ag-border-color;
-            }
-            &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-                border-right: 1px solid $ag-border-color;
-            }
+        &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
+            @include ag-theme-rtl((border-right: 1px solid $ag-border-color));
         }
     }
     
@@ -40,25 +25,9 @@
         background-color: $ag-selected-color;
     }
 
-    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-        border: 1px solid transparent;
-        &.ag-cell-range-top {
-            border-top-color: $ag-primary-color;
-        }
-        &.ag-cell-range-right {
-            border-right-color: $ag-primary-color;
-        }
-        &.ag-cell-range-bottom {
-            border-bottom-color: $ag-primary-color;
-        }
-        &.ag-cell-range-left {
-            border-left-color: $ag-primary-color;
-        }
-    }
-
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus) {
-        background-color: $ag-range-selection-background-color;
+        background-color: $ag-selection-background-color;
         &.ag-cell-range-chart {
             background-color: $ag-range-selection-chart-background-color;
         }
@@ -69,68 +38,73 @@
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 1);
+        @include ag-colour-self-overlay($ag-selection-background-color, 1);
     }
 
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 2);
+        @include ag-colour-self-overlay($ag-selection-background-color, 2);
     }
 
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 3);
+        @include ag-colour-self-overlay($ag-selection-background-color, 3);
     }
 
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 4);
+        @include ag-colour-self-overlay($ag-selection-background-color, 4);
     }
 
-    .ag-ltr,
-    .ag-rtl {
-        .ag-selection-fill-top {
-            border-top: 1px dashed $ag-primary-color;
-            &.ag-cell.ag-cell-range-selected {
-                border-top: 1px dashed darken($ag-border-color, 20%);
-            }
+    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+        border: 1px solid transparent;
+        &.ag-cell-range-top {
+            border-top-color: $ag-selection-border-color;
         }
-
-        .ag-selection-fill-right {
-            border-right: 1px dashed $ag-primary-color;
-            &.ag-cell.ag-cell-range-selected {
-                border-right: 1px dashed darken($ag-border-color, 20%);
-            }
+        &.ag-cell-range-right {
+            border-right-color: $ag-selection-border-color;
         }
-
-        .ag-selection-fill-bottom {
-            border-bottom: 1px dashed $ag-primary-color;
-            &.ag-cell.ag-cell-range-selected {
-                border-bottom: 1px dashed darken($ag-border-color, 20%);
-            }
+        &.ag-cell-range-bottom {
+            border-bottom-color: $ag-selection-border-color;
         }
-
-        .ag-selection-fill-left {
-            border-left: 1px dashed $ag-primary-color;
-            &.ag-cell.ag-cell-range-selected {
-                border-left: 1px dashed darken($ag-border-color, 20%);
-            }
+        &.ag-cell-range-left {
+            border-left-color: $ag-selection-border-color;
         }
     }
 
-    %selection-handle {
+    .ag-cell.ag-selection-fill-top,
+    .ag-cell.ag-selection-fill-top.ag-cell-range-selected {
+        border-top: 1px dashed $ag-selection-border-color;
+    }
+
+    .ag-cell.ag-selection-fill-right,
+    .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
+        border-right: 1px dashed $ag-selection-border-color;
+    }
+
+    .ag-cell.ag-selection-fill-bottom,
+    .ag-cell.ag-selection-fill-bottom.ag-cell-range-selected {
+        border-bottom: 1px dashed $ag-selection-border-color;
+    }
+
+    .ag-cell.ag-selection-fill-left,
+    .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
+        border-left: 1px dashed $ag-selection-border-color;
+    }
+
+    %ag-selection-handle {
         position: absolute;
         width: 6px;
         height: 6px;
         bottom: -1px;
         right: -1px;
-        background-color: $ag-primary-color;
+        background-color: $ag-selection-border-color;
     }
 
     .ag-fill-handle {
-        @extend %selection-handle;
+        @extend %ag-selection-handle;
         cursor: cell;
     }
 
     .ag-range-handle {
-        @extend %selection-handle;
+        @extend %ag-selection-handle;
         cursor: nwse-resize;
     }
 

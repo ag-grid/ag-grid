@@ -16,7 +16,7 @@
 
     .ag-tab-selected {
         background-color: $ag-default-background;
-        border-bottom: 2px solid $ag-primary-color;
+        // TODO required?
         border-bottom: 2px solid $ag-default-background;
         border-color: $ag-border-color;
     }

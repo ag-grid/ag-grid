@@ -15,29 +15,34 @@
         background: $ag-background-color;
         width: $ag-icon-size + 4;
         position: relative;
+        color: $ag-foreground-color;
     }
 
     .ag-side-button-button {
+        border: none;
         background: transparent;
-        border: 0;
-        color: $ag-foreground-color;
         padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-        @if $ag-borders {
+        @if $ag-borders-side-button {
             width: calc(100% + 1px);
+        } @else {
+            width: 100%;
         }
         margin: 0;
         min-height: $ag-grid-size * 18;
-        border-width: 1px 0 1px 0;
-        border-style: solid;
-        border-color: transparent;
         background-position-y: center;
         background-position-x: center;
         background-repeat: no-repeat;
+
+        border: none;
+        @include ag-grid-border((top, bottom), $color: transparent);
     }
 
     .ag-selected .ag-side-button-button {
-        background-color: $ag-tool-panel-background-color;
-        border-color: $ag-border-color;
+        @if $ag-borders-side-button {
+            background-color: $ag-tool-panel-background-color;
+            border-top-color: $ag-border-color;
+            border-bottom-color: $ag-border-color;
+        }
     }
 
     .ag-side-button-icon-wrapper {
@@ -52,12 +57,21 @@
             @include ag-grid-border(left);
         }
 
-        // TODO more specific variable
-        @if $ag-borders {
-            .ag-selected .ag-side-button-button {
+        .ag-side-button-button {
+            border-right: $ag-selected-tab-underline-width solid transparent;
+            @if $ag-selected-tab-underline-transition-speed {
+                transition: border-right $ag-selected-tab-underline-transition-speed;
+            }
+            
+            @if $ag-borders-side-button {
+                // this enlarges the tab button to cover the tool panel border
                 margin-right: -1px;
                 padding-right: 1px;
             }
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-right-color: $ag-selected-tab-underline-color;
         }
     }
 
@@ -70,12 +84,21 @@
             @include ag-grid-border(right);
         }
 
-        // TODO more specific variable
-        @if $ag-borders {
-            .ag-selected .ag-side-button-button {
+        .ag-side-button-button {
+            border-left: $ag-selected-tab-underline-width solid transparent;
+            @if $ag-selected-tab-underline-transition-speed {
+                transition: border-left $ag-selected-tab-underline-transition-speed;
+            }
+            
+            @if $ag-borders-side-button {
+                // this enlarges the tab button to cover the tool panel border
                 margin-left: -1px;
                 padding-left: 1px;
             }
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-left-color: $ag-selected-tab-underline-color;
         }
     }
 

@@ -266,4 +266,20 @@
   @if (variable-exists("ag-alt-icon-color") and not variable-exists("ag-checkbox-background-color")) {
     $ag-checkbox-background-color: $ag-alt-icon-color !global;
   }
+
+  @if (variable-exists("ag-range-selection-background-color") and not variable-exists("ag-selection-background-color")) {
+    $ag-selection-background-color: $ag-range-selection-background-color !global;
+  }
+
+  @if (variable-exists("ag-range-selection-border-color") and not variable-exists("ag-selection-border-color")) {
+    $ag-selection-border-color: $ag-range-selection-border-color !global;
+  }
+
+  @if (variable-exists("ag-primary-color") and not variable-exists("ag-selection-border-color")) {
+    $ag-selection-border-color: $ag-primary-color !global;
+  }
+
+  @if (variable-exists("ag-primary-color") and not variable-exists("ag-selected-tab-underline-color")) {
+    $ag-selected-tab-underline-color: $ag-primary-color !global;
+  }
 }

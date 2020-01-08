@@ -118,44 +118,18 @@
     }
 
     .ag-tabs-header {
-        min-width: 15rem;
-        border-bottom: 1px solid $ag-border-color;
+        min-width: 250px;
         justify-content: center;
-
-        .ag-tab {
-            padding: $ag-grid-size $ag-grid-size * 4;
-            padding-bottom: $ag-grid-size - 2;
-            height: $ag-grid-size * 6;
-
-            .ag-icon {
-                display: block;
-            }
-            border-bottom: 2px solid transparent;
-            margin-bottom: -0px;
-            transition: all 0.3s linear;
-        }
-
-        .ag-tab-selected {
-            .ag-icon {
-                color: $ag-color-primary;
-            }
-
-            border-bottom-color: $ag-color-primary;
-        }
+        @include ag-grid-border(bottom);
     }
 
-    // resets from the main theme
-    .ag-tabs-body {
-        padding: 0;
+    .ag-tab {
+        padding: $ag-grid-size $ag-grid-size * 4;
+        height: $ag-grid-size * 6;
+    }
 
-        .ag-menu-list {
-            & > div:first-child > span {
-                padding-top: $ag-grid-size;
-            }
-            & > div:last-child > span {
-                padding-bottom: $ag-grid-size;
-            }
-        }
+    .ag-tab-selected {
+        color: $ag-color-primary;
     }
 
     ////////////////////////////////////////
@@ -264,14 +238,9 @@
     ////////////////////////////////////////
     // Navigation
     ////////////////////////////////////////
-    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-        border: 1px solid $ag-color-primary;
-    }
 
     .ag-cell.ag-cell-inline-editing {
-        @include ag-primary-box-shadow();
+        @include ag-box-shadow($ag-selection-border-color);
         border-radius: 0;
         padding: 0;
         height: 100%;
@@ -303,7 +272,7 @@
     // Popup editing
     ////////////////////////////////////////
     .ag-popup > div.ag-popup-editor {
-        @include ag-primary-box-shadow();
+        @include ag-box-shadow($ag-selection-border-color);
         min-height: $ag-row-height;
         border-color: $ag-color-primary;
         border-radius: 0;
@@ -572,48 +541,10 @@
     // side buttons
     .ag-side-buttons {
         width: $ag-grid-size * 5;
-
-        .ag-side-button {
-            box-sizing: border-box;
-            margin-bottom: $ag-grid-size;
-            display: flex;
-            align-items: center;
-            transition: border-color 0.3s linear;
-
-            button {
-                background: none;
-                display: flex;
-                align-items: flex-start;
-                justify-content: center;
-                flex-direction: column;
-                appearance: none;
-                padding: 0;
-                & > div {
-                    margin-left: $ag-grid-size;
-                    margin-bottom: $ag-grid-size;
-                }
-                & > span {
-                    margin-left: $ag-grid-size * 1.5;
-                }
-            }
-
-            border-left: 2px solid transparent;
-
-            &.ag-selected {
-                border-color: $ag-color-primary;
-
-                button {
-                    background: none;
-                    border: 0;
-                    margin-left: 0;
-                    color: $ag-color-primary;
-
-                    & > div .ag-icon {
-                        color: $ag-color-primary;
-                    }
-                }
-            }
-        }
+    }
+    
+    .ag-side-button.ag-selected {
+        color: $ag-color-primary;
     }
 
     ////////////////////////////////////////
@@ -671,10 +602,6 @@
 
         .ag-chart-tabbed-menu {
             font: $ag-font-chrome;
-
-            .ag-tab-selected {
-                color: $ag-color-primary;
-            }
         }
 
         .ag-tabs-body {
@@ -935,26 +862,6 @@
             }
             .ag-rich-select-row {
                 padding-right: $ag-cell-horizontal-padding;
-            }
-        }
-
-        .ag-side-bar {
-            .ag-side-button {
-                border-left-width: 0;
-                border-right: 2px solid transparent;
-
-                button {
-                    & > div {
-                        margin-left: 0;
-                        margin-right: $ag-grid-size;
-                    }
-
-                    & > span {
-                        margin-left: 0;
-                        margin-right: $ag-grid-size * 1;
-                        writing-mode: vertical-rl;
-                    }
-                }
             }
         }
 

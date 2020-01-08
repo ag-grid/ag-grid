@@ -1,7 +1,10 @@
 @import "./ag-theme-base-import-legacy-vars";
 
 
+// Draw borders around most UI elements
 $ag-borders: true !default;
+// Draw borders around sidebar tabs so that the active tab merges with the current tool panel
+$ag-borders-side-button: $ag-borders !default;
 
 
 // Optionals TODO move elsewhere
@@ -16,7 +19,6 @@ $ag-menu-option-active-color: null !default;
 $ag-row-stub-background-color: null !default;
 $ag-value-change-value-highlight-background-color: null !default;
 $ag-row-floating-background-color: null !default;
-$ag-primary-color: null !default;
 
 //
 // COLOURS
@@ -46,17 +48,27 @@ $ag-checkbox-background-color: $ag-background-color !default;
 
 $ag-icon-button-color: $ag-secondary-foreground-color !default;
 
+// Color for border around grid and between major UI components
+$ag-border-color: $ag-foreground-color !default;
+
+// Color to draw around selected elements e.g. cell range selections
+$ag-selection-border-color: $ag-border-color !default;
+
 // Background colour when a range of cells is selected. Should be transparent in order to
 // look good when multiple ranges overlap.
-$ag-range-selection-background-color: rgba($ag-foreground-color, 0.15) !default;
+$ag-selection-background-color: rgba($ag-foreground-color, 0.15) !default;
 
+// Color and thickness of the border drawn under selected tabs, including menus
+// and tool panels
+$ag-selected-tab-underline-color: $ag-selection-border-color !default;
+$ag-selected-tab-underline-width: 0 !default;
+$ag-selected-tab-underline-transition-speed: null !default;
 
 
 $ag-header-foreground-color: $ag-secondary-foreground-color !default;
 
 
 
-$ag-border-color: $ag-foreground-color !default;
 $ag-secondary-border-color: $ag-border-color !default;
 $ag-row-border-color: $ag-secondary-border-color !default;
 $ag-accent-color: transparent !default;
@@ -150,8 +162,8 @@ $ag-group-border-color: null !default;
 $ag-group-title-background-color: null !default;
 $ag-group-toolbar-background-color: null !default;
 
-$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
-$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
+$ag-range-selection-chart-background-color: adjust-hue($ag-selection-background-color, 25%) !default;
+$ag-range-selection-chart-category-background-color: adjust-hue($ag-selection-background-color, -80%) !default;
 
 
 // Flags
@@ -159,6 +171,7 @@ $ag-range-selection-chart-category-background-color: adjust-hue($ag-range-select
 $ag-customize-buttons: false !default;
     // variables used when $ag-customize-buttons is true
     // TODO replace with %placeholder%
+    $ag-button-color: null !default;
     $ag-button-background-color: null !default;
     $ag-button-text-transform: null !default;
 

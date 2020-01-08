@@ -62,7 +62,7 @@
     }
     
     .ag-tab {
-        border-bottom: 2px solid transparent;
+        border-bottom: $ag-selected-tab-underline-width solid transparent;
         // TODO structural styles
         display: flex;
         flex: none;
@@ -72,6 +72,14 @@
         @if $ag-full-width-tabs {
             flex: 1 1 auto;
         }
+        
+        @if $ag-selected-tab-underline-transition-speed {
+            transition: border-bottom $ag-selected-tab-underline-transition-speed;
+        }
+    }
+
+    .ag-tab-selected {
+        border-bottom-color: $ag-selected-tab-underline-color;
     }
 
     .ag-tabs-body {
@@ -142,7 +150,7 @@
     .ag-filter-apply-panel-button {
         line-height: 1.5;
         @if $ag-customize-buttons {
-            @include ag-regular-button($ag-primary-color, $ag-button-background-color, $ag-button-text-transform);
+            @include ag-regular-button($ag-button-color, $ag-button-background-color, $ag-button-text-transform);
         }
 
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));

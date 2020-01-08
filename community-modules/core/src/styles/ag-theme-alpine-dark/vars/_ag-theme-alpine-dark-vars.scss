@@ -17,7 +17,6 @@ $ag-chrome-background: $ag-alpine-gray-1 !default;
 $ag-odd-row-background-color: $ag-alpine-gray-1 !default;
 
 // selection
-$ag-color-selected: darken($ag-color-secondary, 25) !default;
 $ag-color-background-range-selection: darken($ag-color-secondary, 34) !default;
 $ag-color-background-range-selected-1: lighten($ag-color-background-range-selection, 10) !default;
 $ag-color-background-range-selected-2: lighten($ag-color-background-range-selection, 20) !default;

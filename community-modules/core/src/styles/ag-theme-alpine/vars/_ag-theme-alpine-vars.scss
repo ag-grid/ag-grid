@@ -34,10 +34,11 @@ $ag-border-color: $ag-alpine-gray-4 !default;
 // borders between body cells
 $ag-secondary-border-color: #dde2eb !default;
 
-// range selection
-$ag-color-selected: lighten($ag-color-secondary, 40) !default;
-$ag-color-background-range-selection: transparentize($ag-color-selected, 0.8) !default;
+$ag-selection-border-color: $ag-color-secondary !default;
+$ag-selection-background-color: rgba($ag-color-secondary, 0.2) !default;
 
+$ag-selected-tab-underline-color: $ag-color-primary !default;
+$ag-selected-tab-underline-width: 2px !default;
 
 $ag-header-column-separator: false !default;
 $ag-header-column-resize-handle: true !default;
@@ -116,6 +117,9 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 //
 //
 
+$ag-borders-side-button: false;
+        
+$ag-selected-tab-underline-transition-speed: 0.3s;
 
 $ag-checkbox-color: $ag-alpine-gray-3 !default;
 $ag-checkbox-checked-color: $ag-color-primary !default;
@@ -141,8 +145,7 @@ $ag-input-disabled-background-color: $ag-color-background-form-element-disabled 
 
 $ag-range-selection-highlight-color: $ag-color-secondary !default;
 
-$ag-selected-color: $ag-color-selected !default;
-$ag-range-selection-background-color: $ag-color-background-range-selection !default;
+$ag-selection-background-color: $ag-color-background-range-selection !default;
 
 $ag-range-selection-chart-category-background-color: transparentize($ag-color-background-chart-range-selection-category, 0.9) !default;
 $ag-range-selection-chart-background-color: transparentize($ag-color-background-chart-range-selection, 0.9) !default;
@@ -186,7 +189,6 @@ $ag-secondary-font-family: $ag-font-family-secondary !default;
 $ag-secondary-font-size: $ag-size-font-secondary !default;
 $ag-secondary-font-weight: $ag-weight-font-secondary !default;
 $ag-accent-color: $ag-color-primary !default;
-$ag-primary-color: $ag-color-primary !default;
 $ag-foreground-color: $ag-color-foreground !default;
 $ag-cell-data-changed-color: $ag-color-cell-data-changed !default;
 $ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;

@@ -12,10 +12,6 @@ $ag-checkbox-border-radius: $ag-border-radius;
     box-shadow: 0 0 2px 0.1rem transparentize($color, 0.6);
 }
 
-@mixin ag-primary-box-shadow {
-    @include ag-box-shadow($ag-color-primary);
-}
-
 @mixin ag-chrome-box-shadow {
     box-shadow: 0 1px 4px 1px transparentize($ag-color-chrome-shadow, 0.6);
 }
@@ -120,7 +116,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
 
     &:focus {
         border-color: $ag-color-primary;
-        @include ag-primary-box-shadow();
+        @include ag-box-shadow($ag-color-primary);
     }
 }
 
@@ -357,7 +353,7 @@ $ag-toggle-button-width: 28px;
 
 @mixin ag-focus-range-thumb {
     border-color: $ag-color-primary;
-    @include ag-primary-box-shadow();
+    @include ag-box-shadow($ag-color-primary);
 }
 
 %range {

@@ -6,7 +6,7 @@ $ag-secondary-foreground-color: rgba($ag-foreground-color, 0.64) !default;
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
 
 $ag-chrome-background: darken(#636e72, 30) !default;
-$ag-active: #00B0FF !default;
+$ag-balham-active: #00B0FF !default;
 $ag-border-color: #424242 !default;
 $ag-row-border-color: #5c5c5c;
 $ag-alt-background: darken(#2d3436, 3) !default;
@@ -16,10 +16,7 @@ $ag-odd-row-background-color: $ag-alt-background !default;
 $ag-input-border-color: #ecf0f1 !default;
 $ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
 
-$ag-primary-color: $ag-active !default;
-$ag-accent-color: $ag-active !default;
-$ag-range-selection-highlight-color: $ag-active !default;
-$ag-selected-color: darken($ag-active, 25) !default;
+$ag-selected-color: darken($ag-balham-active, 25) !default;
 
 $ag-checkbox-color: #ecf0f1 !default;
 
