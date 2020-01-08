@@ -14,80 +14,114 @@ import { Padding } from "../util/padding";
 
 const mappings = {
     cartesian: {
-        constructor: CartesianChart, // Constructor function for the `cartesian` type.
-        // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
-        // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
-        // themselves are the exceptions.
-        // If a chart config has the (optional) `document` property, it will be passed to the constructor.
-        // There is no actual `document` property on the chart, it can only be supplied during instantiation.
-        constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
-        exclude: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
-        defaults: { // These values will be used if properties in question are not in the config object.
-            axes: [{
-                type: 'category',
-                position: 'bottom'
-            }, {
-                type: 'number',
-                position: 'left'
-            }]
+        meta: { // unlike other entries, 'meta' is not a component type or a config name
+            constructor: CartesianChart, // Constructor function for the `cartesian` type.
+            // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
+            // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
+            // themselves are the exceptions.
+            // If a chart config has the (optional) `document` property, it will be passed to the constructor.
+            // There is no actual `document` property on the chart, it can only be supplied during instantiation.
+            constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
+            exclude: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
+            defaults: { // These values will be used if properties in question are not in the config object.
+                axes: [{
+                    type: 'category',
+                    position: 'bottom'
+                }, {
+                    type: 'number',
+                    position: 'left'
+                }]
+            },
         },
         padding: {
-            constructor: Padding
+            meta: {
+                constructor: Padding
+            }
         },
         title: {
-            constructor: Caption
+            meta: {
+                constructor: Caption
+            }
         },
         subtitle: {
-            constructor: Caption
+            meta: {
+                constructor: Caption
+            }
         },
         axes: {
             number: {
-                constructor: NumberAxis,
+                meta: {
+                    constructor: NumberAxis,
+                },
                 label: {},
                 tick: {}
             },
             category: {
-                constructor: CategoryAxis,
+                meta: {
+                    constructor: CategoryAxis,
+                },
                 label: {},
                 tick: {}
             }
         },
         series: {
             line: {
-                constructor: LineSeries,
+                meta: {
+                    constructor: LineSeries,
+                },
                 marker: {}
             },
             column: {
-                constructor: ColumnSeries
+                meta: {
+                    constructor: ColumnSeries
+                }
             },
             bar: {
-                constructor: BarSeries
+                meta: {
+                    constructor: BarSeries
+                }
             },
             scatter: {
-                constructor: ScatterSeries,
+                meta: {
+                    constructor: ScatterSeries,
+                },
                 marker: {}
             },
             area: {
-                constructor: AreaSeries,
+                meta: {
+                    constructor: AreaSeries,
+                },
                 marker: {}
             }
         },
         legend: {
-            constructor: Legend
+            meta: {
+                constructor: Legend
+            }
         }
     },
     polar: {
-        constructor: PolarChart,
-        constructorParams: ['document'],
-        defaults: {
+        meta: {
+            constructor: PolarChart,
+            constructorParams: ['document'],
+            defaults: {}
+        },
+        padding: {
+            meta: {
+                constructor: Padding
+            }
         },
         series: {
             pie: {
-                constructor: PieSeries
+                meta: {
+                    constructor: PieSeries
+                }
             }
         },
         legend: {
-            constructor: Legend
+            meta: {
+                constructor: Legend
+            }
         }
     }
 } as any;
@@ -148,7 +182,7 @@ export abstract class AgChart {
     }
 
     private static setComponentDefaults(options: any, mapping: any) {
-        const { defaults } = mapping;
+        const defaults = mapping && mapping.meta && mapping.meta.defaults;
 
         // If certain options were not provided by the user, use the defaults from the mapping.
         if (defaults) {
@@ -178,18 +212,19 @@ export abstract class AgChart {
         const mapping = getMapping(path);
 
         if (mapping) {
+            const meta = mapping.meta || {};
             AgChart.setComponentDefaults(options, mapping);
-            const constructorParams = mapping.constructorParams || [];
+            const constructorParams = meta.constructorParams || [];
             // TODO: Constructor params processing could be improved, but it's good enough for current params.
             const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            component = component || new mapping.constructor(...constructorParamValues);
+            component = component || new meta.constructor(...constructorParamValues);
 
             for (const key in options) {
                 // Process every non-special key in the config object.
                 if (key !== 'type' && constructorParams.indexOf(key) < 0) {
                     const value = options[key];
 
-                    if (key in mapping && !(mapping.exclude && mapping.exclude.indexOf(key) >= 0)) {
+                    if (key in mapping && !(meta.exclude && meta.exclude.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
                             const subComponents = value.map(config => AgChart._create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
@@ -234,6 +269,21 @@ export abstract class AgChart {
         if (mapping) {
             if (!(component instanceof mapping.constructor)) {
                 return;
+            }
+
+            const meta = mapping.meta || {};
+            const { defaults } = meta.constructor;
+
+            if (defaults) {
+                for (const key in defaults) {
+                    if (typeof component[key] !== 'object' || (meta.exclude && meta.exclude.indexOf(key) >= 0)) {
+                        if (key in options) {
+                            component[key] = options[key];
+                        } else {
+                            component[key] = defaults[key];
+                        }
+                    }
+                }
             }
 
             AgChart.setComponentDefaults(options, mapping);
