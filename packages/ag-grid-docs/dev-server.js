@@ -327,8 +327,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
 }
 
 
-function watchModules(buildSourceModuleOnly) {
-    console.log("Watching modules...");
+function watchModulesLegacy(buildSourceModuleOnly) {
+    console.log("Watching modules [legacy]...");
     const lernaScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
     const node = 'node';
     const watchMode = buildSourceModuleOnly ? '-s' : '-w';
@@ -345,7 +345,7 @@ function watchModules(buildSourceModuleOnly) {
     });
 }
 
-function watchCssModulesBeta() {
+function watchCssModules() {
     console.log("Watching CSS only...");
     const cssScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
     const node = 'node';
@@ -362,7 +362,7 @@ function watchCssModulesBeta() {
     });
 }
 
-function watchModulesBeta() {
+function watchModules() {
     console.log("Watching TS files only...");
     const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
     const node = 'node';
@@ -394,8 +394,8 @@ function buildModules() {
     return 0;
 }
 
-function buildCssBeta() {
-    console.log("Building all modules [BETA]...");
+function buildCss() {
+    console.log("Building all modules...");
     const lernaScript = WINDOWS ?
         `node .\\scripts\\modules\\lernaWatch.js --buildBeta`
         :
@@ -410,7 +410,6 @@ function buildCssBeta() {
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules) {
     console.log("updating fw systemjs boilerplate config with modules...");
 
-    // spl module
     const systemJsFiles = [
         './src/example-runner/angular-boilerplate/systemjs.config.js',
         './src/example-runner/react-boilerplate/systemjs.config.js',
@@ -441,7 +440,7 @@ defaultExtension: 'js'
     })
 }
 
-module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningCheck = false, done) => {
+module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(inUse => {
             if (inUse) {
@@ -482,19 +481,19 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
 
             updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
-            // if we encounter a build failure on startup (in beta) we exit
+            // if we encounter a build failure on startup we exit
             // prevents the need to have to CTRL+C several times for certain types of error
-            const exitCode = buildModules(beta, done);
-            if (beta && exitCode === 1) {
+            const exitCode = buildModules();
+            if (exitCode === 1 && !legacy) {
                 done();
                 return;
             }
 
-            buildCssBeta();
+            buildCss();
 
-            if (beta) {
-                watchCssModulesBeta();
-                watchModulesBeta();
+            if (!legacy) {
+                watchCssModules();
+                watchModules();
 
                 // serve community, enterprise and react
 
@@ -507,7 +506,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
                 addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 
             } else {
-                watchModules(buildSourceModuleOnly);
+                watchModulesLegacy(buildSourceModuleOnly);
 
                 // serve community, enterprise and react
 
@@ -551,7 +550,7 @@ module.exports = (buildSourceModuleOnly = false, beta = false, alreadyRunningChe
             launchPhpCP(app);
 
             // Watch TS for errors. No actual transpiling happens here, just error reporting
-            if (!beta) {
+            if (legacy) {
                 launchTSCCheck(gridCommunityModules, gridEnterpriseModules);
             }
 

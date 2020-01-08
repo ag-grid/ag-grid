@@ -226,8 +226,10 @@ gulp.task('release', series(parallel('generate-examples-release', 'build-package
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 gulp.task('generate-examples', series('generate-examples-dev'));
-gulp.task('serve', require('./dev-server').bind(null, false, false, false));
-gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true, false, false));
-gulp.task('serve-beta', require('./dev-server').bind(null, true, true, false));
-gulp.task('serve-check', require('./dev-server').bind(null, false, false, true));
+
+// buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false
+gulp.task('serve-legacy', require('./dev-server').bind(null, false, true, false));
+gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true, true, false));
+gulp.task('serve', require('./dev-server').bind(null, true, false, false));
+gulp.task('serve-check', require('./dev-server').bind(null, false, true, true));
 

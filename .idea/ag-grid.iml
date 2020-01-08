@@ -35,6 +35,7 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/side-bar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/status-bar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-react-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
@@ -68,6 +69,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/seans-react-examples/dist" />
     </content>
     <content url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />

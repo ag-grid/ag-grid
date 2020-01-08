@@ -2,6 +2,7 @@
 
 const  ModuleRegistry = require("../../../../../community-modules/core/src/ts/main").ModuleRegistry;
 export * from "../../../../../community-modules/core/src/ts/main";
+export * from "../../../../../charts-community-modules/core/src/main";
 
 /* MODULES - Don't delete this line */
 const ClientSideRowModelModule = require("../../../../../community-modules/client-side-row-model/src/clientSideRowModelModule").ClientSideRowModelModule;
