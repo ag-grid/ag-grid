@@ -17,11 +17,11 @@ export class Scene {
         this.ctx = this.canvas.context;
     }
 
-    set parent(value: HTMLElement | undefined) {
-        this.canvas.parent = value;
+    set container(value: HTMLElement | undefined) {
+        this.canvas.container = value;
     }
-    get parent(): HTMLElement | undefined {
-        return this.canvas.parent;
+    get container(): HTMLElement | undefined {
+        return this.canvas.container;
     }
 
     download(fileName?: string) {

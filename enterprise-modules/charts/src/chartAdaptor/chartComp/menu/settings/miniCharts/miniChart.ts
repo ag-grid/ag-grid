@@ -11,7 +11,7 @@ export abstract class MiniChart extends Component {
     protected readonly root = new Group();
     protected readonly scene: Scene;
 
-    constructor(parent: HTMLElement, tooltipName: string) {
+    constructor(container: HTMLElement, tooltipName: string) {
         super();
 
         const scene = new Scene();
@@ -19,7 +19,7 @@ export abstract class MiniChart extends Component {
         scene.resize(this.size, this.size);
 
         scene.root = this.root;
-        scene.parent = parent;
+        scene.container = container;
 
         this.scene = scene;
         this.tooltipName = tooltipName;

@@ -19,8 +19,8 @@ export abstract class Chart extends Observable {
     readonly id = createId(this);
 
     static defaults = chainObjects({}, {
+        container: undefined,
         data: [],
-        parent: undefined,
         width: 600,
         height: 300,
         padding: new Padding(20),
@@ -30,15 +30,30 @@ export abstract class Chart extends Observable {
 
     readonly scene: Scene;
     readonly background: Rect = new Rect();
+    readonly legend = new Legend();
 
     protected legendAutoPadding = new Padding();
     protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement;
     private defaultTooltipClass = 'ag-chart-tooltip';
-
-    legend = new Legend();
     tooltipOffset: [number, number] = [20, 20];
+
+    set container(value: HTMLElement | undefined) {
+        this.scene.container = value;
+    }
+    get container(): HTMLElement | undefined {
+        return this.scene.container;
+    }
+
+    private _data: any[] = Chart.defaults.data;
+    set data(data: any[]) {
+        this._data = data;
+        this.series.forEach(series => series.data = data);
+    }
+    get data(): any[] {
+        return this._data;
+    }
 
     private pendingSize?: [number, number];
 
@@ -60,13 +75,6 @@ export abstract class Chart extends Observable {
     }
     get height(): number {
         return this.pendingSize ? this.pendingSize[1] : this.scene.height;
-    }
-
-    set parent(value: HTMLElement | undefined) {
-        this.scene.parent = value;
-    }
-    get parent(): HTMLElement | undefined {
-        return this.scene.parent;
     }
 
     @reactive('layoutChange') padding = new Padding(20);
@@ -122,7 +130,7 @@ export abstract class Chart extends Observable {
 
         this.legend.removeEventListener('layoutChange', this.onLayoutChange);
         this.cleanupListeners(this.scene.canvas.element);
-        this.scene.parent = undefined;
+        this.scene.container = undefined;
     }
 
     private readonly onLayoutChange = () => {
@@ -160,15 +168,6 @@ export abstract class Chart extends Observable {
     }
     get series(): Series[] {
         return this._series;
-    }
-
-    private _data: any[] = Chart.defaults.data;
-    set data(data: any[]) {
-        this._data = data;
-        this.series.forEach(series => series.data = data);
-    }
-    get data(): any[] {
-        return this._data;
     }
 
     private readonly scheduleLayout = () => {

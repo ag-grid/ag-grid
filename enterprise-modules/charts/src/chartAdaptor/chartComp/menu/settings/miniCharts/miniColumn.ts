@@ -7,8 +7,8 @@ export class MiniColumn extends MiniChartWithAxes {
 
     private readonly bars: Rect[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "groupedColumnTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "groupedColumnTooltip");
 
         const padding = this.padding;
         const size = this.size;

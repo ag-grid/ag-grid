@@ -20,27 +20,27 @@ export class HdpiCanvas {
         this.resize(this._width = 600, this._height = 300);
     }
 
-    private _parent: HTMLElement | undefined = undefined;
-    set parent(value: HTMLElement | undefined) {
-        if (this._parent !== value) {
+    private _container: HTMLElement | undefined = undefined;
+    set container(value: HTMLElement | undefined) {
+        if (this._container !== value) {
             this.remove();
 
             if (value) {
                 value.appendChild(this.element);
             }
 
-            this._parent = value;
+            this._container = value;
         }
     }
-    get parent(): HTMLElement | undefined {
-        return this._parent;
+    get container(): HTMLElement | undefined {
+        return this._container;
     }
 
     private remove() {
-        const parent = this.element.parentNode;
+        const { parentNode } = this.element;
 
-        if (parent != null) {
-            parent.removeChild(this.element);
+        if (parentNode != null) {
+            parentNode.removeChild(this.element);
         }
     }
 

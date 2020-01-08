@@ -13,13 +13,13 @@ export class MiniStackedColumn extends MiniChartWithAxes {
     private readonly bars: Rect[][];
 
     constructor(
-        parent: HTMLElement,
+        container: HTMLElement,
         fills: string[],
         strokes: string[],
         data = MiniStackedColumn.data,
         yScaleDomain = [0, 16],
         tooltipName = "stackedColumnTooltip") {
-        super(parent, tooltipName);
+        super(container, tooltipName);
 
         const padding = this.padding;
         const size = this.size;

@@ -21,7 +21,7 @@ const mappings = {
         // If a chart config has the (optional) `document` property, it will be passed to the constructor.
         // There is no actual `document` property on the chart, it can only be supplied during instantiation.
         constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
-        exclude: ['parent', 'data'], // Properties that should be set on the component as is (without pre-processing).
+        exclude: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
         defaults: { // These values will be used if properties in question are not in the config object.
             axes: [{
                 type: 'category',
@@ -80,7 +80,6 @@ const mappings = {
         constructor: PolarChart,
         constructorParams: ['document'],
         defaults: {
-            parent: document.body
         },
         series: {
             pie: {

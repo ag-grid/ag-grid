@@ -6,8 +6,8 @@ export class MiniScatter extends MiniChartWithAxes {
     static chartType = ChartType.Scatter;
     private readonly points: Shape[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "scatterTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "scatterTooltip");
 
         const size = this.size;
         const padding = this.padding;

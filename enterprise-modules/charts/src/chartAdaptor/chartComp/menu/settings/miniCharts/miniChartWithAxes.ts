@@ -6,8 +6,8 @@ export abstract class MiniChartWithAxes extends MiniChart {
     private readonly stroke = 'gray';
     private readonly axisOvershoot = 3;
 
-    constructor(parent: HTMLElement, tooltipName: string) {
-        super(parent, tooltipName);
+    constructor(container: HTMLElement, tooltipName: string) {
+        super(container, tooltipName);
     }
 
     @PostConstruct

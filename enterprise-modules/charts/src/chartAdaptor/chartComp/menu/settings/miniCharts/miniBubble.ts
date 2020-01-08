@@ -6,8 +6,8 @@ export class MiniBubble extends MiniChartWithAxes {
     static chartType = ChartType.Bubble;
     private readonly points: Shape[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "bubbleTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "bubbleTooltip");
 
         const size = this.size;
         const padding = this.padding;

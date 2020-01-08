@@ -17,8 +17,8 @@ export class MiniArea extends MiniChartWithAxes {
         [5, 3, 1]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
-        super(parent, "groupedAreaTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
+        super(container, "groupedAreaTooltip");
 
         const size = this.size;
         const padding = this.padding;

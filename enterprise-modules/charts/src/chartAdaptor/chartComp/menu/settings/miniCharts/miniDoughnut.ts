@@ -7,8 +7,8 @@ export class MiniDoughnut extends MiniChart {
 
     private readonly sectors: Sector[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
-        super(parent, tooltipName);
+    constructor(container: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
+        super(container, tooltipName);
 
         const radius = (this.size - this.padding * 2) / 2;
         const center = radius + this.padding;

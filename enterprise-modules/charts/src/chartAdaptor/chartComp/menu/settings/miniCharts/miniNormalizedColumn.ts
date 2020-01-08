@@ -9,7 +9,7 @@ export class MiniNormalizedColumn extends MiniStackedColumn {
         [2, 4, 6]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
     }
 }

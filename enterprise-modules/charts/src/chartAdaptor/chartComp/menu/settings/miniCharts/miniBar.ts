@@ -6,8 +6,8 @@ export class MiniBar extends MiniChartWithAxes {
     static chartType = ChartType.GroupedBar;
     private readonly bars: Rect[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "groupedBarTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "groupedBarTooltip");
 
         const padding = this.padding;
         const size = this.size;

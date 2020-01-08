@@ -49,9 +49,9 @@ import { convertToMap } from "./util/map";
 import { TimeAxis } from "./chart/axis/timeAxis";
 
 export class ChartBuilder {
-    private static createCartesianChart(parent: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
+    private static createCartesianChart(container: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
         const chart = new CartesianChart(document);
-        chart.parent = parent;
+        chart.container = container;
         xAxis.position = ChartAxisPosition.Bottom;
         yAxis.position = ChartAxisPosition.Left;
         chart.axes = [xAxis, yAxis];
@@ -59,18 +59,18 @@ export class ChartBuilder {
     }
 
     private static createGroupedCategoryChart(
-        parent: HTMLElement, xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis, document?: Document): GroupedCategoryChart {
+        container: HTMLElement, xAxis: GroupedCategoryChartAxis, yAxis: GroupedCategoryChartAxis, document?: Document): GroupedCategoryChart {
         const chart = new GroupedCategoryChart(document);
-        chart.parent = parent;
+        chart.container = container;
         xAxis.position = ChartAxisPosition.Bottom;
         yAxis.position = ChartAxisPosition.Left;
         chart.axes = [xAxis, yAxis];
         return chart;
     }
 
-    static createBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    static createBarChart(container: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'number'),
             ChartBuilder.createAxis(options.yAxis, 'category'),
             options.document);
@@ -84,9 +84,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createGroupedBarChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
+    static createGroupedBarChart(container: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
         const chart = this.createGroupedCategoryChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'number'),
             ChartBuilder.createGroupedCategoryAxis(options.yAxis),
             options.document
@@ -101,9 +101,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createColumnChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    static createColumnChart(container: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'category'),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
@@ -117,9 +117,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createGroupedColumnChart(parent: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
+    static createGroupedColumnChart(container: HTMLElement, options: CartesianChartOptions<BarSeriesOptions>): GroupedCategoryChart {
         const chart = this.createGroupedCategoryChart(
-            parent,
+            container,
             ChartBuilder.createGroupedCategoryAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document
@@ -134,9 +134,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createLineChart(parent: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    static createLineChart(container: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'category'),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
@@ -150,9 +150,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createGroupedLineChart(parent: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): GroupedCategoryChart {
+    static createGroupedLineChart(container: HTMLElement, options: CartesianChartOptions<LineSeriesOptions>): GroupedCategoryChart {
         const chart = this.createGroupedCategoryChart(
-            parent,
+            container,
             ChartBuilder.createGroupedCategoryAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document,
@@ -167,9 +167,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createScatterChart(parent: HTMLElement, options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
+    static createScatterChart(container: HTMLElement, options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'number'),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
@@ -183,9 +183,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+    static createAreaChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
         const chart = this.createCartesianChart(
-            parent,
+            container,
             ChartBuilder.createAxis(options.xAxis, 'category'),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
@@ -199,9 +199,9 @@ export class ChartBuilder {
         return chart;
     }
 
-    static createGroupedAreaChart(parent: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): GroupedCategoryChart {
+    static createGroupedAreaChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): GroupedCategoryChart {
         const chart = this.createGroupedCategoryChart(
-            parent,
+            container,
             ChartBuilder.createGroupedCategoryAxis(options.xAxis),
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document
@@ -216,18 +216,18 @@ export class ChartBuilder {
         return chart;
     }
 
-    private static createPolarChart(parent: HTMLElement): PolarChart {
+    private static createPolarChart(container: HTMLElement): PolarChart {
         const chart = new PolarChart();
-        chart.parent = parent;
+        chart.container = container;
         return chart;
     }
 
-    static createDoughnutChart(parent: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return this.createPieChart(parent, options);
+    static createDoughnutChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return this.createPieChart(container, options);
     }
 
-    static createPieChart(parent: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        const chart = this.createPolarChart(parent);
+    static createPieChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        const chart = this.createPolarChart(container);
 
         ChartBuilder.initChart(chart, options);
 
