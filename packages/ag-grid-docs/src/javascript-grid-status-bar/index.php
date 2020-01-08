@@ -238,7 +238,17 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 }
 </code>
 
-<p>To build your own status bar component please see the section on <a href="../javascript-grid-status-bar-component">
+
+<h2>Custom Status Bar Components</h2>
+
+<p>
+    Applications that are not using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a> or
+    which require bespoke status bar panels can provide their own custom status bar components.
+</p>
+
+<p>For more details see the following section: <a href="../javascript-grid-status-bar-component">
         Status Bar Panels (Components)</a>.</p>
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
