@@ -21,8 +21,8 @@ export abstract class Chart extends Observable {
     static defaults = chainObjects({}, {
         container: undefined,
         data: [],
-        width: 600,
-        height: 300,
+        width: 800,
+        height: 400,
         padding: new Padding(20),
         title: undefined,
         subtitle: undefined

@@ -22,7 +22,7 @@ const mappings = {
             // If a chart config has the (optional) `document` property, it will be passed to the constructor.
             // There is no actual `document` property on the chart, it can only be supplied during instantiation.
             constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
-            exclude: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
+            setAsIs: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
             defaults: { // These values will be used if properties in question are not in the config object.
                 axes: [{
                     type: 'category',
@@ -136,8 +136,15 @@ function getMapping(path: string) {
 }
 
 export abstract class AgChart {
-    static create(options: any) {
-        return AgChart._create(Object.create(options)); // avoid mutating user provided options
+    static create(options: any, container?: HTMLElement, data?: any[]) {
+        options = Object.create(options); // avoid mutating user provided options
+        if (container) {
+            options.container = container;
+        }
+        if (data) {
+            options.data = data;
+        }
+        return AgChart._create(options);
     }
 
     static update(chart: any, options: any) {
@@ -195,10 +202,6 @@ export abstract class AgChart {
     }
 
     private static _create(options: any, path?: string, component?: any) {
-        if (!(options && typeof options === 'object')) {
-            return;
-        }
-
         AgChart.setComponentType(options, path);
 
         if (path) {
@@ -224,7 +227,7 @@ export abstract class AgChart {
                 if (key !== 'type' && constructorParams.indexOf(key) < 0) {
                     const value = options[key];
 
-                    if (key in mapping && !(meta.exclude && meta.exclude.indexOf(key) >= 0)) {
+                    if (key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                         if (Array.isArray(value)) {
                             const subComponents = value.map(config => AgChart._create(config, path + '.' + key)).filter(config => !!config);
                             component[key] = subComponents;
@@ -240,7 +243,7 @@ export abstract class AgChart {
                                 }
                             }
                         }
-                    } else {
+                    } else { // if (key in meta.constructor.defaults) { // prevent users from creating custom properties
                         component[key] = value;
                     }
                 }
@@ -276,7 +279,7 @@ export abstract class AgChart {
 
             if (defaults) {
                 for (const key in defaults) {
-                    if (typeof component[key] !== 'object' || (meta.exclude && meta.exclude.indexOf(key) >= 0)) {
+                    if (typeof component[key] !== 'object' || (meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                         if (key in options) {
                             component[key] = options[key];
                         } else {
