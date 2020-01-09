@@ -3,6 +3,7 @@
   height: 400px;
   padding: 20px;
   text-align: center;
+  overflow: auto;
 }
 
 .options {

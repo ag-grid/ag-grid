@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { AgChart } from "ag-charts-community";
 import { data, getTemplates, series } from "./templates.jsx";
+import { ChromePicker } from "react-color";
 
 const appName = 'chart-api';
 
@@ -29,7 +30,7 @@ const Option = ({ name, description, value, updateValue, options, Editor }) => {
     return <div>
         <hr />
         <strong>{name}</strong>: {description}<br />
-        Default: {value ? value.toString() : "N/A"}<br />
+        Default: {value != null ? value.toString() : "N/A"}<br />
         Value: <Editor value={value} onChange={updateValue} options={options} />
     </div>;
 };
@@ -133,9 +134,9 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     }
 });
 
-const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
+const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     enabled: {
-        default: false,
+        default: true,
         description: `Whether the ${name} should be shown or not`,
         editor: CheckboxEditor
     },
@@ -161,9 +162,9 @@ class Chart extends React.Component {
         this.chart.current.innerHTML = "";
 
         AgChart.create({
-            ...this.props.options,
+            ...JSON.parse(JSON.stringify(this.props.options)),
             data,
-            parent: this.chart.current,
+            container: this.chart.current,
             series,
         });
     }
@@ -173,12 +174,7 @@ class Chart extends React.Component {
     }
 }
 
-export class App extends React.Component {
-    state = {
-        framework: this.getCurrentFramework(),
-        options: {}
-    };
-
+class Options extends React.PureComponent {
     config = {
         width: {
             default: 600,
@@ -196,22 +192,22 @@ export class App extends React.Component {
         },
         padding: {
             top: {
-                default: 10,
+                default: 20,
                 description: "Padding at the top of the chart area",
                 editor: NumberEditor
             },
             right: {
-                default: 10,
+                default: 20,
                 description: "Padding at the right of the chart area",
                 editor: NumberEditor
             },
             bottom: {
-                default: 10,
+                default: 20,
                 description: "Padding at the bottom of the chart area",
                 editor: NumberEditor
             },
             left: {
-                default: 10,
+                default: 20,
                 description: "Padding at the left of the chart area",
                 editor: NumberEditor
             }
@@ -223,12 +219,12 @@ export class App extends React.Component {
                 editor: ColourEditor
             },
             visible: {
-                default: false,
+                default: true,
                 description: "Whether the background should be visible or not",
                 editor: CheckboxEditor
             }
         },
-        title: getCaptionOptions("title", "bold", 16),
+        title: getCaptionOptions("title"),
         subtitle: getCaptionOptions("subtitle"),
         legend: {
             enabled: {
@@ -244,7 +240,7 @@ export class App extends React.Component {
             },
             padding: {
                 default: 20,
-                description: "The padding to use around the legend",
+                description: "The padding to use outside the legend",
                 editor: NumberEditor
             },
             item: {
@@ -284,6 +280,45 @@ export class App extends React.Component {
                 },
             }
         },
+    };
+
+    generateOptionConfig = (options, prefix = '') => {
+        let elements = [];
+
+        Object.keys(options).forEach(name => {
+            const key = `${prefix}${name}`;
+            const config = options[name];
+
+            if (config.description) {
+                elements.push(<Option
+                    key={key}
+                    name={name}
+                    description={config.description}
+                    value={config.default}
+                    updateValue={newValue => this.props.updateOptions(key, newValue, config.default)}
+                    options={config.options}
+                    Editor={config.editor}
+                />);
+            } else {
+                elements.push(<div class="section">
+                    <h2 key={key}>{name}</h2>
+                    {this.generateOptionConfig(config, `${key}.`)}
+                </div>);
+            }
+        });
+
+        return elements;
+    };
+
+    render() {
+        return this.generateOptionConfig(this.config);
+    }
+};
+
+export class App extends React.Component {
+    state = {
+        framework: this.getCurrentFramework(),
+        options: {}
     };
 
     updateOptions = (expression, value, defaultValue) => {
@@ -348,41 +383,16 @@ export class App extends React.Component {
     }
 
     render() {
-        const generateOptionConfig = (options, prefix) => {
-            let elements = [];
-
-            Object.keys(options).forEach(key => {
-                const value = options[key];
-
-                if (value.description) {
-                    elements.push(<Option
-                        key={`${prefix}${key}`}
-                        name={key}
-                        description={value.description}
-                        value={value.default}
-                        updateValue={newValue => this.updateOptions(`${prefix}${key}`, newValue, value.default)}
-                        options={value.options}
-                        Editor={value.editor}
-                    />);
-                } else {
-                    elements.push(<div class="section">
-                        <h2 key={`${prefix}${key}`}>{key}</h2>
-                        {generateOptionConfig(value, `${prefix}${key}.`)}
-                    </div>);
-                }
-            });
-
-            return elements;
-        };
+        const { options } = this.state;
 
         return <div className="app">
-            <div className="chart"><Chart options={this.state.options} /></div>
+            <div className="chart"><Chart options={options} /></div>
             <div className="options">
-                {generateOptionConfig(this.config, '')}
+                <Options updateOptions={this.updateOptions} />
             </div>
             <div className="code">
-                <OptionsCode options={this.state.options} />
-                <ApiCode options={this.state.options} />
+                <OptionsCode options={options} />
+                <ApiCode options={options} />
             </div>
         </div>;
     }

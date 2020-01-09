@@ -11,6 +11,7 @@ import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
 import { Legend } from "./legend";
 import { Padding } from "../util/padding";
+import { Rect } from "../scene/shape/rect";
 
 const mappings = {
     cartesian: {
@@ -32,6 +33,11 @@ const mappings = {
                     position: 'left'
                 }]
             },
+        },
+        background: {
+            meta: {
+                constructor: Rect
+            }
         },
         padding: {
             meta: {
