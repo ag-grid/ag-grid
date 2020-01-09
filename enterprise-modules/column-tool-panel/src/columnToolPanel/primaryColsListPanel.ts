@@ -263,15 +263,16 @@ export class PrimaryColsListPanel extends Component {
                 column.onSelectAllChanged(this.selectAllChecked);
             });
         } else {
+            // we don't want to change visibility on lock visible / hidden columns
+            const primaryCols = this.columnApi.getPrimaryColumns();
+            const colsToChange = primaryCols.filter(col => {
+                return !col.getColDef().lockVisible && !col.getColDef().hide;
+            });
+
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
-                const primaryCols = this.columnApi.getPrimaryColumns();
-                // we don't want to change visibility on lock visible / hidden columns
-                const colsToChange = primaryCols.filter(col => {
-                    return !col.getColDef().lockVisible && !col.getColDef().hide;
-                });
                 this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
                 return;
             }
@@ -283,8 +284,10 @@ export class PrimaryColsListPanel extends Component {
             });
 
             if (filteredCols.length > 0) {
+                const filteredColsToChange = colsToChange.filter(col => _.includes(filteredCols, col.getColId()));
+
                 // update visibility of columns currently filtered
-                this.columnApi.setColumnsVisible(filteredCols, this.selectAllChecked);
+                this.columnApi.setColumnsVisible(filteredColsToChange, this.selectAllChecked);
 
                 // update select all header with new state
                 const selectionState = this.selectAllChecked ? SELECTED_STATE.CHECKED : SELECTED_STATE.UNCHECKED;
@@ -407,7 +410,8 @@ export class PrimaryColsListPanel extends Component {
             const compId = this.getColumnCompId(child);
             let comp: ColumnItem = this.columnComps[compId];
             if (comp) {
-                const passesFilter = this.filterResults ? this.filterResults[compId] : true;
+                const filterResultExists = this.filterResults && _.exists(this.filterResults[compId]);
+                const passesFilter = filterResultExists ? this.filterResults[compId] : true;
                 comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
 

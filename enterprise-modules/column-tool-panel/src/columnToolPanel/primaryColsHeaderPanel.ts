@@ -181,7 +181,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.dispatchEvent({ type: "selectAll" });
+            this.onSelectClicked();
         }
     }
 
