@@ -550,43 +550,7 @@
     ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
-    .ag-panel {
-        .ag-panel-title-bar {
-            background-color: $ag-dialog-title-background-color;
-            border-bottom: 1px solid $ag-border-color;
-            color: $ag-dialog-title-foreground-color;
-            height: $ag-dialog-title-height;
-            font-size: $ag-dialog-title-font-size;
-            font-weight: $ag-dialog-title-font-weight;
-            font-family: $ag-dialog-title-font-family;
-            padding: $ag-grid-size $ag-cell-horizontal-padding;
-
-            .ag-panel-title-bar-buttons {
-                .ag-panel-title-bar-button {
-                    height: $ag-dialog-title-icon-size;
-                    width: $ag-dialog-title-icon-size;
-                    .ag-icon {
-                        line-height: $ag-dialog-title-icon-size;
-                        font-size: $ag-dialog-title-icon-size;
-                    }
-                    border-radius: $ag-border-radius;
-
-                    &:hover,
-                    &.ag-has-popup {
-                        background-color: inherit;
-                        .ag-icon {
-                            color: $ag-color-primary;
-                        }
-                    }
-
-                    &:not(:last-child) {
-                        margin-right: $ag-grid-size;
-                    }
-                }
-            }
-        }
-    }
-
+    
     .ag-chart {
         .ag-chart-menu {
             top: $ag-grid-size * 2;

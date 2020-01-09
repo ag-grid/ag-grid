@@ -8,6 +8,7 @@
 
     .ag-cell {
         @include ag-theme-rtl(( border-right: $ag-cell-horizontal-border ));
+        @include ag-theme-rtl(( border-right-width: 1px ));
     }
 
     .ag-cell:not(.ag-cell-focus),

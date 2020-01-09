@@ -47,7 +47,8 @@ const args: any = yargs
                 })
                 .option('only-failed', {
                     describe: 'Only run test cases that failed in the last run.',
-                    type: 'boolean'
+                    type: 'boolean',
+                    alias: 'only-failures'
                 })
                 .option('overwrite', {
                     describe: 'Overwrite test cases that already exist',

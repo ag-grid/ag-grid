@@ -92,6 +92,28 @@ $ag-secondary-border-color: $ag-border-color !default;
 // Colour of the border between grid rows
 $ag-row-border-color: $ag-secondary-border-color !default;
 
+// Default border for cells. This can be used to specify the border-style and border-color properties
+// e.g. `dashed red` but the border-width is fixed at 1px.
+$ag-cell-horizontal-border: solid transparent !default;
+
+// radius applied to the border drawn around the whole grid interface
+$ag-grid-radius: null !default;
+
+// Separator between columns in the header. Displays between all header cells
+// For best UX, use either this or $ag-header-column-resize-handle but not both
+$ag-header-column-separator: $ag-borders !default;
+    $ag-header-column-separator-height: 100% !default;
+    $ag-header-column-separator-width: 1px !default;
+    $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
+
+// Visible marker for resizeable columns. Displays in the same position as the column
+// separator, but only when the column is resizeable.
+// For best UX, use either this or $ag-header-column-separator but not both
+$ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator !default;
+    $ag-header-column-resize-handle-height: 50% !default;
+    $ag-header-column-resize-handle-width: 1px !default;
+    $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
+
 
 // 
 // Sizing
@@ -123,31 +145,10 @@ $ag-secondary-font-weight: 400 !default;
 
 // Misc
 
-// TODO consider just using css selectors for these?
-
-// Separator between columns in the header
-// For best UX, use either this or $ag-header-column-resize-handle but not both
-$ag-header-column-separator: $ag-borders !default;
-    $ag-header-column-separator-top: 25% !default;
-    $ag-header-column-separator-bottom: 25% !default;
-    $ag-header-column-separator-width: 1px !default;
-    $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
-
-// Visible marker for resizeable columns. Displays in the same position as the column
-// separator, but only when the column is resizeable
-$ag-header-column-resize-handle: not $ag-header-column-separator !default;
-    $ag-header-column-resize-handle-top: 25% !default;
-    $ag-header-column-resize-handle-bottom: 25% !default;
-    $ag-header-column-resize-handle-width: 1px !default;
-    $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
-
-// radius applied to the the grid wrapper grid
-$ag-grid-radius: null !default;
 
 // radius applied to popup elements
 $ag-card-radius: $ag-grid-radius !default;
 $ag-card-shadow: none !default;
-$ag-cell-horizontal-border: 1px solid transparent !default;
 
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
@@ -157,19 +158,7 @@ $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
 $ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
-$ag-dialog-background-color: $ag-background-color !default;
-$ag-dialog-border-size: 1px !default;
-$ag-dialog-border-style: solid !default;
-$ag-dialog-border-color: $ag-border-color !default;
 
-$ag-dialog-title-background-color: $ag-header-background-color !default;
-$ag-dialog-title-foreground-color: $ag-header-foreground-color !default;
-$ag-dialog-title-height: $ag-header-height !default;
-$ag-dialog-title-font-family: $ag-secondary-font-family !default;
-$ag-dialog-title-font-size: $ag-secondary-font-size !default;
-$ag-dialog-title-font-weight: $ag-secondary-font-weight !default;
-$ag-dialog-title-padding: 5px 10px !default;
-$ag-dialog-title-icon-size: max(20px, $ag-icon-size) !default;
 
 $ag-tool-panel-background-color: $ag-background-color !default;
 // TODO these should all be null defaulted. Move opinionated styles out of base theme and into balham / material.

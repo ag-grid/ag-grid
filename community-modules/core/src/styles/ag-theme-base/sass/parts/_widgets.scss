@@ -277,53 +277,38 @@
         pointer-events: none;
     }
 
+    .ag-dialog {
+        border-radius: $ag-grid-radius;
+        @include ag-grid-border();
+    }
+
     .ag-panel {
-        background-color: $ag-dialog-background-color;
-        border: $ag-dialog-border-size $ag-dialog-border-style $ag-dialog-border-color;
+        background-color: $ag-background-color;
     }
 
     .ag-panel-title-bar {
-        background-color: $ag-dialog-title-background-color;
-        border-bottom: 1px solid lighten($ag-border-color, 10%);
-        color: $ag-dialog-title-foreground-color;
-        height: $ag-dialog-title-height;
-        font-size: $ag-dialog-title-font-size;
-        font-weight: $ag-dialog-title-font-weight;
-        font-family: $ag-dialog-title-font-family;
-        padding: $ag-dialog-title-padding;
-        padding-left: $ag-cell-horizontal-padding;
+        background-color: $ag-header-background-color;
+        color: $ag-header-foreground-color;
+        height: $ag-header-height;
+        font-weight: $ag-secondary-font-weight;
+        font-family: $ag-secondary-font-family;
+        padding: $ag-grid-size $ag-cell-horizontal-padding;
+        @include ag-grid-border(bottom);
     }
 
     .ag-panel-title-bar-button {
-        height: $ag-dialog-title-icon-size;
-        width: $ag-dialog-title-icon-size;
-        border-radius: 5px;
-        &:hover,
-        &.ag-has-popup {
-            @if $ag-dialog-title-background-color {
-                // TODO this darken should happen in vars file
-                background-color: darken($ag-dialog-title-background-color, 10%);
-            }
-        }
-        &:not(:last-child) {
-            margin-right: 5px;
-        }
-    }
-
-    .ag-panel-title-bar-button-icon {
-        line-height: $ag-dialog-title-icon-size;
-        font-size: $ag-dialog-title-icon-size;
+        @include ag-theme-rtl((margin-left: $ag-grid-size));
     }
 
     ////////////////////////////////////////
     // Tooltip
     ////////////////////////////////////////
     .ag-tooltip {
-        background-color: $ag-background-color;
+        background-color: $ag-header-background-color;
         color: $ag-foreground-color;
-        border-radius: 2px;
-        padding: 5px;
+        padding: $ag-grid-size;
         @include ag-grid-border();
+        border-radius: $ag-card-radius;
         transition: opacity 1s;
 
         &.ag-tooltip-hiding {

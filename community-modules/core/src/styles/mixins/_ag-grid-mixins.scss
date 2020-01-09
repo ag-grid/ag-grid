@@ -63,7 +63,7 @@
 */
 @mixin ag-theme-rtl($rules) {
     @if length(nth(&, 1)) < 2 {
-        @error "ag-theme-rtl() can't be used at the top level of a theme, only nested in a selector.";
+        @error "ag-theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
     }
     @at-root {
         #{ag-insert-class-after-theme(&, ".ag-ltr")} {
@@ -118,8 +118,7 @@
         @for $i from 1 through length($selector) {
             $item: nth($selector, $i);
             $result: append($result, $item);
-            $is-theme-class: str-index($item, ".ag-theme-");
-            @if $is-theme-class {
+            @if $i == 1 {
                 $result: append($result, $class);
             }
         }

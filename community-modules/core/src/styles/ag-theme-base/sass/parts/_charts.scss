@@ -107,6 +107,6 @@
     }
 
     .ag-chart-menu-panel {
-        border-width: 0 0 0 1px;
+        @include ag-theme-rtl((border-left: solid 1px $ag-border-color));
     }
 }

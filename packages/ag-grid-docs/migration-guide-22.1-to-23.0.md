@@ -34,6 +34,7 @@ $ag-tooltip-background-color, $ag-tooltip-border-color, $ag-tooltip-border-radiu
 
 $ag-accent-color > $ag-checkbox-checked-color
 
+Variables starting `$ag-dialog-` and `$ag-dialog-title-` have been removed. Instead of using these variables, use a css selector like `.ag-panel { ... }` or `.ag-panel-title { ... }`. The full list of removed variables is: $ag-dialog-background-color, $ag-dialog-border-size, $ag-dialog-border-style, $ag-dialog-border-color, $ag-dialog-title-background-color, $ag-dialog-title-foreground-color, $ag-dialog-title-height, $ag-dialog-title-font-family, $ag-dialog-title-font-size, $ag-dialog-title-font-weight, $ag-dialog-title-padding, $ag-dialog-title-icon-size, 
 
 ## CSS class renames
 

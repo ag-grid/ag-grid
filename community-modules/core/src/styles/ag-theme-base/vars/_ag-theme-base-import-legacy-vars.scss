@@ -35,54 +35,6 @@
     $ag-cell-horizontal-padding: $cell-horizontal-padding !global;
   }
 
-  @if (variable-exists("dialog-background-color") and not variable-exists("ag-dialog-background-color")) {
-    $ag-dialog-background-color: $dialog-background-color !global;
-  }
-
-  @if (variable-exists("dialog-border-color") and not variable-exists("ag-dialog-border-color")) {
-    $ag-dialog-border-color: $dialog-border-color !global;
-  }
-
-  @if (variable-exists("dialog-border-size") and not variable-exists("ag-dialog-border-size")) {
-    $ag-dialog-border-size: $dialog-border-size !global;
-  }
-
-  @if (variable-exists("dialog-border-style") and not variable-exists("ag-dialog-border-style")) {
-    $ag-dialog-border-style: $dialog-border-style !global;
-  }
-
-  @if (variable-exists("dialog-title-background-color") and not variable-exists("ag-dialog-title-background-color")) {
-    $ag-dialog-title-background-color: $dialog-title-background-color !global;
-  }
-
-  @if (variable-exists("dialog-title-font-family") and not variable-exists("ag-dialog-title-font-family")) {
-    $ag-dialog-title-font-family: $dialog-title-font-family !global;
-  }
-
-  @if (variable-exists("dialog-title-font-size") and not variable-exists("ag-dialog-title-font-size")) {
-    $ag-dialog-title-font-size: $dialog-title-font-size !global;
-  }
-
-  @if (variable-exists("dialog-title-font-weight") and not variable-exists("ag-dialog-title-font-weight")) {
-    $ag-dialog-title-font-weight: $dialog-title-font-weight !global;
-  }
-
-  @if (variable-exists("dialog-title-foreground-color") and not variable-exists("ag-dialog-title-foreground-color")) {
-    $ag-dialog-title-foreground-color: $dialog-title-foreground-color !global;
-  }
-
-  @if (variable-exists("dialog-title-height") and not variable-exists("ag-dialog-title-height")) {
-    $ag-dialog-title-height: $dialog-title-height !global;
-  }
-
-  @if (variable-exists("dialog-title-icon-size") and not variable-exists("ag-dialog-title-icon-size")) {
-    $ag-dialog-title-icon-size: $dialog-title-icon-size !global;
-  }
-
-  @if (variable-exists("dialog-title-padding") and not variable-exists("ag-dialog-title-padding")) {
-    $ag-dialog-title-padding: $dialog-title-padding !global;
-  }
-
   @if (variable-exists("disabled-foreground-color-opacity") and not variable-exists("ag-disabled-foreground-color-opacity")) {
     $ag-disabled-foreground-color-opacity: $disabled-foreground-color-opacity !global;
   }
