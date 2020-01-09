@@ -160,12 +160,14 @@ export class ChartDataModel extends BeanStub {
     public getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
+        const startRow = firstCellRange && firstCellRange.startRow;
+        const endRow = firstCellRange && firstCellRange.endRow;
 
         return {
-            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
+            rowStartIndex: startRow && startRow.rowIndex,
+            rowStartPinned: startRow && startRow.rowPinned,
+            rowEndIndex: endRow && endRow.rowIndex,
+            rowEndPinned: endRow && endRow.rowPinned,
             columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
         };
     }
