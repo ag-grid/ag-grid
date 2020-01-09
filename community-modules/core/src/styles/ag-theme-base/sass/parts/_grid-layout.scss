@@ -66,14 +66,26 @@
     .ag-row {
         height: $ag-row-height;
         color: $ag-data-color;
-        @include ag-grid-border(bottom, $color: $ag-row-border-color);
 
-        &.ag-row-selected {
-            border-color: $ag-selected-row-background-color;
+        @if $ag-borders {
+            &::before {
+                content: "";
+                position: absolute;
+                height: 1px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: $ag-row-border-color;
+                background-color: $ag-row-border-color;
+            }
+
+            &.ag-row-selected::before {
+                background-color: $ag-selected-row-background-color;
+            }
         }
     }
 
-    .ag-row-highlight-above::before, .ag-row-highlight-below::before {
+    .ag-row-highlight-above::after, .ag-row-highlight-below::after {
         content: '';
         position: absolute;
         width: 100%;
@@ -82,15 +94,15 @@
         left: 1px;
     }
 
-    .ag-row-highlight-above::before {
+    .ag-row-highlight-above::after {
         top: -2px;
     }
 
-    .ag-row-highlight-above.ag-row-first::before {
+    .ag-row-highlight-above.ag-row-first::after {
         top: 0;
     }
 
-    .ag-row-highlight-below::before {
+    .ag-row-highlight-below::after {
         bottom: 0px;
     }
 
@@ -132,10 +144,9 @@
     }
 
     .ag-cell {
-        line-height: $ag-row-height - 2;
-
-        // adjust for transparent border
         border: 1px solid transparent;
+        // adjust for transparent border
+        line-height: $ag-row-height - 2px;
         padding-left: $ag-cell-horizontal-padding - 1px;
         padding-right: $ag-cell-horizontal-padding - 1px;
     }

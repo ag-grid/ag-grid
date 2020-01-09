@@ -55,7 +55,6 @@
     }
 
     .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
-        border: 1px solid transparent;
         &.ag-cell-range-top {
             border-top-color: $ag-selection-border-color;
         }
