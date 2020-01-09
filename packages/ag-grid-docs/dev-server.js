@@ -24,21 +24,51 @@ const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
 // if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
-    // process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
+// process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 // }
+
+function reporter(middlewareOptions, options) {
+    const {log, state, stats} = options;
+
+    if (state) {
+        const displayStats = middlewareOptions.stats !== false;
+        const statsString = stats.toString(middlewareOptions.stats);
+
+        // displayStats only logged
+        if (displayStats && statsString.trim().length) {
+            if (stats.hasErrors()) {
+                log.error(statsString);
+            } else if (stats.hasWarnings()) {
+                log.warn(statsString);
+            } else {
+                log.info(statsString);
+            }
+        }
+
+        let message = `${middlewareOptions.name} compiled successfully.`;
+
+        if (stats.hasErrors()) {
+            message = `Failed to compile ${middlewareOptions.name}.`;
+        } else if (stats.hasWarnings()) {
+            message = `Compiled ${middlewareOptions.name} with warnings.`;
+        }
+        log.info(message);
+    } else {
+        log.info(`Compiling ${middlewareOptions.name}...`);
+    }
+}
 
 function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
     const compiler = realWebpack(webpackConfig);
     const instance = webpackMiddleware(compiler, {
+        name: bundleDescriptor,
         noInfo: true,
         quiet: true,
         stats: 'errors-only',
-        publicPath: '/'
-    });
-    instance.waitUntilValid(() => {
-        console.log(`${bundleDescriptor} is now ready`);
+        publicPath: '/',
+        reporter
     });
 
     app.use(
