@@ -200,7 +200,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     // returns false if row was moved, otherwise true
-    public ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean {
+    public ensureRowAtPixel(rowNode: RowNode, pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
 
@@ -209,7 +209,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         }
 
         _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
@@ -221,11 +221,11 @@ export class ClientSideRowModel implements IClientSideRowModel {
         return true;
     }
 
-    public highlightRowAtPixel(rowNode: RowNode, pixel: number): void {
-        const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
-        const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+    public highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void {
+        const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
+        const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
-        if (rowNodeAtPixelNow === rowNode) {
+        if (rowNodeAtPixelNow === rowNode || !rowNode || pixel == null) {
             if (this.lastHighlightedRow) {
                 this.lastHighlightedRow.setHighlighted(null);
                 this.lastHighlightedRow = null;
@@ -245,6 +245,10 @@ export class ClientSideRowModel implements IClientSideRowModel {
         this.lastHighlightedRow = rowNodeAtPixelNow;
     }
 
+    public getLastHighlightedRowNode(): RowNode | null {
+        return this.lastHighlightedRow;
+    }
+
     public isLastRowFound(): boolean {
         return true;
     }
@@ -252,49 +256,55 @@ export class ClientSideRowModel implements IClientSideRowModel {
     public getRowCount(): number {
         if (this.rowsToDisplay) {
             return this.rowsToDisplay.length;
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     public getTopLevelRowCount(): number {
         const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+
         if (showingRootNode) {
             return 1;
-        } else {
-            return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
         }
+
+        return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
         const showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
+
         if (showingRootNode) {
             return topLevelIndex;
-        } else {
-            let rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
-            if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-                // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
-                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
-                    rowNode = rowNode.childrenAfterSort[0];
-                }
-            }
-            return rowNode.rowIndex;
         }
+
+        let rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
+
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+            while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
+                rowNode = rowNode.childrenAfterSort[0];
+            }
+        }
+
+        return rowNode.rowIndex;
     }
 
     public getRowBounds(index: number): RowBounds | null {
         if (_.missing(this.rowsToDisplay)) {
             return null;
         }
+
         const rowNode = this.rowsToDisplay[index];
+
         if (rowNode) {
             return {
                 rowTop: rowNode.rowTop,
                 rowHeight: rowNode.rowHeight
             };
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     private onRowGroupOpened(): void {
@@ -544,9 +554,9 @@ export class ClientSideRowModel implements IClientSideRowModel {
             const lastRow = _.last(this.rowsToDisplay);
             const lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     public forEachLeafNode(callback: Function): void {
@@ -577,32 +587,32 @@ export class ClientSideRowModel implements IClientSideRowModel {
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
     private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
-        if (nodes) {
-            for (let i = 0; i < nodes.length; i++) {
-                const node = nodes[i];
-                callback(node, index++);
-                // go to the next level if it is a group
-                if (node.hasChildren()) {
-                    // depending on the recursion type, we pick a difference set of children
-                    let nodeChildren: RowNode[] | null = null;
-                    switch (recursionType) {
-                        case RecursionType.Normal :
-                            nodeChildren = node.childrenAfterGroup;
-                            break;
-                        case RecursionType.AfterFilter :
-                            nodeChildren = node.childrenAfterFilter;
-                            break;
-                        case RecursionType.AfterFilterAndSort :
-                            nodeChildren = node.childrenAfterSort;
-                            break;
-                        case RecursionType.PivotNodes :
-                            // for pivot, we don't go below leafGroup levels
-                            nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
-                            break;
-                    }
-                    if (nodeChildren) {
-                        index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
-                    }
+        if (!nodes) { return index; }
+
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            callback(node, index++);
+            // go to the next level if it is a group
+            if (node.hasChildren()) {
+                // depending on the recursion type, we pick a difference set of children
+                let nodeChildren: RowNode[] | null = null;
+                switch (recursionType) {
+                    case RecursionType.Normal :
+                        nodeChildren = node.childrenAfterGroup;
+                        break;
+                    case RecursionType.AfterFilter :
+                        nodeChildren = node.childrenAfterFilter;
+                        break;
+                    case RecursionType.AfterFilterAndSort :
+                        nodeChildren = node.childrenAfterSort;
+                        break;
+                    case RecursionType.PivotNodes :
+                        // for pivot, we don't go below leafGroup levels
+                        nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
+                        break;
+                }
+                if (nodeChildren) {
+                    index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
                 }
             }
         }
@@ -626,9 +636,8 @@ export class ClientSideRowModel implements IClientSideRowModel {
         }
 
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
-            if (!rowNodes) {
-                return;
-            }
+            if (!rowNodes) { return; }
+
             rowNodes.forEach((rowNode: RowNode) => {
                 const shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
                 if (shouldExpandOrCollapse) {
@@ -666,9 +675,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         // grouping is enterprise only, so if service missing, skip the step
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (doingLegacyTreeData) {
-            return;
-        }
+        if (doingLegacyTreeData) { return; }
 
         if (this.groupStage) {
 
@@ -711,9 +718,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     private restoreGroupState(groupState: any): void {
-        if (!groupState) {
-            return;
-        }
+        if (!groupState) { return; }
 
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => {
             // if the group was open last time, then open it this time. however
@@ -736,9 +741,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     private getGroupState(): any {
-        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) {
-            return null;
-        }
+        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsWrapper.isRememberGroupStateWhenNewData()) { return null; }
         const result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => result[key] = node.expanded);
         return result;

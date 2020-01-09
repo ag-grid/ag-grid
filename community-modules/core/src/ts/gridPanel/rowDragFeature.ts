@@ -13,6 +13,7 @@ import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { RowNode } from "../entities/rowNode";
 
 export class RowDragFeature implements DropTarget {
 
@@ -96,24 +97,44 @@ export class RowDragFeature implements DropTarget {
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
             this.clientSideRowModel.highlightRowAtPixel(rowNode, pixel);
         } else {
-            const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
-            if (rowWasMoved) {
-                this.focusedCellController.clearFocusedCell();
-                if (this.rangeController) {
-                    this.rangeController.removeAllCellRanges();
-                }
+            this.moveRow(rowNode, pixel);
+        }
+    }
+
+    private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
+        const rowNode = draggingEvent.dragItem.rowNode;
+        const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
+        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        let increment = isBelow ? 1 : 0;
+
+        if (rowNode.rowTop < draggingEvent.y) {
+            increment -= 1;
+        }
+
+        this.moveRow(rowNode, draggingEvent.y, increment);
+        this.clientSideRowModel.highlightRowAtPixel(null);
+    }
+
+    private moveRow(rowNode: RowNode, pixel: number, increment: number = 0): void {
+        const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel, increment);
+
+        if (rowWasMoved) {
+            this.focusedCellController.clearFocusedCell();
+            if (this.rangeController) {
+                this.rangeController.removeAllCellRanges();
             }
         }
     }
 
     private normaliseForScroll(pixel: number): number {
         const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+
         if (gridPanelHasScrolls) {
             const pixelRange = this.gridPanel.getVScrollPosition();
             return pixel + pixelRange.top;
-        } else {
-            return pixel;
         }
+
+        return pixel;
     }
 
     private checkCenterForScrolling(pixel: number): void {
@@ -224,6 +245,13 @@ export class RowDragFeature implements DropTarget {
     public onDragStop(draggingEvent: DraggingEvent): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
+
+        if (
+            this.gridOptionsWrapper.isRowDragManaged() &&
+            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()
+        ) {
+            this.moveRowAndClearHighlight(draggingEvent);
+        }
     }
 
     private stopDragging(draggingEvent: DraggingEvent): void {
