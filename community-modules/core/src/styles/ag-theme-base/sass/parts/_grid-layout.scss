@@ -73,6 +73,27 @@
         }
     }
 
+    .ag-row-highlight-above::before, .ag-row-highlight-below::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background-color: $ag-selection-border-color;
+        left: 1px;
+    }
+
+    .ag-row-highlight-above::before {
+        top: -2px;
+    }
+
+    .ag-row-highlight-above.ag-row-first::before {
+        top: 0;
+    }
+
+    .ag-row-highlight-below::before {
+        bottom: 0px;
+    }
+
     @if $ag-odd-row-background-color {
         .ag-row-odd {
             background-color: $ag-odd-row-background-color;

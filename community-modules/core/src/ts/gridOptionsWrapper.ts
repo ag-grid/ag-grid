@@ -435,6 +435,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowDrag);
     }
 
+    public isSuppressMoveWhenRowDragging() {
+        return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
+    }
+
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     public getDomLayout(): string {
         const domLayout = this.gridOptions.domLayout || Constants.DOM_LAYOUT_NORMAL;

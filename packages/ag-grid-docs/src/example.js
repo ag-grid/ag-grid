@@ -167,6 +167,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
+    // suppressMoveWhenRowDragging: true,
     popupParent: document.querySelector('#example-wrapper'),
     // ensureDomOrder: true,
     // enableCellTextSelection: true,

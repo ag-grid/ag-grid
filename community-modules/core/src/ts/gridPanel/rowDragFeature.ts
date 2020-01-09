@@ -92,12 +92,16 @@ export class RowDragFeature implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         const rowNode = draggingEvent.dragItem.rowNode;
-        const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
 
-        if (rowWasMoved) {
-            this.focusedCellController.clearFocusedCell();
-            if (this.rangeController) {
-                this.rangeController.removeAllCellRanges();
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.clientSideRowModel.highlightRowAtPixel(rowNode, pixel);
+        } else {
+            const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
+            if (rowWasMoved) {
+                this.focusedCellController.clearFocusedCell();
+                if (this.rangeController) {
+                    this.rangeController.removeAllCellRanges();
+                }
             }
         }
     }

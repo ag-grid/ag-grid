@@ -63,6 +63,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
@@ -194,6 +195,8 @@ export class RowNode implements IEventEmitter {
 
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
+
+    public highlighted: 'above' | 'below' | null = null;
 
     private selected = false;
     private eventService: EventService;
@@ -388,6 +391,18 @@ export class RowNode implements IEventEmitter {
         this.dragging = dragging;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
+        }
+    }
+
+    public setHighlighted(highlighted: 'above' | 'below' | null): void {
+        if (highlighted === this.highlighted) {
+            return;
+        }
+
+        this.highlighted = highlighted;
+
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
         }
     }
 

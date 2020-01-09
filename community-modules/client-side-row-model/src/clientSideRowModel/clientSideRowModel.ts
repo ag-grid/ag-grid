@@ -71,12 +71,10 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
-
     private rowsToDisplay: RowNode[]; // the rows mapped to rows to display
-
     private nodeManager: ClientSideNodeManager;
-
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
+    private lastHighlightedRow: RowNode | null;
 
     @PostConstruct
     public init(): void {
@@ -221,6 +219,30 @@ export class ClientSideRowModel implements IClientSideRowModel {
         });
 
         return true;
+    }
+
+    public highlightRowAtPixel(rowNode: RowNode, pixel: number): void {
+        const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+
+        if (rowNodeAtPixelNow === rowNode) {
+            if (this.lastHighlightedRow) {
+                this.lastHighlightedRow.setHighlighted(null);
+                this.lastHighlightedRow = null;
+            }
+            return;
+        }
+
+        const { rowTop, rowHeight } = rowNodeAtPixelNow;
+        const highlight = pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
+
+        if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
+            this.lastHighlightedRow.setHighlighted(null);
+            this.lastHighlightedRow = null;
+        }
+
+        rowNodeAtPixelNow.setHighlighted(highlight);
+        this.lastHighlightedRow = rowNodeAtPixelNow;
     }
 
     public isLastRowFound(): boolean {

@@ -97,6 +97,7 @@ export interface GridOptions {
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
+    suppressMoveWhenRowDragging?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     deltaColumnMode?: boolean;

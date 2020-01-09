@@ -383,6 +383,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressClickEdit : any = undefined;
     @Input() public rowDragManaged : any = undefined;
     @Input() public suppressRowDrag : any = undefined;
+    @Input() public suppressMoveWhenRowDragging : any = undefined;
     @Input() public enableGroupEdit : any = undefined;
     @Input() public embedFullWidthRows : any = undefined;
     @Input() public deprecatedEmbedFullWidthRows : any = undefined;

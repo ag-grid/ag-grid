@@ -23,6 +23,7 @@ import {IFrameworkOverrides} from "../interfaces/iFrameworkOverrides";
 import {Constants} from "../constants";
 import {ModuleNames} from "../modules/moduleNames";
 import {ModuleRegistry} from "../modules/moduleRegistry";
+import { RowPositionUtils } from "../entities/rowPosition";
 
 interface CellTemplate {
     template: string;
@@ -466,6 +467,7 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         const eventService = this.beans.eventService;
@@ -531,6 +533,18 @@ export class RowComp extends Component {
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
+    }
+
+    private onRowNodeHighlightChanged(): void {
+        const highlighted = this.rowNode.highlighted;
+
+        this.eAllRowContainers.forEach(row => {
+            _.removeCssClass(row, 'ag-row-highlight-above');
+            _.removeCssClass(row, 'ag-row-highlight-below');
+            if (highlighted) {
+                _.addCssClass(row, 'ag-row-highlight-' + highlighted);
+            }
+        });
     }
 
     private onRowNodeDraggingChanged(): void {

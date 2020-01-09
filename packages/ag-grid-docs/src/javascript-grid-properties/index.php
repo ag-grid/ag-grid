@@ -196,7 +196,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
         </table>
-<h2>Row Dragging</h2>
+    <h2>Row Dragging</h2>
     <table class="table content reference">
         <tr>
             <th>rowDragManaged</th>
@@ -210,9 +210,15 @@ include '../documentation-main/documentation_header.php';
                 Set to true to suppress <a href="../javascript-grid-row-dragging/">Row Dragging</a>.
             </td>
         </tr>
-
-        </table>
-<h2>Editing</h2>
+        <tr>
+            <th>suppressMoveWhenRowDragging</th>
+            <td>
+                Set to true to suppress moving rows while dragging the rowDrag waffle. This option highlights the position where
+                the row will be placed and it will only move the row on mouse up. See more info in <a href=“../javascript-grid-row-dragging/“>Row Dragging</a>.
+            </td>
+        </tr>
+    </table>
+    <h2>Editing</h2>
     <table class="table content reference">
         <tr>
             <th>singleClickEdit</th>
@@ -259,9 +265,8 @@ include '../documentation-main/documentation_header.php';
                 i.e. <a href="../javascript-grid-cell-editing/#enter-key-down">enter key moves down</a>.
             </td>
         </tr>
-
-        </table>
-<h2>Headers</h2>
+    </table>
+    <h2>Headers</h2>
     <table class="table content reference">
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRowsWithHelp($headerHeightProperties) ?>
@@ -338,7 +343,7 @@ include '../documentation-main/documentation_header.php';
                 See <a href="../javascript-grid-pivoting/#pivotRowTotals">Pivot Row Totals</a>.
             </td>
         </tr>
-        </table>
+    </table>
 
     <h2>Data & Row Models</h2>
     <table class="table content reference">
@@ -421,7 +426,7 @@ include '../documentation-main/documentation_header.php';
 
 
         </table>
-<h2>Row Block Loading: Infinite & Enterprise Row Models</h2>
+    <h2>Row Block Loading: Infinite & Enterprise Row Models</h2>
     <table class="table content reference">
         <tr>
             <th>maxConcurrentDatasourceRequests</th>
@@ -443,7 +448,7 @@ include '../documentation-main/documentation_header.php';
 
 
         </table>
-<h2>Row Model: Viewport</h2>
+    <h2>Row Model: Viewport</h2>
     <table class="table content reference">
         <tr>
             <th>viewportRowModelPageSize</th>
@@ -459,8 +464,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
 
 
-        </table>
-<h2>Full Width Renderers</h2>
+    </table>
+    <h2>Full Width Renderers</h2>
     <table class="table content reference">
         <tr>
             <th>groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
@@ -484,8 +489,8 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-full-width-rows/">Full Width Rows</a>.</td>
         </tr>
 
-        </table>
-<h2>Master Detail</h2>
+    </table>
+    <h2>Master Detail</h2>
     <table class="table content reference">
         <tr>
             <th>masterDetail</th>
@@ -503,7 +508,7 @@ include '../documentation-main/documentation_header.php';
         <?php printPropertiesRowsWithHelp($masterDetailProperties) ?>
 
         </table>
-<h2>Rendering & Styling</h2>
+    <h2>Rendering & Styling</h2>
     <table class="table content reference">
         <tr>
             <th>icons</th>
@@ -551,16 +556,14 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         </table>
-<h2>Localisation</h2>
+    <h2>Localisation</h2>
     <table class="table content reference">
-
         <tr>
             <th>localeText, localeTextFunc</th>
             <td>You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
                 a <code>localeTextFunc</code> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
         </tr>
-
-        </table>
+    </table>
     <h2>Overlays</h2>
     <table class="table content reference">
         <tr>
@@ -600,22 +603,15 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        </table>
-
-
-<h2>Charts</h2>
-<table class="table content reference">
-
-    <tr>
-        <th>enableCharts</th>
-        <td>Set to true to  <a href="../javascript-grid-charts-overview/#enabling-charts">Enable Charts</a>.</td>
-    </tr>
-
-</table>
-
-
-
-<h2>Miscellaneous</h2>
+    </table>
+    <h2>Charts</h2>
+    <table class="table content reference">
+        <tr>
+            <th>enableCharts</th>
+            <td>Set to true to  <a href="../javascript-grid-charts-overview/#enabling-charts">Enable Charts</a>.</td>
+        </tr>
+    </table>
+    <h2>Miscellaneous</h2>
     <table class="table content reference">
         <tr>
             <th>popupParent</th>
