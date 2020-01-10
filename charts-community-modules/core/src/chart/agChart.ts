@@ -287,8 +287,8 @@ function update(component: any, options: any, path?: string) {
         provideDefaultOptions(options, mapping);
 
         const meta = mapping.meta || {};
-        const defaults = meta?.constructor?.defaults;
-        const constructorParams = meta?.constructorParams || [];
+        const defaults = meta && meta.constructor && meta.constructor.defaults;
+        const constructorParams = meta && meta.constructorParams || [];
         const skipKeys = ['type'].concat(constructorParams);
 
         for (const key in options) {
@@ -364,7 +364,7 @@ function provideDefaultChartType(options: any) {
  * @param mapping
  */
 function provideDefaultOptions(options: any, mapping: any) {
-    const defaults = mapping?.meta?.defaults;
+    const defaults = mapping && mapping.meta && mapping.meta.defaults;
 
     if (defaults) {
         for (const key in defaults) {
