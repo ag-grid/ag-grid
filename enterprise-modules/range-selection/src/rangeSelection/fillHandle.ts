@@ -294,7 +294,10 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         }
 
-        const allNumbers = !values.some(val => isNaN(parseFloat(val)));
+        const allNumbers = !values.some(val => {
+            const asFloat = parseFloat(val);
+            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        });
 
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
