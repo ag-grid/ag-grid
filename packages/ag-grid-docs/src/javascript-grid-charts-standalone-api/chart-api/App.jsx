@@ -154,19 +154,29 @@ class Chart extends React.Component {
         this.chart = React.createRef();
     }
 
+    chartInstance = undefined;
+
     componentDidMount() {
-        this.componentDidUpdate();
-    }
-
-    componentDidUpdate() {
-        this.chart.current.innerHTML = "";
-
-        AgChart.create({
+        // this.componentDidUpdate();
+        this.chartInstance = AgChart.create({
             ...JSON.parse(JSON.stringify(this.props.options)),
             data,
             container: this.chart.current,
             series,
         });
+    }
+
+    componentDidUpdate() {
+        // this.chart.current.innerHTML = "";
+
+        if (this.chartInstance) {
+            AgChart.update(this.chartInstance, {
+                ...JSON.parse(JSON.stringify(this.props.options)),
+                data,
+                container: this.chart.current,
+                series,
+            });
+        }
     }
 
     render() {
