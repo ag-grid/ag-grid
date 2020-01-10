@@ -2,6 +2,7 @@ import { AgChart } from "./agChart";
 const raf = require('raf');
 // const { createCanvas } = require('canvas');
 import 'jest-canvas-mock';
+import { LegendPosition } from "./legend";
 
 const data1 = [{
     month: 'Jan',
@@ -40,7 +41,7 @@ const data2 = [{
 }];
 
 describe('update', () => {
-    test('', () => {
+    test('cartesian chart top-level properties', () => {
         const chart = AgChart.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
@@ -59,16 +60,27 @@ describe('update', () => {
                 yKeys: ['profit'],
                 fills: ['lime']
             }],
-            legend: {}
+            legend: {
+                itemPaddingY: 16
+            }
         });
         AgChart.update(chart, {
-            data: data2,
-            width: 300,
-            height: 400,
+            width: 500,
+            height: 500,
+            padding: {
+                top: 30,
+                right: 40,
+                bottom: 50,
+                left: 60
+            },
+            subtitle: {
+                text: 'My Subtitle',
+                fontSize: 20
+            },
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
                 xKey: 'month',
-                yKey: 'apples',
+                yKey: 'revenue',
                 marker: {
                     shape: 'plus',
                     size: 20
@@ -76,9 +88,25 @@ describe('update', () => {
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
-                yKeys: ['oranges'],
+                yKeys: ['profit'],
                 fills: ['lime']
-            }]
+            }],
+            legend: {
+                padding: 50,
+                position: LegendPosition.Bottom
+            }
         });
+
+        expect(chart.container).toBe(undefined);
+        expect(chart.width).toBe(500);
+        expect(chart.height).toBe(500);
+        expect(chart.data.length).toBe(0);
+        expect(chart.padding.top).toBe(30);
+        expect(chart.padding.right).toBe(40);
+        expect(chart.padding.bottom).toBe(50);
+        expect(chart.padding.left).toBe(60);
+        expect(chart.title).toBe(undefined);
+        expect(chart.subtitle.text).toBe('My Subtitle');
+        expect(chart.subtitle.fontSize).toBe(20);
     });
 });

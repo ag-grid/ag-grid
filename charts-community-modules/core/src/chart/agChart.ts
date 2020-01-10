@@ -9,9 +9,111 @@ import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
 import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
-import { Legend } from "./legend";
+import { Legend, LegendOrientation, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
-import { Rect } from "../scene/shape/rect";
+import { MarkerLabel } from "./markerLabel";
+
+export abstract class AgChart {
+    static create(options: any, container?: HTMLElement, data?: any[]) {
+        options = Object.create(options); // avoid mutating user provided options
+        if (container) {
+            options.container = container;
+        }
+        if (data) {
+            options.data = data;
+        }
+        const chart = create(options);
+        // console.log(JSON.stringify(flattenObject(options), null, 4));
+        return chart;
+    }
+
+    static update(chart: any, options: any) {
+        return update(chart, Object.create(options));
+    }
+}
+
+const chartMappings = {
+    background: {
+        meta: {
+            defaults: {
+                fill: 'white'
+            }
+        }
+    },
+    padding: {
+        meta: {
+            constructor: Padding,
+            defaults: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            }
+        }
+    },
+    title: {
+        meta: {
+            constructor: Caption,
+            defaults: {
+                enabled: true,
+                padding: new Padding(10),
+                text: 'Title',
+                fontStyle: undefined,
+                fontWeight: 'bold',
+                fontSize: 18,
+                fontFamily: 'sans-serif, Verdana, Arial',
+                color: 'black'
+            }
+        }
+    },
+    subtitle: {
+        meta: {
+            constructor: Caption,
+            defaults: {
+                enabled: true,
+                padding: new Padding(10),
+                text: 'Subtitle',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 14,
+                fontFamily: 'sans-serif, Verdana, Arial',
+                color: 'black'
+            }
+        }
+    },
+    legend: {
+        meta: {
+            constructor: Legend,
+            defaults: {
+                enabled: true,
+                orientation: LegendOrientation.Vertical,
+                position: LegendPosition.Right,
+                padding: 20,
+                itemPaddingX: 16,
+                itemPaddingY: 8,
+                markerShape: undefined,
+                markerPadding: MarkerLabel.defaults.padding,
+                markerSize: MarkerLabel.defaults.markerSize,
+                markerStrokeWidth: 1,
+                labelColor: MarkerLabel.defaults.labelColor,
+                labelFontStyle: MarkerLabel.defaults.labelFontStyle,
+                labelFontWeight: MarkerLabel.defaults.labelFontWeight,
+                labelFontSize: MarkerLabel.defaults.labelFontSize,
+                labelFontFamily: MarkerLabel.defaults.labelFontFamily
+            }
+        }
+    }
+} as any;
+
+const chartDefaults = {
+    container: undefined,
+    data: [],
+    width: 800,
+    height: 400,
+    padding: new Padding(20),
+    title: undefined,
+    subtitle: undefined,
+} as any;
 
 const mappings = {
     cartesian: {
@@ -25,6 +127,7 @@ const mappings = {
             constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
             setAsIs: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
             defaults: { // These values will be used if properties in question are not in the config object.
+                ...chartDefaults,
                 axes: [{
                     type: 'category',
                     position: 'bottom'
@@ -34,26 +137,7 @@ const mappings = {
                 }]
             },
         },
-        background: {
-            meta: {
-                constructor: Rect
-            }
-        },
-        padding: {
-            meta: {
-                constructor: Padding
-            }
-        },
-        title: {
-            meta: {
-                constructor: Caption
-            }
-        },
-        subtitle: {
-            meta: {
-                constructor: Caption
-            }
-        },
+        ...chartMappings,
         axes: {
             number: {
                 meta: {
@@ -99,34 +183,22 @@ const mappings = {
                 },
                 marker: {}
             }
-        },
-        legend: {
-            meta: {
-                constructor: Legend
-            }
         }
     },
     polar: {
         meta: {
             constructor: PolarChart,
             constructorParams: ['document'],
-            defaults: {}
-        },
-        padding: {
-            meta: {
-                constructor: Padding
+            defaults: {
+                ...chartDefaults
             }
         },
+        ...chartMappings,
         series: {
             pie: {
                 meta: {
                     constructor: PieSeries
                 }
-            }
-        },
-        legend: {
-            meta: {
-                constructor: Legend
             }
         }
     }
@@ -141,171 +213,172 @@ function getMapping(path: string) {
     return value;
 }
 
-export abstract class AgChart {
-    static create(options: any, container?: HTMLElement, data?: any[]) {
-        options = Object.create(options); // avoid mutating user provided options
-        if (container) {
-            options.container = container;
+function create(options: any, path?: string, component?: any) {
+    provideDefaultType(options, path);
+
+    if (path) {
+        if (options.type) {
+            path = path + '.' + options.type;
         }
-        if (data) {
-            options.data = data;
-        }
-        return AgChart._create(options);
+    } else {
+        path = options.type;
     }
 
-    static update(chart: any, options: any) {
-        return AgChart._update(chart, Object.create(options));
-    }
+    const mapping = getMapping(path);
 
-    private static setChartType(options: any) {
-        // If chart type is not specified, try to infer it from the type of first series.
-        if (!options.type) {
-            const series = options.series && options.series[0];
+    if (mapping) {
+        provideDefaultOptions(options, mapping);
 
-            if (series && series.type) {
-                outerLoop: for (const chartType in mappings) {
-                    for (const seriesType in mappings[chartType].series) {
-                        if (series.type === seriesType) {
-                            options.type = chartType;
-                            break outerLoop;
-                        }
-                    }
-                }
-            }
-            if (!options.type) {
-                options.type = 'cartesian';
-            }
-        }
-    }
+        const meta = mapping.meta || {};
+        const constructorParams = meta.constructorParams || [];
+        const skipKeys = ['type'].concat(constructorParams);
+        // TODO: Constructor params processing could be improved, but it's good enough for current params.
+        const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
+        component = component || new meta.constructor(...constructorParamValues);
 
-    private static setComponentType(options: any, path?: string) {
-        if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
-            AgChart.setChartType(options);
-        }
+        for (const key in options) {
+            // Process every non-special key in the config object.
+            if (skipKeys.indexOf(key) < 0) {
+                const value = options[key];
 
-        // Default series type for cartesian charts.
-        if (path === 'cartesian.series' && !options.type) {
-            options.type = 'line';
-        }
-
-        // Default series type for polar charts.
-        if (path === 'polar.series' && !options.type) {
-            options.type = 'pie';
-        }
-    }
-
-    private static setComponentDefaults(options: any, mapping: any) {
-        const defaults = mapping && mapping.meta && mapping.meta.defaults;
-
-        // If certain options were not provided by the user, use the defaults from the mapping.
-        if (defaults) {
-            for (const key in defaults) {
-                if (!options[key]) {
-                    options[key] = defaults[key];
-                }
-            }
-        }
-    }
-
-    private static _create(options: any, path?: string, component?: any) {
-        AgChart.setComponentType(options, path);
-
-        if (path) {
-            if (options.type) {
-                path = path + '.' + options.type;
-            }
-        } else {
-            path = options.type;
-        }
-
-        const mapping = getMapping(path);
-
-        if (mapping) {
-            const meta = mapping.meta || {};
-            AgChart.setComponentDefaults(options, mapping);
-            const constructorParams = meta.constructorParams || [];
-            // TODO: Constructor params processing could be improved, but it's good enough for current params.
-            const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
-            component = component || new meta.constructor(...constructorParamValues);
-
-            for (const key in options) {
-                // Process every non-special key in the config object.
-                if (key !== 'type' && constructorParams.indexOf(key) < 0) {
-                    const value = options[key];
-
-                    if (key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
-                        if (Array.isArray(value)) {
-                            const subComponents = value.map(config => AgChart._create(config, path + '.' + key)).filter(config => !!config);
-                            component[key] = subComponents;
+                if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
+                    if (Array.isArray(value)) {
+                        const subComponents = value.map(config => create(config, path + '.' + key)).filter(config => !!config);
+                        component[key] = subComponents;
+                    } else {
+                        if (mapping[key] && component[key]) {
+                            // The instance property already exists on the component (e.g. chart.legend).
+                            // Simply configure the existing instance, without creating a new one.
+                            create(value, path + '.' + key, component[key]);
                         } else {
-                            if (mapping[key] && component[key]) {
-                                // The instance property already exists on the component (e.g. chart.legend).
-                                // Simply configure the existing instance, without creating a new one.
-                                AgChart._create(value, path + '.' + key, component[key]);
-                            } else {
-                                const subComponent = AgChart._create(value, value.type ? path : path + '.' + key);
-                                if (subComponent) {
-                                    component[key] = subComponent;
-                                }
+                            const subComponent = create(value, value.type ? path : path + '.' + key);
+                            if (subComponent) {
+                                component[key] = subComponent;
                             }
                         }
-                    } else { // if (key in meta.constructor.defaults) { // prevent users from creating custom properties
-                        component[key] = value;
                     }
+                } else { // if (key in meta.constructor.defaults) { // prevent users from creating custom properties
+                    component[key] = value;
                 }
             }
-            return component;
         }
+        return component;
+    }
+}
+
+function update(component: any, options: any, path?: string) {
+    if (!(options && typeof options === 'object')) {
+        return;
     }
 
-    private static _update(component: any, options: any, path?: string) {
-        if (!(options && typeof options === 'object')) {
-            return;
+    provideDefaultType(options, path);
+
+    if (path) {
+        if (options.type) {
+            path = path + '.' + options.type;
         }
+    } else {
+        path = options.type;
+    }
 
-        AgChart.setComponentType(options, path);
+    const mapping = getMapping(path);
 
-        if (path) {
-            if (options.type) {
-                path = path + '.' + options.type;
-            }
-        } else {
-            path = options.type;
-        }
+    if (mapping) {
+        provideDefaultOptions(options, mapping);
 
-        const mapping = getMapping(path);
+        const meta = mapping.meta || {};
+        const defaults = meta?.constructor?.defaults;
+        const constructorParams = meta?.constructorParams || [];
+        const skipKeys = ['type'].concat(constructorParams);
 
-        if (mapping) {
-            if (!(component instanceof mapping.constructor)) {
-                return;
-            }
+        for (const key in options) {
+            if (skipKeys.indexOf(key) < 0) {
+                const value = options[key];
 
-            const meta = mapping.meta || {};
-            const { defaults } = meta.constructor;
+                if (meta.setAsIs && meta.setAsIs.indexOf(key) >= 0) {
+                    component[key] = value;
+                } else {
+                    const existingValue = component[key];
+                    if (!existingValue && value) {
 
-            if (defaults) {
-                for (const key in defaults) {
-                    if (typeof component[key] !== 'object' || (meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
-                        if (key in options) {
-                            component[key] = options[key];
+                    }
+                    if (Array.isArray(existingValue)) { // skip array properties like 'axes' and 'series' for now
+
+                    } else if (typeof existingValue === 'object') {
+                        update(existingValue, value, value.type ? path : path + '.' + key);
+                    } else {
+                        const isConfigValue = typeof value === 'object' && !Array.isArray(value);
+                        const subComponent = isConfigValue && create(value, value.type ? path : path + '.' + key);
+                        if (subComponent) {
+                            component[key] = subComponent;
                         } else {
-                            component[key] = defaults[key];
+                            component[key] = value;
                         }
                     }
                 }
             }
-
-            AgChart.setComponentDefaults(options, mapping);
         }
+    }
+}
 
-        if (options.legend) {
-            for (const key in Legend.defaults) {
-                if (key in options.legend) {
-                    component.legend[key] = options.legend[key];
-                } else {
-                    component.legend[key] = (Legend.defaults as any)[key];
+function provideDefaultType(options: any, path?: string) {
+    if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
+        provideDefaultChartType(options);
+    }
+
+    // Default series type for cartesian charts.
+    if (path === 'cartesian.series' && !options.type) {
+        options.type = 'line';
+    }
+
+    // Default series type for polar charts.
+    if (path === 'polar.series' && !options.type) {
+        options.type = 'pie';
+    }
+}
+
+function provideDefaultChartType(options: any) {
+    // If chart type is not specified, try to infer it from the type of first series.
+    if (!options.type) {
+        const series = options.series && options.series[0];
+
+        if (series && series.type) {
+            outerLoop: for (const chartType in mappings) {
+                for (const seriesType in mappings[chartType].series) {
+                    if (series.type === seriesType) {
+                        options.type = chartType;
+                        break outerLoop;
+                    }
                 }
             }
         }
+        if (!options.type) {
+            options.type = 'cartesian';
+        }
     }
-};
+}
+
+/**
+ * If certain options were not provided by the user, use the defaults from the mapping.
+ * @param options
+ * @param mapping
+ */
+function provideDefaultOptions(options: any, mapping: any) {
+    const defaults = mapping?.meta?.defaults;
+
+    if (defaults) {
+        for (const key in defaults) {
+            if (!options[key]) {
+                options[key] = defaults[key];
+            }
+        }
+    }
+}
+
+function flattenObject(obj: any) {
+    const result = Object.create(obj);
+    for (const key in result) {
+        result[key] = result[key];
+    }
+    return result;
+}
