@@ -273,7 +273,7 @@ export class PrimaryColsListPanel extends Component {
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
-                this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
+                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, 'columnMenu');
                 return;
             }
 
@@ -287,7 +287,7 @@ export class PrimaryColsListPanel extends Component {
                 const filteredColsToChange = colsToChange.filter(col => _.includes(filteredCols, col.getColId()));
 
                 // update visibility of columns currently filtered
-                this.columnApi.setColumnsVisible(filteredColsToChange, this.selectAllChecked);
+                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
 
                 // update select all header with new state
                 const selectionState = this.selectAllChecked ? SELECTED_STATE.CHECKED : SELECTED_STATE.UNCHECKED;
