@@ -57,11 +57,6 @@ $ag-range-selection-highlight-color: #fce4ec !default;
 
 $ag-row-hover-color: #fafafa !default;
 $ag-selected-row-background-color: #eee !default;
-$ag-cell-data-changed-color: #fce4ec !default;
-
-$ag-group-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
-$ag-group-title-background-color: darken($ag-group-background-color, 5%) !default;
-$ag-group-toolbar-background-color: darken($ag-group-background-color, 2%);
 
 // Misc
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
@@ -79,8 +74,6 @@ $ag-input-border-width: 0 !default;
 $ag-button-text-transform: uppercase !default;
 
 // delta changes
-$ag-value-change-delta-up-color: #43a047 !default;
-$ag-value-change-delta-down-color: #e53935 !default;
 $ag-value-change-value-highlight-background-color: #00acc1 !default;
 
 // Flags

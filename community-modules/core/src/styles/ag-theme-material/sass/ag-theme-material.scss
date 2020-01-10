@@ -11,6 +11,16 @@
         height: $ag-grid-size * 4.5;
     }
 
+    .ag-tabs-header,
+    .ag-column-drop-horizontal,
+    .ag-group-title-bar {
+        background-color: #eee;
+    }
+
+    .ag-group-toolbar {
+        background-color: #f7f7f7;
+    }
+
     .ag-icon-checkbox-checked,
     .ag-icon-checkbox-checked-readonly,
     .ag-icon-checkbox-unchecked,

@@ -4,16 +4,7 @@
 
 // Optionals TODO move elsewhere
 // TODO See if we can default the values here and remove the overrides from derived themes
-$ag-header-background-image: null !default;
-$ag-header-background-color: null !default;
 $ag-full-width-tabs: null !default;
-$ag-odd-row-background-color: null !default;
-$ag-value-change-delta-up-color: null !default;
-$ag-value-change-delta-down-color: null !default;
-$ag-menu-option-active-color: null !default;
-$ag-row-stub-background-color: null !default;
-$ag-value-change-value-highlight-background-color: null !default;
-$ag-row-floating-background-color: null !default;
 
 //
 // COLOURS
@@ -26,9 +17,6 @@ $ag-foreground-color: #000 !default;
 // Colour of text in grid cells
 $ag-data-color: $ag-foreground-color !default;
 
-// Background colour of the grid
-$ag-background-color: #fff !default;
-
 // Colour of text and icons in UI elements that need to be slightly less emphasised
 // to avoid distracting attention from data
 $ag-secondary-foreground-color: $ag-foreground-color !default;
@@ -40,6 +28,12 @@ $ag-header-foreground-color: $ag-secondary-foreground-color !default;
 // can't be interacted with because they are in a disabled state
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.5) !default;
 
+// Background colour of the grid
+$ag-background-color: #fff !default;
+
+// Background for all headers, including the grid header, panels, toolpanel subheadings etc
+$ag-header-background-color: null !default;
+
 // Colours for checkboxes and similar click-to-select components like toggle buttons and radio buttons
 $ag-checkbox-color: $ag-foreground-color !default;
 $ag-checkbox-checked-color: $ag-foreground-color !default;
@@ -47,6 +41,9 @@ $ag-checkbox-background-color: $ag-background-color !default;
 
 // Background color of selected rows in the grid and in dropdown menus
 $ag-selected-row-background-color: mix($ag-background-color, $ag-foreground-color, 75%) !default;
+
+// Background colour applied to every other row or null to use $ag-background-color for all rows
+$ag-odd-row-background-color: null !default;
 
 // Background color when hovering over rows in the grid and in dropdown menus
 $ag-row-hover-color: null !default;
@@ -75,6 +72,19 @@ $ag-header-cell-hover-background-color: null !default;
 
 // Colour applied to header cells when the column is being dragged to a new position
 $ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
+
+// Colour to apply when a cell value changes and enableCellChangeFlash is enabled
+$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+
+// Colours to apply when a value increases or decreases in an agAnimateShowChangeCellRenderer cell
+$ag-value-change-delta-up-color: #43a047 !default;
+$ag-value-change-delta-down-color: #e53935 !default;
+
+
+// TODO process these
+$ag-menu-option-active-color: null !default;
+$ag-row-stub-background-color: null !default;
+$ag-row-floating-background-color: null !default;
 
 //
 // BORDERS
@@ -122,7 +132,6 @@ $ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator
 
 // TODO replace this with a $ag-borders cascade child $ag-borders-pinned-column
 $ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
-
 
 $ag-tool-panel-background-color: $ag-background-color !default;
 

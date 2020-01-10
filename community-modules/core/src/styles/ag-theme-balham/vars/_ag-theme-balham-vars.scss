@@ -51,13 +51,9 @@ $ag-chip-background-color: darken($ag-alt-background, 5) !default;
 $ag-row-stub-background-color: inherit !default;
 $ag-row-floating-background-color: inherit !default;
 
-$ag-group-background-color: lighten($ag-tool-panel-background-color, 1%) !default;
 $ag-group-border-color: lighten($ag-border-color, 5%) !default;
-$ag-group-title-background-color: darken($ag-group-background-color, 5%) !default;
-$ag-group-toolbar-background-color: darken($ag-group-background-color, 2%);
 
 // delta changes
-$ag-cell-data-changed-color: #fce4ec !default;
 $ag-value-change-delta-up-color: #43a047 !default;
 $ag-value-change-delta-down-color: #e53935 !default;
 $ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;

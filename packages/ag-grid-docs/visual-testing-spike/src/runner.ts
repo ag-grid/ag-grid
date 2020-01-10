@@ -236,7 +236,7 @@ const getImageDifferences = async (
             image1,
             image2,
             {
-                ignoreAntialiasing: true,
+                ignore: "nothing",
                 largeImageThreshold: 2000
             },
             (err: any, result: ImageAnalysisResult) => {

@@ -2,7 +2,7 @@
 @mixin ag-theme-base-part-column-drop {
     
     .ag-column-drop-horizontal {
-        background-color: $ag-panel-background-color;
+        background-color: $ag-header-background-color;
         color: $ag-secondary-foreground-color;
         height: $ag-row-height;
         @include ag-grid-border(bottom);

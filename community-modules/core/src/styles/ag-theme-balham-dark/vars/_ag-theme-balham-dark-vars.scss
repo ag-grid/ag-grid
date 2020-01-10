@@ -25,23 +25,14 @@ $ag-checkbox-color: #ecf0f1 !default;
 $ag-background-color: $ag-default-background !default;
 
 $ag-editor-background-color: $ag-chrome-background !default;
-$ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
 
 $ag-row-hover-color: lighten($ag-alt-background, 10) !default;
 $ag-chip-background-color: lighten($ag-alt-background, 5) !default;
 
-// delta changes
-$ag-cell-data-changed-color: #fce4ec !default;
-$ag-value-change-delta-up-color: #43a047 !default;
-$ag-value-change-delta-down-color: #e53935 !default;
-$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
 
 $ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
 $ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
-
-$ag-group-background-color: $ag-background-color !default;
-$ag-group-title-background-color: $ag-header-background-color !default;
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';

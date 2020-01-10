@@ -72,7 +72,6 @@ $ag-color-background-chart-range-selection: $ag-alpine-blue !default;
 $ag-color-background-chip: transparentize($ag-alpine-gray-4, 0.8) !default;
 
 // delta changes
-$ag-color-cell-data-changed: $ag-alpine-light-pink !default;
 $ag-color-value-change-delta-up: $ag-alpine-dim-green !default;
 $ag-color-value-change-delta-down: $ag-alpine-dim-red !default;
 $ag-color-value-change-value-highlight-background: transparentize($ag-alpine-deep-teal, 0.5) !default;
@@ -152,7 +151,6 @@ $ag-range-selection-chart-category-background-color: transparentize($ag-color-ba
 $ag-range-selection-chart-background-color: transparentize($ag-color-background-chart-range-selection, 0.9) !default;
 
 $ag-editor-background-color: $ag-chrome-background !default;
-$ag-panel-background-color: $ag-chrome-background !default;
 $ag-tool-panel-background-color: $ag-chrome-background !default;
 $ag-header-background-color: $ag-chrome-background !default;
 
@@ -185,7 +183,6 @@ $ag-secondary-font-family: $ag-font-family-secondary !default;
 $ag-secondary-font-size: $ag-size-font-secondary !default;
 $ag-secondary-font-weight: $ag-weight-font-secondary !default;
 $ag-foreground-color: $ag-color-foreground !default;
-$ag-cell-data-changed-color: $ag-color-cell-data-changed !default;
 $ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;
 $ag-value-change-delta-down-color: $ag-color-value-change-delta-down !default;
 $ag-value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background !default;

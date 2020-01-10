@@ -1,3 +1,15 @@
+In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. There will be breaking changes for most custom themes. We want to explain why we are doing this, and let you know how to update your custom themes.
+
+In previous versions of the grid, our philosophy was to provide Sass variables to allow the grid to be customised. The CSS classes on the DOM were considered an implementation detail to support the variables, not a public API for creating themes. However from our own experience writing themes and from user feedback, we knew that in practice the variables were not enough, and theme authors had to write CSS. This meant that most themes ended up relying on implementation details (DOM class names) to apply their styles. Sometimes the CSS required to achieve quite a simple effect was quite complex. And as a result of this complexity, CSS rules would often require updating for minor releases.
+
+In v23.0 we have done a lot of work to make it easier to style the grid using plain CSS:
+
+- We have added new class names to the DOM to make it easier to target specific elements. For example, overriding the colour of a child-level heading in the filter tool panel previously required the following CSS rule: `.ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item { color: red }` and now the same effect can be achieved with: `.ag-filter-toolpanel-group-level-1-header { color: red }`.
+- We have renamed classes and variables to make them consistent throughout the grid.
+- We have rewritten and simplified our provided themes to take advantage of these new classes. Extending and customising provided themes will now be easier.
+- Some variables were only really necessary because of the difficulty of using CSS selectors. These have been removed.
+- In order to support the next major version of Sass, we have changed the way we handle renamed variables. Previously we automatically imported old variables. Now we will issue a warning when an old variable name is used to notify you to update it to the new name.
+
 
 
 // TODO change this to use tables with old on left and new on right
@@ -16,7 +28,7 @@
 
 We have made various changes to Sass variables. When we have renamed variables, we still support the old variable names for compatibilty, but the changes are listed here for your information.
 
-$ag-header-icon-size, $ag-row-border-width, $ag-transition-speed: These vars were defined but not used and have been removed.
+$ag-header-icon-size, $ag-row-border-width, $ag-transition-speed, $ag-cell-data-changed-color: These vars were defined but not used and have been removed.
 
 $ag-foreground-opacity > $ag-foreground-color-opacity
 $ag-alt-icon-color > $ag-checkbox-background-color
@@ -35,6 +47,8 @@ $ag-tooltip-background-color, $ag-tooltip-border-color, $ag-tooltip-border-radiu
 $ag-accent-color > $ag-checkbox-checked-color
 
 Variables starting `$ag-dialog-` and `$ag-dialog-title-` have been removed. Instead of using these variables, use a css selector like `.ag-panel { ... }` or `.ag-panel-title { ... }`. The full list of removed variables is: $ag-dialog-background-color, $ag-dialog-border-size, $ag-dialog-border-style, $ag-dialog-border-color, $ag-dialog-title-background-color, $ag-dialog-title-foreground-color, $ag-dialog-title-height, $ag-dialog-title-font-family, $ag-dialog-title-font-size, $ag-dialog-title-font-weight, $ag-dialog-title-padding, $ag-dialog-title-icon-size, 
+
+$ag-header-background-image: removed. Apply a style to .ag-header instead
 
 ## CSS class renames
 

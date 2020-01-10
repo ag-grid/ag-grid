@@ -225,20 +225,6 @@ colDefs = {
 }</snippet>
     </p>
 
-<h2>Changing Tool Panel Contents Height </h2>
-
-<p>
-    By default, the tool panels stretch to fit the height of the grid, with maximum height set to <code>100vh</code>.
-    To tweak the height of them, you can use the <code>.ag-column-panel-center</code> selector:
-</p>
-
-<snippet language="css">
-.ag-column-panel-center {
-    /* increase the total max height of tool panel contents */
-    max-height: 2000px;
-}
-</snippet>
-
     <h2>Column Tool Panel Example</h2>
 
     <p>

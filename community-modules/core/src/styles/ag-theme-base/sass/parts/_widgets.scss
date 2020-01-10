@@ -96,21 +96,17 @@
         @include ag-theme-rtl(( margin-left: 2px ));
     }
 
-    .ag-group {
-        background-color: $ag-group-background-color;
-    }
-
     .ag-group-item {
         margin-top: $ag-grid-size / 2;
         margin-bottom: $ag-grid-size / 2;
     }
 
     .ag-group-title-bar {
+        background-color: $ag-header-background-color;
         padding: $ag-grid-size;
     }
     
     .ag-group-toolbar {
-        background-color: $ag-group-toolbar-background-color;
         padding: $ag-grid-size;
     }
 

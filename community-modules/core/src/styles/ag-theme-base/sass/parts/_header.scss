@@ -2,13 +2,7 @@
 @mixin ag-theme-base-part-header {
     
     .ag-header {
-        @if $ag-header-background-color {
-            background-color: $ag-header-background-color;
-        }
-        @if $ag-header-background-image {
-            background-image: $ag-header-background-image;
-        }
-
+        background-color: $ag-header-background-color;
         border-bottom: 1px solid $ag-border-color;
     }
     

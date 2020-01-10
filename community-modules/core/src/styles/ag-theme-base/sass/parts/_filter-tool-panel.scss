@@ -24,10 +24,6 @@
         @include ag-theme-rtl(( margin-right: $ag-grid-size ));
     }
 
-    .ag-group-title-bar.ag-filter-toolpanel-group-level-0-header {
-        background-color: $ag-group-title-background-color;
-    }
-
     .ag-filter-toolpanel-group-level-0 {
         @include ag-grid-border(top, $color: $ag-group-border-color);
     }

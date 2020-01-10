@@ -39,7 +39,6 @@
     }
 
     .ag-column-drop-horizontal {
-        background-color: $ag-panel-background-color;
         height: $ag-header-height;
     }
 
@@ -101,8 +100,8 @@
         border-top: 1px solid $ag-border-color;
     }
 
-    // TODO move to base
-    .ag-filter-toolpanel-body {
+    .ag-filter-toolpanel-body,
+    .ag-filter-toolpanel-group-container {
         background-color: $ag-background-color;
     }
 
