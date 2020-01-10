@@ -12,21 +12,10 @@ import { Caption } from "../caption";
 import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
-import { chainObjects } from "../util/object";
 import { createId } from "../util/id";
 
 export abstract class Chart extends Observable {
     readonly id = createId(this);
-
-    static defaults = chainObjects({}, {
-        container: undefined,
-        data: [],
-        width: 800,
-        height: 400,
-        padding: new Padding(20),
-        title: undefined,
-        subtitle: undefined
-    });
 
     readonly scene: Scene;
     readonly background: Rect = new Rect();
@@ -46,7 +35,7 @@ export abstract class Chart extends Observable {
         return this.scene.container;
     }
 
-    private _data: any[] = Chart.defaults.data;
+    private _data: any[] = [];
     set data(data: any[]) {
         this._data = data;
         this.series.forEach(series => series.data = data);

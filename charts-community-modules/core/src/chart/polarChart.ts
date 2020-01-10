@@ -1,13 +1,9 @@
 import { Chart } from "./chart";
 import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
-import { chainObjects } from "../util/object";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
-
-    static defaults = chainObjects(Chart.defaults, {
-    });
 
     constructor(document = window.document) {
         super(document);

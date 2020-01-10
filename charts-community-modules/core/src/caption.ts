@@ -7,13 +7,8 @@ import { Observable, reactive } from "./util/observable";
 export class Caption extends Observable {
     readonly node: Text = new Text();
 
-    static defaults = {
-        enabled: true,
-        padding: new Padding(10)
-    };
-
-    @reactive('change') enabled = Caption.defaults.enabled;
-    @reactive('change') padding = Caption.defaults.padding;
+    @reactive('change') enabled = true;
+    @reactive('change') padding = new Padding(10);
 
     set text(value: string) {
         if (this.node.text !== value) {

@@ -5,13 +5,9 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
-import { chainObjects } from "../util/object";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
-
-    static defaults = chainObjects(Chart.defaults, {
-    });
 
     constructor(document = window.document) {
         super(document);
