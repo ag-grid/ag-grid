@@ -40,10 +40,9 @@
     .ag-header-group-cell {
         padding-left: $ag-cell-horizontal-padding;
         padding-right: $ag-cell-horizontal-padding;
-        @if $ag-header-cell-moving-background-color {
-            &.ag-header-cell-moving {
-                background-color: $ag-header-cell-moving-background-color;
-            }
+        
+        &.ag-header-cell-moving {
+            background-color: $ag-header-cell-moving-background-color;
         }
     }
 

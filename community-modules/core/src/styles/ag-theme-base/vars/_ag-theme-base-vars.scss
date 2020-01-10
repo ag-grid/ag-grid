@@ -70,6 +70,12 @@ $ag-range-selection-chart-category-background-color: adjust-hue($ag-selection-ba
 // Background colour for cells that provide data to the current range chart
 $ag-range-selection-chart-background-color: adjust-hue($ag-selection-background-color, 25%) !default;
 
+// Rollover colour for header cells
+$ag-header-cell-hover-background-color: null !default;
+
+// Colour applied to header cells when the column is being dragged to a new position
+$ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
+
 //
 // BORDERS
 //
@@ -89,7 +95,7 @@ $ag-border-color: mix($ag-background-color, $ag-foreground-color, 25%) !default;
 // Colour for borders used to separate elements within a major UI component
 $ag-secondary-border-color: $ag-border-color !default;
 
-// Colour of the border between grid rows
+// Colour of the border between grid rows, or null to display no border
 $ag-row-border-color: $ag-secondary-border-color !default;
 
 // Default border for cells. This can be used to specify the border-style and border-color properties
@@ -114,6 +120,47 @@ $ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator
     $ag-header-column-resize-handle-width: 1px !default;
     $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
+// TODO replace this with a $ag-borders cascade child $ag-borders-pinned-column
+$ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
+
+
+$ag-tool-panel-background-color: $ag-background-color !default;
+
+// TODO these should all be null defaulted. Move opinionated styles out of base theme and into balham / material.
+$ag-group-background-color: null !default;
+$ag-group-border-color: null !default;
+$ag-group-title-background-color: null !default;
+$ag-group-toolbar-background-color: null !default;
+
+// TODO imported optionals, can they have sensible defaults? Can definitions be removed from derived themes?
+$ag-chip-background-color: null !default;
+$ag-editor-background-color: null !default;
+$ag-panel-background-color: null !default;
+
+
+
+//
+// INPUTS
+//
+
+$ag-customize-buttons: false !default;
+    // variables used when $ag-customize-buttons is true
+    // TODO replace with another method of customisation like %placeholder or class selector
+    $ag-button-color: null !default;
+    $ag-button-background-color: null !default;
+    $ag-button-text-transform: null !default;
+
+
+$ag-input-disabled-background-color: null !default;
+$ag-input-border-color: null !default;
+$ag-customize-inputs: false !default;
+    // variables used when $ag-customize-inputs is true
+    // TODO replace with another method of customisation like %placeholder or class selector
+    $ag-focused-textbox-border-bottom: null !default;
+    $ag-input-border-width: null !default;
+    $ag-input-bottom-border: null !default;
+    $ag-input-bottom-border-disabled: null !default;
+    $ag-input-height: null !default;
 
 // 
 // Sizing
@@ -153,46 +200,12 @@ $ag-card-shadow: none !default;
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 
-$ag-header-cell-moving-background-color: rgb(190, 190, 190) !default;
-$ag-input-disabled-background-color: null !default;
-$ag-input-border-color: null !default;
-$ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
-
-
-$ag-tool-panel-background-color: $ag-background-color !default;
-// TODO these should all be null defaulted. Move opinionated styles out of base theme and into balham / material.
-$ag-group-background-color: null !default;
-$ag-group-border-color: null !default;
-$ag-group-title-background-color: null !default;
-$ag-group-toolbar-background-color: null !default;
 
 
 // Flags
-
-$ag-customize-buttons: false !default;
-    // variables used when $ag-customize-buttons is true
-    // TODO replace with %placeholder%
-    $ag-button-color: null !default;
-    $ag-button-background-color: null !default;
-    $ag-button-text-transform: null !default;
-
-
-$ag-customize-inputs: false !default;
-    // variables used when $ag-customize-inputs is true
-    // TODO replace with %placeholder%
-    $ag-focused-textbox-border-bottom: null !default;
-    $ag-input-border-width: null !default;
-    $ag-input-bottom-border: null !default;
-    $ag-input-bottom-border-disabled: null !default;
-    $ag-input-height: null !default;
 
 // Icons
 @import "./font-vars";
 
 
-// TODO imported optionals, can they have sensible defaults? Can definitions be removed from derived themes?
-$ag-chip-background-color: null !default;
-$ag-editor-background-color: null !default;
-$ag-header-cell-hover-background-color: null !default;
-$ag-panel-background-color: null !default;

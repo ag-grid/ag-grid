@@ -79,18 +79,6 @@
       border: solid 1px $ag-border-color;
     }
 
-    .ag-row {
-        height: $ag-row-height;
-        &:not(.ag-row-first) {
-            // TODO move to base theme, needs another flag other than $ag-borders
-            border-top: solid 1px $ag-row-border-color;
-        }
-        &.ag-row-last {
-            // TODO move to base theme, needs another flag other than $ag-borders
-            border-bottom: solid 1px $ag-row-border-color;
-        }
-    }
-
     .ag-column-select {
         // TODO move to base theme with new flag
         border-bottom: solid 1px $ag-secondary-border-color;

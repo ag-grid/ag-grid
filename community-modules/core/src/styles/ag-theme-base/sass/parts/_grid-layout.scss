@@ -67,20 +67,12 @@
         height: $ag-row-height;
         color: $ag-data-color;
 
-        @if $ag-borders {
-            &::before {
-                content: "";
-                position: absolute;
-                height: 1px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: $ag-row-border-color;
-                background-color: $ag-row-border-color;
+        @if $ag-row-border-color {
+            &:not(.ag-row-first) {
+                border-top: solid 1px $ag-row-border-color;
             }
-
-            &.ag-row-selected::before {
-                background-color: $ag-selected-row-background-color;
+            &.ag-row-last {
+                border-bottom: solid 1px $ag-row-border-color;
             }
         }
     }
@@ -116,18 +108,12 @@
         }
     }
 
-    .ag-horizontal-left-spacer {
+    // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
+    .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
         border-right: $ag-scroll-spacer-border;
-        &.ag-scroller-corner {
-            border-right: none;
-        }
     }
-    
-    .ag-horizontal-right-spacer {
+    .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
         border-left: $ag-scroll-spacer-border;
-        &.ag-scroller-corner {
-            border-left: none;
-        }
     }
 
     .ag-row-hover {
