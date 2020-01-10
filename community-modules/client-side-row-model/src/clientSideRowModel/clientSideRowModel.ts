@@ -117,7 +117,6 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean {
-
         let atLeastOneChange: boolean;
         let res = false;
 
@@ -200,16 +199,21 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     // returns false if row was moved, otherwise true
-    public ensureRowAtPixel(rowNode: RowNode, pixel: number, increment: number = 0): boolean {
+    public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
 
-        if (rowNodeAtPixelNow === rowNode) {
+        if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
         }
 
-        _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment);
+        rowNodes.forEach(rowNode => {
+            _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+        });
+
+        rowNodes.forEach((rowNode, idx) => {
+            _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment + idx);
+        });
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
