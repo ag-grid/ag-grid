@@ -129,6 +129,10 @@ export class RowDragFeature implements DropTarget {
         });
 
         this.moveRows(rowNodes, draggingEvent.y, increment);
+        this.clearRowHighlight();
+    }
+
+    private clearRowHighlight(): void {
         this.clientSideRowModel.highlightRowAtPixel(null);
     }
 
@@ -257,6 +261,7 @@ export class RowDragFeature implements DropTarget {
     public onDragLeave(draggingEvent: DraggingEvent): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
+        this.clearRowHighlight();
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
