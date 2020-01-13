@@ -38,9 +38,7 @@ then
     build_sass "$srcFolder/ag-grid.scss"
 
 else
-
     build_sass "$specificFile";
-
 fi
 
 # kill watch processes on Ctrl+C

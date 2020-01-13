@@ -15,9 +15,8 @@
     }
 
     .ag-tab-selected {
-        background-color: $ag-default-background;
-        // TODO required?
-        border-bottom: 2px solid $ag-default-background;
+        background-color: $ag-background-color;
+        border-bottom: 2px solid $ag-background-color;
         border-color: $ag-border-color;
     }
 
@@ -61,24 +60,21 @@
         border-bottom: 1px solid $ag-border-color;
     }
 
+    .ag-menu-header {
+        background-color: $ag-header-background-color;
+    }
+
     .ag-tab {
         margin-bottom: -2px;
 
         &.ag-tab-selected {
-            background-color: $ag-default-background;
+            background-color: $ag-background-color;
             border-bottom-color: transparent;
         }
     }
 
-    .ag-tabs-body,
-    .ag-popup-editor,
-    .ag-menu {
-        background-color: $ag-default-background;
-        color: $ag-foreground-color;
-    }
-
     .ag-details-row {
-        background-color: $ag-default-background;
+        background-color: $ag-background-color;
     }
 
     .ag-overlay-loading-wrapper {
@@ -86,7 +82,7 @@
     }
 
     .ag-overlay-loading-center {
-        background-color: $ag-default-background;
+        background-color: $ag-background-color;
         border: 1px solid $ag-border-color;
         color: $ag-foreground-color;
         padding: $ag-grid-size * 4;
@@ -100,13 +96,8 @@
         border-top: 1px solid $ag-border-color;
     }
 
-    .ag-filter-toolpanel-body,
-    .ag-filter-toolpanel-group-container {
-        background-color: $ag-background-color;
-    }
-
     .ag-tooltip {
-        border-color: $ag-balham-tooltip-background-color;
+        border: none;
         background-color: $ag-balham-tooltip-background-color;
     }
 }

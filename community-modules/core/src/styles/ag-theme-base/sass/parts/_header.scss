@@ -40,6 +40,10 @@
         }
     }
 
+    .ag-header-icon {
+        color: $ag-secondary-foreground-color;
+    }
+
     .ag-header-row:not(:first-child) {
         .ag-header-cell,
         .ag-header-group-cell.ag-header-group-cell-with-group {

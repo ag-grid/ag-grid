@@ -74,7 +74,7 @@
         padding-left: $ag-grid-size * 2;
 
         &:hover {
-            background-color: $ag-menu-option-active-color;
+            background-color: $ag-selected-row-background-color;
         }
     }
 }

@@ -1,11 +1,6 @@
 @import "./ag-theme-base-import-legacy-vars";
 
 
-
-// Optionals TODO move elsewhere
-// TODO See if we can default the values here and remove the overrides from derived themes
-$ag-full-width-tabs: null !default;
-
 //
 // COLOURS
 //
@@ -31,8 +26,15 @@ $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.5) !default;
 // Background colour of the grid
 $ag-background-color: #fff !default;
 
-// Background for all headers, including the grid header, panels, toolpanel subheadings etc
+// Background colour for all headers, including the grid header, panels, toolpanel subheadings etc
+// Semi-transparent colours work well as the same header colour will well on any background
 $ag-header-background-color: null !default;
+
+// Background colour for second level headings within UI components
+$ag-subheader-background-color: null !default;
+
+// Background for areas of the interface that contain UI controls, like tool panels and the chart settings menu
+$ag-control-panel-background-color: null !default;
 
 // Colours for checkboxes and similar click-to-select components like toggle buttons and radio buttons
 $ag-checkbox-color: $ag-foreground-color !default;
@@ -48,24 +50,27 @@ $ag-odd-row-background-color: null !default;
 // Background color when hovering over rows in the grid and in dropdown menus
 $ag-row-hover-color: null !default;
 
-// Color to draw around selected elements e.g. cell range selections
-$ag-selection-border-color: $ag-foreground-color !default;
+// Color to draw around selected cell ranges
+$ag-range-selection-border-color: $ag-foreground-color !default;
 
-// Background colour when a range of cells is selected. Should be transparent in order to
+// Background colour of selected cell ranges. Should be transparent in order to
 // look good when multiple ranges overlap.
-$ag-selection-background-color: rgba($ag-selection-border-color, 0.20) !default;
+$ag-range-selection-background-color: rgba($ag-range-selection-border-color, 0.20) !default;
+
+// Background colour to apply to a cell range when it is copied from or pasted into
+$ag-range-selection-highlight-color: $ag-range-selection-border-color;
 
 // Colour and thickness of the border drawn under selected tabs, including menus
 // and tool panels
-$ag-selected-tab-underline-color: $ag-selection-border-color !default;
+$ag-selected-tab-underline-color: $ag-range-selection-border-color !default;
 $ag-selected-tab-underline-width: 0 !default;
 $ag-selected-tab-underline-transition-speed: null !default;
 
 // Background colour for cells that provide categories to the current range chart
-$ag-range-selection-chart-category-background-color: adjust-hue($ag-selection-background-color, -80%) !default;
+$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
 
 // Background colour for cells that provide data to the current range chart
-$ag-range-selection-chart-background-color: adjust-hue($ag-selection-background-color, 25%) !default;
+$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
 
 // Rollover colour for header cells
 $ag-header-cell-hover-background-color: null !default;
@@ -80,11 +85,8 @@ $ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) 
 $ag-value-change-delta-up-color: #43a047 !default;
 $ag-value-change-delta-down-color: #e53935 !default;
 
-
-// TODO process these
-$ag-menu-option-active-color: null !default;
-$ag-row-stub-background-color: null !default;
-$ag-row-floating-background-color: null !default;
+// Colour for the "chip" that repersents a column that has been dragged onto a drop zone
+$ag-chip-background-color: null !default;
 
 //
 // BORDERS
@@ -133,21 +135,6 @@ $ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator
 // TODO replace this with a $ag-borders cascade child $ag-borders-pinned-column
 $ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
-$ag-tool-panel-background-color: $ag-background-color !default;
-
-// TODO these should all be null defaulted. Move opinionated styles out of base theme and into balham / material.
-$ag-group-background-color: null !default;
-$ag-group-border-color: null !default;
-$ag-group-title-background-color: null !default;
-$ag-group-toolbar-background-color: null !default;
-
-// TODO imported optionals, can they have sensible defaults? Can definitions be removed from derived themes?
-$ag-chip-background-color: null !default;
-$ag-editor-background-color: null !default;
-$ag-panel-background-color: null !default;
-
-
-
 //
 // INPUTS
 //
@@ -186,9 +173,14 @@ $ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
-$filter-tool-panel-group-indent: 16px !default;
-$filter-tool-panel-top-level-row-height: $ag-grid-size * 8 !default;
-$filter-tool-panel-sub-level-row-height: $ag-grid-size * 6 !default;
+$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
+$ag-filter-tool-panel-group-indent: 16px !default;
+$ag-filter-tool-panel-top-level-row-height: $ag-grid-size * 8 !default;
+$ag-filter-tool-panel-sub-level-row-height: $ag-grid-size * 6 !default;
+
+// Cause tabs to stretch across the full width of the tab panel header
+$ag-full-width-tabs: false !default;
 
 // Fonts
 $ag-font-family: 'Helvetica Neue', sans-serif !default;
@@ -205,11 +197,6 @@ $ag-secondary-font-weight: 400 !default;
 // radius applied to popup elements
 $ag-card-radius: $ag-grid-radius !default;
 $ag-card-shadow: none !default;
-
-$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
-$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
-
-
 
 
 // Flags

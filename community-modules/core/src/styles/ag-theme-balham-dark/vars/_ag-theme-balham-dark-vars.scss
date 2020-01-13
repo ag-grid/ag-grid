@@ -1,38 +1,29 @@
 
-// theme shortcuts
-$ag-default-background: #2d3436 !default;
+// override colours from balham theme
 $ag-foreground-color: #F5F5F5 !default;
-$ag-secondary-foreground-color: rgba($ag-foreground-color, 0.64) !default;
+$ag-secondary-foreground-color: $ag-foreground-color !default;
+$ag-header-foreground-color: rgba($ag-foreground-color, 0.64) !default;
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
+$ag-background-color: #2d3436 !default;
+$ag-header-background-color: #1c1f20 !default;
+$ag-subheader-background-color: #101213 !default;
+$ag-control-panel-background-color: #1c1f20 !default;
 
-$ag-chrome-background: darken(#636e72, 30) !default;
 $ag-balham-active: #00B0FF !default;
+$ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
+$ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 $ag-border-color: #424242 !default;
 $ag-row-border-color: #5c5c5c;
-$ag-alt-background: darken(#2d3436, 3) !default;
-$ag-odd-row-background-color: $ag-alt-background !default;
+$ag-odd-row-background-color: darken($ag-background-color, 3) !default;
+$ag-row-hover-color: lighten($ag-background-color, 7) !default;
+$ag-selected-row-background-color: darken($ag-balham-active, 25) !default;
 
-$ag-balham-tooltip-background-color: #1c1f20;
-
-// Derived from above
 $ag-input-border-color: #ecf0f1 !default;
 $ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
 
-$ag-selected-row-background-color: darken($ag-balham-active, 25) !default;
-
 $ag-checkbox-color: #ecf0f1 !default;
 
-$ag-background-color: $ag-default-background !default;
+$ag-balham-tooltip-background-color: #1c1f20 !default;
 
-$ag-editor-background-color: $ag-chrome-background !default;
-$ag-tool-panel-background-color: $ag-chrome-background !default;
-$ag-header-background-color: $ag-chrome-background !default;
-
-$ag-row-hover-color: lighten($ag-alt-background, 10) !default;
-$ag-chip-background-color: lighten($ag-alt-background, 5) !default;
-
-
-$ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
-$ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';

@@ -36,7 +36,6 @@
     }
 
     .ag-header-cell, .ag-header-group-cell {
-        background-color: $ag-header-background-color;
         transition: background-color 0.5s;
     }
 
@@ -83,6 +82,10 @@
 
         padding-top: $ag-grid-size;
         padding-bottom: $ag-grid-size;
+    }
+
+    .ag-column-drop-vertical-cell {
+        margin-left: 0;
     }
 
     .ag-status-bar {

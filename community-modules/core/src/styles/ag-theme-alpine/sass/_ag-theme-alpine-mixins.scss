@@ -3,7 +3,7 @@ $ag-checkbox-size: 15px;
 $ag-checkbox-border-radius: $ag-border-radius;
 
 @mixin ag-active-invert {
-    color: $ag-color-background;
+    color: $ag-background-color;
     background-color: $ag-color-primary;
 }
 
@@ -23,7 +23,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     vertical-align: middle;
     border-radius: $ag-checkbox-border-radius;
     border: 1px solid $ag-color-border-form-element;
-    background: $ag-color-background;
+    background: $ag-background-color;
     transition: background-color 0.1s linear;
     display: block;
     margin: 0;
@@ -39,7 +39,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
         content: ' ';
         width: $ag-checkbox-size - 2;
         height: $ag-checkbox-size - 2;
-        background: $ag-color-background;
+        background: $ag-background-color;
         display: block;
         margin-left: 0px;
         margin-right: 0px;
@@ -53,8 +53,8 @@ $ag-checkbox-border-radius: $ag-border-radius;
 
     &::after {
         content: ' ';
-        border-right: 1px solid $ag-color-background;
-        border-bottom: 1px solid $ag-color-background;
+        border-right: 1px solid $ag-background-color;
+        border-bottom: 1px solid $ag-background-color;
         display: block;
         transform: rotate(45deg);
         transition: all 0.2s linear;
@@ -76,7 +76,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     }
 
     &:checked::before {
-        background: transparentize($ag-color-background, 1);
+        background: transparentize($ag-background-color, 1);
         visibility: visible;
     }
 
@@ -134,7 +134,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     border-radius: $ag-border-radius;
     padding: $ag-grid-size;
     border: 1px solid $ag-color-border-form-element;
-    background: $ag-color-background;
+    background: $ag-background-color;
     color: $ag-color-foreground;
     box-sizing: border-box;
 }
@@ -183,7 +183,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     margin: 0;
     margin-top: -$ag-size-font-form-element / 4;
     vertical-align: middle;
-    background: $ag-color-background;
+    background: $ag-background-color;
 
     &::after {
         content: ' ';
@@ -217,7 +217,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     border-radius: $ag-border-radius;
     border: 1px solid $ag-color-primary;
     color: $ag-color-primary;
-    background: $ag-color-background;
+    background: $ag-background-color;
     font-weight: 600;
     padding: $ag-grid-size $ag-grid-size * 2;
     // transition: all 0.1s;
@@ -231,7 +231,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     &:active {
         border-color: $ag-color-primary;
         background-color: transparentize($ag-color-primary, 0.1);
-        color: $ag-color-background;
+        color: $ag-background-color;
     }
 }
 
@@ -249,7 +249,7 @@ $ag-checkbox-border-radius: $ag-border-radius;
     &:active {
         border-color: $ag-color-primary;
         background-color: transparentize($ag-color-primary, 0.1);
-        color: $ag-color-background;
+        color: $ag-background-color;
     }
 }
 
@@ -339,7 +339,7 @@ $ag-toggle-button-width: 28px;
     -webkit-appearance: none;
     width: 12px;
     height: 12px;
-    background: $ag-color-background;
+    background: $ag-background-color;
     border: 1px solid $ag-border-color;
     border-radius: 12px;
 }

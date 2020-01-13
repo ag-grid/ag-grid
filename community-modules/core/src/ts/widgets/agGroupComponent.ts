@@ -205,9 +205,7 @@ export class AgGroupComponent extends Component {
 
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
         this.enabled = enabled;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
-        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !enabled);
-        _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !enabled);
+        this.refreshDisabledStyles();
 
         this.toggleGroupExpand(enabled);
 
@@ -234,6 +232,7 @@ export class AgGroupComponent extends Component {
     public hideEnabledCheckbox(hide: boolean): this {
         this.suppressEnabledCheckbox = hide;
         this.refreshChildDisplay();
+        this.refreshDisabledStyles();
         return this;
     }
 
@@ -244,5 +243,11 @@ export class AgGroupComponent extends Component {
             this.toggleGroupExpand(true);
         }
         return this;
+    }
+
+    private refreshDisabledStyles() {
+        _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !this.enabled);
+        _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     }
 }

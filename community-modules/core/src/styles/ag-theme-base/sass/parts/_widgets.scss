@@ -43,7 +43,7 @@
     // Rich Select
     ////////////////////////////////////////
     .ag-rich-select {
-        background-color: $ag-editor-background-color;
+        background-color: $ag-control-panel-background-color;
     }
 
     .ag-rich-select-list {
@@ -102,11 +102,14 @@
     }
 
     .ag-group-title-bar {
-        background-color: $ag-header-background-color;
+        background-color: $ag-subheader-background-color;
         padding: $ag-grid-size;
     }
     
     .ag-group-toolbar {
+        @if $ag-subheader-background-color {
+            background-color: rgba($ag-subheader-background-color, 0.5);
+        }
         padding: $ag-grid-size;
     }
 
@@ -162,6 +165,7 @@
     }
 
     .ag-toggle-button-icon {
+        background-color: $ag-background-color;
         width: $ag-icon-size;
         height: $ag-icon-size;
         border: 1px solid $ag-checkbox-color;
@@ -169,7 +173,6 @@
         right: calc(100% - #{$ag-icon-size} + 1px);
     }
     .ag-selected .ag-toggle-button-icon {
-        background: $ag-background-color;
         right: -1px;
     }
 
@@ -296,6 +299,11 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size));
     }
 
+    .ag-panel-title-bar-button-icon {
+        font-size: $ag-header-height - $ag-grid-size * 2;
+        line-height: $ag-header-height - $ag-grid-size * 2;
+    }
+
     ////////////////////////////////////////
     // Tooltip
     ////////////////////////////////////////
@@ -318,7 +326,7 @@
         align-items: center;
     }
     
-    @for $i from 1 to 20 {
+    @for $i from 1 to 5 {
         .ag-column-select-indent-#{$i} {
             @include ag-theme-rtl((padding-left: $i * $ag-column-select-indent-size));
         }

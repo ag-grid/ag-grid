@@ -11,15 +11,12 @@
         @include ag-theme-rtl(( border-right-width: 1px ));
     }
 
-    .ag-cell:not(.ag-cell-focus),
-    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell),
-    .ag-root:not(.ag-has-focus) .ag-cell {
-        &.ag-cell-first-right-pinned:not(.ag-cell-range-left) {
-            @include ag-theme-rtl((border-left: 1px solid $ag-border-color));
-        }
-        &.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-            @include ag-theme-rtl((border-right: 1px solid $ag-border-color));
-        }
+    .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+        @include ag-theme-rtl((border-left: 1px solid $ag-border-color));
+    }
+
+    .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+        @include ag-theme-rtl((border-right: 1px solid $ag-border-color));
     }
     
     .ag-row-selected {
@@ -28,7 +25,7 @@
 
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected:not(.ag-cell-focus) {
-        background-color: $ag-selection-background-color;
+        background-color: $ag-range-selection-background-color;
         &.ag-cell-range-chart {
             background-color: $ag-range-selection-chart-background-color;
         }
@@ -39,54 +36,61 @@
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-selection-background-color, 1);
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 1);
     }
 
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-selection-background-color, 2);
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 2);
     }
 
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-selection-background-color, 3);
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 3);
     }
 
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-selection-background-color, 4);
+        @include ag-colour-self-overlay($ag-range-selection-background-color, 4);
     }
 
     .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
         &.ag-cell-range-top {
-            border-top-color: $ag-selection-border-color;
+            border-top-color: $ag-range-selection-border-color;
         }
         &.ag-cell-range-right {
-            border-right-color: $ag-selection-border-color;
+            border-right-color: $ag-range-selection-border-color;
         }
         &.ag-cell-range-bottom {
-            border-bottom-color: $ag-selection-border-color;
+            border-bottom-color: $ag-range-selection-border-color;
         }
         &.ag-cell-range-left {
-            border-left-color: $ag-selection-border-color;
+            border-left-color: $ag-range-selection-border-color;
         }
+    }
+
+    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+        border: 1px solid $ag-range-selection-border-color;
+        outline: initial;
     }
 
     .ag-cell.ag-selection-fill-top,
     .ag-cell.ag-selection-fill-top.ag-cell-range-selected {
-        border-top: 1px dashed $ag-selection-border-color;
+        border-top: 1px dashed $ag-range-selection-border-color;
     }
 
     .ag-cell.ag-selection-fill-right,
     .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
-        border-right: 1px dashed $ag-selection-border-color;
+        border-right: 1px dashed $ag-range-selection-border-color;
     }
 
     .ag-cell.ag-selection-fill-bottom,
     .ag-cell.ag-selection-fill-bottom.ag-cell-range-selected {
-        border-bottom: 1px dashed $ag-selection-border-color;
+        border-bottom: 1px dashed $ag-range-selection-border-color;
     }
 
     .ag-cell.ag-selection-fill-left,
     .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
-        border-left: 1px dashed $ag-selection-border-color;
+        border-left: 1px dashed $ag-range-selection-border-color;
     }
 
     %ag-selection-handle {
@@ -94,8 +98,8 @@
         width: 6px;
         height: 6px;
         bottom: -1px;
-        right: -1px;
-        background-color: $ag-selection-border-color;
+        @include ag-theme-rtl((right: -1px));
+        background-color: $ag-range-selection-border-color;
     }
 
     .ag-fill-handle {

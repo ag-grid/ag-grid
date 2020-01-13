@@ -148,7 +148,7 @@ $ag-color-primary: $ag-alpine-blue !default;
 // color used for the grid selection and selection checkboxes.
 $ag-color-secondary: $ag-alpine-orange !default;
 // background
-$ag-color-background: $ag-alpine-white !default;
+$ag-background-color: $ag-alpine-white !default;
 
 // text
 $ag-color-foreground: $ag-alpine-black !default;

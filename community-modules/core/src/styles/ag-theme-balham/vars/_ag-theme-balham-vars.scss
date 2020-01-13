@@ -1,88 +1,65 @@
-@import './ag-theme-balham-import-legacy-vars';
+@import "./ag-theme-balham-import-legacy-vars";
 
-// Sizing
-$ag-grid-size: 4px !default;
-$ag-icon-size: 16px !default;
-
-// these three should be changed in environment.ts, too
-$ag-row-height: $ag-grid-size * 7 !default;
-// theme shortcuts
-$ag-default-background: white !default;
-$ag-chrome-background: lighten(#ECF0F1, 3) !default;
-$ag-balham-active: #0091EA !default;
+// main colours (overridden by balham-dark)
 $ag-foreground-color: #000 !default;
 $ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
-$ag-border-color: #BDC3C7 !default;
-$ag-row-border-color: #D9DCDE !default;
-$ag-checkbox-background-color: $ag-default-background !default;
-$ag-alt-background: #ECF0F1 !default;
-$ag-odd-row-background-color: rgb(252, 253, 254) !default;
-$ag-header-cell-moving-background-color: $ag-default-background !default;
+$ag-background-color: white !default;
+$ag-header-background-color: #f5f7f7 !default;
+$ag-subheader-background-color: #e2e9eb !default;
+$ag-control-panel-background-color: #f5f7f7 !default;
+$ag-balham-active: #0091ea !default;
+$ag-range-selection-chart-category-background-color: rgba(#00ff84, 0.1) !default;
+$ag-range-selection-chart-background-color: rgba(#0059ff, 0.1) !default;
+$ag-border-color: #bdc3c7 !default;
+$ag-row-border-color: #d9dcde !default;
+$ag-odd-row-background-color: #fcfdfe !default;
+$ag-row-hover-color: #f2f2f2 !default;
 
-$ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
-$ag-header-column-separator-height: 50%;
-
-// Derived from above
-$ag-input-border-color: #95A5A6 !default;
+$ag-input-border-color: #95a5a6 !default;
 $ag-input-disabled-background-color: #ebebeb !default;
 
-$ag-selection-background-color: rgba($ag-balham-active, 0.2) !default;
-$ag-selection-border-color: $ag-balham-active;
-$ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
-$ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
+$ag-checkbox-color: #7f8c8d !default;
+
+$ag-value-change-value-highlight-background-color: rgba(#16a085, 0.5) !default;
+
+$ag-balham-tooltip-background-color: #cbd0d3 !default;
+
+// derived colours (shared by balham-dark)
+$ag-range-selection-background-color: rgba($ag-balham-active, 0.2) !default;
+$ag-range-selection-border-color: $ag-balham-active;
 $ag-range-selection-highlight-color: $ag-balham-active !default;
-$ag-selected-row-background-color: lighten($ag-balham-active, 40) !default;
-
-
-$ag-checkbox-color: #7F8C8D !default;
 $ag-checkbox-checked-color: $ag-balham-active !default;
+$ag-selected-row-background-color: lighten($ag-balham-active, 40) !default;
+$ag-chip-background-color: mix($ag-control-panel-background-color, $ag-foreground-color, 80%) !default;
+$ag-header-cell-moving-background-color: $ag-background-color !default;
+$ag-header-column-separator-color: rgba($ag-border-color, 0.5) !default;
 
-$ag-background-color: $ag-default-background !default;
-
-$ag-editor-background-color: $ag-chrome-background !default;
-$ag-panel-background-color: $ag-chrome-background !default;
-$ag-tool-panel-background-color: $ag-chrome-background !default;
-$ag-header-background-color: $ag-chrome-background !default;
-
-$ag-row-hover-color: $ag-alt-background !default;
-$ag-chip-background-color: darken($ag-alt-background, 5) !default;
-
-$ag-row-stub-background-color: inherit !default;
-$ag-row-floating-background-color: inherit !default;
-
-$ag-group-border-color: lighten($ag-border-color, 5%) !default;
-
-// delta changes
-$ag-value-change-delta-up-color: #43a047 !default;
-$ag-value-change-delta-down-color: #e53935 !default;
-$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
-
+// sizing
+$ag-grid-size: 4px !default;
+$ag-icon-size: 16px !default;
+$ag-row-height: $ag-grid-size * 7 !default;
 $ag-header-height: $ag-grid-size * 8 !default;
 $ag-virtual-item-height: $ag-grid-size * 7 !default;
-
-$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
-
-$ag-balham-tooltip-background-color: #cbd0d3;
-
+$ag-header-column-separator-height: 50%;
+$ag-input-height: $ag-grid-size * 4 !default;
 
 // Fonts
-$ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
-
+$ag-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
 $ag-font-size: 12px !default;
 $ag-font-weight: 400 !default;
 
 $ag-secondary-font-family: $ag-font-family !default; //font-secondary
 $ag-secondary-font-size: 12px !default; // font-secondary-size
 $ag-secondary-font-weight: 600 !default; // font-secondary-weight
+
+// Misc
+
 $ag-card-radius: 2px !default;
 $ag-card-shadow: none !default;
-
-$ag-input-height: $ag-grid-size * 4 !default;
 $ag-button-text-transform: uppercase !default;
-$ag-use-icons-for-pager-buttons: true !default;
 
 // Icons
 @import "./font-vars";

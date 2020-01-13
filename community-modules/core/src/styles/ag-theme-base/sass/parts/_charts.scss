@@ -52,7 +52,7 @@
         border-radius: 4px;
 
         &.ag-selected {
-            background-color: $ag-selection-border-color;
+            background-color: $ag-checkbox-checked-color;
         }
     }
 
@@ -63,7 +63,7 @@
     .ag-charts-minichart-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        @include ag-grid-border(top, $color: $ag-group-border-color);
+        @include ag-grid-border(top, $color: $ag-secondary-border-color);
     }
 
     .ag-charts-minichart-group-container {
@@ -102,5 +102,7 @@
 
     .ag-chart-menu-panel {
         @include ag-theme-rtl((border-left: solid 1px $ag-border-color));
+
+        background-color: $ag-control-panel-background-color;
     }
 }

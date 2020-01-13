@@ -7,11 +7,11 @@
     }
 
     .ag-filter-toolpanel-header {
-        height: $filter-tool-panel-sub-level-row-height;
+        height: $ag-filter-tool-panel-sub-level-row-height;
         @include ag-theme-rtl(( padding-left: $ag-grid-size ));
     }
     .ag-filter-toolpanel-group-level-0-header {
-        height: $filter-tool-panel-top-level-row-height;
+        height: $ag-filter-tool-panel-top-level-row-height;
     }
 
     .ag-filter-toolpanel-search {
@@ -25,7 +25,7 @@
     }
 
     .ag-filter-toolpanel-group-level-0 {
-        @include ag-grid-border(top, $color: $ag-group-border-color);
+        @include ag-grid-border(top, $color: $ag-secondary-border-color);
     }
 
     .ag-filter-toolpanel-expand,
@@ -36,7 +36,7 @@
     @for $i from 1 through 10 {
         .ag-filter-toolpanel-group-level-#{$i}-header {
             @include ag-theme-rtl((
-                padding-left: $filter-tool-panel-group-indent * ($i - 1) + $ag-grid-size
+                padding-left: $ag-filter-tool-panel-group-indent * ($i - 1) + $ag-grid-size
             ));
         }
     }

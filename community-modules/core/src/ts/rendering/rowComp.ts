@@ -994,7 +994,7 @@ export class RowComp extends Component {
         }
 
         if (rowNode.stub) {
-            classes.push('ag-row-stub');
+            classes.push('ag-row-loading');
         }
 
         if (this.fullWidthRow) {

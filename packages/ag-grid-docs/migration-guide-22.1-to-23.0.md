@@ -28,19 +28,16 @@ In v23.0 we have done a lot of work to make it easier to style the grid using pl
 
 We have made various changes to Sass variables. When we have renamed variables, we still support the old variable names for compatibilty, but the changes are listed here for your information.
 
-$ag-header-icon-size, $ag-row-border-width, $ag-transition-speed, $ag-cell-data-changed-color: These vars were defined but not used and have been removed.
+$ag-header-icon-size, $ag-row-border-width, $ag-transition-speed, $ag-cell-data-changed-color, $ag-use-icons-for-pager-buttons: These vars were defined but not used and have been removed.
 
 $ag-foreground-opacity > $ag-foreground-color-opacity
-$ag-alt-icon-color > $ag-checkbox-background-color
-
-$ag-range-selection-background-color > $ag-selection-background-color
-$ag-range-selection-border-color > $ag-selection-border-color
+$ag-alt-icon-color > $ag-checkbox-background-colorag-range-selection-border-color
    
-$ag-range-selected-color-1 (and -2, -3, -4): removed. Colour when multiple ranges overlap now calculated automatically from the opacity of $ag-selection-background-color.
+$ag-range-selected-color-1 (and -2, -3, -4): removed. Colour when multiple ranges overlap now calculated automatically from the opacity of $ag-range-selection-background-color.
 
 $ag-foreground-color-opacity, $ag-secondary-foreground-color-opacity, $ag-disabled-foreground-color-opacity: removed. If you were using them, instead set a semi-transparent colour to $ag-foreground-color, $ag-secondary-foreground-color, or $ag-disabled-foreground-color
 
-$ag-primary-color removed. Use $ag-selection-border-color and $ag-selected-tab-underline-color.
+$ag-primary-color removed. Use $ag-range-selection-border-color and $ag-selected-tab-underline-color.
 
 $ag-tooltip-background-color, $ag-tooltip-border-color, $ag-tooltip-border-radius, $ag-tooltip-border-style, $ag-tooltip-border-width, $ag-tooltip-foreground-color, $ag-tooltip-padding: removed. Use a CSS rule like .ag-tooltip { padding: 10px; }
 
@@ -48,7 +45,21 @@ $ag-accent-color > $ag-checkbox-checked-color
 
 Variables starting `$ag-dialog-` and `$ag-dialog-title-` have been removed. Instead of using these variables, use a css selector like `.ag-panel { ... }` or `.ag-panel-title { ... }`. The full list of removed variables is: $ag-dialog-background-color, $ag-dialog-border-size, $ag-dialog-border-style, $ag-dialog-border-color, $ag-dialog-title-background-color, $ag-dialog-title-foreground-color, $ag-dialog-title-height, $ag-dialog-title-font-family, $ag-dialog-title-font-size, $ag-dialog-title-font-weight, $ag-dialog-title-padding, $ag-dialog-title-icon-size, 
 
-$ag-header-background-image: removed. Apply a style to .ag-header instead
+$ag-header-background-image: removed. .ag-header {background: xxx}
+
+$ag-row-stub-background-color: removed. use .ag-row-loading {background-color: xxx}
+
+$ag-row-floating-background-color: removed. Use .ag-row-pinned {background-color: xxx}
+
+$ag-group-border-color: removed
+
+TODO: replaced with new styles, document
+$ag-editor-background-color: null !default;
+$ag-panel-background-color: null !default;
+$ag-group-background-color: null !default;
+$ag-group-border-color: null !default;
+$ag-group-title-background-color: null !default;
+$ag-group-toolbar-background-color: null !default;
 
 ## CSS class renames
 
@@ -58,6 +69,8 @@ ag-group-component-title-bar-icon
 ag-group-component-title
 ag-group-component-container
 ag-group-component-toolbar
+
+.ag-row-stub > .ag-row-loading
 
 Are now ag-group, ag-group-title-bar etc
 

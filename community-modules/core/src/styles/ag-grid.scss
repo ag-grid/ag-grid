@@ -1528,19 +1528,14 @@ $ag-handleSize: 5px;
     cursor: pointer;
 }
 
-
-// TODO can be removed if we merge themes
-$ag-column-select-indent-size: 10px !default;
-$ag-row-group-indent-size: 10px !default;
-
 // Default values for themes that do not use the mixins
-@for $i from 1 to 20 {
-    .ag-ltr .ag-column-select-indent-#{$i} {
-        @include ag-unthemed-rtl(( padding-left: $i * $ag-column-select-indent-size ));
+@for $i from 1 to 5 {
+    .ag-column-select-indent-#{$i} {
+        @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }
     
-    .ag-ltr .ag-row-group-indent-#{$i} {
-        @include ag-unthemed-rtl(( padding-left: $i * $ag-row-group-indent-size ));
+    .ag-row-group-indent-#{$i} {
+        @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }
 }
 

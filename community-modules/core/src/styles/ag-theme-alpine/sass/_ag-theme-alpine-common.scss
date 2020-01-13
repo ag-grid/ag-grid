@@ -181,7 +181,7 @@
     ////////////////////////////////////////
     .ag-pinned-left-header,
     .ag-root:not(.ag-has-focus) .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right) {
-        border-right: 1px solid $ag-border-color !important;
+        border-right: 1px solid $ag-border-color;
     }
 
     .ag-pinned-right-header {
@@ -230,7 +230,7 @@
             }
 
             &:active .ag-icon {
-                color: $ag-color-background;
+                color: $ag-background-color;
             }
         }
     }
@@ -240,7 +240,7 @@
     ////////////////////////////////////////
 
     .ag-cell.ag-cell-inline-editing {
-        @include ag-box-shadow($ag-selection-border-color);
+        @include ag-box-shadow($ag-range-selection-border-color);
         border-radius: 0;
         padding: 0;
         height: 100%;
@@ -272,7 +272,7 @@
     // Popup editing
     ////////////////////////////////////////
     .ag-popup > div.ag-popup-editor {
-        @include ag-box-shadow($ag-selection-border-color);
+        @include ag-box-shadow($ag-range-selection-border-color);
         min-height: $ag-row-height;
         border-color: $ag-color-primary;
         border-radius: 0;
@@ -305,7 +305,7 @@
             @extend %custom-selection;
             border: 0;
             color: $ag-color-foreground;
-            background: $ag-color-background;
+            background: $ag-background-color;
             font: $ag-font-default;
             padding: $ag-grid-size * 2 $ag-grid-size * 3;
         }
@@ -391,7 +391,7 @@
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: transparentize($ag-color-background, 0.25);
+        background-color: transparentize($ag-background-color, 0.25);
     }
 
     ////////////////////////////////////////
@@ -479,7 +479,7 @@
     }
 
     .ag-column-drop-vertical-title-bar {
-        background-color: $ag-color-background;
+        background-color: $ag-background-color;
         padding: $ag-grid-size * 2 $ag-grid-size * 2;
         @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
     }
@@ -524,7 +524,7 @@
 
             .ag-filter-toolpanel-header {
                 padding: $ag-grid-size $ag-grid-size * 2;
-                background-color: $ag-color-background;
+                background-color: $ag-background-color;
                 border-bottom: 1px solid $ag-border-color;
 
                 [ref='eExpand'] {
@@ -623,7 +623,7 @@
                 border-radius: $ag-border-radius;
                 padding: $ag-grid-size;
                 color: $ag-color-foreground;
-                background: $ag-color-background;
+                background: $ag-background-color;
             }
 
             select {
@@ -649,7 +649,7 @@
 
     .ag-charts-format-top-level-group-title-bar, .ag-charts-data-group-title-bar {
         font: $ag-font-chrome;
-        background: $ag-color-background;
+        background: $ag-background-color;
         @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
         padding: $ag-grid-size $ag-grid-size * 2;
 
@@ -676,7 +676,7 @@
     .ag-charts-format-top-level-group-toolbar {
         padding: $ag-grid-size $ag-grid-size * 2;
         height: auto;
-        background: $ag-color-background;
+        background: $ag-background-color;
         input.ag-native-checkbox {
             @include ag-toggle-button;
         }
@@ -707,7 +707,7 @@
     .ag-color-panel {
         .ag-spectrum-slider {
             border: 1px solid $ag-border-color;
-            box-shadow: 0 0px 1px 1px $ag-color-background;
+            box-shadow: 0 0px 1px 1px $ag-background-color;
         }
     }
 
@@ -729,7 +729,7 @@
                 background-color: $ag-color-border-form-element;
             }
             .ag-angle-select-child-circle {
-                background-color: $ag-color-background;
+                background-color: $ag-background-color;
             }
         }
     }
@@ -744,7 +744,7 @@
         }
 
         &:active .ag-icon {
-            // color: $ag-color-background;
+            // color: $ag-background-color;
         }
     }
 
@@ -880,10 +880,6 @@
             padding-right: $ag-grid-size;
             padding-left: 0;
         }
-    }
-
-    .ag-panel .ag-panel-title-bar .ag-panel-title-bar-buttons .ag-panel-title-bar-button .ag-icon {
-        font-size: $ag-icon-size;
     }
 
     .ag-header-expand-icon {

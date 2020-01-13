@@ -6,13 +6,15 @@
     }
  
     .ag-side-bar {
-        background-color: $ag-tool-panel-background-color;
         position: relative;
+    }
+
+    .ag-tool-panel-wrapper {
+        background-color: $ag-control-panel-background-color;
     }
 
     .ag-side-buttons {
         padding-top: $ag-grid-size * 4;
-        background: $ag-background-color;
         width: $ag-icon-size + 4;
         position: relative;
         color: $ag-foreground-color;
@@ -39,7 +41,7 @@
 
     .ag-selected .ag-side-button-button {
         @if $ag-borders-side-button {
-            background-color: $ag-tool-panel-background-color;
+            background-color: $ag-control-panel-background-color;
             border-top-color: $ag-border-color;
             border-bottom-color: $ag-border-color;
         }

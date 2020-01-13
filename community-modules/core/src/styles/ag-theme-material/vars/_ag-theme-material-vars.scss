@@ -2,26 +2,44 @@
 
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
+$ag-mat-primary-color: #3f51b5 !default;
+$ag-mat-accent-color: #ff4081 !default;
 
-$ag-borders: false;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// The variables below can be overriden to adjust the look up to the app color scheme
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// Colors
+$ag-foreground-color: rgba(#000, 0.87) !default;
+$ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
+$ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
+$ag-background-color: #fff !default;
+$ag-header-background-color: #FFF !default;
+$ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
+$ag-checkbox-checked-color: $ag-mat-accent-color !default;
+$ag-checkbox-background-color: transparent !default;
+$ag-chip-background-color: #e2e2e2 !default;
+$ag-range-selection-background-color: rgba(122, 134, 203, 0.1) !default;
+$ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
+$ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
+$ag-range-selection-highlight-color: #fce4ec !default;
+$ag-row-hover-color: #fafafa !default;
+$ag-control-panel-background-color: #fafafa !default;
+$ag-selected-row-background-color: #eee !default;
+$ag-range-selection-border-color: $ag-mat-primary-color;
+
+// Borders
+$ag-borders: false; // draw our own borders
+$ag-border-color: #e2e2e2 !default;
+$ag-focused-textbox-border-bottom: 2px solid $ag-mat-primary-color !default;
 
 // Sizing
 $ag-grid-size: 8px !default;
 $ag-icon-size: 18px !default;
 $ag-header-height: $ag-grid-size * 7 !default;
 $ag-row-height: $ag-grid-size * 6 !default;
-$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
-$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-virtual-item-height: $ag-grid-size * 5;
-$filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
-$filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
-
-$ag-selected-tab-underline-width: 2px;
+$ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
+$ag-filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
+$ag-filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default; // legacy: font
@@ -32,55 +50,31 @@ $ag-secondary-font-family: "Roboto", sans-serif !default; //font-secondary
 $ag-secondary-font-size: 12px !default; // font-secondary-size
 $ag-secondary-font-weight: 700 !default; // font-secondary-weight
 
-// Colors
-$ag-foreground-color: rgba(#000, 0.87) !default;
-$ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
-$ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
-$ag-background-color: #fff !default;
-$ag-header-background-color: $ag-background-color !default;
-$ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
-
-$ag-border-color: #e2e2e2 !default;
-
-$ag-checkbox-checked-color: #ff4081 !default;
-$ag-checkbox-background-color: transparent !default;
-
-$ag-editor-background-color: #fafafa !default;
-$ag-panel-background-color: #eee !default;
-$ag-tool-panel-background-color: #fafafa !default;
-$ag-chip-background-color: #e2e2e2 !default;
-
-$ag-selection-background-color: rgba(122, 134, 203, 0.1) !default;
-$ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
-$ag-range-selection-chart-background-color: rgba(0, 88, 255, 0.1) !default;
-$ag-range-selection-highlight-color: #fce4ec !default;
-
-$ag-row-hover-color: #fafafa !default;
-$ag-selected-row-background-color: #eee !default;
 
 // Misc
+$ag-selected-tab-underline-color: $ag-mat-primary-color;
+$ag-selected-tab-underline-width: 2px;
+
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;
 
-$ag-focused-textbox-border-bottom: 2px solid #3f51b5 !default;
-$ag-input-bottom-border: 2px solid $ag-border-color !default;
-$ag-input-bottom-border-disabled: 1px solid $ag-border-color !default;
-$ag-button-color: #3f51b5 !default;
-$ag-selected-tab-underline-color: #3f51b5;
-$ag-selection-border-color: #3f51b5;
-$ag-button-background-color: transparent !default;
-$ag-input-height: $ag-grid-size * 5 !default;
-$ag-input-border-width: 0 !default;
-$ag-button-text-transform: uppercase !default;
+// Inputs
+$ag-customize-inputs: true !default;
+    $ag-input-bottom-border: 2px solid $ag-border-color !default;
+    $ag-input-bottom-border-disabled: 1px solid $ag-border-color !default;
+    $ag-input-border-width: 0 !default;
+    $ag-input-height: $ag-grid-size * 5 !default;
+
+// Buttons
+$ag-customize-buttons: true !default;
+    $ag-button-color: $ag-mat-primary-color !default;
+    $ag-button-text-transform: uppercase !default;
+    $ag-button-background-color: transparent !default;
 
 // delta changes
 $ag-value-change-value-highlight-background-color: #00acc1 !default;
 
 // Flags
-
-$ag-use-icons-for-pager-buttons: true !default;
-$ag-customize-inputs: true !default;
-$ag-customize-buttons: true !default;
 $ag-full-width-tabs: true !default;
 
 // Icons

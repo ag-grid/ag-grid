@@ -34,12 +34,7 @@
         margin: 0 $ag-grid-size;
     }
 
-    .ag-row-stub {
-        background-color: $ag-row-stub-background-color;
-    }
-
     .ag-status-bar {
-        background: $ag-background-color;
         @include ag-grid-border(top);
         color: $ag-disabled-foreground-color;
         font-weight: $ag-secondary-font-weight;

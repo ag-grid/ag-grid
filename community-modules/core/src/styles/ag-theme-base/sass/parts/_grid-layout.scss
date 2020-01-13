@@ -82,7 +82,7 @@
         position: absolute;
         width: 100%;
         height: 1px;
-        background-color: $ag-selection-border-color;
+        background-color: $ag-range-selection-border-color;
         left: 1px;
     }
 
@@ -101,10 +101,6 @@
     @if $ag-odd-row-background-color {
         .ag-row-odd {
             background-color: $ag-odd-row-background-color;
-        }
-
-        .ag-row-even {
-            background-color: $ag-background-color;
         }
     }
 
@@ -145,33 +141,22 @@
         opacity: 0.5;
     }
 
-    .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-    .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
-        border: 1px solid $ag-selection-border-color;
-        outline: initial;
-    }
-
     .ag-cell-inline-editing {
         @include ag-card();
         padding: 0;
         height: $ag-row-height;
-        background-color: $ag-editor-background-color;
+        background-color: $ag-control-panel-background-color;
     }
 
     .ag-popup-editor {
         @include ag-card();
-        background-color: $ag-editor-background-color;
+        background-color: $ag-control-panel-background-color;
         padding: 0;
     }
 
     .ag-large-text-input {
         height: auto;
         padding: $ag-cell-horizontal-padding;
-    }
-
-    .ag-row-stub {
-        background-color: $ag-row-stub-background-color;
     }
 
     .ag-details-row {
@@ -218,14 +203,4 @@
     .ag-floating-bottom {
         border-top: 1px solid $ag-border-color;
     }
-
-    .ag-floating-top,
-    .ag-floating-bottom {
-        background-color: $ag-row-floating-background-color;
-    }
-
-    .ag-row-pinned {
-        background-color: $ag-row-floating-background-color;
-    }
-
 }
