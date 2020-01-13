@@ -205,11 +205,17 @@ const mappings = {
     }
 } as any;
 
-// Amend the `mappings` object with shorthands for different chart types.
+// Amend the `mappings` object with aliases for different chart types.
 {
-    ['line', 'area', 'bar', 'column'].forEach(type => {
-        mappings[type] = mappings.cartesian;
-    });
+    const typeToAliases: { [key in string]: string[] } = {
+        cartesian: ['line', 'area', 'bar', 'column'],
+        polar: ['pie']
+    };
+    for (const type in typeToAliases) {
+        typeToAliases[type].forEach(alias => {
+            mappings[alias] = mappings[type];
+        });
+    }
 
     // Special handling for scatter charts where both axes should default to type `number`.
     mappings['scatter'] = {
@@ -228,8 +234,6 @@ const mappings = {
             }
         }
     };
-
-    mappings['pie'] = mappings.polar;
 }
 
 const pathToSeriesTypeMap: { [key in string]: string } = {
