@@ -62,10 +62,11 @@ export class RowDragFeature implements DropTarget {
     }
 
     public getRowNodes(dragginEvent: DraggingEvent): RowNode[] {
+        const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
         const selectedNodes = this.selectionController.getSelectedNodes();
         const currentNode = dragginEvent.dragItem.rowNode;
 
-        if (selectedNodes.indexOf(currentNode) !== -1) {
+        if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
             return [...selectedNodes];
         }

@@ -28,8 +28,9 @@ import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { TooltipManager } from "../widgets/tooltipManager";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./detailRowCompCache";
-import {CellPositionUtils} from "../entities/cellPosition";
-import {RowPositionUtils} from "../entities/rowPosition";
+import { CellPositionUtils } from "../entities/cellPosition";
+import { RowPositionUtils } from "../entities/rowPosition";
+import { SelectionController } from "../selectionController";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -71,6 +72,7 @@ export class Beans {
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
+    @Autowired('selectionController') public selectionController: SelectionController;
 
     public doingMasterDetail: boolean;
 

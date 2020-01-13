@@ -41,6 +41,15 @@ export class RowDragComp extends Component {
         this.addFeature(strategy, this.beans.context);
     }
 
+    private getSelectedCount(): number {
+        const multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
+        if (!multiRowEnabled) { return 1; }
+
+        const selection = this.beans.selectionController.getSelectedNodes();
+
+        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+    }
+
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
         const managed = this.beans.gridOptionsWrapper.isRowDragManaged();
@@ -66,7 +75,15 @@ export class RowDragComp extends Component {
         const dragSource: DragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
-            dragItemName: rowDragText ? rowDragText(dragItem) : this.cellValue,
+            dragItemName: () => {
+                if (rowDragText) {
+                    return rowDragText(dragItem);
+                }
+
+                const count = this.getSelectedCount();
+
+                return count === 1 ? this.cellValue : `${count} rows`;
+            },
             getDragItem: () => dragItem,
             dragStartPixels: 0
         };

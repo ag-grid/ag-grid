@@ -28,7 +28,7 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     getDragItem: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string | null;
+    dragItemName: string | (() => string) | null;
     /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
@@ -296,41 +296,31 @@ export class DragAndDropService {
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
-        if (this.eventLastTime.clientX > event.clientX) {
-            return HorizontalDirection.Left;
-        } else if (this.eventLastTime.clientX < event.clientX) {
-            return HorizontalDirection.Right;
-        } else {
-            return null;
-        }
+        const clientX = this.eventLastTime.clientX;
+        const eClientX = event.clientX;
+
+        if (clientX === eClientX) { return null; }
+
+        return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
     }
 
     public getVerticalDirection(event: MouseEvent): VerticalDirection {
-        if (this.eventLastTime.clientY > event.clientY) {
-            return VerticalDirection.Up;
-        } else if (this.eventLastTime.clientY < event.clientY) {
-            return VerticalDirection.Down;
-        } else {
-            return null;
-        }
+        const clientY = this.eventLastTime.clientY;
+        const eClientY = event.clientY;
+
+        if (clientY === eClientY) { return null; }
+
+        return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
     }
 
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
         // localise x and y to the target component
         const rect = dropTarget.getContainer().getBoundingClientRect();
+        const { dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return {
-            event,
-            x,
-            y,
-            vDirection,
-            hDirection,
-            dragSource: this.dragSource,
-            fromNudge,
-            dragItem: this.dragItem
-        };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem };
     }
 
     private positionGhost(event: MouseEvent): void {
@@ -346,7 +336,7 @@ export class DragAndDropService {
         // put ghost vertically in middle of cursor
         let top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
-        let left = event.pageX - 30;
+        let left = event.pageX - 10;
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         const windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
@@ -394,7 +384,13 @@ export class DragAndDropService {
         this.setGhostIcon(null);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
-        eText.innerHTML = _.escape(this.dragSource.dragItemName);
+        let dragItemName = this.dragSource.dragItemName;
+
+        if (_.isFunction(dragItemName)) {
+            dragItemName = (dragItemName as () => string)();
+        }
+
+        eText.innerHTML = _.escape(dragItemName as string);
 
         this.eGhost.style.height = '25px';
         this.eGhost.style.top = '20px';
