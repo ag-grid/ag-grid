@@ -24,28 +24,21 @@ export interface GridStyle {
 }
 
 export class AxisTick {
-    static defaults = chainObjects({}, {
-        width: 1,
-        size: 6,
-        color: 'rgba(195, 195, 195, 1)',
-        count: 10
-    });
-
     /**
      * The line width to be used by axis ticks.
      */
-    width: number = AxisTick.defaults.width;
+    width: number = 1;
 
     /**
      * The line length to be used by axis ticks.
      */
-    size: number = AxisTick.defaults.size;
+    size: number = 6;
 
     /**
      * The color of the axis ticks.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make the ticks invisible.
      */
-    color?: string = AxisTick.defaults.color;
+    color?: string = 'rgba(195, 195, 195, 1)';
 
     /**
      * A hint of how many ticks to use (the exact number of ticks might differ),
@@ -56,39 +49,29 @@ export class AxisTick {
      *     axis.tick.count = year;
      *     axis.tick.count = month.every(6);
      */
-    count: any = AxisTick.defaults.count;
+    count: any = 10;
 }
 
 export class AxisLabel {
 
-    static defaults = chainObjects({}, {
-        fontStyle: undefined,
-        fontWeight: undefined,
-        fontSize: 12,
-        fontFamily: 'Verdana, sans-serif',
-        padding: 5,
-        color: 'rgba(87, 87, 87, 1)',
-        formatter: undefined
-    });
+    fontStyle?: FontStyle;
 
-    fontStyle?: FontStyle = AxisLabel.defaults.fontStyle;
+    fontWeight?: FontWeight;
 
-    fontWeight?: FontWeight = AxisLabel.defaults.fontWeight;
+    fontSize: number = 12;
 
-    fontSize: number = AxisLabel.defaults.fontSize;
-
-    fontFamily: string = AxisLabel.defaults.fontFamily;
+    fontFamily: string = 'Verdana, sans-serif';
 
     /**
      * The padding between the labels and the ticks.
      */
-    padding: number = AxisLabel.defaults.padding;
+    padding: number = 5;
 
     /**
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
      */
-    color?: string = AxisLabel.defaults.color;
+    color?: string = 'rgba(87, 87, 87, 1)';
 
     /**
      * Custom label rotation in degrees.
@@ -127,8 +110,7 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string
-        = AxisLabel.defaults.formatter;
+    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
 
     onFormatChange?: (format?: string) => void;
 

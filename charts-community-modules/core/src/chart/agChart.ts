@@ -13,6 +13,7 @@ import { Legend, LegendOrientation, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
 import { MarkerLabel } from "./markerLabel";
 import { DropShadow } from "../scene/dropShadow";
+import { AxisLabel, AxisTick } from "../axis";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -130,6 +131,34 @@ const shadowMapping = {
     }
 };
 
+const axisMappings = {
+    label: {
+        meta: {
+            constructor: AxisLabel,
+            defaults: {
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: 'Verdana, sans-serif',
+                padding: 5,
+                color: 'rgba(87, 87, 87, 1)',
+                formatter: undefined
+            }
+        }
+    },
+    tick: {
+        meta: {
+            constructor: AxisTick,
+            defaults: {
+                width: 1,
+                size: 6,
+                color: 'rgba(195, 195, 195, 1)',
+                count: 10
+            }
+        }
+    }
+} as any;
+
 const mappings = {
     cartesian: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
@@ -158,15 +187,13 @@ const mappings = {
                 meta: {
                     constructor: NumberAxis,
                 },
-                label: {},
-                tick: {}
+                ...axisMappings
             },
             category: {
                 meta: {
                     constructor: CategoryAxis,
                 },
-                label: {},
-                tick: {}
+                ...axisMappings
             }
         },
         series: {
