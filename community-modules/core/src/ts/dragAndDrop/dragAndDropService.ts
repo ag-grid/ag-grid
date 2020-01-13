@@ -93,12 +93,10 @@ export class DragAndDropService {
     public static ICON_NOT_ALLOWED = 'notAllowed';
 
     public static GHOST_TEMPLATE =
-        '<div class="ag-dnd-ghost">' +
+        '<div ref="eWrapper"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label"></div>' +
-        '</div>';
-
-    private logger: Logger;
+        '</div></div>';
 
     private dragSourceAndParamsList: { params: DragListenerParams, dragSource: DragSource }[] = [];
 
@@ -107,7 +105,7 @@ export class DragAndDropService {
     private dragSource: DragSource;
     private dragging: boolean;
 
-    private eGhost: HTMLElement;
+    private eWrapper: HTMLElement;
     private eGhostParent: HTMLElement;
     private eGhostIcon: HTMLElement;
 
@@ -137,10 +135,6 @@ export class DragAndDropService {
         this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
         this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
         this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -324,7 +318,8 @@ export class DragAndDropService {
     }
 
     private positionGhost(event: MouseEvent): void {
-        const ghostRect = this.eGhost.getBoundingClientRect();
+        const ghost = this.eWrapper.querySelector('.ag-dnd-ghost') as HTMLDivElement;
+        const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
 
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -343,47 +338,47 @@ export class DragAndDropService {
         const windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
-        if (browserWidth > 0 && ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX))) {
-            left = browserWidth + windowScrollX - this.eGhost.clientWidth;
+        if (browserWidth > 0 && ((left + ghost.clientWidth) > (browserWidth + windowScrollX))) {
+            left = browserWidth + windowScrollX - ghost.clientWidth;
         }
 
         if (left < 0) {
             left = 0;
         }
 
-        if (browserHeight > 0 && ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY))) {
-            top = browserHeight + windowScrollY - this.eGhost.clientHeight;
+        if (browserHeight > 0 && ((top + ghost.clientHeight) > (browserHeight + windowScrollY))) {
+            top = browserHeight + windowScrollY - ghost.clientHeight;
         }
 
         if (top < 0) {
             top = 0;
         }
 
-        this.eGhost.style.left = left + 'px';
-        this.eGhost.style.top = top + 'px';
+        ghost.style.left = left + 'px';
+        ghost.style.top = top + 'px';
     }
 
     private removeGhost(): void {
-        if (this.eGhost && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eGhost);
+        if (this.eWrapper && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eWrapper);
         }
 
-        this.eGhost = null;
+        this.eWrapper = null;
     }
 
     private createGhost(): void {
-        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eWrapper = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            _.addCssClass(this.eGhost, theme);
+            _.addCssClass(this.eWrapper, theme);
         }
 
-        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
+        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
         this.setGhostIcon(null);
 
-        const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
+        const eText = this.eWrapper.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
 
         if (_.isFunction(dragItemName)) {
@@ -392,9 +387,9 @@ export class DragAndDropService {
 
         eText.innerHTML = _.escape(dragItemName as string);
 
-        this.eGhost.style.height = '25px';
-        this.eGhost.style.top = '20px';
-        this.eGhost.style.left = '20px';
+        this.eWrapper.style.height = '25px';
+        this.eWrapper.style.top = '20px';
+        this.eWrapper.style.left = '20px';
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
@@ -402,7 +397,7 @@ export class DragAndDropService {
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         } else {
-            this.eGhostParent.appendChild(this.eGhost);
+            this.eGhostParent.appendChild(this.eWrapper);
         }
     }
 

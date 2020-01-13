@@ -342,11 +342,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
     display: inline-block;
     overflow: hidden;
-    // TODO nesting
-    & .ag-header-cell-sortable {
-        cursor: pointer;
-    }
 }
+
+.ag-header-cell-sortable {
+    cursor: pointer;
+}
+
 .ag-header {
     display: flex;
     width: 100%;
@@ -408,11 +409,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     @include ag-unthemed-rtl((
         right: -4px
     ));
-}
-
-// TODO visual style
-.ag-header-expand-icon {
-    @include ag-unthemed-rtl(( padding-left: 4px ));
 }
 
 .ag-header-select-all {
@@ -631,6 +627,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-cell .ag-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /**
  ****************************
  * Filters
@@ -693,11 +694,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
 }
 
-.ag-floating-filter-input:read-only {
-    // TODO visual styles
-    background-color: #eee;
-}
-
 .ag-floating-filter-button {
     display: flex;
     flex: none;
@@ -715,22 +711,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     align-items: center;
     cursor: move;
-    // TODO visual styles
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    overflow: hidden;
-    padding: 3px;
-    position: absolute;
-    text-overflow: ellipsis;
-    user-select: none;
-    z-index: 10;
+    white-space: nowrap;
 }
-
-// TODO visual styles
-.ag-dnd-ghost-icon {
-    padding: 2px;
-}
-
 
 /**
  ****************************
@@ -749,7 +731,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-overlay-panel {
     display: flex;
     height: 100%;
-    pointer-events: none;
     width: 100%;
 }
 
@@ -761,13 +742,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     justify-content: center;
     text-align: center;
-    // TODO required?
-    &.ag-overlay-loading-wrapper {
-        pointer-events: all;
-    }
 }
 
-// for when auto height is used but there is no row data
+.ag-overlay-loading-wrapper {
+    // prevent interaction with grid while it's loading
+    pointer-events: all;
+}
+
+// in auto-height mode with no rows, add padding to prevent grid being too small
 .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
     padding-top: 30px;
 }
@@ -975,39 +957,12 @@ $ag-handleSize: 5px;
     z-index: 99999;
     opacity: 0;
     transition-property: opacity;
-
-    // TODO visual styles
-    font: 12px Verdana, sans-serif;
-    color: black;
-    background: rgb(244, 244, 244);
-    border-radius: 5px;
-    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-    transform: scale(0.90);
-    transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    transition-property: opacity, transform;
 }
 
 .ag-chart-tooltip-visible {
     opacity: 1;
-    // TODO visual style
-    transform: scale(1);
 }
 
-.ag-chart-tooltip-title {
-    // TODO visual style
-    font-weight: bold;
-    padding: 7px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    color: white;
-    background-color: #888888;
-}
-
-.ag-chart-tooltip-content {
-    // TODO visual style
-    padding: 7px;
-    line-height: 1.7em;
-}
 
 /**
  ****************************
@@ -1097,10 +1052,10 @@ $ag-handleSize: 5px;
 
 .ag-rich-select-list {
     position: relative;
-    // TODO nesting
-    .ag-virtual-list-item {
-        display: flex;
-    }
+}
+
+.ag-rich-select-virtual-list-item {
+    display: flex;
 }
 
 .ag-rich-select-row {
@@ -1189,17 +1144,6 @@ $ag-handleSize: 5px;
 
 .ag-side-bar-right .ag-tool-panel-horizontal-resize {
     @include ag-unthemed-rtl(( left: -3px ));
-}
-
-.ag-filter-loading {
-    // TODO visual styles
-    background-color: #e6e6e6;
-    height: 100%;
-    padding: 5px;
-    position: absolute;
-    top: 34px;
-    width: 100%;
-    z-index: 1;
 }
 
 .ag-details-row {
@@ -1436,20 +1380,18 @@ $ag-handleSize: 5px;
 }
 
 .ag-label-align-right {
-    // TODO on hold pending ag-wrapper / input refactor
-    label {
+    .ag-label {
         order: 1;
     }
-    > div {
+    > * {
         flex: none;
     }
 }
 
 .ag-label-align-top {
-    // TODO on hold pending ag-wrapper / input refactor
     flex-direction: column;
     align-items: flex-start;
-    > div {
+    > * {
         align-self: stretch;
     }
 }
@@ -1529,7 +1471,7 @@ $ag-handleSize: 5px;
 }
 
 // Default values for themes that do not use the mixins
-@for $i from 1 to 5 {
+@for $i from 1 to 10 {
     .ag-column-select-indent-#{$i} {
         @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }

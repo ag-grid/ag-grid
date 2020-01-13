@@ -1,11 +1,6 @@
 
 @mixin ag-theme-base-part-grid-borders {
 
-    // TODO refactor the code behind selections and borders so that we don't need these complicated selectors
-    //      while doing that, consider improving the look and feel. Borders and selections don't overlap well
-    //      because theyre' based on flat colours. If we rendered borders using semi-transparent overlays
-    //      whenthen they would combine over whatever background colour they're above
-
     .ag-cell {
         @include ag-theme-rtl(( border-right: $ag-cell-horizontal-border ));
         @include ag-theme-rtl(( border-right-width: 1px ));
@@ -80,7 +75,7 @@
 
     .ag-cell.ag-selection-fill-right,
     .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
-        border-right: 1px dashed $ag-range-selection-border-color;
+        @include ag-theme-rtl((border-right: 1px dashed $ag-range-selection-border-color));
     }
 
     .ag-cell.ag-selection-fill-bottom,
@@ -90,7 +85,7 @@
 
     .ag-cell.ag-selection-fill-left,
     .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
-        border-left: 1px dashed $ag-range-selection-border-color;
+        @include ag-theme-rtl((border-left: 1px dashed $ag-range-selection-border-color));
     }
 
     %ag-selection-handle {

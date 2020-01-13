@@ -93,9 +93,7 @@
     justify-content: space-around;
     flex: 1 1 auto;
     height: 100%;
-
-    // TODO visual style
-    padding: 0 10px;
+    padding: 0 10px; // increase size of click area for better UX
 }
 
 .ag-chart-settings-card-item {

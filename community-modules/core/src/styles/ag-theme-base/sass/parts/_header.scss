@@ -44,6 +44,10 @@
         color: $ag-secondary-foreground-color;
     }
 
+    .ag-header-expand-icon {
+        @include ag-theme-rtl(( padding-left: 4px ));
+    }
+
     .ag-header-row:not(:first-child) {
         .ag-header-cell,
         .ag-header-group-cell.ag-header-group-cell-with-group {
@@ -70,7 +74,6 @@
         .ag-header-cell::after,
         .ag-header-group-cell::after {
             content: "";
-            // TODO structural styles
             position: absolute;
             z-index: 1;
             display: block;
@@ -104,11 +107,18 @@
         @include ag-theme-rtl(( margin-right: $ag-cell-horizontal-padding ));
     }
 
-    &.ag-dnd-ghost {
+    .ag-dnd-ghost {
         @include ag-card();
 
-        // TODO add new flag for element borders which need tgo be controlled separately from $ag-borders
-        border: 1px solid $ag-secondary-border-color;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        overflow: hidden;
+        padding: 3px;
+        position: absolute;
+        text-overflow: ellipsis;
+        user-select: none;
+        z-index: 10;
+        @include ag-grid-border($color: $ag-secondary-border-color);
         color: $ag-secondary-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
@@ -122,8 +132,6 @@
 
     .ag-dnd-ghost-icon {
         height: 100%;
-        margin: 0;
-        padding: 0;
         margin-right: $ag-grid-size;
         color: $ag-foreground-color;
     }
@@ -139,5 +147,15 @@
         height: $ag-icon-size;
         padding: 0;
         width: $ag-icon-size;
+    }
+
+    .ag-filter-loading {
+        background-color: #e6e6e6;
+        height: 100%;
+        padding: 5px;
+        position: absolute;
+        top: 34px;
+        width: 100%;
+        z-index: 1;
     }
 }

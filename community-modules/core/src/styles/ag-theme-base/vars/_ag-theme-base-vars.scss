@@ -92,9 +92,6 @@ $ag-chip-background-color: null !default;
 // BORDERS
 //
 
-// TODO ag-grid-border should take a required type parameter 'primary', 'secondary', 'row' etc,
-// which should control both whether each kind of border is drawn, and its color
-
 // Draw borders around most UI elements
 $ag-borders: true !default;
 
@@ -132,7 +129,7 @@ $ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator
     $ag-header-column-resize-handle-width: 1px !default;
     $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
-// TODO replace this with a $ag-borders cascade child $ag-borders-pinned-column
+// TODO use critical border flag instead
 $ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
 //
@@ -149,14 +146,7 @@ $ag-customize-buttons: false !default;
 
 $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
-$ag-customize-inputs: false !default;
-    // variables used when $ag-customize-inputs is true
-    // TODO replace with another method of customisation like %placeholder or class selector
-    $ag-focused-textbox-border-bottom: null !default;
-    $ag-input-border-width: null !default;
-    $ag-input-bottom-border: null !default;
-    $ag-input-bottom-border-disabled: null !default;
-    $ag-input-height: null !default;
+
 
 // 
 // Sizing

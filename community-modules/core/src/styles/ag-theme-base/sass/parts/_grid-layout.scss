@@ -9,7 +9,7 @@
         @include ag-grid-border($radius: $ag-grid-radius);
     }
     
-    @for $i from 1 to 20 {
+    @for $i from 1 to 10 {
         .ag-row-group-indent-#{$i} {
             @include ag-theme-rtl(( padding-left: $i * $ag-row-group-indent-size ));
         }
@@ -17,12 +17,6 @@
 
     .ag-row-group-leaf-indent {
         @include ag-theme-rtl(( margin-left: $ag-row-group-indent-size ));
-    }
-
-    .ag-cell .ag-icon {
-        // TODO structural styles
-        display: inline-block;
-        vertical-align: middle;
     }
 
     .ag-cell {
@@ -161,10 +155,11 @@
 
     .ag-details-row {
         padding: $ag-grid-size * 5;
+        background-color: $ag-background-color;
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: transparentize($ag-background-color, 0.5);
+        background-color: rgba($ag-background-color, 0.5);
     }
 
     .ag-overlay-loading-center {

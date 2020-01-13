@@ -11,6 +11,11 @@
         width: 100%;
     }
 
+    .ag-menu-option-part {
+        padding-top: $ag-grid-size * 1.5;
+        padding-bottom: $ag-grid-size * 1.5;
+    }
+
     .ag-menu-option-active {
         background-color: $ag-row-hover-color;
     }
@@ -56,13 +61,11 @@
     .ag-tabs-header {
         min-width: 220px;
         width: 100%;
-        // TODO structural style
         display: flex;
     }
     
     .ag-tab {
         border-bottom: $ag-selected-tab-underline-width solid transparent;
-        // TODO structural styles
         display: flex;
         flex: none;
         align-items: center;
@@ -139,7 +142,6 @@
     }
 
     .ag-filter-apply-panel {
-        // TODO structural styles
         display: flex;
         justify-content: flex-end;
         padding: $ag-grid-size;
@@ -148,10 +150,6 @@
     
     .ag-filter-apply-panel-button {
         line-height: 1.5;
-        @if $ag-customize-buttons {
-            @include ag-regular-button($ag-button-color, $ag-button-background-color, $ag-button-text-transform);
-        }
-
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
 

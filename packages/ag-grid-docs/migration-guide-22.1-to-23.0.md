@@ -61,6 +61,11 @@ $ag-group-border-color: null !default;
 $ag-group-title-background-color: null !default;
 $ag-group-toolbar-background-color: null !default;
 
+$ag-customise-inputs, $ag-input-bottom-border, $ag-input-bottom-border-disabled, $ag-input-border-width, $ag-input-height, $ag-focused-textbox-border-bottom: removed. Use the new %ag-text-input placeholder selector to style text inputs instead. See ag-theme-material.scss for an example.
+
+
+$ag-customize-buttons, $ag-button-color, $ag-button-text-transform, $ag-button-background-color: remvoed. Apply styles to buttons using css class name selectors like `.ag-filter-apply-panel-button { ... }`
+
 ## CSS class renames
 
 ag-group-component

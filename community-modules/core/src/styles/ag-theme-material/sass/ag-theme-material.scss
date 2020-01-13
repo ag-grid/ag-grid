@@ -12,13 +12,8 @@
     }
 
     .ag-tabs-header,
-    .ag-column-drop-horizontal,
-    .ag-group-title-bar {
-        background-color: #eee;
-    }
-
-    .ag-group-toolbar {
-        background-color: #f7f7f7;
+    .ag-column-drop-horizontal {
+        background-color: $ag-subheader-background-color;
     }
 
     .ag-icon-checkbox-checked,
@@ -48,38 +43,15 @@
         height: $ag-row-height + $ag-grid-size * 3;
     }
 
-    .ag-menu-option {
-        height: $ag-grid-size * 5 - 2;
-    }
-
-    .ag-side-bar {
-        border-bottom: none;
-        border-top: none;
-    }
-
     .ag-side-button-button {
         color: $ag-secondary-foreground-color;
         font-family: $ag-secondary-font-family;
         font-size: $ag-secondary-font-size;
         font-weight: $ag-secondary-font-weight;
-        background-color: transparent;
-    }
-
-    .ag-side-bar-right .ag-side-button-button {
-        @include ag-theme-rtl((border-left-width: 2px));
-    }
-    
-    .ag-side-bar-left .ag-side-button-button {
-        @include ag-theme-rtl((border-right-width: 2px));
-    }
-
-    .ag-filter-toolpanel-body {
-        background-color: $ag-background-color;
     }
 
     .ag-column-drop-vertical {
         border-bottom: solid 1px $ag-border-color;
-
         padding-top: $ag-grid-size;
         padding-bottom: $ag-grid-size;
     }
@@ -89,17 +61,15 @@
     }
 
     .ag-status-bar {
-      border: solid 1px $ag-border-color;
+        border: solid 1px $ag-border-color;
     }
 
     .ag-column-select {
-        // TODO move to base theme with new flag
-        border-bottom: solid 1px $ag-secondary-border-color;
+        border-bottom: solid 1px $ag-border-color;
     }
 
     .ag-column-select-header, .ag-column-select-list {
-        // TODO move to base theme with new flag
-        border-top: solid 1px $ag-secondary-border-color;
+        border-top: solid 1px $ag-border-color;
     }
 
     .ag-group-title-bar {
@@ -108,5 +78,44 @@
 
     .ag-charts-format-sub-level-group-title-bar {
         padding: $ag-grid-size * 0.5 $ag-grid-size;
+    }
+
+    %ag-text-input {
+
+        background: transparent;
+        color: $ag-foreground-color;
+        font-family: inherit;
+        font-size: inherit;
+        height: $ag-grid-size * 5;
+        padding-bottom: $ag-grid-size;
+
+        border-width: 0;
+
+        border-bottom: 2px solid $ag-border-color;
+
+        &:focus {
+            border-bottom: 2px solid $ag-mat-primary-color;
+            outline: none;
+        }
+
+        &::placeholder {
+            color: $ag-disabled-foreground-color;
+        }
+
+        &:disabled {
+            border-bottom: 1px solid $ag-border-color;
+        }
+    }
+
+    .ag-filter-apply-panel-button {
+        appearance: none;
+        background-color: transparent;
+        border: 0;
+        color: $ag-mat-primary-color;
+        font-family: inherit;
+        font-size: inherit;
+        margin: 0;
+        padding: 0;
+        text-transform: uppercase;
     }
 }

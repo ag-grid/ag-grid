@@ -1,12 +1,9 @@
 
 @mixin ag-theme-base-part-columns-tool-panel {
     
-
     .ag-pivot-mode-panel {
         height: $ag-header-height;
-        // TODO structural styles
         display: flex;
-        flex: none;
     }
 
     .ag-pivot-mode-select {

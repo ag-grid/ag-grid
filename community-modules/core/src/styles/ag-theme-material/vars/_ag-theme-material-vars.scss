@@ -11,7 +11,8 @@ $ag-foreground-color: rgba(#000, 0.87) !default;
 $ag-secondary-foreground-color: rgba($ag-foreground-color, 0.54) !default;
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.38) !default;
 $ag-background-color: #fff !default;
-$ag-header-background-color: #FFF !default;
+$ag-header-background-color: #fff !default;
+$ag-subheader-background-color: #eee;
 $ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
 $ag-checkbox-checked-color: $ag-mat-accent-color !default;
 $ag-checkbox-background-color: transparent !default;
@@ -28,7 +29,6 @@ $ag-range-selection-border-color: $ag-mat-primary-color;
 // Borders
 $ag-borders: false; // draw our own borders
 $ag-border-color: #e2e2e2 !default;
-$ag-focused-textbox-border-bottom: 2px solid $ag-mat-primary-color !default;
 
 // Sizing
 $ag-grid-size: 8px !default;
@@ -57,19 +57,6 @@ $ag-selected-tab-underline-width: 2px;
 
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;
-
-// Inputs
-$ag-customize-inputs: true !default;
-    $ag-input-bottom-border: 2px solid $ag-border-color !default;
-    $ag-input-bottom-border-disabled: 1px solid $ag-border-color !default;
-    $ag-input-border-width: 0 !default;
-    $ag-input-height: $ag-grid-size * 5 !default;
-
-// Buttons
-$ag-customize-buttons: true !default;
-    $ag-button-color: $ag-mat-primary-color !default;
-    $ag-button-text-transform: uppercase !default;
-    $ag-button-background-color: transparent !default;
 
 // delta changes
 $ag-value-change-value-highlight-background-color: #00acc1 !default;

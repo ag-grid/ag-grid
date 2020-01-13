@@ -27,43 +27,14 @@
 
 @mixin ag-textbox() {
 
-    @if $ag-customize-inputs {
-        background: transparent;
-        color: $ag-foreground-color;
-        font-family: inherit;
-        font-size: inherit;
-        height: $ag-input-height;
-        padding-bottom: $ag-grid-size;
+    @extend %ag-text-input !optional;
 
-        @if $ag-input-border-width {
-            border-width: $ag-input-border-width;
-        }
-
-        @if $ag-input-bottom-border {
-            border-bottom: $ag-input-bottom-border;
-        }
-
-        &:focus {
-            @if $ag-focused-textbox-border-bottom {
-                border-bottom: $ag-focused-textbox-border-bottom;
-                outline: none;
-            }
-        }
-
-        &::placeholder {
-            color: $ag-disabled-foreground-color;
-        }
-
-        &:disabled {
-            @if $ag-input-bottom-border-disabled {
-                border-bottom: $ag-input-bottom-border-disabled;
-            }
-        }
-    } @else if $ag-input-border-color {
+    @if $ag-input-border-color {
         border-width: 1px;
         border-style: solid;
         border-color: $ag-input-border-color;
     }
+
     &:disabled {
         color: $ag-disabled-foreground-color;
         @if $ag-input-disabled-background-color {
@@ -73,18 +44,6 @@
             border-color: transparentize($ag-input-border-color, 0.7);
         }
     }
-}
-
-@mixin ag-regular-button($color, $background-color, $text-transform) {
-    appearance: none;
-    background-color: $background-color;
-    border: 0;
-    color: $color;
-    font-family: inherit;
-    font-size: inherit;
-    margin: 0;
-    padding: 0;
-    text-transform: $text-transform;
 }
 
 @mixin ag-icon-element($icon, $code) {
@@ -174,10 +133,6 @@
 
   .ag-right-arrow:before {
       content: $ag-icon-left;
-  }
-
-  .ag-icon-radio-button-on {
-      color: $ag-checkbox-checked-color;
   }
 
   .ag-right-arrow:before {

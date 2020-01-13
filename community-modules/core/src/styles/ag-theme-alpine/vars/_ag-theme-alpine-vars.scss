@@ -19,7 +19,6 @@ $ag-color-primary: $ag-alpine-blue !default;
 
 
 // color used for the grid selection and selection checkboxes.
-// TODO move selection color into grid
 $ag-color-secondary: $ag-alpine-orange !default;
 // background
 $ag-background-color: $ag-alpine-white !default;
@@ -157,6 +156,7 @@ $ag-header-height: $ag-grid-size * 8 !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;
 
 $ag-row-group-indent-size: $ag-grid-size + $ag-icon-size !default;
+$ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2;
 

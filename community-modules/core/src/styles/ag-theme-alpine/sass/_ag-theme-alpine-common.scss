@@ -104,10 +104,6 @@
         padding: $ag-grid-size * 2;
         margin: 0;
 
-        .ag-menu-option > span {
-            padding-top: $ag-grid-size;
-            padding-bottom: $ag-grid-size;
-        }
 
         .ag-menu-option-shortcut {
             text-align: right;
@@ -314,10 +310,6 @@
     ////////////////////////////////////////
     // Rich Select
     ////////////////////////////////////////
-    
-    .ag-rich-select-value {
-        border-bottom: 1px solid $ag-secondary-border-color;
-    }
 
     .ag-rich-select-virtual-list-item {
         height: $ag-grid-size * 5;
@@ -388,10 +380,6 @@
         border: 1px solid $ag-border-color;
         padding: $ag-grid-size * 2 $ag-grid-size * 3;
         font: $ag-font-default;
-    }
-
-    .ag-overlay-loading-wrapper {
-        background-color: transparentize($ag-background-color, 0.25);
     }
 
     ////////////////////////////////////////
@@ -663,14 +651,6 @@
     .ag-charts-format-top-level-group-container {
         @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
         margin-left: 0;
-        // TODO what does this do?
-        justify-content: flex-start;
-        padding: $ag-grid-size $ag-grid-size * 2;
-
-        .ag-group-item {
-            margin: 0;
-            margin-right: 0;
-        }
     }
 
     .ag-charts-format-top-level-group-toolbar {
@@ -749,7 +729,6 @@
     }
 
     // RTL Overrides
-    // TODO simplify this a lot, use ag-theme-rtl, and move stuff to the base
     .ag-rtl {
         .ag-filter .ag-filter-apply-panel button + button {
             margin-left: 0;

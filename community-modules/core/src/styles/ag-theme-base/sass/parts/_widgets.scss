@@ -55,6 +55,8 @@
     .ag-rich-select-value {
         padding: 0 $ag-grid-size 0 $ag-cell-horizontal-padding;
         height: $ag-rich-select-item-height;
+        
+        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
     }
 
     .ag-rich-select-virtual-list-item {
@@ -162,6 +164,14 @@
     }
     .ag-selected .ag-toggle-button-input-wrapper {
         background-color: $ag-checkbox-checked-color;
+    }
+
+
+    .ag-icon-radio-button-off {
+        color: $ag-checkbox-color;
+    }
+    .ag-icon-radio-button-on {
+        color: $ag-checkbox-checked-color;
     }
 
     .ag-toggle-button-icon {
@@ -299,11 +309,6 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size));
     }
 
-    .ag-panel-title-bar-button-icon {
-        font-size: $ag-header-height - $ag-grid-size * 2;
-        line-height: $ag-header-height - $ag-grid-size * 2;
-    }
-
     ////////////////////////////////////////
     // Tooltip
     ////////////////////////////////////////
@@ -326,14 +331,14 @@
         align-items: center;
     }
     
-    @for $i from 1 to 5 {
+    @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
             @include ag-theme-rtl((padding-left: $i * $ag-column-select-indent-size));
         }
     }
 
     .ag-column-select-add-group-indent {
-        @include ag-theme-rtl(( margin-left: $ag-column-select-indent-size + $ag-grid-size ));
+        @include ag-theme-rtl(( margin-left: $ag-icon-size + $ag-grid-size ));
     }
 
     .ag-column-select-header-icon {
