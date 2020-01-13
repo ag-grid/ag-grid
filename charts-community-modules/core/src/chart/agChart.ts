@@ -12,6 +12,7 @@ import { Caption } from "../caption";
 import { Legend, LegendOrientation, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
 import { MarkerLabel } from "./markerLabel";
+import { DropShadow } from "../scene/dropShadow";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -116,6 +117,19 @@ const chartDefaults = {
     subtitle: undefined,
 } as any;
 
+const shadowMapping = {
+    meta: {
+        constructor: DropShadow,
+        defaults: {
+            enabled: true,
+            color: 'rgba(0, 0, 0, 0.5)',
+            xOffset: 0,
+            yOffset: 0,
+            blur: 5
+        }
+    }
+};
+
 const mappings = {
     cartesian: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
@@ -165,12 +179,14 @@ const mappings = {
             column: {
                 meta: {
                     constructor: ColumnSeries
-                }
+                },
+                shadow: shadowMapping
             },
             bar: {
                 meta: {
                     constructor: BarSeries
-                }
+                },
+                shadow: shadowMapping
             },
             scatter: {
                 meta: {
@@ -182,7 +198,8 @@ const mappings = {
                 meta: {
                     constructor: AreaSeries,
                 },
-                marker: {}
+                marker: {},
+                shadow: shadowMapping
             }
         }
     },
@@ -200,7 +217,8 @@ const mappings = {
                 meta: {
                     constructor: PieSeries
                 }
-            }
+            },
+            shadow: shadowMapping
         }
     }
 } as any;

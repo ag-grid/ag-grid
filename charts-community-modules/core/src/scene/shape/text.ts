@@ -2,8 +2,8 @@ import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
 
-export type FontStyle = "normal" | "italic" | "oblique";
-export type FontWeight = "normal" | "bold" | "bolder" | "lighter" | "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+export type FontStyle = 'normal' | 'italic' | 'oblique';
+export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 export class Text extends Shape {
 
@@ -13,8 +13,8 @@ export class Text extends Shape {
         textAlign: 'start' as CanvasTextAlign,
         fontStyle: undefined,
         fontWeight: undefined,
-        fontSize: 10 as number,
-        fontFamily: 'sans-serif' as string,
+        fontSize: 10,
+        fontFamily: 'sans-serif',
         textBaseline: 'alphabetic' as CanvasTextBaseline
     });
 
