@@ -84,37 +84,17 @@
 </div>
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title">Conferences 2019</h5>
+        <h5 class="card-title">Conferences 2020</h5>
         <p class="font-weight-normal">Come see us at the following conferences that we are attending and sponsoring.</p>
 
-        <h6 class="card-subtitle mb-2 text-muted">React</h6>
-        <img src="../images/flags/netherlands.png">
-        <a class="learn-more" href="https://react.amsterdam/" target="_blank"> React Amsterdam</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Apr 10th-12th</p>
-        <img src="../images/flags/united-states.png" style="height: 18px; width: 18px">
-        <a class="learn-more" href="https://www.reactrally.com/" target="_blank"> React Rally</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Aug 22th-23th</p>
-
-        <br>
         <h6 class="card-subtitle mb-2 text-muted">Angular</h6>
         <img src="../images/flags/united-states.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://www.ng-conf.org" target="_blank"> ng-Conf</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 1st-3rd</p>
-        <img src="../images/flags/den.png">
-        <a class="learn-more" href="https://ngvikings.org/" target="_blank">ng-Vikings</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 27th-28th</p>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Apr 1st-3rd</p>
+
         <img src="../images/flags/united-kingdom.png">
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Sep 19th-20th</p>
-        <img src="../images/flags/spain.png" style="height: 18px; width: 18px">
-        <a class="learn-more" href="https://ngspain.com/" target="_blank"> ngSpain</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 18th-20th</p>
-
-        <br>
-        <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
-        <img src="../images/flags/united-kingdom.png">
-        <a class="learn-more" href="https://halfstackconf.com/london/" target="_blank"> Half Stack London</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Nov 2nd</p>
     </div>
 </div>
     <!-- Begin Mailchimp Signup Form -->
