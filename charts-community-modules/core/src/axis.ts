@@ -150,9 +150,6 @@ export class Axis<S extends Scale<D, number>, D = any> {
     //     return rect;
     // })();
 
-    static defaults = chainObjects({}, {
-    });
-
     private groupSelection: Selection<Group, Group, D, D>;
     private lineNode = new Line();
 

@@ -64,7 +64,7 @@ const chartMappings = {
                 fontStyle: undefined,
                 fontWeight: 'bold',
                 fontSize: 18,
-                fontFamily: 'sans-serif, Verdana, Arial',
+                fontFamily: 'Verdana, sans-serif',
                 color: 'black'
             }
         }
@@ -79,7 +79,7 @@ const chartMappings = {
                 fontStyle: undefined,
                 fontWeight: undefined,
                 fontSize: 14,
-                fontFamily: 'sans-serif, Verdana, Arial',
+                fontFamily: 'Verdana, sans-serif',
                 color: 'black'
             }
         }
@@ -132,6 +132,21 @@ const shadowMapping = {
 };
 
 const axisMappings = {
+    title: {
+        meta: {
+            constructor: Caption,
+            defaults: {
+                enabled: true,
+                padding: new Padding(10),
+                text: 'Axis Title',
+                fontStyle: undefined,
+                fontWeight: 'bold',
+                fontSize: 16,
+                fontFamily: 'Verdana, sans-serif',
+                color: 'black'
+            }
+        }
+    },
     label: {
         meta: {
             constructor: AxisLabel,
@@ -185,7 +200,7 @@ const mappings = {
         axes: {
             number: {
                 meta: {
-                    constructor: NumberAxis,
+                    constructor: NumberAxis
                 },
                 ...axisMappings
             },
