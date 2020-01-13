@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChromePicker } from "react-color";
 
-export const NumberEditor = ({ value, onChange }) => {
+export const NumberEditor = ({ value, min, max, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = parseInt(event.target.value);
@@ -9,15 +9,33 @@ export const NumberEditor = ({ value, onChange }) => {
         onChange(newValue);
     };
 
-    return <input type="number" value={stateValue} onChange={inputOnChange} />;
+    const props = {
+        type: 'number',
+        value: stateValue,
+        onChange: inputOnChange
+    };
+
+    if (min != null) {
+        props.min = min;
+    }
+
+    if (max != null) {
+        props.max = max;
+    }
+
+    return <input {...props} />;
 };
 
-export const StringEditor = ({ value, onChange }) => {
+export const StringEditor = ({ value, transform, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.value;
+
         setValueChange(newValue);
-        onChange(newValue);
+
+        const transformed = transform ? transform(newValue) : newValue;
+
+        onChange(transformed);
     };
 
     return <input type="text" value={stateValue} onChange={inputOnChange} />;

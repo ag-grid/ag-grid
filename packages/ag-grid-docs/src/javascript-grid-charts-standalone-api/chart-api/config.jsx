@@ -151,3 +151,78 @@ export const generalConfig = {
         }
     },
 };
+
+export const axisConfig = Object.freeze({
+    type: {
+        default: 'category',
+        description: 'The type of the axis',
+        editor: DropDownEditor,
+        options: ['category', 'number', 'time']
+    },
+    title: getCaptionOptions('title'),
+    line: {
+        width: {
+            default: 1,
+            description: 'Width of the axis line',
+            editor: NumberEditor
+        },
+        color: {
+            default: 'rgba(195, 195, 195, 1)',
+            description: 'Colour of the axis line',
+            editor: ColourEditor
+        }
+    },
+    tick: {
+        width: {
+            default: 1,
+            description: 'Width of the axis ticks (and corresponding grid line)',
+            editor: NumberEditor,
+            min: 0,
+        },
+        size: {
+            default: 6,
+            description: 'Length of the axis ticks',
+            editor: NumberEditor,
+            min: 0
+        },
+        color: {
+            default: 'rgba(195, 195, 195, 1)',
+            description: 'Colour of the axis ticks',
+            editor: ColourEditor
+        }
+    },
+    label: {
+        ...getFontOptions('label'),
+        padding: {
+            default: 5,
+            description: 'Padding between the axis label and the tick',
+            editor: NumberEditor,
+            min: 0,
+        },
+        rotation: {
+            default: 0,
+            description: 'Rotation of the axis labels',
+            editor: NumberEditor,
+        },
+        format: {
+            description: 'Format string used when rendering labels for time axes',
+            editor: StringEditor,
+        },
+        formatter: {
+            description: 'Function used to render axis labels',
+        }
+    },
+    gridStyle: {
+        stroke: {
+            default: 'rgba(195, 195, 195, 1)',
+            description: 'Colour of the grid line',
+            editor: ColourEditor,
+        },
+        lineDash: {
+            default: '4, 2',
+            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.',
+            editor: StringEditor,
+            transform: value => value.split(',').map(x => parseInt(x)).filter(x => !isNaN(x))
+        }
+    }
+});

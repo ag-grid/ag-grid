@@ -2,20 +2,24 @@ import React from 'react';
 import './App.css';
 import { AgChart } from "ag-charts-community";
 import { data, getTemplates, series } from "./templates.jsx";
-import { generalConfig } from "./config.jsx";
+import { generalConfig, axisConfig } from "./config.jsx";
 
 const appName = 'chart-api';
 
-const OptionsCode = ({ options }) => <pre>options = {JSON.stringify(options, null, 2)}</pre>;
+const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.create({JSON.stringify(options, null, 2)});</pre>;
 
 const ApiCode = ({ options }) => {
-    const lines = [];
+    const lines = ['// update existing chart'];
     const extractLines = (prefix, object) => {
         Object.keys(object).forEach(key => {
             const value = object[key];
-            if (typeof value === 'object') {
+
+            if (Array.isArray(object)) {
+                extractLines(`${prefix}[${key}]`, value);
+            }
+            else if (typeof value === 'object') {
                 extractLines(`${prefix}.${key}`, value);
-            } else {
+            } else if (value != null) {
                 lines.push(`${prefix}.${key} = ${JSON.stringify(value)};`);
             }
         });
@@ -23,17 +27,32 @@ const ApiCode = ({ options }) => {
 
     extractLines("this.chart", options);
 
-    return <pre>{lines.join("\n")}</pre>;
+    return lines.length > 1 && <pre>{lines.join("\n")}</pre>;
 };
 
-const Option = ({ name, description, value, updateValue, options, Editor }) => {
+const Option = ({ name, description, defaultValue, Editor, editorProps }) => {
     return <div>
         <hr />
         <strong>{name}</strong>: {description}<br />
-        Default: {value != null ? value.toString() : "N/A"}<br />
-        Value: <Editor value={value} onChange={updateValue} options={options} />
+        Default: {defaultValue != null ? defaultValue.toString() : "N/A"}<br />
+        {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
     </div>;
 };
+
+const deepClone = object => JSON.parse(JSON.stringify(object || {}));
+
+const createOptionsJson = options => ({
+    ...options.chart,
+    axes: options.axis && Object.keys(options.axis).length > 0 ? [{
+        type: 'category',
+        position: 'bottom',
+        ...options.axis,
+    },
+    {
+        type: 'number',
+        position: 'left',
+    }] : undefined,
+});
 
 class Chart extends React.Component {
     constructor(props) {
@@ -45,24 +64,28 @@ class Chart extends React.Component {
     chartInstance = undefined;
 
     componentDidMount() {
-        this.chartInstance = AgChart.create(this.createOptions());
+        this.createChart();
     }
 
     componentDidUpdate() {
         if (this.chartInstance && this.useDynamicUpdates) {
-            AgChart.update(this.chartInstance, this.createOptions());
+            AgChart.update(this.chartInstance, this.createOptionsJson());
         } else {
             this.chartInstance && this.chartInstance.destroy();
-            this.chartInstance = AgChart.create(this.createOptions());
+            this.createChart();
         }
     }
 
-    createOptions() {
+    createChart() {
+        this.chartInstance = AgChart.create(this.createOptionsJson());
+    }
+
+    createOptionsJson() {
         return {
-            ...JSON.parse(JSON.stringify(this.props.options)),
-            data,
             container: this.chart.current,
+            data,
             series,
+            ...deepClone(this.props.options),
         };
     }
 
@@ -73,30 +96,45 @@ class Chart extends React.Component {
 
 class Options extends React.PureComponent {
     config = {
-        ...generalConfig,
+        chart: generalConfig,
+        axis: axisConfig
     };
 
-    generateOptionConfig = (options, prefix = '') => {
+    getName = name => {
+        switch (name) {
+            case 'chart':
+                return "General chart options";
+            case 'axis':
+                return "Axis options";
+            default:
+                return name;
+        }
+    }
+
+    generateOptions = (options, prefix = '') => {
         let elements = [];
 
         Object.keys(options).forEach(name => {
             const key = `${prefix}${name}`;
             const config = options[name];
+            const { description, default: defaultValue, editor, ...editorProps } = config;
 
             if (config.description) {
                 elements.push(<Option
                     key={key}
                     name={name}
-                    description={config.description}
-                    value={config.default}
-                    updateValue={newValue => this.props.updateOptions(key, newValue, config.default)}
-                    options={config.options}
-                    Editor={config.editor}
+                    description={description}
+                    defaultValue={defaultValue}
+                    Editor={editor}
+                    editorProps={{
+                        ...editorProps,
+                        onChange: newValue => this.props.updateOptions(key, newValue, defaultValue)
+                    }}
                 />);
             } else {
                 elements.push(<div class="section">
-                    <h2 key={key}>{name}</h2>
-                    {this.generateOptionConfig(config, `${key}.`)}
+                    <h2 key={key}>{this.getName(name)}</h2>
+                    {this.generateOptions(config, `${key}.`)}
                 </div>);
             }
         });
@@ -105,7 +143,7 @@ class Options extends React.PureComponent {
     };
 
     render() {
-        return this.generateOptionConfig(this.config);
+        return this.generateOptions(this.config);
     }
 };
 
@@ -171,13 +209,13 @@ export class App extends React.Component {
     componentDidUpdate() {
         window.parent.document.getElementById(appName).setAttribute('data-context',
             JSON.stringify({
-                files: getTemplates(this.state.framework, this.state.options)
+                files: getTemplates(this.state.framework, createOptionsJson(this.state.options))
             })
         );
     }
 
     render() {
-        const { options } = this.state;
+        const options = createOptionsJson(this.state.options);
 
         return <div className="app">
             <div className="chart"><Chart options={options} /></div>
