@@ -168,6 +168,7 @@ var gridOptions = {
     enableCellChangeFlash: true,
     rowDragManaged: true,
     // suppressMoveWhenRowDragging: true,
+    // enableMultiRowDragging: true,
     popupParent: document.querySelector('#example-wrapper'),
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
