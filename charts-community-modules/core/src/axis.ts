@@ -454,7 +454,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const title = this.title;
 
-        if (title) {
+        let titleVisible = false;
+        if (title && title.enabled) {
+            titleVisible = true;
             const padding = title.padding.bottom;
             const titleNode = title.node;
             const bbox = this.computeBBox({ excludeTitle: true });
@@ -470,6 +472,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
             // title.text = `Axis Title: ${sideFlag} ${toDegrees(parallelFlipRotation).toFixed(0)} ${titleRotationFlag}`;
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+        }
+        if (title) {
+            title.node.visible = titleVisible;
         }
 
         // debug (bbox)
