@@ -287,7 +287,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
         '/* START OF GRID MODULES DEV - DO NOT DELETE */',
         '/* END OF GRID MODULES DEV - DO NOT DELETE */',
-        gridCommunityModules,
+        gridCommunityModules.concat(chartCommunityModules),
         gridEnterpriseModules,
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`,
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);

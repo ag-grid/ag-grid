@@ -90,6 +90,10 @@
             'ag-charts-react': {
                 main: './main.js',
                 defaultExtension: 'js'
+            },
+            'ag-charts-community': {
+                main: './dist/cjs/main.js',
+                defaultExtension: 'js'
             }
         },
         meta: {

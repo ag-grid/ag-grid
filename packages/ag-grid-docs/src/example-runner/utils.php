@@ -45,6 +45,7 @@ if (USE_LOCAL) {
         "@ag-grid-community/core" => "$prefix/@ag-grid-community/core",
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/csv-export",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/infinite-row-model",
+        "ag-charts-community" => "$prefix/ag-charts-community",
         "@ag-grid-enterprise/all-modules" => "$prefix/@ag-grid-enterprise/all-modules",
         "@ag-grid-enterprise/charts" => "$prefix/@ag-grid-enterprise/charts",
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/clipboard",
@@ -66,7 +67,6 @@ if (USE_LOCAL) {
         "@ag-grid-community/react" => "$prefix/@ag-grid-community/react",
         "@ag-grid-community/angular" => "$prefix/@ag-grid-community/angular",
         "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue",
-        "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js",
         "ag-charts-react" => "$prefix/ag-charts-react"
     );
 
@@ -78,6 +78,7 @@ if (USE_LOCAL) {
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
 /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js",
     );
     $systemJsEnterprisePaths = array(
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
@@ -104,6 +105,7 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/status-bar" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/viewport-row-model" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
 /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js"
     );
 // production mode, return from unpkg
 } else {
