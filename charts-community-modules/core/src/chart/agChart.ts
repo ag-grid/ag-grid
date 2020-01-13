@@ -205,6 +205,57 @@ const mappings = {
     }
 } as any;
 
+// Amend the `mappings` object with shorthands for different chart types.
+{
+    ['line', 'area', 'bar', 'column'].forEach(type => {
+        mappings[type] = mappings.cartesian;
+    });
+
+    // Special handling for scatter charts where both axes should default to type `number`.
+    mappings['scatter'] = {
+        ...mappings.cartesian,
+        meta: {
+            ...mappings.cartesian.meta,
+            defaults: { // These values will be used if properties in question are not in the config object.
+                ...chartDefaults,
+                axes: [{
+                    type: 'number',
+                    position: 'bottom'
+                }, {
+                    type: 'number',
+                    position: 'left'
+                }]
+            }
+        }
+    };
+
+    mappings['pie'] = mappings.polar;
+}
+
+const pathToSeriesTypeMap: { [key in string]: string } = {
+    'cartesian.series': 'line', // default series type for cartesian charts
+    'line.series': 'line',
+    'area.series': 'area',
+    'bar.series': 'bar',
+    'column.series': 'column',
+    'scatter.series': 'scatter',
+    'polar.series': 'pie', // default series type for polar charts
+    'pie.series': 'pie'
+};
+
+function provideDefaultType(options: any, path?: string) {
+    if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
+        provideDefaultChartType(options);
+    }
+
+    if (!options.type) {
+        const seriesType = pathToSeriesTypeMap[path];
+        if (seriesType) {
+            options.type = seriesType;
+        }
+    }
+}
+
 function getMapping(path: string) {
     const parts = path.split('.');
     let value = mappings;
@@ -300,9 +351,7 @@ function update(component: any, options: any, path?: string) {
                     component[key] = value;
                 } else {
                     const existingValue = component[key];
-                    // if (!existingValue && value) {
-                    //
-                    // }
+
                     if (Array.isArray(existingValue)) { // skip array properties like 'axes' and 'series' for now
 
                     } else if (typeof existingValue === 'object') {
@@ -319,22 +368,6 @@ function update(component: any, options: any, path?: string) {
                 }
             }
         }
-    }
-}
-
-function provideDefaultType(options: any, path?: string) {
-    if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
-        provideDefaultChartType(options);
-    }
-
-    // Default series type for cartesian charts.
-    if (path === 'cartesian.series' && !options.type) {
-        options.type = 'line';
-    }
-
-    // Default series type for polar charts.
-    if (path === 'polar.series' && !options.type) {
-        options.type = 'pie';
     }
 }
 
