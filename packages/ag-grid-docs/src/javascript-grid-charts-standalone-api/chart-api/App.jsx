@@ -39,6 +39,7 @@ class Chart extends React.Component {
     constructor(props) {
         super(props);
         this.chart = React.createRef();
+        this.useDynamicUpdates = false;
     }
 
     chartInstance = undefined;
@@ -48,8 +49,11 @@ class Chart extends React.Component {
     }
 
     componentDidUpdate() {
-        if (this.chartInstance) {
+        if (this.chartInstance && this.useDynamicUpdates) {
             AgChart.update(this.chartInstance, this.createOptions());
+        } else {
+            this.chartInstance && this.chartInstance.destroy();
+            this.chartInstance = AgChart.create(this.createOptions());
         }
     }
 
