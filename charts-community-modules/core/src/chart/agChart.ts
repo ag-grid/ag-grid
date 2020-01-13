@@ -36,6 +36,7 @@ const chartMappings = {
     background: {
         meta: {
             defaults: {
+                visible: true,
                 fill: 'white'
             }
         }

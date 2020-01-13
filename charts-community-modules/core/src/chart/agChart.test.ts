@@ -74,8 +74,13 @@ describe('update', () => {
                 left: 60
             },
             subtitle: {
+                enabled: false,
                 text: 'My Subtitle',
                 fontSize: 20
+            },
+            background: {
+                fill: 'red',
+                visible: false
             },
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
@@ -108,5 +113,8 @@ describe('update', () => {
         expect(chart.title).toBe(undefined);
         expect(chart.subtitle.text).toBe('My Subtitle');
         expect(chart.subtitle.fontSize).toBe(20);
+        expect(chart.subtitle.enabled).toBe(false);
+        expect(chart.background.fill).toBe('red');
+        expect(chart.background.visible).toBe(false);
     });
 });
