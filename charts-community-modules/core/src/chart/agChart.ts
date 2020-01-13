@@ -299,9 +299,9 @@ function update(component: any, options: any, path?: string) {
                     component[key] = value;
                 } else {
                     const existingValue = component[key];
-                    if (!existingValue && value) {
-
-                    }
+                    // if (!existingValue && value) {
+                    //
+                    // }
                     if (Array.isArray(existingValue)) { // skip array properties like 'axes' and 'series' for now
 
                     } else if (typeof existingValue === 'object') {
@@ -368,7 +368,7 @@ function provideDefaultOptions(options: any, mapping: any) {
 
     if (defaults) {
         for (const key in defaults) {
-            if (!options[key]) {
+            if (!(key in options)) {
                 options[key] = defaults[key];
             }
         }
