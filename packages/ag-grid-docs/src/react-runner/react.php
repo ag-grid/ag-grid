@@ -1,6 +1,6 @@
 <?php
 include '../example-runner/utils.php';
-include 'utils.php';
+include 'react-utils.php';
 $example = getReactExampleInfo('react');
 $generated = isset($_GET['generated']);
 if ($generated) {
@@ -32,7 +32,6 @@ if ($generated) {
         overflow: auto;
     }
     </style>
-<?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
 <?php renderNonGeneratedScripts($example['scripts']); ?>
 </head>
@@ -43,7 +42,7 @@ if ($generated) {
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
         var systemJsMap = <?= json_encode($systemJsMap); ?>;
-        var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths) ?>;
+        var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>

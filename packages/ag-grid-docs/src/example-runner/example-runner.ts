@@ -320,6 +320,7 @@ class ExampleRunner {
     }
 
     openPlunker(clickEvent) {
+        console.log("here");
         const postData: any = {
             "tags[0]": "ag-grid",
             "tags[1]": "example",

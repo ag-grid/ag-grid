@@ -33,13 +33,8 @@
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types',
-                // 'js-cookie': 'npm:js-cookie',
-                // 'react-cookie': 'npm:react-cookie',
-                // 'hoist-non-react-statics': 'npm:hoist-non-react-statics',
-                'universal-cookie': 'npm:universal-cookie',
                 'object-assign': 'npm:object-assign',
                 'cookie': 'npm:cookie',
-                // 'react-is': 'npm:react-is',
                 'react-color': 'npm:react-color@2.17.3',
                 'reactcss': 'npm:reactcss@1.2.3',
                 'lodash': 'npm:lodash@4.17.15',
@@ -89,27 +84,11 @@
             'tinycolor2': {
                 main: './dist/tinycolor-min.js',
             },
-            // 'js-cookie': {
-            //     main: './src/js.cookie.js',
-            //     defaultExtension: 'js'
-            // },
-            // 'react-cookie': {
-            //     main: './cjs/index.js',
-            //     defaultExtension: 'js'
-            // },
-            'universal-cookie': {
-                main: './cjs/index.js',
-                defaultExtension: 'js'
-            },
             app: {
                 defaultExtension: 'jsx'
             },
             'ag-charts-react': {
                 main: './main.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-community': {
-                main: './dist/cjs/main.js',
                 defaultExtension: 'js'
             }
         },

@@ -66,9 +66,9 @@ options.data = data;
 options.series = ${JSON.stringify(series, null, 2)};
 
 document.addEventListener('DOMContentLoaded', function() {
-    options.parent = document.querySelector('#myChart');
+    options.container = document.querySelector('#myChart');
 
-    agCharts.agChart.create(options);
+    agCharts.AgChart.create(options);
 });`
       };
     case 'react':

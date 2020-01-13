@@ -285,16 +285,16 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         .map(css => css.replace('../../community-modules/all-modules/dist/styles/', ''));
 
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
-        '/* START OF MODULES DEV - DO NOT DELETE */',
-        '/* END OF MODULES DEV - DO NOT DELETE */',
-        gridCommunityModules.concat(chartCommunityModules),
+        '/* START OF GRID MODULES DEV - DO NOT DELETE */',
+        '/* END OF GRID MODULES DEV - DO NOT DELETE */',
+        gridCommunityModules,
         gridEnterpriseModules,
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`,
         module => `        "${module.publishedName}" => "$prefix/${module.publishedName}",`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
-        '/* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
+        '/* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
+        '/* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",`,
@@ -302,25 +302,16 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
-        '/* END OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
-        chartCommunityModules,
-        [],
-        module => `        "${module.publishedName}" => "$prefix/${module.publishedName}/dist/${module.moduleDirName}.cjs.js",`,
-        () => {
-        });
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
-        '/* END OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
+        '/* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
+        '/* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
         gridCommunityModules,
         gridEnterpriseModules,
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`,
         module => `        "${module.publishedName}" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF CSS DEV - DO NOT DELETE */',
-        '/* END OF CSS DEV - DO NOT DELETE */',
+        '/* START OF GRID CSS DEV - DO NOT DELETE */',
+        '/* END OF GRID CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
@@ -328,8 +319,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
-        '/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
+        '/* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
+        '/* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",`,
@@ -337,16 +328,16 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
-        '/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
+        '/* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
+        '/* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         gridCommunityModules,
         gridEnterpriseModules,
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`,
         module => `        "${module.publishedName}" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '/* START OF CSS PROD - DO NOT DELETE */',
-        '/* END OF CSS PROD - DO NOT DELETE */',
+        '/* START OF GRID CSS PROD - DO NOT DELETE */',
+        '/* END OF GRID CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
         cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,

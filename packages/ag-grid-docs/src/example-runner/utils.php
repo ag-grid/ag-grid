@@ -31,21 +31,20 @@ if (USE_LOCAL) {
     define('AG_GRID_CHARTS_SCRIPT_PATH', "$prefix/ag-charts-community/dist/ag-charts-community.js");
 
     $systemJsMap = array(
-/* START OF CSS DEV - DO NOT DELETE */
+        /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
-/* END OF CSS DEV - DO NOT DELETE */
-/* START OF MODULES DEV - DO NOT DELETE */
+/* END OF GRID CSS DEV - DO NOT DELETE */
+        /* START OF GRID MODULES DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-community/all-modules",
         "@ag-grid-community/client-side-row-model" => "$prefix/@ag-grid-community/client-side-row-model",
         "@ag-grid-community/core" => "$prefix/@ag-grid-community/core",
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/csv-export",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/infinite-row-model",
-        "ag-charts-community" => "$prefix/ag-charts-community",
         "@ag-grid-enterprise/all-modules" => "$prefix/@ag-grid-enterprise/all-modules",
         "@ag-grid-enterprise/charts" => "$prefix/@ag-grid-enterprise/charts",
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/clipboard",
@@ -63,27 +62,25 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/side-bar" => "$prefix/@ag-grid-enterprise/side-bar",
         "@ag-grid-enterprise/status-bar" => "$prefix/@ag-grid-enterprise/status-bar",
         "@ag-grid-enterprise/viewport-row-model" => "$prefix/@ag-grid-enterprise/viewport-row-model",
-/* END OF MODULES DEV - DO NOT DELETE */
+/* END OF GRID MODULES DEV - DO NOT DELETE */
         "@ag-grid-community/react" => "$prefix/@ag-grid-community/react",
         "@ag-grid-community/angular" => "$prefix/@ag-grid-community/angular",
         "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue",
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js",
         "ag-charts-react" => "$prefix/ag-charts-react"
     );
 
     $systemJsCommunityPaths = array(
-        /* START OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+        /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/client-side-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/core" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/csv-export" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/infinite-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
-/* END OF COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
-        /* START OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community" => "$prefix/ag-charts-community/dist/core.cjs.js",
-/* END OF CHARTS COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
+/* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
     );
     $systemJsEnterprisePaths = array(
-/* START OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
+        /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/client-side-row-model" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/core" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
@@ -106,40 +103,43 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/side-bar" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/status-bar" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/viewport-row-model" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-/* END OF ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
+/* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
     );
 // production mode, return from unpkg
 } else {
     define('AG_GRID_SCRIPT_PATH', "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
+    define('AG_GRID_CHARTS_SCRIPT_PATH', "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.min.js");
 
     $systemJsMap = array(
         "@ag-grid-community/core/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
         "@ag-grid-community/core/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
-/* START OF CSS PROD - DO NOT DELETE */
+        /* START OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
-/* END OF CSS PROD - DO NOT DELETE */
+/* END OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/react" => "npm:@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
         "@ag-grid-community/angular" => "npm:@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
-        "@ag-grid-community/vue" => "npm:@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/"
+        "@ag-grid-community/vue" => "npm:@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
+        "ag-charts-react" => "npm:ag-charts-react@" . AG_CHART_REACT_VERSION . "/",
+        "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
     );
 
     $systemJsCommunityPaths = array(
-/* START OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
+        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/client-side-row-model" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/core" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/csv-export" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/infinite-row-model" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
-/* END OF COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
+/* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
     );
     $systemJsEnterprisePaths = array(
-/* START OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
+        /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/client-side-row-model" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/core" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
@@ -162,7 +162,7 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/side-bar" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/status-bar" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/viewport-row-model" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
-/* END OF ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
+/* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     );
 }
 

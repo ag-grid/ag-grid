@@ -9,7 +9,7 @@
     "test": "jest",
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
-    "package": "node ../../module-build/rollup/build.js",
+    "package": "node ../../module-build/rollup/build.js ag-charts-community",
     "build": "npm run build-cjs && npm run build-es6"
   },
   "repository": {

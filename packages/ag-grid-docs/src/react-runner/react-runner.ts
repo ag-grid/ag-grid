@@ -1,35 +1,25 @@
 import * as angular from "angular";
 import * as jQuery from "jquery";
 
-import { trackIfInViewPort, whenInViewPort } from "./lib/viewport";
-import { highlight } from "./lib/highlight";
+import {trackIfInViewPort, whenInViewPort} from "./lib/viewport";
 
 const docs: angular.IModule = angular.module("documentation");
-
-function resetIndent(str) {
-    const leadingWhitespace = str.match(/^\n?( +)/);
-    if (leadingWhitespace) {
-        return str.replace(new RegExp(" {" + leadingWhitespace[1].length + "}", "g"), "").trim();
-    } else {
-        return str.trim();
-    }
-}
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function($document) {
-        return function(url, newWindow, fields) {
+    function ($document: any) {
+        return function (url: any, newWindow: any, fields: any) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
-             * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
+             * If a user chooses to bypass pop-up blocker one time and click the link, they will arrive at
              * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
              * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
              * newWindow param allows for this possibility.
              */
             var target = newWindow ? "_blank" : "_self";
             var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-            angular.forEach(fields, function(value, name) {
+            angular.forEach(fields, function (value, name) {
                 var input = angular.element('<input type="hidden" name="' + name + '">');
                 input.attr("value", value);
                 form.append(input);
@@ -41,29 +31,17 @@ docs.factory("formPostData", [
     }
 ]);
 
-const ACTIVE_EXAMPLE_RUNNERS = [];
-
 class ReactRunner {
     private ready: boolean = false;
-    private source: any;
-    private loadingSource: boolean;
     private showFrameworksDropdown: boolean;
-    private selectedTab: string;
-
-    private selectedFile: string;
     private resultUrl: string;
-
     private id: string;
-    private files: string[];
     private title: string;
     private section: string;
     private name: string;
-    private type: string;
     private currentType: string;
     private noPlunker: boolean;
-    private boilerplateFiles: string[];
     private boilerplatePath: string;
-    sourcePrefix: string;
 
     private titles: { [key: string]: string; };
 
@@ -94,8 +72,6 @@ class ReactRunner {
     private openFwDropdown: boolean = false;
     private visible: boolean = false;
 
-    private processVue: boolean = false;
-
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
     }
@@ -112,8 +88,6 @@ class ReactRunner {
         if (options.exampleHeight) {
             this.iframeStyle.height = options.exampleHeight + "px";
         }
-
-        this.selectedTab = options.showResult === false ? "code" : "result";
 
         this.id = this.config.app.id;
         this.title = this.config.title;
@@ -132,14 +106,10 @@ class ReactRunner {
         const divWrapper = jQuery(this.$element).find("div.example-wrapper");
 
         this.$timeout(() => {
-            let visibleToggle: angular.IPromise<void>;
-            let nextVisible: boolean = false;
-
-            trackIfInViewPort(divWrapper, visible => {
+            trackIfInViewPort(divWrapper, (visible: any) => {
                 this.$timeout(() => {
                     if (visible && !this.visible) {
                         this.visible = true;
-                        ACTIVE_EXAMPLE_RUNNERS.push(this);
                     }
                 });
             });
@@ -183,18 +153,7 @@ class ReactRunner {
     setType(type: string) {
         const typeConfig = this.config.app;
 
-        this.boilerplateFiles = typeConfig.boilerplateFiles || [];
         this.boilerplatePath = typeConfig.boilerplatePath;
-
-        const files = typeConfig.files ?
-            typeConfig.files.filter((file) => {
-                return file.indexOf('node_modules') === -1;
-            }) :
-            typeConfig.files;
-
-        this.files = files[0] === "index.html" ? files : ["index.html"].concat(files);
-
-        this.selectedFile = this.files[1];
 
         this.resultUrl = typeConfig.resultUrl;
 
@@ -202,93 +161,7 @@ class ReactRunner {
 
         this.noPlunker = this.config.options.noPlunker;
 
-        this.loadAllSources();
-
-        this.refreshSource();
-
         this.openFwDropdown = false;
-    }
-
-    private sources: string[];
-    private allFiles: any;
-
-    loadAllSources() {
-        this.allFiles = this.files.concat(this.boilerplateFiles);
-
-        this.$q
-            .all(
-                this.allFiles.map((file: string) => {
-                    return this.loadSource(file);
-                })
-            )
-            .then((sources: any) => {
-                this.sources = sources;
-            });
-    }
-
-    refreshSource() {
-        this.loadingSource = true;
-        this.source = this.$sce.trustAsHtml("Loading...");
-
-        this.loadSource(this.selectedFile).then(source => {
-            this.loadingSource = false;
-            if (!this.selectedFile) {
-                throw new Error("We ended up without a selected file :(");
-            }
-            const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-            const highlightedSource = highlight(source.trim(), extension);
-            this.source = this.$sce.trustAsHtml(highlightedSource);
-        });
-    }
-
-    loadSource(file: string): angular.IPromise<string> {
-        let source = this.getSource(file);
-        let sourceUrl;
-
-        if (typeof source === "string") {
-            return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
-                return response.data;
-            });
-        } else {
-            const sourcePromises = source.sources.map(source => (source ? this.$http.get(source).then(response => response.data) : ""));
-            return this.$q.all(sourcePromises).then(responses => {
-                // stupid typescript
-                return (<any>source).process(responses);
-            });
-        }
-    }
-
-    getSource(file: string): string | { sources: string[]; process: (string) => string; } {
-        if (this.boilerplateFiles.indexOf(file) > -1) {
-            return [this.boilerplatePath, file].join("/");
-        }
-
-        if (file == this.files[0]) {
-            return this.resultUrl + "&preview=true";
-        } else {
-            return this.appFilePath(file);
-        }
-    }
-
-    sourcesForGeneration(): string[] {
-        const vanillaTypes = this.config.types.vanilla.files;
-
-        return [this.appFilePath(vanillaTypes.filter(file => file.endsWith(".js"))[0]), this.appFilePath(vanillaTypes.filter(file => file.endsWith(".html"))[0])];
-    }
-
-    appFilePath(file) {
-        if (!file) {
-            return "";
-        }
-
-        let endSegment = [file];
-        if (this.config.type === "multi") {
-            endSegment = [this.currentType, file];
-        } else if (this.config.type === "generated") {
-            endSegment = ["_gen", this.currentType, file];
-        }
-
-        return [this.config.sourcePrefix, this.section, this.name].concat(endSegment).join("/");
     }
 
     openPlunker($event) {
@@ -321,76 +194,56 @@ ReactRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$elem
 
 docs.component("reactRunner", {
     template: `
-        <div ng-class='["example-runner"]'>
+<div ng-class='["example-runner"]'>
+    <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
+        <span> Example version: </span>
+        <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
+            <button type="button"
+                    ng-click="$ctrl.toggleFwDropdown()"
+                    ng-blur="$ctrl.hideFwDropdown()"
+                    class="btn btn-default dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
 
-        <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
-            <span> Example version: </span>
-            <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
+                <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]" data-current-framework="{{$ctrl.currentType}}" data-framework-dropdown="{{$ctrl.id}}">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
+                <span class="caret"></span>
+            </button>
 
-    <button type="button"
-    ng-click="$ctrl.toggleFwDropdown()"
-    ng-blur="$ctrl.hideFwDropdown()"
-    class="btn btn-default dropdown-toggle"
-    data-toggle="dropdown"
-    aria-haspopup="true"
-    aria-expanded="false">
-
-    <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]" data-current-framework="{{$ctrl.currentType}}" data-framework-dropdown="{{$ctrl.id}}">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
-    <span class="caret"></span>
-
-    </button>
-
-                <ul class="dropdown-menu">
-    <li ng-repeat="type in $ctrl.availableTypes">
-        <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]" data-framework-item="{{$ctrl.id}}">{{$ctrl.typeTitle(type)}}</a>
-    </li>
-                </ul>
-            </div>
+            <ul class="dropdown-menu">
+                <li ng-repeat="type in $ctrl.availableTypes">
+                    <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();"
+                       ng-class="['runner-item', 'runner-item-' + type ]" data-framework-item="{{$ctrl.id}}">{{$ctrl.typeTitle(type)}}</a>
+                </li>
+            </ul>
         </div>
-
+    </div>
 
     <div class="example-wrapper">
         <ul role="tablist" class="primary">
             <li class="title">
-                <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
+                <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}">
+                    <i class="fa fa-link" aria-hidden="true"></i>{{$ctrl.title}}
+                </a>
             </li>
 
             <example-tab
-                value="'result'"
-                current-value="$ctrl.selectedTab"
-                title="'Result'"
-                tooltip="'Live Result of the Example'"
-                icon="'fa-play'"
-                on-click="$ctrl.selectedTab = 'result'">
+                    value="'result'"
+                    current-value="'result'"
+                    title="'Result'"
+                    tooltip="'Live Result of the Example'"
+                    icon="'fa-play'">
             </example-tab>
-
-<!--            <example-tab -->
-<!--                value="'code'" -->
-<!--                current-value="$ctrl.selectedTab" -->
-<!--                title="'Code'"-->
-<!--                tooltip="'Examine Example Source Code'"-->
-<!--                icon="'fa-code'" -->
-<!--                on-click="$ctrl.selectedTab = 'code'">-->
-<!--            </example-tab>-->
-
-
-<!--            <li role="presentation">-->
-<!--                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">-->
-<!--                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab-->
-<!--                </a>-->
-<!--            </li>-->
 
             <example-tab
-                ng-hide="$ctrl.noPlunker"
-                value="'plunker'"
-                current-value="$ctrl.selectedTab"
-                title="'Plunker'"
-                tooltip="'Open Example in Plunker'"
-                id="$ctrl.id"
-                icon="'fa-external-link'"
-                on-click="$ctrl.openPlunker($event);">
+                    ng-hide="$ctrl.noPlunker"
+                    value="'plunker'"
+                    title="'Plunker'"
+                    tooltip="'Open Example in Plunker'"
+                    id="$ctrl.id"
+                    icon="'fa-external-link'"
+                    on-click="$ctrl.openPlunker($event);">
             </example-tab>
-
         </ul>
 
         <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
@@ -398,197 +251,19 @@ docs.component("reactRunner", {
         </div>
 
         <div class="tab-contents" ng-if="$ctrl.ready">
-            <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
+            <div role="tabpanel" class="result">
                 <iframe ng-if="$ctrl.visible" ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" scrolling="no" seamless="true"></iframe>
                 <div ng-show="!$ctrl.visible" class="iframe-placeholder" ng-style="$ctrl.iframeStyle">
                     <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
                 </div>
             </div>
-
-            <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
-                <ul role="tablist" class="secondary">
-
-                    <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
-                         App
-                    </li>
-
-                    <example-tab
-                        ng-repeat="file in $ctrl.files"
-                        value="file"
-                        current-value="$ctrl.selectedFile"
-                        title="file"
-                        icon="'fa-file-code-o'"
-                        on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
-                    </example-tab>
-
-                    <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
-                        Framework
-                    </li>
-
-                    <example-tab
-                        ng-repeat="file in $ctrl.boilerplateFiles"
-                        value="file"
-                        current-value="$ctrl.selectedFile"
-                        title="file"
-                        icon="'fa-file-code-o'"
-                        on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
-                    </example-tab>
-                </ul>
-
-                <pre><code ng-bind-html="$ctrl.source"></code></pre>
-            </div>
-        </div>
-
         </div>
     </div>
+</div>
     `,
     bindings: {
         config: "<"
     },
 
     controller: ReactRunner
-});
-
-docs.component("preview", {
-    bindings: {
-        resultUrl: "<",
-        sourceCodeUrl: "<",
-        title: "<",
-        name: "<",
-        options: "<"
-    },
-
-    template: `<div ng-class='["example-runner"]'>
-        <ul role="tablist" class="primary">
-            <li class="title">
-                <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
-            </li>
-
-            <example-tab
-                value="'result'"
-                current-value="'result'"
-                title="'Result'"
-                icon="'fa-play'"
-                >
-            </example-tab>
-
-            <li role="presentation">
-                <a role="tab" ng-href="{{$ctrl.sourceCodeUrl}}" target="_blank">
-                    <i class="fa fa-external-link" aria-hidden="true"></i> Browse Source Code
-                </a>
-            </li>
-
-        </ul>
-
-        <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-        </div>
-        <div class="loading-placeholder" ng-if="!$ctrl.ready">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-        </div>
-
-        <div class="tab-contents" ng-if="$ctrl.ready">
-            <div role="tabpanel" class="result">
-                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show Result in New Tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
-                <iframe src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
-            </div>
-        </div>
-
-    </div>
-    `,
-
-    controller: [
-        "$timeout",
-        "$element",
-        function($timeout, $element) {
-            this.ready = false;
-
-            this.$onInit = function() {
-                this.iframeStyle = {};
-
-                if (this.options.exampleHeight) {
-                    this.iframeStyle.height = this.options.exampleHeight + "px";
-                }
-
-                whenInViewPort(jQuery($element), () => {
-                    $timeout(() => (this.ready = true));
-                });
-            };
-        }
-    ]
-});
-
-let removeFilenameFromPath = function(pathname) {
-    if (pathname.lastIndexOf("/") === 0) {
-        // only the root slash present
-        return pathname;
-    }
-    return pathname.slice(0, pathname.lastIndexOf("/"));
-};
-
-let getPathWithTrailingSlash = function() {
-    let pathname = removeFilenameFromPath(window.location.pathname);
-    let trailingSlash = pathname.indexOf("/", 1) === pathname.length - 1;
-    pathname += trailingSlash ? "" : "/";
-    return pathname;
-};
-
-docs.directive("showSources", function() {
-    const ShowComplexScriptExampleController = [
-        "$scope",
-        "$http",
-        "$attrs",
-        "$sce",
-        "HighlightService",
-        function($scope, $http, $attrs, $sce, HighlightService) {
-            const pathname = getPathWithTrailingSlash();
-
-            $scope.source = $scope.sourcesOnly ? $attrs["example"] : pathname + $attrs["example"];
-
-            $scope.extraPages = [];
-
-            const sources = eval($attrs.sources);
-            sources.forEach(function(source) {
-                let root = source.root;
-                root = root === "./" ? pathname : root;
-                const files = source.files.split(",");
-
-                $scope.extraPages = $scope.extraPages.concat(files);
-
-                $scope.extraPageContent = {};
-                files.forEach(function(file) {
-                    $http
-                        .get(root + file)
-                        .then(function(response) {
-                            const language = $attrs.language ? $attrs.language : "js";
-                            const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
-                            $scope.extraPageContent[file] = $sce.trustAsHtml('<pre class="language-' + language + '"><code>' + content + "</code></pre>");
-                        })
-                        .catch(function(response) {
-                            $scope.extraPageContent[file] = response.data;
-                        });
-                });
-                $scope.extraPage = $scope.extraPages[0];
-            });
-
-            if ($attrs.exampleheight) {
-                $scope.iframeStyle = { height: $attrs.exampleheight };
-            } else {
-                $scope.iframeStyle = { height: "500px" };
-            }
-
-            $scope.isActivePage = function(item) {
-                return $scope.extraPage == item;
-            };
-            $scope.setActivePage = function(item) {
-                $scope.extraPage = item;
-            };
-        }
-    ];
-
-    return {
-        scope: true,
-        controller: ShowComplexScriptExampleController,
-        templateUrl: "/showSources.html"
-    };
 });

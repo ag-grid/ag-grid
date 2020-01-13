@@ -25,13 +25,16 @@ const buildPackagedExamples = require('./packaged-example-builder');
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
 
-const {communityModules, enterpriseModules} = getAllModules();
+const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
 
 // copy core project libs (community, enterprise, angular etc) to dist/dev folder
 const populateDevFolder = () => {
     console.log("Populating dev folder with modules...");
     const copyTasks = [];
-    communityModules.concat(enterpriseModules).forEach(module => {
+    gridCommunityModules
+        .concat(gridEnterpriseModules)
+        .concat(chartCommunityModules)
+        .forEach(module => {
         copyTasks.push(
             gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], {cwd: `${module.rootDir}/`})
                 .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
@@ -41,7 +44,9 @@ const populateDevFolder = () => {
     const angular = gulp.src(['../../community-modules/angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
     const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
-    return merge(...copyTasks, react, angular, vue);
+    const chartReact = gulp.src(['../../charts-community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-community-modules/react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
+
+    return merge(...copyTasks, react, angular, vue, chartReact);
 };
 
 updateFrameworkBoilerplateSystemJsEntry = (done) => {
@@ -51,6 +56,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/angular-boilerplate/',
         './dist/example-runner/vue-boilerplate/',
         './dist/example-runner/react-boilerplate/',
+        './dist/react-runner/react-boilerplate/',
     ];
 
     boilerPlateLocation.forEach(boilerPlateLocation => {
@@ -59,8 +65,8 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
 
     const utilFileContent = fs.readFileSync('./dist/example-runner/utils.php', 'UTF-8');
     let updatedUtilFileContent = updateBetweenStrings(utilFileContent,
-        '/* START OF MODULES DEV - DO NOT DELETE */',
-        '/* END OF MODULES DEV - DO NOT DELETE */',
+        '/* START OF GRID MODULES DEV - DO NOT DELETE */',
+        '/* END OF GRID MODULES DEV - DO NOT DELETE */',
         [],
         [],
         () => {},
@@ -193,8 +199,8 @@ gulp.task('generate-examples-release', (done) => {
         },
         undefined,
         false,
-        communityModules,
-        enterpriseModules
+        gridCommunityModules,
+        gridEnterpriseModules
     )();
 });
 gulp.task('generate-examples-dev', (done) => {
@@ -206,8 +212,8 @@ gulp.task('generate-examples-dev', (done) => {
         },
         undefined,
         true,
-        communityModules,
-        enterpriseModules
+        gridCommunityModules,
+        gridEnterpriseModules
     )();
 });
 gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {
