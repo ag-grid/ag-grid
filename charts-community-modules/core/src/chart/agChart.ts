@@ -353,7 +353,35 @@ const mappings = {
         series: {
             pie: {
                 meta: {
-                    constructor: PieSeries
+                    constructor: PieSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        title: undefined,
+                        calloutColors: palette.strokes,
+                        calloutStrokeWidth: 1,
+                        calloutLength: 10,
+                        labelOffset: 3,
+                        labelFontStyle: undefined,
+                        labelFontWeight: undefined,
+                        labelFontSize: 12,
+                        labelFontFamily: 'Verdana, sans-serif',
+                        labelColor: 'black',
+                        angleKey: '',
+                        angleName: '',
+                        radiusKey: undefined,
+                        radiusName: undefined,
+                        labelKey: undefined,
+                        labelName: undefined,
+                        fills: palette.fills,
+                        strokes: palette.strokes,
+                        fillOpacity: 1,
+                        strokeOpacity: 1,
+                        rotation: 0,
+                        outerRadiusOffset: 0,
+                        innerRadiusOffset: 0,
+                        strokeWidth: 1,
+                        shadow: undefined
+                    }
                 }
             },
             shadow: shadowMapping

@@ -18,7 +18,6 @@ import { Shape } from "../../../scene/shape/shape";
 import { reactive } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import { chainObjects } from "../../../util/object";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -56,34 +55,6 @@ export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
 
-    static defaults = chainObjects(PolarSeries.defaults, {
-        title: undefined,
-        calloutColors: palette.strokes,
-        calloutStrokeWidth: 1,
-        calloutLength: 10,
-        labelOffset: 3,
-        labelFontStyle: undefined,
-        labelFontWeight: undefined,
-        labelFontSize: 12,
-        labelFontFamily: 'Verdana, sans-serif',
-        labelColor: 'black',
-        angleKey: '',
-        angleName: '',
-        radiusKey: undefined,
-        radiusName: undefined,
-        labelKey: undefined,
-        labelName: undefined,
-        fills: palette.fills,
-        strokes: palette.strokes,
-        fillOpacity: 1,
-        strokeOpacity: 1,
-        rotation: 0,
-        outerRadiusOffset: 0,
-        innerRadiusOffset: 0,
-        strokeWidth: 1,
-        shadow: undefined
-    });
-
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -104,7 +75,7 @@ export class PieSeries extends PolarSeries {
     // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
     public seriesItemEnabled: boolean[] = [];
 
-    private _title?: Caption = PieSeries.defaults.title;
+    private _title?: Caption;
     set title(value: Caption | undefined) {
         const oldTitle = this._title;
 
@@ -131,11 +102,11 @@ export class PieSeries extends PolarSeries {
     /**
      * Defaults to make the callout colors the same as {@link strokeStyle}.
      */
-    @reactive('layoutChange') calloutColors = PieSeries.defaults.calloutColors;
+    @reactive('layoutChange') calloutColors = palette.strokes;
 
-    @reactive('layoutChange') calloutStrokeWidth = PieSeries.defaults.calloutStrokeWidth;
+    @reactive('layoutChange') calloutStrokeWidth = 1;
 
-    @reactive('layoutChange') calloutLength = PieSeries.defaults.calloutLength;
+    @reactive('layoutChange') calloutLength = 10;
 
     readonly label = new PieSeriesLabel();
 
@@ -151,24 +122,24 @@ export class PieSeries extends PolarSeries {
         });
     }
 
-    @reactive('layoutChange') labelOffset = PieSeries.defaults.labelOffset; // from the callout line
+    @reactive('layoutChange') labelOffset = 3; // from the callout line
 
-    @reactive('layoutChange') labelFontStyle?: FontStyle = PieSeries.defaults.labelFontStyle;
+    @reactive('layoutChange') labelFontStyle?: FontStyle;
 
-    @reactive('layoutChange') labelFontWeight?: FontWeight = PieSeries.defaults.labelFontWeight;
+    @reactive('layoutChange') labelFontWeight?: FontWeight;
 
-    @reactive('layoutChange') labelFontSize = PieSeries.defaults.labelFontSize;
+    @reactive('layoutChange') labelFontSize = 12;
 
-    @reactive('layoutChange') labelFontFamily = PieSeries.defaults.labelFontFamily;
+    @reactive('layoutChange') labelFontFamily = 'Verdana, sans-serif';
 
-    @reactive('layoutChange') labelColor = PieSeries.defaults.labelColor;
+    @reactive('layoutChange') labelColor = 'black';
 
     /**
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
      */
-    @reactive('dataChange') angleKey = PieSeries.defaults.angleKey;
-    @reactive('update') angleName = PieSeries.defaults.angleName;
+    @reactive('dataChange') angleKey = '';
+    @reactive('update') angleName = '';
 
     /**
      * The key of the numeric field to use to determine the radii of pie slices.
@@ -176,13 +147,13 @@ export class PieSeries extends PolarSeries {
      * proportionally smaller radii. To prevent confusing visuals, this config only works
      * if {@link innerRadiusOffset} is zero.
      */
-    @reactive('dataChange') radiusKey = PieSeries.defaults.radiusKey;
-    @reactive('update') radiusName = PieSeries.defaults.radiusName;
+    @reactive('dataChange') radiusKey?: string;
+    @reactive('update') radiusName?: string;
 
-    @reactive('dataChange') labelKey = PieSeries.defaults.labelKey;
-    @reactive('update') labelName = PieSeries.defaults.labelName;
+    @reactive('dataChange') labelKey?: string;
+    @reactive('update') labelName?: string;
 
-    private _fills: string[] = PieSeries.defaults.fills;
+    private _fills: string[] = palette.fills;
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -192,7 +163,7 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = PieSeries.defaults.strokes;
+    private _strokes: string[] = palette.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
         this.calloutColors = values;
@@ -202,21 +173,21 @@ export class PieSeries extends PolarSeries {
         return this._strokes;
     }
 
-    @reactive('layoutChange') fillOpacity = PieSeries.defaults.fillOpacity;
-    @reactive('layoutChange') strokeOpacity = PieSeries.defaults.strokeOpacity;
+    @reactive('layoutChange') fillOpacity = 1;
+    @reactive('layoutChange') strokeOpacity = 1;
 
     /**
      * The series rotation in degrees.
      */
-    @reactive('dataChange') rotation = PieSeries.defaults.rotation;
+    @reactive('dataChange') rotation = 0;
 
-    @reactive('layoutChange') outerRadiusOffset = PieSeries.defaults.outerRadiusOffset;
+    @reactive('layoutChange') outerRadiusOffset = 0;
 
-    @reactive('dataChange') innerRadiusOffset = PieSeries.defaults.innerRadiusOffset;
+    @reactive('dataChange') innerRadiusOffset = 0;
 
-    @reactive('layoutChange') strokeWidth = PieSeries.defaults.strokeWidth;
+    @reactive('layoutChange') strokeWidth = 1;
 
-    @reactive('layoutChange') shadow?: DropShadow = PieSeries.defaults.shadow;
+    @reactive('layoutChange') shadow?: DropShadow;
 
     highlightStyle: {
         fill?: string,

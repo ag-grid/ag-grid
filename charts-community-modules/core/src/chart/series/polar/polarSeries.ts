@@ -1,11 +1,8 @@
 import { Series } from "../series";
 import { ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
-import { chainObjects } from "../../../util/object";
 
 export abstract class PolarSeries extends Series {
-
-    static defaults = chainObjects(Series.defaults, {});
 
     directionKeys = {
         [ChartAxisDirection.X]: ['angleKey'],
