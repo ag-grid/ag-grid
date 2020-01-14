@@ -6,19 +6,29 @@ import { generalConfig, axisConfig } from "./config.jsx";
 
 const appName = 'chart-api';
 
-const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.create({JSON.stringify(options, null, 2)});</pre>;
+const formatJson = object => {
+    // custom formatting for number arrays
+    const formattedJson = JSON.stringify(object, (_, v) => Array.isArray(v) && v.every(x => !isNaN(x)) ? `[${v.join(', ')}]` : v, 2);
+
+    return formattedJson.replace('"[', '[').replace(']"', ']');
+}
+
+const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.create({formatJson(options)});</pre>;
 
 const ApiCode = ({ options }) => {
     const lines = ['// update existing chart'];
     const extractLines = (prefix, object) => {
+        if (Array.isArray(object) && prefix !== 'this.chart.axes') {
+            // arrays should be specified in their entirety
+            lines.push(`${prefix} = ${formatJson(object)};`);
+            return;
+        }
+
         Object.keys(object).forEach(key => {
             const value = object[key];
 
-            if (Array.isArray(object)) {
-                extractLines(`${prefix}[${key}]`, value);
-            }
-            else if (typeof value === 'object') {
-                extractLines(`${prefix}.${key}`, value);
+            if (typeof value === 'object') {
+                extractLines(Array.isArray(object) ? `${prefix}[${key}]` : `${prefix}.${key}`, value);
             } else if (value != null) {
                 lines.push(`${prefix}.${key} = ${JSON.stringify(value)};`);
             }
@@ -27,31 +37,42 @@ const ApiCode = ({ options }) => {
 
     extractLines("this.chart", options);
 
-    return lines.length > 1 && <pre>{lines.join("\n")}</pre>;
+    return lines.length > 1 && <pre>{lines.join('\n')}</pre>;
 };
 
 const Option = ({ name, description, defaultValue, Editor, editorProps }) => {
     return <div className='option'>
         <strong>{name}</strong>: {description}<br />
-        Default: {defaultValue != null ? defaultValue.toString() : "N/A"}<br />
+        Default: {defaultValue != null ? <code>{formatJson(defaultValue)}</code>: "N/A"}<br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
     </div>;
 };
 
 const deepClone = object => JSON.parse(JSON.stringify(object || {}));
 
-const createOptionsJson = options => ({
-    ...options.chart,
-    axes: options.axis && Object.keys(options.axis).length > 0 ? [{
-        type: 'category',
-        position: 'bottom',
-        ...options.axis,
-    },
-    {
-        type: 'number',
-        position: 'left',
-    }] : undefined,
-});
+const createOptionsJson = options => {
+    const json = {
+        ...options.chart,
+        axes: options.axis && Object.keys(options.axis).length > 0 ? [{
+            type: 'category',
+            position: 'bottom',
+            ...options.axis,
+        },
+        {
+            type: 'number',
+            position: 'left',
+        }] : undefined,
+    };
+
+    const gridStyle = json.axes && json.axes[0].gridStyle;
+
+    if (gridStyle) {
+        // special handling for gridStyle which requires an array
+        json.axes[0].gridStyle = [gridStyle];
+    }
+
+    return json;
+};
 
 class Chart extends React.Component {
     constructor(props) {
@@ -161,7 +182,7 @@ export class App extends React.Component {
     };
 
     updateOptions = (expression, value, defaultValue) => {
-        const newOptions = { ...this.state.options };
+        const newOptions = deepClone(this.state.options);
         const keys = expression.split(".");
         const objects = [];
         let objectToUpdate = newOptions;
@@ -182,7 +203,7 @@ export class App extends React.Component {
         let keyIndex = keys.length - 1;
         let key = keys[keyIndex];
 
-        if (value === defaultValue) {
+        if (value == null || value === '' || JSON.stringify(value) === JSON.stringify(defaultValue)) {
             delete objectToUpdate[key];
 
             while (keyIndex > 0 && Object.keys(objectToUpdate).length < 1) {

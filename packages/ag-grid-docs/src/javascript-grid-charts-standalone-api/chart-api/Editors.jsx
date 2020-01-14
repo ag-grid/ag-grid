@@ -26,16 +26,17 @@ export const NumberEditor = ({ value, min, max, onChange }) => {
     return <input {...props} />;
 };
 
-export const StringEditor = ({ value, transform, onChange }) => {
-    const [stateValue, setValueChange] = useState(value);
+export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }) => {
+    const initialValue = toStringValue ? toStringValue(value) : value;
+    const [stateValue, setValueChange] = useState(initialValue);
     const inputOnChange = event => {
         const newValue = event.target.value;
 
         setValueChange(newValue);
 
-        const transformed = transform ? transform(newValue) : newValue;
+        const transformedValue = fromStringValue ? fromStringValue(newValue) : newValue;
 
-        onChange(transformed);
+        onChange(transformedValue);
     };
 
     return <input type="text" value={stateValue} onChange={inputOnChange} />;
@@ -76,13 +77,12 @@ export const ColourEditor = ({ value, onChange }) => {
     const onClick = () => setIsShown(!isShown);
 
     return <React.Fragment>
-        <span style={{
-            display: "inline-block",
-            "backgroundColor": stateValue,
-            width: "15px",
-            height: "15px",
-            border: "solid 1px black"
-        }} onClick={onClick}></span>
+        <span
+            style={{
+                "backgroundColor": stateValue,
+            }}
+            className="colour-editor-input"
+            onClick={onClick}></span>
         {isShown && <ChromePicker color={stateValue} onChangeComplete={color => inputOnChange(color.hex)} />}
     </React.Fragment>;
 };

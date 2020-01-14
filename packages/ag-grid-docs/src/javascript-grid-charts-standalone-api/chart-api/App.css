@@ -65,3 +65,11 @@
   background-color: #212529;
   color: #f8f9fa;
 }
+
+.colour-editor-input {
+  display: inline-block;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  border: solid 1px black;
+}
