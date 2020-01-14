@@ -38,24 +38,6 @@ export enum LegendPosition {
 
 export class Legend extends Observable {
 
-    static defaults = Object.freeze({
-        enabled: true,
-        orientation: LegendOrientation.Vertical,
-        position: LegendPosition.Right,
-        padding: 20,
-        itemPaddingX: 16,
-        itemPaddingY: 8,
-        markerShape: undefined,
-        markerPadding: MarkerLabel.defaults.padding,
-        markerSize: MarkerLabel.defaults.markerSize,
-        markerStrokeWidth: 1,
-        labelColor: MarkerLabel.defaults.labelColor,
-        labelFontStyle: MarkerLabel.defaults.labelFontStyle,
-        labelFontWeight: MarkerLabel.defaults.labelFontWeight,
-        labelFontSize: MarkerLabel.defaults.labelFontSize,
-        labelFontFamily: MarkerLabel.defaults.labelFontFamily
-    });
-
     static className = 'Legend';
 
     readonly id = createId(this);
@@ -69,26 +51,26 @@ export class Legend extends Observable {
     private oldSize: [number, number] = [0, 0];
 
     @reactive('layoutChange') data: LegendDatum[] = [];
-    @reactive('layoutChange') enabled = Legend.defaults.enabled;
-    @reactive('layoutChange') orientation: LegendOrientation = Legend.defaults.orientation;
-    @reactive('layoutChange') position: LegendPosition = Legend.defaults.position;
+    @reactive('layoutChange') enabled = true;
+    @reactive('layoutChange') orientation: LegendOrientation = LegendOrientation.Vertical;
+    @reactive('layoutChange') position: LegendPosition = LegendPosition.Right;
 
-    @reactive('layoutChange') padding = Legend.defaults.padding;
-    @reactive('layoutChange') itemPaddingX = Legend.defaults.itemPaddingX;
-    @reactive('layoutChange') itemPaddingY = Legend.defaults.itemPaddingY;
+    @reactive('layoutChange') padding = 20;
+    @reactive('layoutChange') itemPaddingX = 16;
+    @reactive('layoutChange') itemPaddingY = 8;
 
     // If the marker type is set, the legend will always use that marker type for all its items,
     // regardless of the type that comes from the `data`.
-    @reactive('layoutChange') markerShape?: string | (new () => Marker) = Legend.defaults.markerShape;
-    @reactive('layoutChange') markerPadding = Legend.defaults.markerPadding;
-    @reactive('layoutChange') markerSize = Legend.defaults.markerSize;
-    @reactive('change') markerStrokeWidth = Legend.defaults.markerStrokeWidth;
+    @reactive('layoutChange') markerShape?: string | (new () => Marker);
+    @reactive('layoutChange') markerPadding = 8;
+    @reactive('layoutChange') markerSize = 15;
+    @reactive('change') markerStrokeWidth = 1;
 
-    @reactive('change') labelColor = Legend.defaults.labelColor;
-    @reactive('layoutChange') labelFontStyle?: FontStyle = Legend.defaults.labelFontStyle;
-    @reactive('layoutChange') labelFontWeight?: FontWeight = Legend.defaults.labelFontWeight;
-    @reactive('layoutChange') labelFontSize = Legend.defaults.labelFontSize;
-    @reactive('layoutChange') labelFontFamily = Legend.defaults.labelFontFamily;
+    @reactive('change') labelColor = 'black';
+    @reactive('layoutChange') labelFontStyle?: FontStyle;
+    @reactive('layoutChange') labelFontWeight?: FontWeight;
+    @reactive('layoutChange') labelFontSize = 12;
+    @reactive('layoutChange') labelFontFamily = 'Verdana, sans-serif';
 
     constructor() {
         super();

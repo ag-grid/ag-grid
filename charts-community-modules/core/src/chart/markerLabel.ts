@@ -7,17 +7,6 @@ export class MarkerLabel extends Group {
 
     static className = 'MarkerLabel';
 
-    static defaults = Object.freeze({
-        padding: 8,
-        markerSize: 15,
-        labelFont: '12px Verdana, sans-serif',
-        labelFontStyle: undefined,
-        labelFontWeight: undefined,
-        labelFontSize: 12,
-        labelFontFamily: 'Verdana, sans-serif',
-        labelColor: 'black'
-    });
-
     private label = new Text();
 
     constructor() {
@@ -25,11 +14,9 @@ export class MarkerLabel extends Group {
 
         const label = this.label;
         label.textBaseline = 'middle';
-        label.fontStyle = MarkerLabel.defaults.labelFontStyle;
-        label.fontWeight = MarkerLabel.defaults.labelFontWeight;
-        label.fontSize = MarkerLabel.defaults.labelFontSize;
-        label.fontFamily = MarkerLabel.defaults.labelFontFamily;
-        label.fill = MarkerLabel.defaults.labelColor;
+        label.fontSize = 12;
+        label.fontFamily = 'Verdana, sans-serif';
+        label.fill = 'black';
         label.y = 2; // for better looking vertical alignment of labels to markers
 
         this.append([this.marker, label]);
@@ -91,7 +78,7 @@ export class MarkerLabel extends Group {
         return this._marker;
     }
 
-    private _markerSize: number = MarkerLabel.defaults.markerSize;
+    private _markerSize: number = 15;
     set markerSize(value: number) {
         if (this._markerSize !== value) {
             this._markerSize = value;
@@ -145,7 +132,7 @@ export class MarkerLabel extends Group {
         return this.marker.opacity;
     }
 
-    private _padding: number = MarkerLabel.defaults.padding;
+    private _padding: number = 8;
     set padding(value: number) {
         if (this._padding !== value) {
             this._padding = value;
