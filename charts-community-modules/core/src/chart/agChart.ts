@@ -150,17 +150,34 @@ const columnSeriesDefaults = {
 } as any;
 
 const shadowMapping = {
-    meta: {
-        constructor: DropShadow,
-        defaults: {
-            enabled: true,
-            color: 'rgba(0, 0, 0, 0.5)',
-            xOffset: 0,
-            yOffset: 0,
-            blur: 5
+    shadow: {
+        meta: {
+            constructor: DropShadow,
+            defaults: {
+                enabled: true,
+                color: 'rgba(0, 0, 0, 0.5)',
+                xOffset: 0,
+                yOffset: 0,
+                blur: 5
+            }
         }
     }
 };
+
+const labelMapping = {
+    label: {
+        meta: {
+            defaults: {
+                enabled: true,
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: 'Verdana, sans-serif',
+                color: 'black'
+            }
+        }
+    }
+} as any;
 
 const axisMappings = {
     line: {
@@ -279,7 +296,8 @@ const mappings = {
                         ...columnSeriesDefaults
                     }
                 },
-                shadow: shadowMapping
+                ...labelMapping,
+                ...shadowMapping
             },
             bar: {
                 meta: {
@@ -289,7 +307,8 @@ const mappings = {
                         ...columnSeriesDefaults
                     }
                 },
-                shadow: shadowMapping
+                ...labelMapping,
+                ...shadowMapping
             },
             scatter: {
                 meta: {
@@ -337,7 +356,7 @@ const mappings = {
                     }
                 },
                 marker: {},
-                shadow: shadowMapping
+                ...shadowMapping
             }
         }
     },
@@ -384,7 +403,8 @@ const mappings = {
                     }
                 }
             },
-            shadow: shadowMapping
+            ...labelMapping,
+            ...shadowMapping
         }
     }
 } as any;
