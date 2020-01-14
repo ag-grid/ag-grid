@@ -13,6 +13,11 @@ const formatJson = object => {
     return formattedJson.replace('"[', '[').replace(']"', ']');
 }
 
+const Code = ({ options }) => <div className='code'>
+    <OptionsCode options={options} />
+    <ApiCode options={options} />
+</div>;
+
 const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.create({formatJson(options)});</pre>;
 
 const ApiCode = ({ options }) => {
@@ -35,15 +40,17 @@ const ApiCode = ({ options }) => {
         });
     };
 
-    extractLines("this.chart", options);
+    extractLines('this.chart', options);
 
     return lines.length > 1 && <pre>{lines.join('\n')}</pre>;
 };
 
-const Option = ({ name, description, defaultValue, Editor, editorProps }) => {
+const Option = ({ name, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     return <div className='option'>
-        <strong>{name}</strong>: {description}<br />
-        Default: {defaultValue != null ? <code>{formatJson(defaultValue)}</code>: "N/A"}<br />
+        <span className='option__name'>{name}</span>
+        {type && <span className='option__type'>{type}</span>}
+        <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code>: 'N/A'}</div><br />
+        {isRequired && <span className='option__required'>Required.</span>}<span className='option__description'>{description}</span><br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
     </div>;
 };
@@ -116,7 +123,7 @@ class Chart extends React.Component {
     }
 
     render() {
-        return <div ref={this.chart}></div>;
+        return <div className='chart' ref={this.chart}></div>;
     }
 }
 
@@ -141,12 +148,21 @@ class Options extends React.PureComponent {
         Object.keys(options).forEach(name => {
             const key = `${prefix}${name}`;
             const config = options[name];
-            const { description, default: defaultValue, editor, ...editorProps } = config;
+            const {
+                type,
+                isRequired,
+                description,
+                default: defaultValue,
+                editor,
+                ...editorProps
+            } = config;
 
             if (config.description) {
                 elements.push(<Option
                     key={key}
                     name={name}
+                    type={type}
+                    isRequired={isRequired}
                     description={description}
                     defaultValue={defaultValue}
                     Editor={editor}
@@ -166,15 +182,18 @@ class Options extends React.PureComponent {
     };
 
     render() {
-        return this.generateOptions(this.config);
+        return <div className="options">{this.generateOptions(this.config)}</div>;
     }
 };
 
 const Section = ({ title, children }) => {
     const [expanded, setExpanded] = useState(true);
 
-    return <div className={`section ${expanded ? 'expanded' : ''}`}>
-        <h2 onClick={() => setExpanded(!expanded)}>{title}</h2>
+    return <div className={`section ${expanded ? 'section--expanded' : ''}`}>
+        <h2 className={`section__heading ${expanded ? 'section__heading--expanded' : ''}`}
+            onClick={() => setExpanded(!expanded)}>
+            {title}
+        </h2>
         {expanded && children}
     </div>;
 }
@@ -250,14 +269,9 @@ export class App extends React.Component {
         const options = createOptionsJson(this.state.options);
 
         return <div className="app">
-            <div className="chart"><Chart options={options} /></div>
-            <div className="options">
-                <Options updateOptions={this.updateOptions} />
-            </div>
-            <div className="code">
-                <OptionsCode options={options} />
-                <ApiCode options={options} />
-            </div>
+            <Chart options={options} />
+            <Options updateOptions={this.updateOptions} />
+            <Code options={options} />
         </div>;
     }
 }

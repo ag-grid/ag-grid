@@ -20,43 +20,66 @@
   overflow-y: auto;
 }
 
-.options .section {
+.section {
   margin-bottom: 10px;
 }
 
-.options .section h2 {
+.section__heading {
   margin: 0;
   padding: 20px 10px;
   color: white;
   background-color:#0084e7;
 }
 
-.options .section h2::after {
+.section__heading::after {
   content: "❯";
   float: right;
   font-size: 80%;
   transition: transform 0.3s ease-out;
 }
 
-.options .section.expanded > h2::after {
+.section__heading--expanded::after {
   transform: rotate(90deg);
 }
 
-.options .section:first-child {
+.section:first-child {
   margin-top: 0;
 }
 
-.options .section > .section {
+.section > .section {
   border: solid 1px rgba(0, 0, 0, 0.125);
   margin: 10px;
 }
 
-.options .option {
+.option {
   padding: 10px;
 }
 
-.options .section .option:nth-child(odd) {
+.option:nth-child(odd) {
   background-color: #f1f7ff;
+}
+
+.option__name {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.option__required {
+  font-weight: bold;
+  color: red;
+  margin-right: 10px;
+}
+
+.option__type {
+  color: #0084e7;
+}
+
+.option__default {
+  float: right;
+}
+
+.option__code {
+  color: #0084e7;
 }
 
 .code {
@@ -66,7 +89,7 @@
   color: #f8f9fa;
 }
 
-.colour-editor-input {
+.colour-editor__input {
   display: inline-block;
   vertical-align: middle;
   width: 15px;

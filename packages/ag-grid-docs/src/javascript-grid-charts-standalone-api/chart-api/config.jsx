@@ -46,7 +46,17 @@ const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
 });
 
 export const generalConfig = Object.freeze({
+    data: {
+        type: 'object[]',
+        isRequired: true,
+        description: 'The data to render the chart from',
+    },
+    container: {
+        type: 'HTMLElement',
+        description: 'The element to place the rendered chart canvas element into'
+    },
     width: {
+        type: 'number',
         default: 800,
         description: "The width of the chart",
         editor: NumberEditor,
@@ -54,6 +64,7 @@ export const generalConfig = Object.freeze({
         max: 800,
     },
     height: {
+        type: 'number',
         default: 400,
         description: "The height of the chart",
         editor: NumberEditor,

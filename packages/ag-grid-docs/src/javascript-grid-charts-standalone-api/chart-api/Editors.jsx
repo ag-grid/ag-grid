@@ -82,10 +82,8 @@ export const ColourEditor = ({ value, onChange }) => {
 
     return <React.Fragment>
         <span
-            style={{
-                "backgroundColor": stateValue,
-            }}
-            className="colour-editor-input"
+            style={{ 'backgroundColor': stateValue }}
+            className='colour-editor__input'
             onClick={onClick}></span>
         {isShown && <ChromePicker color={stateValue} onChangeComplete={color => inputOnChange(color.hex)} />}
     </React.Fragment>;
