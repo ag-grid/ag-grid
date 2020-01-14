@@ -96,14 +96,14 @@ const chartMappings = {
                 itemPaddingX: 16,
                 itemPaddingY: 8,
                 markerShape: undefined,
-                markerPadding: MarkerLabel.defaults.padding,
-                markerSize: MarkerLabel.defaults.markerSize,
+                markerPadding: 8,
+                markerSize: 15,
                 markerStrokeWidth: 1,
-                labelColor: MarkerLabel.defaults.labelColor,
-                labelFontStyle: MarkerLabel.defaults.labelFontStyle,
-                labelFontWeight: MarkerLabel.defaults.labelFontWeight,
-                labelFontSize: MarkerLabel.defaults.labelFontSize,
-                labelFontFamily: MarkerLabel.defaults.labelFontFamily
+                labelColor: 'black',
+                labelFontStyle: undefined,
+                labelFontWeight: undefined,
+                labelFontSize: 12,
+                labelFontFamily: 'Verdana, sans-serif'
             }
         }
     }
