@@ -120,15 +120,16 @@ export class RowDragFeature implements DropTarget {
         const rowNodes = this.isMultiRowDrag ? this.selectionController.getSelectedNodes() : [draggingEvent.dragItem.rowNode];
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        const pixel = this.normaliseForScroll(draggingEvent.y);
         let increment = isBelow ? 1 : 0;
 
         rowNodes.forEach(rowNode => {
-            if (rowNode.rowTop < draggingEvent.y) {
+            if (rowNode.rowTop < pixel) {
                 increment -= 1;
             }
         });
 
-        this.moveRows(rowNodes, draggingEvent.y, increment);
+        this.moveRows(rowNodes, pixel, increment);
         this.clearRowHighlight();
     }
 

@@ -270,9 +270,7 @@ export class DragAndDropService {
                 const rect = eContainer.getBoundingClientRect();
 
                 // if element is not visible, then width and height are zero
-                if (rect.width === 0 || rect.height === 0) {
-                    return;
-                }
+                if (rect.width === 0 || rect.height === 0) { return; }
 
                 const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
                 const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
