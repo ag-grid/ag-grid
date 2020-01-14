@@ -118,6 +118,15 @@ const chartDefaults = {
     subtitle: undefined,
 } as any;
 
+const axisDefaults = {
+    defaults: {
+        gridStyle: [{
+            stroke: 'rgba(219, 219, 219, 1)',
+            lineDash: [4, 2]
+        }]
+    }
+};
+
 const shadowMapping = {
     meta: {
         constructor: DropShadow,
@@ -132,6 +141,14 @@ const shadowMapping = {
 };
 
 const axisMappings = {
+    line: {
+        meta: {
+            defaults: {
+                width: 1,
+                color: 'rgba(195, 195, 195, 1)'
+            }
+        }
+    },
     title: {
         meta: {
             constructor: Caption,
@@ -200,13 +217,15 @@ const mappings = {
         axes: {
             number: {
                 meta: {
-                    constructor: NumberAxis
+                    constructor: NumberAxis,
+                    ...axisDefaults
                 },
                 ...axisMappings
             },
             category: {
                 meta: {
                     constructor: CategoryAxis,
+                    ...axisDefaults
                 },
                 ...axisMappings
             }
