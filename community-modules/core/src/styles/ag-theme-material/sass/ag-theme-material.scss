@@ -54,6 +54,10 @@
         border-bottom: solid 1px $ag-border-color;
         padding-top: $ag-grid-size;
         padding-bottom: $ag-grid-size;
+        
+        &.ag-last-column-drop {
+            border-bottom: none;
+        }
     }
 
     .ag-column-drop-vertical-cell {
@@ -107,6 +111,7 @@
         }
     }
 
+    // TODO add ag-regular-button class and use that instead
     .ag-filter-apply-panel-button {
         appearance: none;
         background-color: transparent;

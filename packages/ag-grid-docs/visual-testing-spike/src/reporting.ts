@@ -33,14 +33,18 @@ const init = () => {
         $(document.body).addClass('blink-failure-bounds');
         selectFunctions.push(selectTab);
     });
-    let original = true;
     document.onkeypress = e => {
-        if (e.key === 'm') {
+        if (e.key === 'b') {
             $(document.body).toggleClass('blink-failure-bounds');
         }
         if (e.key === 'o') {
-            original = !original;
-            selectFunctions.forEach(f => f(original ? 'original' : 'new'));
+            selectFunctions.forEach(f => f('original'));
+        }
+        if (e.key === 'n') {
+            selectFunctions.forEach(f => f('new'));
+        }
+        if (e.key === 'd') {
+            selectFunctions.forEach(f => f('difference'));
         }
     };
 };
@@ -127,7 +131,7 @@ export const getReportHtml = (results: SpecResult[], inProgress: boolean) => {
     }
     if (failures.length > 0) {
         body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
-        body += '<p>Press "m" to toggle the red blinkensquares, or "o" to toggle original/new.</p>';
+        body += '<p>Shortcuts: "m" to toggle the red blinkensquares; "o" / "n" / "d" to set all images to "original" / "new" / "difference".</p>';
         body += failures.map(f => f.type === 'test' ? getFailureHtml(f) : '').join('\n\n');
     } else {
         body += `<h2>✅ ALL PASSED</h2>`;

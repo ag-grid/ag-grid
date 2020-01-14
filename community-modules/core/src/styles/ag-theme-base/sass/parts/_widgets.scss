@@ -34,7 +34,7 @@
                 background-color: $ag-input-disabled-background-color;
             }
             @if $ag-input-border-color {
-                border-color: transparentize($ag-input-border-color, 0.7);
+                border-color: rgba($ag-input-border-color, 0.3);
             }
         }
     }

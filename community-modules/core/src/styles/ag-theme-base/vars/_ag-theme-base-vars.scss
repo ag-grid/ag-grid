@@ -135,14 +135,6 @@ $ag-header-column-resize-handle: false !default;
 // INPUTS
 //
 
-$ag-customize-buttons: false !default;
-    // variables used when $ag-customize-buttons is true
-    // TODO replace with another method of customisation like %placeholder or class selector
-    $ag-button-color: null !default;
-    $ag-button-background-color: null !default;
-    $ag-button-text-transform: null !default;
-
-
 $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
 
