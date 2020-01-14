@@ -17,7 +17,7 @@
     "init": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna clean --yes",
-    "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
+    "bootstrap": "node scripts/addNoSyncToNodeModules.js && npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "test": "npx lerna run test --stream",
@@ -56,6 +56,8 @@
     "chokidar": "^3.2.2",
     "commander": "^3.0.2",
     "execa": "^3.2.0",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
     "inquirer": "^7.0.0",
     "lerna": "^3.18.3",
     "lighthouse": "^5.4.0",
@@ -65,8 +67,5 @@
     "terser": "^4.3.9",
     "typescript": "^3.7.2",
     "walk": "^2.3.14"
-  },
-  "dependencies": {
-    "fs-extra": "^8.1.0"
   }
 }
