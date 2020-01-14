@@ -15,6 +15,7 @@ import { Constants } from "../constants";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
+import { _ } from "../utils/general";
 
 export class RowDragFeature implements DropTarget {
 
@@ -36,6 +37,7 @@ export class RowDragFeature implements DropTarget {
     private intervalCount: number;
     private lastDraggingEvent: DraggingEvent;
     private isMultiRowDrag: boolean = false;
+    private movingNodes: RowNode[] = null;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
         this.eContainer = eContainer;
@@ -107,7 +109,13 @@ export class RowDragFeature implements DropTarget {
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
-        const rowNodes = this.isMultiRowDrag ? this.selectionController.getSelectedNodes() : [draggingEvent.dragItem.rowNode];
+        let rowNodes = this.movingNodes = [draggingEvent.dragItem.rowNode];
+
+        if (this.isMultiRowDrag) {
+            rowNodes = this.movingNodes = [...this.selectionController.getSelectedNodes()].sort(
+                (a, b) => this.getRowIndexNumber(a) - this.getRowIndexNumber(b)
+            );
+        }
 
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
             this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
@@ -116,11 +124,15 @@ export class RowDragFeature implements DropTarget {
         }
     }
 
+    private getRowIndexNumber(rowNode: RowNode): number {
+        return parseInt(_.last(rowNode.getRowIndexString().split('-')), 10);
+    }
+
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
-        const rowNodes = this.isMultiRowDrag ? this.selectionController.getSelectedNodes() : [draggingEvent.dragItem.rowNode];
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
         const pixel = this.normaliseForScroll(draggingEvent.y);
+        const rowNodes = this.movingNodes;
         let increment = isBelow ? 1 : 0;
 
         rowNodes.forEach(rowNode => {
@@ -277,6 +289,7 @@ export class RowDragFeature implements DropTarget {
         }
 
         this.isMultiRowDrag = false;
+        this.movingNodes = null;
     }
 
     private stopDragging(draggingEvent: DraggingEvent): void {
