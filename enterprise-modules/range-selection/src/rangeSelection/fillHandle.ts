@@ -307,7 +307,7 @@ export class FillHandle extends AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return _.last(values) + 1 * multiplier;
+                return parseFloat(_.last(values)) + 1 * multiplier;
             }
             return values[idx % values.length];
         }
