@@ -14,6 +14,7 @@ import { Padding } from "../util/padding";
 import { MarkerLabel } from "./markerLabel";
 import { DropShadow } from "../scene/dropShadow";
 import { AxisLabel, AxisTick } from "../axis";
+import palette from "./palettes";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -127,6 +128,27 @@ const axisDefaults = {
     }
 };
 
+const seriesDefaults = {
+    data: undefined,
+    visible: true,
+    showInLegend: true
+} as any;
+
+const columnSeriesDefaults = {
+    fills: palette.fills,
+    strokes: palette.strokes,
+    fillOpacity: 1,
+    strokeOpacity: 1,
+    xKey: '',
+    xName: '',
+    yKeys: [],
+    yNames: [],
+    grouped: false,
+    normalizedTo: undefined,
+    strokeWidth: 1,
+    shadow: undefined
+} as any;
+
 const shadowMapping = {
     meta: {
         constructor: DropShadow,
@@ -158,7 +180,7 @@ const axisMappings = {
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 16,
+                fontSize: 14,
                 fontFamily: 'Verdana, sans-serif',
                 color: 'black'
             }
@@ -234,30 +256,85 @@ const mappings = {
             line: {
                 meta: {
                     constructor: LineSeries,
+                    defaults: {
+                        title: undefined,
+                        xKey: '',
+                        xName: '',
+                        yKey: '',
+                        yName: '',
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 2,
+                        fillOpacity: 1,
+                        strokeOpacity: 1
+                    }
                 },
                 marker: {}
             },
             column: {
                 meta: {
-                    constructor: ColumnSeries
+                    constructor: ColumnSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        ...columnSeriesDefaults
+                    }
                 },
                 shadow: shadowMapping
             },
             bar: {
                 meta: {
-                    constructor: BarSeries
+                    constructor: BarSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        ...columnSeriesDefaults
+                    }
                 },
                 shadow: shadowMapping
             },
             scatter: {
                 meta: {
                     constructor: ScatterSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        title: undefined,
+                        xKey: '',
+                        yKey: '',
+                        sizeKey: undefined,
+                        labelKey: undefined,
+                        xName: 'X',
+                        yName: 'Y',
+                        sizeName: 'Size',
+                        labelName: 'Label',
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 2,
+                        fillOpacity: 1,
+                        strokeOpacity: 1,
+                        highlightStyle: {
+                            fill: 'yellow'
+                        },
+                        tooltipRenderer: undefined
+                    }
                 },
                 marker: {}
             },
             area: {
                 meta: {
                     constructor: AreaSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        xKey: '',
+                        xName: '',
+                        yKeys: [],
+                        yNames: [],
+                        normalizedTo: undefined,
+                        fills: palette.fills,
+                        strokes: palette.strokes,
+                        fillOpacity: 1,
+                        strokeOpacity: 1,
+                        strokeWidth: 2,
+                        shadow: undefined
+                    }
                 },
                 marker: {},
                 shadow: shadowMapping

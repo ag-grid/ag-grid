@@ -32,27 +32,6 @@ export class ScatterSeries extends CartesianSeries {
 
     static className = 'ScatterSeries';
 
-    static defaults = chainObjects(CartesianSeries.defaults, {
-        title: undefined,
-        xKey: '',
-        yKey: '',
-        sizeKey: undefined,
-        labelKey: undefined,
-        xName: 'X',
-        yName: 'Y',
-        sizeName: 'Size',
-        labelName: 'Label',
-        fill: palette.fills[0],
-        stroke: palette.strokes[0],
-        strokeWidth: 2,
-        fillOpacity: 1,
-        strokeOpacity: 1,
-        highlightStyle: {
-            fill: 'yellow'
-        },
-        tooltipRenderer: undefined
-    });
-
     private xDomain: number[] = [];
     private yDomain: number[] = [];
     private xData: any[] = [];
@@ -66,7 +45,7 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string = ScatterSeries.defaults.fill;
+    private _fill: string = palette.fills[0];
     set fill(value: string) {
         if (this._fill !== value) {
             this._fill = value;
@@ -77,7 +56,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._fill;
     }
 
-    private _stroke: string = ScatterSeries.defaults.stroke;
+    private _stroke: string = palette.strokes[0];
     set stroke(value: string) {
         if (this._stroke !== value) {
             this._stroke = value;
@@ -88,7 +67,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._stroke;
     }
 
-    private _strokeWidth: number = ScatterSeries.defaults.strokeWidth;
+    private _strokeWidth: number = 2;
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
@@ -99,7 +78,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._strokeWidth;
     }
 
-    private _fillOpacity: number = ScatterSeries.defaults.fillOpacity;
+    private _fillOpacity: number = 1;
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
@@ -110,7 +89,7 @@ export class ScatterSeries extends CartesianSeries {
         return this._fillOpacity;
     }
 
-    private _strokeOpacity: number = ScatterSeries.defaults.strokeOpacity;
+    private _strokeOpacity: number = 1;
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
@@ -124,20 +103,22 @@ export class ScatterSeries extends CartesianSeries {
     highlightStyle: {
         fill?: string,
         stroke?: string
-    } = ScatterSeries.defaults.highlightStyle;
+    } = {
+        fill: 'yellow'
+    };
 
-    @reactive('layoutChange') title?: string = ScatterSeries.defaults.title;
-    @reactive('dataChange') xKey: string = ScatterSeries.defaults.xKey;
-    @reactive('dataChange') yKey: string = ScatterSeries.defaults.yKey;
-    @reactive('dataChange') sizeKey?: string = ScatterSeries.defaults.sizeKey;
-    @reactive('dataChange') labelKey?: string = ScatterSeries.defaults.labelKey;
+    @reactive('layoutChange') title?: string;
+    @reactive('dataChange') xKey: string = '';
+    @reactive('dataChange') yKey: string = '';
+    @reactive('dataChange') sizeKey?: string;
+    @reactive('dataChange') labelKey?: string;
 
-    xName: string = ScatterSeries.defaults.xName;
-    yName: string = ScatterSeries.defaults.yName;
-    sizeName?: string = ScatterSeries.defaults.sizeName;
-    labelName?: string = ScatterSeries.defaults.labelName;
+    xName: string = 'X';
+    yName: string = 'Y';
+    sizeName?: string = 'Size';
+    labelName?: string = 'Label';
 
-    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string = ScatterSeries.defaults.tooltipRenderer;
+    tooltipRenderer?: (params: ScatterTooltipRendererParams) => string;
 
     constructor() {
         super();

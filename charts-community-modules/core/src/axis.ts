@@ -10,7 +10,6 @@ import { Shape } from "./scene/shape/shape";
 import { BBox } from "./scene/bbox";
 import { Matrix } from "./scene/matrix";
 import { Caption } from "./caption";
-import { chainObjects } from "./util/object";
 // import { Rect } from "./scene/shape/rect"; // debug (bbox)
 
 enum Tags {

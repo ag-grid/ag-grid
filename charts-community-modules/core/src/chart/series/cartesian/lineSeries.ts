@@ -14,7 +14,6 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive } from "../../../util/observable";
-import { chainObjects } from "../../../util/object";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -26,19 +25,6 @@ export { LineTooltipRendererParams };
 export class LineSeries extends CartesianSeries {
 
     static className = 'LineSeries';
-
-    static defaults = chainObjects(CartesianSeries.defaults, {
-        title: undefined,
-        xKey: '',
-        xName: '',
-        yKey: '',
-        yName: '',
-        fill: palette.fills[0],
-        stroke: palette.strokes[0],
-        strokeWidth: 2,
-        fillOpacity: 1,
-        strokeOpacity: 1
-    });
 
     private xDomain: any[] = [];
     private yDomain: any[] = [];
@@ -53,13 +39,13 @@ export class LineSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive('layoutChange') title?: string = LineSeries.defaults.title;
+    @reactive('layoutChange') title?: string;
 
-    @reactive('update') fill: string = LineSeries.defaults.fill;
-    @reactive('update') stroke: string = LineSeries.defaults.stroke;
-    @reactive('update') strokeWidth: number = LineSeries.defaults.strokeWidth;
-    @reactive('update') fillOpacity: number = LineSeries.defaults.fillOpacity;
-    @reactive('update') strokeOpacity: number = LineSeries.defaults.strokeOpacity;
+    @reactive('update') fill: string = palette.fills[0];
+    @reactive('update') stroke: string = palette.strokes[0];
+    @reactive('update') strokeWidth: number = 2;
+    @reactive('update') fillOpacity: number = 1;
+    @reactive('update') strokeOpacity: number = 1;
 
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
 
@@ -94,7 +80,7 @@ export class LineSeries extends CartesianSeries {
         this.fireEvent({type: 'legendChange'});
     }
 
-    protected _xKey: string = LineSeries.defaults.xKey;
+    protected _xKey: string = '';
     set xKey(value: string) {
         if (this._xKey !== value) {
             this._xKey = value;
@@ -106,9 +92,9 @@ export class LineSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    @reactive('update') xName: string = LineSeries.defaults.xName;
+    @reactive('update') xName: string = '';
 
-    protected _yKey: string = LineSeries.defaults.yKey;
+    protected _yKey: string = '';
     set yKey(value: string) {
         if (this._yKey !== value) {
             this._yKey = value;
@@ -120,7 +106,7 @@ export class LineSeries extends CartesianSeries {
         return this._yKey;
     }
 
-    @reactive('update') yName: string = LineSeries.defaults.yName;
+    @reactive('update') yName: string = '';
 
     processData(): boolean {
         const { xAxis, xKey, yKey, xData, yData } = this;
