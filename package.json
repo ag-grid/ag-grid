@@ -14,6 +14,8 @@
     "initMarketing": "git checkout marketing && npm run updateCoreDependencies && npm run buildCore",
     "initMaster": "npm run initSubModules && sh ./scripts/switchToBranch.sh master",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
+    "noSyncInit": "node scripts/noSyncRoot.js && npm i && npm run noSyncPackages",
+    "noSyncPackages": "node scripts/noSyncPackages.js",
     "init": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna clean --yes",
