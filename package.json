@@ -17,7 +17,7 @@
     "init": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna clean --yes",
-    "bootstrap": "node scripts/addNoSyncToNodeModules.js && npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
+    "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "test": "npx lerna run test --stream",
