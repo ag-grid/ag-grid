@@ -58,7 +58,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                         } else {
                             var isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
                             var defaultTheme = isDark ? 'ag-theme-balham-dark' : 'ag-theme-balham';
-                            themeDropdown.querySelector('option[value="' + defaultTheme + '"]').setAttribute("selected", "selected");
+                            themeDropdown.value = defaultTheme;
                         }
                     })();
                 </script>

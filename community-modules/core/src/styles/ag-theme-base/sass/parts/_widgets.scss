@@ -20,7 +20,23 @@
     input[type='date'],
     input[type='datetime-local'],
     textarea {
-        @include ag-textbox();
+        @extend %ag-text-input !optional;
+    
+        @if $ag-input-border-color {
+            border-width: 1px;
+            border-style: solid;
+            border-color: $ag-input-border-color;
+        }
+    
+        &:disabled {
+            color: $ag-disabled-foreground-color;
+            @if $ag-input-disabled-background-color {
+                background-color: $ag-input-disabled-background-color;
+            }
+            @if $ag-input-border-color {
+                border-color: transparentize($ag-input-border-color, 0.7);
+            }
+        }
     }
 
     input[type='range'] {
@@ -56,7 +72,7 @@
         padding: 0 $ag-grid-size 0 $ag-cell-horizontal-padding;
         height: $ag-rich-select-item-height;
         
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
     }
 
     .ag-rich-select-virtual-list-item {
@@ -288,7 +304,7 @@
 
     .ag-dialog {
         border-radius: $ag-grid-radius;
-        @include ag-grid-border();
+        @include ag-grid-border(primary);
     }
 
     .ag-panel {
@@ -302,7 +318,7 @@
         font-weight: $ag-secondary-font-weight;
         font-family: $ag-secondary-font-family;
         padding: $ag-grid-size $ag-cell-horizontal-padding;
-        @include ag-grid-border(bottom);
+        @include ag-grid-border(primary, bottom);
     }
 
     .ag-panel-title-bar-button {
@@ -316,19 +332,13 @@
         background-color: $ag-header-background-color;
         color: $ag-foreground-color;
         padding: $ag-grid-size;
-        @include ag-grid-border();
+        @include ag-grid-border(primary);
         border-radius: $ag-card-radius;
         transition: opacity 1s;
 
         &.ag-tooltip-hiding {
             opacity: 0;
         }
-    }
-
-    .ag-column-select-header {
-        border-top: 1px solid $ag-border-color;
-        height: $ag-header-height;
-        align-items: center;
     }
     
     @for $i from 1 to 10 {

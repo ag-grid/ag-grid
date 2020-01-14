@@ -5,13 +5,15 @@
         background-color: $ag-header-background-color;
         color: $ag-secondary-foreground-color;
         height: $ag-row-height;
-        @include ag-grid-border(bottom);
+        @include ag-grid-border(primary, bottom);
 
         @include ag-theme-rtl(( padding-left: $ag-cell-horizontal-padding ));
     }
     
     .ag-column-drop-horizontal-half-width:not(:last-child) {
-        @include ag-theme-rtl((border-right: solid 1px $ag-border-color));
+        @if ag-should-draw-border(primary) {
+            @include ag-theme-rtl((border-right: solid 1px $ag-border-color));
+        }
     }
 
     .ag-column-drop-horizontal-cell-separator {

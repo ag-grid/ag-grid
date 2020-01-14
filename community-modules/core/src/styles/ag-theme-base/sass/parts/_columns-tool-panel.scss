@@ -15,14 +15,27 @@
     }
 
     .ag-column-panel-column-select {
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
+    }
+
+    .ag-column-select-header {
+        @include ag-grid-border(critical, top);
+        height: $ag-header-height;
+        align-items: center;
+    }
+
+    .ag-column-select-header-filter-wrapper {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
     }
 
     .ag-column-drop-vertical {
+        @include ag-grid-border(secondary, bottom);
+        min-height: 50px;
         padding-bottom: $ag-grid-size * 2;
 
         &.ag-last-column-drop {
-            border-bottom-width: 0;
+            @include ag-grid-border(secondary, bottom, $none: true);
         }
     }
 

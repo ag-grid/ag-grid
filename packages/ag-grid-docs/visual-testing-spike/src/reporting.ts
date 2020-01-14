@@ -1,6 +1,9 @@
 import { SpecResult, TestSpecResult } from './types';
 
+type SelectFunc = (tab: string) => void;
+
 const init = () => {
+    const selectFunctions: SelectFunc[] = [];
     $('.tab-block').each((_, tabBlock) => {
         const selectTab = (name: string) => {
             $(tabBlock)
@@ -28,12 +31,18 @@ const init = () => {
             .find('.tab-button')
             .click(e => selectTab(e.target.textContent!.trim()));
         $(document.body).addClass('blink-failure-bounds');
-        document.onkeypress = e => {
-            if (e.key === 'm') {
-                $(document.body).toggleClass('blink-failure-bounds');
-            }
-        };
+        selectFunctions.push(selectTab);
     });
+    let original = true;
+    document.onkeypress = e => {
+        if (e.key === 'm') {
+            $(document.body).toggleClass('blink-failure-bounds');
+        }
+        if (e.key === 'o') {
+            original = !original;
+            selectFunctions.forEach(f => f(original ? 'original' : 'new'));
+        }
+    };
 };
 
 const pageTemplate = (content: string) => /*html*/ `<!doctype html>
@@ -118,7 +127,7 @@ export const getReportHtml = (results: SpecResult[], inProgress: boolean) => {
     }
     if (failures.length > 0) {
         body += `<h2>${failures.length} failure${failures.length > 1 ? 's' : ''}</h2>`;
-        body += '<p>Press "m" to toggle the red blinkensquares.</p>';
+        body += '<p>Press "m" to toggle the red blinkensquares, or "o" to toggle original/new.</p>';
         body += failures.map(f => f.type === 'test' ? getFailureHtml(f) : '').join('\n\n');
     } else {
         body += `<h2>✅ ALL PASSED</h2>`;

@@ -25,7 +25,7 @@
     }
 
     .ag-filter-toolpanel-group-level-0 {
-        @include ag-grid-border(top, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, top);
     }
 
     .ag-filter-toolpanel-expand,
@@ -42,7 +42,7 @@
     }
 
     .ag-filter-air {
-        @include ag-grid-border((top, bottom));
+        @include ag-grid-border(primary, (top, bottom));
         padding-top: $ag-grid-size;
         color: $ag-foreground-color;
         font-weight: $ag-font-weight;

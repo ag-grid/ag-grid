@@ -46,7 +46,7 @@
     .ag-menu-separator-cell:after {
         content: "";
         display: block;
-        @include ag-grid-border(top, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, top);
     }
 
     .ag-menu-option-popup-pointer {
@@ -137,7 +137,7 @@
     }
 
     .ag-filter-header-container {
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
         padding-bottom: $ag-grid-size / 2;
     }
 
@@ -166,7 +166,7 @@
     }
 
     .ag-column-select-list {
-        @include ag-grid-border(top, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, top);
         padding-top: $ag-grid-size;
     }
 }

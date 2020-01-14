@@ -236,7 +236,7 @@ const getImageDifferences = async (
             image1,
             image2,
             {
-                ignore: ["nothing", "antialiasing"],
+                ignore: ['nothing', 'antialiasing'],
                 largeImageThreshold: 2000
             },
             (err: any, result: ImageAnalysisResult) => {
@@ -391,7 +391,6 @@ export const runSuite = async (params: RunSuiteParams) => {
         return acc + matchingCases.length;
     }, 0);
     let testCasesRun = 0;
-
     let failedTestCases: string[] = [];
 
     await runSpecs(specs, {
@@ -421,14 +420,16 @@ export const runSuite = async (params: RunSuiteParams) => {
                     originalUri: pngBufferToDataUri(oldData),
                     area: result.diffBounds
                 });
+                process.stdout.clearLine(0);
+                process.stdout.cursorTo(0);
                 if (differenceUri) {
                     log(
                         `${chalk.red.bold(`✘ ${testCaseName}`)} - found difference, see report.html`
                     );
                     failedTestCases.push(testCaseName);
-                } else {
-                    log(`${chalk.green.bold(`✔ ${testCaseName}`)} - OK`);
                 }
+
+                process.stdout.write(`🙌  comparing: ${testCasesRun} of ${totalMatchingTestCases}`);
             }
 
             const thisReportIteration = Math.floor(
@@ -442,6 +443,9 @@ export const runSuite = async (params: RunSuiteParams) => {
     });
 
     await browser.close();
+
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
 
     if (testCasesRun === 0) {
         log(chalk.yellow('No test cases match filter'));

@@ -63,7 +63,7 @@
     .ag-charts-minichart-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        @include ag-grid-border(top, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, top);
     }
 
     .ag-charts-minichart-group-container {

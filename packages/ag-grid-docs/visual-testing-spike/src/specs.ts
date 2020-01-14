@@ -278,7 +278,7 @@ export const specs: SpecDefinition[] = [
                         return {top, left};
                     });
                     // move mouse over bar to get tooltop
-                    await page.mouse.move(chartCoords.left + 82, chartCoords.top + 600);
+                    await page.mouse.move(chartCoords.left + 85, chartCoords.top + 600);
                     // wait for tooltip to fade in
                     await wait(500);
                 }

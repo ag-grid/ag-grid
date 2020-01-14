@@ -27,7 +27,7 @@ $ag-selected-row-background-color: #eee !default;
 $ag-range-selection-border-color: $ag-mat-primary-color;
 
 // Borders
-$ag-borders: false; // draw our own borders
+$ag-borders: critical; // only draw important borders
 $ag-border-color: #e2e2e2 !default;
 
 // Sizing

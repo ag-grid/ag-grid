@@ -92,11 +92,13 @@ $ag-chip-background-color: null !default;
 // BORDERS
 //
 
-// Draw borders around most UI elements
+// Draw borders around most UI elements. Set to true to draw all borders, false to draw none,
+// or a list the border types you want to draw. Valid border types are:
+//     critical: the few borders that are critical to UX, e.g. between headers and rows
+//     primary: around major UI elements like tool panels and menus
+//     side-button: around sidebar tabs so that the active tab appears connected to the current tool panel
+//     secondary: between UI elements
 $ag-borders: true !default;
-
-// Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
-$ag-borders-side-button: $ag-borders !default;
 
 // Colour for border around major UI components like the grid itself, headers, footers and tool panels
 $ag-border-color: mix($ag-background-color, $ag-foreground-color, 25%) !default;
@@ -116,7 +118,7 @@ $ag-grid-radius: null !default;
 
 // Separator between columns in the header. Displays between all header cells
 // For best UX, use either this or $ag-header-column-resize-handle but not both
-$ag-header-column-separator: $ag-borders !default;
+$ag-header-column-separator: false !default;
     $ag-header-column-separator-height: 100% !default;
     $ag-header-column-separator-width: 1px !default;
     $ag-header-column-separator-color: transparentize($ag-border-color, 0.5) !default;
@@ -124,13 +126,10 @@ $ag-header-column-separator: $ag-borders !default;
 // Visible marker for resizeable columns. Displays in the same position as the column
 // separator, but only when the column is resizeable.
 // For best UX, use either this or $ag-header-column-separator but not both
-$ag-header-column-resize-handle: $ag-borders and not $ag-header-column-separator !default;
+$ag-header-column-resize-handle: false !default;
     $ag-header-column-resize-handle-height: 50% !default;
     $ag-header-column-resize-handle-width: 1px !default;
     $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
-
-// TODO use critical border flag instead
-$ag-scroll-spacer-border: 1px solid if($ag-border-color, $ag-border-color, lightgrey) !default;
 
 //
 // INPUTS

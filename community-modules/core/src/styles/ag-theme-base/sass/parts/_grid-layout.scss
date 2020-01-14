@@ -6,7 +6,7 @@
     }
 
     .ag-root-wrapper {
-        @include ag-grid-border($radius: $ag-grid-radius);
+        @include ag-grid-border(primary, $radius: $ag-grid-radius);
     }
     
     @for $i from 1 to 10 {
@@ -63,10 +63,10 @@
 
         @if $ag-row-border-color {
             &:not(.ag-row-first) {
-                border-top: solid 1px $ag-row-border-color;
+                @include ag-grid-border(critical, top, $color: $ag-row-border-color);
             }
             &.ag-row-last {
-                border-bottom: solid 1px $ag-row-border-color;
+                @include ag-grid-border(critical, bottom, $color: $ag-row-border-color);
             }
         }
     }
@@ -100,10 +100,10 @@
 
     // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
     .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
-        border-right: $ag-scroll-spacer-border;
+        @include ag-grid-border(critical, right);
     }
     .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
-        border-left: $ag-scroll-spacer-border;
+        @include ag-grid-border(critical, left);
     }
 
     .ag-row-hover {
@@ -120,6 +120,7 @@
     }
 
     .ag-cell {
+        // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
         line-height: $ag-row-height - 2px;
@@ -193,9 +194,9 @@
     }
 
     .ag-floating-top {
-        border-bottom: 1px solid $ag-border-color;
+        @include ag-grid-border(critical, bottom);
     }
     .ag-floating-bottom {
-        border-top: 1px solid $ag-border-color;
+        @include ag-grid-border(critical, top);
     }
 }

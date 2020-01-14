@@ -35,7 +35,7 @@
     }
 
     .ag-status-bar {
-        @include ag-grid-border(top);
+        @include ag-grid-border(primary, top);
         color: $ag-disabled-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;

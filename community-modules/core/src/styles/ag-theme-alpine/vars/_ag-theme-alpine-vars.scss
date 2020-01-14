@@ -42,7 +42,6 @@ $ag-selected-row-background-color: mix($ag-color-secondary, $ag-background-color
 $ag-selected-tab-underline-color: $ag-color-primary !default;
 $ag-selected-tab-underline-width: 2px !default;
 
-$ag-header-column-separator: false !default;
 $ag-header-column-resize-handle: true !default;
 $ag-header-column-resize-handle-width: 2px !default;
 $ag-header-column-resize-handle-height: 30% !default;
@@ -117,7 +116,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 //
 //
 
-$ag-borders-side-button: false;
+$ag-borders: (critical, primary, secondary);
         
 $ag-selected-tab-underline-transition-speed: 0.3s;
 

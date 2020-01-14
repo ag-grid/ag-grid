@@ -1,49 +1,55 @@
 @import "./ag-grid-mixins";
 
-@mixin ag-grid-border($sides: null, $radius: null, $width: 1px, $color: $ag-border-color, $style: solid, $none: false) {
-    @if $ag-borders {
+@mixin ag-grid-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
+    @if ag-should-draw-border($border-type) {
+        @if $color == null {
+            $color: if($border-type == secondary, $ag-secondary-border-color, $ag-border-color)
+        }
+
         @if $sides {
             @each $side in $sides {
-              border-#{$side}: if($none, none, $style $width $color);
+                border-#{$side}: if($none, none, $style $width $color);
             }
         }
         @else {
             border: if($none, none, $style $width $color);
         }
         @if $radius {
-          border-radius: $radius;
+            border-radius: $radius;
         }
     }
 }
 
+@function ag-should-draw-border($type) {
+    @if type-of($ag-borders) == bool {
+        @return $ag-borders;
+    }
+    @if type-of($ag-borders) != list and type-of($ag-borders) != string {
+        @error "Expected $ag-borders to be an list or string, got a #{type-of($ag-borders)} instead: #{inspect($ag-borders)}";
+    }
+    $valid-types: (critical: true, primary: true, side-button: true, secondary: true);
+    $draw-border: false;
+    @if not map-has-key($valid-types, $type) {
+        @error "Invalid border type '#{inspect($type)}'";
+    }
+    @each $acceptable in $ag-borders {
+        @if not map-has-key($valid-types, $acceptable) {
+            @error "Invalid entry in $ag-borders: '#{inspect($acceptable)}'";
+        }
+        @if $type == $acceptable {
+            $draw-border: true;
+        }
+    }
+    @return $draw-border;
+}
+
 @mixin ag-card() {
-    @include ag-grid-border();
+    @include ag-grid-border(primary);
     
     background: $ag-background-color;
     border-radius: $ag-card-radius;
     box-shadow: $ag-card-shadow;
     padding: $ag-grid-size;
-}
-
-@mixin ag-textbox() {
-
-    @extend %ag-text-input !optional;
-
-    @if $ag-input-border-color {
-        border-width: 1px;
-        border-style: solid;
-        border-color: $ag-input-border-color;
-    }
-
-    &:disabled {
-        color: $ag-disabled-foreground-color;
-        @if $ag-input-disabled-background-color {
-            background-color: $ag-input-disabled-background-color;
-        }
-        @if $ag-input-border-color {
-            border-color: transparentize($ag-input-border-color, 0.7);
-        }
-    }
 }
 
 @mixin ag-icon-element($icon, $code) {

@@ -3,7 +3,7 @@
     
     .ag-header {
         background-color: $ag-header-background-color;
-        border-bottom: 1px solid $ag-border-color;
+        @include ag-grid-border(critical, bottom);
     }
     
     .ag-header-row {
@@ -14,15 +14,14 @@
     }
 
     .ag-pinned-right-header {
-        border-left: 1px solid $ag-border-color;
+        @include ag-grid-border(critical, left);
     }
 
     .ag-pinned-left-header {
-        border-right: 1px solid $ag-border-color;
+        @include ag-grid-border(critical, right);
     }
 
     .ag-header-row {
-        border: none;
         height: $ag-header-height;
     }
 
@@ -51,7 +50,7 @@
     .ag-header-row:not(:first-child) {
         .ag-header-cell,
         .ag-header-group-cell.ag-header-group-cell-with-group {
-            border-top: solid 1px $ag-border-color;
+            @include ag-grid-border(critical, top);
         }
     }
 
@@ -118,7 +117,7 @@
         text-overflow: ellipsis;
         user-select: none;
         z-index: 10;
-        @include ag-grid-border($color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary);
         color: $ag-secondary-foreground-color;
         font-weight: $ag-secondary-font-weight;
         font-size: $ag-secondary-font-size;
@@ -143,7 +142,7 @@
     .ag-floating-filter-button-button {
         appearance: none;
         background: transparent;
-        border: 0;
+        border: none;
         height: $ag-icon-size;
         padding: 0;
         width: $ag-icon-size;

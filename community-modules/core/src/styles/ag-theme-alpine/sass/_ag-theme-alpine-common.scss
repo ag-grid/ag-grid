@@ -116,7 +116,7 @@
     .ag-tabs-header {
         min-width: 250px;
         justify-content: center;
-        @include ag-grid-border(bottom);
+        @include ag-grid-border(primary, bottom);
     }
 
     .ag-tab {
@@ -469,7 +469,7 @@
     .ag-column-drop-vertical-title-bar {
         background-color: $ag-background-color;
         padding: $ag-grid-size * 2 $ag-grid-size * 2;
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
     }
 
     .ag-column-drop-vertical-icon {
@@ -638,7 +638,7 @@
     .ag-charts-format-top-level-group-title-bar, .ag-charts-data-group-title-bar {
         font: $ag-font-chrome;
         background: $ag-background-color;
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
         padding: $ag-grid-size $ag-grid-size * 2;
 
         .ag-column-group-icons {
@@ -649,7 +649,7 @@
     }
 
     .ag-charts-format-top-level-group-container {
-        @include ag-grid-border(bottom, $color: $ag-secondary-border-color);
+        @include ag-grid-border(secondary, bottom);
         margin-left: 0;
     }
 
