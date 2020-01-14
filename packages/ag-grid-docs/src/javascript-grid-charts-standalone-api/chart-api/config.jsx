@@ -45,16 +45,20 @@ const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     ...getFontOptions(name, fontWeight, fontSize)
 });
 
-export const generalConfig = {
+export const generalConfig = Object.freeze({
     width: {
-        default: 600,
+        default: 800,
         description: "The width of the chart",
         editor: NumberEditor,
+        min: 1,
+        max: 800,
     },
     height: {
-        default: 300,
+        default: 400,
         description: "The height of the chart",
         editor: NumberEditor,
+        min: 1,
+        max: 400,
     },
     tooltipClass: {
         description: "A class to be added to tooltips in the chart, if required",
@@ -170,7 +174,7 @@ export const generalConfig = {
             },
         }
     },
-};
+});
 
 export const axisConfig = Object.freeze({
     type: {
@@ -253,4 +257,42 @@ export const axisConfig = Object.freeze({
             toStringValue: array => array.join(', '),
         }
     }
+});
+
+export const barSeriesConfig = Object.freeze({
+    fills: {
+        description: 'Array of colours to cycle through for the fills of the series',
+    },
+    fillOpacity: {
+        default: 1,
+        description: 'The opacity of the fill of the bars',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    },
+    strokes: {
+        description: 'Array of colours to cycle through for the strokes of the series'
+    },
+    strokeOpacity: {
+        default: 1,
+        description: 'The opacity of the stroke of the bars',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.1,
+    },
+    // stroke: StrokeOptions;
+
+    // // The shadow type to use for bars. Defaults to no shadow.
+    // // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
+    // shadow: DropShadowOptions;
+
+    // label: BarSeriesLabelOptions;
+
+    // // The style to apply to a bar when it is hovered over or tapped
+    // highlightStyle: HighlightOptions;
+
+    // // Configures the tooltip for bars when they are hovered over or tapped
+    // tooltip: TooltipOptions;
 });

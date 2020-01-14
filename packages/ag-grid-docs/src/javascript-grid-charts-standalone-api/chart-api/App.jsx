@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { AgChart } from "ag-charts-community";
 import { data, getTemplates, series } from "./templates.jsx";
-import { generalConfig, axisConfig } from "./config.jsx";
+import { generalConfig, axisConfig, barSeriesConfig } from "./config.jsx";
 
 const appName = 'chart-api';
 
@@ -62,6 +62,12 @@ const createOptionsJson = options => {
             type: 'number',
             position: 'left',
         }] : undefined,
+        series: [{
+            type: 'column',
+            xKey: 'month',
+            yKeys: ['revenue', 'profit'],
+            ...options.series,
+        }]
     };
 
     const gridStyle = json.axes && json.axes[0].gridStyle;
@@ -117,19 +123,17 @@ class Chart extends React.Component {
 class Options extends React.PureComponent {
     config = {
         chart: generalConfig,
-        axis: axisConfig
+        axis: axisConfig,
+        series: barSeriesConfig
     };
 
-    getName = name => {
-        switch (name) {
-            case 'chart':
-                return "General chart options";
-            case 'axis':
-                return "Axis options";
-            default:
-                return name;
-        }
-    }
+    configNameMappings = {
+        'chart': 'General chart options',
+        'axis': 'Axis options',
+        'series': 'Series options'
+    };
+
+    getName = name => this.configNameMappings[name] || name;
 
     generateOptions = (options, prefix = '') => {
         let elements = [];
