@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { AgChart } from "ag-charts-community";
 import { data, getTemplates, series } from "./templates.jsx";
@@ -31,8 +31,7 @@ const ApiCode = ({ options }) => {
 };
 
 const Option = ({ name, description, defaultValue, Editor, editorProps }) => {
-    return <div>
-        <hr />
+    return <div className='option'>
         <strong>{name}</strong>: {description}<br />
         Default: {defaultValue != null ? defaultValue.toString() : "N/A"}<br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
@@ -132,10 +131,9 @@ class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<div class="section">
-                    <h2 key={key}>{this.getName(name)}</h2>
+                elements.push(<Section key={key} title={this.getName(name)}>
                     {this.generateOptions(config, `${key}.`)}
-                </div>);
+                </Section>);
             }
         });
 
@@ -146,6 +144,15 @@ class Options extends React.PureComponent {
         return this.generateOptions(this.config);
     }
 };
+
+const Section = ({ title, children }) => {
+    const [expanded, setExpanded] = useState(true);
+
+    return <div className={`section ${expanded ? 'expanded' : ''}`}>
+        <h2 onClick={() => setExpanded(!expanded)}>{title}</h2>
+        {expanded && children}
+    </div>;
+}
 
 export class App extends React.Component {
     state = {
