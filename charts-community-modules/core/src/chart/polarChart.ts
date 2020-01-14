@@ -37,7 +37,7 @@ export class PolarChart extends Chart {
             shrinkRect.width -= legendAutoPadding.left + legendAutoPadding.right;
             shrinkRect.height -= legendAutoPadding.top + legendAutoPadding.bottom;
 
-            const legendPadding = this.legend.padding;
+            const legendPadding = this.legend.spacing;
             switch (this.legend.position) {
                 case 'right':
                     shrinkRect.width -= legendPadding;

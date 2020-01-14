@@ -11,7 +11,6 @@ import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
 import { Legend, LegendOrientation, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
-import { MarkerLabel } from "./markerLabel";
 import { DropShadow } from "../scene/dropShadow";
 import { AxisLabel, AxisTick } from "../axis";
 import palette from "./palettes";

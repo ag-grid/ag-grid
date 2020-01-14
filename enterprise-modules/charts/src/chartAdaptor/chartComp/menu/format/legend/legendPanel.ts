@@ -94,11 +94,11 @@ export class LegendPanel extends Component {
 
     private initLegendPadding() {
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
+            .setLabel(this.chartTranslator.translate("spacing"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.spacing"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.padding", newValue));
+            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.spacing", newValue));
     }
 
     private initLegendItems() {
@@ -112,9 +112,9 @@ export class LegendPanel extends Component {
 
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 20);
-        initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
-        initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
+        initSlider("item.marker.padding", "itemSpacing", this.markerPaddingSlider, 20);
+        initSlider("item.paddingX", "layoutHorizontalSpacing", this.itemPaddingXSlider, 50);
+        initSlider("item.paddingY", "layoutVerticalSpacing", this.itemPaddingYSlider, 50);
     }
 
     private initLabelPanel() {

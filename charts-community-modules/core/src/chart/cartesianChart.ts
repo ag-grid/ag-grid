@@ -47,7 +47,7 @@ export class CartesianChart extends Chart {
 
         if (legend.enabled && legend.data.length) {
             const { legendAutoPadding } = this;
-            const legendPadding = this.legend.padding;
+            const legendPadding = this.legend.spacing;
 
             shrinkRect.x += legendAutoPadding.left;
             shrinkRect.y += legendAutoPadding.top;

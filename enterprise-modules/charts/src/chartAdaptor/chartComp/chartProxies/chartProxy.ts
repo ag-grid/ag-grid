@@ -177,16 +177,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {
-            'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
+            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
             'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.markerPadding',
-            'legend.item.label.fontFamily': 'legend.labelFontFamily',
-            'legend.item.label.fontStyle': 'legend.labelFontStyle',
-            'legend.item.label.fontWeight': 'legend.labelFontWeight',
-            'legend.item.label.fontSize': 'legend.labelFontSize',
-            'legend.item.label.color': 'legend.labelColor',
-            'legend.item.paddingX': 'legend.itemPaddingX',
-            'legend.item.paddingY': 'legend.itemPaddingY',
+            'legend.item.marker.padding': 'legend.itemSpacing',
+            'legend.item.label.fontFamily': 'legend.fontFamily',
+            'legend.item.label.fontStyle': 'legend.fontStyle',
+            'legend.item.label.fontWeight': 'legend.fontWeight',
+            'legend.item.label.fontSize': 'legend.fontSize',
+            'legend.item.label.color': 'legend.textColor',
+            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
+            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
         };
 
         _.set(this.chart, mappings[expression] || expression, value);

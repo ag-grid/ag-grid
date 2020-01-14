@@ -23,45 +23,45 @@ export class MarkerLabel extends Group {
         this.update();
     }
 
-    set labelText(value: string) {
+    set text(value: string) {
         this.label.text = value;
     }
-    get labelText(): string {
+    get text(): string {
         return this.label.text;
     }
 
-    set labelFontStyle(value: FontStyle | undefined) {
+    set fontStyle(value: FontStyle | undefined) {
         this.label.fontStyle = value;
     }
-    get labelFontStyle(): FontStyle | undefined {
+    get fontStyle(): FontStyle | undefined {
         return this.label.fontStyle;
     }
 
-    set labelFontWeight(value: FontWeight | undefined) {
+    set fontWeight(value: FontWeight | undefined) {
         this.label.fontWeight = value;
     }
-    get labelFontWeight(): FontWeight | undefined {
+    get fontWeight(): FontWeight | undefined {
         return this.label.fontWeight;
     }
 
-    set labelFontSize(value: number) {
+    set fontSize(value: number) {
         this.label.fontSize = value;
     }
-    get labelFontSize(): number {
+    get fontSize(): number {
         return this.label.fontSize;
     }
 
-    set labelFontFamily(value: string) {
+    set fontFamily(value: string) {
         this.label.fontFamily = value;
     }
-    get labelFontFamily(): string {
+    get fontFamily(): string {
         return this.label.fontFamily;
     }
 
-    set labelColor(value: string | undefined) {
+    set textColor(value: string | undefined) {
         this.label.fill = value;
     }
-    get labelColor(): string | undefined {
+    get textColor(): string | undefined {
         return this.label.fill;
     }
 
@@ -132,15 +132,15 @@ export class MarkerLabel extends Group {
         return this.marker.opacity;
     }
 
-    private _padding: number = 8;
-    set padding(value: number) {
-        if (this._padding !== value) {
-            this._padding = value;
+    private _spacing: number = 8;
+    set spacing(value: number) {
+        if (this._spacing !== value) {
+            this._spacing = value;
             this.update();
         }
     }
-    get padding(): number {
-        return this._padding;
+    get spacing(): number {
+        return this._spacing;
     }
 
     private update() {
@@ -149,6 +149,6 @@ export class MarkerLabel extends Group {
 
         marker.size = markerSize;
 
-        this.label.x = markerSize / 2 + this.padding;
+        this.label.x = markerSize / 2 + this.spacing;
     }
 }

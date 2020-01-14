@@ -488,7 +488,7 @@ export abstract class Chart extends Observable {
         const width = this.width;
         const height = this.height - captionAutoPadding;
         const legendGroup = legend.group;
-        const legendPadding = legend.padding;
+        const legendSpacing = legend.spacing;
 
         legendGroup.translationX = 0;
         legendGroup.translationY = 0;
@@ -496,40 +496,40 @@ export abstract class Chart extends Observable {
         let legendBBox: BBox;
         switch (legend.position) {
             case 'bottom':
-                legend.performLayout(width - legendPadding * 2, 0);
+                legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendPadding;
+                legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
 
                 legendAutoPadding.bottom = legendBBox.height;
                 break;
 
             case 'top':
-                legend.performLayout(width - legendPadding * 2, 0);
+                legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
 
                 legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = captionAutoPadding + legendPadding - legendBBox.y;
+                legendGroup.translationY = captionAutoPadding + legendSpacing - legendBBox.y;
 
                 legendAutoPadding.top = legendBBox.height;
                 break;
 
             case 'left':
-                legend.performLayout(0, height - legendPadding * 2);
+                legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = legendPadding - legendBBox.x;
+                legendGroup.translationX = legendSpacing - legendBBox.x;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 legendAutoPadding.left = legendBBox.width;
                 break;
 
             default: // case 'right':
-                legend.performLayout(0, height - legendPadding * 2);
+                legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendPadding;
+                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
                 legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 legendAutoPadding.right = legendBBox.width;
