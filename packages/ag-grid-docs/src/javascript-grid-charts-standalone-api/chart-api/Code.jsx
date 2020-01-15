@@ -12,7 +12,7 @@ const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.creat
 const ApiCode = ({ options }) => {
     const lines = ['// update existing chart'];
     const extractLines = (prefix, object) => {
-        if (Array.isArray(object) && prefix !== 'this.chart.axes') {
+        if (Array.isArray(object) && ['this.chart.axes', 'this.chart.series'].indexOf(prefix) < 0) {
             // arrays should be specified in their entirety
             lines.push(`${prefix} = ${formatJson(object)};`);
             return;

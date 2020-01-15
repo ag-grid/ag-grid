@@ -62,8 +62,7 @@ export const getTemplates = (framework, options) => {
 
 var options = ${JSON.stringify(options, null, 2)};
 
-options.data = data;
-options.series = ${JSON.stringify(series, null, 2)};
+options.data = data;${options.series ? '' : `\noptions.series = ${JSON.stringify(series, null, 2)};`}
 
 document.addEventListener('DOMContentLoaded', function() {
     options.container = document.querySelector('#myChart');
@@ -188,8 +187,7 @@ class ChartExample extends Component {
   render() {
     const options = ${JSON.stringify(options, null, 2)};
 
-    options.data = data;
-    options.series = ${JSON.stringify(series, null, 2)};
+    options.data = data;${options.series ? '' : `\n    options.series = ${JSON.stringify(series, null, 2)};`}
 
     return <AgChartsReact options={options} />;
   }
@@ -385,4 +383,4 @@ defaultExtension: 'js'
     default:
       return {};
   }
-}
+};
