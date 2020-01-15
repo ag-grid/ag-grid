@@ -104,8 +104,12 @@ var gridOptions = {
         <li><b>columnTypes:</b> specific column types containing properties that column definitions can inherit.</li>
     </ul>
 
-    <note>
+    <p>
         Default columns and column types can specify any of the <a href="../javascript-grid-column-properties/">column properties</a> available on a column.
+    </p>
+
+    <note>
+        Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
     </note>
 
     <p>
