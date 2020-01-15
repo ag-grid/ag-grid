@@ -564,6 +564,7 @@ function update(component: any, options: any, path?: string) {
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
                         if (path in mappings) { // component is a chart
                             if (key === 'series') {
+                                const keyPath = path + '.' + key;
                                 const chart = component as Chart;
                                 const configs = value;
                                 const allSeries = oldValue as Series[];
@@ -571,17 +572,19 @@ function update(component: any, options: any, path?: string) {
                                 let i = 0;
                                 for (; i < configs.length; i++) {
                                     const config = configs[i];
-                                    const series = allSeries[i];
+                                    let series = allSeries[i];
                                     if (series) {
-                                        provideDefaultType(config, path + '.' + key);
+                                        provideDefaultType(config, keyPath);
                                         if (series.type === config.type) {
-                                            update(series, config, path + '.' + key);
+                                            update(series, config, keyPath);
                                         } else {
-                                            const newSeries = create(config, config.type ? path : path + '.' + key);
+                                            const newSeries = create(config, keyPath);
+                                            chart.removeSeries(series);
                                             chart.addSeriesAfter(newSeries, prevSeries);
+                                            series = newSeries;
                                         }
                                     } else { // more new configs than existing series
-                                        const newSeries = create(config, config.type ? path : path + '.' + key);
+                                        const newSeries = create(config, keyPath);
                                         chart.addSeries(newSeries);
                                     }
                                     prevSeries = series;

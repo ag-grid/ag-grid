@@ -1,10 +1,11 @@
 import { AgChart } from "./agChart";
-const raf = require('raf');
-// const { createCanvas } = require('canvas');
 import 'jest-canvas-mock';
 import { LegendPosition } from "./legend";
+import { AreaSeries } from "./series/cartesian/areaSeries";
+import { ColumnSeries } from "./series/cartesian/columnSeries";
+import { LineSeries } from "./series/cartesian/lineSeries";
 
-const data1 = [{
+const revenueProfitData = [{
     month: 'Jan',
     revenue: 155000,
     profit: 33000,
@@ -49,7 +50,7 @@ describe('update', () => {
         const chart = AgChart.create({
             // chart type is optional because it defaults to `cartesian`
             container: document.body,
-            data: data1,
+            data: revenueProfitData,
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
                 xKey: 'month',
@@ -124,7 +125,7 @@ describe('update', () => {
 
     test('series', () => {
         const chart = AgChart.create({
-            data: data1,
+            data: revenueProfitData,
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
                 xKey: 'month',
@@ -140,28 +141,114 @@ describe('update', () => {
                 fills: ['lime']
             }]
         });
+
         const firstSeries = chart.series[0];
         const secondSeries = chart.series[1];
+
         AgChart.update(chart, {
-            data: data1,
+            data: revenueProfitData,
             series: [{
                 // series type if optional because `line` is default for `cartesian` charts
                 xKey: 'month',
                 yKey: 'revenue',
                 marker: {
-                    shape: 'plus',
+                    shape: 'square',
                     size: 10
                 }
             }, {
                 type: 'column', // have to specify type explicitly here
                 xKey: 'month',
-                yKeys: ['profit'],
+                yKeys: ['profit', 'foobar'],
+                fills: ['lime', 'cyan']
+            }, {
+                type: 'area',
+                xKey: 'month',
+                yKeys: ['foobar']
+            }]
+        });
+
+        expect(chart.series[0]).toBe(firstSeries);
+        expect(chart.series[1]).toBe(secondSeries);
+        expect(chart.series[0].marker.shape).toBe('square');
+        expect(chart.series[0].marker.size).toBe(10);
+        expect(chart.series[1].fills).toEqual(['lime', 'cyan']);
+        expect(chart.series[1].yKeys).toEqual(['profit', 'foobar']);
+        expect(chart.series[2] instanceof AreaSeries).toBe(true);
+        expect(chart.series[2].xKey).toBe('month');
+        expect(chart.series[2].yKeys).toEqual(['foobar']);
+
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                // series type if optional because `line` is default for `cartesian` charts
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {
+                    shape: 'square',
+                    size: 10
+                }
+            }, {
+                type: 'column', // have to specify type explicitly here
+                xKey: 'month',
+                yKeys: ['profit', 'foobar'],
                 fills: ['lime', 'cyan']
             }]
         });
+
+        expect(chart.series.length).toBe(2);
         expect(chart.series[0]).toBe(firstSeries);
         expect(chart.series[1]).toBe(secondSeries);
-        // expect(chart.series[0].marker.size).toBe(10);
-        expect(chart.series[1].fills).toEqual(['lime', 'cyan']);
+
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                type: 'column', // have to specify type explicitly here
+                xKey: 'month',
+                yKeys: ['profit', 'foobar'],
+                fills: ['lime', 'cyan']
+            }, {
+                // series type if optional because `line` is default for `cartesian` charts
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {
+                    shape: 'square',
+                    size: 10
+                }
+            }]
+        });
+
+        expect(chart.series.length).toBe(2);
+        expect(chart.series[0]).not.toBe(firstSeries);
+        expect(chart.series[1]).not.toBe(secondSeries);
+        expect(chart.series[0] instanceof ColumnSeries).toBe(true);
+        expect(chart.series[1] instanceof LineSeries).toBe(true);
+        expect(chart.series[0].yKeys).toEqual(['profit', 'foobar']);
+        expect(chart.series[1].yKey).toBe('revenue');
+        expect(chart.series[1].marker.size).toBe(10);
+
+        const lineSeries = chart.series[1];
+
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                type: 'area', // have to specify type explicitly here
+                xKey: 'month',
+                yKeys: ['profit', 'foobar'],
+                fills: ['lime', 'cyan']
+            }, {
+                // series type if optional because `line` is default for `cartesian` charts
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {
+                    shape: 'square',
+                    size: 10
+                }
+            }]
+        });
+
+        expect(chart.series.length).toBe(2);
+        expect(chart.series[0] instanceof AreaSeries).toBe(true);
+        expect(chart.series[1] instanceof LineSeries).toBe(true);
+        expect(chart.series[1]).toBe(lineSeries);
     });
 });
