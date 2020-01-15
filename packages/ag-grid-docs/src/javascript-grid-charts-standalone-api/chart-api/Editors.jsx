@@ -47,7 +47,7 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
     return <input type="text" value={stateValue} onChange={inputOnChange} />;
 };
 
-export const CheckboxEditor = ({ value, onChange }) => {
+export const BooleanEditor = ({ value, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.checked;
@@ -58,7 +58,7 @@ export const CheckboxEditor = ({ value, onChange }) => {
     return <input type="checkbox" checked={stateValue} onChange={inputOnChange} />;
 };
 
-export const DropDownEditor = ({ value, options, onChange }) => {
+export const MultiSelectEditor = ({ value, options, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.value;

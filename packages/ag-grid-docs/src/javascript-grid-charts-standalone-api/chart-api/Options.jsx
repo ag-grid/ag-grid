@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Options.css';
 import { formatJson } from "./utils.jsx";
 import { generalConfig, axisConfig, barSeriesConfig } from "./config.jsx";
 
@@ -10,16 +11,32 @@ const Section = ({ title, children }) => {
             onClick={() => setExpanded(!expanded)}>
             {title}
         </h2>
-        {expanded && children}
+        <div className={`section__content ${expanded ? '' : 'section__content--hidden'}`}>
+            {children}
+        </div>
     </div>;
 };
 
+const getType = value => {
+    if (value == null) {
+        return null;
+    }
+
+    if (Array.isArray(value)) {
+        return value.length ? `${getType(value[0])}[]` : 'object[]';
+    }
+
+    return typeof value;
+};
+
 const Option = ({ name, isRequired, type, description, defaultValue, Editor, editorProps }) => {
+    const derivedType = type || getType(defaultValue);
+
     return <div className='option'>
         <span className='option__name'>{name}</span>
-        {type && <span className='option__type'>{type}</span>}
-        <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div><br />
-        {isRequired && <span className='option__required'>Required.</span>}<span className='option__description'>{description}</span><br />
+        {derivedType && <span className='option__type'>{derivedType}</span>}
+        {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
+        <span className='option__description' dangerouslySetInnerHTML={{ __html: description }}></span><br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
     </div>;
 };

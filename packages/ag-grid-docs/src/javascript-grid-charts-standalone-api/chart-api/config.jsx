@@ -1,17 +1,17 @@
-import { StringEditor, NumberEditor, CheckboxEditor, DropDownEditor, ColourEditor } from "./Editors.jsx";
+import { StringEditor, NumberEditor, BooleanEditor, MultiSelectEditor, ColourEditor } from "./Editors.jsx";
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {
         default: 'normal',
         options: ['normal', 'italic', 'oblique'],
         description: `The font style to use for the ${name}`,
-        editor: DropDownEditor,
+        editor: MultiSelectEditor,
     },
     fontWeight: {
         default: fontWeight,
         options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
         description: `The font weight to use for the ${name}`,
-        editor: DropDownEditor,
+        editor: MultiSelectEditor,
     },
     fontSize: {
         default: fontSize,
@@ -23,7 +23,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
         default: 'Verdana, sans-serif',
         options: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
         description: `The font family to use for the ${name}`,
-        editor: DropDownEditor,
+        editor: MultiSelectEditor,
     },
     color: {
         default: '#000000',
@@ -36,9 +36,10 @@ const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     enabled: {
         default: true,
         description: `Whether the ${name} should be shown or not`,
-        editor: CheckboxEditor,
+        editor: BooleanEditor,
     },
     text: {
+        type: 'string',
         description: `The text to show in the ${name}`,
         editor: StringEditor,
     },
@@ -49,14 +50,13 @@ export const generalConfig = Object.freeze({
     data: {
         type: 'object[]',
         isRequired: true,
-        description: 'The data to render the chart from',
+        description: 'The data to render the chart from. If it is not specified, it must be set on individual series instead.',
     },
     container: {
         type: 'HTMLElement',
         description: 'The element to place the rendered chart canvas element into'
     },
     width: {
-        type: 'number',
         default: 800,
         description: "The width of the chart",
         editor: NumberEditor,
@@ -64,7 +64,6 @@ export const generalConfig = Object.freeze({
         max: 800,
     },
     height: {
-        type: 'number',
         default: 400,
         description: "The height of the chart",
         editor: NumberEditor,
@@ -72,6 +71,7 @@ export const generalConfig = Object.freeze({
         max: 400,
     },
     tooltipClass: {
+        type: 'string',
         description: "A class to be added to tooltips in the chart, if required",
         editor: StringEditor,
     },
@@ -114,7 +114,7 @@ export const generalConfig = Object.freeze({
         visible: {
             default: true,
             description: "Whether the background should be visible or not",
-            editor: CheckboxEditor,
+            editor: BooleanEditor,
         }
     },
     title: getCaptionOptions("title"),
@@ -123,13 +123,13 @@ export const generalConfig = Object.freeze({
         enabled: {
             default: true,
             description: "Configures whether to show the legend",
-            editor: CheckboxEditor,
+            editor: BooleanEditor,
         },
         position: {
             default: "right",
             description: "Where the legend should show in relation to the chart",
             options: ['top', 'right', 'bottom', 'left'],
-            editor: DropDownEditor,
+            editor: MultiSelectEditor,
         },
         padding: {
             default: 20,
@@ -145,7 +145,7 @@ export const generalConfig = Object.freeze({
                     default: 'square',
                     options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
                     description: "The type of marker to use for chart series",
-                    editor: DropDownEditor,
+                    editor: MultiSelectEditor,
                 },
                 size: {
                     default: 15,
@@ -191,7 +191,7 @@ export const axisConfig = Object.freeze({
     type: {
         default: 'category',
         description: 'The type of the axis',
-        editor: DropDownEditor,
+        editor: MultiSelectEditor,
         options: ['category', 'number', 'time'],
     },
     title: getCaptionOptions('title'),
@@ -271,26 +271,143 @@ export const axisConfig = Object.freeze({
 });
 
 export const barSeriesConfig = Object.freeze({
+    data: {
+        type: 'object[]',
+        isRequired: true,
+        description: 'The data to use when rendering the series. If it is not supplied, data must be set on the chart instead.',
+    },
+    xKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve x-values from the data.',
+    },
+    xName: {
+        type: 'string',
+        description: 'A human-readable description of the x-values.',
+    },
+    yKeys: {
+        type: 'string[]',
+        isRequired: true,
+        description: 'The keys to use to retrieve y-values from the data.',
+    },
+    yName: {
+        type: 'string[]',
+        description: 'A human-readable description of the y-values.',
+    },
+    grouped: {
+        default: false,
+        description: 'Whether to show different y-values as separate bars (grouped) or not (stacked).',
+        editor: BooleanEditor,
+    },
+    normalizedTo: {
+        type: 'number',
+        description: 'The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.',
+        editor: NumberEditor,
+    },
+    visible: {
+        default: true,
+        description: 'Whether to display the series or not.',
+        editor: BooleanEditor,
+    },
+    showInLegend: {
+        default: true,
+        description: 'Whether to include the series in the legend.',
+        editor: BooleanEditor,
+    },
+    flipXY: {
+        default: false,
+        description: 'Flips the direction of the bars.',
+    },
     fills: {
-        description: 'Array of colours to cycle through for the fills of the series',
+        default: [
+            '#f3622d',
+            '#fba71b',
+            '#57b757',
+            '#41a9c9',
+            '#4258c9',
+            '#9a42c8',
+            '#c84164',
+            '#888888'
+        ],
+        description: 'Colours to cycle through for the fills of the series.',
     },
     fillOpacity: {
         default: 1,
-        description: 'The opacity of the fill of the bars',
+        description: 'The opacity of the fill of the bars.',
         editor: NumberEditor,
         min: 0,
         max: 1,
         step: 0.1,
     },
     strokes: {
-        description: 'Array of colours to cycle through for the strokes of the series'
+        default: [
+            '#aa4520',
+            '#b07513',
+            '#3d803d',
+            '#2d768d',
+            '#2e3e8d',
+            '#6c2e8c',
+            '#8c2d46',
+            '#5f5f5f'
+        ],
+        description: 'Colours to cycle through for the strokes of the series.',
     },
     strokeOpacity: {
         default: 1,
-        description: 'The opacity of the stroke of the bars',
+        description: 'The opacity of the stroke of the bars.',
         editor: NumberEditor,
         min: 0,
         max: 1,
         step: 0.1,
     },
+    strokeWidth: {
+        default: 1,
+        description: 'The width of the stroke around the bars.',
+        editor: NumberEditor,
+    },
+    shadow: {
+        enabled: {
+            default: true,
+            description: 'Whether the shadow is visible or not',
+            editor: BooleanEditor,
+        },
+        color: {
+            default: 'rgba(0, 0, 0, 0.5)',
+            description: 'Colour of the shadow.',
+            editor: ColourEditor,
+        },
+        xOffset: {
+            default: 0,
+            description: 'Horizontal offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        yOffset: {
+            default: 0,
+            description: 'Vertical offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        blur: {
+            default: 5,
+            description: 'How much to blur the shadow.',
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+        }
+    },
+    highlightStyle: {
+        fill: {
+            default: 'yellow',
+            description: 'The fill colour of the bar when hovered over.',
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: 'The colour of the stroke around the bar when hovered over.',
+            editor: ColourEditor,
+        }
+    }
 });
