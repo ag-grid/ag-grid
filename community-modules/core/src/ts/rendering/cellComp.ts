@@ -1462,9 +1462,12 @@ export class CellComp extends Component {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        if (!this.editingCell && this.beans.gridOptionsWrapper.isRowSelection()) {
-            const selected = this.rowNode.isSelected();
-            this.rowNode.setSelected(!selected);
+        const { gridOptionsWrapper }  = this.beans;
+        if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
+            const newSelection = !this.rowNode.isSelected();
+            if (newSelection || gridOptionsWrapper.isRowDeselection()) {
+                this.rowNode.setSelected(newSelection);
+            }
         }
 
         // prevent default as space key, by default, moves browser scroll down
