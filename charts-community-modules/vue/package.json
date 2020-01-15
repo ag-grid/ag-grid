@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue",
   "description": "ag-Charts Vue Component",
-  "version": "22.1.2",
+  "version": "22.1.1",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",

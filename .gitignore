@@ -61,5 +61,3 @@ community-modules/core/typings
 charts-community-modules/react/lib
 charts-community-modules/react/umd
 charts-community-modules/vue/lib/**
-charts-community-modules/vue/main.js
-charts-community-modules/vue/main.d.ts
