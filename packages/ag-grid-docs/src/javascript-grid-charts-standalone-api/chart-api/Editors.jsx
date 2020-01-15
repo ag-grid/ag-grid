@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './Editors.css';
 import { ChromePicker } from "react-color";
 
 export const NumberEditor = ({ value, min, max, step, onChange }) => {

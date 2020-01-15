@@ -293,17 +293,4 @@ export const barSeriesConfig = Object.freeze({
         max: 1,
         step: 0.1,
     },
-    // stroke: StrokeOptions;
-
-    // // The shadow type to use for bars. Defaults to no shadow.
-    // // Note: shadows can noticeably slow down rendering of charts with a few hundred bars.
-    // shadow: DropShadowOptions;
-
-    // label: BarSeriesLabelOptions;
-
-    // // The style to apply to a bar when it is hovered over or tapped
-    // highlightStyle: HighlightOptions;
-
-    // // Configures the tooltip for bars when they are hovered over or tapped
-    // tooltip: TooltipOptions;
 });

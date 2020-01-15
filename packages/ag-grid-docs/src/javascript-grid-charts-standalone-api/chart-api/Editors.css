@@ -1,0 +1,7 @@
+.colour-editor__input {
+    display: inline-block;
+    vertical-align: middle;
+    width: 15px;
+    height: 15px;
+    border: solid 1px black;
+}
