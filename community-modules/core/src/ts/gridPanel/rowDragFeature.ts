@@ -11,7 +11,6 @@ import { EventService } from "../eventService";
 import { RowDragEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
