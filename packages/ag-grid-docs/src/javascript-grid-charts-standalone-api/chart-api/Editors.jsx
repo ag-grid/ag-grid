@@ -44,7 +44,23 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
         onChange(transformedValue);
     };
 
-    return <input type="text" value={stateValue} onChange={inputOnChange} />;
+    return <input type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
+};
+
+export const ArrayEditor = ({ value, onChange }) => {
+    const stringValue = value.join(', ');
+    const [stateValue, setValueChange] = useState(stringValue);
+    const inputOnChange = event => {
+        const newValue = event.target.value;
+
+        setValueChange(newValue);
+
+        const array = newValue.split(',').filter(x => x != null && x.trim().length).map(x => JSON.parse(x));
+
+        onChange(array);
+    };
+
+    return <input type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
 };
 
 export const BooleanEditor = ({ value, onChange }) => {

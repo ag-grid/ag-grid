@@ -1,47 +1,48 @@
-import { StringEditor, NumberEditor, BooleanEditor, MultiSelectEditor, ColourEditor } from "./Editors.jsx";
+import { StringEditor, NumberEditor, BooleanEditor, MultiSelectEditor, ColourEditor, ArrayEditor } from "./Editors.jsx";
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {
         default: 'normal',
         options: ['normal', 'italic', 'oblique'],
-        description: `The font style to use for the ${name}`,
+        description: `The font style to use for the ${name}.`,
         editor: MultiSelectEditor,
     },
     fontWeight: {
         default: fontWeight,
         options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
-        description: `The font weight to use for the ${name}`,
+        description: `The font weight to use for the ${name}.`,
         editor: MultiSelectEditor,
     },
     fontSize: {
         default: fontSize,
-        description: `The font size to use for the ${name}`,
+        description: `The font size to use for the ${name}.`,
         editor: NumberEditor,
         min: 1,
+        max: 30,
     },
     fontFamily: {
         default: 'Verdana, sans-serif',
         options: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
-        description: `The font family to use for the ${name}`,
+        description: `The font family to use for the ${name}.`,
         editor: MultiSelectEditor,
     },
-    color: {
-        default: '#000000',
-        description: `The colour to use for the ${name}`,
-        editor: ColourEditor,
-    }
 });
 
 const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     enabled: {
         default: true,
-        description: `Whether the ${name} should be shown or not`,
+        description: `Whether the ${name} should be shown or not.`,
         editor: BooleanEditor,
     },
     text: {
         type: 'string',
-        description: `The text to show in the ${name}`,
+        description: `The text to show in the ${name}.`,
         editor: StringEditor,
+    },
+    color: {
+        default: '#000000',
+        description: `The colour to use for the ${name}.`,
+        editor: ColourEditor,
     },
     ...getFontOptions(name, fontWeight, fontSize)
 });
@@ -54,52 +55,58 @@ export const generalConfig = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart canvas element into'
+        description: 'The element to place the rendered chart canvas element into.'
     },
     width: {
         default: 800,
-        description: "The width of the chart",
+        description: 'The width of the chart.',
         editor: NumberEditor,
         min: 1,
         max: 800,
     },
     height: {
         default: 400,
-        description: "The height of the chart",
+        description: 'The height of the chart.',
         editor: NumberEditor,
         min: 1,
         max: 400,
     },
+    tooltipOffset: {
+        type: '[number, number]',
+        default: [20, 20],
+        description: 'Offset of a tooltip from the cursor, specified as <code>[xOffset, yOffset]</code>.',
+        editor: ArrayEditor,
+    },
     tooltipClass: {
         type: 'string',
-        description: "A class to be added to tooltips in the chart, if required",
+        description: 'A class to be added to tooltips in the chart.',
         editor: StringEditor,
     },
     padding: {
         top: {
             default: 20,
-            description: "Padding at the top of the chart area",
+            description: 'Padding at the top of the chart area.',
             editor: NumberEditor,
             min: 0,
             max: 40,
         },
         right: {
             default: 20,
-            description: "Padding at the right of the chart area",
+            description: 'Padding at the right of the chart area.',
             editor: NumberEditor,
             min: 0,
             max: 40,
         },
         bottom: {
             default: 20,
-            description: "Padding at the bottom of the chart area",
+            description: 'Padding at the bottom of the chart area.',
             editor: NumberEditor,
             min: 0,
             max: 40,
         },
         left: {
             default: 20,
-            description: "Padding at the left of the chart area",
+            description: 'Padding at the left of the chart area.',
             editor: NumberEditor,
             min: 0,
             max: 40,
@@ -107,83 +114,84 @@ export const generalConfig = Object.freeze({
     },
     background: {
         fill: {
-            default: "#FFFFFF",
-            description: "Colour of the chart background",
+            default: '#FFFFFF',
+            description: 'Colour of the chart background.',
             editor: ColourEditor,
         },
         visible: {
             default: true,
-            description: "Whether the background should be visible or not",
+            description: 'Whether the background should be visible or not.',
             editor: BooleanEditor,
         }
     },
-    title: getCaptionOptions("title"),
-    subtitle: getCaptionOptions("subtitle"),
+    title: getCaptionOptions('title'),
+    subtitle: getCaptionOptions('subtitle'),
     legend: {
         enabled: {
             default: true,
-            description: "Configures whether to show the legend",
+            description: 'Configures whether to show the legend.',
             editor: BooleanEditor,
         },
         position: {
-            default: "right",
-            description: "Where the legend should show in relation to the chart",
+            default: 'right',
+            description: 'Where the legend should show in relation to the chart.',
             options: ['top', 'right', 'bottom', 'left'],
             editor: MultiSelectEditor,
         },
-        padding: {
+        spacing: {
             default: 20,
-            description: "The padding to use outside the legend",
+            description: 'The spacing to use between the chart and the legend.',
             editor: NumberEditor,
             min: 0,
             max: 40,
         },
-        item: {
-            label: getFontOptions("legend item"),
-            marker: {
-                type: {
-                    default: 'square',
-                    options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
-                    description: "The type of marker to use for chart series",
-                    editor: MultiSelectEditor,
-                },
-                size: {
-                    default: 15,
-                    description: "The size of legend markers",
-                    editor: NumberEditor,
-                    min: 1,
-                    max: 30,
-                },
-                padding: {
-                    default: 8,
-                    description: "The padding between the marker and the text",
-                    editor: NumberEditor,
-                    min: 0,
-                    max: 40,
-                },
-                strokeWidth: {
-                    default: 1,
-                    description: "The width of the stroke around the marker",
-                    editor: NumberEditor,
-                    min: 0,
-                    max: 40,
-                }
-            },
-            paddingX: {
-                default: 16,
-                description: "The horizontal padding between items",
-                editor: NumberEditor,
-                min: 0,
-                max: 40,
-            },
-            paddingY: {
-                default: 8,
-                description: "The vertical padding between items",
-                editor: NumberEditor,
-                min: 0,
-                max: 40,
-            },
-        }
+        layoutHorizontalSpacing: {
+            default: 16,
+            description: 'The horizontal spacing to use between legend items.',
+            editor: NumberEditor,
+            min: 0,
+            max: 40,
+        },
+        layoutVerticalSpacing: {
+            default: 8,
+            description: 'The vertical spacing to use between legend items.',
+            editor: NumberEditor,
+            min: 0,
+            max: 40,
+        },
+        itemSpacing: {
+            default: 8,
+            description: 'The spacing between a legend marker and the corresponding label.',
+            editor: NumberEditor,
+            min: 0,
+            max: 40,
+        },
+        markerShape: {
+            default: 'square',
+            description: 'This will override the marker shape from the series and show the specified marker shape in the legend instead.',
+            editor: MultiSelectEditor,
+            options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
+        },
+        markerSize: {
+            default: 15,
+            description: 'The size of the markers in the legend.',
+            editor: NumberEditor,
+            min: 0,
+            max: 30,
+        },
+        strokeWidth: {
+            default: 1,
+            description: 'The width of the stroke for markers in the legend.',
+            editor: NumberEditor,
+            min: 0,
+            max: 10,
+        },
+        textColor: {
+            default: 'black',
+            description: 'Colour of the text.',
+            editor: ColourEditor
+        },
+        ...getFontOptions('legend'),
     },
 });
 
@@ -231,7 +239,12 @@ export const axisConfig = Object.freeze({
         }
     },
     label: {
-        ...getFontOptions('label'),
+        ...getFontOptions('labels'),
+        color: {
+            default: '#000000',
+            description: `The colour to use for the labels.`,
+            editor: ColourEditor,
+        },
         padding: {
             default: 5,
             description: 'Padding between the axis label and the tick',
@@ -263,9 +276,7 @@ export const axisConfig = Object.freeze({
         lineDash: {
             default: [4, 2],
             description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.',
-            editor: StringEditor,
-            fromStringValue: value => value.split(',').map(x => parseInt(x)).filter(x => !isNaN(x)),
-            toStringValue: array => array.join(', '),
+            editor: ArrayEditor,
         }
     }
 });

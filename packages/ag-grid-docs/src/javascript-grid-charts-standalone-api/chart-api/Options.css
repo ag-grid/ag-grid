@@ -1,8 +1,8 @@
 .options {
     float: left;
-    width: calc(50% - 20px);
-    height: calc(100vh - 500px);
-    overflow-y: auto;
+    width: 55%;
+    height: calc(100vh - 480px);
+    overflow-y: scroll;
     line-height: 1.6em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     color: #495057;
