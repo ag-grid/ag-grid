@@ -281,6 +281,7 @@ export class GridPanel extends Component {
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.paginationAutoPageSizeService.registerGridComp(this);
+        this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
 

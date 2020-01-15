@@ -15,6 +15,7 @@ import { Constants } from "../constants";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
+import { MouseEventService } from "./mouseEventService";
 import { _ } from "../utils/general";
 
 export class RowDragFeature implements DropTarget {
@@ -26,6 +27,7 @@ export class RowDragFeature implements DropTarget {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('eventService') private eventService: EventService;
 
     private gridPanel: GridPanel;
@@ -98,7 +100,7 @@ export class RowDragFeature implements DropTarget {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
-        const pixel = this.normaliseForScroll(draggingEvent.y);
+        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
 
         const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
         if (managedDrag) {
@@ -131,7 +133,7 @@ export class RowDragFeature implements DropTarget {
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
-        const pixel = this.normaliseForScroll(draggingEvent.y);
+        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const rowNodes = this.movingNodes;
         let increment = isBelow ? 1 : 0;
 
@@ -158,17 +160,6 @@ export class RowDragFeature implements DropTarget {
                 this.rangeController.removeAllCellRanges();
             }
         }
-    }
-
-    private normaliseForScroll(pixel: number): number {
-        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-
-        if (gridPanelHasScrolls) {
-            const pixelRange = this.gridPanel.getVScrollPosition();
-            return pixel + pixelRange.top;
-        }
-
-        return pixel;
     }
 
     private checkCenterForScrolling(pixel: number): void {
@@ -231,8 +222,7 @@ export class RowDragFeature implements DropTarget {
     //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
-
-        const yNormalised = this.normaliseForScroll(draggingEvent.y);
+        const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
 
         let overIndex = -1;
         let overNode = null;
