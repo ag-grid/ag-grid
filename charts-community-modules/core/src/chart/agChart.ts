@@ -13,6 +13,8 @@ import { Legend, LegendOrientation, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
 import { DropShadow } from "../scene/dropShadow";
 import { AxisLabel, AxisTick } from "../axis";
+import { Chart } from "./chart";
+import { Series } from "./series/series";
 import palette from "./palettes";
 
 export abstract class AgChart {
@@ -230,7 +232,7 @@ const axisMappings = {
 } as any;
 
 const mappings = {
-    cartesian: {
+    [CartesianChart.type]: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
             constructor: CartesianChart, // Constructor function for the `cartesian` type.
             // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
@@ -269,7 +271,7 @@ const mappings = {
             }
         },
         series: {
-            line: {
+            [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
                     defaults: {
@@ -287,7 +289,7 @@ const mappings = {
                 },
                 marker: {}
             },
-            column: {
+            [ColumnSeries.type]: {
                 meta: {
                     constructor: ColumnSeries,
                     defaults: {
@@ -298,7 +300,7 @@ const mappings = {
                 ...labelMapping,
                 ...shadowMapping
             },
-            bar: {
+            [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
                     defaults: {
@@ -309,7 +311,7 @@ const mappings = {
                 ...labelMapping,
                 ...shadowMapping
             },
-            scatter: {
+            [ScatterSeries.type]: {
                 meta: {
                     constructor: ScatterSeries,
                     defaults: {
@@ -336,7 +338,7 @@ const mappings = {
                 },
                 marker: {}
             },
-            area: {
+            [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
                     defaults: {
@@ -359,7 +361,7 @@ const mappings = {
             }
         }
     },
-    polar: {
+    [PolarChart.type]: {
         meta: {
             constructor: PolarChart,
             constructorParams: ['document'],
@@ -369,7 +371,7 @@ const mappings = {
         },
         ...chartMappings,
         series: {
-            pie: {
+            [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
                     defaults: {
@@ -557,15 +559,52 @@ function update(component: any, options: any, path?: string) {
                 if (meta.setAsIs && meta.setAsIs.indexOf(key) >= 0) {
                     component[key] = value;
                 } else {
-                    const existingValue = component[key];
+                    const oldValue = component[key];
 
-                    if (Array.isArray(existingValue)) { // skip array properties like 'axes' and 'series' for now
+                    if (Array.isArray(oldValue) && Array.isArray(value)) {
+                        if (path in mappings) { // component is a chart
+                            if (key === 'series') {
+                                const chart = component as Chart;
+                                const configs = value;
+                                const allSeries = oldValue as Series[];
+                                let prevSeries: Series | undefined;
+                                let i = 0;
+                                for (; i < configs.length; i++) {
+                                    const config = configs[i];
+                                    const series = allSeries[i];
+                                    if (series) {
+                                        provideDefaultType(config, path + '.' + key);
+                                        if (series.type === config.type) {
+                                            update(series, config, path + '.' + key);
+                                        } else {
+                                            const newSeries = create(config, config.type ? path : path + '.' + key);
+                                            chart.addSeriesAfter(newSeries, prevSeries);
+                                        }
+                                    } else { // more new configs than existing series
+                                        const newSeries = create(config, config.type ? path : path + '.' + key);
+                                        chart.addSeries(newSeries);
+                                    }
+                                    prevSeries = series;
+                                }
+                                // more existing series than new configs
+                                for (; i < allSeries.length; i++) {
+                                    const series = allSeries[i];
+                                    if (series) {
+                                        chart.removeSeries(series);
+                                    }
+                                }
+                            } else if (key === 'axes') {
 
-                    } else if (typeof existingValue === 'object') {
-                        update(existingValue, value, value.type ? path : path + '.' + key);
+                            }
+                        } else {
+                            component[key] = value;
+                        }
+                    } else if (typeof oldValue === 'object') {
+                        if (value) {
+                            update(oldValue, value, value.type ? path : path + '.' + key);
+                        }
                     } else {
-                        const isConfigValue = typeof value === 'object' && !Array.isArray(value);
-                        const subComponent = isConfigValue && create(value, value.type ? path : path + '.' + key);
+                        const subComponent = isObject(value) && create(value, value.type ? path : path + '.' + key);
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {
@@ -614,6 +653,10 @@ function provideDefaultOptions(options: any, mapping: any) {
             }
         }
     }
+}
+
+function isObject(value: any): boolean {
+    return typeof value === 'object' && !Array.isArray(value);
 }
 
 function flattenObject(obj: any) {

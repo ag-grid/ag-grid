@@ -46,6 +46,10 @@ export abstract class Series extends Observable {
 
     readonly id = createId(this);
 
+    get type(): string {
+        return (this.constructor as any).type || '';
+    }
+
     /**
      * The group node that contains all the nodes used to render this series.
      */

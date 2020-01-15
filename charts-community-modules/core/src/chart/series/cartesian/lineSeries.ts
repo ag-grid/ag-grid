@@ -25,6 +25,7 @@ export { LineTooltipRendererParams };
 export class LineSeries extends CartesianSeries {
 
     static className = 'LineSeries';
+    static type = 'line';
 
     private xDomain: any[] = [];
     private yDomain: any[] = [];

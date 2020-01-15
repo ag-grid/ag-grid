@@ -35,6 +35,7 @@ export { AreaTooltipRendererParams };
 export class AreaSeries extends CartesianSeries {
 
     static className = 'AreaSeries';
+    static type = 'area';
 
     tooltipRenderer?: (params: AreaTooltipRendererParams) => string;
 

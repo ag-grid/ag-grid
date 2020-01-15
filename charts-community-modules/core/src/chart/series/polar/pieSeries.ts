@@ -54,6 +54,7 @@ class PieSeriesLabel extends Label {
 export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
+    static type = 'pie';
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();

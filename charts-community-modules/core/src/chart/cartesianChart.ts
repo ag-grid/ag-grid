@@ -8,6 +8,7 @@ import { Series } from "./series/series";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
+    static type = 'cartesian';
 
     constructor(document = window.document) {
         super(document);

@@ -31,6 +31,7 @@ export interface ScatterTooltipRendererParams extends CartesianTooltipRendererPa
 export class ScatterSeries extends CartesianSeries {
 
     static className = 'ScatterSeries';
+    static type = 'scatter';
 
     private xDomain: number[] = [];
     private yDomain: number[] = [];

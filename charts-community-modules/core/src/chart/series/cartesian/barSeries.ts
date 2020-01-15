@@ -6,6 +6,7 @@ export { CartesianTooltipRendererParams as BarTooltipRendererParams } from "../s
 export class BarSeries extends ColumnSeries {
 
     static className = 'BarSeries';
+    static type = 'bar';
 
     @reactive('layoutChange') flipXY = true;
 }

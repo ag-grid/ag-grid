@@ -4,6 +4,7 @@ import { PolarSeries } from "./series/polar/polarSeries";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
+    static type = 'polar';
 
     constructor(document = window.document) {
         super(document);

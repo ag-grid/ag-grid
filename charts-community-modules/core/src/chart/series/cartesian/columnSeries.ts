@@ -62,6 +62,7 @@ class ColumnSeriesLabel extends Label {
 export class ColumnSeries extends CartesianSeries {
 
     static className = 'ColumnSeries';
+    static type = 'column';
 
     // Need to put column and label nodes into separate groups, because even though label nodes are
     // created after the column nodes, this only guarantees that labels will always be on top of columns

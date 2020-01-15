@@ -7,19 +7,23 @@ import { LegendPosition } from "./legend";
 const data1 = [{
     month: 'Jan',
     revenue: 155000,
-    profit: 33000
+    profit: 33000,
+    foobar: 44700
 }, {
     month: 'Feb',
     revenue: 123000,
-    profit: 35500
+    profit: 35500,
+    foobar: 23400
 }, {
     month: 'Mar',
     revenue: 172500,
-    profit: 41000
+    profit: 41000,
+    foobar: 43400
 }, {
     month: 'Apr',
     revenue: 185000,
-    profit: 50000
+    profit: 50000,
+    foobar: 23500
 }];
 
 const data2 = [{
@@ -116,5 +120,48 @@ describe('update', () => {
         expect(chart.subtitle.enabled).toBe(false);
         expect(chart.background.fill).toBe('red');
         expect(chart.background.visible).toBe(false);
+    });
+
+    test('series', () => {
+        const chart = AgChart.create({
+            data: data1,
+            series: [{
+                // series type if optional because `line` is default for `cartesian` charts
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {
+                    shape: 'plus',
+                    size: 20
+                }
+            }, {
+                type: 'column', // have to specify type explicitly here
+                xKey: 'month',
+                yKeys: ['profit'],
+                fills: ['lime']
+            }]
+        });
+        const firstSeries = chart.series[0];
+        const secondSeries = chart.series[1];
+        AgChart.update(chart, {
+            data: data1,
+            series: [{
+                // series type if optional because `line` is default for `cartesian` charts
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {
+                    shape: 'plus',
+                    size: 10
+                }
+            }, {
+                type: 'column', // have to specify type explicitly here
+                xKey: 'month',
+                yKeys: ['profit'],
+                fills: ['lime', 'cyan']
+            }]
+        });
+        expect(chart.series[0]).toBe(firstSeries);
+        expect(chart.series[1]).toBe(secondSeries);
+        // expect(chart.series[0].marker.size).toBe(10);
+        expect(chart.series[1].fills).toEqual(['lime', 'cyan']);
     });
 });
