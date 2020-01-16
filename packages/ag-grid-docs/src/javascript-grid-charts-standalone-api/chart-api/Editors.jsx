@@ -74,7 +74,7 @@ export const BooleanEditor = ({ value, onChange }) => {
     return <input type="checkbox" checked={stateValue} onChange={inputOnChange} />;
 };
 
-export const MultiSelectEditor = ({ value, options, onChange }) => {
+export const PresetEditor = ({ value, options, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const newValue = event.target.value;

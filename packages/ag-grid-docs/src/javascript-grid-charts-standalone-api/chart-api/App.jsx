@@ -14,11 +14,11 @@ const createOptionsJson = options => {
         axes: options.axis && Object.keys(options.axis).length > 0 ? [{
             type: 'category',
             position: 'bottom',
-            ...options.axis,
         },
         {
             type: 'number',
             position: 'left',
+            ...options.axis,
         }] : undefined,
         series: [{
             type: 'column',
