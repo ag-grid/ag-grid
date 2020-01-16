@@ -16,6 +16,8 @@ import { AxisLabel, AxisTick } from "../axis";
 import { Chart } from "./chart";
 import { Series } from "./series/series";
 import palette from "./palettes";
+import { ChartAxis } from "./chartAxis";
+import { find } from "../util/array";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -244,24 +246,24 @@ const mappings = {
             defaults: { // These values will be used if properties in question are not in the config object.
                 ...chartDefaults,
                 axes: [{
-                    type: 'category',
+                    type: CategoryAxis.type,
                     position: 'bottom'
                 }, {
-                    type: 'number',
+                    type: NumberAxis.type,
                     position: 'left'
                 }]
             },
         },
         ...chartMappings,
         axes: {
-            number: {
+            [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
                     ...axisDefaults
                 },
                 ...axisMappings
             },
-            category: {
+            [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
                     ...axisDefaults
@@ -554,6 +556,7 @@ function update(component: any, options: any, path?: string) {
         for (const key in options) {
             if (skipKeys.indexOf(key) < 0) {
                 const value = options[key];
+                const keyPath = path + '.' + key;
 
                 if (meta.setAsIs && meta.setAsIs.indexOf(key) >= 0) {
                     component[key] = value;
@@ -563,7 +566,6 @@ function update(component: any, options: any, path?: string) {
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
                         if (path in mappings) { // component is a chart
                             if (key === 'series') {
-                                const keyPath = path + '.' + key;
                                 const chart = component as Chart;
                                 const configs = value;
                                 const allSeries = oldValue as Series[];
@@ -596,17 +598,45 @@ function update(component: any, options: any, path?: string) {
                                     }
                                 }
                             } else if (key === 'axes') {
+                                const chart = component as Chart;
+                                const configs = value;
+                                const axes = oldValue as ChartAxis[];
+                                const axesToAdd: ChartAxis[] = [];
+                                const axesToRemove: ChartAxis[] = [];
 
+                                for (const config of configs) {
+                                    const axisToUpdate = find(axes, axis => {
+                                        return axis.type === config.type && axis.position === config.position;
+                                    });
+                                    if (axisToUpdate) {
+                                        update(axisToUpdate, config, keyPath);
+                                    } else {
+                                        const newAxis = create(config, keyPath);
+                                        if (newAxis) {
+                                            axesToAdd.push(newAxis);
+                                            const oldAxis = find(axes, axis => {
+                                                return axis.position === config.position;
+                                            });
+                                            if (oldAxis) {
+                                                axesToRemove.push(oldAxis);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (axesToAdd.length || axesToRemove.length) {
+                                    chart.axes = axes.filter(axis => axesToRemove.indexOf(axis) < 0).concat(axesToAdd);
+                                }
                             }
                         } else {
                             component[key] = value;
                         }
                     } else if (typeof oldValue === 'object') {
                         if (value) {
-                            update(oldValue, value, value.type ? path : path + '.' + key);
+                            update(oldValue, value, value.type ? path : keyPath);
                         }
                     } else {
-                        const subComponent = isObject(value) && create(value, value.type ? path : path + '.' + key);
+                        const subComponent = isObject(value) && create(value, value.type ? path : keyPath);
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {

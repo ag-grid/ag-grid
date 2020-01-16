@@ -4,6 +4,8 @@ import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { ColumnSeries } from "./series/cartesian/columnSeries";
 import { LineSeries } from "./series/cartesian/lineSeries";
+import { NumberAxis } from "./axis/numberAxis";
+import { ChartAxis, ChartAxisPosition } from "./chartAxis";
 
 const revenueProfitData = [{
     month: 'Jan',
@@ -250,5 +252,42 @@ describe('update', () => {
         expect(chart.series[0] instanceof AreaSeries).toBe(true);
         expect(chart.series[1] instanceof LineSeries).toBe(true);
         expect(chart.series[1]).toBe(lineSeries);
+    });
+
+    test('axes', () => {
+        const chart = AgChart.create({
+            data: revenueProfitData,
+            series: [{
+                xKey: 'month',
+                yKey: 'revenue'
+            }]
+        });
+
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                xKey: 'blah',
+                yKey: 'revenue'
+            }],
+            axes: [{
+                type: 'number',
+                position: 'left',
+                title: {
+                    text: 'Hello'
+                }
+            }, {
+                type: 'number',
+                position: 'bottom'
+            }]
+        });
+
+        const axes = chart.axes as ChartAxis[];
+        expect(axes.length).toBe(2);
+        expect(axes[0] instanceof NumberAxis).toBe(true);
+        expect(axes[1] instanceof NumberAxis).toBe(true);
+        const leftAxis = axes.find(axis => axis.position === ChartAxisPosition.Left);
+        expect(axes.find(axis => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
+        expect(leftAxis).toBeDefined();
+        expect(leftAxis.title.text).toBe('Hello');
     });
 });

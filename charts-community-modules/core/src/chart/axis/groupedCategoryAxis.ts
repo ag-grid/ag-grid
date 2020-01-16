@@ -37,6 +37,8 @@ export class GroupedCategoryAxis extends ChartAxis {
     // })();
 
     static className = 'GroupedCategoryAxis';
+    static type = 'groupedCategory';
+
     readonly id = createId(this);
     // Label scale (labels are positionsed between ticks, tick count = label count + 1).
     // We don't call is `labelScale` for consistency with other axes.

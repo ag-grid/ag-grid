@@ -30,6 +30,10 @@ export class ChartAxis extends Axis<Scale<any, number>> {
     boundSeries: Series[] = [];
     linkedTo?: ChartAxis;
 
+    get type(): string {
+        return (this.constructor as any).type || '';
+    }
+
     protected _position: ChartAxisPosition;
     set position(value: ChartAxisPosition) {
         if (this._position !== value) {
