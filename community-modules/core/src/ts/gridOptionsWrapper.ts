@@ -158,6 +158,19 @@ export class GridOptionsWrapper {
             );
         }
 
+        if (this.isRowModelServerSide()) {
+            const msg = (prop: string) => `ag-Grid: '${prop}' is not supported on the Server-side Row Model`;
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupDefaultExpanded'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeFooter'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeTotalFooter'));
+            }
+        }
+
         if (this.isEnableRangeSelection()) {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         }
