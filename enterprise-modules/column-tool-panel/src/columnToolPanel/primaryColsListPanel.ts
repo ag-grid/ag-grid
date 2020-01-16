@@ -263,11 +263,9 @@ export class PrimaryColsListPanel extends Component {
                 column.onSelectAllChanged(this.selectAllChecked);
             });
         } else {
-            // we don't want to change visibility on lock visible / hidden columns
+            // we don't want to change visibility on lock visible columns
             const primaryCols = this.columnApi.getPrimaryColumns();
-            const colsToChange = primaryCols.filter(col => {
-                return !col.getColDef().lockVisible && !col.getColDef().hide;
-            });
+            const colsToChange = primaryCols.filter(col => !col.getColDef().lockVisible);
 
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)

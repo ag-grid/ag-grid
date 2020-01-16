@@ -129,9 +129,9 @@ export class PrimaryColsHeaderPanel extends Component {
             this.eExpandIndeterminate = _.createIconNoSpan(
             "columnSelectIndeterminate",
             this.gridOptionsWrapper
-        )
-    )
-        );
+            )
+        ));
+        this.setExpandState(EXPAND_STATE.EXPANDED);
     }
 
     private createCheckIcons() {
@@ -153,6 +153,8 @@ export class PrimaryColsHeaderPanel extends Component {
                 this.gridOptionsWrapper
             )
         ));
+
+        this.setSelectionState(SELECTED_STATE.CHECKED);
     }
 
     // we only show expand / collapse if we are showing columns
