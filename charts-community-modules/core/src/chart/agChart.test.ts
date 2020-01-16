@@ -66,7 +66,7 @@ describe('update', () => {
                 fills: ['lime']
             }],
             legend: {
-                itemPaddingY: 16
+                layoutVerticalSpacing: 16
             }
         });
         AgChart.update(chart, {
@@ -102,7 +102,7 @@ describe('update', () => {
                 fills: ['lime']
             }],
             legend: {
-                padding: 50,
+                spacing: 50,
                 position: LegendPosition.Bottom
             }
         });

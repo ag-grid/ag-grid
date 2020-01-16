@@ -91,20 +91,19 @@ const chartMappings = {
             constructor: Legend,
             defaults: {
                 enabled: true,
-                orientation: LegendOrientation.Vertical,
                 position: LegendPosition.Right,
-                padding: 20,
-                itemPaddingX: 16,
-                itemPaddingY: 8,
+                spacing: 20,
+                layoutHorizontalSpacing: 16,
+                layoutVerticalSpacing: 8,
+                itemSpacing: 8,
                 markerShape: undefined,
-                markerPadding: 8,
                 markerSize: 15,
-                markerStrokeWidth: 1,
-                labelColor: 'black',
-                labelFontStyle: undefined,
-                labelFontWeight: undefined,
-                labelFontSize: 12,
-                labelFontFamily: 'Verdana, sans-serif'
+                strokeWidth: 1,
+                textColor: 'black',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: 'Verdana, sans-serif'
             }
         }
     }
