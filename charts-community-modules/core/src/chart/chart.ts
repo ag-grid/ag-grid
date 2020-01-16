@@ -265,10 +265,7 @@ export abstract class Chart extends Observable {
         this.seriesChanged = true;
     }
 
-    /**
-     * Finds all the series that use any given axis.
-     */
-    protected onSeriesChange() {
+    protected assignSeriesToAxes() {
         this.axes.forEach(axis => {
             const axisName = axis.direction + 'Axis';
             const boundSeries: Series[] = [];
@@ -285,8 +282,8 @@ export abstract class Chart extends Observable {
         this.seriesChanged = false;
     }
 
-    // Has to run before onSeriesChange
-    protected onAxesChange(force: boolean = false) {
+    protected assignAxesToSeries(force: boolean = false) {
+        // This method has to run before `assignSeriesToAxes`.
         const directionToAxesMap: { [key in ChartAxisDirection]?: ChartAxis[] } = {};
 
         this.axes.forEach(axis => {
@@ -417,11 +414,12 @@ export abstract class Chart extends Observable {
         this.layoutPending = false;
 
         if (this.axesChanged) {
-            this.onAxesChange();
+            this.assignAxesToSeries(true);
+            this.assignSeriesToAxes();
         }
 
         if (this.seriesChanged) {
-            this.onSeriesChange();
+            this.assignSeriesToAxes();
         }
 
         this.series.filter(s => s.visible).forEach(series => series.processData());
