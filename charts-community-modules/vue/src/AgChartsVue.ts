@@ -29,8 +29,8 @@ export interface AgChartOptions {
 
 @Component({
     props: {
-        options: {}
-    }
+        options: {},
+    },
 })
 export class AgChartsVue extends Vue {
     private isCreated = false;
@@ -49,8 +49,8 @@ export class AgChartsVue extends Vue {
 
         this.chart = AgChart.create(options);
 
-        this.$watch("options", (newValue, oldValue) => {
-            this.processChanges(newValue, oldValue)
+        this.$watch('options', (newValue, oldValue) => {
+            this.processChanges(newValue, oldValue);
         });
         this.isCreated = true;
     }

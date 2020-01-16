@@ -3,7 +3,9 @@
     "community-modules/*",
     "enterprise-modules/*",
     "charts-community-modules/*",
-    "packages/*"
+    "packages/*",
+    "examples-charts/*",
+    "examples-grid/*"
   ],
   "command": {
     "bootstrap": {

@@ -6,7 +6,11 @@
       <sourceFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/lib" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/ag-grid/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/node_modules.nosync" />
@@ -63,6 +67,11 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/status-bar/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-charts/ag-charts-react-example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-charts/ag-charts-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-vue-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-react-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-react-example/node_modules.nosync" />
