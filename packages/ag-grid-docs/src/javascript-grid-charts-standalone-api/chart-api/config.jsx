@@ -28,7 +28,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
 });
 
-const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
+const getCaptionOptions = (name, defaultText, fontSize = 10, fontWeight = 'normal') => ({
     enabled: {
         default: true,
         description: `Whether the ${name} should be shown or not.`,
@@ -36,6 +36,7 @@ const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     },
     text: {
         type: 'string',
+        default: defaultText,
         description: `The text to show in the ${name}.`,
         editor: StringEditor,
     },
@@ -80,7 +81,6 @@ export const generalConfig = Object.freeze({
     tooltipClass: {
         type: 'string',
         description: 'A class to be added to tooltips in the chart.',
-        editor: StringEditor,
     },
     padding: {
         top: {
@@ -124,8 +124,8 @@ export const generalConfig = Object.freeze({
             editor: BooleanEditor,
         }
     },
-    title: getCaptionOptions('title'),
-    subtitle: getCaptionOptions('subtitle'),
+    title: getCaptionOptions('title', 'Title', 18, 'bold'),
+    subtitle: getCaptionOptions('subtitle', 'Subtitle', 14, 'normal'),
     legend: {
         enabled: {
             default: true,
@@ -211,7 +211,7 @@ export const axisConfig = Object.freeze({
         type: 'number',
         description: 'The rotation of the axis in degrees.',
     },
-    title: getCaptionOptions('axis title'),
+    title: getCaptionOptions('axis title', 'Axis title', 14, 'bold'),
     line: {
         width: {
             default: 1,
@@ -311,12 +311,31 @@ export const axisConfig = Object.freeze({
     }
 });
 
-export const barSeriesConfig = Object.freeze({
+const seriesConfig = {
     data: {
         type: 'object[]',
         isRequired: true,
         description: 'The data to use when rendering the series. If it is not supplied, data must be set on the chart instead.',
     },
+    visible: {
+        default: true,
+        description: 'Whether to display the series or not.',
+        editor: BooleanEditor,
+    },
+    showInLegend: {
+        default: true,
+        description: 'Whether to include the series in the legend.',
+        editor: BooleanEditor,
+    },
+    tooltipEnabled: {
+        default: false,
+        description: 'Whether or not to show tooltips when the series are hovered over.',
+        editor: BooleanEditor,
+    },
+};
+
+export const barSeriesConfig = Object.freeze({
+    ...seriesConfig,
     xKey: {
         type: 'string',
         isRequired: true,
@@ -344,16 +363,6 @@ export const barSeriesConfig = Object.freeze({
         type: 'number',
         description: 'The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.',
         editor: NumberEditor,
-    },
-    visible: {
-        default: true,
-        description: 'Whether to display the series or not.',
-        editor: BooleanEditor,
-    },
-    showInLegend: {
-        default: true,
-        description: 'Whether to include the series in the legend.',
-        editor: BooleanEditor,
     },
     flipXY: {
         default: false,
@@ -405,6 +414,8 @@ export const barSeriesConfig = Object.freeze({
         default: 1,
         description: 'The width of the stroke around the bars.',
         editor: NumberEditor,
+        min: 0,
+        max: 20,
     },
     shadow: {
         enabled: {
@@ -450,5 +461,5 @@ export const barSeriesConfig = Object.freeze({
             description: 'The colour of the stroke around the bar when hovered over.',
             editor: ColourEditor,
         }
-    }
+    },
 });
