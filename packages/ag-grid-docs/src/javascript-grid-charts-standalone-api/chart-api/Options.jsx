@@ -31,13 +31,20 @@ const getType = value => {
 
 const Option = ({ name, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || getType(defaultValue);
+    const isFunction = derivedType != null && typeof derivedType === 'object';
 
     return <div className='option'>
         <span className='option__name'>{name}</span>
-        {derivedType && <span className='option__type'>{derivedType}</span>}
+        {derivedType && <span className='option__type'>{isFunction ? `(${Object.keys(derivedType.parameters).join(', ')}) => ${derivedType.returnType}` : derivedType}</span>}
         {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
+        {isFunction && <div className='option__functionDefinition'>
+            <div className='option__params'>Parameters:<br />
+                {Object.keys(derivedType.parameters).map(p => <code>{p}: {derivedType.parameters[p]}<br /></code>)}
+            </div>
+        </div>}
         <span className='option__description' dangerouslySetInnerHTML={{ __html: description }}></span><br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
+        {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(o => JSON.stringify(o)).join(' | ')}</code></span>}
     </div>;
 };
 

@@ -14,11 +14,11 @@ const createOptionsJson = options => {
         axes: options.axis && Object.keys(options.axis).length > 0 ? [{
             type: 'category',
             position: 'bottom',
-            ...options.axis,
         },
         {
             type: 'number',
             position: 'left',
+            ...options.axis,
         }] : undefined,
         series: [{
             type: 'column',
@@ -44,29 +44,28 @@ export class App extends React.Component {
         options: {}
     };
 
+    // to ensure the chart always displays using the latest values, we first have to update the state
+    // with the latest values to trigger the chart update, and then remove any no-longer needed keys
     updateOptions = (expression, value, defaultValue) => {
-        const newOptions = deepClone(this.state.options);
         const keys = expression.split(".");
-        const objects = [];
-        let objectToUpdate = newOptions;
 
-        for (let i = 0; i < keys.length - 1; i++) {
-            const key = keys[i];
-            const parent = objectToUpdate;
-
-            objects.push(parent);
-            objectToUpdate = parent[key];
-
-            if (objectToUpdate == null) {
-                objectToUpdate = {};
-                parent[key] = objectToUpdate;
+        const removeDeadKey = () => {
+            if (value !== defaultValue && JSON.stringify(value) !== JSON.stringify(defaultValue)) {
+                // key has a different value to the default, so don't remove it
+                return;
             }
-        }
 
-        let keyIndex = keys.length - 1;
-        let key = keys[keyIndex];
+            const objects = [];
+            const newOptions = deepClone(this.state.options);
+            let objectToUpdate = newOptions;
+            let keyIndex = keys.length - 1;
 
-        if (value == null || value === '' || JSON.stringify(value) === JSON.stringify(defaultValue)) {
+            for (let i = 0; i < keyIndex; i++) {
+                objects.push(objectToUpdate);
+                objectToUpdate = objectToUpdate[keys[i]];
+            }
+
+            let key = keys[keyIndex];
             delete objectToUpdate[key];
 
             while (keyIndex > 0 && Object.keys(objectToUpdate).length < 1) {
@@ -76,11 +75,31 @@ export class App extends React.Component {
 
                 delete objectToUpdate[key];
             }
-        } else {
-            objectToUpdate[key] = value;
-        }
 
-        this.setState({ options: newOptions });
+            this.setState({ options: newOptions });
+        };
+
+        this.setState(prevState => {
+            const newOptions = deepClone(prevState.options);
+            let objectToUpdate = newOptions;
+            const lastKeyIndex = keys.length - 1;
+
+            for (let i = 0; i < lastKeyIndex; i++) {
+                const key = keys[i];
+                const parent = objectToUpdate;
+
+                objectToUpdate = parent[key];
+
+                if (objectToUpdate == null) {
+                    objectToUpdate = {};
+                    parent[key] = objectToUpdate;
+                }
+            }
+
+            objectToUpdate[keys[lastKeyIndex]] = value;
+
+            return { options: newOptions };
+        }, removeDeadKey);
     };
 
     getCurrentFramework() {

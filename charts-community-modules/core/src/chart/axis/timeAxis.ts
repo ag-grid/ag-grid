@@ -2,6 +2,9 @@ import { TimeScale } from "../../scale/timeScale";
 import { ChartAxis } from "../chartAxis";
 
 export class TimeAxis extends ChartAxis {
+    static className = 'TimeAxis';
+    static type = 'time';
+
     constructor() {
         super(new TimeScale());
         (this.scale as TimeScale).clamp = true;

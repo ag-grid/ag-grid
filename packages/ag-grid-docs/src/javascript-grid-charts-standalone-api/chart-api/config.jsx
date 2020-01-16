@@ -1,17 +1,17 @@
-import { StringEditor, NumberEditor, BooleanEditor, MultiSelectEditor, ColourEditor, ArrayEditor } from "./Editors.jsx";
+import { StringEditor, NumberEditor, BooleanEditor, PresetEditor, ColourEditor, ArrayEditor } from "./Editors.jsx";
 
 const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     fontStyle: {
         default: 'normal',
         options: ['normal', 'italic', 'oblique'],
         description: `The font style to use for the ${name}.`,
-        editor: MultiSelectEditor,
+        editor: PresetEditor,
     },
     fontWeight: {
         default: fontWeight,
         options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
         description: `The font weight to use for the ${name}.`,
-        editor: MultiSelectEditor,
+        editor: PresetEditor,
     },
     fontSize: {
         default: fontSize,
@@ -24,11 +24,11 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
         default: 'Verdana, sans-serif',
         options: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
         description: `The font family to use for the ${name}.`,
-        editor: MultiSelectEditor,
+        editor: PresetEditor,
     },
 });
 
-const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
+const getCaptionOptions = (name, defaultText, fontSize = 10, fontWeight = 'normal') => ({
     enabled: {
         default: true,
         description: `Whether the ${name} should be shown or not.`,
@@ -36,6 +36,7 @@ const getCaptionOptions = (name, fontWeight = 'normal', fontSize = 10) => ({
     },
     text: {
         type: 'string',
+        default: defaultText,
         description: `The text to show in the ${name}.`,
         editor: StringEditor,
     },
@@ -80,7 +81,6 @@ export const generalConfig = Object.freeze({
     tooltipClass: {
         type: 'string',
         description: 'A class to be added to tooltips in the chart.',
-        editor: StringEditor,
     },
     padding: {
         top: {
@@ -124,8 +124,8 @@ export const generalConfig = Object.freeze({
             editor: BooleanEditor,
         }
     },
-    title: getCaptionOptions('title'),
-    subtitle: getCaptionOptions('subtitle'),
+    title: getCaptionOptions('title', 'Title', 18, 'bold'),
+    subtitle: getCaptionOptions('subtitle', 'Subtitle', 14, 'normal'),
     legend: {
         enabled: {
             default: true,
@@ -136,11 +136,11 @@ export const generalConfig = Object.freeze({
             default: 'right',
             description: 'Where the legend should show in relation to the chart.',
             options: ['top', 'right', 'bottom', 'left'],
-            editor: MultiSelectEditor,
+            editor: PresetEditor,
         },
         spacing: {
             default: 20,
-            description: 'The spacing to use between the chart and the legend.',
+            description: 'The spacing to use outside the legend.',
             editor: NumberEditor,
             min: 0,
             max: 40,
@@ -169,7 +169,7 @@ export const generalConfig = Object.freeze({
         markerShape: {
             default: 'square',
             description: 'This will override the marker shape from the series and show the specified marker shape in the legend instead.',
-            editor: MultiSelectEditor,
+            editor: PresetEditor,
             options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
         },
         markerSize: {
@@ -197,45 +197,61 @@ export const generalConfig = Object.freeze({
 
 export const axisConfig = Object.freeze({
     type: {
-        default: 'category',
-        description: 'The type of the axis',
-        editor: MultiSelectEditor,
+        type: 'string',
+        description: 'The type of the axis.',
         options: ['category', 'number', 'time'],
     },
-    title: getCaptionOptions('title'),
+    position: {
+        type: 'string',
+        description: 'The position on the chart to render the axis in.',
+        editor: PresetEditor,
+        options: ['top', 'right', 'bottom', 'left'],
+    },
+    rotation: {
+        type: 'number',
+        description: 'The rotation of the axis in degrees.',
+    },
+    title: getCaptionOptions('axis title', 'Axis title', 14, 'bold'),
     line: {
         width: {
             default: 1,
-            description: 'Width of the axis line',
+            description: 'Width of the axis line.',
             editor: NumberEditor,
             min: 0,
             max: 10,
         },
         color: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the axis line',
+            description: 'Colour of the axis line.',
             editor: ColourEditor,
         }
     },
     tick: {
         width: {
             default: 1,
-            description: 'Width of the axis ticks (and corresponding grid line)',
+            description: 'Width of the axis ticks (and corresponding grid line).',
             editor: NumberEditor,
             min: 0,
             max: 10,
         },
         size: {
             default: 6,
-            description: 'Length of the axis ticks',
+            description: 'Length of the axis ticks.',
             editor: NumberEditor,
             min: 0,
             max: 20,
         },
         color: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the axis ticks',
+            description: 'Colour of the axis ticks.',
             editor: ColourEditor,
+        },
+        count: {
+            default: 10,
+            description: 'A hint of how many ticks to use across an axis.',
+            editor: NumberEditor,
+            min: 0,
+            max: 100,
         }
     },
     label: {
@@ -247,30 +263,44 @@ export const axisConfig = Object.freeze({
         },
         padding: {
             default: 5,
-            description: 'Padding between the axis label and the tick',
+            description: 'Padding between the axis label and the tick.',
             editor: NumberEditor,
             min: 0,
             max: 20,
         },
         rotation: {
             default: 0,
-            description: 'Rotation of the axis labels',
+            description: 'Rotation of the axis labels.',
             editor: NumberEditor,
             min: -359,
             max: 359
         },
+        mirrored: {
+            default: false,
+            description: 'By default, labels and ticks are positioned to the left of the axis. Setting this to <code>true</code> will position them on the right instead.',
+            editor: BooleanEditor,
+        },
+        parallel: {
+            default: false,
+            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <true> will render them parallel to the line instead.',
+            editor: BooleanEditor,
+        },
         format: {
-            description: 'Format string used when rendering labels for time axes',
-            editor: StringEditor,
+            type: 'string',
+            description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="http://localhost:8080/javascript-grid-charts-integrated-customisation-cartesian/">click here</a>.',
         },
         formatter: {
-            description: 'Function used to render axis labels',
+            type: {
+                parameters: { params: '{ value, index, fractionDigits?, formatter?: x => string }' },
+                returnType: 'string',
+            },
+            description: 'Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code>.',
         }
     },
     gridStyle: {
         stroke: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the grid line',
+            description: 'Colour of the grid line.',
             editor: ColourEditor,
         },
         lineDash: {
@@ -281,12 +311,31 @@ export const axisConfig = Object.freeze({
     }
 });
 
-export const barSeriesConfig = Object.freeze({
+const seriesConfig = {
     data: {
         type: 'object[]',
         isRequired: true,
         description: 'The data to use when rendering the series. If it is not supplied, data must be set on the chart instead.',
     },
+    visible: {
+        default: true,
+        description: 'Whether to display the series or not.',
+        editor: BooleanEditor,
+    },
+    showInLegend: {
+        default: true,
+        description: 'Whether to include the series in the legend.',
+        editor: BooleanEditor,
+    },
+    tooltipEnabled: {
+        default: false,
+        description: 'Whether or not to show tooltips when the series are hovered over.',
+        editor: BooleanEditor,
+    },
+};
+
+export const barSeriesConfig = Object.freeze({
+    ...seriesConfig,
     xKey: {
         type: 'string',
         isRequired: true,
@@ -314,16 +363,6 @@ export const barSeriesConfig = Object.freeze({
         type: 'number',
         description: 'The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.',
         editor: NumberEditor,
-    },
-    visible: {
-        default: true,
-        description: 'Whether to display the series or not.',
-        editor: BooleanEditor,
-    },
-    showInLegend: {
-        default: true,
-        description: 'Whether to include the series in the legend.',
-        editor: BooleanEditor,
     },
     flipXY: {
         default: false,
@@ -375,6 +414,8 @@ export const barSeriesConfig = Object.freeze({
         default: 1,
         description: 'The width of the stroke around the bars.',
         editor: NumberEditor,
+        min: 0,
+        max: 20,
     },
     shadow: {
         enabled: {
@@ -420,5 +461,5 @@ export const barSeriesConfig = Object.freeze({
             description: 'The colour of the stroke around the bar when hovered over.',
             editor: ColourEditor,
         }
-    }
+    },
 });

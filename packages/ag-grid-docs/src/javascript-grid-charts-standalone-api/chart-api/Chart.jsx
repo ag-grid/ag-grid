@@ -8,7 +8,7 @@ export class Chart extends React.Component {
     constructor(props) {
         super(props);
         this.chart = React.createRef();
-        this.useDynamicUpdates = false;
+        this.useDynamicUpdates = true;
     }
 
     chartInstance = undefined;

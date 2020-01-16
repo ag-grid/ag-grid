@@ -72,6 +72,10 @@
     float: right;
 }
 
-.option__code, .option__description code {
+.option__params code {
+    font-size: 0.8rem;
+}
+
+.option code {
     color: #0084e7;
 }
