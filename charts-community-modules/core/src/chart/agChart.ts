@@ -9,7 +9,7 @@ import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
 import { PieSeries } from "./series/polar/pieSeries";
 import { Caption } from "../caption";
-import { Legend, LegendOrientation, LegendPosition } from "./legend";
+import { Legend, LegendPosition } from "./legend";
 import { Padding } from "../util/padding";
 import { DropShadow } from "../scene/dropShadow";
 import { AxisLabel, AxisTick } from "../axis";
@@ -634,6 +634,8 @@ function update(component: any, options: any, path?: string) {
                     } else if (typeof oldValue === 'object') {
                         if (value) {
                             update(oldValue, value, value.type ? path : keyPath);
+                        } else if (key in options) {
+                            component[key] = value;
                         }
                     } else {
                         const subComponent = isObject(value) && create(value, value.type ? path : keyPath);

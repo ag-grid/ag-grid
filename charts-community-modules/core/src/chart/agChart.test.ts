@@ -123,6 +123,27 @@ describe('update', () => {
         expect(chart.subtitle.enabled).toBe(false);
         expect(chart.background.fill).toBe('red');
         expect(chart.background.visible).toBe(false);
+        expect(chart.series[0].marker.shape).toBe('plus');
+
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                xKey: 'month',
+                yKey: 'revenue',
+                marker: {}
+            }, {
+                type: 'column',
+                xKey: 'month',
+                yKeys: ['profit'],
+                fills: ['lime']
+            }],
+            legend: {
+                layoutVerticalSpacing: 16
+            }
+        });
+
+        expect(chart.title).not.toBeDefined();
+        expect(chart.subtitle).not.toBeDefined();
     });
 
     test('series', () => {
