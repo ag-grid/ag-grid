@@ -147,7 +147,10 @@ const columnSeriesDefaults = {
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,
-    shadow: undefined
+    shadow: undefined,
+    highlightStyle: {
+        fill: 'yellow'
+    }
 } as any;
 
 const shadowMapping = {
@@ -276,6 +279,7 @@ const mappings = {
             [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         title: undefined,
                         xKey: '',
@@ -286,7 +290,10 @@ const mappings = {
                         stroke: palette.strokes[0],
                         strokeWidth: 2,
                         fillOpacity: 1,
-                        strokeOpacity: 1
+                        strokeOpacity: 1,
+                        highlightStyle: {
+                            fill: 'yellow'
+                        }
                     }
                 },
                 marker: {}
@@ -294,6 +301,7 @@ const mappings = {
             [ColumnSeries.type]: {
                 meta: {
                     constructor: ColumnSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         ...columnSeriesDefaults
@@ -305,6 +313,7 @@ const mappings = {
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         ...columnSeriesDefaults
@@ -316,6 +325,7 @@ const mappings = {
             [ScatterSeries.type]: {
                 meta: {
                     constructor: ScatterSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -332,10 +342,10 @@ const mappings = {
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
+                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
-                        },
-                        tooltipRenderer: undefined
+                        }
                     }
                 },
                 marker: {}
@@ -343,6 +353,7 @@ const mappings = {
             [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         xKey: '',
@@ -355,7 +366,10 @@ const mappings = {
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 2,
-                        shadow: undefined
+                        shadow: undefined,
+                        highlightStyle: {
+                            fill: 'yellow'
+                        }
                     }
                 },
                 marker: {},
