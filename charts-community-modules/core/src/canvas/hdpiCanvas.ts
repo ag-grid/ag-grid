@@ -178,8 +178,8 @@ export class HdpiCanvas {
     }
 
     // 2D canvas context used for measuring text.
-    private _textMeasuringContext?: CanvasRenderingContext2D;
-    private get textMeasuringContext(): CanvasRenderingContext2D {
+    private static _textMeasuringContext?: CanvasRenderingContext2D;
+    private static get textMeasuringContext(): CanvasRenderingContext2D {
         if (this._textMeasuringContext) {
             return this._textMeasuringContext;
         }
@@ -191,8 +191,8 @@ export class HdpiCanvas {
     // is at least 25 times slower than `CanvasRenderingContext2D.measureText`.
     // Using a <span> and its `getBoundingClientRect` for text measurement
     // is also slow and often results in a grossly incorrect measured height.
-    private _svgText?: SVGTextElement;
-    private get svgText(): SVGTextElement {
+    private static _svgText?: SVGTextElement;
+    private static get svgText(): SVGTextElement {
         if (this._svgText) {
             return this._svgText;
         }
@@ -226,11 +226,11 @@ export class HdpiCanvas {
         return svgText;
     }
 
-    private _has?: {
+    private static _has?: {
         textMetrics: boolean,
         getTransform: boolean
     };
-    get has() {
+    static get has() {
         if (this._has) {
             return this._has;
         }
@@ -241,9 +241,9 @@ export class HdpiCanvas {
         });
     }
 
-    measureText(text: string, font: string,
-        textBaseline: CanvasTextBaseline,
-        textAlign: CanvasTextAlign): TextMetrics {
+    static measureText(text: string, font: string,
+                       textBaseline: CanvasTextBaseline,
+                       textAlign: CanvasTextAlign): TextMetrics {
         const ctx = this.textMeasuringContext;
         ctx.font = font;
         ctx.textBaseline = textBaseline;
@@ -256,7 +256,7 @@ export class HdpiCanvas {
      * @param text The single-line text to measure.
      * @param font The font shorthand string.
      */
-    getTextSize(text: string, font: string): Size {
+    static getTextSize(text: string, font: string): Size {
         if (this.has.textMetrics) {
             const ctx = this.textMeasuringContext;
             ctx.font = font;
@@ -273,8 +273,8 @@ export class HdpiCanvas {
 
     private static textSizeCache: { [font: string]: { [text: string]: Size } } = {};
 
-    private measureSvgText(text: string, font: string): Size {
-        const cache = HdpiCanvas.textSizeCache;
+    private static measureSvgText(text: string, font: string): Size {
+        const cache = this.textSizeCache;
         const fontCache = cache[font];
 
         // Note: consider not caching the size of numeric strings.

@@ -1,6 +1,7 @@
 import { Shape } from "./shape";
 import { chainObjects } from "../../util/object";
 import { BBox } from "../bbox";
+import { HdpiCanvas } from "../../canvas/hdpiCanvas";
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
 export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
@@ -179,15 +180,13 @@ export class Text extends Shape {
     }
 
     computeBBox(): BBox | undefined {
-        return this.scene
-            ? this.scene.canvas.has.textMetrics
-                ? this.getPreciseBBox()
-                : this.getApproximateBBox()
-            : undefined;
+        return HdpiCanvas.has.textMetrics
+            ? this.getPreciseBBox()
+            : this.getApproximateBBox();
     }
 
     private getPreciseBBox(): BBox {
-        const metrics = this.scene!.canvas.measureText(this.text, this.font,
+        const metrics = HdpiCanvas.measureText(this.text, this.font,
             this.textBaseline, this.textAlign);
 
         return new BBox(
@@ -199,7 +198,7 @@ export class Text extends Shape {
     }
 
     private getApproximateBBox(): BBox {
-        const size = this.scene!.canvas.getTextSize(this.text, this.font);
+        const size = HdpiCanvas.getTextSize(this.text, this.font);
         let { x, y } = this;
 
         switch (this.textAlign) {
