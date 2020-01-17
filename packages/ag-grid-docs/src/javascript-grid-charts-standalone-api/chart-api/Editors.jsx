@@ -5,13 +5,13 @@ import { ChromePicker } from "react-color";
 export const NumberEditor = ({ value, min, max, step, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
-        const newValue = step % 1 > 0 ? parseFloat(event.target.value) : parseInt(event.target.value);
+        const { value } = event.target;
+        const newValue = value == null || value.trim() === '' ? undefined : step % 1 > 0 ? parseFloat(value) : parseInt(value);
         setValueChange(newValue);
         onChange(newValue);
     };
 
     const props = {
-        type: 'number',
         value: stateValue,
         onChange: inputOnChange
     };
@@ -28,7 +28,10 @@ export const NumberEditor = ({ value, min, max, step, onChange }) => {
         props.step = step;
     }
 
-    return <input {...props} />;
+    return <span className='number-editor'>
+        {min != null && max != null && <input type='range' className='number-editor__slider' {...props} />}
+        <input type='number' className='number-editor__input' {...props} />
+    </span>;
 };
 
 export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }) => {
@@ -44,47 +47,31 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
         onChange(transformedValue);
     };
 
-    return <input type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
+    return <input className="string-editor__input" type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
 };
 
-export const ArrayEditor = ({ value, onChange }) => {
-    const stringValue = value.join(', ');
-    const [stateValue, setValueChange] = useState(stringValue);
-    const inputOnChange = event => {
-        const newValue = event.target.value;
+export const ArrayEditor = props =>
+    <StringEditor
+        toStringValue={array => array.join(', ')}
+        fromStringValue={value => value.split(',').filter(x => x != null && x.trim().length).map(x => JSON.parse(x))}
+        {...props}
+    />;
 
-        setValueChange(newValue);
-
-        const array = newValue.split(',').filter(x => x != null && x.trim().length).map(x => JSON.parse(x));
-
-        onChange(array);
-    };
-
-    return <input type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
-};
-
-export const BooleanEditor = ({ value, onChange }) => {
-    const [stateValue, setValueChange] = useState(value);
-    const inputOnChange = event => {
-        const newValue = event.target.checked;
-        setValueChange(newValue);
-        onChange(newValue);
-    };
-
-    return <input type="checkbox" checked={stateValue} onChange={inputOnChange} />;
-};
+export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
 
 export const PresetEditor = ({ value, options, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
-    const inputOnChange = event => {
-        const newValue = event.target.value;
+    const inputOnChange = newValue => {
         setValueChange(newValue);
         onChange(newValue);
     };
 
-    return <select value={stateValue} onChange={inputOnChange}>
-        {options.map(o => <option key={o}>{o}</option>)}
-    </select>;
+    return <div className='preset-editor'>
+        {options.map(o => <div
+            key={o}
+            className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
+            onClick={() => inputOnChange(o)}>{o.toString()}</div>)}
+    </div>;
 };
 
 export const ColourEditor = ({ value, onChange }) => {

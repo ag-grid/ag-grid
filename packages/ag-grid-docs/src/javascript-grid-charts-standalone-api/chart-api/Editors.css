@@ -5,3 +5,44 @@
     height: 15px;
     border: solid 1px black;
 }
+
+.string-editor__input, .number-editor__input {
+    border: 1px solid #0084e7;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+.number-editor__slider {
+    vertical-align: middle;
+}
+
+.preset-editor {
+    display: flex;
+    margin: 5px 0;
+}
+
+.preset-editor__option {
+    flex-grow: 1;
+    border: 1px solid #0084e7;
+    border-right: 0;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.preset-editor__option:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.preset-editor__option:last-child {
+    border: 1px solid #0084e7;
+    border-radius: 0 5px 5px 0;
+}
+
+.preset-editor__option--selected {
+    background-color: #0084e7;
+    color: white;
+    box-shadow: inset 0 0 5px #00407f;
+}

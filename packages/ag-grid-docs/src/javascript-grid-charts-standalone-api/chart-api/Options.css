@@ -1,7 +1,8 @@
 .options {
     float: left;
-    width: 55%;
+    width: calc(55% - 10px);
     height: calc(100vh - 480px);
+    padding-right: 10px;
     overflow-y: scroll;
     line-height: 1.6em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -15,9 +16,14 @@
 
 .section__heading {
     margin: 0;
-    padding: 20px 10px;
+    padding: 15px 10px;
     color: white;
     background-color: #0084e7;
+    border-radius: 10px;
+}
+
+.section__heading--expanded {
+    border-radius: 10px 10px 0 0;
 }
 
 .section__heading::after {
@@ -36,8 +42,14 @@
 }
 
 .section .section {
-    border: solid 1px rgba(0, 0, 0, 0.125);
     margin: 10px;
+}
+
+.section .section .section__content {
+    border-width: 0 1px 1px 1px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.125);
+    border-radius: 0 0 10px 10px;
 }
 
 .section__content--hidden {
@@ -48,8 +60,12 @@
     padding: 10px;
 }
 
-.option:nth-child(odd) {
+.option:nth-child(even) {
     background-color: #f1f7ff;
+}
+
+.option:last-child {
+    border-radius: 0 0 10px 10px;
 }
 
 .option__name {
