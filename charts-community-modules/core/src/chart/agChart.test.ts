@@ -310,5 +310,41 @@ describe('update', () => {
         expect(axes.find(axis => axis.position === ChartAxisPosition.Bottom)).toBeDefined();
         expect(leftAxis).toBeDefined();
         expect(leftAxis.title.text).toBe('Hello');
+
+        expect(leftAxis.gridStyle).toEqual([{
+            stroke: 'rgba(219, 219, 219, 1)',
+            lineDash: [4, 2]
+        }]);
+        AgChart.update(chart, {
+            data: revenueProfitData,
+            series: [{
+                xKey: 'blah',
+                yKey: 'revenue'
+            }],
+            axes: [{
+                type: 'number',
+                position: 'left',
+                title: {
+                    text: 'Hello'
+                },
+                gridStyle: [{
+                    stroke: 'red',
+                    lineDash: [5, 5]
+                }, {
+                    stroke: 'blue',
+                    lineDash: [2, 6, 2]
+                }]
+            }, {
+                type: 'number',
+                position: 'bottom'
+            }]
+        });
+        expect(leftAxis.gridStyle).toEqual([{
+            stroke: 'red',
+            lineDash: [5, 5]
+        }, {
+            stroke: 'blue',
+            lineDash: [2, 6, 2]
+        }]);
     });
 });
