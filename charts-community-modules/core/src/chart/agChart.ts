@@ -648,6 +648,10 @@ function update(component: any, options: any, path?: string) {
             }
         }
     }
+
+    if (path in mappings) { // top-level component (chart)
+        (component as Chart).performLayout();
+    }
 }
 
 function provideDefaultChartType(options: any) {
