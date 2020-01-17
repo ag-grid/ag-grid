@@ -103,7 +103,9 @@ export class DragService {
         this.touchLastTime = touch;
         this.touchStart = touch;
 
-        touchEvent.preventDefault();
+        if (touchEvent.cancelable) {
+            touchEvent.preventDefault();
+        }
 
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e, params.eElement);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e, params.eElement);
