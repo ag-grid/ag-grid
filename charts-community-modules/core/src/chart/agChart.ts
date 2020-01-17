@@ -258,6 +258,7 @@ const mappings = {
             [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
+                    setAsIs: ['gridStyle'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -265,6 +266,7 @@ const mappings = {
             [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
+                    setAsIs: ['gridStyle'],
                     ...axisDefaults
                 },
                 ...axisMappings
