@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './Options.css';
-import { formatJson } from "./utils.jsx";
-import { generalConfig, axisConfig, barSeriesConfig } from "./config.jsx";
+import { formatJson } from './utils.jsx';
+import { generalConfig, axisConfig, barSeriesConfig } from './config.jsx';
 
-const Section = ({ title, children }) => {
+const Section = ({ title, isVisible, children }) => {
     const [expanded, setExpanded] = useState(true);
 
-    return <div className={`section ${expanded ? 'section--expanded' : ''}`}>
+    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${expanded ? 'section--expanded' : ''}`}>
         <h2 className={`section__heading ${expanded ? 'section__heading--expanded' : ''}`}
             onClick={() => setExpanded(!expanded)}>
             {title}
@@ -29,11 +29,11 @@ const getType = value => {
     return typeof value;
 };
 
-const Option = ({ name, isRequired, type, description, defaultValue, Editor, editorProps }) => {
+const Option = ({ name, isVisible, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || getType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
 
-    return <div className='option'>
+    return <div className={`option ${isVisible ? '' : 'option--hidden'}`}>
         <span className='option__name'>{name}</span>
         {derivedType && <span className='option__type'>{isFunction ? `(${Object.keys(derivedType.parameters).join(', ')}) => ${derivedType.returnType}` : derivedType}</span>}
         {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
@@ -48,20 +48,37 @@ const Option = ({ name, isRequired, type, description, defaultValue, Editor, edi
     </div>;
 };
 
+const Search = ({ text, onChange }) => {
+    return <div className='search'>
+        Search: <input className='search__input' type='text' value={text} onChange={event => onChange(event.target.value)} />
+    </div>;
+};
+
 export class Options extends React.PureComponent {
+    state = {
+        searchText: '',
+    };
+
     config = {
-        chart: generalConfig,
-        axis: axisConfig,
-        series: barSeriesConfig
+        ...generalConfig,
+        axes: axisConfig,
+        series: barSeriesConfig,
     };
 
-    configNameMappings = {
-        'chart': 'General chart options',
-        'axis': 'Axis options',
-        'series': 'Series options'
+    isVisible = name => {
+        const { searchText } = this.state;
+        const trimmedSearchText = searchText && searchText.trim();
+
+        return !trimmedSearchText || name.indexOf(trimmedSearchText) >= 0;
     };
 
-    getName = name => this.configNameMappings[name] || name;
+    isSectionVisible = options => {
+        return Object.keys(options).some(name => {
+            const config = options[name];
+
+            return config.description ? this.isVisible(name) : this.isSectionVisible(config);
+        });
+    };
 
     generateOptions = (options, prefix = '') => {
         let elements = [];
@@ -82,6 +99,7 @@ export class Options extends React.PureComponent {
                 elements.push(<Option
                     key={key}
                     name={name}
+                    isVisible={this.isVisible(name)}
                     type={type}
                     isRequired={isRequired}
                     description={description}
@@ -93,7 +111,7 @@ export class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<Section key={key} title={this.getName(name)}>
+                elements.push(<Section key={key} title={name} isVisible={this.isSectionVisible(config)}>
                     {this.generateOptions(config, `${key}.`)}
                 </Section>);
             }
@@ -103,6 +121,9 @@ export class Options extends React.PureComponent {
     };
 
     render() {
-        return <div className="options">{this.generateOptions(this.config)}</div>;
+        return <div className='options'>
+            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value })} />
+            <div>{this.generateOptions(this.config)}</div>
+        </div>;
     }
 };
