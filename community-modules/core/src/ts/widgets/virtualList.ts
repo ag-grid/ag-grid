@@ -55,9 +55,10 @@ export class VirtualList extends Component {
         // let nodeAtIndex = this.rowModel.getRow(index);
         const rowTopPixel = index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
+        const eGui = this.getGui();
 
-        const viewportTopPixel = this.getGui().scrollTop;
-        const viewportHeight = this.getGui().offsetHeight;
+        const viewportTopPixel = eGui.scrollTop;
+        const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
         const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
@@ -65,11 +66,11 @@ export class VirtualList extends Component {
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            eGui.scrollTop = rowTopPixel;
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            eGui.scrollTop = newScrollPosition;
         }
     }
 

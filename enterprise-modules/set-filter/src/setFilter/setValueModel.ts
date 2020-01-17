@@ -55,15 +55,17 @@ export class SetValueModel {
     private valueFormatterService: ValueFormatterService;
     private column: Column;
 
-    constructor(colDef: ColDef,
-                rowModel: IRowModel,
-                valueGetter: any,
-                doesRowPassOtherFilters: any,
-                suppressSorting: boolean,
-                modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void,
-                isLoadingFunc: (loading: boolean) => void,
-                valueFormatterService: ValueFormatterService,
-                column: Column) {
+    constructor(
+        colDef: ColDef,
+        rowModel: IRowModel,
+        valueGetter: any,
+        doesRowPassOtherFilters: any,
+        suppressSorting: boolean,
+        modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void,
+        isLoadingFunc: (loading: boolean) => void,
+        valueFormatterService: ValueFormatterService,
+        column: Column
+    ) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
