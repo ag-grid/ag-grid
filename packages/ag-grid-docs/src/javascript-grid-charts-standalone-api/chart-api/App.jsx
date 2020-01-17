@@ -46,11 +46,13 @@ export class App extends React.Component {
 
     // to ensure the chart always displays using the latest values, we first have to update the state
     // with the latest values to trigger the chart update, and then remove any no-longer needed keys
+    // (ones where the value is the just the same as the default) so they aren't used in generated code
     updateOptions = (expression, value, defaultValue) => {
         const keys = expression.split(".");
+        const removeUnneededKeys = false;
 
-        const removeDeadKey = () => {
-            if (value !== defaultValue && JSON.stringify(value) !== JSON.stringify(defaultValue)) {
+        const removeUnneededKey = () => {
+            if (!removeUnneededKeys || (value !== defaultValue && JSON.stringify(value) !== JSON.stringify(defaultValue))) {
                 // key has a different value to the default, so don't remove it
                 return;
             }
@@ -99,7 +101,7 @@ export class App extends React.Component {
             objectToUpdate[keys[lastKeyIndex]] = value;
 
             return { options: newOptions };
-        }, removeDeadKey);
+        }, removeUnneededKey);
     };
 
     getCurrentFramework() {
