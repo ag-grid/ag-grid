@@ -131,7 +131,6 @@ const axisDefaults = {
 };
 
 const seriesDefaults = {
-    data: undefined,
     visible: true,
     showInLegend: true
 } as any;
