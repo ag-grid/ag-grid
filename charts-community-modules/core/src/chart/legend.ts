@@ -115,6 +115,11 @@ export class Legend extends Observable {
             }
         });
 
+        this.addPropertyListener('markerShape', event => {
+            this.itemSelection = this.itemSelection.setData([]);
+            this.itemSelection.exit.remove();
+        });
+
         this.addEventListener('change', () => this.update());
     }
 
