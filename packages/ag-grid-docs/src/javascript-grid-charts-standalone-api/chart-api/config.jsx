@@ -298,6 +298,9 @@ export const axisConfig = Object.freeze({
         }
     },
     gridStyle: {
+        meta: {
+            requiresWholeObject: true,
+        },
         stroke: {
             default: 'rgba(195, 195, 195, 1)',
             description: 'Colour of the grid line.',

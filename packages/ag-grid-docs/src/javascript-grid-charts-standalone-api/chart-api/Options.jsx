@@ -80,10 +80,10 @@ export class Options extends React.PureComponent {
         });
     };
 
-    generateOptions = (options, prefix = '') => {
+    generateOptions = (options, prefix = '', requiresWholeObject = false) => {
         let elements = [];
 
-        Object.keys(options).forEach(name => {
+        Object.keys(options).filter(name => name !== 'meta').forEach(name => {
             const key = `${prefix}${name}`;
             const config = options[name];
             const {
@@ -96,6 +96,8 @@ export class Options extends React.PureComponent {
             } = config;
 
             if (config.description) {
+                this.props.updateOptionDefault(key, defaultValue);
+
                 elements.push(<Option
                     key={key}
                     name={name}
@@ -107,12 +109,12 @@ export class Options extends React.PureComponent {
                     Editor={editor}
                     editorProps={{
                         ...editorProps,
-                        onChange: newValue => this.props.updateOptions(key, newValue, defaultValue)
+                        onChange: newValue => this.props.updateOption(key, newValue, requiresWholeObject)
                     }}
                 />);
             } else {
                 elements.push(<Section key={key} title={name} isVisible={this.isSectionVisible(config)}>
-                    {this.generateOptions(config, `${key}.`)}
+                    {this.generateOptions(config, `${key}.`, requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
                 </Section>);
             }
         });

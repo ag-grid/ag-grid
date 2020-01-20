@@ -41,15 +41,54 @@ const createOptionsJson = options => {
 export class App extends React.Component {
     state = {
         framework: this.getCurrentFramework(),
-        options: {}
+        options: {},
+        defaults: {},
+    };
+
+    getKeys = expression => expression.split('.');
+
+    getDefaultValue = expression => {
+        let { defaults } = this.state;
+        const keys = this.getKeys(expression);
+
+        while (keys.length > 0 && defaults != null) {
+            defaults = defaults[keys.shift()];
+        }
+
+        return defaults;
+    };
+
+    updateOptionDefault = (expression, defaultValue) => {
+        const keys = this.getKeys(expression);
+
+        this.setState(prevState => {
+            const newDefaults = { ...prevState.defaults };
+            let objectToUpdate = newDefaults;
+
+            while (keys.length > 1) {
+                const key = keys.shift();
+                const parent = objectToUpdate;
+
+                objectToUpdate = { ...parent[key] };
+                parent[key] = objectToUpdate;
+            }
+
+            objectToUpdate[keys.shift()] = defaultValue;
+
+            return { defaults: newDefaults };
+        });
     };
 
     // to ensure the chart always displays using the latest values, we first have to update the state
     // with the latest values to trigger the chart update, and then remove any no-longer needed keys
     // (ones where the value is the just the same as the default) so they aren't used in generated code
-    updateOptions = (expression, value, defaultValue) => {
-        const keys = expression.split(".");
-        const removeUnneededKeys = false;
+    updateOption = (expression, value, requiresWholeObject = false) => {
+        const keys = this.getKeys(expression);
+        const parentKeys = [...keys];
+        parentKeys.pop();
+        const defaultParent = { ...this.getDefaultValue(parentKeys.join('.')) };
+        const defaultValue = defaultParent[keys[keys.length - 1]];
+        const removeUnneededKeys = true;
 
         const removeUnneededKey = () => {
             if (!removeUnneededKeys || (value !== defaultValue && JSON.stringify(value) !== JSON.stringify(defaultValue))) {
@@ -68,7 +107,15 @@ export class App extends React.Component {
             }
 
             let key = keys[keyIndex];
-            delete objectToUpdate[key];
+
+            if (requiresWholeObject) {
+                if (JSON.stringify(objectToUpdate) === JSON.stringify(defaultParent)) {
+                    // if all the defaults match, we can remove the whole object
+                    objectToUpdate = {};
+                }
+            } else {
+                delete objectToUpdate[key];
+            }
 
             while (keyIndex > 0 && Object.keys(objectToUpdate).length < 1) {
                 keyIndex--;
@@ -82,7 +129,7 @@ export class App extends React.Component {
         };
 
         this.setState(prevState => {
-            const newOptions = deepClone(prevState.options);
+            const newOptions = { ...prevState.options };
             let objectToUpdate = newOptions;
             const lastKeyIndex = keys.length - 1;
 
@@ -90,12 +137,13 @@ export class App extends React.Component {
                 const key = keys[i];
                 const parent = objectToUpdate;
 
-                objectToUpdate = parent[key];
-
-                if (objectToUpdate == null) {
-                    objectToUpdate = {};
-                    parent[key] = objectToUpdate;
+                if (parent[key] == null) {
+                    objectToUpdate = requiresWholeObject && i === lastKeyIndex - 1 ? defaultParent : {};
+                } else {
+                    objectToUpdate = { ...parent[key] };
                 }
+
+                parent[key] = objectToUpdate;
             }
 
             objectToUpdate[keys[lastKeyIndex]] = value;
@@ -131,7 +179,7 @@ export class App extends React.Component {
 
         return <div className="app">
             <Chart options={options} />
-            <Options updateOptions={this.updateOptions} />
+            <Options updateOptionDefault={this.updateOptionDefault} updateOption={this.updateOption} />
             <Code options={options} />
         </div>;
     }
