@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewEncapsulation} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@angular/core";
 
 import {AgChart, Chart} from 'ag-charts-community';
 
@@ -41,7 +41,8 @@ export class AgChartsAngularComponent implements AfterViewInit {
 
     private _chart!: Chart;
 
-    private options!: AgChartOptions;
+    @Input()
+    public options!: AgChartOptions;
 
     constructor(elementDef: ElementRef) {
         this._nativeElement = elementDef.nativeElement;

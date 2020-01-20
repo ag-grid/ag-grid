@@ -1,25 +1,35 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AgChartsAngularComponent } from './ag-charts-angular.component';
+import {AgChartsAngularComponent} from './ag-charts-angular.component';
+import {Component} from "@angular/core";
 
 describe('AgChartsAngularComponent', () => {
-  let component: AgChartsAngularComponent;
-  let fixture: ComponentFixture<AgChartsAngularComponent>;
+    let component: TestHostComponent;
+    let fixture: ComponentFixture<TestHostComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AgChartsAngularComponent ]
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [AgChartsAngularComponent, TestHostComponent]
+        })
+            .compileComponents();
+    }));
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(TestHostComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
+
+    @Component({
+        selector: `host-component`,
+        template: `
+            <ag-charts-angular options="options"></ag-charts-angular>`
     })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AgChartsAngularComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    class TestHostComponent {
+        options = {}
+    }
 });
