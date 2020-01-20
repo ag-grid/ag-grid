@@ -125,7 +125,14 @@ export const generalConfig = Object.freeze({
         }
     },
     title: getCaptionOptions('title', 'Title', 18, 'bold'),
-    subtitle: getCaptionOptions('subtitle', 'Subtitle', 14, 'normal'),
+    subtitle: {
+        ...getCaptionOptions('subtitle', 'Subtitle', 14, 'normal'),
+        enabled: {
+            default: true,
+            description: `Whether the subtitle should be shown or not. Note: a subtitle will only be shown if a title is also visible.`,
+            editor: BooleanEditor,
+        },
+    },
     legend: {
         enabled: {
             default: true,
@@ -211,7 +218,7 @@ export const axisConfig = Object.freeze({
         type: 'number',
         description: 'The rotation of the axis in degrees.',
     },
-    title: getCaptionOptions('axis title', 'Axis title', 14, 'bold'),
+    title: getCaptionOptions('axis title', 'Axis Title', 14, 'bold'),
     line: {
         width: {
             default: 1,
@@ -251,7 +258,7 @@ export const axisConfig = Object.freeze({
             description: 'A hint of how many ticks to use across an axis.',
             editor: NumberEditor,
             min: 0,
-            max: 100,
+            max: 50,
         }
     },
     label: {
@@ -390,7 +397,7 @@ export const barSeriesConfig = Object.freeze({
         editor: NumberEditor,
         min: 0,
         max: 1,
-        step: 0.1,
+        step: 0.05,
     },
     strokes: {
         default: [
@@ -411,7 +418,7 @@ export const barSeriesConfig = Object.freeze({
         editor: NumberEditor,
         min: 0,
         max: 1,
-        step: 0.1,
+        step: 0.05,
     },
     strokeWidth: {
         default: 1,

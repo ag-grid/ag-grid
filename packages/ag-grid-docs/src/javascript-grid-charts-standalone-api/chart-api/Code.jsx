@@ -7,7 +7,7 @@ export const Code = ({ options }) => <div className='code'>
     <ApiCode options={options} />
 </div>;
 
-const OptionsCode = ({ options }) => <pre>// create new chart<br />AgChart.create({formatJson(options)});</pre>;
+const OptionsCode = ({ options }) => <pre>// create new chart<br />chart = AgChart.create({formatJson(options)});</pre>;
 
 const ApiCode = ({ options }) => {
     const lines = ['// update existing chart'];

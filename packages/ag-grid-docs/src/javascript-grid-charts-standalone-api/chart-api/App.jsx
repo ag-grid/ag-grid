@@ -86,9 +86,9 @@ export class App extends React.Component {
         const keys = this.getKeys(expression);
         const parentKeys = [...keys];
         parentKeys.pop();
-        const defaultParent = { ...this.getDefaultValue(parentKeys.join('.')) };
+        const defaultParent = { ...this.getDefaultValue(parentKeys.join('.')) || this.state.defaults };
         const defaultValue = defaultParent[keys[keys.length - 1]];
-        const removeUnneededKeys = true;
+        const removeUnneededKeys = false;
 
         const removeUnneededKey = () => {
             if (!removeUnneededKeys || (value !== defaultValue && JSON.stringify(value) !== JSON.stringify(defaultValue))) {
