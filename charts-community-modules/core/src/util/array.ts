@@ -63,3 +63,34 @@ export function numericExtent<T>(values: T[]): [number, number] | undefined {
 export function sumPositiveValues(array: number[]): number {
     return array.reduce((total, value) => value > 0 ? total + value : total, 0);
 }
+
+export function findMinMax(values: number[]): { min: number, max: number } {
+    let min = 0;
+    let max = 0;
+
+    for (const value of values) {
+        if (value < 0) {
+            min += value;
+        } else {
+            max += value;
+        }
+    }
+
+    return { min, max };
+}
+
+export function findLargestMinMax(totals: { min: number, max: number }[]): { min: number, max: number } {
+    let min = 0;
+    let max = 0;
+
+    for (const total of totals) {
+        if (total.min < min) {
+            min = total.min;
+        }
+        if (total.max > max) {
+            max = total.max;
+        }
+    }
+
+    return { min, max };
+}

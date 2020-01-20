@@ -12,7 +12,7 @@ import {
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
-import { sumPositiveValues } from "../../../util/array";
+import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
@@ -300,7 +300,7 @@ export class ColumnSeries extends CartesianSeries {
         //   [10, -15, 20]
         // ]
 
-        const ySums = this.yData.map(values => sumPositiveValues(values)); // used for normalization of stacked columns
+        const yMinMax = this.yData.map(values => findMinMax(values)); // used for normalization of stacked columns
         const { yData, normalizedTo } = this;
 
         let yMin: number = Infinity;
@@ -315,15 +315,23 @@ export class ColumnSeries extends CartesianSeries {
             yMin = Math.min(0, ...yData.map(values => Math.min(...values)));
             yMax = Math.max(...yData.map(values => Math.max(...values)));
         } else { // stacked or regular
+            const yLargestMinMax = findLargestMinMax(yMinMax);
+
             if (normalizedTo && isFinite(normalizedTo)) {
-                yMin = 0;
+                yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
                 yMax = normalizedTo;
-                yData.forEach((stackValues, i) => stackValues.forEach((y, j) => stackValues[j] = y / ySums[i] * normalizedTo));
+                yData.forEach((stackValues, i) => stackValues.forEach((y, j) => {
+                    if (y < 0) {
+                        stackValues[j] = -y / yMinMax[i].min * normalizedTo;
+                    } else {
+                        stackValues[j] = y / yMinMax[i].max * normalizedTo;
+                    }
+                }));
             } else {
                 // Find the height of each stack in the positive and negative directions,
                 // then find the tallest stacks in both directions.
-                yMin = Math.min(0, ...yData.map(values => values.reduce((min, value) => value < 0 ? min - value : min, 0)));
-                yMax = Math.max(...yData.map(values => values.reduce((max, value) => value > 0 ? max + value : max, 0)));
+                yMin = yLargestMinMax.min;
+                yMax = yLargestMinMax.max;
             }
         }
 
@@ -392,15 +400,17 @@ export class ColumnSeries extends CartesianSeries {
         const selectionData: SelectionDatum[] = [];
 
         xData.forEach((category, i) => {
-            const values = yData[i];
+            const stackValues = yData[i];
             const seriesDatum = data[i];
             const x = xScale.convert(category);
 
-            let prev = 0;
+            let prevMin = 0;
+            let prevMax = 0;
 
-            values.forEach((curr, j) => {
+            stackValues.forEach((curr, j) => {
                 const yKey = yKeys[j];
                 const columnX = grouped ? x + groupScale.convert(yKey) : x;
+                const prev = curr < 0 ? prevMin : prevMax;
                 const y = yScale.convert(grouped ? curr : prev + curr);
                 const bottomY = yScale.convert(grouped ? 0 : prev);
                 const yValue = seriesDatum[yKey]; // unprocessed y-value
@@ -437,10 +447,12 @@ export class ColumnSeries extends CartesianSeries {
                     } : undefined
                 });
 
-                if (grouped) {
-                    prev = curr;
-                } else {
-                    prev += curr;
+                if (!grouped) {
+                    if (curr < 0) {
+                        prevMin += curr;
+                    } else {
+                        prevMax += curr;
+                    }
                 }
             });
         });
