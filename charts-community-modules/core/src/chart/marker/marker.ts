@@ -24,7 +24,7 @@ export abstract class Marker extends Path {
         return this._y;
     }
 
-    protected _size: number = 4;
+    protected _size: number = 12;
     set size(value: number) {
         if (this._size !== value) {
             this._size = Math.abs(value);
