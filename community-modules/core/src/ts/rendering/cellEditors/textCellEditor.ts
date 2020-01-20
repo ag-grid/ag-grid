@@ -100,6 +100,12 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         eInput.select();
     }
 
+    public focusOut(): void {
+        if (_.isBrowserIE()) {
+            this.eInput.setSelectionRange(0, 0);
+        }
+    }
+
     public getValue(): any {
         const eInput = this.eInput;
         return this.params.parseValue(eInput.value);
