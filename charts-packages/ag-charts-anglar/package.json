@@ -48,5 +48,10 @@
     "tsickle": "^0.37.0",
     "tslint": "~5.15.0",
     "typescript": "~3.5.3"
+  },
+  "module_ivy_ngcc": "__ivy_ngcc__/dist/ag-charts-angular/fesm5/ag-charts-angular.js",
+  "__processed_by_ivy_ngcc__": {
+    "module": "8.2.14",
+    "typings": "8.2.14"
   }
 }
