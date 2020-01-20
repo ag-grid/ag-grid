@@ -123,7 +123,7 @@ export class Options extends React.PureComponent {
     render() {
         return <div className='options'>
             <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value })} />
-            <div>{this.generateOptions(this.config)}</div>
+            <div className='options__content'>{this.generateOptions(this.config)}</div>
         </div>;
     }
 };
