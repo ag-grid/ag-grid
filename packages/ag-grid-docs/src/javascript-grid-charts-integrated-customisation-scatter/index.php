@@ -16,7 +16,7 @@ In addition to the <a href="../javascript-grid-charts-integrated-customisation-g
 
 <h2>Option Interfaces</h2>
 
-<snippet>
+<snippet language="ts">
 interface ScatterChartOptions {
     seriesDefaults: {
         // The fill colours used by the series' markers

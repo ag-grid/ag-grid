@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-modules/">module</a>, which can be imported as follows:
     </p>
 
-    <snippet>
+    <snippet language="ts">
 // import all Enterprise modules
 import { ModuleRegistry, AllModules } from '@ag-grid-enterprise/all-modules';
 
@@ -75,7 +75,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ChartsModule]);
         To enable charting in the grid set the following grid option:
     </p>
 
-<snippet>
+<snippet language="ts">
 gridOptions = {
     enableCharts: true
 }
@@ -88,7 +88,7 @@ gridOptions = {
         option:
     </p>
 
-<snippet>
+<snippet language="ts">
 gridOptions = {
     enableRangeSelection: true
 }

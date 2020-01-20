@@ -2,14 +2,30 @@ import React from 'react';
 import './Code.css';
 import { formatJson } from "./utils.jsx";
 
-export const Code = ({ options }) => <div className='code'>
-    <OptionsCode options={options} />
-    <ApiCode options={options} />
-</div>;
+export const Code = ({ framework, options }) => {
+    let Code;
 
-const OptionsCode = ({ options }) => <pre>// create new chart<br />chart = AgChart.create({formatJson(options)});</pre>;
+    switch (framework) {
+        case 'vanilla':
+            Code = VanillaCode;
+            break;
+        case 'react':
+            Code = ReactCode;
+            break;
+        case 'angular':
+            Code = AngularCode;
+            break;
+        case 'vue':
+            Code = VueCode;
+            break;
+    }
 
-const ApiCode = ({ options }) => {
+    return <div className='code'>
+        {Code && <Code options={options} />}
+    </div>;
+};
+
+const VanillaCode = ({ options }) => {
     const lines = ['// update existing chart'];
     const extractLines = (prefix, object) => {
         if (Array.isArray(object) && ['chart.axes', 'chart.series'].indexOf(prefix) < 0) {
@@ -31,5 +47,32 @@ const ApiCode = ({ options }) => {
 
     extractLines('chart', options);
 
-    return lines.length > 1 && <pre>{lines.join('\n')}</pre>;
+    return <React.Fragment>
+        <pre>// create new chart<br />chart = AgChart.create({formatJson(options)});</pre>
+        {lines.length > 1 && <pre>{lines.join('\n')}</pre>}
+    </React.Fragment>;
 };
+
+const ReactCode = ({ options }) => {
+    return <pre>
+const options = {formatJson(options)};
+
+{`\n\n<AgChartsReact options={options} />;`}
+    </pre>;
+}
+
+const AngularCode = ({ options }) => {
+    return <pre>
+const options = {formatJson(options)};
+
+{`\n\n<ag-charts-angular [options]="options"></ag-charts-angular>`}
+    </pre>;
+}
+
+const VueCode = ({ options }) => {
+    return <pre>
+const options = {formatJson(options)};
+
+{`\n\n<ag-charts-vue :options="options"></ag-charts-vue>`}
+    </pre>;
+}

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Option Interfaces</h2>
 
-<snippet>
+<snippet language="ts">
 interface ChartOptions {
     width: number, // default: 800
     height: number; // default: 400

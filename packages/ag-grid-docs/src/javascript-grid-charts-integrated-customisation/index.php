@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     The primary mechanism for customising charts is via the following <code>gridOptions</code> callback:
 </p>
 
-<snippet>
+<snippet language="ts">
 gridOptions.processChartOptions?(params: ProcessChartOptionsParams): ChartOptions;
 
 interface ProcessChartOptionsParams {

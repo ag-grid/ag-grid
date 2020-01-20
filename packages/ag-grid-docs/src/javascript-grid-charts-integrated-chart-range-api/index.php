@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     as follows:
 </p>
 
-<snippet>
+<snippet language="ts">
 function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
 
 interface CreateRangeChartParams {
@@ -175,7 +175,7 @@ interface ProcessChartOptionsParams {
     generated from all data in the grid:
 </p>
 
-<snippet>
+<snippet language="ts">
 function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
 
 interface CreatePivotChartParams {
@@ -201,7 +201,7 @@ interface CreatePivotChartParams {
     easily used with the other API methods to later recreate the chart. You can also retrieve a base64 encoded image rendered from the chart in the model.
 </p>
 
-<snippet>
+<snippet language="ts">
 function getChartModels(): ChartModel[];
 
 interface ChartModel {

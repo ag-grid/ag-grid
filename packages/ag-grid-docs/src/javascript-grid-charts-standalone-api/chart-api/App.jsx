@@ -180,7 +180,7 @@ export class App extends React.Component {
         return <div className="app">
             <Chart options={options} />
             <Options updateOptionDefault={this.updateOptionDefault} updateOption={this.updateOption} />
-            <Code options={options} />
+            <Code framework={this.state.framework} options={options} />
         </div>;
     }
 }

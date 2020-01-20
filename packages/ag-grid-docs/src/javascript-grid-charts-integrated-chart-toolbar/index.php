@@ -132,7 +132,7 @@ include '../documentation-main/documentation_header.php';
         interface:
     </p>
 
-<snippet>
+<snippet language="ts">
 interface GridOptions {
     getChartToolbarItems(params: GetChartToolbarItemsParams): string[];
 }

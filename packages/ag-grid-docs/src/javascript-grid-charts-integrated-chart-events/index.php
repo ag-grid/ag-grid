@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     This event is raised whenever a chart is first created.
 </p>
 
-<snippet>
+<snippet language="ts">
 interface ChartCreated {
     type: string; // 'chartCreated'
     chartId: string;
@@ -36,7 +36,7 @@ interface ChartCreated {
     information about the range, allowing you to recreate the chart.
 </p>
 
-<snippet>
+<snippet language="ts">
 interface ChartRangeSelectionChanged {
     type: string; // 'chartRangeSelectionChanged'
     id: string;
@@ -66,7 +66,7 @@ interface CellRangeParams {
     Formatting changes made by users through the Format Panel will raise the <code>ChartOptionsChanged</code> event:
 </p>
 
-<snippet>
+<snippet language="ts">
 interface ChartOptionsChanged {
     type: string; // 'chartOptionsChanged'
     chartId: string;
@@ -103,7 +103,7 @@ type ChartType =
 
 <p>This is raised when a chart is destroyed.</p>
 
-<snippet>
+<snippet language="ts">
 interface ChartDestroyed {
     type: string; // 'chartDestroyed'
     chartId: string;

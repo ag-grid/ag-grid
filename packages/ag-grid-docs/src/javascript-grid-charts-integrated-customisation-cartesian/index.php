@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Option Interfaces</h2>
 
-<snippet>
+<snippet language="ts">
 interface CartesianChartOptions {
     xAxis: AxisOptions;
     yAxis: AxisOptions;

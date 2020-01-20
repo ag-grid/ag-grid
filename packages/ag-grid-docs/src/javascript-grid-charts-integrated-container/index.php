@@ -19,12 +19,12 @@ include '../documentation-main/documentation_header.php';
         <code>createChartContainer(chartRef)</code>. The interface is as follows:
     </p>
 
-    <snippet>
+    <snippet language="ts">
 function createChartContainer(chartRef: ChartRef): void;
 
 interface ChartRef {
     chartElement: HTMLElement;
-    destroyChart: () => void; 
+    destroyChart: () => void;
 }</snippet>
 
     <p>

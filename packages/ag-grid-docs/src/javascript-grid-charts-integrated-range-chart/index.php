@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         should be considered within the context of charting. The allowed values are shown below:
     </p>
 
-    <snippet>
+    <snippet language="ts">
         ColDef.chartDataType = 'category' | 'series' | 'excluded' | undefined
     </snippet>
 
@@ -128,7 +128,7 @@ include '../documentation-main/documentation_header.php';
         The following column definitions show how the different <code>ColDef.chartDataType</code> values are applied:
     </p>
 
-    <snippet>
+    <snippet language="ts">
         // 'category' columns
         { field: 'athlete', chartDataType: 'category' },
         { field: 'age', chartDataType: 'category' }, // despite containing numbers
