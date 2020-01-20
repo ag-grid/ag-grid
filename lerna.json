@@ -5,7 +5,8 @@
     "charts-community-modules/*",
     "packages/*",
     "examples-charts/*",
-    "examples-grid/*"
+    "examples-grid/*",
+    "charts-packages/*"
   ],
   "command": {
     "bootstrap": {

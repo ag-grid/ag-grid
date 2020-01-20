@@ -11,6 +11,7 @@
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/react/umd" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-anglar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/ag-grid/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/node_modules.nosync" />

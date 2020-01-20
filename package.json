@@ -67,5 +67,6 @@
     "terser": "^4.3.9",
     "typescript": "^3.7.2",
     "walk": "^2.3.14"
-  }
+  },
+  "dependencies": {}
 }

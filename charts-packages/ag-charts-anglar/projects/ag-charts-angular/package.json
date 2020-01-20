@@ -1,0 +1,9 @@
+{
+  "name": "ag-charts-angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^8.2.14",
+    "@angular/core": "^8.2.14",
+    "ag-charts-community": "~22.1.1"
+  }
+}

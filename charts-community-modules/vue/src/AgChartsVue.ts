@@ -26,7 +26,6 @@ export interface AgChartOptions {
     legend?: AgLegendProps;
 }
 
-
 @Component({
     props: {
         options: {},
