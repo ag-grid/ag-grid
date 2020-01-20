@@ -4,7 +4,7 @@ import { formatJson } from './utils.jsx';
 import { generalConfig, axisConfig, barSeriesConfig } from './config.jsx';
 
 const Section = ({ title, isVisible, children }) => {
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
 
     return <div className={`section ${isVisible ? '' : 'section--hidden'} ${expanded ? 'section--expanded' : ''}`}>
         <h2 className={`section__heading ${expanded ? 'section__heading--expanded' : ''}`}

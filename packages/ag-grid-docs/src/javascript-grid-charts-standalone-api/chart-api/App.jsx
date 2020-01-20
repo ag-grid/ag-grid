@@ -10,15 +10,15 @@ const appName = 'chart-api';
 
 const createOptionsJson = options => {
     const json = {
-        ...options.chart,
-        axes: options.axis && Object.keys(options.axis).length > 0 ? [{
+        ...options,
+        axes: options.axes && Object.keys(options.axes).length > 0 ? [{
             type: 'category',
             position: 'bottom',
         },
         {
             type: 'number',
             position: 'left',
-            ...options.axis,
+            ...options.axes,
         }] : undefined,
         series: [{
             type: 'column',
@@ -28,11 +28,11 @@ const createOptionsJson = options => {
         }]
     };
 
-    const gridStyle = json.axes && json.axes[0].gridStyle;
+    const gridStyle = json.axes && json.axes[1].gridStyle;
 
     if (gridStyle) {
         // special handling for gridStyle which requires an array
-        json.axes[0].gridStyle = [gridStyle];
+        json.axes[1].gridStyle = [gridStyle];
     }
 
     return json;
