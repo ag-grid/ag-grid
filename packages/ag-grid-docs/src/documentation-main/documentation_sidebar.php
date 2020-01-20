@@ -94,7 +94,11 @@
 
         <img src="../images/flags/united-kingdom.png">
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Sep 19th-20th</p>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 13th-14th</p>
+
+        <img src="../images/flags/no.png" style="height: 13px; width: 18px">
+        <a class="learn-more" href="https://angularconnect.com" target="_blank"> ngVikings</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 25-26</p>
     </div>
 </div>
     <!-- Begin Mailchimp Signup Form -->
