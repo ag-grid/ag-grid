@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {AgChartsAngularComponent} from './ag-charts-angular.component';
+import {AgChartsAngular} from './ag-charts-angular.component';
 import {Component} from "@angular/core";
 
 describe('AgChartsAngularComponent', () => {
@@ -9,7 +9,7 @@ describe('AgChartsAngularComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [AgChartsAngularComponent, TestHostComponent]
+            declarations: [AgChartsAngular, TestHostComponent]
         })
             .compileComponents();
     }));

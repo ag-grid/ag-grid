@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
-import { AgChartsAngularComponent } from './ag-charts-angular.component';
+import { AgChartsAngular } from './ag-charts-angular.component';
 
 
 
 @NgModule({
-  declarations: [AgChartsAngularComponent],
+  declarations: [AgChartsAngular],
   imports: [
   ],
-  exports: [AgChartsAngularComponent]
+  exports: [AgChartsAngular]
 })
 export class AgChartsAngularModule { }

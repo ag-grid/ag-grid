@@ -1,16 +1,16 @@
 {
-  "name": "ag-charts-anglar",
-  "version": "0.0.0",
+  "name": "ag-charts-angular",
+  "version": "22.1.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
     "test": "ng test  --watch false --browsers ChromeHeadless",
     "lint": "ng lint"
   },
   "private": false,
-  "main": "./dist/ag-charts-angular/public-api.d.ts",
-  "module": "./dist/ag-charts-angular/esm2015/public-api.js",
+  "main": "./dist/ag-charts-angular/bundles/ag-charts-angular.umd.js",
+  "module": "./dist/ag-charts-angular/fesm5/ag-charts-angular.js",
+  "typings": "./dist/ag-charts-angular/ag-charts-angular.d.ts",
   "dependencies": {
     "@angular/animations": "~8.2.14",
     "@angular/common": "~8.2.14",

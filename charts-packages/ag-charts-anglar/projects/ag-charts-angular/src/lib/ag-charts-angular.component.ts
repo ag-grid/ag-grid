@@ -33,7 +33,7 @@ export interface AgChartOptions {
     template: '',
     encapsulation: ViewEncapsulation.None
 })
-export class AgChartsAngularComponent implements AfterViewInit {
+export class AgChartsAngular implements AfterViewInit {
 
     private _nativeElement: any;
     private _initialised = false;
