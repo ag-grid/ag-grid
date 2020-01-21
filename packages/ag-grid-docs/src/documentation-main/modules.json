@@ -124,7 +124,7 @@
     "title": "Server Side Row Model",
     "module": "@ag-grid-enterprise/server-side-row-model",
     "enterprise": true,
-    "exported": "ServerSideRowModule"
+    "exported": "ServerSideRowModelModule"
   },
   {
     "title": "Set Filter",
