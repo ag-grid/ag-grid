@@ -16,7 +16,7 @@ export function getMarker(shape: string | (new () => Marker) = Square) {
                 return Circle;
             case 'cross':
                 return Cross;
-            case 'diamnond':
+            case 'diamond':
                 return Diamond;
             case 'plus':
                 return Plus;
@@ -26,5 +26,6 @@ export function getMarker(shape: string | (new () => Marker) = Square) {
                 return Square;
         }
     }
+
     return shape;
 }
