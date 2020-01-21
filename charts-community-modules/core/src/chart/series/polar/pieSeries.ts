@@ -18,6 +18,7 @@ import { Shape } from "../../../scene/shape/shape";
 import { reactive } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { Chart } from "../../chart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     index: number;
@@ -473,12 +474,12 @@ export class PieSeries extends PolarSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${text}</div>` : '';
+            const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${text}</div>` : '';
             const label = labelKey ? `${nodeDatum.seriesDatum[labelKey]}: ` : '';
             const value = nodeDatum.seriesDatum[angleKey];
             const formattedValue = typeof value === 'number' ? toFixed(value) : value.toString();
 
-            return `${titleString}<div class="ag-chart-tooltip-content">${label}${formattedValue}</div>`;
+            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${label}${formattedValue}</div>`;
         }
     }
 

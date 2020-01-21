@@ -14,6 +14,7 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
 import { reactive } from "../../../util/observable";
+import { Chart } from "../../chart";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -493,14 +494,14 @@ export class AreaSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const title = text ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${text}</div>` : '';
+            const title = text ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${text}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            return `${title}<div class="ag-chart-tooltip-content">${xString}: ${yString}</div>`;
+            return `${title}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
         }
     }
 

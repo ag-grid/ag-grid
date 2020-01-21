@@ -11,6 +11,7 @@ import { locale } from "../../../../util/time/format/defaultLocale";
 import { CartesianSeries } from "../cartesianSeries";
 import { reactive, Observable } from "../../../../util/observable";
 import { ChartAxisDirection } from "../../../chartAxis";
+import { Chart } from "../../../chart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     date: number;
@@ -375,7 +376,7 @@ export class OHLCSeries extends CartesianSeries {
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleHtml = title ? `<div class="ag-chart-tooltip-title" ${titleStyle}>${title}</div>` : '';
+            const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const dateValue = seriesDatum[dateKey];
             const openValue = seriesDatum[openKey];
@@ -392,7 +393,7 @@ export class OHLCSeries extends CartesianSeries {
                 contentHtml = `<b>${labelName}</b>: ${seriesDatum[labelKey]}<br>` + contentHtml;
             }
 
-            return `${titleHtml}<div class="ag-chart-tooltip-content">${contentHtml}</div>`;
+            return `${titleHtml}<div class="${Chart.defaultTooltipClass}-content">${contentHtml}</div>`;
         }
     }
 

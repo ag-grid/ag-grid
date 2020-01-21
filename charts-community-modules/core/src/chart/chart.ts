@@ -14,6 +14,45 @@ import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
 
+const defaultTooltipCss = `
+.ag-chart-tooltip {
+    display: table;
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 99999;
+    font: 12px Verdana, sans-serif;
+    color: black;
+    background: rgb(244, 244, 244);
+    border-radius: 5px;
+    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
+    opacity: 0;
+    transform: scale(0.90);
+    transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-property: opacity, transform;
+}
+
+.ag-chart-tooltip-visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.ag-chart-tooltip-title {
+    font-weight: bold;
+    padding: 7px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: white;
+    background-color: #888888;
+}
+
+.ag-chart-tooltip-content {
+    padding: 7px;
+    line-height: 1.7em;
+}
+`;
+
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
@@ -25,7 +64,7 @@ export abstract class Chart extends Observable {
     protected captionAutoPadding = 0; // top padding only
 
     private tooltipElement: HTMLDivElement;
-    private defaultTooltipClass = 'ag-chart-tooltip';
+    static readonly defaultTooltipClass = 'ag-chart-tooltip';
     tooltipOffset: [number, number] = [20, 20];
 
     set container(value: HTMLElement | undefined) {
@@ -70,6 +109,8 @@ export abstract class Chart extends Observable {
     @reactive('layoutChange') title?: Caption;
     @reactive('layoutChange') subtitle?: Caption;
 
+    private static tooltipDocuments: Document[] = [];
+
     protected constructor(document = window.document) {
         super();
 
@@ -90,6 +131,13 @@ export abstract class Chart extends Observable {
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
         document.body.appendChild(this.tooltipElement);
+
+        if (Chart.tooltipDocuments.indexOf(document) < 0) {
+            const styleElement = document.createElement('style');
+            styleElement.innerHTML = defaultTooltipCss;
+            document.head.appendChild(styleElement);
+            Chart.tooltipDocuments.push(document);
+        }
 
         this.setupListeners(scene.canvas.element);
 
@@ -634,7 +682,7 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private _tooltipClass: string = this.defaultTooltipClass;
+    private _tooltipClass: string = Chart.defaultTooltipClass;
     set tooltipClass(value: string) {
         if (this._tooltipClass !== value) {
             this._tooltipClass = value;
@@ -646,9 +694,9 @@ export abstract class Chart extends Observable {
     }
 
     private toggleTooltip(visible?: boolean) {
-        const classList = [this.defaultTooltipClass, this._tooltipClass];
+        const classList = [Chart.defaultTooltipClass, this.tooltipClass];
         if (visible) {
-            classList.push('ag-chart-tooltip-visible');
+            classList.push(`${Chart.defaultTooltipClass}-visible`);
         } else if (this.lastPick) {
             this.lastPick.series.dehighlightNode();
             this.lastPick = undefined;
