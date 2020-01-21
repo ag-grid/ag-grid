@@ -1,6 +1,10 @@
 import React from 'react';
 import './Code.css';
 import { formatJson } from "./utils.jsx";
+import * as Prism from "prismjs";
+import 'prismjs/components/prism-javascript';
+import "prismjs/components/prism-jsx";
+import './prism.css';
 
 export const Code = ({ framework, options }) => {
     let Code;
@@ -26,7 +30,7 @@ export const Code = ({ framework, options }) => {
 };
 
 const VanillaCode = ({ options }) => {
-    const lines = ['// update existing chart'];
+    const lines = [];
     const extractLines = (prefix, object) => {
         if (Array.isArray(object) && ['chart.axes', 'chart.series'].indexOf(prefix) < 0) {
             // arrays should be specified in their entirety
@@ -47,32 +51,57 @@ const VanillaCode = ({ options }) => {
 
     extractLines('chart', options);
 
-    return <React.Fragment>
-        <pre>// create new chart<br />chart = AgChart.create({formatJson(options)});</pre>
-        {lines.length > 1 && <pre>{lines.join('\n')}</pre>}
-    </React.Fragment>;
+    if (lines.length > 0) {
+        lines.unshift('\n// update existing chart');
+    }
+
+    lines.unshift('// create new chart', `chart = AgChart.create(${formatJson(options)});`);
+
+    return <CodeSnippet lines={lines} />;
 };
 
-const ReactCode = ({ options }) => {
-    return <pre>
-const options = {formatJson(options)};
+const ReactCode = ({ options }) => <CodeSnippet lines={[`const options = ${formatJson(options)};`, '', '<AgChartsReact options={options} />']} language='jsx' />;
 
-{`\n\n<AgChartsReact options={options} />;`}
-    </pre>;
-}
+const AngularCode = ({ options }) => <React.Fragment>
+    <CodeSnippet lines={[`const options = ${formatJson(options)};`]} />
+    <CodeSnippet lines={['<ag-charts-angular [options]="options">', '</ag-charts-angular>']} language='html' />
+</React.Fragment>;
 
-const AngularCode = ({ options }) => {
-    return <pre>
-const options = {formatJson(options)};
 
-{`\n\n<ag-charts-angular [options]="options"></ag-charts-angular>`}
-    </pre>;
-}
+const VueCode = ({ options }) => <React.Fragment>
+    <CodeSnippet lines={[`const options = ${formatJson(options)};`]} />
+    <CodeSnippet lines={['<ag-charts-vue :options="options"></ag-charts-vue>']} language='html' />
+</React.Fragment>;
 
-const VueCode = ({ options }) => {
-    return <pre>
-const options = {formatJson(options)};
+class CodeSnippet extends React.Component {
+    constructor(props) {
+        super(props);
+        this.ref = React.createRef();
+    }
 
-{`\n\n<ag-charts-vue :options="options"></ag-charts-vue>`}
-    </pre>;
+    componentDidMount() {
+        this.highlight();
+    }
+
+    componentDidUpdate() {
+        this.highlight();
+    }
+
+    highlight = () => {
+        if (this.ref && this.ref.current) {
+            Prism.highlightElement(this.ref.current);
+        }
+    };
+
+    render() {
+        const { lines, plugins, language = 'js' } = this.props;
+
+        return (
+            <pre className={!plugins ? "" : plugins.join(" ")}>
+                <code ref={this.ref} className={`language-${language}`}>
+                    {lines.join('\n')}
+                </code>
+            </pre>
+        );
+    }
 }

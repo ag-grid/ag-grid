@@ -1,9 +1,7 @@
 .code {
-    float: left;
-    width: calc(45% - 20px);
-    height: calc(100vh - 500px);
+    float: right;
+    width: calc(45% - 10px);
+    height: calc(100vh - 480px);
     overflow-y: auto;
-    padding: 10px;
-    background-color: #212529;
     color: #f8f9fa;
 }
