@@ -7,11 +7,7 @@ include '../documentation-main/documentation_header.php';
 define("skipInPageNav", true);
 ?>
 
-<h1 class="heading-enterprise">Charts Standalone - API</h1>
-
-<p class="lead">
-    This section introduces the standalone charts API.
-</p>
+<h1 class="heading">Charts Standalone - API Explorer</h1>
 
 <?= reactApp('chart-api', 'chart-api', array("exampleHeight" => 1000, "enterprise" => true, "frameworks" => true)) ?>
 
