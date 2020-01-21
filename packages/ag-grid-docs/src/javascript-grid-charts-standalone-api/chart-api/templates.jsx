@@ -26,7 +26,7 @@ export const getTemplates = (framework, options) => {
   switch (framework) {
     case 'vanilla':
       return {
-        "index.html": `<!DOCTYPE html>
+        'index.html': `<!DOCTYPE html>
 <html lang="en">
   <head>
     <style media="only screen">
@@ -58,7 +58,7 @@ export const getTemplates = (framework, options) => {
     <script src="main.js"></script>
   </body>
 </html>`,
-        "main.js": `var data = ${JSON.stringify(data, null, 2)};
+        'main.js': `var data = ${JSON.stringify(data, null, 2)};
 
 var options = ${JSON.stringify(options, null, 2)};
 
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
     case 'react':
       return {
-        "index.html": `<!DOCTYPE html>
+        'index.html': `<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>React example</title>
@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
         overflow: auto;
       }
     </style>
-    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div id="root">Loading React example&hellip;</div>
@@ -107,63 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
       var appLocation = '';
       var boilerplatePath = '';
       var systemJsMap = {
-    "@ag-grid-community/all-modules/dist/styles/ag-grid.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
-    "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
-    "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
-    "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
-    "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
-    "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css": "//localhost:8080/dev/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
-    "@ag-grid-community/all-modules": "//localhost:8080/dev/@ag-grid-community/all-modules",
-    "@ag-grid-community/client-side-row-model": "//localhost:8080/dev/@ag-grid-community/client-side-row-model",
-    "@ag-grid-community/core": "//localhost:8080/dev/@ag-grid-community/core",
-    "@ag-grid-community/csv-export": "//localhost:8080/dev/@ag-grid-community/csv-export",
-    "@ag-grid-community/infinite-row-model": "//localhost:8080/dev/@ag-grid-community/infinite-row-model",
     "ag-charts-community": "//localhost:8080/dev/ag-charts-community",
-    "@ag-grid-enterprise/all-modules": "//localhost:8080/dev/@ag-grid-enterprise/all-modules",
-    "@ag-grid-enterprise/charts": "//localhost:8080/dev/@ag-grid-enterprise/charts",
-    "@ag-grid-enterprise/clipboard": "//localhost:8080/dev/@ag-grid-enterprise/clipboard",
-    "@ag-grid-enterprise/column-tool-panel": "//localhost:8080/dev/@ag-grid-enterprise/column-tool-panel",
-    "@ag-grid-enterprise/core": "//localhost:8080/dev/@ag-grid-enterprise/core",
-    "@ag-grid-enterprise/excel-export": "//localhost:8080/dev/@ag-grid-enterprise/excel-export",
-    "@ag-grid-enterprise/filter-tool-panel": "//localhost:8080/dev/@ag-grid-enterprise/filter-tool-panel",
-    "@ag-grid-enterprise/master-detail": "//localhost:8080/dev/@ag-grid-enterprise/master-detail",
-    "@ag-grid-enterprise/menu": "//localhost:8080/dev/@ag-grid-enterprise/menu",
-    "@ag-grid-enterprise/range-selection": "//localhost:8080/dev/@ag-grid-enterprise/range-selection",
-    "@ag-grid-enterprise/rich-select": "//localhost:8080/dev/@ag-grid-enterprise/rich-select",
-    "@ag-grid-enterprise/row-grouping": "//localhost:8080/dev/@ag-grid-enterprise/row-grouping",
-    "@ag-grid-enterprise/server-side-row-model": "//localhost:8080/dev/@ag-grid-enterprise/server-side-row-model",
-    "@ag-grid-enterprise/set-filter": "//localhost:8080/dev/@ag-grid-enterprise/set-filter",
-    "@ag-grid-enterprise/side-bar": "//localhost:8080/dev/@ag-grid-enterprise/side-bar",
-    "@ag-grid-enterprise/status-bar": "//localhost:8080/dev/@ag-grid-enterprise/status-bar",
-    "@ag-grid-enterprise/viewport-row-model": "//localhost:8080/dev/@ag-grid-enterprise/viewport-row-model",
-    "@ag-grid-community/react": "//localhost:8080/dev/@ag-grid-community/react",
-    "@ag-grid-community/angular": "//localhost:8080/dev/@ag-grid-community/angular",
-    "@ag-grid-community/vue": "//localhost:8080/dev/@ag-grid-community/vue",
     "ag-charts-react": "//localhost:8080/dev/ag-charts-react"
-};
-      var systemJsPaths = {
-    "@ag-grid-community/all-modules": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-community/client-side-row-model": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-community/core": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-community/csv-export": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-community/infinite-row-model": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/all-modules": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/charts": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/clipboard": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/column-tool-panel": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/core": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/excel-export": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/filter-tool-panel": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/master-detail": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/menu": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/range-selection": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/rich-select": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/row-grouping": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/server-side-row-model": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/set-filter": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/side-bar": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/status-bar": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
-    "@ag-grid-enterprise/viewport-row-model": "//localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js"
 };
     </script>
 
@@ -175,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
   </body>
 </html>`,
-        "index.jsx": `"use strict";
+        'index.jsx': `"use strict";
 
 import React, { Component } from "react";
 import { render } from "react-dom";
@@ -261,113 +205,10 @@ render(<ChartExample />, document.querySelector("#root"));`,
               main: './main.js',
               defaultExtension: 'js'
           },
-          '@ag-grid-community/react': {
-              main: './main.js',
-              defaultExtension: 'js'
-          },
-          // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-          '@ag-grid-community/core/dist/cjs/utils': {
-              main: './index.js',
-              defaultExtension: 'js'
-          },
-          '@ag-grid-enterprise/charts/dist/cjs/chartAdaptor/chartComp/menu/settings/miniCharts': {
-              main: './index.js',
-              defaultExtension: 'js'
-          },
-          /* START OF MODULES - DO NOT DELETE */
-          '@ag-grid-community/all-modules': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-community/client-side-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-community/core': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-community/csv-export': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-community/infinite-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
           'ag-charts-community': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/all-modules': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/charts': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/clipboard': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/column-tool-panel': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/core': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/excel-export': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/filter-tool-panel': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/master-detail': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/menu': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/range-selection': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/rich-select': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/row-grouping': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/server-side-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/set-filter': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/side-bar': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/status-bar': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-          '@ag-grid-enterprise/viewport-row-model': {
-main: './dist/cjs/main.js',
-defaultExtension: 'js'
-},
-/* END OF MODULES - DO NOT DELETE */
+              main: './dist/cjs/main.js',
+              defaultExtension: 'js'
+          },
       },
       meta: {
           '*.jsx': {
