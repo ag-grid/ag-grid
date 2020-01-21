@@ -57,7 +57,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 #### Install dependencies
 
-    $ npm i --save ag-grid ag-grid-angular
+    $ npm i --save ag-grid-community ag-grid-angular
 
 #### Import `AgGridModule` and add it to the `App` module
 
@@ -73,8 +73,8 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 ### Import styles in `styles.css`
 
-    @import "~ag-grid/dist/styles/ag-grid.css";
-    @import "~ag-grid/dist/styles/ag-theme-balham.css";
+    @import "~ag-grid-community/dist/styles/ag-grid.css";
+    @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
 
 ### Set the grid's configuration in a parent component
 

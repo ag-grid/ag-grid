@@ -73,8 +73,8 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 ### Import styles in `styles.css`
 
-    @import "~ag-grid/dist/styles/ag-grid.css";
-    @import "~ag-grid/dist/styles/ag-theme-balham.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-grid.css";
+    @import "~@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 ### Set the grid's configuration in a parent component
 

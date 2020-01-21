@@ -73,10 +73,10 @@ Usage Overview
 
 #### Import the grid and styles
 
-    import {Grid} from "ag-grid/main";
+    import {Grid} from "@ag-grid-community/core";
 
-    import "ag-grid/dist/styles/ag-grid.css";
-    import "ag-grid/dist/styles/ag-theme-balham.css";
+    import "@ag-grid-community/core/dist/styles/ag-grid.css";
+    import "@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 ### Set configuration
 
