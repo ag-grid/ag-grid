@@ -10,7 +10,7 @@
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "precheck": "tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && gulp && tsc -p tsconfig.typings.json",
-    "test": "jest && npm run validate-es5",
+    "test": "jest",
     "validate-es5": "eslint dist/cjs",
     "package": "node ../../module-build/rollup/build.js",
     "build-es6": "npx gulp tsc-no-clean-es6",
