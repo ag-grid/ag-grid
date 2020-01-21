@@ -328,8 +328,6 @@ export class ColumnSeries extends CartesianSeries {
                     }
                 }));
             } else {
-                // Find the height of each stack in the positive and negative directions,
-                // then find the tallest stacks in both directions.
                 yMin = yLargestMinMax.min;
                 yMax = yLargestMinMax.max;
             }
@@ -400,14 +398,14 @@ export class ColumnSeries extends CartesianSeries {
         const selectionData: SelectionDatum[] = [];
 
         xData.forEach((category, i) => {
-            const stackValues = yData[i];
+            const yDatum = yData[i];
             const seriesDatum = data[i];
             const x = xScale.convert(category);
 
             let prevMin = 0;
             let prevMax = 0;
 
-            stackValues.forEach((curr, j) => {
+            yDatum.forEach((curr, j) => {
                 const yKey = yKeys[j];
                 const columnX = grouped ? x + groupScale.convert(yKey) : x;
                 const prev = curr < 0 ? prevMin : prevMax;
