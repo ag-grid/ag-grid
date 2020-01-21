@@ -192,6 +192,16 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-charts-react'
     });
+    lnk('../../charts-packages/ag-charts-angular/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-angular'
+    });
+    lnk('../../charts-community-modules/vue/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-vue'
+    });
 
 }
 
@@ -558,6 +568,8 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, '@ag-grid-community/vue');
             serveFramework(app, '@ag-grid-community/react');
             serveFramework(app, 'ag-charts-react');
+            serveFramework(app, 'ag-charts-angular');
+            serveFramework(app, 'ag-charts-vue');
 
             // build "packaged" landing page examples (for performance reasons)
             // these aren't watched and regenerated like the other examples

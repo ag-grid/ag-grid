@@ -67,7 +67,9 @@ if (USE_LOCAL) {
         "@ag-grid-community/react" => "$prefix/@ag-grid-community/react",
         "@ag-grid-community/angular" => "$prefix/@ag-grid-community/angular",
         "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue",
-        "ag-charts-react" => "$prefix/ag-charts-react"
+        "ag-charts-react" => "$prefix/ag-charts-react",
+        "ag-charts-angular" => "$prefix/ag-charts-angular",
+        "ag-charts-vue" => "$prefix/ag-charts-vue"
     );
 
     $systemJsCommunityPaths = array(
@@ -128,6 +130,8 @@ if (USE_LOCAL) {
         "@ag-grid-community/angular" => "npm:@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
         "@ag-grid-community/vue" => "npm:@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
         "ag-charts-react" => "npm:ag-charts-react@" . AG_CHART_REACT_VERSION . "/",
+        "ag-charts-angular" => "npm:ag-charts-angular@" . AG_CHART_ANGULAR_VERSION . "/",
+        "ag-charts-vue" => "npm:ag-charts-vue@" . AG_CHART_VUE_VERSION . "/",
         "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
     );
 

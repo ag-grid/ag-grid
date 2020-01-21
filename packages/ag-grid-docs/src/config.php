@@ -9,4 +9,6 @@ define('AG_GRID_REACT_VERSION', '$$LOCAL$$');
 define('AG_GRID_ANGULAR_VERSION', '$$LOCAL$$');
 define('AG_GRID_VUE_VERSION', '$$LOCAL$$');
 define('AG_CHART_REACT_VERSION', '$$LOCAL$$');
+define('AG_CHART_ANGULAR_VERSION', '$$LOCAL$$');
+define('AG_CHART_VUE_VERSION', '$$LOCAL$$');
 ?>

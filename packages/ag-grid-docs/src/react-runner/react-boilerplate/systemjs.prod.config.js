@@ -93,6 +93,14 @@
             'ag-charts-react': {
                 main: './main.js',
                 defaultExtension: 'js'
+            },
+            'ag-charts-angular': {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-vue': {
+                main: './main.js',
+                defaultExtension: 'js'
             }
         },
         meta: {
