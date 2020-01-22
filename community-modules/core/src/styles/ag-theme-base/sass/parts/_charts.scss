@@ -19,7 +19,7 @@
     .ag-chart-menu-icon:hover {
         background-color: darken($ag-background-color, 10%);
     }
-    
+
     .ag-chart-mini-thumbnail {
         border: 1px solid $ag-secondary-border-color;
         border-radius: 5px;
@@ -79,7 +79,7 @@
         margin-left: $ag-grid-size * 2;
         padding: $ag-grid-size;
     }
-    
+
     .ag-charts-format-sub-level-group-container {
         padding: $ag-grid-size;
     }
@@ -105,39 +105,4 @@
 
         background-color: $ag-control-panel-background-color;
     }
-
-    @at-root {
-        // FIXME chart tooltips are appended to the body without an .ag-theme-xyz parent, so they
-        // can't be themed correctly
-
-        .ag-chart-tooltip {
-            font: 12px Verdana, sans-serif;
-            color: black;
-            background: rgb(244, 244, 244);
-            border-radius: 5px;
-            box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-            transform: scale(0.90);
-            transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-            transition-property: opacity, transform;
-        }
-        
-        .ag-chart-tooltip-visible {
-            transform: scale(1);
-        }
-        
-        .ag-chart-tooltip-title {
-            font-weight: bold;
-            padding: 7px;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            color: white;
-            background-color: #888888;
-        }
-        
-        .ag-chart-tooltip-content {
-            padding: 7px;
-            line-height: 1.7em;
-        }
-    }
-
 }
