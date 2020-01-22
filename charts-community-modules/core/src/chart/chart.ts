@@ -135,7 +135,8 @@ export abstract class Chart extends Observable {
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
             const styleElement = document.createElement('style');
             styleElement.innerHTML = defaultTooltipCss;
-            document.head.appendChild(styleElement);
+            // Make sure the default tooltip style goes before other styles so it can be overridden.
+            document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Chart.tooltipDocuments.push(document);
         }
 
