@@ -17,13 +17,15 @@ docs.factory("formPostData", [
              * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
              * newWindow param allows for this possibility.
              */
-            var target = newWindow ? "_blank" : "_self";
-            var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-            angular.forEach(fields, function(value, name) {
-                var input = angular.element('<input type="hidden" name="' + name + '">');
+            const target = newWindow ? "_blank" : "_self";
+            const form: any = angular.element(`<form style="display: none;" method="post" action="${url}" target="${target}"></form>`);
+
+            angular.forEach(fields, (value, name) => {
+                const input = angular.element(`<input type="hidden" name="${name}">`);
                 input.attr("value", value);
                 form.append(input);
             });
+
             $document.find("body").append(form);
             form[0].submit();
             form.remove();
@@ -154,13 +156,9 @@ class ReactRunner {
         const typeConfig = this.config.app;
 
         this.boilerplatePath = typeConfig.boilerplatePath;
-
         this.resultUrl = typeConfig.resultUrl;
-
         this.currentType = type;
-
         this.noPlunker = this.config.options.noPlunker;
-
         this.openFwDropdown = false;
     }
 
@@ -220,20 +218,13 @@ docs.component("reactRunner", {
     </div>
 
     <div class="example-wrapper">
-        <ul role="tablist" class="primary">
+        <ul role="tablist" class="ghost">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}">
                     <i class="fa fa-link" aria-hidden="true"></i>{{$ctrl.title}}
                 </a>
             </li>
 
-            <example-tab
-                    value="'result'"
-                    current-value="'result'"
-                    title="'Result'"
-                    tooltip="'Live Result of the Example'"
-                    icon="'fa-play'">
-            </example-tab>
 
             <example-tab
                     ng-hide="$ctrl.noPlunker"
@@ -241,7 +232,7 @@ docs.component("reactRunner", {
                     title="'Plunker'"
                     tooltip="'Open Example in Plunker'"
                     id="$ctrl.id"
-                    icon="'fa-external-link'"
+                    icon="'fa-external-link-alt'"
                     on-click="$ctrl.openPlunker($event);">
             </example-tab>
         </ul>

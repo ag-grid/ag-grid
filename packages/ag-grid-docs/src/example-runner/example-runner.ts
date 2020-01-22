@@ -38,22 +38,24 @@ docs.directive("snippet", function() {
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function($document) {
-        return function(url, newWindow, fields) {
+    function($document: any) {
+        return function(url: any, newWindow: any, fields: any) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
-             * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
+             * If a user chooses to bypass pop-up blocker one time and click the link, they will arrive at
              * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
              * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
              * newWindow param allows for this possibility.
              */
-            var target = newWindow ? "_blank" : "_self";
-            var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-            angular.forEach(fields, function(value, name) {
-                var input = angular.element('<input type="hidden" name="' + name + '">');
+            const target = newWindow ? "_blank" : "_self";
+            const form: any = angular.element(`<form style="display: none;" method="post" action="${url}" target="${target}"></form>`);
+
+            angular.forEach(fields, (value, name) => {
+                const input = angular.element(`<input type="hidden" name="${name}">`);
                 input.attr("value", value);
                 form.append(input);
             });
+
             $document.find("body").append(form);
             form[0].submit();
             form.remove();
@@ -434,7 +436,7 @@ docs.component("exampleRunner", {
                 current-value="$ctrl.selectedTab"
                 title="'Plunker'"
                 tooltip="'Open Example in Plunker'"
-                icon="'fa-external-link'"
+                icon="'fa-external-link-alt'"
                 on-click="$ctrl.openPlunker($event); $event.preventDefault()">
             </example-tab>
 
