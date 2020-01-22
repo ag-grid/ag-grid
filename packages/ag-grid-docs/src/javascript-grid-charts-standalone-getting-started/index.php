@@ -79,7 +79,7 @@ const chart = AgChart.create({
 });
     </snippet>
 
-    <?= example('Basic Column Chart', 'basic-column', 'generated', array("enterprise" => true)) ?>
+//     <?= example('Basic Column Chart', 'basic-column', 'generated', array("enterprise" => true)) ?>
 
     <p>By default, the chart's padding is set to 20 on all sides of the chart and the legend's spacing is set to 20 as well.</p>
 

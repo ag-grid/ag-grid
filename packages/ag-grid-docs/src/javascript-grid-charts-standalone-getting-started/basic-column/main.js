@@ -1,4 +1,4 @@
-const data = [
+var data = [
     {
         beverage: 'Coffee',
         Q1: 450,
@@ -22,7 +22,7 @@ const data = [
     },
 ];
 
-const chart = AgChart.create({
+var chart = AgChart.create({
     data,
     container: document.body,
     title: {
