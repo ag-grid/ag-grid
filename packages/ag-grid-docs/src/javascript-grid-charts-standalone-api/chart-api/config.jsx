@@ -338,14 +338,79 @@ const seriesConfig = {
         editor: BooleanEditor,
     },
     tooltipEnabled: {
-        default: false,
+        default: true,
         description: 'Whether or not to show tooltips when the series are hovered over.',
         editor: BooleanEditor,
     },
+    tooltipRenderer: {
+        type: {
+            parameters: {
+                params: '{ datum, title, color, xKey, xName, yKey, yName }',
+            },
+            returnType: 'string'
+        },
+        description: 'Function used to create the content for tooltips.'
+    }
+};
+
+const markerConfig = {
+    marker: {
+        enabled: {
+            default: true,
+            description: 'Whether to show markers or not.',
+            editor: BooleanEditor,
+        },
+        shape: {
+            type: 'string | Marker',
+            default: 'circle',
+            description: 'The shape to use for the markers. You can also supply a custom marker by extending the <code>Marker</code> class and providing that.',
+            editor: PresetEditor,
+            options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle']
+        },
+        size: {
+            default: 8,
+            description: 'The size of the markers.',
+            editor: NumberEditor,
+            min: 1,
+            max: 20,
+        },
+        minSize: {
+            default: 12,
+            description: 'For series where the size of the marker is determined by the data, this determines the smallest size a marker can be.',
+            editor: NumberEditor,
+            min: 1,
+            max: 20,
+        },
+        fill: {
+            type: 'string',
+            description: 'The colour to use for marker fills. If this is not specified, the markers will take their fill from the series.',
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: 'The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series.',
+            editor: ColourEditor,
+        },
+        strokeWidth: {
+            type: 'number',
+            description: 'The width of the marker stroke. If this is not specified, the markers will take their stroke width from the series.',
+            editor: NumberEditor,
+            min: 0,
+            max: 10,
+        },
+        formatter: {
+            type: {
+                parameters: {
+                    params: '{ datum, fill, stroke, strokeWidth, size, highlighted, xKey, yKey }',
+                },
+                returnType: '{ fill, stroke, strokeWidth, size }'
+            },
+            description: 'Function used to return formatting for individual markers, based on the supplied information.',
+        }
+    }
 };
 
 export const barSeriesConfig = Object.freeze({
-    ...seriesConfig,
     xKey: {
         type: 'string',
         isRequired: true,
@@ -364,6 +429,7 @@ export const barSeriesConfig = Object.freeze({
         type: 'string[]',
         description: 'A human-readable description of the y-values.',
     },
+    ...seriesConfig,
     grouped: {
         default: false,
         description: 'Whether to show different y-values as separate bars (grouped) or not (stacked).',
@@ -475,7 +541,6 @@ export const barSeriesConfig = Object.freeze({
 });
 
 export const lineSeriesConfig = Object.freeze({
-    ...seriesConfig,
     xKey: {
         type: 'string',
         isRequired: true,
@@ -494,4 +559,56 @@ export const lineSeriesConfig = Object.freeze({
         type: 'string',
         description: 'A human-readable description of the y-values.',
     },
+    ...seriesConfig,
+    title: {
+        type: 'string',
+        description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
+        editor: StringEditor,
+    },
+    fill: {
+        default: '#f3622d',
+        description: 'The colour to use for the fill of the series.',
+        editor: ColourEditor,
+    },
+    fillOpacity: {
+        default: 1,
+        description: 'The opacity of the fill of the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    stroke: {
+        default: '#aa4520',
+        description: 'The colour to use for the strokes of the series.',
+        editor: ColourEditor,
+    },
+    strokeOpacity: {
+        default: 1,
+        description: 'The opacity of the stroke of the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    strokeWidth: {
+        default: 1,
+        description: 'The width of the stroke for the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 20,
+    },
+    highlightStyle: {
+        fill: {
+            default: 'yellow',
+            description: 'The fill colour of the markers when hovered over.',
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: 'The colour of the stroke around the marker when hovered over.',
+            editor: ColourEditor,
+        }
+    },
+    ...markerConfig,
 });

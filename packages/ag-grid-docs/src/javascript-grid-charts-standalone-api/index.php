@@ -9,6 +9,6 @@ define("skipInPageNav", true);
 
 <h1 class="heading">Charts Standalone - API Explorer</h1>
 
-<?= reactApp('chart-api', 'chart-api', array("exampleHeight" => 'calc(100vh - 300px)', "enterprise" => true, "frameworks" => true)) ?>
+<?= reactApp('chart-api', 'chart-api', array("exampleHeight" => 'calc(100vh - 330px)', "enterprise" => true, "frameworks" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
