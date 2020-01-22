@@ -612,3 +612,125 @@ export const lineSeriesConfig = Object.freeze({
     },
     ...markerConfig,
 });
+
+export const areaSeriesConfig = Object.freeze({
+    xKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve x-values from the data.',
+    },
+    xName: {
+        type: 'string',
+        description: 'A human-readable description of the x-values.',
+    },
+    yKeys: {
+        type: 'string[]',
+        isRequired: true,
+        description: 'The keys to use to retrieve y-values from the data.',
+    },
+    yNames: {
+        type: 'string[]',
+        description: 'A human-readable description of the y-values.',
+    },
+    ...seriesConfig,
+    normalizedTo: {
+        type: 'number',
+        description: 'The number to normalise the area stacks to.',
+        editor: NumberEditor,
+    },
+    fills: {
+        default: [
+            '#f3622d',
+            '#fba71b',
+            '#57b757',
+            '#41a9c9',
+            '#4258c9',
+            '#9a42c8',
+            '#c84164',
+            '#888888'
+        ],
+        description: 'Colours to cycle through for the fills of the series.',
+    },
+    fillOpacity: {
+        default: 1,
+        description: 'The opacity of the fill of the bars.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    strokes: {
+        default: [
+            '#aa4520',
+            '#b07513',
+            '#3d803d',
+            '#2d768d',
+            '#2e3e8d',
+            '#6c2e8c',
+            '#8c2d46',
+            '#5f5f5f'
+        ],
+        description: 'Colours to cycle through for the strokes of the series.',
+    },
+    strokeOpacity: {
+        default: 1,
+        description: 'The opacity of the stroke of the bars.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    strokeWidth: {
+        default: 1,
+        description: 'The width of the stroke around the bars.',
+        editor: NumberEditor,
+        min: 0,
+        max: 20,
+    },
+    shadow: {
+        enabled: {
+            default: true,
+            description: 'Whether the shadow is visible or not',
+            editor: BooleanEditor,
+        },
+        color: {
+            default: 'rgba(0, 0, 0, 0.5)',
+            description: 'Colour of the shadow.',
+            editor: ColourEditor,
+        },
+        xOffset: {
+            default: 0,
+            description: 'Horizontal offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        yOffset: {
+            default: 0,
+            description: 'Vertical offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        blur: {
+            default: 5,
+            description: 'How much to blur the shadow.',
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+        }
+    },
+    highlightStyle: {
+        fill: {
+            default: 'yellow',
+            description: 'The fill colour of the markers when hovered over.',
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: 'The colour of the stroke around the markers when hovered over.',
+            editor: ColourEditor,
+        }
+    },
+    ...markerConfig
+});

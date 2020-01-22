@@ -5,6 +5,7 @@ export const ChartTypeSelector = ({ type, onChange }) => {
     const options = {
         bar: 'Bar',
         line: 'Line',
+        area: 'Area',
     };
 
     return <select className="chart-type-selector" value={type} onChange={e => onChange(e.target.value)}>

@@ -52,6 +52,14 @@ const createOptionsJson = (chartType, options) => {
                 yKey: 'profit',
             }];
             break;
+        case 'area':
+            json.series = [{
+                type: 'area',
+                xKey: 'month',
+                yKeys: ['revenue', 'profit'],
+                ...options.series,
+            }];
+            break;
     }
 
     return json;
