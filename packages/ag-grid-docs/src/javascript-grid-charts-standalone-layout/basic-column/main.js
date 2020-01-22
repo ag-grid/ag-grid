@@ -23,7 +23,7 @@ var data = [
 ];
 
 var chart = AgChart.create({
-    data,
+    data: data,
     container: document.body,
     title: {
         text: 'Beverage Expenses'
