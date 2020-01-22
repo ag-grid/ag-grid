@@ -220,20 +220,19 @@ docs.component("reactRunner", {
     <div class="example-wrapper">
         <ul role="tablist" class="ghost">
             <li class="title">
-                <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}">
+                <a ng-if="$ctrl.title" href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}">
                     <i class="fa fa-link" aria-hidden="true"></i>{{$ctrl.title}}
                 </a>
             </li>
 
-
             <example-tab
-                    ng-hide="$ctrl.noPlunker"
-                    value="'plunker'"
-                    title="'Plunker'"
-                    tooltip="'Open Example in Plunker'"
-                    id="$ctrl.id"
-                    icon="'fa-external-link-alt'"
-                    on-click="$ctrl.openPlunker($event);">
+                ng-hide="$ctrl.noPlunker"
+                value="'plunker'"
+                title="'Plunker'"
+                tooltip="'Open Example in Plunker'"
+                id="$ctrl.id"
+                icon="'fa-external-link-alt'"
+                on-click="$ctrl.openPlunker($event);">
             </example-tab>
         </ul>
 

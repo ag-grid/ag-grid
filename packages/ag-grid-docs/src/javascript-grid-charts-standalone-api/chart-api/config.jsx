@@ -360,7 +360,7 @@ export const barSeriesConfig = Object.freeze({
         isRequired: true,
         description: 'The keys to use to retrieve y-values from the data.',
     },
-    yName: {
+    yNames: {
         type: 'string[]',
         description: 'A human-readable description of the y-values.',
     },
@@ -471,5 +471,27 @@ export const barSeriesConfig = Object.freeze({
             description: 'The colour of the stroke around the bar when hovered over.',
             editor: ColourEditor,
         }
+    },
+});
+
+export const lineSeriesConfig = Object.freeze({
+    ...seriesConfig,
+    xKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve x-values from the data.',
+    },
+    xName: {
+        type: 'string',
+        description: 'A human-readable description of the x-values.',
+    },
+    yKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve y-values from the data.',
+    },
+    yName: {
+        type: 'string',
+        description: 'A human-readable description of the y-values.',
     },
 });

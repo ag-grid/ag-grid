@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Options.css';
 import { formatJson } from './utils.jsx';
-import { generalConfig, axisConfig, barSeriesConfig } from './config.jsx';
+import * as Config from './config.jsx';
 
 const Section = ({ title, isVisible, children }) => {
     const [expanded, setExpanded] = useState(false);
@@ -59,12 +59,6 @@ export class Options extends React.PureComponent {
         searchText: '',
     };
 
-    config = {
-        ...generalConfig,
-        axes: axisConfig,
-        series: barSeriesConfig,
-    };
-
     isVisible = name => {
         const { searchText } = this.state;
         const trimmedSearchText = searchText && searchText.trim();
@@ -85,6 +79,7 @@ export class Options extends React.PureComponent {
 
         Object.keys(options).filter(name => name !== 'meta').forEach(name => {
             const key = `${prefix}${name}`;
+            const componentKey = `${this.props.chartType}_${key}`;
             const config = options[name];
             const {
                 type,
@@ -99,7 +94,7 @@ export class Options extends React.PureComponent {
                 this.props.updateOptionDefault(key, defaultValue);
 
                 elements.push(<Option
-                    key={key}
+                    key={componentKey}
                     name={name}
                     isVisible={this.isVisible(name)}
                     type={type}
@@ -113,7 +108,7 @@ export class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<Section key={key} title={name} isVisible={this.isSectionVisible(config)}>
+                elements.push(<Section key={componentKey} title={name} isVisible={this.isSectionVisible(config)}>
                     {this.generateOptions(config, `${key}.`, requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
                 </Section>);
             }
@@ -123,9 +118,15 @@ export class Options extends React.PureComponent {
     };
 
     render() {
+        const config = {
+            ...Config.generalConfig,
+            axes: Config.axisConfig,
+            series: Config[`${this.props.chartType}SeriesConfig`],
+        };
+
         return <div className='options'>
             <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value })} />
-            <div className='options__content'>{this.generateOptions(this.config)}</div>
+            <div className='options__content'>{this.generateOptions(config)}</div>
         </div>;
     }
 };

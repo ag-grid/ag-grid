@@ -1,14 +1,15 @@
 import React from 'react';
 import './App.css';
-import { getTemplates } from "./templates.jsx";
-import { Chart } from "./Chart.jsx";
-import { Options } from "./Options.jsx";
-import { Code } from "./Code.jsx";
-import { deepClone } from "./utils.jsx";
+import { getTemplates } from './templates.jsx';
+import { Chart } from './Chart.jsx';
+import { Options } from './Options.jsx';
+import { Code } from './Code.jsx';
+import { ChartTypeSelector } from './ChartTypeSelector.jsx';
+import { deepClone } from './utils.jsx';
 
 const appName = 'chart-api';
 
-const createOptionsJson = options => {
+const createOptionsJson = (chartType, options) => {
     const json = {
         ...options,
         axes: options.axes && Object.keys(options.axes).length > 0 ? [{
@@ -20,12 +21,6 @@ const createOptionsJson = options => {
             position: 'left',
             ...options.axes,
         }] : undefined,
-        series: [{
-            type: 'column',
-            xKey: 'month',
-            yKeys: ['revenue', 'profit'],
-            ...options.series,
-        }]
     };
 
     const gridStyle = json.axes && json.axes[1].gridStyle;
@@ -35,12 +30,37 @@ const createOptionsJson = options => {
         json.axes[1].gridStyle = [gridStyle];
     }
 
+    switch (chartType) {
+        case 'bar':
+            json.series = [{
+                type: 'column',
+                xKey: 'month',
+                yKeys: ['revenue', 'profit'],
+                ...options.series,
+            }];
+            break;
+        case 'line':
+            json.series = [{
+                type: 'line',
+                xKey: 'month',
+                yKey: 'revenue',
+                ...options.series,
+            },
+            {
+                type: 'line',
+                xKey: 'month',
+                yKey: 'profit',
+            }];
+            break;
+    }
+
     return json;
 };
 
 export class App extends React.Component {
     state = {
         framework: this.getCurrentFramework(),
+        chartType: 'bar',
         options: {},
         defaults: {},
     };
@@ -152,11 +172,15 @@ export class App extends React.Component {
         }, removeUnneededKey);
     };
 
+    changeChartType = type => {
+        this.setState({ chartType: type, defaults: {}, options: {} });
+    };
+
     getCurrentFramework() {
         const frameworkDropdownElement = window.parent.document.querySelector(`[data-framework-dropdown=${appName}]`);
         const currentFramework = frameworkDropdownElement && frameworkDropdownElement.getAttribute('data-current-framework');
         return currentFramework || 'vanilla';
-    }
+    };
 
     componentDidMount() {
         this.componentDidUpdate();
@@ -169,19 +193,23 @@ export class App extends React.Component {
     componentDidUpdate() {
         window.parent.document.getElementById(appName).setAttribute('data-context',
             JSON.stringify({
-                files: getTemplates(this.state.framework, createOptionsJson(this.state.options))
+                files: getTemplates(this.state.framework, createOptionsJson(this.state.chartType, this.state.options))
             })
         );
     }
 
     render() {
-        const options = createOptionsJson(this.state.options);
+        const options = createOptionsJson(this.state.chartType, this.state.options);
 
         return <div className="container">
+            <ChartTypeSelector type={this.state.chartType} onChange={value => this.changeChartType(value)} />
             <div className="container__chart"><Chart options={options} /></div>
             <div className="container__bottom">
                 <div className="container__options">
-                    <Options updateOptionDefault={this.updateOptionDefault} updateOption={this.updateOption} />
+                    <Options
+                        chartType={this.state.chartType}
+                        updateOptionDefault={this.updateOptionDefault}
+                        updateOption={this.updateOption} />
                 </div>
                 <div className="container__code"><Code framework={this.state.framework} options={options} /></div>
             </div>
