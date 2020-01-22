@@ -1000,7 +1000,14 @@
               },
               {
                 "title": "Features",
-                "url": "javascript-grid-charts-standalone-features/"
+                "url": "javascript-grid-charts-standalone-features/",
+                "items": [
+                  {
+                    "title": "Layout",
+                    "url": "javascript-grid-charts-standalone-layout/",
+                    "enterprise": true
+                  }
+                ]
               },
               {
                 "title": "API",

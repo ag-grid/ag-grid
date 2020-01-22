@@ -19,7 +19,7 @@ var data = [
         Q2: 170,
         Q3: 190,
         Q4: 200
-    }
+    },
 ];
 
 var chart = AgChart.create({

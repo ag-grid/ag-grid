@@ -12,17 +12,12 @@ include '../documentation-main/documentation_header.php';
        This section covers how to get started with the standalone charting library.
     </p>
 
-    <h2>What makes a chart?</h2>
+    <h2>Your first chart</h2>
 
     <p>
-        <img alt="Chart Layout" src="cartesian-chart-layout.png" style="margin-bottom: 0px; width: 100%">
+        Let's say you want to visualize how much is spent on coffee, milk and tea in your company each quarter and in total.
+        Your data might look something like this:
     </p>
-
-    <p>Each chart is composed of a single or multiple series and (optionally) a legend, axes, and captions, such as title and subtitle. All these components are managed by the chart's layout engine and are sized and positioned appropriately based on chart's dimensions, the nature of the data and the user's config.</p>
-
-    <p>It helps to understand the way layout works to configure presentation to one's liking and to get expected results on chart size or data changes.</p>
-
-    <p>For example, given the data:</p>
 
     <snippet language="ts">
 const data = [
@@ -50,38 +45,63 @@ const data = [
 ];
     </snippet>
 
-    <p>we can create the chart pictured above using the following chart factory config:</p>
+    <p>To plot this data we can use the following chart factory config:</p>
 
     <snippet language="ts">
 const chart = AgChart.create({
-    data,
+    data: data,
     container: document.body,
-    title: {
-        text: 'Beverage Expenses'
-    },
-    subtitle: {
-        text: 'per quarter'
-    },
-    padding: {
-        top: 40,
-        right: 40,
-        bottom: 40,
-        left: 40
-    },
     series: [{
         type: 'column',
         xKey: 'beverage',
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-    }],
-    legend: {
-        spacing: 40
-    }
+    }]
 });
     </snippet>
 
-//     <?= example('Basic Column Chart', 'basic-column', 'generated', array("enterprise" => true)) ?>
+    <p>
+        Here we specify
+        <ul>
+            <li>the data we want to use by passing it to the <code>data</code> property</li>
+            <li>the <code>container</code> element for the chart (the chart won't be attached to the DOM without it)</li>
+            <li>and the series <code>type</code> to use to render the data</li>
+        </ul>
+    </p>
 
-    <p>By default, the chart's padding is set to 20 on all sides of the chart and the legend's spacing is set to 20 as well.</p>
+    <p>
+        The <code>series</code> property is an array because
+        it's possible to put multiple series of different kind into a single chart, but let's not
+        go there just now.
+    </p>
+
+    <p>
+        Each series should specify the keys it uses to fetch the data it renders.
+        In this case, we want to have three stacked columns, one per beverage, so we use the <code>xKey</code>
+        to fetch the beverage type and the <code>yKeys</code> to fetch the amount per quarter.
+        The <code>xKey</code> will determine how many stacked columns to create, the <code>yKeys</code> the hight
+        of individual components in each column.
+    </p>
+
+    <p>This config produces the following chart:</p>
+
+    <p>
+        <img alt="Column Chart" src="beverage-expenses-no-captions.png" style="margin-bottom: 0px; width: 100%">
+    </p>
+
+    <p>If we then want to add title and subtitle captions to the chart, we can simply add this to our config:</p>
+
+    <snippet language="ts">
+title: {
+    text: 'Beverage Expenses'
+},
+subtitle: {
+    text: 'per quarter'
+}
+    </snippet>
+
+    <p>
+        <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
+    </p>
 
     <h2>Next Up</h2>
 
