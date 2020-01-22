@@ -177,10 +177,14 @@ export class App extends React.Component {
     render() {
         const options = createOptionsJson(this.state.options);
 
-        return <div className="app">
-            <Chart options={options} />
-            <Options updateOptionDefault={this.updateOptionDefault} updateOption={this.updateOption} />
-            <Code framework={this.state.framework} options={options} />
+        return <div className="container">
+            <div className="container__chart"><Chart options={options} /></div>
+            <div className="container__bottom">
+                <div className="container__options">
+                    <Options updateOptionDefault={this.updateOptionDefault} updateOption={this.updateOption} />
+                </div>
+                <div className="container__code"><Code framework={this.state.framework} options={options} /></div>
+            </div>
         </div>;
     }
 }

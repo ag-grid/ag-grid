@@ -948,22 +948,6 @@ $ag-handleSize: 5px;
     z-index: 99999;
 }
 
-.ag-chart-tooltip {
-    display: table;
-    position: absolute;
-    user-select: none;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 99999;
-    opacity: 0;
-    transition-property: opacity;
-}
-
-.ag-chart-tooltip-visible {
-    opacity: 1;
-}
-
-
 /**
  ****************************
  * Animations
@@ -1475,7 +1459,7 @@ $ag-handleSize: 5px;
     .ag-column-select-indent-#{$i} {
         @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }
-    
+
     .ag-row-group-indent-#{$i} {
         @include ag-unthemed-rtl(( padding-left: $i * 20px ));
     }

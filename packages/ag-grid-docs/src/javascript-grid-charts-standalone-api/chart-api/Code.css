@@ -1,9 +1,4 @@
 .code {
-    float: left;
-    width: calc(45% - 20px);
-    height: calc(100vh - 500px);
-    overflow-y: auto;
-    padding: 10px;
-    background-color: #212529;
     color: #f8f9fa;
+    margin: 0 10px;
 }

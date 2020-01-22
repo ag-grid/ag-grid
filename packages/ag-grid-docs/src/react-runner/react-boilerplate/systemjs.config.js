@@ -41,6 +41,7 @@
                 'material-colors': 'npm:material-colors@1.2.6',
                 '@icons/material': 'npm:@icons/material@0.2.4',
                 'tinycolor2': 'npm:tinycolor2@1.4.1',
+                'prismjs': 'npm:prismjs@1.19.0',
 
                 app: appLocation + 'app'
             },

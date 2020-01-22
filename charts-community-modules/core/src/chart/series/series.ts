@@ -63,17 +63,9 @@ export abstract class Series extends Observable {
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] };
 
-    tooltipEnabled: boolean = false;
+    tooltipEnabled: boolean = true;
 
-    protected _data: any[] | undefined;
-    set data(data: any[] | undefined) {
-        this._data = data;
-        this.fireEvent({ type: 'dataChange' });
-    }
-    get data(): any[] | undefined {
-        return this._data;
-    }
-
+    @reactive('dataChange') data?: any[] = undefined;
     @reactive('dataChange') visible = true;
     @reactive('layoutChange') showInLegend = true;
 
