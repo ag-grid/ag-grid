@@ -1,7 +1,4 @@
 .code {
-    float: right;
-    width: calc(45% - 10px);
-    height: calc(100vh - 480px);
-    overflow-y: auto;
     color: #f8f9fa;
+    margin: 0 10px;
 }

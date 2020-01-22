@@ -1,16 +1,22 @@
 .options {
-    float: left;
-    width: 55%;
     line-height: 1.6em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     color: #495057;
     font-size: 14px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    width: 55%;
 }
 
 .options__content {
-    margin-top: 45px;
-    overflow-y: scroll;
-    height: calc(100vh - 530px);
+    overflow-y: auto;
 }
 
 .section {
@@ -97,10 +103,8 @@
 }
 
 .search {
-    position: fixed;
-    width: calc(55% - 37px);
-    background-color: #f1f7ff;
     padding: 10px;
+    background-color: #f1f7ff;
     text-align: right;
 }
 

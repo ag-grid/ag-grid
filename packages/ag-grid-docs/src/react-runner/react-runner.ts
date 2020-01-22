@@ -1,15 +1,15 @@
 import * as angular from "angular";
 import * as jQuery from "jquery";
 
-import {trackIfInViewPort, whenInViewPort} from "./lib/viewport";
+import { trackIfInViewPort, whenInViewPort } from "./lib/viewport";
 
 const docs: angular.IModule = angular.module("documentation");
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function ($document: any) {
-        return function (url: any, newWindow: any, fields: any) {
+    function($document: any) {
+        return function(url: any, newWindow: any, fields: any) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
              * If a user chooses to bypass pop-up blocker one time and click the link, they will arrive at
@@ -19,7 +19,7 @@ docs.factory("formPostData", [
              */
             var target = newWindow ? "_blank" : "_self";
             var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-            angular.forEach(fields, function (value, name) {
+            angular.forEach(fields, function(value, name) {
                 var input = angular.element('<input type="hidden" name="' + name + '">');
                 input.attr("value", value);
                 form.append(input);
@@ -86,7 +86,7 @@ class ReactRunner {
         const options = this.config.options;
 
         if (options.exampleHeight) {
-            this.iframeStyle.height = options.exampleHeight + "px";
+            this.iframeStyle.height = isNaN(options.exampleHeight) ? options.exampleHeight : options.exampleHeight + "px";
         }
 
         this.id = this.config.app.id;

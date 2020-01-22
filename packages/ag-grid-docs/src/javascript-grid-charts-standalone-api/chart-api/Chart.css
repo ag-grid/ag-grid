@@ -1,6 +1,4 @@
 .chart {
-    width: calc(100% - 40px);
-    height: 400px;
     padding: 20px;
     text-align: center;
     overflow: auto;

@@ -1,0 +1,30 @@
+.container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.container__chart {
+    overflow-y: auto;
+    height: 45%;
+}
+
+.container__bottom {
+    display: flex;
+    height: 55%;
+    min-height: 0;
+    position: relative;
+}
+
+.container__options {
+    width: 55%;
+}
+
+.container__code {
+    width: 45%;
+    overflow-y: auto;
+}
