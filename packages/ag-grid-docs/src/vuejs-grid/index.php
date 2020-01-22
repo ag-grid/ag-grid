@@ -16,6 +16,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?php
+    printVideo("https://www.youtube.com/embed/mH7XeSZ3ksc");
+?>
+
+<?php
 include './intro.php';
 ?>
 
@@ -175,7 +179,7 @@ this.columnDefs = [
 </section>
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
-<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
 
 <p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 <section>
@@ -188,7 +192,7 @@ this.columnDefs = [
 ];
 </snippet>
 </section>
-<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
+<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
 <img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
@@ -197,7 +201,7 @@ this.columnDefs = [
 <p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Thanks to React, implementing this is actually quite simple.
     Notice that the actual data fetching is performed outside of the grid component - We are using the HTML5 <code>fetch</code> API.</p>
 
-<p>Now, let's remove the hard-coded data and fetch one from a remote server. Edit the <code>src/App.vue</code> and add the following fetch statement: </p>
+<p>Now, let's remove the hard-coded data and fetch it from a remote server. Edit the <code>src/App.vue</code> and add the following fetch statement: </p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
@@ -514,6 +518,6 @@ header background color and even the amount of spacing in the cells and columns.
 <h2>Summary</h2> 
 
 <p>With this tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
-While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p> 
+While doing so, we learned how to configure the grid, how to access its API object, and how to change the styling of the component.</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

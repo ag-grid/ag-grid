@@ -15,6 +15,10 @@ include '../documentation-main/documentation_header.php';
     are building applications that would not be possible if ag-Grid did not exist.
   </p>
 
+  <?php
+    printVideo("https://www.youtube.com/embed/iLF11ZyV2e4");
+  ?>
+
 <?php
 include './intro.php';
 ?>
@@ -161,7 +165,7 @@ columnDefs: [{
 </snippet>
 </section>
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
-<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this filtering is your friend.</p>
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows, with many columns. In a data set like this filtering is your friend.</p>
 <p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
@@ -175,7 +179,7 @@ columnDefs: [{
 }]
 </snippet>
 </section>
-<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
+<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 <img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 <h2 id="fetch-remote-data">Fetch Remote Data</h2>
 <p>Displaying hard-coded data in JavaScript is not going to get us very far. In the real world, most of the time, we are dealing with data that resides on a remote server. Thanks to React, implementing this is actually quite simple.

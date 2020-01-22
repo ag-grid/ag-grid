@@ -17,6 +17,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?php
+    printVideo("https://www.youtube.com/embed/uPp5776OiRM");
+?>
+
+<?php
 include './intro.php';
 ?>
 
@@ -188,7 +192,7 @@ columnDefs = [
 
 <p>After adding the property, you should be able to sort the grid by clicking on the column headers. Clicking on a header toggles through ascending, descending and no-sort.</p>
 
-<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) or rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
+<p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a real-world application may have hundreds (or even hundreds of thousands!) of rows, with many columns. In a data set like this <a href="https://www.ag-grid.com/javascript-grid-filtering/">filtering</a> is your friend.</p>
 
 <p>As with sorting, enabling filtering is as easy as setting the <code>filter</code> property:</p>
 <section>
@@ -201,7 +205,7 @@ columnDefs = [
 ];
 </snippet>
 </section>
-<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
+<p>With this property set, the grid will display a small column menu icon when you hover the header. Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and the text that you want to filter by.</p>
 
 <img class="img-fluid" src="../getting-started/step2.png" alt="ag-Grid sorting and filtering" />
 
@@ -228,7 +232,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class AppModule {}
 </snippet>
 </section>
-<p>Now, let's remove the hard-coded data and fetch one from a remote server. Edit the <code>src/app.component.ts</code> to this: </p>
+<p>Now, let's remove the hard-coded data and fetch it from a remote server. Edit the <code>src/app.component.ts</code> to this: </p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="ts">

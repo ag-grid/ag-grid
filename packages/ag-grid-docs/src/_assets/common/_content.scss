@@ -64,6 +64,14 @@ h1 + p.lead {
     margin-bottom: 2rem;
 }
 
+.video {
+    text-align: center;
+    iframe {
+        width: 95%;
+        height: 435px;
+    }
+}
+
 h2 {
     font-size: 1.7rem;
 }

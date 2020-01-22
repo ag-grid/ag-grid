@@ -1,4 +1,5 @@
 <?php
+include_once "../php-utils/videoHelper.php";
 include_once '../example-runner/utils.php';
 include_once '../react-runner/react-utils.php';
 include_once '../includes/html-helpers.php';
