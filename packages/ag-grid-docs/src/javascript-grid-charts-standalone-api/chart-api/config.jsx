@@ -347,10 +347,10 @@ const seriesConfig = {
             parameters: {
                 params: '{ datum, title, color, xKey, xName, yKey, yName }',
             },
-            returnType: 'string'
+            returnType: 'string',
         },
-        description: 'Function used to create the content for tooltips.'
-    }
+        description: 'Function used to create the content for tooltips.',
+    },
 };
 
 const markerConfig = {
@@ -732,5 +732,103 @@ export const areaSeriesConfig = Object.freeze({
             editor: ColourEditor,
         }
     },
-    ...markerConfig
+    ...markerConfig,
+});
+
+export const scatterSeriesConfig = Object.freeze({
+    xKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve x-values from the data.',
+    },
+    xName: {
+        type: 'string',
+        description: 'A human-readable description of the x-values.',
+    },
+    yKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve y-values from the data.',
+    },
+    yName: {
+        type: 'string',
+        description: 'A human-readable description of the y-values.',
+    },
+    sizeKey: {
+        type: 'string',
+        description: 'The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts.'
+    },
+    sizeName: {
+        type: 'string',
+        description: 'A human-readable description of the size values.',
+    },
+    labelKey: {
+        type: 'string',
+        description: 'The key to use to retrieve values from the data to use as labels for the markers.',
+    },
+    labelName: {
+        type: 'string',
+        description: 'A human-readable description of the label values.',
+    },
+    ...seriesConfig,
+    tooltipRenderer: {
+        type: {
+            parameters: {
+                params: '{ datum, title, color, xKey, xName, yKey, yName, sizeKey, sizeName, labelKey, labelName }',
+            },
+            returnType: 'string'
+        },
+        description: 'Function used to create the content for tooltips.'
+    },
+    title: {
+        type: 'string',
+        description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
+        editor: StringEditor,
+    },
+    fill: {
+        default: '#f3622d',
+        description: 'The colour to use for the fill of the series.',
+        editor: ColourEditor,
+    },
+    fillOpacity: {
+        default: 1,
+        description: 'The opacity of the fill of the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    stroke: {
+        default: '#aa4520',
+        description: 'The colour to use for the strokes of the series.',
+        editor: ColourEditor,
+    },
+    strokeOpacity: {
+        default: 1,
+        description: 'The opacity of the stroke of the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    },
+    strokeWidth: {
+        default: 1,
+        description: 'The width of the stroke for the series.',
+        editor: NumberEditor,
+        min: 0,
+        max: 20,
+    },
+    highlightStyle: {
+        fill: {
+            default: 'yellow',
+            description: 'The fill colour of the markers when hovered over.',
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: 'The colour of the stroke around the marker when hovered over.',
+            editor: ColourEditor,
+        }
+    },
+    ...markerConfig,
 });

@@ -10,10 +10,12 @@ import { deepClone } from './utils.jsx';
 const appName = 'chart-api';
 
 const createOptionsJson = (chartType, options) => {
+    const shouldProvideAxisConfig = (options.axes && Object.keys(options.axes).length > 0) || chartType === 'scatter';
+
     const json = {
         ...options,
-        axes: options.axes && Object.keys(options.axes).length > 0 ? [{
-            type: 'category',
+        axes: shouldProvideAxisConfig ? [{
+            type: chartType === 'scatter' ? 'number' : 'category',
             position: 'bottom',
         },
         {
@@ -60,6 +62,13 @@ const createOptionsJson = (chartType, options) => {
                 ...options.series,
             }];
             break;
+        case 'scatter':
+            json.series = [{
+                type: 'scatter',
+                xKey: 'revenue',
+                yKey: 'profit',
+                ...options.series,
+            }];
     }
 
     return json;
