@@ -12,14 +12,15 @@ import {
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
-import { reactive } from "../../../util/observable";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
+import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { toFixed } from "../../../util/number";
+import { equal } from "../../../util/equal";
+import { reactive } from "../../../util/observable";
 
 interface SelectionDatum extends SeriesNodeDatum {
     yKey: string;
@@ -167,19 +168,21 @@ export class ColumnSeries extends CartesianSeries {
      */
     protected _yKeys: string[] = [];
     set yKeys(values: string[]) {
-        this._yKeys = values;
-        this.yData = [];
+        if (!equal(this._yKeys, values)) {
+            this._yKeys = values;
+            this.yData = [];
 
-        const { seriesItemEnabled } = this;
-        seriesItemEnabled.clear();
-        values.forEach(key => seriesItemEnabled.set(key, true));
+            const { seriesItemEnabled } = this;
+            seriesItemEnabled.clear();
+            values.forEach(key => seriesItemEnabled.set(key, true));
 
-        const groupScale = this.groupScale;
-        groupScale.domain = values;
-        groupScale.padding = 0.1;
-        groupScale.round = true;
+            const groupScale = this.groupScale;
+            groupScale.domain = values;
+            groupScale.padding = 0.1;
+            groupScale.round = true;
 
-        this.scheduleData();
+            this.scheduleData();
+        }
     }
     get yKeys(): string[] {
         return this._yKeys;

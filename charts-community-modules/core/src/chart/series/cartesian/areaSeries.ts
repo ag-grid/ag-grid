@@ -3,8 +3,6 @@ import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "../series";
 import { PointerEvents } from "../../../scene/node";
-import { findLargestMinMax, findMinMax } from "../../../util/array";
-import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
 import { Path } from "../../../scene/shape/path";
@@ -13,8 +11,11 @@ import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { reactive } from "../../../util/observable";
 import { Chart } from "../../chart";
+import { findLargestMinMax, findMinMax } from "../../../util/array";
+import { toFixed } from "../../../util/number";
+import { equal } from "../../../util/equal";
+import { reactive } from "../../../util/observable";
 
 interface AreaSelectionDatum {
     yKey: string;
@@ -105,14 +106,16 @@ export class AreaSeries extends CartesianSeries {
 
     protected _yKeys: string[] = [];
     set yKeys(values: string[]) {
-        this._yKeys = values;
-        this.yData = [];
+        if (!equal(this._yKeys, values)) {
+            this._yKeys = values;
+            this.yData = [];
 
-        const { seriesItemEnabled } = this;
-        seriesItemEnabled.clear();
-        values.forEach(key => seriesItemEnabled.set(key, true));
+            const { seriesItemEnabled } = this;
+            seriesItemEnabled.clear();
+            values.forEach(key => seriesItemEnabled.set(key, true));
 
-        this.scheduleData();
+            this.scheduleData();
+        }
     }
     get yKeys(): string[] {
         return this._yKeys;
