@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?php
-    printVideo("https://www.youtube.com/embed/mH7XeSZ3ksc");
+    printVideo("https://www.youtube.com/embed/eW3qCti1lsA");
 ?>
 
 <?php
