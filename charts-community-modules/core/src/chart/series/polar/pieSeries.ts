@@ -124,18 +124,6 @@ export class PieSeries extends PolarSeries {
         });
     }
 
-    @reactive('layoutChange') labelOffset = 3; // from the callout line
-
-    @reactive('layoutChange') labelFontStyle?: FontStyle;
-
-    @reactive('layoutChange') labelFontWeight?: FontWeight;
-
-    @reactive('layoutChange') labelFontSize = 12;
-
-    @reactive('layoutChange') labelFontFamily = 'Verdana, sans-serif';
-
-    @reactive('layoutChange') labelColor = 'black';
-
     /**
      * The key of the numeric field to use to determine the angle (for example,
      * a pie slice angle).
