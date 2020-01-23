@@ -19,7 +19,7 @@ export const formatJson = object => {
 
     const formattedJson = JSON.stringify(object, (_, v) => Array.isArray(v) ? formatArray(v) : v, 2);
 
-    return formattedJson.replace(/"\[/g, '[').replace(/\]"/g, ']');
+    return formattedJson.replace(/\"([^(\")"]+)\":/g, '$1:').replace(/"\[/g, '[').replace(/\]"/g, ']');
 };
 
 export const deepClone = object => JSON.parse(JSON.stringify(object || {}));
