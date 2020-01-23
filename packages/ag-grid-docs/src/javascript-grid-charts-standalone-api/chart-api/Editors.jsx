@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Editors.css';
-import { ChromePicker } from "react-color";
+import { HuePicker, AlphaPicker } from 'react-color';
 
 export const NumberEditor = ({ value, min, max, step, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
@@ -28,9 +28,9 @@ export const NumberEditor = ({ value, min, max, step, onChange }) => {
         props.step = step;
     }
 
-    return <span className='number-editor'>
-        {min != null && max != null && <input type='range' className='number-editor__slider' {...props} />}
-        <input type='number' className='number-editor__input' {...props} />
+    return <span className="number-editor">
+        {min != null && max != null && <input type="range" className="number-editor__slider" {...props} />}
+        <input type="number" className="number-editor__input" {...props} />
     </span>;
 };
 
@@ -66,7 +66,7 @@ export const PresetEditor = ({ value, options, onChange }) => {
         onChange(newValue);
     };
 
-    return <div className='preset-editor'>
+    return <div className="preset-editor">
         {options.map(o => <div
             key={o}
             className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
@@ -75,20 +75,38 @@ export const PresetEditor = ({ value, options, onChange }) => {
 };
 
 export const ColourEditor = ({ value, onChange }) => {
-    const [stateValue, setValueChange] = useState(value);
-    const inputOnChange = color => {
-        setValueChange(color);
-        onChange(color);
+    const [colourString, setColourString] = useState(value);
+    const [rgb, setRgb] = useState(null);
+
+    const inputOnChange = event => {
+        const { value } = event.target;
+
+        setColourString(value);
+        setRgb(null);
+        onChange(value);
     };
 
-    const [isShown, setIsShown] = useState(false);
-    const onClick = () => setIsShown(!isShown);
+    const sliderOnChange = (colour, hasAlpha) => {
+        if (!hasAlpha && rgb) {
+            colour.rgb.a = rgb.a;
+        }
 
-    return <React.Fragment>
-        <span
-            style={{ 'backgroundColor': stateValue }}
-            className='colour-editor__input'
-            onClick={onClick}></span>
-        {isShown && <ChromePicker color={stateValue} onChangeComplete={color => inputOnChange(color.hex)} />}
-    </React.Fragment>;
+        const { r, g, b, a } = colour.rgb;
+        const colourString = a < 1 ? `rgba(${r}, ${g}, ${b}, ${a})` : colour.hex;
+
+        setColourString(colourString);
+        setRgb(colour.rgb);
+        onChange(colourString);
+    };
+
+    const color = rgb || colourString || 'black';
+
+    return <div className="colour-editor">
+        <div class="colour-editor__input-wrapper">
+            <input className="colour-editor__input" type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
+            <div style={{ 'backgroundColor': colourString }} className="colour-editor__sample"></div>
+        </div>
+        <div className="colour-editor__slider"><HuePicker width={'100%'} color={color} onChange={value => sliderOnChange(value, false)} /></div>
+        <div className="colour-editor__slider"><AlphaPicker width={'100%'} color={color} onChange={value => sliderOnChange(value, true)} /></div>
+    </div>;
 };

@@ -601,6 +601,8 @@ export const barSeriesConfig = Object.freeze({
         type: 'number',
         description: 'The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.',
         editor: NumberEditor,
+        min: 1,
+        max: 100,
     },
     flipXY: {
         default: false,
@@ -631,6 +633,8 @@ export const areaSeriesConfig = Object.freeze({
         type: 'number',
         description: 'The number to normalise the areas stack to.',
         editor: NumberEditor,
+        min: 1,
+        max: 100,
     },
     ...getColourConfig(true),
     ...getHighlightConfig(),

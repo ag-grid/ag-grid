@@ -66,7 +66,7 @@ const Option = ({ name, isVisible, isRequired, type, description, defaultValue, 
         {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
         {isFunction && <FunctionDefinition definition={derivedType} />}
         <span className='option__description' dangerouslySetInnerHTML={{ __html: description }}></span><br />
-        {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
+        {Editor && <Editor value={defaultValue} {...editorProps} />}
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(o => JSON.stringify(o)).join(' | ')}</code></span>}
     </div>;
 };
