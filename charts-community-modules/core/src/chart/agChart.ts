@@ -121,6 +121,16 @@ const chartDefaults = {
     subtitle: undefined,
 } as any;
 
+const chartMeta = {
+    // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
+    // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
+    // themselves are the exceptions.
+    // If a chart config has the (optional) `document` property, it will be passed to the constructor.
+    // There is no actual `document` property on the chart, it can only be supplied during instantiation.
+    constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
+    setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
+};
+
 const axisDefaults = {
     defaults: {
         gridStyle: [{
@@ -238,13 +248,7 @@ const mappings = {
     [CartesianChart.type]: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
             constructor: CartesianChart, // Constructor function for the `cartesian` type.
-            // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
-            // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
-            // themselves are the exceptions.
-            // If a chart config has the (optional) `document` property, it will be passed to the constructor.
-            // There is no actual `document` property on the chart, it can only be supplied during instantiation.
-            constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
-            setAsIs: ['container', 'data'], // Properties that should be set on the component as is (without pre-processing).
+            ...chartMeta,
             defaults: { // These values will be used if properties in question are not in the config object.
                 ...chartDefaults,
                 axes: [{
@@ -380,7 +384,7 @@ const mappings = {
     [PolarChart.type]: {
         meta: {
             constructor: PolarChart,
-            constructorParams: ['document'],
+            ...chartMeta,
             defaults: {
                 ...chartDefaults
             }
