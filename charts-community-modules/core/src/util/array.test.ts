@@ -1,4 +1,4 @@
-import { extent, numericExtent, sumPositiveValues } from "./array";
+import { extent, numericExtent } from "./array";
 
 describe("extent", () => {
     test("returns lowest and highest numbers from list of numbers", () => {
@@ -98,25 +98,7 @@ describe("numericExtent", () => {
     });
 
     test("does not coerce objects", () => {
-        const result = numericExtent([{ toString: () => "2" }, { toString: () => "1" }]);
+        const result = numericExtent([{toString: () => "2"}, {toString: () => "1"}]);
         expect(result).toBe(undefined);
-    });
-});
-
-describe("sumPositiveValues", () => {
-    test("returns sum of positive integer elements", () => {
-        const result = sumPositiveValues([32, 54, -12, 21]);
-
-        expect(result).toBe(107);
-    });
-
-    test("returns sum of positive floating point elements", () => {
-        const result = sumPositiveValues([54.124, 78.024, -12.543, 21]);
-
-        expect(result).toBe(153.148);
-    });
-
-    test("returns 0 for empty array", () => {
-        expect(sumPositiveValues([])).toBe(0);
     });
 });

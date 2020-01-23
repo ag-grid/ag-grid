@@ -26,7 +26,7 @@ export function extent<T>(values: T[]): [T, T] | undefined {
         }
     }
 
-    return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [ min, max ];
+    return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
 }
 
 // Custom `Array.find` implementation for legacy browsers.
@@ -51,17 +51,13 @@ export function numericExtent<T>(values: T[]): [number, number] | undefined {
         return;
     }
 
-    const [ a, b ] = calculatedExtent;
+    const [a, b] = calculatedExtent;
     const min = a instanceof Date ? a.getTime() : a;
     const max = b instanceof Date ? b.getTime() : b;
 
     if (typeof min === 'number' && isFinite(min) && typeof max === 'number' && isFinite(max)) {
-        return [ min, max ];
+        return [min, max];
     }
-}
-
-export function sumPositiveValues(array: number[]): number {
-    return array.reduce((total, value) => value > 0 ? total + value : total, 0);
 }
 
 export function findMinMax(values: number[]): { min: number, max: number } {
@@ -76,7 +72,7 @@ export function findMinMax(values: number[]): { min: number, max: number } {
         }
     }
 
-    return { min, max };
+    return {min, max};
 }
 
 export function findLargestMinMax(totals: { min: number, max: number }[]): { min: number, max: number } {
@@ -92,5 +88,5 @@ export function findLargestMinMax(totals: { min: number, max: number }[]): { min
         }
     }
 
-    return { min, max };
+    return {min, max};
 }
