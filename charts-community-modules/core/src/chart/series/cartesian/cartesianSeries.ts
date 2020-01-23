@@ -1,7 +1,6 @@
 import { Series } from "../series";
 import { ChartAxisDirection } from "../../chartAxis";
 import { SeriesMarker, SeriesMarkerFormatterParams } from "../seriesMarker";
-import { chainObjects } from "../../../util/object";
 
 export abstract class CartesianSeries extends Series {
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {

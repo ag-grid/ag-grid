@@ -178,16 +178,32 @@ const shadowMapping = {
     }
 };
 
+const labelDefaults = {
+    enabled: true,
+    fontStyle: undefined,
+    fontWeight: undefined,
+    fontSize: 12,
+    fontFamily: 'Verdana, sans-serif',
+    color: 'black'
+} as any;
+
 const labelMapping = {
     label: {
         meta: {
             defaults: {
-                enabled: true,
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'black'
+                ...labelDefaults
+            }
+        }
+    }
+} as any;
+
+const pieLabelMapping = {
+    label: {
+        meta: {
+            defaults: {
+                ...labelDefaults,
+                offset: 3,
+                minAngle: 20
             }
         }
     }
@@ -394,18 +410,13 @@ const mappings = {
             [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
+                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
                         calloutColors: palette.strokes,
                         calloutStrokeWidth: 1,
                         calloutLength: 10,
-                        labelOffset: 3,
-                        labelFontStyle: undefined,
-                        labelFontWeight: undefined,
-                        labelFontSize: 12,
-                        labelFontFamily: 'Verdana, sans-serif',
-                        labelColor: 'black',
                         angleKey: '',
                         angleName: '',
                         radiusKey: undefined,
@@ -423,7 +434,22 @@ const mappings = {
                         shadow: undefined
                     }
                 },
-                ...labelMapping,
+                title: {
+                    meta: {
+                        constructor: Caption,
+                        defaults: {
+                            enabled: true,
+                            padding: new Padding(10),
+                            text: 'Series Title',
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 14,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'black'
+                        }
+                    }
+                },
+                ...pieLabelMapping,
                 ...shadowMapping
             }
         }
