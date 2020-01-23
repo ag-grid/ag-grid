@@ -48,6 +48,14 @@ const getCaptionOptions = (name, defaultText, fontSize = 10, fontWeight = 'norma
     ...getFontOptions(name, fontWeight, fontSize)
 });
 
+const getPaddingOption = position => ({
+    default: 20,
+    description: `Padding at the ${position} of the chart area.`,
+    editor: NumberEditor,
+    min: 0,
+    max: 40,
+});
+
 export const generalConfig = Object.freeze({
     data: {
         type: 'object[]',
@@ -83,34 +91,10 @@ export const generalConfig = Object.freeze({
         description: 'A class to be added to tooltips in the chart.',
     },
     padding: {
-        top: {
-            default: 20,
-            description: 'Padding at the top of the chart area.',
-            editor: NumberEditor,
-            min: 0,
-            max: 40,
-        },
-        right: {
-            default: 20,
-            description: 'Padding at the right of the chart area.',
-            editor: NumberEditor,
-            min: 0,
-            max: 40,
-        },
-        bottom: {
-            default: 20,
-            description: 'Padding at the bottom of the chart area.',
-            editor: NumberEditor,
-            min: 0,
-            max: 40,
-        },
-        left: {
-            default: 20,
-            description: 'Padding at the left of the chart area.',
-            editor: NumberEditor,
-            min: 0,
-            max: 40,
-        }
+        top: getPaddingOption('top'),
+        right: getPaddingOption('right'),
+        bottom: getPaddingOption('bottom'),
+        left: getPaddingOption('left'),
     },
     background: {
         fill: {
@@ -433,25 +417,180 @@ const markerConfig = {
     }
 };
 
+const getCartesianKeyConfig = (hasMultipleYValues = false) => {
+    const config = {
+        xKey: {
+            type: 'string',
+            isRequired: true,
+            description: 'The key to use to retrieve x-values from the data.',
+        },
+        xName: {
+            type: 'string',
+            description: 'A human-readable description of the x-values.',
+        },
+    };
+
+    if (hasMultipleYValues) {
+        config.yKeys = {
+            type: 'string[]',
+            isRequired: true,
+            description: 'The keys to use to retrieve y-values from the data.',
+        };
+
+        config.yNames = {
+            type: 'string[]',
+            description: 'Human-readable descriptions of the y-values.',
+        };
+    } else {
+        config.yKey = {
+            type: 'string',
+            isRequired: true,
+            description: 'The key to use to retrieve y-values from the data.',
+        };
+
+        config.yName = {
+            type: 'string',
+            description: 'A human-readable description of the y-values.',
+        };
+    }
+
+    return config;
+};
+
+const fills = [
+    '#f3622d',
+    '#fba71b',
+    '#57b757',
+    '#41a9c9',
+    '#4258c9',
+    '#9a42c8',
+    '#c84164',
+    '#888888',
+];
+
+const strokes = [
+    '#aa4520',
+    '#b07513',
+    '#3d803d',
+    '#2d768d',
+    '#2e3e8d',
+    '#6c2e8c',
+    '#8c2d46',
+    '#5f5f5f'
+];
+
+const getColourConfig = (name, hasMultipleSeries = false) => {
+    const config = {};
+
+    if (hasMultipleSeries) {
+        config.fills = {
+            default: fills,
+            description: `Colours to cycle through for the fills of the ${name}.`,
+        };
+    } else {
+        config.fill = {
+            default: fills[0],
+            description: `The colour of the fill for the ${name}.`,
+            editor: ColourEditor,
+        };
+    }
+
+    config.fillOpacity = {
+        default: 1,
+        description: `The opacity of the fill for the ${name}.`,
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    };
+
+
+    if (hasMultipleSeries) {
+        config.strokes = {
+            default: strokes,
+            description: `Colours to cycle through for the strokes of the ${name}.`,
+        };
+    } else {
+        config.stroke = {
+            default: strokes[0],
+            description: `The colour of the stroke for the ${name}.`,
+            editor: ColourEditor,
+        };
+    }
+
+    config.strokeOpacity = {
+        default: 1,
+        description: `The opacity of the stroke for the ${name}.`,
+        editor: NumberEditor,
+        min: 0,
+        max: 1,
+        step: 0.05,
+    };
+
+    config.strokeWidth = {
+        default: 1,
+        description: `The width of the stroke for the ${name}.`,
+        editor: NumberEditor,
+        min: 0,
+        max: 20,
+    };
+
+    return config;
+};
+
+const shadowConfig = {
+    shadow: {
+        enabled: {
+            default: true,
+            description: 'Whether the shadow is visible or not.',
+            editor: BooleanEditor,
+        },
+        color: {
+            default: 'rgba(0, 0, 0, 0.5)',
+            description: 'Colour of the shadow.',
+            editor: ColourEditor,
+        },
+        xOffset: {
+            default: 0,
+            description: 'Horizontal offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        yOffset: {
+            default: 0,
+            description: 'Vertical offset for the shadow.',
+            editor: NumberEditor,
+            min: -20,
+            max: 20,
+        },
+        blur: {
+            default: 5,
+            description: 'How much to blur the shadow.',
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+        }
+    },
+};
+
+const getHighlightConfig = (name = 'marker') => ({
+    highlightStyle: {
+        fill: {
+            default: 'yellow',
+            description: `The fill colour of the ${name} when hovered over.`,
+            editor: ColourEditor,
+        },
+        stroke: {
+            type: 'string',
+            description: `The colour of the stroke around the ${name} when hovered over.`,
+            editor: ColourEditor,
+        },
+    },
+});
+
 export const barSeriesConfig = Object.freeze({
-    xKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve x-values from the data.',
-    },
-    xName: {
-        type: 'string',
-        description: 'A human-readable description of the x-values.',
-    },
-    yKeys: {
-        type: 'string[]',
-        isRequired: true,
-        description: 'The keys to use to retrieve y-values from the data.',
-    },
-    yNames: {
-        type: 'string[]',
-        description: 'A human-readable description of the y-values.',
-    },
+    ...getCartesianKeyConfig(true),
     ...seriesConfig,
     grouped: {
         default: false,
@@ -467,316 +606,40 @@ export const barSeriesConfig = Object.freeze({
         default: false,
         description: 'Flips the direction of the bars.',
     },
-    fills: {
-        default: [
-            '#f3622d',
-            '#fba71b',
-            '#57b757',
-            '#41a9c9',
-            '#4258c9',
-            '#9a42c8',
-            '#c84164',
-            '#888888'
-        ],
-        description: 'Colours to cycle through for the fills of the series.',
-    },
-    fillOpacity: {
-        default: 1,
-        description: 'The opacity of the fill of the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    strokes: {
-        default: [
-            '#aa4520',
-            '#b07513',
-            '#3d803d',
-            '#2d768d',
-            '#2e3e8d',
-            '#6c2e8c',
-            '#8c2d46',
-            '#5f5f5f'
-        ],
-        description: 'Colours to cycle through for the strokes of the series.',
-    },
-    strokeOpacity: {
-        default: 1,
-        description: 'The opacity of the stroke of the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    strokeWidth: {
-        default: 1,
-        description: 'The width of the stroke around the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 20,
-    },
-    shadow: {
-        enabled: {
-            default: true,
-            description: 'Whether the shadow is visible or not',
-            editor: BooleanEditor,
-        },
-        color: {
-            default: 'rgba(0, 0, 0, 0.5)',
-            description: 'Colour of the shadow.',
-            editor: ColourEditor,
-        },
-        xOffset: {
-            default: 0,
-            description: 'Horizontal offset for the shadow.',
-            editor: NumberEditor,
-            min: -20,
-            max: 20,
-        },
-        yOffset: {
-            default: 0,
-            description: 'Vertical offset for the shadow.',
-            editor: NumberEditor,
-            min: -20,
-            max: 20,
-        },
-        blur: {
-            default: 5,
-            description: 'How much to blur the shadow.',
-            editor: NumberEditor,
-            min: 0,
-            max: 20,
-        }
-    },
-    highlightStyle: {
-        fill: {
-            default: 'yellow',
-            description: 'The fill colour of the bar when hovered over.',
-            editor: ColourEditor,
-        },
-        stroke: {
-            type: 'string',
-            description: 'The colour of the stroke around the bar when hovered over.',
-            editor: ColourEditor,
-        }
-    },
+    ...getColourConfig('bars', true),
+    ...getHighlightConfig('bars'),
+    ...shadowConfig,
 });
 
 export const lineSeriesConfig = Object.freeze({
-    xKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve x-values from the data.',
-    },
-    xName: {
-        type: 'string',
-        description: 'A human-readable description of the x-values.',
-    },
-    yKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve y-values from the data.',
-    },
-    yName: {
-        type: 'string',
-        description: 'A human-readable description of the y-values.',
-    },
+    ...getCartesianKeyConfig(),
     ...seriesConfig,
     title: {
         type: 'string',
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
-    fill: {
-        default: '#f3622d',
-        description: 'The colour to use for the fill of the series.',
-        editor: ColourEditor,
-    },
-    fillOpacity: {
-        default: 1,
-        description: 'The opacity of the fill of the series.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    stroke: {
-        default: '#aa4520',
-        description: 'The colour to use for the strokes of the series.',
-        editor: ColourEditor,
-    },
-    strokeOpacity: {
-        default: 1,
-        description: 'The opacity of the stroke of the series.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    strokeWidth: {
-        default: 1,
-        description: 'The width of the stroke for the series.',
-        editor: NumberEditor,
-        min: 0,
-        max: 20,
-    },
-    highlightStyle: {
-        fill: {
-            default: 'yellow',
-            description: 'The fill colour of the markers when hovered over.',
-            editor: ColourEditor,
-        },
-        stroke: {
-            type: 'string',
-            description: 'The colour of the stroke around the marker when hovered over.',
-            editor: ColourEditor,
-        }
-    },
+    ...getColourConfig('lines'),
+    ...getHighlightConfig(),
     ...markerConfig,
 });
 
 export const areaSeriesConfig = Object.freeze({
-    xKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve x-values from the data.',
-    },
-    xName: {
-        type: 'string',
-        description: 'A human-readable description of the x-values.',
-    },
-    yKeys: {
-        type: 'string[]',
-        isRequired: true,
-        description: 'The keys to use to retrieve y-values from the data.',
-    },
-    yNames: {
-        type: 'string[]',
-        description: 'A human-readable description of the y-values.',
-    },
+    ...getCartesianKeyConfig(true),
     ...seriesConfig,
     normalizedTo: {
         type: 'number',
-        description: 'The number to normalise the area stacks to.',
+        description: 'The number to normalise the areas stack to.',
         editor: NumberEditor,
     },
-    fills: {
-        default: [
-            '#f3622d',
-            '#fba71b',
-            '#57b757',
-            '#41a9c9',
-            '#4258c9',
-            '#9a42c8',
-            '#c84164',
-            '#888888'
-        ],
-        description: 'Colours to cycle through for the fills of the series.',
-    },
-    fillOpacity: {
-        default: 1,
-        description: 'The opacity of the fill of the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    strokes: {
-        default: [
-            '#aa4520',
-            '#b07513',
-            '#3d803d',
-            '#2d768d',
-            '#2e3e8d',
-            '#6c2e8c',
-            '#8c2d46',
-            '#5f5f5f'
-        ],
-        description: 'Colours to cycle through for the strokes of the series.',
-    },
-    strokeOpacity: {
-        default: 1,
-        description: 'The opacity of the stroke of the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    },
-    strokeWidth: {
-        default: 1,
-        description: 'The width of the stroke around the bars.',
-        editor: NumberEditor,
-        min: 0,
-        max: 20,
-    },
-    shadow: {
-        enabled: {
-            default: true,
-            description: 'Whether the shadow is visible or not',
-            editor: BooleanEditor,
-        },
-        color: {
-            default: 'rgba(0, 0, 0, 0.5)',
-            description: 'Colour of the shadow.',
-            editor: ColourEditor,
-        },
-        xOffset: {
-            default: 0,
-            description: 'Horizontal offset for the shadow.',
-            editor: NumberEditor,
-            min: -20,
-            max: 20,
-        },
-        yOffset: {
-            default: 0,
-            description: 'Vertical offset for the shadow.',
-            editor: NumberEditor,
-            min: -20,
-            max: 20,
-        },
-        blur: {
-            default: 5,
-            description: 'How much to blur the shadow.',
-            editor: NumberEditor,
-            min: 0,
-            max: 20,
-        }
-    },
-    highlightStyle: {
-        fill: {
-            default: 'yellow',
-            description: 'The fill colour of the markers when hovered over.',
-            editor: ColourEditor,
-        },
-        stroke: {
-            type: 'string',
-            description: 'The colour of the stroke around the markers when hovered over.',
-            editor: ColourEditor,
-        }
-    },
+    ...getColourConfig(true),
+    ...getHighlightConfig(),
     ...markerConfig,
+    ...shadowConfig,
 });
 
 export const scatterSeriesConfig = Object.freeze({
-    xKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve x-values from the data.',
-    },
-    xName: {
-        type: 'string',
-        description: 'A human-readable description of the x-values.',
-    },
-    yKey: {
-        type: 'string',
-        isRequired: true,
-        description: 'The key to use to retrieve y-values from the data.',
-    },
-    yName: {
-        type: 'string',
-        description: 'A human-readable description of the y-values.',
-    },
+    ...getCartesianKeyConfig(),
     sizeKey: {
         type: 'string',
         description: 'The key to use to retrieve size values from the data, used to control the size of the markers in bubble charts.'
@@ -818,50 +681,125 @@ export const scatterSeriesConfig = Object.freeze({
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
-    fill: {
-        default: '#f3622d',
-        description: 'The colour to use for the fill of the series.',
-        editor: ColourEditor,
+    ...getColourConfig(),
+    ...getHighlightConfig(),
+    ...markerConfig,
+});
+
+export const pieSeriesConfig = Object.freeze({
+    angleKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve angle values from the data.',
     },
-    fillOpacity: {
-        default: 1,
-        description: 'The opacity of the fill of the series.',
+    angleName: {
+        type: 'string',
+        description: 'A human-readable description of the angle values.',
+    },
+    labelKey: {
+        type: 'string',
+        isRequired: true,
+        description: 'The key to use to retrieve label values from the data.',
+    },
+    labelName: {
+        type: 'string',
+        description: 'A human-readable description of the label values.',
+    },
+    radiusKey: {
+        type: 'string',
+        description: 'The key to use to retrieve radius values from the data.',
+    },
+    radiusName: {
+        type: 'string',
+        description: 'A human-readable description of the radius values.',
+    },
+    ...seriesConfig,
+    rotation: {
+        default: 0,
+        description: 'The rotation of the pie series.',
         editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
+        min: -359,
+        max: 359,
     },
-    stroke: {
-        default: '#aa4520',
-        description: 'The colour to use for the strokes of the series.',
-        editor: ColourEditor,
-    },
-    strokeOpacity: {
-        default: 1,
-        description: 'The opacity of the stroke of the series.',
+    innerRadiusOffset: {
+        default: 0,
+        description: 'The offset of the inner radius of the series. Used to construct doughnut charts.',
         editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
+        min: -50,
+        max: 50,
     },
-    strokeWidth: {
-        default: 1,
-        description: 'The width of the stroke for the series.',
+    outerRadiusOffset: {
+        default: 0,
+        description: 'The offset of the outer radius of the series. Used to construct doughnut charts.',
         editor: NumberEditor,
-        min: 0,
-        max: 20,
+        min: -50,
+        max: 50,
     },
+    title: {
+        ...getCaptionOptions('title'),
+    },
+    ...getColourConfig('segments', true),
     highlightStyle: {
-        fill: {
-            default: 'yellow',
-            description: 'The fill colour of the markers when hovered over.',
+        ...getHighlightConfig('segments').highlightStyle,
+        centerOffset: {
+            type: 'number',
+            description: 'The offset from the centre that the highlighted segment should appear from.',
+            editor: NumberEditor,
+            min: 0,
+            max: 50,
+        },
+    },
+    label: {
+        enabled: {
+            default: true,
+            description: `Whether the labels should be shown or not.`,
+            editor: BooleanEditor,
+        },
+        color: {
+            default: '#000000',
+            description: `The colour to use for the labels.`,
             editor: ColourEditor,
         },
-        stroke: {
-            type: 'string',
-            description: 'The colour of the stroke around the marker when hovered over.',
-            editor: ColourEditor,
-        }
+        ...getFontOptions('labels'),
+        offset: {
+            default: 3,
+            description: 'Distance between the callout line and the label text.',
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+        },
+        minAngle: {
+            default: 20,
+            description: 'Minimum angle required for a segment to show a label.',
+            editor: NumberEditor,
+            min: 0,
+            max: 360,
+        },
     },
-    ...markerConfig,
+    callout: {
+        enabled: {
+            default: true,
+            description: `Whether the callout lines should be shown or not.`,
+            editor: BooleanEditor,
+        },
+        colors: {
+            default: strokes,
+            description: 'Colours to cycle through for the strokes of the callouts.',
+        },
+        strokeWidth: {
+            default: 1,
+            description: 'Width of the stroke for callout lines.',
+            editor: NumberEditor,
+            min: 1,
+            max: 10,
+        },
+        length: {
+            default: 10,
+            description: 'The length of the callout lines.',
+            editor: NumberEditor,
+            min: 0,
+            max: 20,
+        },
+    },
+    ...shadowConfig,
 });
