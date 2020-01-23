@@ -115,8 +115,8 @@ export class ScatterSeries extends CartesianSeries {
     @reactive('dataChange') sizeKey?: string;
     @reactive('dataChange') labelKey?: string;
 
-    xName: string = 'X';
-    yName: string = 'Y';
+    xName: string = '';
+    yName: string = '';
     sizeName?: string = 'Size';
     labelName?: string = 'Label';
 
