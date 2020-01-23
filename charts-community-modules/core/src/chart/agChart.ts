@@ -422,10 +422,10 @@ const mappings = {
                         strokeWidth: 1,
                         shadow: undefined
                     }
-                }
-            },
-            ...labelMapping,
-            ...shadowMapping
+                },
+                ...labelMapping,
+                ...shadowMapping
+            }
         }
     }
 } as any;
