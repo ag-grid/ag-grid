@@ -1485,12 +1485,10 @@ export class CellComp extends Component {
         }
 
         if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
-            /* We only need to pass true to focusCell when the browser is IE/Edge and we are trying to focus a cell
-            (element with ag-cell class), otherwise we pass false, as we don't want the cell to get the browser focus.
-            If we did, then the cellRenderer could have a text field in it, for example, and as the user clicks on the
-            text field, the focus would not go to the text field but instead to the div behind, making it impossible to
-            select the text field. */
-            const forceBrowserFocus = (_.isBrowserIE() || _.isBrowserEdge()) && this.getGui().contains(target);
+            // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
+            // to focus the cell itself (element with ag-cell). This should never be true if the
+            // mousedown was triggered due to a click on a cell editor for example.
+            const forceBrowserFocus = (_.isBrowserIE() || _.isBrowserEdge()) && target.classList.contains('ag-cell');
 
             this.focusCell(forceBrowserFocus);
         } else {
