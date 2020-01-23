@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Options.css';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
+import { CodeSnippet } from './CodeSnippet.jsx';
 
 const Section = ({ title, isVisible, children }) => {
     const [expanded, setExpanded] = useState(false);
@@ -29,19 +30,41 @@ const getType = value => {
     return typeof value;
 };
 
+const FunctionDefinition = ({ definition }) => {
+    const { parameters, returnType } = definition;
+    const returnTypeIsObject = typeof returnType === 'object';
+
+    const lines = [`function(params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
+        '',
+        'interface ParamsType {',
+    ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
+        '}',
+    ];
+
+    if (returnTypeIsObject) {
+        lines.push(
+            '',
+            'interface ReturnType {',
+            ...Object.keys(returnType).map(key => `  ${key}: ${returnType[key]};`),
+            '}'
+
+        );
+    }
+
+    return <div className='option__functionDefinition'>
+        <CodeSnippet language='ts' lines={lines} />
+    </div>;
+};
+
 const Option = ({ name, isVisible, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || getType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
 
     return <div className={`option ${isVisible ? '' : 'option--hidden'}`}>
         <span className='option__name'>{name}</span>
-        {derivedType && <span className='option__type'>{isFunction ? `(${Object.keys(derivedType.parameters).join(', ')}) => ${derivedType.returnType}` : derivedType}</span>}
+        {derivedType && <span className='option__type'>{isFunction ? 'Function' : derivedType}</span>}
         {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
-        {isFunction && <div className='option__functionDefinition'>
-            <div className='option__params'>Parameters:<br />
-                {Object.keys(derivedType.parameters).map(p => <code>{p}: {derivedType.parameters[p]}<br /></code>)}
-            </div>
-        </div>}
+        {isFunction && <FunctionDefinition definition={derivedType} />}
         <span className='option__description' dangerouslySetInnerHTML={{ __html: description }}></span><br />
         {Editor && <React.Fragment>Value: <Editor value={defaultValue} {...editorProps} /></React.Fragment>}
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(o => JSON.stringify(o)).join(' | ')}</code></span>}

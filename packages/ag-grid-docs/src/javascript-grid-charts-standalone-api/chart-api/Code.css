@@ -2,3 +2,8 @@
     color: #f8f9fa;
     margin: 0 10px;
 }
+
+.code pre[class*="language-"] {
+    margin: 0;
+    margin-bottom: 1em;
+}

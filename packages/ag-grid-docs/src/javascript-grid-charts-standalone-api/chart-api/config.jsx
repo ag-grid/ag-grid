@@ -298,7 +298,12 @@ export const axisConfig = Object.freeze({
         },
         formatter: {
             type: {
-                parameters: { params: '{ value, index, fractionDigits?, formatter?: x => string }' },
+                parameters: {
+                    value: 'any',
+                    index: 'number',
+                    fractionDigits: 'number',
+                    formatter: '(x: any) => string',
+                },
                 returnType: 'string',
             },
             description: 'Function used to render axis labels. If <code>value</code> is a number, <code>fractionDigits</code> will also be provided, which indicates the number of fractional digits used in the step between ticks; for example, a tick step of <code>0.0005</code> would have <code>fractionDigits</code> set to <code>4</code>.',
@@ -345,7 +350,13 @@ const seriesConfig = {
     tooltipRenderer: {
         type: {
             parameters: {
-                params: '{ datum, title, color, xKey, xName, yKey, yName }',
+                datum: 'any',
+                title: 'string',
+                color: 'string',
+                xKey: 'string',
+                xName: 'string',
+                yKey: 'string',
+                yName: 'string',
             },
             returnType: 'string',
         },
@@ -401,9 +412,21 @@ const markerConfig = {
         formatter: {
             type: {
                 parameters: {
-                    params: '{ datum, fill, stroke, strokeWidth, size, highlighted, xKey, yKey }',
+                    datum: 'any',
+                    fill: 'string',
+                    stroke: 'string',
+                    strokeWidth: 'number',
+                    size: 'number',
+                    highlighted: 'boolean',
+                    xKey: 'string',
+                    yKey: 'string',
                 },
-                returnType: '{ fill, stroke, strokeWidth, size }'
+                returnType: {
+                    fill: 'string',
+                    stroke: 'string',
+                    strokeWidth: 'number',
+                    size: 'number',
+                },
             },
             description: 'Function used to return formatting for individual markers, based on the supplied information.',
         }
@@ -774,9 +797,19 @@ export const scatterSeriesConfig = Object.freeze({
     tooltipRenderer: {
         type: {
             parameters: {
-                params: '{ datum, title, color, xKey, xName, yKey, yName, sizeKey, sizeName, labelKey, labelName }',
+                datum: 'any',
+                title: 'string',
+                color: 'string',
+                xKey: 'string',
+                xName: 'string',
+                yKey: 'string',
+                yName: 'string',
+                sizeKey: 'string',
+                sizeName: 'string',
+                labelKey: 'string',
+                labelName: 'string',
             },
-            returnType: 'string'
+            returnType: 'string',
         },
         description: 'Function used to create the content for tooltips.'
     },
