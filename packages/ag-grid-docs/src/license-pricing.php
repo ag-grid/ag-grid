@@ -222,11 +222,23 @@ gtm_data_layer('community-enterprise');
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    We license all concurrent, front-end, JavaScript developers working on a project using
-                                    ag-Grid Enterprise, not just the ones directly working with the grid. Single Application
-                                    Developer Licenses are bound to a unique project name and can’t be reused on other projects.
-                                    You are free to reassign developers so long as the total number of concurrent, front-end,
-                                    JavaScript developers doesn’t exceed the number of developer licenses you own for the project.                                </div>
+                                    <ul>
+                                        <li>
+                                            We license all concurrent, front-end, JavaScript developers working on a
+                                            project using ag-Grid Enterprise, not just the ones directly working with
+                                            the grid.
+                                        </li>
+                                        <li>
+                                            Single Application Developer Licenses are bound to a unique project name
+                                            and can’t be reused on other projects.
+                                        </li>
+                                        <li>
+                                            You are free to reassign developers so long as the total number of
+                                            concurrent, front-end, JavaScript developers doesn’t exceed the number
+                                            of developer licenses you own for the project.
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -249,12 +261,23 @@ gtm_data_layer('community-enterprise');
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    We license all concurrent, front-end, JavaScript developers working on a project using
-                                    ag-Grid Enterprise, not just the ones directly working with the grid. Multiple Applications
-                                    Developer Licenses can be reused on an unlimited number of projects. You are free to
-                                    reassign developers so long as the total number of concurrent, front-end, JavaScript
-                                    developers doesn’t exceed the number of developer licenses you own for your
-                                    company/department.                                </div>
+                                    <ul>
+                                        <li>
+                                            We license all concurrent, front-end, JavaScript developers working on a project using
+                                            ag-Grid Enterprise, not just the ones directly working with the grid.
+                                        </li>
+                                        <li>
+                                            Multiple Applications
+                                            Developer Licenses can be reused on an unlimited number of projects.
+                                        </li>
+                                        <li>
+                                            You are free to
+                                            reassign developers so long as the total number of concurrent, front-end, JavaScript
+                                            developers doesn’t exceed the number of developer licenses you own for your
+                                            company/department.
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -274,101 +297,60 @@ gtm_data_layer('community-enterprise');
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    A Deployment License Add-on allows licensed developers in position of a developer license
-                                    to make their project available to customers (sub-license). One Deployment License Add-on
-                                    covers one production environment for one project.                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="deeper-dive">
-                <div>
-                    <div>&nbsp;</div>
-                    <div style="text-decoration: underline; color: red;">
-                        <h1 style="color: black">DEEPER DIVE</h1>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <img src="./images/pricing/Dependency.svg">
-                    </div>
-                    <div>
-                        <span>Project Dependency</span>
-                        <p>A software project will have a dependency on ag-Grid Enterprise if it requires our software to
-                            perform some of its functions. Every Front-End JavaScript developer working on the project will need
-                            to be licensed.
-                        </p>
-                        <div class="example card">
-                            <div class="card-header">Example</div>
-                            <div class="card-body">
-                                <div class="card-text">
-                                    Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render
-                                    10K rows of data in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise
-                                    to the project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on
-                                    &lsquo;MyApp&rsquo;. Only 1 Front-End developer is tasked with configuring and modifying the data grid.
-                                    The benefit to the UI is project-wide however and all developers contributing to it need to be licensed.
-                                    Company &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                        <img src="./images/pricing/Indirect.svg">
-                    </div>
-                    <div>
-                        <span>Indirect Project Dependency</span>
-                        <p>
-                            A software project will have an indirect dependency on ag-Grid Enterprise even if it's wrapped into
-                            another framework, file, library, etc. Every Front-End JavaScript developer working on a project using
-                            a library that wraps ag-Grid Enterprise will need to be licensed.
-                        </p>
-                        <p>Please note: You are not allowed to wrap ag-Grid Enterprise in a framework, library, component, etc. and
-                            make it available as a development tool outside of your organisation.
-                        </p>
-                        <div class="example card">
-                            <div class="card-header">Example</div>
-                            <div class="card-body">
-                                <div class="card-text">
-                                    A UI development team at Company &lsquo;A&rsquo; creates its own UI library for internal development
-                                    and includes ag-Grid Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new
-                                    library and so does the team working on &lsquo;NewApp&rsquo;. &lsquo;MyApp&rsquo; has 5 Front-End
-                                    JavaScript developers and &lsquo;NewApp&rsquo; has 3. There are 2 Front-End JavaScript developers on
-                                    the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for ag-Grid Enterprise.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div>
-                    <img src="./images/svg/production.svg">
-                    </div>
-                    <div>
-                        <span>Production Environment</span>
-                        <p>
-                            One production deployment of the application (distinct, top-level URL or a place a
-                            customer visits to access the data and services presented in the UI). Multiple instances
-                            of the application within an application cluster are considered part of the same production
-                            environment and do not need separate licensing.
-                        </p>
-                        <div class="example card">
-                            <div class="card-header">Detail</div>
-                            <div class="card-body">
-                                <div class="card-text">
-                                    In a cloud context a single production environment will encompass all identical
-                                    copies made for geographic availability irrespective of the underlying resources.
-                                    In an OEM context a back-end installation would represent a single production
-                                    environment. If you are planning to ship a self-contained application (doesn’t
-                                    call a service) to a desktop email us on info@ag-grid.com
+                                    <ul>
+                                        <li>
+                                            A Deployment License Add-on allows making a project available
+                                            to individuals (eg your customers) outside of your orginisation
+                                            (sub-license).
+                                        </li>
+                                        <li>
+                                            One Deployment License Add-on covers one production environment
+                                            for one project.
+                                        </li>
+                                        <li>
+                                            Only production environments require licensing. All other environments
+                                            (eg development, test, pre-production) do not require a license.
+                                        </li>
+                                        <li>
+                                            We do not charge per server. A cluster of many servers
+                                            part of one application installation is considered one deployment
+                                            and requires one Deployment License. This is true so long as the
+                                            application instances within the cluster are replicas of each other
+                                            and server to provide load balancing and fail over only.
+                                        </li>
+                                        <li>
+                                            Production failover deployments do not need to be licensed separately.
+                                            They are considered part of the overall application production deployment.
+                                        </li>
+                                        <li>
+                                            Multi-tennent deployments, where one application instance is serving
+                                            many customers over different URLs, is considered one deployment, as
+                                            each tennent is getting serviced by the same application instance.
+                                        </li>
+                                        <li>
+                                            Different instances of the same application, where the instances
+                                            are not part of a cluster for fail over or load balancing, are considered
+                                            independent deployments and need a Deployment License for each
+                                            individual application instance.
+                                        </li>
+                                        <li>
+                                            Deploying an application to a cloud service (eg AWS or Docker) requires
+                                            one Deployment License, regardless of how many virtual containers
+                                            or servers the cloud application spawns for that one single instance
+                                            of the application.
+                                        </li>
+                                    </ul>
+                                    If you have a deployment that doesn't fit within our licensing model,
+                                    please start a conversation with us through
+                                    <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> and we will do our
+                                    best to get to something that works.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
             <section id="timeline">
                 <div>
                     <div>&nbsp;</div>
@@ -483,6 +465,95 @@ gtm_data_layer('community-enterprise');
                     </div>
                 </div>
             </section>
+
+            <section id="deeper-dive">
+                <div>
+                    <div>&nbsp;</div>
+                    <div style="text-decoration: underline; color: red;">
+                        <h1 style="color: black">DEEPER DIVE</h1>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <img src="./images/pricing/Dependency.svg">
+                    </div>
+                    <div>
+                        <span>Project Dependency</span>
+                        <p>A software project will have a dependency on ag-Grid Enterprise if it requires our software to
+                            perform some of its functions. Every Front-End JavaScript developer working on the project will need
+                            to be licensed.
+                        </p>
+                        <div class="example card">
+                            <div class="card-header">Example</div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render
+                                    10K rows of data in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise
+                                    to the project to satisfy that requirement. 5 Front-End and 10 Back-End developers are working on
+                                    &lsquo;MyApp&rsquo;. Only 1 Front-End developer is tasked with configuring and modifying the data grid.
+                                    The benefit to the UI is project-wide however and all developers contributing to it need to be licensed.
+                                    Company &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <img src="./images/pricing/Indirect.svg">
+                    </div>
+                    <div>
+                        <span>Indirect Project Dependency</span>
+                        <p>
+                            A software project will have an indirect dependency on ag-Grid Enterprise even if it's wrapped into
+                            another framework, file, library, etc. Every Front-End JavaScript developer working on a project using
+                            a library that wraps ag-Grid Enterprise will need to be licensed.
+                        </p>
+                        <p>Please note: You are not allowed to wrap ag-Grid Enterprise in a framework, library, component, etc. and
+                            make it available as a development tool outside of your organisation.
+                        </p>
+                        <div class="example card">
+                            <div class="card-header">Example</div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    A UI development team at Company &lsquo;A&rsquo; creates its own UI library for internal development
+                                    and includes ag-Grid Enterprise as a component. The team working on &lsquo;MyApp&rsquo; uses the new
+                                    library and so does the team working on &lsquo;NewApp&rsquo;. &lsquo;MyApp&rsquo; has 5 Front-End
+                                    JavaScript developers and &lsquo;NewApp&rsquo; has 3. There are 2 Front-End JavaScript developers on
+                                    the UI development team. Company &lsquo;A&rsquo; purchases 10 licenses for ag-Grid Enterprise.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <img src="./images/svg/production.svg">
+                    </div>
+                    <div>
+                        <span>Production Environment</span>
+                        <p>
+                            One production deployment of the application (distinct, top-level URL or a place a
+                            customer visits to access the data and services presented in the UI). Multiple instances
+                            of the application within an application cluster are considered part of the same production
+                            environment and do not need separate licensing.
+                        </p>
+                        <div class="example card">
+                            <div class="card-header">Detail</div>
+                            <div class="card-body">
+                                <div class="card-text">
+                                    In a cloud context a single production environment will encompass all identical
+                                    copies made for geographic availability irrespective of the underlying resources.
+                                    In an OEM context a back-end installation would represent a single production
+                                    environment. If you are planning to ship a self-contained application (doesn’t
+                                    call a service) to a desktop email us on info@ag-grid.com
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
     <!--        <div id="side-bar">-->
         <div id="side-bar" style="display: none">

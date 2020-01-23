@@ -152,11 +152,9 @@
                 }
                 > p:nth-of-type(2) {
                     font-weight: 400;
-                    color: $grey-1;
                 }
                 .example {
                     @extend .mb-3, .my-md-3;
-                    color: $grey-1;
                     .card-header {
                         @extend .font-weight-bold;
                     }
