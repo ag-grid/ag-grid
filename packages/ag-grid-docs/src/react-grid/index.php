@@ -15,13 +15,20 @@ include '../documentation-main/documentation_header.php';
     are building applications that would not be possible if ag-Grid did not exist.
   </p>
 
-  <?php
-    printVideo("https://www.youtube.com/embed/sA1mHFhP43Q");
-  ?>
-
 <?php
 include './intro.php';
 ?>
+
+<section id="angular-demo" class="mb-3">
+  <div class="card">
+    <div class="card-header">Getting Started Video Tutorial</div>
+    <div class="card-body">
+      <?php
+              printVideo("https://www.youtube.com/embed/sA1mHFhP43Q");
+          ?>
+    </div>
+  </div>
+</section>
 
 <h2>Getting Started</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid
