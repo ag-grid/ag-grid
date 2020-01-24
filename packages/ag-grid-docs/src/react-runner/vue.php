@@ -6,17 +6,18 @@ $example = getReactExampleInfo();
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>ag-Grid React Example</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vue example</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <style media="only screen">
-        html, body, #root {
+        html, body {
             height: 100%;
             width: 100%;
             margin: 0;
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
+
         html {
             position: absolute;
             top: 0;
@@ -24,6 +25,7 @@ $example = getReactExampleInfo();
             padding: 0;
             overflow: auto;
         }
+
         body {
             padding: 1rem;
             overflow: auto;
@@ -31,19 +33,22 @@ $example = getReactExampleInfo();
     </style>
 </head>
 <body>
-<div id="root">Loading&hellip;</div>
+<div id="app" style="height: 100%">
+    <my-component>Loading Vue example&hellip;</my-component>
+</div>
 
 <script>
-    var systemJsMap = <?= json_encode($systemJsMap); ?>;
+    var systemJsMap = <?= json_encode($systemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
     var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
 </script>
 
 <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-<!-- leave the next line as is - is replaced when deploying to archives or production -->
 <script src="systemjs.config.js"></script>
 
 <script>
-    System.import('index.jsx').catch( function(err) { console.error(err); })
+    System.import('main.js').catch(function (err) {
+        console.error(err);
+    })
 </script>
 </body>
 </html>

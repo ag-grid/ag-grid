@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../config.php';
 
-function getReactExampleInfo($boilerplatePrefix)
+function getReactExampleInfo()
 {
     $preview = isset($_GET['preview']);
 
@@ -16,7 +16,7 @@ function getReactExampleInfo($boilerplatePrefix)
     $scripts = getScripts($files, $appRoot, $preview);
     $documents = getDocuments($files, $appRoot, $preview);
 
-    $boilerplatePath = "$boilerplatePrefix-boilerplate/";
+    $boilerplatePath = "app-boilerplate/";
     $appLocation = $appRoot . "/";
 
     return array(
@@ -64,10 +64,10 @@ function reactApp($dir, $id, $options = array())
 
     $entry['files'] = getDirContents($dir, $options['skipDirs']);
 
-    $entry['boilerplatePath'] = "../react-runner/react-boilerplate";
+     $entry['boilerplatePath'] = "../react-runner/app-boilerplate";
     $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
 
-    $entry['resultUrl'] = "../react-runner/react.php?$queryString";
+    $entry['resultUrl'] = "../react-runner/react-app.php?$queryString";
     $entry['id'] = $id;
 
     $config['app'] = $entry;

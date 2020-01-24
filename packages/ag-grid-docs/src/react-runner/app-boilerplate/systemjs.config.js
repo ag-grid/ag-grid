@@ -1,5 +1,5 @@
 (function(global) {
-// simplified version of Object.assign for es3
+    // simplified version of Object.assign for es3
     function assign() {
         var result = {};
         for (var i = 0, len = arguments.length; i < len; i++) {
@@ -33,8 +33,17 @@
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types',
+                'object-assign': 'npm:object-assign',
+                'cookie': 'npm:cookie',
+                'react-color': 'npm:react-color@2.17.3',
+                'reactcss': 'npm:reactcss@1.2.3',
+                'lodash': 'npm:lodash@4.17.15',
+                'material-colors': 'npm:material-colors@1.2.6',
+                '@icons/material': 'npm:@icons/material@0.2.4',
+                'tinycolor2': 'npm:tinycolor2@1.4.1',
+                'prismjs': 'npm:prismjs@1.19.0',
 
-                app: 'app'
+                app: appLocation + 'app'
             },
             systemJsMap
         ), // systemJsMap comes from index.html
@@ -58,6 +67,24 @@
                 main: './dist/react-redux.min.js',
                 defaultExtension: 'js'
             },
+            'react-color': {
+                main: './lib/index.js',
+                map: {
+                    './lib/components/common': './lib/components/common/index.js'
+                }
+            },
+            'reactcss': {
+                main: './lib/index.js',
+            },
+            'lodash': {
+                main: './lodash.min.js',
+            },
+            'material-colors': {
+                main: './dist/colors.js',
+            },
+            'tinycolor2': {
+                main: './dist/tinycolor-min.js',
+            },
             app: {
                 defaultExtension: 'jsx'
             },
@@ -65,10 +92,18 @@
                 main: './main.js',
                 defaultExtension: 'js'
             },
+            'ag-charts-angular': {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-vue': {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
             'ag-charts-community': {
                 main: './dist/cjs/main.js',
                 defaultExtension: 'js'
-            },
+            }
         },
         meta: {
             '*.jsx': {
@@ -76,7 +111,7 @@
                     react: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);

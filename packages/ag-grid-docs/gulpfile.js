@@ -58,7 +58,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/angular-boilerplate/',
         './dist/example-runner/vue-boilerplate/',
         './dist/example-runner/react-boilerplate/',
-        './dist/react-runner/react-boilerplate/',
+        './dist/react-runner/app-boilerplate/',
     ];
 
     boilerPlateLocation.forEach(boilerPlateLocation => {

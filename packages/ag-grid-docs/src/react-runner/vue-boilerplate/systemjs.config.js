@@ -1,5 +1,5 @@
-(function(global) {
-// simplified version of Object.assign for es3
+(function (global) {
+    // simplified version of Object.assign for es3
     function assign() {
         var result = {};
         for (var i = 0, len = arguments.length; i < len; i++) {
@@ -19,20 +19,19 @@
         },
         map: assign(
             {
-                // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
-
                 // babel transpiler
                 'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-                // react
-                react: 'npm:react@16.12.0',
-                'react-dom': 'npm:react-dom@16.12.0',
-                'react-dom-factories': 'npm:react-dom-factories',
-                redux: 'npm:redux@3.6.0',
-                'react-redux': 'npm:react-redux@5.0.6',
-                'prop-types': 'npm:prop-types',
+                // css plugin
+                'css': 'npm:systemjs-plugin-css/css.js',
+
+                // vuejs
+                'vue': 'npm:vue/dist/vue.min.js',
+
+                // vue property decorator
+                'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
+                'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
 
                 app: 'app'
             },
@@ -40,28 +39,19 @@
         ), // systemJsMap comes from index.html
 
         packages: {
-            react: {
-                main: './umd/react.production.min.js'
-            },
-            'react-dom': {
-                main: './umd/react-dom.production.min.js'
-            },
-            'prop-types': {
-                main: './prop-types.min.js',
+            'vue': {
                 defaultExtension: 'js'
             },
-            redux: {
-                main: './dist/redux.min.js',
+            'vue-class-component': {
                 defaultExtension: 'js'
             },
-            'react-redux': {
-                main: './dist/react-redux.min.js',
+            'vue-property-decorator': {
                 defaultExtension: 'js'
             },
             app: {
-                defaultExtension: 'jsx'
+                defaultExtension: 'js'
             },
-            'ag-charts-react': {
+            'ag-charts-vue': {
                 main: './main.js',
                 defaultExtension: 'js'
             },
@@ -71,9 +61,11 @@
             },
         },
         meta: {
-            '*.jsx': {
+            '*.js': {
                 babelOptions: {
-                    react: true
+                    stage1: true,
+                    stage2: true,
+                    es2015: true
                 }
             },
             '*.css': {loader: 'css'}

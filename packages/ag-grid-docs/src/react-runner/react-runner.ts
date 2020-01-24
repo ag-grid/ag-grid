@@ -1,15 +1,16 @@
 import * as angular from "angular";
+// @ts-ignore
 import * as jQuery from "jquery";
 
-import { trackIfInViewPort, whenInViewPort } from "./lib/viewport";
+import {trackIfInViewPort, whenInViewPort} from "./lib/viewport";
 
 const docs: angular.IModule = angular.module("documentation");
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function($document: any) {
-        return function(url: any, newWindow: any, fields: any) {
+    function ($document: any) {
+        return function (url: any, newWindow: any, fields: any) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
              * If a user chooses to bypass pop-up blocker one time and click the link, they will arrive at
@@ -64,6 +65,7 @@ class ReactRunner {
         private $q: angular.IQService,
         private formPostData: any,
         private $element: Element,
+        // @ts-ignore
         private $cookies: angular.cookies.ICookiesService
     ) {
         $http.defaults.cache = true;
@@ -73,6 +75,49 @@ class ReactRunner {
 
     private openFwDropdown: boolean = false;
     private visible: boolean = false;
+
+    private sources: any = {
+        vanilla: {},
+        angular: {},
+        react: {},
+        vue: {}
+    };
+    private boilerplateFiles: {} = {
+        vanilla: {
+            files: [
+                'index.html',
+                'main.js'
+            ]
+        },
+        angular: {
+            files: [
+                'index.html',
+                'app/app.component.html',
+                'app/app.component.ts',
+                'app/app.module.ts',
+                'main.ts',
+                'systemjs.config.js',
+                'systemjs-angular-loader.js'
+            ]
+
+        },
+        react: {
+            files: [
+                'index.html',
+                'index.jsx',
+                'systemjs.config.js'
+            ]
+
+        },
+        vue: {
+            files: [
+                'index.html',
+                'main.js',
+                'systemjs.config.js'
+            ]
+
+        }
+    };
 
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
@@ -123,6 +168,8 @@ class ReactRunner {
                 this.ready = true;
             });
         });
+
+        this.loadAllSources();
     }
 
     getInitialType(): string {
@@ -140,6 +187,49 @@ class ReactRunner {
         } else {
             return this.availableTypes[0];
         }
+    }
+
+    loadAllSources() {
+        this.$q
+            .all(
+                [].concat.apply([], Object.keys(this.boilerplateFiles)
+                    .map((framework: string) => {
+                        const files = (this.boilerplateFiles as any)[framework].files;
+                        return this.loadSources(framework, files);
+                    })
+                )
+            )
+            .then((sources: {}[]) => {
+                sources.forEach((source: any) => {
+                    const framework = (this.sources as any)[source.framework];
+                    framework[source.file] = source.source;
+                });
+                this.sources = JSON.stringify(this.sources);
+            });
+    }
+
+    loadSources(framework: string, files: any): angular.IPromise<string>[] {
+        return files.map((file: string) => {
+            return this.loadSource(framework, file);
+        });
+    }
+
+    loadSource(framework: string, file: string): angular.IPromise<{}> {
+        let source = this.getSource(framework, file);
+        return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
+            return {
+                framework,
+                file,
+                source: response.data
+            };
+        });
+    }
+
+    getSource(framework: string, file: string): string {
+        if (file === 'index.html') {
+            return `/react-runner/${framework}.php?${this.resultUrl}`;
+        }
+        return `/react-runner/${framework}-boilerplate/${this.config.sourcePrefix}/${file}`;
     }
 
     setAndPersistType(type: string) {
@@ -162,7 +252,7 @@ class ReactRunner {
         this.openFwDropdown = false;
     }
 
-    openPlunker($event) {
+    openPlunker($event: any) {
         const context = JSON.parse($event.target.getAttribute('data-context'));
 
         const postData: any = {
@@ -232,6 +322,7 @@ docs.component("reactRunner", {
                 tooltip="'Open Example in Plunker'"
                 id="$ctrl.id"
                 icon="'fa-external-link-alt'"
+                boilerplate="$ctrl.sources"
                 on-click="$ctrl.openPlunker($event);">
             </example-tab>
         </ul>

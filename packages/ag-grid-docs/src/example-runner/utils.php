@@ -187,15 +187,14 @@ function globalAgGridScript($enterprise = false)
 {
     $localCss = getLocalCssIfApplicable();
     echo $localCss; // this is important
-    $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
 
+    $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     return "    <script src=\"$path\"></script>";
 }
 
-function globalAgChartsScript($enterprise = false)
+function globalAgChartsScript()
 {
     $path = AG_GRID_CHARTS_SCRIPT_PATH;
-
     return "    <script src=\"$path\"></script>";
 }
 

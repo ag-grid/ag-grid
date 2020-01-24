@@ -288,7 +288,7 @@ class ExampleRunner {
         }
     }
 
-    getSource(file: string): string | { sources: string[]; process: (string) => string; } {
+    getSource(file: string): string | { sources: string[]; process: (string:string) => string; } {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join("/");
         }
@@ -322,7 +322,6 @@ class ExampleRunner {
     }
 
     openPlunker(clickEvent) {
-        console.log("here");
         const postData: any = {
             "tags[0]": "ag-grid",
             "tags[1]": "example",
@@ -347,7 +346,7 @@ ExampleRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$el
 docs.component("exampleTab", {
     template: `
     <li role="presentation" ng-class="{ active: $ctrl.currentValue == $ctrl.value }">
-        <a role="tab" id="{{$ctrl.id}}" ref="{{$ctrl.id}}" data-context="" ng-click="$ctrl.doClick($event)" href="#" title="{{$ctrl.tooltip}}">
+        <a role="tab" id="{{$ctrl.id}}" ref="{{$ctrl.id}}" data-boilerplate="{{$ctrl.boilerplate}}" data-context="" ng-click="$ctrl.doClick($event)" href="#" title="{{$ctrl.tooltip}}">
             <i ng-class="['fa', $ctrl.icon]" aria-hidden="true"></i> {{$ctrl.title}}
         </a>
     </li>
@@ -359,7 +358,8 @@ docs.component("exampleTab", {
         tooltip: "<",
         value: "<",
         currentValue: "<",
-        onClick: "&"
+        onClick: "&",
+        boilerplate: "<"
     },
     controller: function() {
         this.doClick = function(event) {
