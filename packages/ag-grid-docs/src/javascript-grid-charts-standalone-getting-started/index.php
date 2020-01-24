@@ -43,6 +43,8 @@ const coffeeSpending = [
 <p>To render it we can use this simple chart factory config:</p>
 
 <snippet language="ts">
+import { AgChart } from "ag-charts-community";
+
 const chart = AgChart.create({
     data: coffeeSpending,
     container: document.body,
@@ -96,6 +98,8 @@ const chart = AgChart.create({
 
 <p>As you can see, it's super easy to create a good looking chart. Only a handful of configs requried.</p>
 
+<h2>Handling More Data</h2>
+
 <p>
     Now let's try something more interesting.
     Let's say you want to visualize how much is spent on coffee, milk and tea in your company each quarter and in total.
@@ -145,29 +149,25 @@ const chart = AgChart.create({
 </snippet>
 
 <p>
-    Here we specify
-    <ul>
-        <li>the data we want to use by passing it to the <code>data</code> property</li>
-        <li>the <code>container</code> element for the chart (the chart won't be attached to the DOM without it)</li>
-        <li>and the series <code>type</code> to use to render the data</li>
-    </ul>
+    Unlike <code>'line'</code> series, <code>'column'</code> series can have multiple <code>yKeys</code> to allow for stacking.
+    In our case, one block per quarter. Chart tooltips are enabled by default, so you can hover a block to see its value.
 </p>
-
-<p>
-    Each series should specify the keys it uses to fetch the data it renders.
-    In this case, we want to have three stacked columns, one per beverage, so we use the <code>xKey</code>
-    to fetch the beverage type and the <code>yKeys</code> to fetch the amount per quarter.
-    The <code>xKey</code> will determine how many stacked columns to create, the <code>yKeys</code> the hight
-    of individual components in each column.
-</p>
-
-<p>This config produces the following chart:</p>
 
 <p>
     <img alt="Column Chart" src="beverage-expenses-no-captions.png" style="margin-bottom: 0px; width: 100%">
 </p>
 
-<p>If we then want to add title and subtitle captions to the chart, we can simply add this to our config:</p>
+<p>
+    Alternatively, you can add the <code>label: {}</code> config to the series to show a label inside each block.
+    It's possible to configure label's <code>fontSize</code>, <code>fontFamily</code> and other properties,
+    but we'll just accept the default values:
+</p>
+
+<p>
+    <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0px; width: 100%">
+</p>
+
+<p>If we then want to add title and subtitle captions to the chart, we can simply add this to our chart config:</p>
 
 <snippet language="ts">
 title: {
@@ -181,6 +181,30 @@ subtitle: {
 <p>
     <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
 </p>
+
+<p>Even with all these extra options our final config ended up being quite small:</p>
+
+<snippet language="ts">
+const chart = AgChart.create({
+    data: beverageSpending,
+    container: document.body,
+    title: {
+        text: 'Beverage Expenses'
+    },
+    subtitle: {
+        text: 'per quarter'
+    },
+    series: [{
+        type: 'column',
+        xKey: 'beverage',
+        yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+        label: {}
+    }]
+});
+</snippet>
+
+Now that you've had a taste of what it's like to use AgCharts, we encourage you to explore our documentation
+for specific chart types to learn more.
 
 <h2>Next Up</h2>
 
