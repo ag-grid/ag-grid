@@ -21,7 +21,7 @@ include './intro.php';
 ?>
 
 <?php
-    printVideo("https://www.youtube.com/embed/AeEfiWAGyLc");
+    printVideo("https://www.youtube.com/embed/AeEfiWAGyLc", "angular-demo");
 ?>
 
 <h2>Getting Started</h2>

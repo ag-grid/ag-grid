@@ -1,7 +1,7 @@
 <?php
-    function printVideo($url){
+    function printVideo($url, $id){
         echo "
-            <section id='angular-demo' class='mb-3'>
+            <section id='$id' class='mb-3'>
                 <div class='card'>
                     <div class='card-header'>Getting Started Video Tutorial</div>
                         <div class='card-body'>

@@ -21,7 +21,7 @@ include './intro.php';
 ?>
 
 <?php
-    printVideo("https://www.youtube.com/embed/KS-wg5zfCXc");
+    printVideo("https://www.youtube.com/embed/KS-wg5zfCXc", "javascript-demo");
 ?>
 
 <h2>Getting Started</h2>
