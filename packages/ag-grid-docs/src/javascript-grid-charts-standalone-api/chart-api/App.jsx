@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
-import {getTemplates} from './templates.jsx';
-import {Chart} from './Chart.jsx';
-import {Options} from './Options.jsx';
-import {Code} from './Code.jsx';
-import {ChartTypeSelector} from './ChartTypeSelector.jsx';
-import {deepClone} from './utils.jsx';
+import { getTemplates } from './templates.jsx';
+import { Chart } from './Chart.jsx';
+import { Options } from './Options.jsx';
+import { Code } from './Code.jsx';
+import { ChartTypeSelector } from './ChartTypeSelector.jsx';
+import { deepClone } from './utils.jsx';
 
 const appName = 'chart-api';
 
@@ -18,11 +18,11 @@ const createOptionsJson = (chartType, options) => {
             type: chartType === 'scatter' ? 'number' : 'category',
             position: 'bottom',
         },
-            {
-                type: 'number',
-                position: 'left',
-                ...options.axes,
-            }] : undefined,
+        {
+            type: 'number',
+            position: 'left',
+            ...options.axes,
+        }] : undefined,
     };
 
     const gridStyle = json.axes && json.axes[1].gridStyle;
@@ -48,11 +48,11 @@ const createOptionsJson = (chartType, options) => {
                 yKey: 'revenue',
                 ...options.series,
             },
-                {
-                    type: 'line',
-                    xKey: 'month',
-                    yKey: 'profit',
-                }];
+            {
+                type: 'line',
+                xKey: 'month',
+                yKey: 'profit',
+            }];
             break;
         case 'area':
             json.series = [{
@@ -83,19 +83,22 @@ const createOptionsJson = (chartType, options) => {
     return json;
 };
 
+const getAppElement = () => window.parent.document.getElementById(appName);
+
 export class App extends React.Component {
     state = {
         framework: this.getCurrentFramework(),
         chartType: 'bar',
         options: {},
         defaults: {},
-        boilerplate: JSON.parse(window.parent.document.getElementById(appName).getAttribute('data-boilerplate'))
     };
+
+    boilerplateCode = JSON.parse(getAppElement().getAttribute('data-boilerplate'));
 
     getKeys = expression => expression.split('.');
 
     getDefaultValue = expression => {
-        let {defaults} = this.state;
+        let { defaults } = this.state;
         const keys = this.getKeys(expression);
 
         while (keys.length > 0 && defaults != null) {
@@ -109,20 +112,20 @@ export class App extends React.Component {
         const keys = this.getKeys(expression);
 
         this.setState(prevState => {
-            const newDefaults = {...prevState.defaults};
+            const newDefaults = { ...prevState.defaults };
             let objectToUpdate = newDefaults;
 
             while (keys.length > 1) {
                 const key = keys.shift();
                 const parent = objectToUpdate;
 
-                objectToUpdate = {...parent[key]};
+                objectToUpdate = { ...parent[key] };
                 parent[key] = objectToUpdate;
             }
 
             objectToUpdate[keys.shift()] = defaultValue;
 
-            return {defaults: newDefaults};
+            return { defaults: newDefaults };
         });
     };
 
@@ -133,7 +136,7 @@ export class App extends React.Component {
         const keys = this.getKeys(expression);
         const parentKeys = [...keys];
         parentKeys.pop();
-        const defaultParent = {...this.getDefaultValue(parentKeys.join('.')) || this.state.defaults};
+        const defaultParent = { ...this.getDefaultValue(parentKeys.join('.')) || this.state.defaults };
         const defaultValue = defaultParent[keys[keys.length - 1]];
         const removeUnneededKeys = false;
 
@@ -172,11 +175,11 @@ export class App extends React.Component {
                 delete objectToUpdate[key];
             }
 
-            this.setState({options: newOptions});
+            this.setState({ options: newOptions });
         };
 
         this.setState(prevState => {
-            const newOptions = {...prevState.options};
+            const newOptions = { ...prevState.options };
             let objectToUpdate = newOptions;
             const lastKeyIndex = keys.length - 1;
 
@@ -187,7 +190,7 @@ export class App extends React.Component {
                 if (parent[key] == null) {
                     objectToUpdate = requiresWholeObject && i === lastKeyIndex - 1 ? defaultParent : {};
                 } else {
-                    objectToUpdate = {...parent[key]};
+                    objectToUpdate = { ...parent[key] };
                 }
 
                 parent[key] = objectToUpdate;
@@ -195,17 +198,18 @@ export class App extends React.Component {
 
             objectToUpdate[keys[lastKeyIndex]] = value;
 
-            return {options: newOptions};
+            return { options: newOptions };
         }, removeUnneededKey);
     };
 
     changeChartType = type => {
-        this.setState({chartType: type, defaults: {}, options: {}});
+        this.setState({ chartType: type, defaults: {}, options: {} });
     };
 
     getCurrentFramework() {
         const frameworkDropdownElement = window.parent.document.querySelector(`[data-framework-dropdown=${appName}]`);
         const currentFramework = frameworkDropdownElement && frameworkDropdownElement.getAttribute('data-current-framework');
+
         return currentFramework || 'vanilla';
     };
 
@@ -213,32 +217,33 @@ export class App extends React.Component {
         this.componentDidUpdate();
 
         window.parent.document.querySelectorAll(`[data-framework-item=${appName}]`).forEach(element => {
-            element.addEventListener('click', () => this.setState({framework: this.getCurrentFramework()}));
+            element.addEventListener('click', () => this.setState({ framework: this.getCurrentFramework() }));
         });
     }
 
     componentDidUpdate() {
-        window.parent.document.getElementById(appName).setAttribute('data-context',
-            JSON.stringify({
-                files: getTemplates(this.state.framework, this.state.boilerplate, createOptionsJson(this.state.chartType, this.state.options))
-            })
-        );
+        const { chartType, options, framework } = this.state;
+        const optionsJson = createOptionsJson(chartType, options);
+        const files = getTemplates(framework, this.boilerplateCode, optionsJson);
+
+        getAppElement().setAttribute('data-context', JSON.stringify({ files }));
     }
 
     render() {
-        const options = createOptionsJson(this.state.chartType, this.state.options);
+        const { chartType, options, framework } = this.state;
+        const optionsJson = createOptionsJson(chartType, options);
 
         return <div className="container">
-            <ChartTypeSelector type={this.state.chartType} onChange={value => this.changeChartType(value)}/>
-            <div className="container__chart"><Chart options={options}/></div>
+            <ChartTypeSelector type={chartType} onChange={this.changeChartType} />
+            <div className="container__chart"><Chart options={optionsJson} /></div>
             <div className="container__bottom">
                 <div className="container__options">
                     <Options
-                        chartType={this.state.chartType}
+                        chartType={chartType}
                         updateOptionDefault={this.updateOptionDefault}
-                        updateOption={this.updateOption}/>
+                        updateOption={this.updateOption} />
                 </div>
-                <div className="container__code"><Code framework={this.state.framework} options={options}/></div>
+                <div className="container__code"><Code framework={framework} options={optionsJson} /></div>
             </div>
         </div>;
     }

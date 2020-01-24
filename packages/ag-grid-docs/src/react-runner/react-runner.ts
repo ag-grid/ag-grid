@@ -2,15 +2,15 @@ import * as angular from "angular";
 // @ts-ignore
 import * as jQuery from "jquery";
 
-import {trackIfInViewPort, whenInViewPort} from "./lib/viewport";
+import { trackIfInViewPort, whenInViewPort } from "./lib/viewport";
 
 const docs: angular.IModule = angular.module("documentation");
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory("formPostData", [
     "$document",
-    function ($document: any) {
-        return function (url: any, newWindow: any, fields: any) {
+    function($document: any) {
+        return function(url: any, newWindow: any, fields: any) {
             /*
              * If the form posts to target="_blank", pop-up blockers can cause it not to work.
              * If a user chooses to bypass pop-up blocker one time and click the link, they will arrive at
@@ -86,15 +86,11 @@ class ReactRunner {
         vanilla: {
             files: [
                 'index.html',
-                'main.js'
             ]
         },
         angular: {
             files: [
                 'index.html',
-                'app/app.component.html',
-                'app/app.component.ts',
-                'app/app.module.ts',
                 'main.ts',
                 'systemjs.config.js',
                 'systemjs-angular-loader.js'
@@ -104,7 +100,6 @@ class ReactRunner {
         react: {
             files: [
                 'index.html',
-                'index.jsx',
                 'systemjs.config.js'
             ]
 
@@ -112,7 +107,6 @@ class ReactRunner {
         vue: {
             files: [
                 'index.html',
-                'main.js',
                 'systemjs.config.js'
             ]
 
