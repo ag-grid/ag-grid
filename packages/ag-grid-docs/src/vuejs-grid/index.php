@@ -21,7 +21,7 @@ include './intro.php';
 
 
 <?php
-    printVideo("https://www.youtube.com/embed/eW3qCti1lsA", "vuejs-demo");
+    printVideoSection("https://www.youtube.com/embed/eW3qCti1lsA", "vuejs-demo","Getting Started Video Tutorial");
 ?>
 
 <h2>Getting Started</h2>

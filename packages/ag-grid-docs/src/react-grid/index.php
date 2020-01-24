@@ -20,7 +20,7 @@ include './intro.php';
 ?>
 
 <?php
-  printVideo("https://www.youtube.com/embed/sA1mHFhP43Q", "react-demo");
+  printVideoSection("https://www.youtube.com/embed/sA1mHFhP43Q", "react-demo", "Getting Started Video Tutorial");
 ?>
 
 <h2>Getting Started</h2>
