@@ -106,7 +106,7 @@ export const ColourEditor = ({ value, onChange }) => {
             <input className="colour-editor__input" type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
             <div style={{ 'backgroundColor': colourString }} className="colour-editor__sample"></div>
         </div>
-        <div className="colour-editor__slider"><HuePicker width={'100%'} color={color} onChange={value => sliderOnChange(value, false)} /></div>
-        <div className="colour-editor__slider"><AlphaPicker width={'100%'} color={color} onChange={value => sliderOnChange(value, true)} /></div>
+        <div className="colour-editor__slider"><HuePicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, false)} /></div>
+        <div className="colour-editor__slider"><AlphaPicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, true)} /></div>
     </div>;
 };
