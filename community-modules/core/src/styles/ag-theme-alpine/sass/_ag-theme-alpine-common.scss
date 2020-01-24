@@ -76,10 +76,6 @@
             margin: 0;
             margin-left: $ag-grid-size * 1;
         }
-
-        .ag-native-checkbox {
-            @include ag-checkbox($ag-color-primary);
-        }
     }
 
     .ag-filter-header-container {
@@ -141,26 +137,6 @@
     &.ag-dnd-ghost {
         @include ag-chrome-box-shadow();
         border-radius: $ag-border-radius;
-    }
-
-    ////////////////////////////////////////
-    // Selection Checkbox
-    ////////////////////////////////////////
-    .ag-selection-checkbox input {
-        @include ag-checkbox;
-    }
-
-    ////////////////////////////////////////
-    // Header Checkbox
-    ////////////////////////////////////////
-    .ag-checkbox {
-        .ag-input-wrapper {
-            overflow: visible;
-        }
-
-        input {
-            @include ag-checkbox;
-        }
     }
 
     ////////////////////////////////////////
@@ -337,10 +313,6 @@
             margin-left: $ag-grid-size * 2;
         }
 
-        .ag-checkbox {
-            @include ag-checkbox($ag-color-primary);
-        }
-
         .ag-input-wrapper {
             margin-right: $ag-grid-size * 2;
         }
@@ -350,10 +322,6 @@
         margin-left: $ag-grid-size * 2;
         margin-right: $ag-grid-size * 2;
         padding-left: 0;
-    }
-
-    .ag-column-select-list .ag-checkbox input {
-        @include ag-checkbox($ag-color-primary);
     }
 
     .ag-column-select-list .ag-column-group-icons {
@@ -586,16 +554,8 @@
             }
         }
 
-        .ag-native-checkbox {
-            @include ag-checkbox($ag-color-primary);
+        .ag-checkbox {
             margin-right: 2px;
-        }
-
-        input.ag-native-toggle-button {
-            flex: none;
-            width: unset;
-            min-width: unset;
-            @include ag-toggle-button;
         }
 
         // Format tab
@@ -657,7 +617,7 @@
         padding: $ag-grid-size $ag-grid-size * 2;
         height: auto;
         background: $ag-background-color;
-        input.ag-native-checkbox {
+        input.ag-checkbox {
             @include ag-toggle-button;
         }
     }

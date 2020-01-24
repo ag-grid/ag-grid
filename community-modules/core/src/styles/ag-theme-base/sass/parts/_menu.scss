@@ -136,6 +136,10 @@
         @include ag-theme-rtl((margin-left: 5px));
     }
 
+    .ag-set-filter-item-checkbox input {
+        @include ag-checkbox;
+    }
+
     .ag-filter-header-container {
         @include ag-grid-border(secondary, bottom);
         padding-bottom: $ag-grid-size / 2;
@@ -168,5 +172,9 @@
     .ag-column-select-list {
         @include ag-grid-border(secondary, top);
         padding-top: $ag-grid-size;
+    }
+
+    .ag-column-select-list .ag-checkbox input {
+        @include ag-checkbox;
     }
 }

@@ -19,7 +19,10 @@ $ag-row-hover-color: #f2f2f2 !default;
 $ag-input-border-color: #95a5a6 !default;
 $ag-input-disabled-background-color: #ebebeb !default;
 
-$ag-checkbox-color: #7f8c8d !default;
+$ag-checkbox-border-radius: 3px !default;
+$ag-checkbox-check-color: $ag-balham-active !default;
+$ag-checkbox-border-color: #7f8c8d !default;
+$ag-checkbox-checked-border-color: $ag-balham-active !default;
 
 $ag-value-change-value-highlight-background-color: rgba(#16a085, 0.5) !default;
 
@@ -30,7 +33,7 @@ $ag-balham-tooltip-background-color: #cbd0d3 !default;
 $ag-range-selection-background-color: rgba($ag-balham-active, 0.2) !default;
 $ag-range-selection-border-color: $ag-balham-active;
 $ag-range-selection-highlight-color: $ag-balham-active !default;
-$ag-checkbox-checked-color: $ag-balham-active !default;
+
 $ag-selected-row-background-color: lighten($ag-balham-active, 40) !default;
 $ag-chip-background-color: mix($ag-control-panel-background-color, $ag-foreground-color, 80%) !default;
 $ag-header-cell-moving-background-color: $ag-background-color !default;

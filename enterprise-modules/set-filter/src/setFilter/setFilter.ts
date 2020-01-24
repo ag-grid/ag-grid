@@ -14,11 +14,12 @@ import {
     VirtualList,
     VirtualListModel
 } from "@ag-grid-community/core";
+
 import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {SetFilterModel} from "./setFilterModel";
 
-enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE}
+enum CheckboxState { CHECKED, UNCHECKED, INTERMEDIATE }
 
 export class SetFilter extends ProvidedFilter {
 
@@ -34,14 +35,8 @@ export class SetFilter extends ProvidedFilter {
     @Autowired('eventService') private eventService: EventService;
 
     private selectAllState: CheckboxState;
-
     private setFilterParams: ISetFilterParams;
-
     private virtualList: VirtualList;
-
-    private eCheckedIcon: HTMLElement;
-    private eUncheckedIcon: HTMLElement;
-    private eIndeterminateCheckedIcon: HTMLElement;
 
     // to make the filtering super fast, we store the values in a map.
     // otherwise we would be searching a list of values for each row when checking doesFilterPass
@@ -119,17 +114,10 @@ export class SetFilter extends ProvidedFilter {
 
         this.setFilterParams = params;
 
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.setFilterParams.column);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.setFilterParams.column);
-        this.eIndeterminateCheckedIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.setFilterParams.column);
-
-
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectAllCheckbox = document.createElement("input");
-            this.eSelectAllCheckbox.type = "checkbox";
-            this.eSelectAllCheckbox.className = "ag-native-checkbox";
-            this.eSelectAll.appendChild(this.eSelectAllCheckbox);
-        }
+        this.eSelectAllCheckbox = document.createElement("input");
+        this.eSelectAllCheckbox.type = "checkbox";
+        this.eSelectAllCheckbox.className = "ag-checkbox";
+        this.eSelectAll.appendChild(this.eSelectAllCheckbox);
 
         this.initialiseFilterBodyUi();
 
@@ -184,30 +172,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateCheckboxIcon() {
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectAllCheckbox.checked = this.selectAllState === CheckboxState.CHECKED;
-            this.eSelectAllCheckbox.indeterminate = this.selectAllState === CheckboxState.INTERMEDIATE;
-        } else {
-            _.clearElement(this.eSelectAll);
-
-            let icon: HTMLElement;
-            switch (this.selectAllState) {
-                case CheckboxState.INTERMEDIATE:
-                    icon = this.eIndeterminateCheckedIcon;
-                    break;
-                case CheckboxState.CHECKED:
-                    icon = this.eCheckedIcon;
-                    break;
-                case CheckboxState.UNCHECKED:
-                    icon = this.eUncheckedIcon;
-                    break;
-                default: // default happens when initialising for first time
-                    icon = this.eCheckedIcon;
-                    break;
-            }
-
-            this.eSelectAll.appendChild(icon);
-        }
+        this.eSelectAllCheckbox.checked = this.selectAllState === CheckboxState.CHECKED;
+        this.eSelectAllCheckbox.indeterminate = this.selectAllState === CheckboxState.INTERMEDIATE;
     }
 
     public setLoading(loading: boolean): void {

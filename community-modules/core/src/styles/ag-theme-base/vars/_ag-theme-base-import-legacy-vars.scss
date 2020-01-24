@@ -203,8 +203,8 @@
     $ag-selected-row-background-color: $ag-selected-color !global;
   }
 
-  @if (variable-exists("ag-accent-color") and not variable-exists("ag-checkbox-checked-color")) {
-    $ag-checkbox-checked-color: $ag-accent-color !global;
+  @if (variable-exists("ag-accent-color") and not variable-exists("ag-checkbox-check-color")) {
+    $ag-checkbox-check-color: $ag-accent-color !global;
   }
 
   @if (variable-exists("ag-hover-color") and not variable-exists("ag-row-hover-color")) {

@@ -31,19 +31,19 @@
     }
 
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 1);
+        @include ag-color-self-overlay($ag-range-selection-background-color, 1);
     }
 
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 2);
+        @include ag-color-self-overlay($ag-range-selection-background-color, 2);
     }
 
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 3);
+        @include ag-color-self-overlay($ag-range-selection-background-color, 3);
     }
 
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
-        @include ag-colour-self-overlay($ag-range-selection-background-color, 4);
+        @include ag-color-self-overlay($ag-range-selection-background-color, 4);
     }
 
     .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {

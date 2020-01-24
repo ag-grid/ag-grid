@@ -43,6 +43,14 @@
     @return $draw-border;
 }
 
+@mixin ag-box-shadow($color) {
+    box-shadow: 0 0 2px 0.1rem transparentize($color, 0.6);
+}
+
+@mixin ag-chrome-box-shadow {
+    box-shadow: 0 1px 4px 1px transparentize($ag-color-chrome-shadow, 0.6);
+}
+
 @mixin ag-card() {
     @include ag-grid-border(primary);
     
@@ -50,6 +58,164 @@
     border-radius: $ag-card-radius;
     box-shadow: $ag-card-shadow;
     padding: $ag-grid-size;
+}
+
+@mixin ag-checkbox {
+    -webkit-appearance: none;
+    width: $ag-checkbox-size;
+    height: $ag-checkbox-size;
+    vertical-align: middle;
+    border-radius: $ag-checkbox-border-radius;
+    border: 1px solid $ag-checkbox-border-color;
+    background: $ag-checkbox-background-color;
+    transition: background-color 0.1s linear;
+    display: block;
+    margin: 0;
+
+    &:focus {
+        @include ag-box-shadow($ag-checkbox-background-color);
+        border-color: $ag-checkbox-checked-border-color;
+        outline: none;
+    }
+
+    // the element creates the flashing effect when the checkbox is ticked.
+    &::before {
+        content: ' ';
+        width: $ag-checkbox-size - 2;
+        height: $ag-checkbox-size - 2;
+        background: $ag-checkbox-background-color;
+        display: block;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        visibility: hidden;
+        position: absolute;
+        transition: background-color 0.2s linear;
+        border-radius: $ag-checkbox-border-radius;
+        z-index: 2;
+    }
+
+    &::after {
+        content: ' ';
+        border-right: 1px solid $ag-checkbox-check-color;
+        border-bottom: 1px solid $ag-checkbox-check-color;
+        display: block;
+        transform: rotate(45deg);
+        transition: all 0.2s linear;
+        clip-path: inset(0px 5px 0px 0px);
+        width: 5px;
+        height: 9px;
+        margin-left: 4px;
+        margin-right: 4px;
+        margin-top: 1px;
+    }
+
+    &:checked {
+        background-color: $ag-checkbox-checked-background-color;
+        border-color: $ag-checkbox-checked-border-color;
+    }
+
+    &:checked::after {
+        clip-path: inset(0px 0px 0px 0px);
+    }
+
+    &:checked::before {
+        background: transparentize($ag-checkbox-checked-background-color, 1);
+        visibility: visible;
+    }
+
+    &:indeterminate {
+        background-color: $ag-checkbox-checked-background-color;
+        border-color: $ag-checkbox-checked-border-color;
+    }
+
+    &:indeterminate::after {
+        clip-path: inset(0px 0px 0px 0px);
+        transform: rotate(0deg);
+        margin-top: 6px;
+        margin-left: 2px;
+        margin-right: 2px;
+        width: 9px;
+        border-bottom-width: 1.5px;
+        height: 0px;
+    }
+
+    &:disabled {
+        background-color: $ag-checkbox-disabled-background-color;
+        border-color: $ag-checkbox-disabled-border-color;
+    }
+
+    &:checked:disabled {
+        background-color: $ag-checkbox-disabled-background-color;
+        border-color: $ag-checkbox-disabled-border-color;
+    }
+}
+
+@mixin ag-toggle-button($color: $ag-foreground-color) {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    width: $ag-toggle-button-width;
+    height: $ag-toggle-button-height;
+    background-color: $ag-toggle-button-background-color;
+    border-color: $ag-toggle-button-background-color;
+    border-radius: $ag-toggle-button-height / 2;
+    margin: 0;
+    position: relative;
+
+    &:focus {
+        box-shadow: none;
+        border-color: $ag-toggle-button-background-color;
+    }
+
+    &:checked {
+        background-color: $color;
+        border-color: $ag-border-color;
+    }
+
+    &::before {
+        box-sizing: border-box;
+        height: $ag-toggle-button-height;
+        width: $ag-toggle-button-height;
+        content: ' ';
+        background: white;
+        display: inline-block;
+        position: absolute;
+        border-radius: $ag-toggle-button-height / 2;
+        transition: left 100ms linear;
+        top: -1px;
+        left: -1px;
+        // below resets stuff from checkbox
+        visibility: visible;
+        border: 1px solid $ag-border-color;
+        padding: 0;
+    }
+
+    &:checked::before {
+        left: ($ag-toggle-button-width - $ag-toggle-button-height / 2) + 2;
+        border-color: $color;
+    }
+
+    &::after {
+        margin: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        content: none;
+        line-height: 20px;
+        display: block;
+        text-align: right;
+        padding-left: 5px;
+        padding-right: 5px;
+        transform: none;
+        width: auto;
+        height: auto;
+        border: 0;
+    }
+
+    &:checked::after {
+        text-align: left;
+        content: ' ';
+    }
 }
 
 @mixin ag-icon-element($icon, $code) {
@@ -145,42 +311,9 @@
       content: $ag-icon-right;
   }
 
-
-  @if not $nativeCheckboxes {
-    @include ag-icon-element('checkbox-checked', $ag-icon-checkbox-checked);
-    @include ag-icon-element('checkbox-indeterminate', $ag-icon-checkbox-indeterminate);
-    @include ag-icon-element('checkbox-unchecked', $ag-icon-checkbox-unchecked);
-    @include ag-icon-element('radio-button-off', $ag-icon-radio-button-off);
-    @include ag-icon-element('radio-button-on', $ag-icon-radio-button-on);
-
-    .ag-icon-checkbox-checked,
-    .ag-icon-checkbox-indeterminate,
-    .ag-icon-checkbox-unchecked {
-        background-color: $ag-checkbox-background-color;
-        line-height: $ag-icon-size;
-        border-radius: 3px;
-        color: $ag-checkbox-color;
-        &-readonly {
-            cursor: default;
-            opacity: opacity($ag-disabled-foreground-color);
-        }
-    }
-    .ag-icon-checkbox-checked {
-        color: $ag-checkbox-checked-color;
-        &-readonly:before {
-            content: $ag-icon-checkbox-checked;
-        }
-    }
-    .ag-icon-checkbox-indeterminate-readonly:before {
-        content: $ag-icon-checkbox-indeterminate;
-    }
-    .ag-icon-checkbox-unchecked-readonly:before  {
-        content: $ag-icon-checkbox-unchecked; 
-    }
-  }
 }
 
-@mixin ag-colour-self-overlay($color, $times) {
+@mixin ag-color-self-overlay($color, $times) {
     $solidity: 1 - opacity($color);
     $output-solidity: 1;
     @if $times > 0 {

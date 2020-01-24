@@ -1,12 +1,24 @@
 
 @mixin ag-theme-base-part-widgets {
-    
     .ag-checkbox,
-    .ag-radio-button,
+    .ag-radio-button {
+        .ag-input-wrapper {
+            overflow: visible;
+        }
+
+        input {
+            @include ag-checkbox;
+        }
+    }
+
     .ag-toggle-button {
-        display: flex;
-        align-items: center;
-        cursor: default;
+        flex: none;
+        width: unset;
+        min-width: unset;
+        input {
+            @include ag-toggle-button($ag-toggle-button-color);
+        }
+        
     }
 
     .ag-label-align-right .ag-label {
@@ -105,6 +117,10 @@
 
         color: $ag-secondary-foreground-color;
     }
+
+    .ag-selection-checkbox input {
+        @include ag-checkbox;
+    }
     
     .ag-group-title-bar-icon {
         color: $ag-secondary-foreground-color;
@@ -175,26 +191,18 @@
         height: $ag-icon-size;
         width: 40px;
         background-color: $ag-background-color;
-        border: 1px solid $ag-checkbox-color;
+        border: 1px solid $ag-checkbox-check-color;
         border-radius: 500rem;
     }
     .ag-selected .ag-toggle-button-input-wrapper {
-        background-color: $ag-checkbox-checked-color;
-    }
-
-
-    .ag-icon-radio-button-off {
-        color: $ag-checkbox-color;
-    }
-    .ag-icon-radio-button-on {
-        color: $ag-checkbox-checked-color;
+        background-color: $ag-checkbox-check-color;
     }
 
     .ag-toggle-button-icon {
         background-color: $ag-background-color;
         width: $ag-icon-size;
         height: $ag-icon-size;
-        border: 1px solid $ag-checkbox-color;
+        border: 1px solid $ag-checkbox-border-color;
         border-radius: 500rem;
         right: calc(100% - #{$ag-icon-size} + 1px);
     }

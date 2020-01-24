@@ -27,10 +27,6 @@ export class PrimaryColsHeaderPanel extends Component {
     @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
     @RefSelector('eFilterTextField') private eFilterTextField: HTMLInputElement;
 
-    private eSelectChecked: HTMLElement;
-    private eSelectUnchecked: HTMLElement;
-    private eSelectIndeterminate: HTMLElement;
-
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
@@ -65,14 +61,10 @@ export class PrimaryColsHeaderPanel extends Component {
     @PostConstruct
     public postConstruct(): void {
         this.createExpandIcons();
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectCheckbox = document.createElement("input");
-            this.eSelectCheckbox.type = "checkbox";
-            this.eSelectCheckbox.className = "ag-checkbox";
-            this.eSelect.appendChild(this.eSelectCheckbox);
-        } else {
-            this.createCheckIcons();
-        }
+        this.eSelectCheckbox = document.createElement("input");
+        this.eSelectCheckbox.type = "checkbox";
+        this.eSelectCheckbox.className = "ag-checkbox";
+        this.eSelect.appendChild(this.eSelectCheckbox);
 
         this.addDestroyableEventListener(
             this.eExpand,
@@ -133,30 +125,7 @@ export class PrimaryColsHeaderPanel extends Component {
         ));
         this.setExpandState(EXPAND_STATE.EXPANDED);
     }
-
-    private createCheckIcons() {
-        this.eSelect.appendChild((
-            this.eSelectChecked = _.createIconNoSpan(
-                "checkboxChecked",
-                this.gridOptionsWrapper
-            )
-        ));
-        this.eSelect.appendChild((
-            this.eSelectUnchecked = _.createIconNoSpan(
-                "checkboxUnchecked",
-                this.gridOptionsWrapper
-            )
-        ));
-        this.eSelect.appendChild((
-            this.eSelectIndeterminate = _.createIconNoSpan(
-                "checkboxIndeterminate",
-                this.gridOptionsWrapper
-            )
-        ));
-
-        this.setSelectionState(SELECTED_STATE.CHECKED);
-    }
-
+ 
     // we only show expand / collapse if we are showing columns
     private showOrHideOptions(): void {
         const showFilter = !this.params.suppressColumnFilter;
@@ -216,23 +185,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
     public setSelectionState(state: SELECTED_STATE): void {
         this.selectState = state;
-
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectCheckbox.checked = this.selectState === SELECTED_STATE.CHECKED;
-            this.eSelectCheckbox.indeterminate = this.selectState === SELECTED_STATE.INDETERMINATE;
-        } else {
-            _.setDisplayed(
-                this.eSelectChecked,
-                this.selectState === SELECTED_STATE.CHECKED
-            );
-            _.setDisplayed(
-                this.eSelectUnchecked,
-                this.selectState === SELECTED_STATE.UNCHECKED
-            );
-            _.setDisplayed(
-                this.eSelectIndeterminate,
-                this.selectState === SELECTED_STATE.INDETERMINATE
-            );
-        }
+        this.eSelectCheckbox.checked = this.selectState === SELECTED_STATE.CHECKED;
+        this.eSelectCheckbox.indeterminate = this.selectState === SELECTED_STATE.INDETERMINATE;
     }
 }
