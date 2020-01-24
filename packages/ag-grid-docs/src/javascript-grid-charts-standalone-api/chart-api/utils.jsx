@@ -19,7 +19,12 @@ export const formatJson = object => {
 
     const formattedJson = JSON.stringify(object, (_, v) => Array.isArray(v) ? formatArray(v) : v, 2);
 
-    return formattedJson.replace(/\"([^(\")"]+)\":/g, '$1:').replace(/"\[/g, '[').replace(/\]"/g, ']');
+    console.log(`Formatting ${formattedJson}`);
+
+    return formattedJson
+        .replace(/\"([^\"]+)\":/g, '$1:') // format property names
+        .replace(/"\[/g, '[').replace(/\]"/g, ']') // finish array formatting
+        .replace(/\"([^\"]+)\"/g, '\'$1\''); // force single quotes
 };
 
 export const deepClone = object => JSON.parse(JSON.stringify(object || {}));

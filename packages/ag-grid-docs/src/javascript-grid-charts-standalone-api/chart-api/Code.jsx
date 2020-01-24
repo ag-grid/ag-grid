@@ -41,7 +41,7 @@ const VanillaCode = ({ options }) => {
             if (typeof value === 'object') {
                 extractLines(Array.isArray(object) ? `${prefix}[${key}]` : `${prefix}.${key}`, value);
             } else if (value != null) {
-                lines.push(`${prefix}.${key} = ${JSON.stringify(value)};`);
+                lines.push(`${prefix}.${key} = ${formatJson(value)};`);
             }
         });
     };
