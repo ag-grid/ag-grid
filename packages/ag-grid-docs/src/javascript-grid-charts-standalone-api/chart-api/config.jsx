@@ -743,16 +743,7 @@ export const pieSeriesConfig = Object.freeze({
         ...getCaptionOptions('title'),
     },
     ...getColourConfig('segments', true),
-    highlightStyle: {
-        ...getHighlightConfig('segments').highlightStyle,
-        centerOffset: {
-            type: 'number',
-            description: 'The offset from the centre that the highlighted segment should appear from.',
-            editor: NumberEditor,
-            min: 0,
-            max: 50,
-        },
-    },
+    ...getHighlightConfig('segments'),
     label: {
         enabled: {
             default: true,
