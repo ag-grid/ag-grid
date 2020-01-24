@@ -19,16 +19,9 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<section id="angular-demo" class="mb-3">
-  <div class="card">
-    <div class="card-header">Getting Started Video Tutorial</div>
-    <div class="card-body">
-      <?php
-              printVideo("https://www.youtube.com/embed/sA1mHFhP43Q");
-          ?>
-    </div>
-  </div>
-</section>
+<?php
+  printVideo("https://www.youtube.com/embed/sA1mHFhP43Q");
+?>
 
 <h2>Getting Started</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid

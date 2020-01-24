@@ -20,16 +20,9 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<section id="angular-demo" class="mb-3">
-    <div class="card">
-        <div class="card-header">Getting Started Video Tutorial</div>
-        <div class="card-body">
-            <?php
-                printVideo("https://www.youtube.com/embed/AeEfiWAGyLc");
-            ?>
-        </div>
-    </div>
-</section>
+<?php
+    printVideo("https://www.youtube.com/embed/AeEfiWAGyLc");
+?>
 
 <h2>Getting Started</h2>
 <p>
