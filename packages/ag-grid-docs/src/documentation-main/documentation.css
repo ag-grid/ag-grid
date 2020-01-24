@@ -60,7 +60,7 @@
 	flex: none;
 	margin-bottom: 25px;
 	margin-right: 25px;
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 #documentation .docs-homepage-section-preview .card {
@@ -70,10 +70,6 @@
 	width: 100%;
 	border: 1px solid #dee2e6;
 	overflow: hidden;
-}
-
-#documentation .docs-homepage-section-preview:not(.open) .card:hover {
-    border-color: #A7A7A7
 }
 
 #documentation .docs-homepage-section-preview.open .card {
@@ -173,6 +169,14 @@
 	}
 	#documentation .group:first-child {
 		margin-top: 1rem;
+	}
+
+	#documentation .docs-homepage-section-preview {
+		cursor: pointer;
+	}
+
+	#documentation .docs-homepage-section-preview:not(.open) .card:hover {
+		border-color: #A7A7A7
 	}
 }
 
