@@ -147,7 +147,7 @@ $ag-checkbox-checked-border-color: $ag-foreground-color !default;
 $ag-checkbox-indeterminate-border-color: $ag-checkbox-checked-border-color !default;
 $ag-checkbox-disabled-border-color: transparentize($ag-border-color, 0.7) !default;
 
-$ag-toggle-button-color: $ag-foreground-color;
+$ag-toggle-button-color: $ag-foreground-color !default;
 $ag-toggle-button-background-color: $ag-background-color !default;
 $ag-toggle-button-height: 18px !default;
 $ag-toggle-button-width: 28px !default;

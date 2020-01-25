@@ -16,7 +16,7 @@
         width: unset;
         min-width: unset;
         input {
-            @include ag-toggle-button($ag-toggle-button-color);
+            @include ag-toggle-button;
         }
         
     }
@@ -191,7 +191,7 @@
         height: $ag-icon-size;
         width: 40px;
         background-color: $ag-background-color;
-        border: 1px solid $ag-checkbox-check-color;
+        border: 1px solid $ag-checkbox-border-color;
         border-radius: 500rem;
     }
     .ag-selected .ag-toggle-button-input-wrapper {

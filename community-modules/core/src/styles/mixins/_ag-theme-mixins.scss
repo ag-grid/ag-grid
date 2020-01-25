@@ -150,48 +150,45 @@
     }
 }
 
-@mixin ag-toggle-button($color: $ag-foreground-color) {
+@mixin ag-toggle-button {
     box-sizing: border-box;
     -webkit-appearance: none;
     width: $ag-toggle-button-width;
     height: $ag-toggle-button-height;
     background-color: $ag-toggle-button-background-color;
-    border-color: $ag-toggle-button-background-color;
+    border: 1px solid $ag-checkbox-border-color;
     border-radius: $ag-toggle-button-height / 2;
     margin: 0;
     position: relative;
 
     &:focus {
         box-shadow: none;
-        border-color: $ag-toggle-button-background-color;
     }
 
     &:checked {
-        background-color: $color;
-        border-color: $ag-border-color;
+        background-color: $ag-toggle-button-color;
     }
 
     &::before {
         box-sizing: border-box;
-        height: $ag-toggle-button-height;
-        width: $ag-toggle-button-height;
+        height: $ag-toggle-button-height - 2;
+        width: $ag-toggle-button-height - 2;
         content: ' ';
-        background: white;
+        background: $ag-background-color;
         display: inline-block;
         position: absolute;
         border-radius: $ag-toggle-button-height / 2;
         transition: left 100ms linear;
-        top: -1px;
+        top: 0;
         left: -1px;
         // below resets stuff from checkbox
         visibility: visible;
-        border: 1px solid $ag-border-color;
+        border: 1px solid $ag-checkbox-border-color;
         padding: 0;
     }
 
     &:checked::before {
-        left: ($ag-toggle-button-width - $ag-toggle-button-height / 2) + 2;
-        border-color: $color;
+        left: calc(100% - #{$ag-toggle-button-height - 3});
     }
 
     &::after {
