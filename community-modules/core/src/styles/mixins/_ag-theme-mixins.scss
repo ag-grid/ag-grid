@@ -231,7 +231,7 @@
     }
 }
 
-@mixin ag-icons-webfont($nativeCheckboxes: false) {
+@mixin ag-icons-webfont() {
   .ag-icon {
       font-family: '#{$ag-icon-font-family}';
       font-size: $ag-icon-size;
