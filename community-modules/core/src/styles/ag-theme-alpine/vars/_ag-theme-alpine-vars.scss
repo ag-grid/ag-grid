@@ -117,11 +117,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 //
 
 $ag-borders: (critical, primary, secondary);
-        
 $ag-selected-tab-underline-transition-speed: 0.3s;
-
-$ag-checkbox-color: $ag-alpine-gray-3 !default;
-$ag-checkbox-checked-color: $ag-color-primary !default;
 
 // Sizing
 $ag-grid-size: 6px !default;
@@ -129,8 +125,6 @@ $ag-icon-size: 16px !default;
 
 // these three should be changed in environment.ts, too
 $ag-row-height: $ag-grid-size * 7 !default;
-
-$ag-checkbox-background-color: $ag-background-color !default;
 $ag-header-cell-moving-background-color: $ag-background-color !default;
 
 // Derived from above
@@ -178,6 +172,19 @@ $ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;
 $ag-value-change-delta-down-color: $ag-color-value-change-delta-down !default;
 $ag-value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background !default;
 $ag-input-height: $ag-grid-size * 4 !default;
+
+$ag-checkbox-size: 15px !default;
+$ag-checkbox-border-radius: $ag-border-radius !default;
+
+$ag-checkbox-check-color: $ag-background-color !default;
+$ag-checkbox-background-color: $ag-background-color !default;
+$ag-checkbox-checked-background-color: $ag-color-secondary !default;
+$ag-checkbox-indeterminate-background-color: $ag-checkbox-checked-background-color !default;
+$ag-checkbox-checked-border-color: $ag-color-secondary !default;
+$ag-toggle-button-color: $ag-color-secondary !default;
+
+$ag-toggle-button-height: 18px !default;
+$ag-toggle-button-width: 28px !default;
 
 
 // Icons

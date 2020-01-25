@@ -11,7 +11,8 @@ import {
     PostConstruct,
     Promise,
     UserComponentFactory,
-    ValueFormatterService
+    ValueFormatterService,
+    RefSelector
 } from "@ag-grid-community/core";
 
 
@@ -26,20 +27,18 @@ export class SetFilterListItem extends Component {
 
     private static TEMPLATE = 
         `<label class="ag-set-filter-item">
-            <div class="ag-set-filter-item-checkbox"></div>
+            <div ref="eCheckbox" class="ag-set-filter-item-checkbox"></div>
             <span class="ag-set-filter-item-value"></span>
         </label>`;
 
-    private eCheckbox: HTMLElement;
-    private eNativeCheckbox: HTMLInputElement;
+    @RefSelector('eCheckbox') private eCheckbox: HTMLElement;
+
+    private eCheckboxInput: HTMLInputElement;
     private eClickableArea: HTMLElement;
     private selected: boolean = true;
 
     private value: any;
     private column: Column;
-
-    private eCheckedIcon: HTMLElement;
-    private eUncheckedIcon: HTMLElement;
 
     constructor(value: any, column: Column) {
         super(SetFilterListItem.TEMPLATE);
@@ -64,16 +63,10 @@ export class SetFilterListItem extends Component {
 
     @PostConstruct
     private init(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-        this.eCheckbox = this.queryForHtmlElement('.ag-set-filter-item-checkbox');
-
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eNativeCheckbox = document.createElement('input');
-            this.eNativeCheckbox.type = 'checkbox';
-            this.eNativeCheckbox.className = 'ag-native-checkbox';
-            this.eCheckbox.appendChild(this.eNativeCheckbox);
-        }
+        this.eCheckboxInput = document.createElement('input');
+        this.eCheckboxInput.type = 'checkbox';
+        this.eCheckboxInput.className = 'ag-checkbox';
+        this.eCheckbox.appendChild(this.eCheckboxInput);
 
         this.eClickableArea = this.getGui();
 
@@ -103,17 +96,7 @@ export class SetFilterListItem extends Component {
     }
 
     private updateCheckboxIcon() {
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eNativeCheckbox.checked = this.isSelected();
-        } else {
-            _.clearElement(this.eCheckbox);
-
-            if (this.isSelected()) {
-                this.eCheckbox.appendChild(this.eCheckedIcon);
-            } else {
-                this.eCheckbox.appendChild(this.eUncheckedIcon);
-            }
-        }
+        this.eCheckboxInput.checked = this.isSelected();
     }
 
     public render(): void {

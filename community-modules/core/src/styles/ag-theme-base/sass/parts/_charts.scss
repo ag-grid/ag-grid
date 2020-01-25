@@ -41,7 +41,7 @@
         }
 
         &.ag-selected {
-            border-color: $ag-checkbox-checked-color;
+            border-color: $ag-checkbox-check-color;
         }
     }
 
@@ -52,7 +52,7 @@
         border-radius: 4px;
 
         &.ag-selected {
-            background-color: $ag-checkbox-checked-color;
+            background-color: $ag-checkbox-check-color;
         }
     }
 

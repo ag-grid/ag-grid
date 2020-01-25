@@ -110,11 +110,6 @@ export class Environment {
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public useNativeCheckboxes() {
-        const { theme } = this.getTheme();
-        return !!theme && theme.indexOf('alpine') >= 0;
-    }
-
     public chartMenuPanelWidth() {
         const theme = this.getTheme().themeFamily;
         return this.getSassVariable(theme, 'chartMenuPanelWidth');

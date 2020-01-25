@@ -1,11 +1,6 @@
 @import "./ag-theme-base-import-legacy-vars";
 
 
-//
-// COLOURS
-//
-
-
 // Colour of text and icons in primary UI elements like menus
 $ag-foreground-color: #000 !default;
 
@@ -35,11 +30,6 @@ $ag-subheader-background-color: null !default;
 
 // Background for areas of the interface that contain UI controls, like tool panels and the chart settings menu
 $ag-control-panel-background-color: null !default;
-
-// Colours for checkboxes and similar click-to-select components like toggle buttons and radio buttons
-$ag-checkbox-color: $ag-foreground-color !default;
-$ag-checkbox-checked-color: $ag-foreground-color !default;
-$ag-checkbox-background-color: $ag-background-color !default;
 
 // Background color of selected rows in the grid and in dropdown menus
 $ag-selected-row-background-color: mix($ag-background-color, $ag-foreground-color, 75%) !default;
@@ -99,6 +89,7 @@ $ag-chip-background-color: null !default;
 //     side-button: around sidebar tabs so that the active tab appears connected to the current tool panel
 //     secondary: between UI elements
 $ag-borders: true !default;
+$ag-border-radius: 0px !default;
 
 // Colour for border around major UI components like the grid itself, headers, footers and tool panels
 $ag-border-color: mix($ag-background-color, $ag-foreground-color, 25%) !default;
@@ -138,10 +129,29 @@ $ag-header-column-resize-handle: false !default;
 $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
 
+$ag-checkbox-size: 15px !default;
+$ag-checkbox-check-size: 1px !default;
+$ag-checkbox-border-radius: $ag-border-radius !default;
+$ag-checkbox-border-size: 1px !default;
 
-// 
-// Sizing
-//
+$ag-checkbox-check-color: $ag-foreground-color !default;
+$ag-checkbox-disabled-color: $ag-disabled-foreground-color !default;
+
+$ag-checkbox-background-color: $ag-background-color !default;
+$ag-checkbox-checked-background-color: $ag-background-color !default;
+$ag-checkbox-indeterminate-background-color: $ag-checkbox-background-color !default;
+$ag-checkbox-disabled-background-color: $ag-input-disabled-background-color !default;
+
+$ag-checkbox-border-color: $ag-border-color !default;
+$ag-checkbox-checked-border-color: $ag-foreground-color !default;
+$ag-checkbox-indeterminate-border-color: $ag-checkbox-checked-border-color !default;
+$ag-checkbox-disabled-border-color: transparentize($ag-border-color, 0.7) !default;
+
+$ag-toggle-button-color: $ag-foreground-color !default;
+$ag-toggle-button-background-color: $ag-background-color !default;
+$ag-toggle-button-height: 18px !default;
+$ag-toggle-button-width: 28px !default;
+
 
 // The main control for affecting how tightly data and UI elements are packed together.
 // All block sizes, margins and padding in the grid are defined as a multiple of $ag-grid-size,
@@ -172,15 +182,11 @@ $ag-secondary-font-family: $ag-font-family !default;
 $ag-secondary-font-size: 14px !default;
 $ag-secondary-font-weight: 400 !default;
 
-// Misc
-
 
 // radius applied to popup elements
 $ag-card-radius: $ag-grid-radius !default;
 $ag-card-shadow: none !default;
 
-
-// Flags
 
 // Icons
 @import "./font-vars";

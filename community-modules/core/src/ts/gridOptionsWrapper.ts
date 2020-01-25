@@ -1694,10 +1694,6 @@ export class GridOptionsWrapper {
         return this.specialForNewMaterial(20, 'virtualItemHeight');
     }
 
-    public useNativeCheckboxes() {
-        return this.environment.useNativeCheckboxes();
-    }
-
     public chartMenuPanelWidth() {
         return this.environment.chartMenuPanelWidth();
     }
