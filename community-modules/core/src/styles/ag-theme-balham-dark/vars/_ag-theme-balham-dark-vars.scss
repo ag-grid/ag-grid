@@ -20,10 +20,9 @@ $ag-selected-row-background-color: darken($ag-balham-active, 25) !default;
 
 $ag-input-border-color: #f0f0f0 !default;
 $ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;
-
-$ag-checkbox-check-color: #f0f0f0 !default;
-
 $ag-balham-tooltip-background-color: #1c1f20 !default;
+
+$ag-checkbox-border-color: $ag-foreground-color !default;
 
 
 @import '../../ag-theme-balham/vars/ag-theme-balham-vars';

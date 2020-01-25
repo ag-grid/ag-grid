@@ -130,17 +130,21 @@ $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
 
 $ag-checkbox-size: 15px !default;
+$ag-checkbox-check-size: 1px !default;
 $ag-checkbox-border-radius: $ag-border-radius !default;
+$ag-checkbox-border-size: 1px !default;
 
 $ag-checkbox-check-color: $ag-foreground-color !default;
 $ag-checkbox-disabled-color: $ag-disabled-foreground-color !default;
 
 $ag-checkbox-background-color: $ag-background-color !default;
 $ag-checkbox-checked-background-color: $ag-background-color !default;
+$ag-checkbox-indeterminate-background-color: $ag-checkbox-background-color !default;
 $ag-checkbox-disabled-background-color: $ag-input-disabled-background-color !default;
 
 $ag-checkbox-border-color: $ag-border-color !default;
 $ag-checkbox-checked-border-color: $ag-foreground-color !default;
+$ag-checkbox-indeterminate-border-color: $ag-checkbox-checked-border-color !default;
 $ag-checkbox-disabled-border-color: transparentize($ag-border-color, 0.7) !default;
 
 $ag-toggle-button-color: $ag-foreground-color;

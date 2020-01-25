@@ -175,9 +175,12 @@ $ag-input-height: $ag-grid-size * 4 !default;
 
 $ag-checkbox-size: 15px !default;
 $ag-checkbox-border-radius: $ag-border-radius !default;
-$ag-checkbox-background-color: $ag-alpine-gray-3 !default;
-$ag-checkbox-check-color: $ag-color-primary !default;
-$ag-checkbox-checked-background-color: $ag-background-color !default;
+
+$ag-checkbox-check-color: $ag-background-color !default;
+$ag-checkbox-background-color: $ag-background-color !default;
+$ag-checkbox-checked-background-color: $ag-color-secondary !default;
+$ag-checkbox-indeterminate-background-color: $ag-checkbox-checked-background-color !default;
+$ag-checkbox-checked-border-color: $ag-color-secondary !default;
 
 $ag-toggle-button-height: 18px !default;
 $ag-toggle-button-width: 28px !default;

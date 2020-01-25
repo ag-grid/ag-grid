@@ -14,8 +14,6 @@ $ag-background-color: #fff !default;
 $ag-header-background-color: #fff !default;
 $ag-subheader-background-color: #eee;
 $ag-header-cell-hover-background-color: darken($ag-header-background-color, 5%) !default;
-$ag-checkbox-check-color: $ag-mat-accent-color !default;
-$ag-checkbox-background-color: transparent !default;
 $ag-chip-background-color: #e2e2e2 !default;
 $ag-range-selection-background-color: rgba(122, 134, 203, 0.1) !default;
 $ag-range-selection-chart-category-background-color: rgba(0, 255, 132, 0.1) !default;
@@ -25,6 +23,18 @@ $ag-row-hover-color: #fafafa !default;
 $ag-control-panel-background-color: #fafafa !default;
 $ag-selected-row-background-color: #eee !default;
 $ag-range-selection-border-color: $ag-mat-primary-color;
+
+$ag-checkbox-size: 18px !default;
+$ag-checkbox-check-size: 2px !default;
+$ag-checkbox-border-size: 2px !default;
+$ag-checkbox-border-radius: 2px !default;
+$ag-checkbox-check-color: $ag-background-color !default;
+$ag-checkbox-background-color: $ag-background-color !default;
+$ag-checkbox-checked-background-color: $ag-mat-accent-color !default;
+$ag-checkbox-indeterminate-background-color: $ag-foreground-color !default;
+$ag-checkbox-checked-border-color: $ag-mat-accent-color !default;
+$ag-checkbox-indeterminate-border-color: $ag-checkbox-indeterminate-background-color !default;
+$ag-checkbox-border-color: $ag-foreground-color !default;
 
 // Borders
 $ag-borders: critical; // only draw important borders

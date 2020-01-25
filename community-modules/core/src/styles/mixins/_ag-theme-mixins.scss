@@ -66,14 +66,14 @@
     height: $ag-checkbox-size;
     vertical-align: middle;
     border-radius: $ag-checkbox-border-radius;
-    border: 1px solid $ag-checkbox-border-color;
+    border: $ag-checkbox-border-size solid $ag-checkbox-border-color;
     background: $ag-checkbox-background-color;
     transition: background-color 0.1s linear;
     display: block;
     margin: 0;
 
     &:focus {
-        @include ag-box-shadow($ag-checkbox-background-color);
+        @include ag-box-shadow($ag-checkbox-checked-background-color);
         border-color: $ag-checkbox-checked-border-color;
         outline: none;
     }
@@ -97,17 +97,16 @@
 
     &::after {
         content: ' ';
-        border-right: 1px solid $ag-checkbox-check-color;
-        border-bottom: 1px solid $ag-checkbox-check-color;
+        border-right: $ag-checkbox-check-size solid $ag-checkbox-check-color;
+        border-bottom: $ag-checkbox-check-size solid $ag-checkbox-check-color;
         display: block;
         transform: rotate(45deg);
         transition: all 0.2s linear;
         clip-path: inset(0px 5px 0px 0px);
-        width: 5px;
-        height: 9px;
+        width: $ag-checkbox-size / 3;
+        height: $ag-checkbox-size - 6;
         margin-left: 4px;
         margin-right: 4px;
-        margin-top: 1px;
     }
 
     &:checked {
@@ -125,8 +124,8 @@
     }
 
     &:indeterminate {
-        background-color: $ag-checkbox-checked-background-color;
-        border-color: $ag-checkbox-checked-border-color;
+        background-color: $ag-checkbox-indeterminate-background-color;
+        border-color: $ag-checkbox-indeterminate-border-color;
     }
 
     &:indeterminate::after {
