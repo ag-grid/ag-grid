@@ -38,7 +38,7 @@ const builds = {
     */
 };
 
-function genConfig(buildName, sourceDirectory, moduleName) {
+function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
     const packageJson = require(path.resolve(sourceDirectory, './package.json'));
 
     const banner = ['/**',
@@ -49,7 +49,7 @@ function genConfig(buildName, sourceDirectory, moduleName) {
         ' */',
         ''].join('\n');
 
-    const build = builds[buildName];
+    const build = buildsToUse[buildName];
 
     const config = {
         input: path.resolve(sourceDirectory, `./dist/es6/main.js`),
@@ -78,4 +78,26 @@ function genConfig(buildName, sourceDirectory, moduleName) {
     return config
 }
 
-exports.getAllBuilds = (sourceDirectory, moduleName) => Object.keys(builds).map(buildName => genConfig(buildName, sourceDirectory, moduleName));
+const getBuilds = (umdModuleName) => {
+    const buildsToUse = {...builds};
+    if (umdModuleName) {
+        buildsToUse['umd-dev'] = {
+            format: 'umd',
+            env: 'development',
+            moduleName: umdModuleName,
+            extension: '.min.js'
+        };
+        buildsToUse['umd-prod'] = {
+            format: 'umd',
+            env: 'production',
+            moduleName: umdModuleName,
+            extension: '.js'
+        }
+    }
+    return buildsToUse;
+};
+
+exports.getAllBuilds = (sourceDirectory, bundlePrefix, umdModuleName) => {
+    const buildsToUse = getBuilds(umdModuleName);
+    return Object.keys(buildsToUse).map(buildName => genConfig(buildsToUse, buildName, sourceDirectory, bundlePrefix));
+};
