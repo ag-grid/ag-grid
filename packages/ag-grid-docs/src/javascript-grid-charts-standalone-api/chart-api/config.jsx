@@ -576,6 +576,9 @@ const shadowConfig = {
 
 const getHighlightConfig = (name = 'marker') => ({
     highlightStyle: {
+        meta: {
+            requiresWholeObject: true,
+        },
         fill: {
             default: 'yellow',
             description: `The fill colour of the ${name} when hovered over.`,
