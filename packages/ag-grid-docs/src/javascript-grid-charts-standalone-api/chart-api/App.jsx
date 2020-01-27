@@ -5,7 +5,7 @@ import { Chart } from './Chart.jsx';
 import { Options } from './Options.jsx';
 import { Code } from './Code.jsx';
 import { ChartTypeSelector } from './ChartTypeSelector.jsx';
-import { deepClone } from './utils.jsx';
+import { deepClone, getUrlParameters } from './utils.jsx';
 
 const appName = 'chart-api';
 
@@ -83,6 +83,7 @@ const createOptionsJson = (chartType, options) => {
     return json;
 };
 
+const isFullScreen = () => window.self === window.top;
 const getAppElement = () => window.parent.document.getElementById(appName);
 
 export class App extends React.Component {
@@ -93,7 +94,7 @@ export class App extends React.Component {
         defaults: {},
     };
 
-    boilerplateCode = JSON.parse(getAppElement().getAttribute('data-boilerplate'));
+    boilerplateCode = !isFullScreen() && JSON.parse(getAppElement().getAttribute('data-boilerplate'));
 
     getKeys = expression => expression.split('.');
 
@@ -208,7 +209,11 @@ export class App extends React.Component {
 
     getCurrentFramework() {
         const frameworkDropdownElement = window.parent.document.querySelector(`[data-framework-dropdown=${appName}]`);
-        const currentFramework = frameworkDropdownElement && frameworkDropdownElement.getAttribute('data-current-framework');
+        let currentFramework = frameworkDropdownElement && frameworkDropdownElement.getAttribute('data-current-framework');
+
+        if (!currentFramework) {
+            currentFramework = getUrlParameters()['framework'];
+        }
 
         return currentFramework || 'vanilla';
     };
@@ -222,6 +227,8 @@ export class App extends React.Component {
     }
 
     componentDidUpdate() {
+        if (isFullScreen()) { return; }
+
         const { chartType, options, framework } = this.state;
         const optionsJson = createOptionsJson(chartType, options);
         const files = getTemplates(framework, this.boilerplateCode, optionsJson);

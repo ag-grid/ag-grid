@@ -19,8 +19,6 @@ export const formatJson = object => {
 
     const formattedJson = JSON.stringify(object, (_, v) => Array.isArray(v) ? formatArray(v) : v, 2);
 
-    console.log(`Formatting ${formattedJson}`);
-
     return formattedJson
         .replace(/\"([^\"]+)\":/g, '$1:') // format property names
         .replace(/"\[/g, '[').replace(/\]"/g, ']') // finish array formatting
@@ -28,3 +26,13 @@ export const formatJson = object => {
 };
 
 export const deepClone = object => JSON.parse(JSON.stringify(object || {}));
+
+export const getUrlParameters = () => {
+    const parameters = {};
+
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+        parameters[key] = value;
+    });
+
+    return parameters;
+};
