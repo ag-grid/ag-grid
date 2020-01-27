@@ -40,29 +40,14 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Version 22.0.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Nov 11</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Best Web Grids for 2020</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jan 27th</h6>
         <p class="card-text">
-            Major release with new features and bug fixes:
-        </p>
-        <ul>
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-overview/">Charts out of Beta!</a></li>
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-modules/">Modularisation</a></li>
-
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-charts-chart-range-api/#pivot-charts">Pivot Chart API</a></li>
-
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-tool-panel/">Tool Panel Enhancements</a></li>
-        </ul>
-
-        <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=22.0.0">Change Log</a>
+            ag-Grid is the "Absolute Winner" according to <a href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
         </p>
     </div>
 </div>
+
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">Community or Enterprise?</h5>
@@ -99,6 +84,18 @@
         <img src="../images/flags/united-kingdom.png">
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 13th-14th</p>
+
+        <p/>
+
+        <h6 class="card-subtitle mb-2 text-muted">React</h6>
+        <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px">
+        <a class="learn-more" href="https://www.ng-conf.org" target="_blank"> React Summit</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">April 17</p>
+
+        <img src="../images/flags/united-kingdom.png" style="height: 18px; width: 18px">
+        <a class="learn-more" href="https://www.ng-conf.org" target="_blank"> React Advanced</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Date TBA</p>
+
     </div>
 </div>
     <!-- Begin Mailchimp Signup Form -->
