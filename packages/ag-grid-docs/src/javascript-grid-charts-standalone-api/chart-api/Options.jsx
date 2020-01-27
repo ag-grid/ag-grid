@@ -4,15 +4,16 @@ import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
 
-const Section = ({ title, isVisible, children }) => {
-    const [expanded, setExpanded] = useState(false);
+const Section = ({ title, isVisible, children, isSearching }) => {
+    const [isExpanded, setExpanded] = useState(false);
+    const sectionIsExpanded = isExpanded || isSearching;
 
-    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${expanded ? 'section--expanded' : ''}`}>
-        <h2 className={`section__heading ${expanded ? 'section__heading--expanded' : ''}`}
-            onClick={() => setExpanded(!expanded)}>
+    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${sectionIsExpanded ? 'section--expanded' : ''}`}>
+        <h2 className={`section__heading ${sectionIsExpanded ? 'section__heading--expanded' : ''}`}
+            onClick={() => setExpanded(!isExpanded)}>
             {title}
         </h2>
-        <div className={`section__content ${expanded ? '' : 'section__content--hidden'}`}>
+        <div className={`section__content ${sectionIsExpanded ? '' : 'section__content--hidden'}`}>
             {children}
         </div>
     </div>;
@@ -82,9 +83,14 @@ export class Options extends React.PureComponent {
         searchText: '',
     };
 
-    isVisible = name => {
+    getSearchText = () => {
         const { searchText } = this.state;
-        const trimmedSearchText = searchText && searchText.trim();
+
+        return searchText && searchText.trim();
+    };
+
+    isVisible = name => {
+        const trimmedSearchText = this.getSearchText();
 
         return !trimmedSearchText || name.indexOf(trimmedSearchText) >= 0;
     };
@@ -99,6 +105,7 @@ export class Options extends React.PureComponent {
 
     generateOptions = (options, prefix = '', requiresWholeObject = false) => {
         let elements = [];
+        const isSearching = this.getSearchText() != null;
 
         Object.keys(options).filter(name => name !== 'meta').forEach(name => {
             const key = `${prefix}${name}`;
@@ -131,7 +138,7 @@ export class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<Section key={componentKey} title={name} isVisible={this.isSectionVisible(config)}>
+                elements.push(<Section key={componentKey} title={name} isVisible={this.isSectionVisible(config)} isSearching={isSearching}>
                     {this.generateOptions(config, `${key}.`, requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
                 </Section>);
             }
