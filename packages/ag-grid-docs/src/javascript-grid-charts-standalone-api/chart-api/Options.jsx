@@ -83,29 +83,13 @@ export class Options extends React.PureComponent {
         searchText: '',
     };
 
-    getSearchText = () => {
-        const { searchText } = this.state;
+    getTrimmedSearchText = () => this.state.searchText.trim();
+    matchesSearch = name => name.indexOf(this.getTrimmedSearchText()) >= 0;
+    childMatchesSearch = config => !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
 
-        return searchText && searchText.trim();
-    };
-
-    isVisible = name => {
-        const trimmedSearchText = this.getSearchText();
-
-        return !trimmedSearchText || name.indexOf(trimmedSearchText) >= 0;
-    };
-
-    isSectionVisible = options => {
-        return Object.keys(options).some(name => {
-            const config = options[name];
-
-            return config.description ? this.isVisible(name) : this.isSectionVisible(config);
-        });
-    };
-
-    generateOptions = (options, prefix = '', requiresWholeObject = false) => {
+    generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false) => {
         let elements = [];
-        const isSearching = this.getSearchText() != null;
+        const isSearching = this.getTrimmedSearchText() !== '';
 
         Object.keys(options).filter(name => name !== 'meta').forEach(name => {
             const key = `${prefix}${name}`;
@@ -120,13 +104,15 @@ export class Options extends React.PureComponent {
                 ...editorProps
             } = config;
 
+            const isVisible = !isSearching || parentMatchesSearch || this.matchesSearch(name);
+
             if (config.description) {
                 this.props.updateOptionDefault(key, defaultValue);
 
                 elements.push(<Option
                     key={componentKey}
                     name={name}
-                    isVisible={this.isVisible(name)}
+                    isVisible={isVisible}
                     type={type}
                     isRequired={isRequired}
                     description={description}
@@ -138,8 +124,8 @@ export class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<Section key={componentKey} title={name} isVisible={this.isSectionVisible(config)} isSearching={isSearching}>
-                    {this.generateOptions(config, `${key}.`, requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
+                elements.push(<Section key={componentKey} title={name} isVisible={isVisible || this.childMatchesSearch(config)} isSearching={isSearching}>
+                    {this.generateOptions(config, `${key}.`, parentMatchesSearch || (isSearching && this.matchesSearch(name)), requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
                 </Section>);
             }
         });
