@@ -19,7 +19,7 @@
     .ag-side-button-button {
         background: transparent;
         padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-        @if ag-should-draw-border(side-button) {
+        @if $ag-borders-side-button {
             width: calc(100% + 1px);
         } @else {
             width: 100%;
@@ -35,7 +35,7 @@
     }
 
     .ag-selected .ag-side-button-button {
-        @if ag-should-draw-border(side-button) {
+        @if $ag-borders-side-button {
             background-color: $ag-control-panel-background-color;
             border-top-color: $ag-border-color;
             border-bottom-color: $ag-border-color;
@@ -60,7 +60,7 @@
                 transition: border-right $ag-selected-tab-underline-transition-speed;
             }
             
-            @if ag-should-draw-border(side-button) {
+            @if $ag-borders-side-button {
                 // this enlarges the tab button to cover the tool panel border
                 margin-right: -1px;
                 padding-right: 1px;
@@ -87,7 +87,7 @@
                 transition: border-left $ag-selected-tab-underline-transition-speed;
             }
             
-            @if ag-should-draw-border(side-button) {
+            @if $ag-borders-side-button {
                 // this enlarges the tab button to cover the tool panel border
                 margin-left: -1px;
                 padding-left: 1px;

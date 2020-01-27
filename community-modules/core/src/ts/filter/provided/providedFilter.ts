@@ -230,9 +230,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return `<div>
                     <div class='ag-filter-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
                     <div class="ag-filter-apply-panel" ref="eButtonsPanel">
-                        <button type="button" ref="eClearButton" class="ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
-                        <button type="button" ref="eResetButton" class="ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>
-                        <button type="button" ref="eApplyButton" class="ag-filter-apply-panel-button">${translate('applyFilter', 'Apply Filter')}</button>
+                        <button type="button" ref="eClearButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
+                        <button type="button" ref="eResetButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>
+                        <button type="button" ref="eApplyButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('applyFilter', 'Apply Filter')}</button>
                     </div>
                 </div>`;
     }

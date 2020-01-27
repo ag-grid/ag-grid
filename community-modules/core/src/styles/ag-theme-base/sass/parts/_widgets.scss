@@ -120,9 +120,11 @@
         @include ag-theme-rtl(( margin-right: $ag-cell-widget-spacing ));
 
         color: $ag-secondary-foreground-color;
+        display: block;
     }
 
     .ag-selection-checkbox input {
+        // TODO remove placeholder selectors and use e.g. input[type='checkbox']
         @extend %ag-checkbox;
     }
     
@@ -315,7 +317,7 @@
     }
 
     .ag-dialog {
-        border-radius: $ag-grid-radius;
+        border-radius: $ag-border-radius;
         @include ag-grid-border(primary);
     }
 

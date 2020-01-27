@@ -11,7 +11,7 @@
     }
     
     .ag-column-drop-horizontal-half-width:not(:last-child) {
-        @if ag-should-draw-border(primary) {
+        @if $ag-borders {
             @include ag-theme-rtl((border-right: solid 1px $ag-border-color));
         }
     }

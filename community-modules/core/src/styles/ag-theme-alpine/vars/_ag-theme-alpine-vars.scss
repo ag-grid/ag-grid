@@ -5,187 +5,149 @@
 //
 //
 
-@import './colors';
-
-////////////////////////////////////////
-// Colors
-////////////////////////////////////////
-
-$ag-header-background-color: $ag-alpine-gray-5 !default;
-$ag-odd-row-background-color: $ag-alpine-gray-6 !default;
 
 
-$ag-color-primary: $ag-alpine-blue !default;
+// TODO reinstate alpine drop shadows
+// $ag-color-chrome-shadow: $ag-alpine-gray-4 !default;
+
+// // color for the reset / cancel buttons
+// $ag-color-form-element-secondary: $ag-alpine-gray-3;
+// $ag-color-border-form-element: $ag-alpine-gray-4 !default;
+// $ag-color-background-form-element-disabled: transparentize($ag-alpine-gray-4, 0.8) !default;
+
+// // inactive color for the switch
+// $ag-color-background-toggle-button: $ag-alpine-gray-4 !default;
+
+// // chart selections
+// $ag-color-background-chart-range-selection-category: $ag-alpine-green !default;
+// $ag-color-background-chart-range-selection: $ag-alpine-blue !default;
+
+// // chips in grouping and aggregation
+// $ag-color-background-chip: transparentize($ag-alpine-gray-4, 0.8) !default;
 
 
-// color used for the grid selection and selection checkboxes.
-$ag-color-secondary: $ag-alpine-orange !default;
-// background
-$ag-background-color: $ag-alpine-white !default;
-
-// text
-$ag-color-foreground: $ag-alpine-black !default;
 
 
-$ag-color-background-alt: $ag-alpine-gray-5 !default;
 
-// borders between the grid elements (body, panel, header, etc.)
-$ag-border-color: $ag-alpine-gray-4 !default;
 
-// borders between body cells
+// $ag-color-primary: $ag-alpine-blue !default;
+// $ag-background-color: $ag-alpine-white !default;
+// $ag-color-foreground: $ag-alpine-black !default;
+// $ag-color-background-alt: $ag-alpine-gray-5 !default;
+
+// // color used for the grid selection and selection checkboxes.
+// // background
+
+// // text
+
+
+
+// // borders between the grid elements (body, panel, header, etc.)
+
+// // borders between body cells
+// $ag-selected-tab-underline-width: 2px !default;
+
+
+
+// ////////////////////////////////////////
+// //Fonts
+// ////////////////////////////////////////
+
+// // Primary
+// $ag-font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
+// $ag-size-font-default: 14px !default;
+// $ag-weight-font-default: 400 !default;
+// $ag-font-default: $ag-weight-font-default $ag-size-font-default $ag-font-family-default;
+
+// // Secondary (used mostly in headers)
+// $ag-font-family-secondary: $ag-font-family-default !default;
+// $ag-size-font-secondary: 13px !default;
+// $ag-weight-font-secondary: 700 !default;
+// $ag-font-secondary: $ag-weight-font-secondary $ag-size-font-secondary $ag-font-family-secondary;
+
+// // Form elements
+// $ag-font-family-form-element: $ag-font-family-default !default;
+// $ag-size-font-form-element: 13px !default;
+// $ag-weight-font-form-element: 400 !default;
+// $ag-font-form-element: $ag-weight-font-form-element $ag-size-font-form-element $ag-font-family-form-element;
+
+// // Chrome UI (menu, tool panel, etc)
+// $ag-font-family-chrome: $ag-font-family-default !default;
+// $ag-size-font-chrome: 13px !default;
+// $ag-weight-font-chrome: 400 !default;
+// $ag-font-chrome: $ag-weight-font-chrome $ag-size-font-chrome $ag-font-family-chrome;
+
+// // tooltip and status bar are chrome but smaller
+// $ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
+// $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
+
+
+// //
+// //
+// // OLD INTERNAL VARS
+// //
+// //
+// //
+
+// COLOURS
+
+// main colours (overridden by alpine-dark)
+
+$ag-alpine-active-color: #2196f3 !default;
+
+$ag-background-color: #fff !default;
+$ag-foreground-color: #181d1f !default;
 $ag-secondary-border-color: #dde2eb !default;
+$ag-header-background-color: #f8f8f8 !default;
+$ag-odd-row-background-color: #fcfcfc !default;
+$ag-range-selection-border-color: #ff9800 !default;
+$ag-border-color: #babfc7 !default;
+$ag-selected-tab-underline-color: $ag-alpine-active-color !default;
+$ag-row-hover-color: transparentize($ag-alpine-active-color, 0.9) !default;
+$ag-chip-background-color: rgba($ag-foreground-color, 0.07) !default;
 
-$ag-range-selection-border-color: $ag-color-secondary !default;
-$ag-range-selection-background-color: rgba($ag-color-secondary, 0.2) !default;
-$ag-selected-row-background-color: mix($ag-color-secondary, $ag-background-color, 30%);
+// derived colours (shared by alpine-dark)
+$ag-secondary-foreground-color: $ag-foreground-color !default;
+$ag-disabled-foreground-color: $ag-foreground-color !default;
+$ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color, 20%) !default;
+$ag-input-border-color: $ag-border-color !default;
+$ag-checkbox-check-color: $ag-background-color !default;
+$ag-checkbox-background-color: $ag-background-color !default;
+$ag-checkbox-checked-background-color: $ag-alpine-active-color !default;
+$ag-checkbox-indeterminate-background-color: $ag-checkbox-checked-background-color !default;
+$ag-checkbox-checked-border-color: $ag-alpine-active-color !default;
+$ag-toggle-button-color: $ag-alpine-active-color !default;
 
-$ag-selected-tab-underline-color: $ag-color-primary !default;
-$ag-selected-tab-underline-width: 2px !default;
+
+// BORDERS
+$ag-borders: (critical, primary, secondary);
+$ag-border-radius: 3px !default;
+$ag-selected-tab-underline-transition-speed: 0.3s;
 
 $ag-header-column-resize-handle: true !default;
 $ag-header-column-resize-handle-width: 2px !default;
 $ag-header-column-resize-handle-height: 30% !default;
 
-$ag-color-row-hover: transparentize($ag-color-primary, 0.9) !default;
-
-// shadows of popups, menus, etc
-$ag-color-chrome-shadow: $ag-alpine-gray-4 !default;
-
-// dropdown arrow
-$ag-url-data-image-dropdown-arrow: url($ag-black-dropdown-arrow) !default;
-$ag-url-hover-data-image-dropdown-arrow: url($ag-blue-dropdown-arrow) !default;
-$ag-url-pressed-data-image-dropdown-arrow: url($ag-white-dropdown-arrow) !default;
-
-// color for the reset / cancel buttons
-$ag-color-form-element-secondary: $ag-alpine-gray-3;
-$ag-color-border-form-element: $ag-alpine-gray-4 !default;
-$ag-color-background-form-element-disabled: transparentize($ag-alpine-gray-4, 0.8) !default;
-
-// inactive color for the switch
-$ag-color-background-toggle-button: $ag-alpine-gray-4 !default;
-
-// chart selections
-$ag-color-background-chart-range-selection-category: $ag-alpine-green !default;
-$ag-color-background-chart-range-selection: $ag-alpine-blue !default;
-
-// chips in grouping and aggregation
-$ag-color-background-chip: transparentize($ag-alpine-gray-4, 0.8) !default;
-
-// delta changes
-$ag-color-value-change-delta-up: $ag-alpine-dim-green !default;
-$ag-color-value-change-delta-down: $ag-alpine-dim-red !default;
-$ag-color-value-change-value-highlight-background: transparentize($ag-alpine-deep-teal, 0.5) !default;
-
-////////////////////////////////////////
-//Fonts
-////////////////////////////////////////
-
-// Primary
-$ag-font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
-$ag-size-font-default: 14px !default;
-$ag-weight-font-default: 400 !default;
-$ag-font-default: $ag-weight-font-default $ag-size-font-default $ag-font-family-default;
-
-// Secondary (used mostly in headers)
-$ag-font-family-secondary: $ag-font-family-default !default;
-$ag-size-font-secondary: 13px !default;
-$ag-weight-font-secondary: 700 !default;
-$ag-font-secondary: $ag-weight-font-secondary $ag-size-font-secondary $ag-font-family-secondary;
-
-// Form elements
-$ag-font-family-form-element: $ag-font-family-default !default;
-$ag-size-font-form-element: 13px !default;
-$ag-weight-font-form-element: 400 !default;
-$ag-font-form-element: $ag-weight-font-form-element $ag-size-font-form-element $ag-font-family-form-element;
-
-// Chrome UI (menu, tool panel, etc)
-$ag-font-family-chrome: $ag-font-family-default !default;
-$ag-size-font-chrome: 13px !default;
-$ag-weight-font-chrome: 400 !default;
-$ag-font-chrome: $ag-weight-font-chrome $ag-size-font-chrome $ag-font-family-chrome;
-
-// tooltip and status bar are chrome but smaller
-$ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
-$ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
-
-
-//
-//
-// OLD INTERNAL VARS
-//
-//
-//
-
-$ag-borders: (critical, primary, secondary);
-$ag-selected-tab-underline-transition-speed: 0.3s;
-
-// Sizing
+// SIZING
 $ag-grid-size: 6px !default;
 $ag-icon-size: 16px !default;
-
-// these three should be changed in environment.ts, too
-$ag-row-height: $ag-grid-size * 7 !default;
-$ag-header-cell-moving-background-color: $ag-background-color !default;
-
-// Derived from above
-$ag-secondary-foreground-color: $ag-color-foreground !default; // foreground-secondary
-$ag-disabled-foreground-color: $ag-color-foreground; // foreground-disabled
-$ag-input-border-color: $ag-color-border-form-element !default;
-$ag-input-disabled-background-color: $ag-color-background-form-element-disabled !default;
-
-$ag-range-selection-highlight-color: $ag-color-secondary !default;
-
-$ag-range-selection-background-color: $ag-color-background-range-selection !default;
-
-
-$ag-range-selection-chart-category-background-color: transparentize($ag-color-background-chart-range-selection-category, 0.9) !default;
-$ag-range-selection-chart-background-color: transparentize($ag-color-background-chart-range-selection, 0.9) !default;
-
-
-$ag-row-hover-color: $ag-color-row-hover !default;
-$ag-chip-background-color: $ag-color-background-chip !default;
-
-$ag-header-height: $ag-grid-size * 8 !default;
-$ag-virtual-item-height: $ag-grid-size * 5 !default;
-
+$ag-row-height: $ag-grid-size * 7 !default;          // if changed, update environment.ts
+$ag-header-height: $ag-grid-size * 8 !default;       // if changed, update environment.ts
+$ag-virtual-item-height: $ag-grid-size * 5 !default; // if changed, update environment.ts
 $ag-row-group-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2;
 
-$ag-border-radius: 3px !default;
 
-$ag-grid-radius: 2px !default;
-
-$ag-card-radius: 2px !default;
-$ag-card-shadow: none !default;
-
+// FONTS
 
 $ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
-$ag-font-size: $ag-size-font-default !default;
-$ag-font-weight: $ag-weight-font-default !default;
-$ag-secondary-font-family: $ag-font-family-secondary !default;
-$ag-secondary-font-size: $ag-size-font-secondary !default;
-$ag-secondary-font-weight: $ag-weight-font-secondary !default;
-$ag-foreground-color: $ag-color-foreground !default;
-$ag-value-change-delta-up-color: $ag-color-value-change-delta-up !default;
-$ag-value-change-delta-down-color: $ag-color-value-change-delta-down !default;
-$ag-value-change-value-highlight-background-color: $ag-color-value-change-value-highlight-background !default;
-$ag-input-height: $ag-grid-size * 4 !default;
-
-$ag-checkbox-size: 15px !default;
-$ag-checkbox-border-radius: $ag-border-radius !default;
-
-$ag-checkbox-check-color: $ag-background-color !default;
-$ag-checkbox-background-color: $ag-background-color !default;
-$ag-checkbox-checked-background-color: $ag-color-secondary !default;
-$ag-checkbox-indeterminate-background-color: $ag-checkbox-checked-background-color !default;
-$ag-checkbox-checked-border-color: $ag-color-secondary !default;
-$ag-toggle-button-color: $ag-color-secondary !default;
-
-$ag-toggle-button-height: 18px !default;
-$ag-toggle-button-width: 28px !default;
-
+$ag-font-size: 14px !default;
+$ag-font-weight: 400 !default;
+$ag-secondary-font-family: $ag-font-family !default;
+$ag-secondary-font-size: 13px !default;
+$ag-secondary-font-weight: 700 !default;
 
 // Icons
 @import "./font-vars";

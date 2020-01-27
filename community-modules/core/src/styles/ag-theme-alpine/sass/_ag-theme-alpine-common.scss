@@ -1,21 +1,17 @@
 @import '../vars/ag-theme-alpine-vars';
 @import '../../ag-theme-base/sass/ag-theme-base';
-@import './ag-theme-alpine-mixins';
+// @import './ag-theme-alpine-mixins';
 
 @include ag-icons-font-face();
 
 @mixin ag-theme-alpine() {
     @include ag-grid-theme();
 
-    color: $ag-color-foreground;
-
-    &.ag-popup {
-        color: $ag-color-foreground;
+    %ag-text-input {
+        height: $ag-grid-size * 4;
     }
 
-    .ag-header-cell {
-        border-color: $ag-border-color;
-    }
+    /*
 
     ////////////////////////////////////////
     // filter menu
@@ -828,4 +824,6 @@
     .ag-header-expand-icon {
         transform: translateY($ag-grid-size / 2);
     }
+
+    */
 }

@@ -57,10 +57,10 @@ $ag-selected-tab-underline-width: 0 !default;
 $ag-selected-tab-underline-transition-speed: null !default;
 
 // Background colour for cells that provide categories to the current range chart
-$ag-range-selection-chart-category-background-color: adjust-hue($ag-range-selection-background-color, -80%) !default;
+$ag-range-selection-chart-category-background-color: rgba($ag-range-selection-background-color, 0.3) !default;
 
 // Background colour for cells that provide data to the current range chart
-$ag-range-selection-chart-background-color: adjust-hue($ag-range-selection-background-color, 25%) !default;
+$ag-range-selection-chart-background-color: $ag-range-selection-background-color !default;
 
 // Rollover colour for header cells
 $ag-header-cell-hover-background-color: null !default;
@@ -69,7 +69,7 @@ $ag-header-cell-hover-background-color: null !default;
 $ag-header-cell-moving-background-color: $ag-header-cell-hover-background-color !default;
 
 // Colour to apply when a cell value changes and enableCellChangeFlash is enabled
-$ag-value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !default;
+$ag-value-change-value-highlight-background-color: rgba(#16A085, 0.5) !default;
 
 // Colours to apply when a value increases or decreases in an agAnimateShowChangeCellRenderer cell
 $ag-value-change-delta-up-color: #43a047 !default;
@@ -82,13 +82,18 @@ $ag-chip-background-color: null !default;
 // BORDERS
 //
 
-// Draw borders around most UI elements. Set to true to draw all borders, false to draw none,
-// or a list the border types you want to draw. Valid border types are:
-//     critical: the few borders that are critical to UX, e.g. between headers and rows
-//     primary: around major UI elements like tool panels and menus
-//     side-button: around sidebar tabs so that the active tab appears connected to the current tool panel
-//     secondary: between UI elements
+// Draw borders around most UI elements
 $ag-borders: true !default;
+
+// Draw the few borders that are critical to UX, e.g. between headers and rows.
+$ag-borders-critical: $ag-borders !default;
+
+// Draw decorative borders separating UI elements within components
+$ag-borders-secondary: $ag-borders !default;
+
+// Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
+$ag-borders-side-button: $ag-borders !default;
+
 $ag-border-radius: 0px !default;
 
 // Colour for border around major UI components like the grid itself, headers, footers and tool panels
@@ -103,9 +108,6 @@ $ag-row-border-color: $ag-secondary-border-color !default;
 // Default border for cells. This can be used to specify the border-style and border-color properties
 // e.g. `dashed red` but the border-width is fixed at 1px.
 $ag-cell-horizontal-border: solid transparent !default;
-
-// radius applied to the border drawn around the whole grid interface
-$ag-grid-radius: null !default;
 
 // Separator between columns in the header. Displays between all header cells
 // For best UX, use either this or $ag-header-column-resize-handle but not both
@@ -184,11 +186,9 @@ $ag-secondary-font-weight: 400 !default;
 
 
 // radius applied to popup elements
-$ag-card-radius: $ag-grid-radius !default;
+$ag-card-radius: $ag-border-radius !default;
 $ag-card-shadow: none !default;
 
 
 // Icons
 @import "./font-vars";
-
-

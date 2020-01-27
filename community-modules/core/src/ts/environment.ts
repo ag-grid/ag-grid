@@ -1,7 +1,6 @@
 import { Bean, Autowired } from './context/context';
 import { _ } from './utils';
 
-const MAT_GRID_SIZE = 8;
 
 export type SASS_PROPERTIES = 'headerHeight' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 interface HardCodedSize {
@@ -10,6 +9,7 @@ interface HardCodedSize {
     };
 }
 
+const MAT_GRID_SIZE = 8;
 const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;

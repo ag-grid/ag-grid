@@ -21,26 +21,17 @@
 }
 
 @function ag-should-draw-border($type) {
-    @if type-of($ag-borders) == bool {
-        @return $ag-borders;
-    }
-    @if type-of($ag-borders) != list and type-of($ag-borders) != string {
-        @error "Expected $ag-borders to be an list or string, got a #{type-of($ag-borders)} instead: #{inspect($ag-borders)}";
-    }
-    $valid-types: (critical: true, primary: true, side-button: true, secondary: true);
+    $valid-types: (
+        critical: $ag-borders-critical,
+        primary: $ag-borders,
+        side-button: $ag-borders-side-button,
+        secondary: $ag-borders-secondary
+    );
     $draw-border: false;
     @if not map-has-key($valid-types, $type) {
         @error "Invalid border type '#{inspect($type)}'";
     }
-    @each $acceptable in $ag-borders {
-        @if not map-has-key($valid-types, $acceptable) {
-            @error "Invalid entry in $ag-borders: '#{inspect($acceptable)}'";
-        }
-        @if $type == $acceptable {
-            $draw-border: true;
-        }
-    }
-    @return $draw-border;
+    @return map-get($valid-types, $type);
 }
 
 @mixin ag-box-shadow($color) {

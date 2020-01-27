@@ -6,10 +6,11 @@
     }
 
     .ag-root-wrapper {
-        @include ag-grid-border(primary, $radius: $ag-grid-radius);
+        @include ag-grid-border(primary, $radius: $ag-border-radius);
     }
     
-    @for $i from 1 to 10 {
+    // support 20 levels here because row group indentation is used for tree data which can be quite deep
+    @for $i from 1 to 20 {
         .ag-row-group-indent-#{$i} {
             @include ag-theme-rtl(( padding-left: $i * $ag-row-group-indent-size ));
         }
