@@ -1006,6 +1006,11 @@
                     "title": "Layout",
                     "url": "javascript-grid-charts-standalone-layout/",
                     "enterprise": true
+                  },
+                  {
+                    "title": "Legend",
+                    "url": "javascript-grid-charts-standalone-legend/",
+                    "enterprise": true
                   }
                 ]
               },
