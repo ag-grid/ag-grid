@@ -31,7 +31,7 @@ export const getErrorMessage = (e: VisualTestingError) =>
 export const tickCheckBoxWithin = async (page: Page, parentSelector: string) => {
     // support native and legacy style checkbox
     await page.click(
-        `${parentSelector} .ag-icon-checkbox-unchecked, ${parentSelector} input[type="checkbox"]`
+        `${parentSelector} input[type="checkbox"]`
     );
 };
 
@@ -49,7 +49,7 @@ export const clickElementByText = async (page: Page, text: string) => {
 export const untickCheckBoxWithin = async (page: Page, parentSelector: string) => {
     // support native and legacy style checkbox
     await page.click(
-        `${parentSelector} .ag-icon-checkbox-checked, ${parentSelector} input[type="checkbox"]`
+        `${parentSelector} input[type="checkbox"]`
     );
 };
 
