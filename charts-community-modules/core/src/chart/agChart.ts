@@ -647,31 +647,24 @@ function update(component: any, options: any, path?: string) {
                                 const configs = value;
                                 const axes = oldValue as ChartAxis[];
                                 const axesToAdd: ChartAxis[] = [];
-                                const axesToRemove: ChartAxis[] = [];
+                                const axesToUpdate: ChartAxis[] = [];
 
                                 for (const config of configs) {
                                     const axisToUpdate = find(axes, axis => {
                                         return axis.type === config.type && axis.position === config.position;
                                     });
                                     if (axisToUpdate) {
+                                        axesToUpdate.push(axisToUpdate);
                                         update(axisToUpdate, config, keyPath);
                                     } else {
-                                        const newAxis = create(config, keyPath);
-                                        if (newAxis) {
-                                            axesToAdd.push(newAxis);
-                                            const oldAxis = find(axes, axis => {
-                                                return axis.position === config.position;
-                                            });
-                                            if (oldAxis) {
-                                                axesToRemove.push(oldAxis);
-                                            }
+                                        const axisToAdd = create(config, keyPath);
+                                        if (axisToAdd) {
+                                            axesToAdd.push(axisToAdd);
                                         }
                                     }
                                 }
 
-                                if (axesToAdd.length || axesToRemove.length) {
-                                    chart.axes = axes.filter(axis => axesToRemove.indexOf(axis) < 0).concat(axesToAdd);
-                                }
+                                chart.axes = axesToUpdate.concat(axesToAdd);
                             }
                         } else {
                             component[key] = value;
