@@ -16,18 +16,19 @@
         background-color: $ag-subheader-background-color;
     }
 
-    .ag-icon-checkbox-checked,
-    .ag-icon-checkbox-checked-readonly,
-    .ag-icon-checkbox-unchecked,
-    .ag-icon-checkbox-unchecked-readonly,
-    .ag-icon-checkbox-indeterminate,
-    .ag-icon-checkbox-indeterminate-readonly,
-    .ag-icon-radio-button-on,
-    .ag-icon-radio-button-off {
-        height: $ag-icon-size + 6;
-        width: $ag-icon-size + 6;
-        font-size: $ag-icon-size + 6;
-        line-height: $ag-icon-size + 6;
+    .ag-radio-button {
+        input {
+            &:focus, &:checked {
+                border-color: $ag-checkbox-checked-background-color;
+            }
+            &:focus {
+                box-shadow: 0 0 2px 0.1rem transparentize($ag-checkbox-checked-background-color, 0.6);
+            }
+    
+            &:checked::after{
+                background-color: $ag-checkbox-checked-background-color;
+            }
+        }
     }
 
     .ag-header-cell, .ag-header-group-cell {

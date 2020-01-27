@@ -137,7 +137,7 @@
     }
 
     .ag-set-filter-item-checkbox input {
-        @include ag-checkbox;
+        @extend %ag-checkbox;
     }
 
     .ag-filter-header-container {
@@ -175,6 +175,6 @@
     }
 
     .ag-column-select-list .ag-checkbox input {
-        @include ag-checkbox;
+        @extend %ag-checkbox;
     }
 }
