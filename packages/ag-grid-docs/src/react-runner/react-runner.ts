@@ -309,6 +309,12 @@ docs.component("reactRunner", {
                 </a>
             </li>
 
+            <li role="presentation">
+                <a role="tab" ng-href="{{$ctrl.resultUrl}}&framework={{$ctrl.currentType}}" target="_blank" title="Open Example in New Tab">
+                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab
+                </a>
+            </li>
+
             <example-tab
                 ng-hide="$ctrl.noPlunker"
                 value="'plunker'"

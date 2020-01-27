@@ -14,7 +14,7 @@
         @include ag-theme-rtl(( margin-left: $ag-grid-size ));
 
         input {
-            @include ag-checkbox;
+            @extend %ag-checkbox;
         }
     }
 
@@ -28,7 +28,7 @@
         align-items: center;
 
         .ag-checkbox {
-            @include ag-checkbox;
+            @extend %ag-checkbox;
         }
     }
 

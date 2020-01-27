@@ -5,10 +5,14 @@
         .ag-input-wrapper {
             overflow: visible;
         }
+    }
 
-        input {
-            @include ag-checkbox;
-        }
+    .ag-checkbox input {
+        @extend %ag-checkbox;
+    }
+
+    .ag-radio-button input {
+        @extend %radio-button;
     }
 
     .ag-toggle-button {
@@ -16,7 +20,7 @@
         width: unset;
         min-width: unset;
         input {
-            @include ag-toggle-button;
+            @extend %ag-toggle-button;
         }
         
     }
@@ -119,7 +123,7 @@
     }
 
     .ag-selection-checkbox input {
-        @include ag-checkbox;
+        @extend %ag-checkbox;
     }
     
     .ag-group-title-bar-icon {

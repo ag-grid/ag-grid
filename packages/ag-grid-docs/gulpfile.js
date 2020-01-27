@@ -45,7 +45,7 @@ const populateDevFolder = () => {
     const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
     const chartReact = gulp.src(['../../charts-community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-community-modules/react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
-    const chartAngular = gulp.src(['../../charts-packages/angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
+    const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
     const chartVue = gulp.src(['../../charts-community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-community-modules/vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-vue`));
 
     return merge(...copyTasks, react, angular, vue, chartReact, chartAngular, chartVue);
@@ -59,6 +59,9 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/vue-boilerplate/',
         './dist/example-runner/react-boilerplate/',
         './dist/react-runner/app-boilerplate/',
+        './dist/react-runner/react-boilerplate/',
+        './dist/react-runner/vue-boilerplate/',
+        './dist/react-runner/angular-boilerplate/',
     ];
 
     boilerPlateLocation.forEach(boilerPlateLocation => {

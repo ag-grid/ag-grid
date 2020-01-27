@@ -4,15 +4,16 @@ import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
 
-const Section = ({ title, isVisible, children }) => {
-    const [expanded, setExpanded] = useState(false);
+const Section = ({ title, isVisible, children, isSearching }) => {
+    const [isExpanded, setExpanded] = useState(false);
+    const sectionIsExpanded = isExpanded || isSearching;
 
-    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${expanded ? 'section--expanded' : ''}`}>
-        <h2 className={`section__heading ${expanded ? 'section__heading--expanded' : ''}`}
-            onClick={() => setExpanded(!expanded)}>
+    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${sectionIsExpanded ? 'section--expanded' : ''}`}>
+        <h2 className={`section__heading ${sectionIsExpanded ? 'section__heading--expanded' : ''}`}
+            onClick={() => setExpanded(!isExpanded)}>
             {title}
         </h2>
-        <div className={`section__content ${expanded ? '' : 'section__content--hidden'}`}>
+        <div className={`section__content ${sectionIsExpanded ? '' : 'section__content--hidden'}`}>
             {children}
         </div>
     </div>;
@@ -80,25 +81,16 @@ const Search = ({ text, onChange }) => {
 export class Options extends React.PureComponent {
     state = {
         searchText: '',
+        hasResults: false,
     };
 
-    isVisible = name => {
-        const { searchText } = this.state;
-        const trimmedSearchText = searchText && searchText.trim();
+    getTrimmedSearchText = () => this.state.searchText.trim();
+    matchesSearch = name => name.indexOf(this.getTrimmedSearchText()) >= 0;
+    childMatchesSearch = config => !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
 
-        return !trimmedSearchText || name.indexOf(trimmedSearchText) >= 0;
-    };
-
-    isSectionVisible = options => {
-        return Object.keys(options).some(name => {
-            const config = options[name];
-
-            return config.description ? this.isVisible(name) : this.isSectionVisible(config);
-        });
-    };
-
-    generateOptions = (options, prefix = '', requiresWholeObject = false) => {
+    generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false) => {
         let elements = [];
+        const isSearching = this.getTrimmedSearchText() !== '';
 
         Object.keys(options).filter(name => name !== 'meta').forEach(name => {
             const key = `${prefix}${name}`;
@@ -113,13 +105,19 @@ export class Options extends React.PureComponent {
                 ...editorProps
             } = config;
 
+            const isVisible = !isSearching || parentMatchesSearch || this.matchesSearch(name);
+
+            if (isVisible) {
+                this.setState({ hasResults: true });
+            }
+
             if (config.description) {
                 this.props.updateOptionDefault(key, defaultValue);
 
                 elements.push(<Option
                     key={componentKey}
                     name={name}
-                    isVisible={this.isVisible(name)}
+                    isVisible={isVisible}
                     type={type}
                     isRequired={isRequired}
                     description={description}
@@ -131,8 +129,8 @@ export class Options extends React.PureComponent {
                     }}
                 />);
             } else {
-                elements.push(<Section key={componentKey} title={name} isVisible={this.isSectionVisible(config)}>
-                    {this.generateOptions(config, `${key}.`, requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
+                elements.push(<Section key={componentKey} title={name} isVisible={isVisible || this.childMatchesSearch(config)} isSearching={isSearching}>
+                    {this.generateOptions(config, `${key}.`, parentMatchesSearch || (isSearching && this.matchesSearch(name)), requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
                 </Section>);
             }
         });
@@ -151,9 +149,10 @@ export class Options extends React.PureComponent {
 
         config.series = Config[`${this.props.chartType}SeriesConfig`];
 
-        return <div className='options'>
-            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value })} />
-            <div className='options__content'>{this.generateOptions(Object.freeze(config))}</div>
+        return <div className="options">
+            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
+            {!this.state.hasResults && <div className="options__no-content"><i class="fa fa-link"></i> No properties match your search: '{this.getTrimmedSearchText()}'</div>}
+            <div className="options__content">{this.generateOptions(Object.freeze(config))}</div>
         </div>;
     }
 };

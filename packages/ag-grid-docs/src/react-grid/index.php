@@ -347,7 +347,6 @@ columnDefs={this.state.columnDefs}
 +  groupSelectsChildren={true}
 +  autoGroupColumnDef={this.state.autoGroupColumnDef}
 rowData={this.state.rowData}
-&gt;
 </snippet>
 </section>
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>

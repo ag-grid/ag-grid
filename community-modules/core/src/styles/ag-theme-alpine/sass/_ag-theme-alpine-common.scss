@@ -425,7 +425,7 @@
         .ag-pivot-mode-select {
             margin-left: $ag-grid-size * 2;
             input {
-                @include ag-toggle-button;
+                @extend %ag-toggle-button;
             }
         }
     }
@@ -538,24 +538,28 @@
 
         // Data Tab
         .ag-chart-data {
-            .ag-radio-button {
-                margin: 0;
-                padding: $ag-grid-size 0;
-
-                input[type='radio'] {
-                    @extend %radio-button;
-                    margin-top: 0;
-                    margin-right: 2px;
-                }
-            }
-
-            .ag-checkbox {
+            .ag-radio-button, .ag-checkbox {
                 padding: $ag-grid-size 0;
             }
         }
 
         .ag-checkbox {
             margin-right: 2px;
+        }
+
+        .ag-radio-button {
+            input {
+                &:focus, &:checked {
+                    border-color: $ag-checkbox-checked-background-color;
+                }
+                &:focus {
+                    box-shadow: 0 0 2px 0.1rem transparentize($ag-checkbox-checked-background-color, 0.6);
+                }
+        
+                &:checked::after{
+                    background-color: $ag-checkbox-checked-background-color;
+                }
+            }
         }
 
         // Format tab
@@ -618,7 +622,7 @@
         height: auto;
         background: $ag-background-color;
         input.ag-checkbox {
-            @include ag-toggle-button;
+            @extend %ag-toggle-button;
         }
     }
 

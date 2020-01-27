@@ -61,3 +61,4 @@ community-modules/core/typings
 charts-community-modules/react/lib
 charts-community-modules/react/umd
 charts-community-modules/vue/lib/**
+charts-packages/ag-charts-angular/dist

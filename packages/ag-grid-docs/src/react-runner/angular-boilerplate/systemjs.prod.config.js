@@ -118,10 +118,6 @@
                 main: './dist/ag-charts-angular/bundles/ag-charts-angular.umd.js',
                 defaultExtension: 'js'
             },
-            'ag-charts-community': {
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },
             rxjs: {
                 defaultExtension: false
             }

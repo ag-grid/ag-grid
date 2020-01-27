@@ -11,13 +11,13 @@ export class HdpiCanvas {
 
     // The width/height attributes of the Canvas element default to
     // 300/150 according to w3.org.
-    constructor(document = window.document) {
+    constructor(document = window.document, width = 600, height = 300) {
         this.document = document;
         this.element = document.createElement('canvas');
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(this._width = 600, this._height = 300);
+        this.resize(this._width = width, this._height = height, false);
     }
 
     private _container: HTMLElement | undefined = undefined;
@@ -158,21 +158,26 @@ export class HdpiCanvas {
         return this._height;
     }
 
-    resize(width: number, height: number) {
+    resize(width: number, height: number, preventFlicker = true) {
         const { element: canvas, context, pixelRatio } = this;
 
         this._width = width;
         this._height = height;
 
-        const imageData = context.getImageData(0, 0, canvas.width * pixelRatio, canvas.height * pixelRatio);
-
-        canvas.width = Math.round(width * pixelRatio);
-        canvas.height = Math.round(height * pixelRatio);
-        canvas.style.width = Math.round(width) + 'px';
-        canvas.style.height = Math.round(height) + 'px';
-
-        // prevent flickering on resize
-        context.putImageData(imageData, 0, 0);
+        const doResize = () => {
+            canvas.width = Math.round(width * pixelRatio);
+            canvas.height = Math.round(height * pixelRatio);
+            canvas.style.width = Math.round(width) + 'px';
+            canvas.style.height = Math.round(height) + 'px';
+        }
+        
+        if (preventFlicker) {
+            const imageData = context.getImageData(0, 0, canvas.width * pixelRatio, canvas.height * pixelRatio);
+            doResize();
+            context.putImageData(imageData, 0, 0);
+        } else {
+            doResize();
+        }
 
         context.resetTransform();
     }
