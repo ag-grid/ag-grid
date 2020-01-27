@@ -3,6 +3,7 @@ import './Options.css';
 import { formatJson } from './utils.jsx';
 import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
+import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 
 const Section = ({ title, isVisible, children, isSearching }) => {
     const [isExpanded, setExpanded] = useState(false);
@@ -139,19 +140,20 @@ export class Options extends React.PureComponent {
     };
 
     render() {
-        const config = {
-            ...Config.generalConfig,
-        };
+        const { chartType, updateChartType } = this.props;
+        const { searchText, hasResults } = this.state;
+        const config = { ...Config.generalConfig };
 
-        if (this.props.chartType !== 'pie') {
+        if (chartType !== 'pie') {
             config.axes = Config.axisConfig;
         }
 
-        config.series = Config[`${this.props.chartType}SeriesConfig`];
+        config.series = Config[`${chartType}SeriesConfig`];
 
         return <div className="options">
-            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
-            {!this.state.hasResults && <div className="options__no-content"><i class="fa fa-link"></i> No properties match your search: '{this.getTrimmedSearchText()}'</div>}
+            <ChartTypeSelector type={chartType} onChange={updateChartType} />
+            <Search value={searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
+            {!hasResults && <div className="options__no-content">No properties match your search: '{this.getTrimmedSearchText()}'</div>}
             <div className="options__content">{this.generateOptions(Object.freeze(config))}</div>
         </div>;
     }

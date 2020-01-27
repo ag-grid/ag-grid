@@ -1,5 +1,6 @@
 import React from 'react';
 import './ChartTypeSelector.css';
+import { PresetEditor } from "./Editors.jsx";
 
 export const ChartTypeSelector = ({ type, onChange }) => {
     const options = {
@@ -10,7 +11,5 @@ export const ChartTypeSelector = ({ type, onChange }) => {
         pie: 'Pie/Doughnut',
     };
 
-    return <select className="chart-type-selector" value={type} onChange={e => onChange(e.target.value)}>
-        {Object.keys(options).map(key => <option value={key}>{options[key]}</option>)}
-    </select>;
+    return <div className="chart-type-selector"><PresetEditor value={type} options={options} onChange={onChange} /></div>;
 };

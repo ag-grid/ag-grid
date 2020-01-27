@@ -2,20 +2,16 @@ import { formatJson, deepClone } from "./utils.jsx";
 
 export const data = [{
     month: 'Jan',
-    revenue: 155000,
-    profit: 33000
+    revenue: 155,
+    profit: 33
 }, {
     month: 'Feb',
-    revenue: 123000,
-    profit: 35500
+    revenue: 123,
+    profit: 35.5
 }, {
     month: 'Mar',
-    revenue: 172500,
-    profit: 41000
-}, {
-    month: 'Apr',
-    revenue: 185000,
-    profit: 50000
+    revenue: 172.5,
+    profit: 41
 }];
 
 export const series = [{

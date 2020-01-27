@@ -4,7 +4,6 @@ import { getTemplates } from './templates.jsx';
 import { Chart } from './Chart.jsx';
 import { Options } from './Options.jsx';
 import { Code } from './Code.jsx';
-import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 import { deepClone, getUrlParameters } from './utils.jsx';
 
 const appName = 'chart-api';
@@ -203,7 +202,7 @@ export class App extends React.Component {
         }, removeUnneededKey);
     };
 
-    changeChartType = type => {
+    updateChartType = type => {
         this.setState({ chartType: type, defaults: {}, options: {} });
     };
 
@@ -241,15 +240,17 @@ export class App extends React.Component {
         const optionsJson = createOptionsJson(chartType, options);
 
         return <div className="container">
-            <ChartTypeSelector type={chartType} onChange={this.changeChartType} />
-            <div className="container__chart"><Chart options={optionsJson} /></div>
-            <div className="container__bottom">
+            <div className="container__left">
                 <div className="container__options">
                     <Options
                         chartType={chartType}
+                        updateChartType={this.updateChartType}
                         updateOptionDefault={this.updateOptionDefault}
                         updateOption={this.updateOption} />
                 </div>
+            </div>
+            <div className="container__right">
+                <div className="container__chart"><Chart options={optionsJson} /></div>
                 <div className="container__code"><Code framework={framework} options={optionsJson} /></div>
             </div>
         </div>;

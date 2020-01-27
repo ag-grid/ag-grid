@@ -5,26 +5,31 @@
     left: 0;
     right: 0;
     display: flex;
-    flex-direction: column;
 }
 
-.container__chart {
-    overflow-y: auto;
-    height: 45%;
-}
-
-.container__bottom {
-    display: flex;
-    height: 55%;
-    min-height: 0;
-    position: relative;
+.container__left {
+    width: 50%;
 }
 
 .container__options {
-    width: 55%;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.container__right {
+    flex-direction: column;
+    width: 50%;
+}
+
+.container__chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50%;
 }
 
 .container__code {
-    width: 45%;
-    overflow-y: auto;
+    overflow: auto;
+    height: 50%;
 }

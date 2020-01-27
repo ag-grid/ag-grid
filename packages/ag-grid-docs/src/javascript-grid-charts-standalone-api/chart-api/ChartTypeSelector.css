@@ -1,10 +1,3 @@
 .chart-type-selector {
-    width: 150px;
-    height: 30px;
-    position: absolute;
-    right: 0;
-    margin: 10px 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
-    font-size: 0.9em;
+    margin: 10px;
 }

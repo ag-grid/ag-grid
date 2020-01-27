@@ -21,11 +21,16 @@ export const NumberEditor = ({ value, min, max, step, onChange }) => {
     }
 
     if (max != null) {
-        props.max = max;
+        props.max = typeof max === 'function' ? max() : max;
     }
 
     if (step != null) {
         props.step = step;
+    }
+
+    if (props.max && stateValue > props.max) {
+        setValueChange(props.max);
+        onChange(props.max);
     }
 
     return <span className="number-editor">
@@ -67,10 +72,10 @@ export const PresetEditor = ({ value, options, onChange }) => {
     };
 
     return <div className="preset-editor">
-        {options.map(o => <div
+        {(Array.isArray(options) ? options : Object.keys(options)).map(o => <div
             key={o}
             className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
-            onClick={() => inputOnChange(o)}>{o.toString()}</div>)}
+            onClick={() => inputOnChange(o)}>{Array.isArray(options) ? o.toString() : options[o]}</div>)}
     </div>;
 };
 

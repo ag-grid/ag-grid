@@ -56,6 +56,8 @@ const getPaddingOption = position => ({
     max: 40,
 });
 
+const getChartContainer = () => document.querySelector('.container__chart') || {};
+
 export const generalConfig = Object.freeze({
     data: {
         type: 'object[]',
@@ -71,14 +73,14 @@ export const generalConfig = Object.freeze({
         description: 'The width of the chart.',
         editor: NumberEditor,
         min: 1,
-        max: 800,
+        max: () => getChartContainer().offsetWidth - (getChartContainer().offsetWidth % 10),
     },
     height: {
         default: 400,
         description: 'The height of the chart.',
         editor: NumberEditor,
         min: 1,
-        max: 400,
+        max: () => getChartContainer().offsetHeight - (getChartContainer().offsetHeight % 10),
     },
     tooltipOffset: {
         type: '[number, number]',
