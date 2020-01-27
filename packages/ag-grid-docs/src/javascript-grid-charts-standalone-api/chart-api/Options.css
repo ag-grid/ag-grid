@@ -15,6 +15,12 @@
     width: 55%;
 }
 
+.options__no-content {
+    margin: 2em;
+    font-size: 1.2em;
+    text-align: center;
+}
+
 .options__content {
     overflow-y: auto;
 }

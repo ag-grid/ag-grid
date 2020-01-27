@@ -81,6 +81,7 @@ const Search = ({ text, onChange }) => {
 export class Options extends React.PureComponent {
     state = {
         searchText: '',
+        hasResults: false,
     };
 
     getTrimmedSearchText = () => this.state.searchText.trim();
@@ -105,6 +106,10 @@ export class Options extends React.PureComponent {
             } = config;
 
             const isVisible = !isSearching || parentMatchesSearch || this.matchesSearch(name);
+
+            if (isVisible) {
+                this.setState({ hasResults: true });
+            }
 
             if (config.description) {
                 this.props.updateOptionDefault(key, defaultValue);
@@ -144,9 +149,10 @@ export class Options extends React.PureComponent {
 
         config.series = Config[`${this.props.chartType}SeriesConfig`];
 
-        return <div className='options'>
-            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value })} />
-            <div className='options__content'>{this.generateOptions(Object.freeze(config))}</div>
+        return <div className="options">
+            <Search value={this.state.searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
+            {!this.state.hasResults && <div className="options__no-content"><i class="fa fa-link"></i> No properties match your search: '{this.getTrimmedSearchText()}'</div>}
+            <div className="options__content">{this.generateOptions(Object.freeze(config))}</div>
         </div>;
     }
 };
