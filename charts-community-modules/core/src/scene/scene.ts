@@ -12,8 +12,8 @@ export class Scene {
     readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
-    constructor(document = window.document) {
-        this.canvas = new HdpiCanvas(document);
+    constructor(document = window.document, width?: number, height?: number) {
+        this.canvas = new HdpiCanvas(document, width, height);
         this.ctx = this.canvas.context;
     }
 
