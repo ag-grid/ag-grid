@@ -299,7 +299,6 @@ const mappings = {
             [LineSeries.type]: {
                 meta: {
                     constructor: LineSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         title: undefined,
                         xKey: '',
@@ -316,36 +315,36 @@ const mappings = {
                         }
                     }
                 },
+                highlightStyle: {},
                 marker: {}
             },
             [ColumnSeries.type]: {
                 meta: {
                     constructor: ColumnSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         ...columnSeriesDefaults
                     }
                 },
+                highlightStyle: {},
                 ...labelMapping,
                 ...shadowMapping
             },
             [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         ...columnSeriesDefaults
                     }
                 },
+                highlightStyle: {},
                 ...labelMapping,
                 ...shadowMapping
             },
             [ScatterSeries.type]: {
                 meta: {
                     constructor: ScatterSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -368,12 +367,12 @@ const mappings = {
                         }
                     }
                 },
+                highlightStyle: {},
                 marker: {}
             },
             [AreaSeries.type]: {
                 meta: {
                     constructor: AreaSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         xKey: '',
@@ -392,6 +391,7 @@ const mappings = {
                         }
                     }
                 },
+                highlightStyle: {},
                 marker: {},
                 ...shadowMapping
             }
@@ -410,7 +410,6 @@ const mappings = {
             [PieSeries.type]: {
                 meta: {
                     constructor: PieSeries,
-                    setAsIs: ['highlightStyle'],
                     defaults: {
                         ...seriesDefaults,
                         title: undefined,
@@ -434,6 +433,7 @@ const mappings = {
                         shadow: undefined
                     }
                 },
+                highlightStyle: {},
                 title: {
                     meta: {
                         constructor: Caption,
