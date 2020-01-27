@@ -12,6 +12,10 @@ export class Scene {
     readonly canvas: HdpiCanvas;
     private readonly ctx: CanvasRenderingContext2D;
 
+    // As a rule of thumb, constructors with no parameters are preferred.
+    // A few exceptions are:
+    // - we absolutely need to know something at construction time (document)
+    // - knowing something at construction time meaningfully improves performance (width, height)
     constructor(document = window.document, width?: number, height?: number) {
         this.canvas = new HdpiCanvas(document, width, height);
         this.ctx = this.canvas.context;
