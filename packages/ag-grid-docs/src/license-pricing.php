@@ -189,9 +189,14 @@ gtm_data_layer('community-enterprise');
                 </div>
             </section>
             <section>
-                <div style="text-align: center; font-weight: bold;">
-                    Should you have any questions regarding your purchase, please email
-                    <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                <div>
+                    <div style="text-align: center;">
+                        <div style="max-width: 800px; display: inline-block;">
+                            Bulk pricing available. For up to 10 licenses please use our e-commerce configurator to see pricing.
+                            For more than 10 licenses or any questions with regards your purchase, please email
+                            <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -421,16 +426,17 @@ gtm_data_layer('community-enterprise');
                     <div>
                         <span>Subscription Renewal (optional)</span>
                         <p>
-                            You can choose to renew your subscription to license new versions of ag-Grid Enterprise at a
-                            discounted rate. This could range from 365 days up to a 5-year term. At the end of your subscription
-                            period you will no longer be able to license the latest versions of ag-Grid Enterprise without renewing.
-                            You can continue to use your licensed versions in perpetuity.
+                            At the end of your subscription period you will no longer be able to license the latest
+                            versions of ag-Grid Enterprise or access support without renewing. This could range from
+                            365 days up to a 5-year term. Renewal pricing starts as follows: Single Application Developer
+                            License, $350; Multiple Applications Developer License, $560;
+                            Deployment License Add-on, $350.
                         </p>
                         <p>
-                            Please note that while use of the software is perpetual Support, and Corrective Maintenance are not. We
-                            do not provide issue resolution to versions of ag-Grid Enterprise older than 12 months. We roll bug fixes,
-                            performance enhancements and other improvements into new releases; we don't patch, fix or in any way
-                            alter older versions.
+                            Please note that while use of the software is perpetual Support and Corrective Maintenance
+                            are not. We do not provide issue resolution to versions of ag-Grid Enterprise older than
+                            12 months. We roll bug fixes, performance enhancements and other improvements into new
+                            releases; we don’t patch, fix or in any way alter older versions.
                         </p>
                         <div>
                             <img src="./images/pricing/Versions%203.svg">
@@ -555,104 +561,10 @@ gtm_data_layer('community-enterprise');
             </section>
 
         </div>
-    <!--        <div id="side-bar">-->
-        <div id="side-bar" style="display: none">
-            <div style="margin: 1rem; position: fixed; top: 65px;">
-                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center">
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <img src="./images/pricing/SA.svg" style="min-width: 50px; max-width: 50px;">
-                    </div>
-                    <div style="flex: 1 1 auto;">
-                        &dollar;750
-                    </div>
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #009ede;;border-color: #009ede;" href="mailto:info@ag-grid.com">CONTACT US</a>
-                    </div>
-                </div>
-                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <img src="./images/pricing/MA.svg" style="min-width: 55px; max-width: 55px;">
-                    </div>
-                    <div style="flex: 1 1 auto;">
-                        &dollar;1,200
-                    </div>
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #009d70;border-color: #009d70;" href="mailto:info@ag-grid.com">CONTACT US</a>
-                    </div>
-                </div>
-                <div style="border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 0.25rem; background-color: #f8f9fa;display: flex; flex-direction: column; align-items: center; margin-top: 1rem">
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <img src="./images/pricing/Deployment%20Add-on.svg" style="min-width: 55px; max-width: 55px;">
-                    </div>
-                    <div style="flex: 1 1 auto;">
-                        &dollar;750
-                    </div>
-                    <div style="flex: 1 1 auto; margin: 1rem">
-                        <a class="btn" style="color: #fbad18;border-color: #fbad18;" href="mailto:info@ag-grid.com">CONTACT US</a>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <?php include_once("./includes/footer.php"); ?>
 </div>
 <?php include_once("./includes/analytics.php"); ?>
-<script>
-    if (window.location.href.indexOf("/community-support.php?submitted=true") !== -1) {
-        (new Image()).src = "//www.googleadservices.com/pagead/conversion/873243008/?label=8TOnCM7BnWsQgMOyoAM&guid=ON&script=0";
-    }
-
-    function getRect(element) {
-        const bounds = element.offset();
-        bounds.right = bounds.left + element.outerWidth();
-        bounds.bottom = bounds.top + element.outerHeight();
-        return bounds;
-    }
-
-    function getCurrentViewPort() {
-        const viewport = {
-            top: win.scrollTop(),
-            left: win.scrollLeft(),
-            right: NaN,
-            bottom: NaN
-        };
-
-        viewport.right = viewport.left + win.width();
-        viewport.bottom = viewport.top + win.height();
-
-        return viewport;
-    }
-
-    var win = jQuery(window);
-    var scroller = jQuery('.page-content')[0];
-
-    function trackIfInViewPort(element, leeway, callback) {
-        function comparePosition() {
-            var viewPort = getCurrentViewPort();
-            var box = getRect(element);
-            var inViewPort = viewPort.bottom >= box.top && viewPort.top <= (box.bottom - leeway);
-
-            callback(inViewPort);
-        }
-
-        comparePosition();
-        scroller.addEventListener('scroll', comparePosition);
-    }
-
-    function positionAndToggleSideBar(inViewPort) {
-        var pricingNav = jQuery('#side-bar');
-        var licenses = jQuery('#licenses');
-
-        var viewPort = getCurrentViewPort();
-
-        pricingNav.offset({top: viewPort.top, left: licenses.offset().left + licenses.width() + 100});
-        inViewPort ? pricingNav.fadeOut() : pricingNav.fadeIn();
-    }
-
-    // allow for a little margin leeway - looks nicer
-    var leeway = 25;
-    trackIfInViewPort(jQuery('#licenses'), leeway, positionAndToggleSideBar);
-</script>
 <script src="dist/homepage.js"></script>
 </body>
 </html>
