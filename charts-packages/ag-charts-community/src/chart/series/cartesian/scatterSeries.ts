@@ -12,7 +12,6 @@ import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } f
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
-import { chainObjects } from "../../../util/object";
 import { Chart } from "../../chart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
