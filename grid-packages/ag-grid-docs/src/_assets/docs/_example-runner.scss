@@ -202,9 +202,6 @@
         li {
             border: 0;
             padding: 1rem;
-
-            > a {
-            }
         }
 
         li.active {
@@ -245,6 +242,16 @@
 
         .dropdown-menu {
             @extend .dropdown-menu-right;
+        }
+
+        &.framework-chooser--inline {
+            display: inline-block;
+            margin: 0.5rem;
+
+            li {
+                margin: 0;
+                padding: 0;
+            }
         }
     }
 

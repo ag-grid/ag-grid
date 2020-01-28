@@ -277,30 +277,6 @@ ReactRunner.$inject = ["$http", "$timeout", "$sce", "$q", "formPostData", "$elem
 docs.component("reactRunner", {
     template: `
 <div ng-class='["example-runner"]'>
-    <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
-        <span> Example version: </span>
-        <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
-            <button type="button"
-                    ng-click="$ctrl.toggleFwDropdown()"
-                    ng-blur="$ctrl.hideFwDropdown()"
-                    class="btn btn-default dropdown-toggle"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false">
-
-                <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]" data-current-framework="{{$ctrl.currentType}}" data-framework-dropdown="{{$ctrl.id}}">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
-                <span class="caret"></span>
-            </button>
-
-            <ul class="dropdown-menu">
-                <li ng-repeat="type in $ctrl.availableTypes">
-                    <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();"
-                       ng-class="['runner-item', 'runner-item-' + type ]" data-framework-item="{{$ctrl.id}}">{{$ctrl.typeTitle(type)}}</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
     <div class="example-wrapper">
         <ul role="tablist" class="ghost">
             <li class="title">
@@ -325,6 +301,29 @@ docs.component("reactRunner", {
                 boilerplate="$ctrl.sources"
                 on-click="$ctrl.openPlunker($event);">
             </example-tab>
+
+            <div class="framework-chooser framework-chooser--inline" ng-if="$ctrl.showFrameworksDropdown">
+                <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
+                    <button type="button"
+                            ng-click="$ctrl.toggleFwDropdown()"
+                            ng-blur="$ctrl.hideFwDropdown()"
+                            class="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+
+                        <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]" data-current-framework="{{$ctrl.currentType}}" data-framework-dropdown="{{$ctrl.id}}">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
+                        <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="type in $ctrl.availableTypes">
+                            <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();"
+                            ng-class="['runner-item', 'runner-item-' + type ]" data-framework-item="{{$ctrl.id}}">{{$ctrl.typeTitle(type)}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </ul>
 
         <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
