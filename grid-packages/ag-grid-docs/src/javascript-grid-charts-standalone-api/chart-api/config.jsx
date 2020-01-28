@@ -86,7 +86,7 @@ export const generalConfig = Object.freeze({
     tooltipOffset: {
         type: '[number, number]',
         default: [20, 20],
-        description: 'Offset of a tooltip from the cursor, specified as <code>[xOffset, yOffset]</code>.',
+        description: 'Offset of a tooltip from the cursor, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
         editor: ArrayEditor,
     },
     tooltipClass: {

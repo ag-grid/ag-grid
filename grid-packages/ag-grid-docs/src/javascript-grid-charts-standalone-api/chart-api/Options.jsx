@@ -67,7 +67,7 @@ const Option = ({ name, isVisible, isRequired, type, description, defaultValue, 
         {isFunction && <FunctionDefinition definition={derivedType} />}
         <span className="option__description" dangerouslySetInnerHTML={{ __html: description }}></span><br />
         {Editor && <Editor value={defaultValue} {...editorProps} />}
-        {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(o => JSON.stringify(o)).join(' | ')}</code></span>}
+        {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code></span>}
     </div>;
 };
 
@@ -84,7 +84,7 @@ export class Options extends React.PureComponent {
     };
 
     getTrimmedSearchText = () => this.state.searchText.trim();
-    matchesSearch = name => name.indexOf(this.getTrimmedSearchText()) >= 0;
+    matchesSearch = name => name.toLowerCase().indexOf(this.getTrimmedSearchText().toLowerCase()) >= 0;
     childMatchesSearch = config => !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
 
     generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false) => {
