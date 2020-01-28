@@ -482,7 +482,7 @@ const strokes = [
     '#5f5f5f'
 ];
 
-const getColourConfig = (name, hasMultipleSeries = false) => {
+const getColourConfig = (name = 'markers', hasMultipleSeries = false) => {
     const config = {};
 
     if (hasMultipleSeries) {
@@ -506,7 +506,6 @@ const getColourConfig = (name, hasMultipleSeries = false) => {
         max: 1,
         step: 0.05,
     };
-
 
     if (hasMultipleSeries) {
         config.strokes = {
@@ -577,7 +576,7 @@ const shadowConfig = {
     },
 };
 
-const getHighlightConfig = (name = 'marker') => ({
+const getHighlightConfig = (name = 'markers') => ({
     highlightStyle: {
         meta: {
             requiresWholeObject: true,
@@ -642,7 +641,7 @@ export const areaSeriesConfig = Object.freeze({
         min: 1,
         max: 100,
     },
-    ...getColourConfig(true),
+    ...getColourConfig('areas', true),
     ...getHighlightConfig(),
     ...markerConfig,
     ...shadowConfig,
@@ -778,11 +777,6 @@ export const pieSeriesConfig = Object.freeze({
         },
     },
     callout: {
-        enabled: {
-            default: true,
-            description: `Whether the callout lines should be shown or not.`,
-            editor: BooleanEditor,
-        },
         colors: {
             default: strokes,
             description: 'Colours to cycle through for the strokes of the callouts.',
