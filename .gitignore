@@ -57,6 +57,8 @@ grid-packages/ag-grid-angular/exports.metadata.json
 grid-packages/ag-grid-community/src/styles
 
 community-modules/core/typings
+enterprise-modules/core/typings
+enterprise-modules/set-filter/typings
 
 charts-packages/ag-charts-react/lib
 charts-packages/ag-charts-react/umd
