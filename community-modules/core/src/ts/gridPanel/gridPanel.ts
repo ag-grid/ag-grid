@@ -175,7 +175,9 @@ export class GridPanel extends Component {
     private scrollTop = -1;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
-    private readonly resetLastHorizontalScrollElementDebounce: () => void;
+
+    public readonly redrawRowsDebounced: () => void;
+    private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
     private bodyHeight: number;
 
@@ -191,7 +193,8 @@ export class GridPanel extends Component {
 
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
-        this.resetLastHorizontalScrollElementDebounce = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
+        this.redrawRowsDebounced = _.debounce(this.redrawRowsAfterScroll.bind(this), 50);
+        this.resetLastHorizontalScrollElementDebounced = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
     public getVScrollPosition(): { top: number, bottom: number } {
@@ -741,7 +744,6 @@ export class GridPanel extends Component {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    // fixme - how does this work in the new way
     public ensureIndexVisible(index: any, position?: string) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) { return; }
@@ -1387,7 +1389,7 @@ export class GridPanel extends Component {
         if (scrollWentPastBounds) { return; }
 
         this.doHorizontalScroll(scrollLeft);
-        this.resetLastHorizontalScrollElementDebounce();
+        this.resetLastHorizontalScrollElementDebounced();
     }
 
     private resetLastHorizontalScrollElement() {

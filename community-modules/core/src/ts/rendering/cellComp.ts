@@ -10,6 +10,7 @@ import {
     CellEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
+    CellRendererHeightChangedEvent,
     Events,
     FlashCellsEvent
 } from "../events";
@@ -371,7 +372,6 @@ export class CellComp extends Component {
             if (typeof this.cellRendererGui === 'string') {
                 return this.cellRendererGui as string;
             }
-
             return '';
         }
 
@@ -890,10 +890,21 @@ export class CellComp extends Component {
             return;
         }
 
-        // if async components, then it's possible the user started editing since
-        // this call was made
+        // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
             this.eParentOfValue.appendChild(this.cellRendererGui);
+        }
+
+        const autoHeightColumn = this.column.getColDef().autoHeight;
+        const shouldRaiseAutoHeightChangedEvent = autoHeightColumn && this.cellRendererGui.offsetHeight > 0;
+        if (shouldRaiseAutoHeightChangedEvent) {
+            const afterAutoHeightCellRendererCreated: CellRendererHeightChangedEvent = {
+                type: Events.EVENT_CELL_RENDERER_HEIGHT_CHANGED,
+                rowNode: this.rowNode,
+                column: this.column,
+                cellRendererGui: this.cellRendererGui
+            };
+            this.beans.eventService.dispatchEvent(afterAutoHeightCellRendererCreated);
         }
     }
 

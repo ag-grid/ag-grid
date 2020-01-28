@@ -135,7 +135,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
-                if (rowNode.rowHeightEstimated) {
+                if (rowNode.rowHeightEstimated || rowNode.__autoHeightChanged) {
                     const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;
@@ -542,7 +542,6 @@ export class ClientSideRowModel implements IClientSideRowModel {
             } else if (currentRowNode.rowTop > pixelToMatch) {
                 topPointer = midPointer - 1;
             }
-
         }
     }
 

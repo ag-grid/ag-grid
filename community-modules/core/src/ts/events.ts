@@ -404,3 +404,10 @@ export interface ColumnAggFuncChangeRequestEvent extends ColumnRequestEvent {
 // not documented, for internal use only
 export interface ScrollVisibilityChangedEvent extends AgGridEvent {
 }
+
+// not documented, for internal use only - used by AutoHeightCalculator
+export interface CellRendererHeightChangedEvent extends AgEvent {
+    rowNode: RowNode;
+    column: Column;
+    cellRendererGui: HTMLElement;
+}

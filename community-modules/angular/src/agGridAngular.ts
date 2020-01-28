@@ -515,6 +515,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
     @Output() public popupToFront: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public cellRendererHeightChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnRowGroupChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();

@@ -166,11 +166,22 @@ export class RowNode implements IEventEmitter {
 
     /** The height, in pixels, of this row */
     public rowHeight: number;
+
     /** Dynamic row heights are done on demand, only when row is visible. However for row virtualisation
      * we need a row height to do the 'what rows are in viewport' maths. So we assign a row height to each
      * row based on defaults and rowHeightEstimated=true, then when the row is needed for drawing we do
      * the row height calculation and set rowHeightEstimated=false.*/
     public rowHeightEstimated: boolean;
+
+    /** set by the autoHeightCalculator to true when the row height has changed from an async cell renderer */
+    public __autoHeightChanged = false;
+
+    /** cell renderer elements required to recalculate auto row heights, e.g. through column resizing */
+    public __autoHeightCellRendererElements: {[colId: string]: {element: HTMLElement, async: boolean}} = {};
+
+    /** a separate row height that is used in auto row height calculations to prevent unnecessary row redraws */
+    public __autoRowHeight: number;
+
     /** The top pixel for this row */
     public rowTop: number;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,
