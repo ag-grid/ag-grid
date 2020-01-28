@@ -17,8 +17,15 @@ export class Chart extends React.Component {
         this.createChart();
     }
 
-    componentDidUpdate() {
-        if (this.chartInstance && this.useDynamicUpdates) {
+    componentDidUpdate(prevProps) {
+        const oldSeriesType = prevProps.options.series[0].type;
+        const newSeriesType = this.props.options.series[0].type;
+        const polarSeriesType = 'pie';
+        const changeBetweenPolarAndCartesian =
+            (oldSeriesType === polarSeriesType && newSeriesType !== polarSeriesType) ||
+            (oldSeriesType !== polarSeriesType && newSeriesType === polarSeriesType);
+
+        if (this.chartInstance && this.useDynamicUpdates && !changeBetweenPolarAndCartesian) {
             AgChart.update(this.chartInstance, this.createOptionsJson());
         } else {
             this.chartInstance && this.chartInstance.destroy();
