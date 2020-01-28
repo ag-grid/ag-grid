@@ -22,7 +22,7 @@ export class SeriesMarker extends Observable {
      */
     @reactive('change') minSize = 4;
 
-    @reactive('change') fill?: string = '#f3622d';
+    @reactive('change') fill?: string;
 
     @reactive('change') stroke?: string;
 
