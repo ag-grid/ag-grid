@@ -320,7 +320,7 @@ export class ScatterSeries extends CartesianSeries {
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
-            let contentHtml = `<b>${xName}</b>: ${toFixed(xValue)}<br><b>${yName}</b>: ${toFixed(yValue)}`;
+            let contentHtml = `<b>${xName || xKey}</b>: ${toFixed(xValue)}<br><b>${yName || yKey}</b>: ${toFixed(yValue)}`;
 
             if (sizeKey) {
                 contentHtml += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;
