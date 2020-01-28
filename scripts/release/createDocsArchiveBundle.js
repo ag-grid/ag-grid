@@ -13,7 +13,7 @@ if (process.argv.length !== 3) {
 
 const [exec, scriptPath, newVersion] = process.argv;
 
-const DIST_PATH = 'packages/ag-grid-docs/dist';
+const DIST_PATH = 'grid-packages/ag-grid-docs/dist';
 
 function getArchiveFilename() {
     const now = new Date();

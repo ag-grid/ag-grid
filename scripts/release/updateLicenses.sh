@@ -4,7 +4,7 @@ SOURCE_DIR="core"
 
 COMMUNITY_ROOT=./community-modules
 SOURCE_COMMUNITY_LICENSE=$COMMUNITY_ROOT/core/LICENSE.txt
-LEGACY_ROOT=./packages
+LEGACY_ROOT=./grid-packages
 LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-polymer" "ag-grid-react" "ag-grid-vue")
 LEGACY_ENTERPRISE_DIRS=(ag-grid-enterprise)
 

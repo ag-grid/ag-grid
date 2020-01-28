@@ -2,7 +2,7 @@
 
 ZIP_PREFIX=`date +%Y%m%d`
 
-cd packages/ag-grid-docs
+cd grid-packages/ag-grid-docs
 npx gulp release
 cd dist
 

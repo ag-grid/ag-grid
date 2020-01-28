@@ -1,32 +1,32 @@
-[submodule "packages/ag-grid-angular-cli-example"]
+[submodule "grid-packages/ag-grid-angular-cli-example"]
 	path = examples-grid/ag-grid-angular-cli-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-example.git
     branch = latest
-[submodule "packages/ag-grid-react-example"]
+[submodule "grid-packages/ag-grid-react-example"]
 	path = examples-grid/ag-grid-react-example
 	url = https://github.com/ag-grid/ag-grid-react-example.git
     branch = latest
-[submodule "packages/ag-grid-vue-example"]
+[submodule "grid-packages/ag-grid-vue-example"]
 	path = examples-grid/ag-grid-vue-example
 	url = https://github.com/ag-grid/ag-grid-vue-example.git
     branch = latest
-[submodule "packages/ag-grid-polymer-example"]
+[submodule "grid-packages/ag-grid-polymer-example"]
 	path = examples-grid/ag-grid-polymer-example
 	url = https://github.com/ag-grid/ag-grid-polymer-example.git
     branch = latest
-[submodule "packages/ag-grid-charts-example"]
+[submodule "charts-packages/ag-grid-charts-example"]
 	path = examples-grid/ag-grid-charts-example
 	url = https://github.com/ag-grid/ag-grid-charts-example.git
     branch = latest
-[submodule "packages/ag-charts-react-example"]
+[submodule "charts-packages/ag-charts-react-example"]
 	path = examples-charts/ag-charts-react-example
 	url = https://github.com/ag-grid/ag-charts-react-example.git
-[submodule "packages/ag-charts-vue-example"]
+[submodule "charts-packages/ag-charts-vue-example"]
 	path = examples-charts/ag-charts-vue-example
 	url = https://github.com/ag-grid/ag-charts-vue-example.git
-[submodule "packages/ag-charts-polymer-example"]
+[submodule "charts-packages/ag-charts-polymer-example"]
 	path = examples-charts/ag-charts-polymer-example
 	url = https://github.com/ag-grid/ag-charts-polymer-example.git
-[submodule "packages/ag-charts-angular-example"]
+[submodule "charts-packages/ag-charts-angular-example"]
 	path = examples-charts/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git

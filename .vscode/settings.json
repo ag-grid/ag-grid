@@ -17,11 +17,11 @@
         "trans"
     ],
     "files.exclude": {
-        "packages/ag-grid-community": true,
-        "packages/ag-grid-enterprise": true,
-        "packages/ag-grid-angular": true,
-        "packages/ag-grid-react": true,
-        "packages/ag-grid-vue": true,
+        "grid-packages/ag-grid-community": true,
+        "grid-packages/ag-grid-enterprise": true,
+        "grid-packages/ag-grid-angular": true,
+        "grid-packages/ag-grid-react": true,
+        "grid-packages/ag-grid-vue": true,
         "**/.git": true,
         "**/.DS_Store": true
     },

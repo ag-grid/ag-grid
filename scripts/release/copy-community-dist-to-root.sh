@@ -7,9 +7,9 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
-cp -r packages/ag-grid-community/dist .
-cp packages/ag-grid-community/main.d.ts .
-cp packages/ag-grid-community/main.js .
-cp packages/ag-grid-community/bower.json .
+cp -r grid-packages/ag-grid-community/dist .
+cp grid-packages/ag-grid-community/main.d.ts .
+cp grid-packages/ag-grid-community/main.js .
+cp grid-packages/ag-grid-community/bower.json .
 
 node ./scripts/release/versionPackageJson.js $1

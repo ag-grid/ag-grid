@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
-const PACKAGE_DIRS = ['packages', 'community-modules', 'enterprise-modules', 'examples-grid', 'examples-charts'];
+const PACKAGE_DIRS = ['grid-packages', 'charts-packages', 'community-modules', 'enterprise-modules', 'examples-grid', 'examples-charts'];
 const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length !== 4) {

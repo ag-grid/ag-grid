@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/packages/ag-grid-community/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/core/node_modules.nosync" />
@@ -13,6 +13,10 @@
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-anglar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-community/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/charts-packages/ag-charts-vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/ag-grid/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/all-modules/node_modules.nosync" />
@@ -75,67 +79,67 @@
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-angular-cli-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-angular-cli-example/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-angular/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia-example/docs" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia-example/scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-aurelia/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-charts-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-charts-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/.cache-loader" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/dist_orig" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-dev/bundle-size-tests" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-dev/bundles" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-dev/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/.cache-loader" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/_dev" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/framework-examples" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/javascript-grid-cell-rendering-components/polymer-dynamic/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/polymer-getting-started/simple-grid/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-polymer-example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-polymer-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-polymer/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-vue-example/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-vue/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-vue/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/seans-react-examples/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/seans-react-examples/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-react-example/build" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-react-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-charts-vue-example/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular-cli-example/tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/docs" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia-example/scripts" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-aurelia/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/.cache-loader" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/dist_orig" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundle-size-tests" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/bundles" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-dev/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.cache-loader" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/.vscode" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/_dev" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/framework-examples" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/javascript-grid-cell-rendering-components/polymer-dynamic/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-docs/src/polymer-getting-started/simple-grid/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-enterprise/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer-example/build" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-polymer/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/.vscode" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/umd" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue-example/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/seans-react-examples/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/seans-react-examples/node_modules.nosync" />
     </content>
-    <content url="file://$MODULE_DIR$/packages/ag-grid-docs/node_modules" />
+    <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/packages/ag-grid/node_modules/uri-templates" />
+        <option value="$MODULE_DIR$/grid-packages/ag-grid/node_modules/uri-templates" />
       </list>
     </option>
   </component>

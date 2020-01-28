@@ -12,7 +12,7 @@ examples=(ag-grid-angular-cli-example ag-grid-react-example ag-grid-vue-example 
 pwd
 for example in ${examples[@]}; do
     echo $example
-    cd "packages/$example"
+    cd "grid-packages/$example"
 
     git checkout master
     ../../scripts/release/git-merge-one-way.sh $1

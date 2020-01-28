@@ -20,12 +20,12 @@ docs_are_running
 # latest only
 dist
 
-packages/ag-grid-angular/aot/**
-packages/ag-grid-angular/dist/**
-packages/ag-grid-angular/main.js.map
-packages/ag-grid-angular/main.js
-packages/ag-grid-angular/main.d.ts
-packages/ag-grid-angular/main.metadata.json
+grid-packages/ag-grid-angular/aot/**
+grid-packages/ag-grid-angular/dist/**
+grid-packages/ag-grid-angular/main.js.map
+grid-packages/ag-grid-angular/main.js
+grid-packages/ag-grid-angular/main.d.ts
+grid-packages/ag-grid-angular/main.metadata.json
 community-modules/angular/aot/**
 community-modules/angular/dist/**
 community-modules/angular/main.js.map
@@ -33,32 +33,32 @@ community-modules/angular/main.js
 community-modules/angular/main.d.ts
 community-modules/angular/main.metadata.json
 
-packages/ag-grid-react/lib/**
-packages/ag-grid-react/umd/ag-grid-react.min.js
+grid-packages/ag-grid-react/lib/**
+grid-packages/ag-grid-react/umd/ag-grid-react.min.js
 community-modules/react/lib/**
 community-modules/react/umd/ag-grid-react.min.js
 
-packages/ag-grid-community/main.d.ts
-packages/ag-grid-community/main.js
-packages/ag-grid-enterprise/main.d.ts
-packages/ag-grid-enterprise/main.js
+grid-packages/ag-grid-community/main.d.ts
+grid-packages/ag-grid-community/main.js
+grid-packages/ag-grid-enterprise/main.d.ts
+grid-packages/ag-grid-enterprise/main.js
 
-packages/ag-grid-vue/lib/**
-packages/ag-grid-vue/main.js
-packages/ag-grid-vue/main.d.ts
+grid-packages/ag-grid-vue/lib/**
+grid-packages/ag-grid-vue/main.js
+grid-packages/ag-grid-vue/main.d.ts
 community-modules/vue/lib/**
 community-modules/vue/main.js
 
-packages/ag-grid-angular/exports.d.ts
-packages/ag-grid-angular/exports.js
-packages/ag-grid-angular/exports.js.map
-packages/ag-grid-angular/exports.metadata.json
+grid-packages/ag-grid-angular/exports.d.ts
+grid-packages/ag-grid-angular/exports.js
+grid-packages/ag-grid-angular/exports.js.map
+grid-packages/ag-grid-angular/exports.metadata.json
 
-packages/ag-grid-community/src/styles
+grid-packages/ag-grid-community/src/styles
 
 community-modules/core/typings
 
-charts-community-modules/react/lib
-charts-community-modules/react/umd
-charts-community-modules/vue/lib/**
+charts-packages/ag-charts-react/lib
+charts-packages/ag-charts-react/umd
+charts-packages/ag-charts-vue/lib/**
 charts-packages/ag-charts-angular/dist

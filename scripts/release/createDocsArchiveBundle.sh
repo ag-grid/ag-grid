@@ -13,7 +13,7 @@ RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
 echo "Building Docs Release"
-cd packages/ag-grid-docs
+cd grid-packages/ag-grid-docs
 npx gulp release-archive
 cd ../../
 
