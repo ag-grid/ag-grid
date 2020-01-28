@@ -43,7 +43,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
-            const matchingIndex = _.findIndex(seriesDefinitions, s =>
+            const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
                 s.xField.colId === series.xKey &&
                 s.yField.colId === series.yKey &&
                 ((!s.sizeField && !series.sizeKey) || (s.sizeField && s.sizeField.colId === series.sizeKey)));
