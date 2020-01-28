@@ -1,6 +1,6 @@
 import { Group } from "../../../scene/group";
 import { Line } from "../../../scene/shape/line";
-import { FontStyle, FontWeight, Text } from "../../../scene/shape/text";
+import { Text } from "../../../scene/shape/text";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
@@ -15,7 +15,7 @@ import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
 import { Shape } from "../../../scene/shape/shape";
-import { reactive } from "../../../util/observable";
+import { reactive, Observable } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
@@ -50,6 +50,12 @@ enum PieSeriesNodeTag {
 class PieSeriesLabel extends Label {
     @reactive('change') offset = 3; // from the callout line
     @reactive('dataChange') minAngle = 20; // in degrees
+}
+
+class PieSeriesCallout extends Observable {
+    @reactive('change') colors = palette.strokes;
+    @reactive('change') length = 10;
+    @reactive('change') strokeWidth = 1;
 }
 
 export class PieSeries extends PolarSeries {
@@ -101,16 +107,8 @@ export class PieSeries extends PolarSeries {
         return this._title;
     }
 
-    /**
-     * Defaults to make the callout colors the same as {@link strokeStyle}.
-     */
-    @reactive('layoutChange') calloutColors = palette.strokes;
-
-    @reactive('layoutChange') calloutStrokeWidth = 1;
-
-    @reactive('layoutChange') calloutLength = 10;
-
     readonly label = new PieSeriesLabel();
+    readonly callout = new PieSeriesCallout();
 
     constructor() {
         super();
@@ -118,6 +116,7 @@ export class PieSeries extends PolarSeries {
         this.addEventListener('update', () => this.update());
         this.label.addEventListener('change', () => this.scheduleLayout());
         this.label.addEventListener('dataChange', () => this.scheduleData());
+        this.callout.addEventListener('change', () => this.scheduleLayout());
 
         this.addPropertyListener('data', event => {
             event.source.seriesItemEnabled = event.value.map(() => true);
@@ -156,7 +155,7 @@ export class PieSeries extends PolarSeries {
     private _strokes: string[] = palette.strokes;
     set strokes(values: string[]) {
         this._strokes = values;
-        this.calloutColors = values;
+        this.callout.colors = values;
         this.scheduleData();
     }
     get strokes(): string[] {
@@ -315,7 +314,7 @@ export class PieSeries extends PolarSeries {
             strokes,
             fillOpacity,
             strokeOpacity,
-            calloutColors,
+            callout,
             outerRadiusOffset,
             innerRadiusOffset,
             radiusScale,
@@ -381,13 +380,13 @@ export class PieSeries extends PolarSeries {
             centerOffsets.push(sector.centerOffset);
         });
 
-        const { calloutLength } = this;
+        const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
         groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout).each((line, datum, index) => {
             if (datum.label) {
                 const outerRadius = centerOffsets[index] + outerRadii[index];
 
-                line.strokeWidth = this.calloutStrokeWidth;
+                line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
                 line.y1 = datum.midSin * outerRadius;

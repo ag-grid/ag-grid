@@ -197,18 +197,6 @@ const labelMapping = {
     }
 } as any;
 
-const pieLabelMapping = {
-    label: {
-        meta: {
-            defaults: {
-                ...labelDefaults,
-                offset: 3,
-                minAngle: 20
-            }
-        }
-    }
-} as any;
-
 const axisMappings = {
     line: {
         meta: {
@@ -449,7 +437,24 @@ const mappings = {
                         }
                     }
                 },
-                ...pieLabelMapping,
+                label: {
+                    meta: {
+                        defaults: {
+                            ...labelDefaults,
+                            offset: 3,
+                            minAngle: 20
+                        }
+                    }
+                },
+                callout: {
+                    meta: {
+                        defaults: {
+                            colors: palette.strokes,
+                            length: 10,
+                            strokeWidth: 1
+                        }
+                    }
+                },
                 ...shadowMapping
             }
         }

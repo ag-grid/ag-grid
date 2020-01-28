@@ -506,9 +506,9 @@ export class ChartBuilder {
         }
 
         if (callout) {
-            this.setValueIfExists(series, 'calloutColors', callout.colors);
-            this.setValueIfExists(series, 'calloutStrokeWidth', callout.strokeWidth);
-            this.setValueIfExists(series, 'calloutLength', callout.length);
+            this.setValueIfExists(series.callout, 'colors', callout.colors);
+            this.setValueIfExists(series.callout, 'strokeWidth', callout.strokeWidth);
+            this.setValueIfExists(series.callout, 'length', callout.length);
         }
 
         if (label) {
