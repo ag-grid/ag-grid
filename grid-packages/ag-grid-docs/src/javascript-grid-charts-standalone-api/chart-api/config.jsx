@@ -482,30 +482,32 @@ const strokes = [
     '#5f5f5f'
 ];
 
-const getColourConfig = (name = 'markers', hasMultipleSeries = false) => {
+const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFill = true) => {
     const config = {};
 
-    if (hasMultipleSeries) {
-        config.fills = {
-            default: fills,
-            description: `Colours to cycle through for the fills of the ${name}.`,
-        };
-    } else {
-        config.fill = {
-            default: fills[0],
-            description: `The colour of the fill for the ${name}.`,
-            editor: ColourEditor,
+    if (includeFill) {
+        if (hasMultipleSeries) {
+            config.fills = {
+                default: fills,
+                description: `Colours to cycle through for the fills of the ${name}.`,
+            };
+        } else {
+            config.fill = {
+                default: fills[0],
+                description: `The colour of the fill for the ${name}.`,
+                editor: ColourEditor,
+            };
+        }
+
+        config.fillOpacity = {
+            default: 1,
+            description: `The opacity of the fill for the ${name}.`,
+            editor: NumberEditor,
+            min: 0,
+            max: 1,
+            step: 0.05,
         };
     }
-
-    config.fillOpacity = {
-        default: 1,
-        description: `The opacity of the fill for the ${name}.`,
-        editor: NumberEditor,
-        min: 0,
-        max: 1,
-        step: 0.05,
-    };
 
     if (hasMultipleSeries) {
         config.strokes = {
@@ -626,7 +628,7 @@ export const lineSeriesConfig = Object.freeze({
         description: 'The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not.',
         editor: StringEditor,
     },
-    ...getColourConfig('lines'),
+    ...getColourConfig('lines', false, false),
     ...getHighlightConfig(),
     ...markerConfig,
 });
