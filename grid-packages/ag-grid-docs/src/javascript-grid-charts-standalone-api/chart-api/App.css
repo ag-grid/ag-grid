@@ -8,7 +8,7 @@
 }
 
 .container__left {
-    width: 50%;
+    width: 45%;
 }
 
 .container__options {
@@ -19,7 +19,7 @@
 
 .container__right {
     flex-direction: column;
-    width: 50%;
+    width: 55%;
 }
 
 .container__chart {

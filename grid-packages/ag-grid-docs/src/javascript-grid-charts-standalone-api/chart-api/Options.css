@@ -14,13 +14,16 @@
 }
 
 .options__content {
-    overflow-y: scroll;
+    overflow-y: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
+    height: 100%;
 }
 
 .options__no-content {
-    margin: 2em;
+    padding: 2em;
     font-size: 1.2em;
     text-align: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .section {
@@ -98,18 +101,19 @@
     float: right;
 }
 
-.option__params code {
-    font-size: 0.8rem;
-}
-
 .option code {
     color: #0084e7;
+    font-size: 1.1rem;
+    line-height: 1rem;
 }
 
 .search {
     padding: 10px;
     background-color: #f1f7ff;
     text-align: right;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-width: 1px 1px 0 0;
+    border-top-right-radius: 10px;
 }
 
 .search__input {

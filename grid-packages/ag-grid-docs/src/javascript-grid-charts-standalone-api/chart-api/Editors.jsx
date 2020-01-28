@@ -64,19 +64,35 @@ export const ArrayEditor = props =>
 
 export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
 
-export const PresetEditor = ({ value, options, onChange }) => {
+export const PresetEditor = ({ value, options, breakIndex, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = newValue => {
         setValueChange(newValue);
         onChange(newValue);
     };
 
-    return <div className="preset-editor">
-        {(Array.isArray(options) ? options : Object.keys(options)).map(o => <div
-            key={o}
-            className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
-            onClick={() => inputOnChange(o)}>{Array.isArray(options) ? o.toString() : options[o]}</div>)}
-    </div>;
+    const createOptionElement = o => <div
+        key={o}
+        className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
+        onClick={() => inputOnChange(o)}>{Array.isArray(options) ? o.toString() : options[o]}</div>;
+
+    const elementsBeforeBreak = [];
+    const elementsAfterBreak = [];
+
+    (Array.isArray(options) ? options : Object.keys(options)).forEach((option, i) => {
+        const element = createOptionElement(option);
+
+        if (breakIndex && i >= breakIndex) {
+            elementsAfterBreak.push(element);
+        } else {
+            elementsBeforeBreak.push(element);
+        }
+    });
+
+    return <React.Fragment>
+        {elementsBeforeBreak.length > 0 && <div className="preset-editor">{elementsBeforeBreak}</div>}
+        {elementsAfterBreak.length > 0 && <div className="preset-editor">{elementsAfterBreak}</div>}
+    </React.Fragment>;
 };
 
 export const ColourEditor = ({ value, onChange }) => {

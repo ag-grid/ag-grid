@@ -12,6 +12,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
         options: ['normal', 'bold', 'bolder', 'lighter', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
         description: `The font weight to use for the ${name}.`,
         editor: PresetEditor,
+        breakIndex: 4,
     },
     fontSize: {
         default: fontSize,

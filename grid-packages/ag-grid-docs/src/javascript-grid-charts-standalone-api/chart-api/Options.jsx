@@ -53,9 +53,7 @@ const FunctionDefinition = ({ definition }) => {
         );
     }
 
-    return <div className='option__functionDefinition'>
-        <CodeSnippet language='ts' lines={lines} />
-    </div>;
+    return <CodeSnippet language="ts" lines={lines} />;
 };
 
 const Option = ({ name, isVisible, isRequired, type, description, defaultValue, Editor, editorProps }) => {
@@ -63,19 +61,19 @@ const Option = ({ name, isVisible, isRequired, type, description, defaultValue, 
     const isFunction = derivedType != null && typeof derivedType === 'object';
 
     return <div className={`option ${isVisible ? '' : 'option--hidden'}`}>
-        <span className='option__name'>{name}</span>
-        {derivedType && <span className='option__type'>{isFunction ? 'Function' : derivedType}</span>}
-        {isRequired ? <div className='option__required'>Required</div> : <div className='option__default'>Default: {defaultValue != null ? <code className='option__code'>{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
+        <span className="option__name">{name}</span>
+        {derivedType && <span className="option__type">{isFunction ? 'Function' : derivedType}</span>}
+        {isRequired ? <div className="option__required">Required</div> : <div className="option__default">Default: {defaultValue != null ? <code className="option__code">{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
         {isFunction && <FunctionDefinition definition={derivedType} />}
-        <span className='option__description' dangerouslySetInnerHTML={{ __html: description }}></span><br />
+        <span className="option__description" dangerouslySetInnerHTML={{ __html: description }}></span><br />
         {Editor && <Editor value={defaultValue} {...editorProps} />}
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(o => JSON.stringify(o)).join(' | ')}</code></span>}
     </div>;
 };
 
 const Search = ({ text, onChange }) => {
-    return <div className='search'>
-        Search: <input className='search__input' type='text' value={text} onChange={event => onChange(event.target.value)} />
+    return <div className="search">
+        Search: <input className="search__input" type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} />
     </div>;
 };
 
