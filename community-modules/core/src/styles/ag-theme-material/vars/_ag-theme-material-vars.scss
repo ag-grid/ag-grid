@@ -64,15 +64,13 @@ $ag-secondary-font-weight: 700 !default; // font-secondary-weight
 // Misc
 $ag-selected-tab-underline-color: $ag-mat-primary-color;
 $ag-selected-tab-underline-width: 2px;
+$ag-full-width-tabs: true !default;
 
 $ag-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
 $ag-card-radius: 2px;
 
 // delta changes
 $ag-value-change-value-highlight-background-color: #00acc1 !default;
-
-// Flags
-$ag-full-width-tabs: true !default;
 
 // Icons
 @import "./font-vars";

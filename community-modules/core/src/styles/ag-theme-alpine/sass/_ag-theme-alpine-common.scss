@@ -11,6 +11,33 @@
         height: $ag-grid-size * 4;
     }
 
+
+    .ag-tab {
+        padding: $ag-grid-size * 1.5;
+        transition: color 0.4s;
+    }
+    .ag-tab-selected {
+        color: $ag-alpine-active-color;
+    }
+
+    .ag-tabs-body {
+        padding: 0;
+    }
+
+    .ag-charts-minichart-group-title-bar {
+        padding: $ag-grid-size $ag-grid-size * 2;
+        line-height: $ag-icon-size + $ag-grid-size - 2;
+        @include ag-grid-border(secondary, bottom);
+    }
+
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-group-title-bar,
+    .ag-chart-settings-nav-bar,
+    .ag-charts-format-sub-level-group-title-bar {
+        @include ag-grid-border(secondary, bottom);
+    }
+
+
     /*
 
     ////////////////////////////////////////
