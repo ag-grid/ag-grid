@@ -298,7 +298,7 @@ export class ChartBuilder {
         }
 
         if (fill) {
-            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series.marker, 'fill', fill.color);
 
             // default marker to same fill as series
             // this.setValueIfExists(series.marker, 'fill', fill.color);

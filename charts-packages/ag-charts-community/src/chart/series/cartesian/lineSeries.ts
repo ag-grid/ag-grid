@@ -43,7 +43,6 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') fill: string = palette.fills[0];
     @reactive('update') stroke: string = palette.strokes[0];
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
@@ -224,7 +223,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
-        const { marker, xKey, yKey, highlightedNode, fill, stroke, strokeWidth } = this;
+        const { marker, xKey, yKey, highlightedNode, stroke, strokeWidth } = this;
         let { groupSelection } = this;
 
         const MarkerShape = getMarker(marker.shape);
@@ -244,7 +243,7 @@ export class LineSeries extends CartesianSeries {
         groupSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
                 const isHighlightedNode = node === highlightedNode;
-                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill;
                 const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
@@ -285,7 +284,7 @@ export class LineSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill: color, title, tooltipRenderer } = this;
+        const { xName, yName, stroke: color, title, tooltipRenderer } = this;
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -313,7 +312,7 @@ export class LineSeries extends CartesianSeries {
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
             id, data, xKey, yKey, yName, visible,
-            title, marker, fill, stroke, strokeOpacity
+            title, marker, stroke, strokeOpacity
         } = this;
 
         if (data && data.length && xKey && yKey) {
@@ -326,7 +325,7 @@ export class LineSeries extends CartesianSeries {
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fill,
+                    fill: marker.fill,
                     stroke: marker.stroke || stroke,
                     fillOpacity: 1,
                     strokeOpacity
