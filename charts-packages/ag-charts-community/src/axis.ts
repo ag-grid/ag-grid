@@ -486,7 +486,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
     }
 
     computeBBox(options?: { excludeTitle: boolean }): BBox {
-        const lineNode = this.lineNode;
+        const { title, lineNode } = this;
         const labels = this.groupSelection.selectByClass(Text);
 
         let left = Infinity;
@@ -521,8 +521,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
         });
 
-        if (this.title && (!options || !options.excludeTitle)) {
-            const label = this.title.node;
+        if (title && title.enabled && (!options || !options.excludeTitle)) {
+            const label = title.node;
             label.computeTransformMatrix();
             const matrix = Matrix.flyweight(label.matrix);
             const labelBBox = label.computeBBox();
