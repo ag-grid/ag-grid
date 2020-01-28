@@ -20,7 +20,7 @@ export class SeriesMarker extends Observable {
      * within the `[minSize, size]` range, where the largest values will correspond to the `size`
      * and the lowest to the `minSize`.
      */
-    @reactive('change') minSize = 12;
+    @reactive('change') minSize = 4;
 
     @reactive('change') fill?: string = '#f3622d';
 
