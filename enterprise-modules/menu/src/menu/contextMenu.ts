@@ -3,11 +3,13 @@ import {
     Autowired,
     Bean,
     BeanStub,
+    CellPosition,
     Column,
     ColumnController,
     Component,
     Context,
     EventService,
+    FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
     GridOptionsWrapper,
@@ -17,11 +19,13 @@ import {
     IRowModel,
     MenuItemDef,
     ModuleNames,
+    ModuleRegistry,
     PopupService,
     PostConstruct,
     RowNode,
     Optional,
-    IRangeController, ModuleRegistry
+    IRangeController,
+    CellPositionUtils
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -33,15 +37,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
-
-    @PostConstruct
-    private init(): void {
-    }
 
     public hideActiveMenu(): void {
         if (!this.activeMenu) {
@@ -153,8 +152,12 @@ class ContextMenu extends Component implements IComponent<any> {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
+
 
     private menuItems: (MenuItemDef | string)[];
+    private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
         super('<div class="ag-menu"></div>');
@@ -179,7 +182,20 @@ class ContextMenu extends Component implements IComponent<any> {
             this.addDestroyFunc(params.hidePopup);
         }
 
+        this.focusedCell = this.focusController.getFocusedCell();
+
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+    }
+
+    public destroy(): void {
+        const currentFocusedCell = this.focusController.getFocusedCell();
+
+        if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
+            const { rowIndex, rowPinned, column } = this.focusedCell;
+            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+        }
+
+        super.destroy();
     }
 }

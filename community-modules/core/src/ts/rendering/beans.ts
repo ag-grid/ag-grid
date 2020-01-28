@@ -10,7 +10,7 @@ import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController } from "../interfaces/iRangeController";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
@@ -54,7 +54,7 @@ export class Beans {
     @Autowired('columnController') public columnController: ColumnController;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeController') public rangeController: IRangeController;
-    @Autowired('focusedCellController') public focusedCellController: FocusedCellController;
+    @Autowired('focusController') public focusController: FocusController;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') public popupService: PopupService;

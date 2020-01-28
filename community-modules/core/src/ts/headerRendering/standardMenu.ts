@@ -53,6 +53,7 @@ export class StandardMenuFactory implements IMenuFactory {
         const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
 
         const eMenu = document.createElement('div');
+        eMenu.tabIndex = -1;
         _.addCssClass(eMenu, 'ag-menu');
         filterWrapper.guiPromise.promise.then(gui => {
             eMenu.appendChild(gui);

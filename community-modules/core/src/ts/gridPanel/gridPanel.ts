@@ -10,7 +10,7 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
-import {FocusedCellController} from "../focusedCellController";
+import {FocusController} from "../focusController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
 import {Column} from "../entities/column";
@@ -122,7 +122,7 @@ export class GridPanel extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
@@ -712,7 +712,7 @@ export class GridPanel extends Component {
 
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return; }
 
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell = this.focusController.getFocusedCell();
 
         this.clipboardService.copyToClipboard();
         event.preventDefault();
@@ -721,7 +721,7 @@ export class GridPanel extends Component {
         // because of the trickery the copy logic uses with a temporary
         // widget. so we set it back again.
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
     }
 

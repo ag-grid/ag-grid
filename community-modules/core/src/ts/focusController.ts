@@ -11,8 +11,8 @@ import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
 import { _ } from "./utils";
 
-@Bean('focusedCellController')
-export class FocusedCellController {
+@Bean('focusController')
+export class FocusController {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

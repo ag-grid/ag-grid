@@ -17,7 +17,7 @@ import {
     Events,
     EventService,
     FlashCellsEvent,
-    FocusedCellController,
+    FocusController,
     GridApi,
     GridCore,
     GridOptionsWrapper,
@@ -60,7 +60,7 @@ export class ClipboardService implements IClipboardService {
     @Autowired('rowModel') private rowModel: IRowModel;
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -155,7 +155,7 @@ export class ClipboardService implements IClipboardService {
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell = this.focusController.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
@@ -168,7 +168,7 @@ export class ClipboardService implements IClipboardService {
         this.fireRowChanged(updatedRowNodes);
 
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
 
         this.eventService.dispatchEvent({
@@ -426,7 +426,7 @@ export class ClipboardService implements IClipboardService {
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
-        } else if (this.focusedCellController.isAnyCellFocused()) {
+        } else if (this.focusController.isAnyCellFocused()) {
             // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard(includeHeaders);
         } else {
@@ -528,7 +528,7 @@ export class ClipboardService implements IClipboardService {
     }
 
     private copyFocusedCellToClipboard(includeHeaders = false): void {
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell = this.focusController.getFocusedCell();
 
         if (focusedCell == null) { return; }
 

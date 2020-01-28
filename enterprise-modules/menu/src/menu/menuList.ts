@@ -1,11 +1,11 @@
-import { Autowired, Component, MenuItemDef, PopupService, _ } from "@ag-grid-community/core";
+import { Autowired, Component, MenuItemDef, PopupService, _, PostConstruct } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 export class MenuList extends Component {
 
     @Autowired('popupService') private popupService: PopupService;
 
-    private static TEMPLATE = '<div class="ag-menu-list"></div>';
+    private static TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
 
     private static SEPARATOR_TEMPLATE =
         `<div class="ag-menu-separator">
@@ -24,6 +24,16 @@ export class MenuList extends Component {
 
     constructor() {
         super(MenuList.TEMPLATE);
+    }
+
+    @PostConstruct
+    public init(): void {
+        window.setTimeout(() => {
+            const eGui = this.getGui();
+            if (eGui && this.isAlive() && !this.getParentComponent()) {
+                eGui.focus();
+            }
+        }, 0);
     }
 
     public clearActiveItem(): void {
@@ -104,7 +114,7 @@ export class MenuList extends Component {
         window.setTimeout(() => {
             const shouldShow = timerCountCopy === this.timerCount;
             const showingThisMenu = this.subMenuParentDef === menuItemDef;
-            if (shouldShow && !showingThisMenu) {
+            if (this.isAlive() && shouldShow && !showingThisMenu) {
                 this.showChildMenu(menuItemDef, menuItemComp, null);
             }
         }, 300);
@@ -118,10 +128,12 @@ export class MenuList extends Component {
         this.removeChildPopup();
 
         const childMenu = new MenuList();
+        childMenu.setParentComponent(this);
+
         this.getContext().wireBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
 
-        const ePopup = _.loadTemplate('<div class="ag-menu"></div>');
+        const ePopup = _.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');
         ePopup.appendChild(childMenu.getGui());
 
         const hidePopupFunc = this.popupService.addAsModalPopup(

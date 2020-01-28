@@ -3,7 +3,7 @@ import {Autowired, Bean, PostConstruct} from "../context/context";
 import {EventService} from "../eventService";
 import {Events} from "../eventKeys";
 import {CellValueChangedEvent, FillEndEvent} from "../events";
-import {FocusedCellController} from "../focusedCellController";
+import {FocusController} from "../focusController";
 import {IRowModel} from "../interfaces/iRowModel";
 import {GridApi} from "../gridApi";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
@@ -19,7 +19,7 @@ import {CellRange, CellRangeParams} from "../interfaces/iRangeController";
 export class UndoRedoService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -202,7 +202,7 @@ export class UndoRedoService {
             this.gridApi.clearRangeSelection();
         }
 
-        this.focusedCellController.setFocusedCell(rowIndex, columnId, rowPinned, true);
+        this.focusController.setFocusedCell(rowIndex, columnId, rowPinned, true);
     }
 
     private addRowEditingListeners() {

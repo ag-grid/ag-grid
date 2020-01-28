@@ -12,7 +12,7 @@ import { GridCore } from "../gridCore";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
 import { Logger, LoggerFactory } from "../logger";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { CellNavigationService } from "../cellNavigationService";
 import { CellPosition } from "../entities/cellPosition";
@@ -42,7 +42,7 @@ export class RowRenderer extends BeanStub {
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
-    @Autowired("focusedCellController") private focusedCellController: FocusedCellController;
+    @Autowired("focusController") private focusController: FocusController;
     @Autowired("cellNavigationService") private cellNavigationService: CellNavigationService;
     @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("gridApi") private gridApi: GridApi;
@@ -396,7 +396,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition {
-        const focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+        const focusedCell = params.suppressKeepFocus ? null : this.focusController.getFocusCellToUseAfterRefresh();
 
         if (_.missing(focusedCell)) {
             return null;
@@ -508,7 +508,7 @@ export class RowRenderer extends BeanStub {
     // edited cell).
     private restoreFocusedCell(cellPosition: CellPosition): void {
         if (cellPosition) {
-            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
+            this.focusController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
         }
     }
 
@@ -1052,7 +1052,7 @@ export class RowRenderer extends BeanStub {
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
 
-        const rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+        const rowHasFocus = this.focusController.isRowNodeFocused(rowNode);
         const rowIsEditing = rowComp.isEditing();
         const rowIsDetail = rowNode.detail;
 
@@ -1211,7 +1211,7 @@ export class RowRenderer extends BeanStub {
         // merged cells.
         this.ensureCellVisible(nextCell);
 
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
+        this.focusController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
 
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
@@ -1305,7 +1305,7 @@ export class RowRenderer extends BeanStub {
     }
 
     public tabToNextCell(backwards: boolean): boolean {
-        const focusedCell = this.focusedCellController.getFocusedCell();
+        const focusedCell = this.focusController.getFocusedCell();
         // if no focus, then cannot navigate
         if (_.missing(focusedCell)) {
             return false;

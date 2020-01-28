@@ -3,7 +3,7 @@ import {
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -22,7 +22,7 @@ export class RowDragFeature implements DropTarget {
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -154,7 +154,7 @@ export class RowDragFeature implements DropTarget {
         const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
 
         if (rowWasMoved) {
-            this.focusedCellController.clearFocusedCell();
+            this.focusController.clearFocusedCell();
             if (this.rangeController) {
                 this.rangeController.removeAllCellRanges();
             }

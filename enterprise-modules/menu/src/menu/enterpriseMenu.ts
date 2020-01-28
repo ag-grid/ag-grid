@@ -26,9 +26,9 @@ import {
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
-import {MenuList} from "./menuList";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuItemMapper} from "./menuItemMapper";
+import { MenuList } from "./menuList";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuItemMapper } from "./menuItemMapper";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -225,11 +225,11 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private isModuleLoaded(menuTabName: string):boolean {
-        if (menuTabName===EnterpriseMenu.TAB_COLUMNS) {
+        if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
             return ModuleRegistry.isRegistered(ModuleNames.ColumnToolPanelModule);
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     private isValidMenuTabItem(menuTabName: string): boolean {
