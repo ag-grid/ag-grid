@@ -46,7 +46,6 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') fill: string = palette.fills[0];
     @reactive('update') stroke: string = palette.strokes[0];
     @reactive('update') strokeWidth: number = 2;
-    @reactive('update') fillOpacity: number = 1;
     @reactive('update') strokeOpacity: number = 1;
 
     tooltipRenderer?: (params: LineTooltipRendererParams) => string;
@@ -314,7 +313,7 @@ export class LineSeries extends CartesianSeries {
     listSeriesItems(legendData: LegendDatum[]): void {
         const {
             id, data, xKey, yKey, yName, visible,
-            title, marker, fill, stroke, fillOpacity, strokeOpacity
+            title, marker, fill, stroke, strokeOpacity
         } = this;
 
         if (data && data.length && xKey && yKey) {
@@ -329,7 +328,7 @@ export class LineSeries extends CartesianSeries {
                     shape: marker.shape,
                     fill: marker.fill || fill,
                     stroke: marker.stroke || stroke,
-                    fillOpacity,
+                    fillOpacity: 1,
                     strokeOpacity
                 }
             });
