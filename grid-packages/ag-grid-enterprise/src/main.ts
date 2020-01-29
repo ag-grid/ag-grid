@@ -32,5 +32,6 @@ ModuleRegistry.register(StatusBarModule as any);
 ModuleRegistry.register(ViewportRowModelModule as any);
 ModuleRegistry.register(ClipboardModule as any);
 
+export {VirtualList} from "ag-grid-community";
 export {LicenseManager} from "@ag-grid-enterprise/core";
 export {SetFilter} from "@ag-grid-enterprise/set-filter";

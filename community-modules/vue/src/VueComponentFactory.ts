@@ -1,11 +1,13 @@
-import Vue, { VueConstructor } from 'vue';
-import { AgGridVue } from './AgGridVue';
+import Vue, {AsyncComponent, VueConstructor} from 'vue';
+import {AgGridVue} from './AgGridVue';
+import {Component} from 'vue/types/options';
 
 export class VueComponentFactory {
 
     public static getComponentType(parent: AgGridVue, component: VueConstructor) {
         if (typeof component === 'string') {
-            const componentInstance: VueConstructor = parent.$parent.$options.components![component] as VueConstructor;
+            const componentInstance: VueConstructor =
+                this.searchForComponentInstance(parent, component) as VueConstructor;
             if (!componentInstance) {
                 console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
                 return null;
@@ -34,5 +36,25 @@ export class VueComponentFactory {
         const component = new componentType(details);
         component.$mount();
         return component;
+    }
+
+    private static searchForComponentInstance(parent: AgGridVue, component: VueConstructor, maxDepth = 10) {
+        let componentInstance: Component | AsyncComponent | null = null;
+
+        let currentParent: Vue = parent.$parent;
+        let depth = 0;
+        while (!componentInstance &&
+        currentParent &&
+        currentParent.$options &&
+        (++depth < maxDepth)) {
+            componentInstance = currentParent.$options.components![component as any];
+            currentParent = currentParent.$parent;
+        }
+
+        if (!componentInstance) {
+            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+            return null;
+        }
+        return componentInstance;
     }
 }
