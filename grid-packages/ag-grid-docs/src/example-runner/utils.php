@@ -28,9 +28,9 @@ if (USE_LOCAL) {
     ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js");
-    define('AG_GRID_CHARTS_SCRIPT_PATH', "$prefix/ag-charts-community/dist/ag-charts-community.js");
+    define('AG_CHARTS_SCRIPT_PATH', "$prefix/ag-charts-community/dist/ag-charts-community.js");
 
-    $systemJsMap = array(
+    $gridSystemJsMap = array(
         /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
@@ -72,7 +72,7 @@ if (USE_LOCAL) {
         "ag-charts-vue" => "$prefix/ag-charts-vue"
     );
 
-    $systemJsCommunityPaths = array(
+    $gridSystemJsCommunityPaths = array(
         /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/client-side-row-model" => "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.cjs.js",
@@ -82,7 +82,7 @@ if (USE_LOCAL) {
 /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */
         "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js",
     );
-    $systemJsEnterprisePaths = array(
+    $gridSystemJsEnterprisePaths = array(
         /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/client-side-row-model" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
@@ -109,13 +109,26 @@ if (USE_LOCAL) {
 /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
         "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js"
     );
-// production mode, return from unpkg
+
+    $chartSystemJsMap = array(
+        /* START OF CHART MODULES DEV - DO NOT DELETE */
+        "ag-charts-community" => "$prefix/ag-charts-community",
+        /* END OF CHART MODULES DEV - DO NOT DELETE */
+        "ag-charts-react" => "$prefix/ag-charts-react",
+        "ag-charts-angular" => "$prefix/ag-charts-angular",
+        "ag-charts-vue" => "$prefix/ag-charts-vue"
+    );
+
+    $chartSystemJsCommunityPaths = array(
+        "ag-charts-community" => "$prefix/ag-charts-community/dist/ag-charts-community.cjs.js",
+    );
 } else {
+    // production mode, return from unpkg
     define('AG_GRID_SCRIPT_PATH', "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
-    define('AG_GRID_CHARTS_SCRIPT_PATH', "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.min.js");
+    define('AG_CHARTS_SCRIPT_PATH', "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.min.js");
 
-    $systemJsMap = array(
+    $gridSystemJsMap = array(
         "@ag-grid-community/core/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
         "@ag-grid-community/core/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
         /* START OF GRID CSS PROD - DO NOT DELETE */
@@ -129,13 +142,10 @@ if (USE_LOCAL) {
         "@ag-grid-community/react" => "npm:@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
         "@ag-grid-community/angular" => "npm:@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
         "@ag-grid-community/vue" => "npm:@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
-        "ag-charts-react" => "npm:ag-charts-react@" . AG_CHART_REACT_VERSION . "/",
-        "ag-charts-angular" => "npm:ag-charts-angular@" . AG_CHART_ANGULAR_VERSION . "/",
-        "ag-charts-vue" => "npm:ag-charts-vue@" . AG_CHART_VUE_VERSION . "/",
         "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
     );
 
-    $systemJsCommunityPaths = array(
+    $gridSystemJsCommunityPaths = array(
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
         "@ag-grid-community/client-side-row-model" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
@@ -144,7 +154,7 @@ if (USE_LOCAL) {
         "@ag-grid-community/infinite-row-model" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.cjs.js",
 /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
     );
-    $systemJsEnterprisePaths = array(
+    $gridSystemJsEnterprisePaths = array(
         /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-community/client-side-row-model" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
@@ -170,6 +180,15 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/viewport-row-model" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
 /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
     );
+
+    $chartSystemJsMap = array(
+        "ag-charts-react" => "npm:ag-charts-react@" . AG_CHARTS_REACT_VERSION . "/",
+        "ag-charts-angular" => "npm:ag-charts-angular@" . AG_CHARTS_ANGULAR_VERSION . "/",
+        "ag-charts-vue" => "npm:ag-charts-vue@" . AG_CHARTS_VUE_VERSION . "/",
+        "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
+    );
+
+    $chartSystemJsCommunityPaths = array();
 }
 
 function getLocalCssIfApplicable()
@@ -194,7 +213,7 @@ function globalAgGridScript($enterprise = false)
 
 function globalAgChartsScript()
 {
-    $path = AG_GRID_CHARTS_SCRIPT_PATH;
+    $path = AG_CHARTS_SCRIPT_PATH;
     return "    <script src=\"$path\"></script>";
 }
 

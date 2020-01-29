@@ -11,6 +11,10 @@
         return result;
     }
 
+    var sjsPaths = {};
+    if(typeof xxx !== "undefined") {
+        sjsPaths = systemJsPaths;
+    }
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
@@ -19,7 +23,7 @@
                 {
                     // paths serve as alias
                     "npm:": "https://unpkg.com/",
-                }, systemJsPaths),
+                }, sjsPaths),
         map: assign(
             {
                 // css plugin

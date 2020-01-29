@@ -38,8 +38,14 @@ $example = getReactExampleInfo();
 </div>
 
 <script>
-    var systemJsMap = <?= json_encode($systemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
-    var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+    var systemJsMap = <?= json_encode($chartSystemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+<?php
+        if(!empty($chartSystemJsCommunityPaths)) {
+?>
+        var systemJsPaths = <?= json_encode($chartSystemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+<?php
+        }
+?>
 </script>
 
 <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>

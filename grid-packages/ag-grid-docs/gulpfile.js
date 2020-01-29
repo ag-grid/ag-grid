@@ -77,6 +77,14 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         () => {},
         () => {});
 
+    updatedUtilFileContent = updateBetweenStrings(updatedUtilFileContent,
+        '/* START OF CHART MODULES DEV - DO NOT DELETE */',
+        '/* END OF CHART MODULES DEV - DO NOT DELETE */',
+        [],
+        [],
+        () => {},
+        () => {});
+
     fs.writeFileSync('./dist/example-runner/utils.php', updatedUtilFileContent, 'UTF-8');
 
     done();

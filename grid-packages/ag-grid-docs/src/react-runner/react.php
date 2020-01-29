@@ -34,8 +34,14 @@ $example = getReactExampleInfo();
 <div id="root">Loading&hellip;</div>
 
 <script>
-    var systemJsMap = <?= json_encode($systemJsMap); ?>;
-    var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $systemJsEnterprisePaths : $systemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+    var systemJsMap = <?= json_encode($chartSystemJsMap); ?>;
+<?php
+        if(!empty($chartSystemJsCommunityPaths)) {
+?>
+        var systemJsPaths = <?= json_encode($chartSystemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+<?php
+        }
+?>
 </script>
 
 <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
