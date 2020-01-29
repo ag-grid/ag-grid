@@ -1011,6 +1011,11 @@
                     "title": "Legend",
                     "url": "javascript-charts-legend/",
                     "enterprise": true
+                  },
+                  {
+                    "title": "Line",
+                    "url": "javascript-charts-line-series/",
+                    "enterprise": true
                   }
                 ]
               },
