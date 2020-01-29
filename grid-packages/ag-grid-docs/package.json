@@ -4,7 +4,9 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "start": "gulp serve",
+    "start": "npm-run-all --parallel start-server start-sass",
+    "start-server": "gulp serve",
+    "start-sass": "./sass-native-watch.sh",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5"
@@ -53,6 +55,7 @@
     "mkdir-p": "0.0.7",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
+    "npm-run-all": "^4.1.5",
     "prettier": "~1.18.2",
     "puppeteer": "1.7.0",
     "tcp-port-used": "^1.0.1",
