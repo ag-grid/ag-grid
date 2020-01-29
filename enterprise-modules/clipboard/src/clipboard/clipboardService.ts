@@ -394,7 +394,7 @@ export class ClipboardService implements IClipboardService {
             !rowNode ||
             !currentRow ||
             !column ||
-            !column.isCellEditable ||
+            !column.isCellEditable(rowNode) ||
             column.isSuppressPaste(rowNode)
         ) { return; }
 
