@@ -31,6 +31,15 @@
         color: $ag-alpine-active-color;
     }
 
+    .ag-tabs-header {
+        @include ag-grid-border(primary, bottom);
+    }
+
+    .ag-menu-header {
+        background-color: $ag-header-background-color;
+        padding-top: 1px; // hack to align column menu tab header border with header row border
+    }
+
     .ag-tabs-body {
         padding: 0;
     }

@@ -23,13 +23,16 @@
     }
 
     .ag-column-select-header {
-        @include ag-grid-border(critical, top);
         height: $ag-header-height;
         align-items: center;
 
         .ag-checkbox {
             @extend %ag-checkbox;
         }
+    }
+
+    .ag-column-panel-column-select {
+        @include ag-grid-border(critical, top);
     }
 
     .ag-column-select-header-filter-wrapper {

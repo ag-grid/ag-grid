@@ -180,9 +180,14 @@ $ag-font-family: 'Helvetica Neue', sans-serif !default;
 $ag-font-size: 14px !default;
 
 
-// radius applied to popup elements
+// cards are elements that float above the UI
 $ag-card-radius: $ag-border-radius !default;
+
+// the default card shadow applies to simple cards like column drag indicators and text editors
 $ag-card-shadow: none !default;
+
+// override the shadow for popups - cards that contain complex UI, like menus and charts
+$ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3) !default;
 
 
 // Icons
