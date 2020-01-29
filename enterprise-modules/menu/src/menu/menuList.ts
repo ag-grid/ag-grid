@@ -1,9 +1,12 @@
-import { Autowired, Component, MenuItemDef, PopupService, _, PostConstruct } from "@ag-grid-community/core";
+import { Autowired, Component, MenuItemDef, PopupService, _, PostConstruct, Constants, GridOptionsWrapper } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
+
+type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
 
 export class MenuList extends Component {
 
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private static TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
 
@@ -17,6 +20,8 @@ export class MenuList extends Component {
 
     private static HIDE_MENU_DELAY: number = 80;
 
+    
+    private menuItems: MenuItem[] = [];
     private activeMenuItemParams: MenuItemDef | null;
     private activeMenuItem: MenuItemComponent | null;
     private subMenuHideTimer: number = 0;
@@ -39,7 +44,7 @@ export class MenuList extends Component {
             }
         }, 0);
 
-        this.addDestroyableEventListener(eGui, 'keydown', this.onItemNav.bind(this));
+        this.addDestroyableEventListener(eGui, 'keydown', this.handleKeyDown.bind(this));
     }
 
     public clearActiveItem(): void {
@@ -66,6 +71,7 @@ export class MenuList extends Component {
     public addItem(menuItemDef: MenuItemDef): void {
         const cMenuItem = new MenuItemComponent(menuItemDef);
         this.getContext().wireBean(cMenuItem);
+        this.menuItems.push({comp: cMenuItem, params: menuItemDef });
         this.getGui().appendChild(cMenuItem.getGui());
 
         this.addDestroyFunc(() => cMenuItem.destroy());
@@ -77,6 +83,8 @@ export class MenuList extends Component {
                 this.dispatchEvent(event);
             }
         });
+
+        cMenuItem.setParentComponent(this);
 
         const handleMouseEnter = (cMenuItem: MenuItemComponent, menuItemDef: MenuItemDef) => {
             if (this.subMenuShowTimer) {
@@ -110,9 +118,15 @@ export class MenuList extends Component {
         cMenuItem.addGuiEventListener('mouseleave', (e) => handleMouseLeave(e, cMenuItem));
     }
 
+    public activateFirstItem(): void {
+        const item = this.menuItems.filter(item => !item.params.disabled)[0];
+        if (!item) { return; }
+        this.activateItem(item.comp, item.params);
+    }
+
     private mouseEnterItem(menuItem: MenuItemComponent, menuItemParams: MenuItemDef): void {
         this.subMenuShowTimer = 0;
-        this.activateItem(menuItem, menuItemParams);
+        this.activateItem(menuItem, menuItemParams, true);
     }
 
     private mouseLeaveItem(e: MouseEvent, menuItem: MenuItemComponent) {
@@ -130,8 +144,9 @@ export class MenuList extends Component {
         this.deactivateItem(menuItem);
     }
 
-    private activateItem(menuItem: MenuItemComponent, menuItemParams: MenuItemDef, ): void {
+    private activateItem(menuItem: MenuItemComponent, menuItemParams: MenuItemDef, openSubMenu?: boolean): void {
         if (menuItemParams.disabled) {
+            this.deactivateItem();
             return;
         }
 
@@ -147,13 +162,17 @@ export class MenuList extends Component {
         this.activeMenuItem = menuItem;
         _.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
 
-        if (menuItemParams.subMenu) {
+        if (!this.getGui().contains(document.activeElement)) {
+            this.getGui().focus();
+        }
+
+        if (openSubMenu && menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItem, menuItemParams);
         }
     }
 
     private deactivateItem(menuItem?: MenuItemComponent) {
-        if (!menuItem && this.activateItem) {
+        if (!menuItem && this.activeMenuItem) {
             menuItem = this.activeMenuItem;
         }
 
@@ -169,8 +188,102 @@ export class MenuList extends Component {
         this.activeMenuItemParams = null;
     }
 
-    private onItemNav(e: KeyboardEvent): void {
+    private handleKeyDown(e: KeyboardEvent): void {
+        const navKeys = [
+            Constants.KEY_UP,
+            Constants.KEY_RIGHT,
+            Constants.KEY_DOWN,
+            Constants.KEY_LEFT
+        ];
 
+        if (navKeys.indexOf(e.keyCode) !== -1) {
+            e.preventDefault();
+            this.handleNavKey(e.keyCode);
+        }
+
+        if (e.keyCode === Constants.KEY_ESCAPE) {
+            let parent = this.getParentComponent();
+            while (true) {
+                const nextParent = parent.getParentComponent();
+                if (!nextParent || (!(nextParent instanceof MenuList || nextParent instanceof MenuItemComponent))) {
+                    break;
+                }
+                parent = nextParent;
+            }
+            if (parent) {
+                parent.getGui().focus();
+            }
+        }
+    }
+
+    private handleNavKey(key: number): void {
+        if (key === Constants.KEY_UP || key === Constants.KEY_DOWN) {
+            const nextItem = this.findNextItem(key === Constants.KEY_UP);
+            if (nextItem && nextItem.comp !== this.activeMenuItem) {
+                this.deactivateItem();
+                this.activateItem(nextItem.comp, nextItem.params);
+            }
+            return;
+        }
+
+        if (!this.activateItem) { return; }
+
+        const left = this.gridOptionsWrapper.isEnableRtl() ? Constants.KEY_RIGHT : Constants.KEY_LEFT;
+
+        if (key === left) {
+            this.closeIfIsChild();
+        } else {
+            this.openChild();
+        }
+    }
+
+    private closeIfIsChild(): void {
+        const parentItem = this.getParentComponent();
+        if (parentItem && parentItem instanceof MenuItemComponent) {
+            const parentMenuList = parentItem.getParentComponent() as MenuList;
+            // this focuses the parent MenuList
+            parentMenuList.getGui().focus();
+            parentMenuList.removeChildPopup();
+        }
+    }
+
+    private openChild(): void {
+        if (this.activeMenuItemParams.subMenu) {
+            this.showChildMenu(this.activeMenuItem, this.activeMenuItemParams, null);
+            setTimeout(() => {
+                const subMenu = this.subMenuComp;
+                subMenu.activateFirstItem();
+            }, 0)
+        }
+    }
+
+    private findNextItem(up?: boolean): MenuItem | undefined {
+        const items = this.menuItems.filter(item => !item.params.disabled);
+        if (!items.length) { return; }
+        if (!this.activeMenuItem) {
+            return up ? _.last(items) : items[0];
+        }
+
+        if (up) {
+            items.reverse();
+        }
+
+        let nextItem: MenuItem;
+        let foundCurrent = false;
+
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (!foundCurrent) {
+                if (item.comp === this.activeMenuItem) {
+                    foundCurrent = true;
+                }
+                continue;
+            }
+            nextItem = item;
+            break;
+        }
+
+        return nextItem || { comp: this.activeMenuItem, params: this.activeMenuItemParams };
     }
 
     private addHoverForChildPopup(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef): void {
@@ -201,7 +314,7 @@ export class MenuList extends Component {
 
         const hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
-            true,
+            false,
             undefined,
             mouseEvent
         );
@@ -233,13 +346,12 @@ export class MenuList extends Component {
             childMenu.destroy();
             this.subMenuParentComp = null;
             this.subMenuComp = null;
-            
             childMenu.removeEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, selectedListener);
             hidePopupFunc();
         });
     }
 
-    private removeChildPopup(): void {
+    public removeChildPopup(): void {
         this.removeChildFuncs.forEach(func => func());
         this.removeChildFuncs = [];
     }
