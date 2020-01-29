@@ -220,9 +220,11 @@ export class App extends React.Component {
     componentDidMount() {
         this.componentDidUpdate();
 
-        window.parent.document.querySelectorAll(`[data-framework-item=${appName}]`).forEach(element => {
-            element.addEventListener('click', () => this.setState({ framework: this.getCurrentFramework() }));
-        });
+        const frameworkItems = window.parent.document.querySelectorAll(`[data-framework-item=${appName}]`);
+
+        for (let i = 0; i < frameworkItems.length; i++) {
+            frameworkItems[i].addEventListener('click', () => this.setState({ framework: this.getCurrentFramework() }));
+        }
     }
 
     componentDidUpdate() {

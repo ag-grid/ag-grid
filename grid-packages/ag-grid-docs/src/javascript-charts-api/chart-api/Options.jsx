@@ -39,7 +39,7 @@ const FunctionDefinition = ({ definition }) => {
     const lines = [`function(params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
         '',
         'interface ParamsType {',
-    ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
+        ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
         '}',
     ];
 
@@ -49,7 +49,6 @@ const FunctionDefinition = ({ definition }) => {
             'interface ReturnType {',
             ...Object.keys(returnType).map(key => `  ${key}: ${returnType[key]};`),
             '}'
-
         );
     }
 
@@ -85,7 +84,7 @@ export class Options extends React.PureComponent {
 
     getTrimmedSearchText = () => this.state.searchText.trim();
     matchesSearch = name => name.toLowerCase().indexOf(this.getTrimmedSearchText().toLowerCase()) >= 0;
-    childMatchesSearch = config => !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
+    childMatchesSearch = config => typeof config === 'object' && !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
 
     generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false) => {
         let elements = [];

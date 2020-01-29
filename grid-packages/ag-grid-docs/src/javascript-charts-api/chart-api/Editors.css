@@ -5,13 +5,26 @@
     font-size: 0.8rem;
 }
 
-.string-editor__input, .number-editor__input {
+.string-editor__input {
     margin-top: 0.5em;
+    width: 100%;
+}
+
+.number-editor {
+    display: flex;
+    margin-top: 0.5em;
+    width: 100%;
 }
 
 .number-editor__slider {
+    width: 100%;
     vertical-align: middle;
-    margin-right: 0.5em;
+}
+
+.number-editor__input {
+    width: 15%;
+    margin-left: 1em;
+    max-height: 2em;
 }
 
 .preset-editor {
@@ -55,7 +68,6 @@
 }
 
 .colour-editor__input {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -69,7 +81,6 @@
 }
 
 .colour-editor__slider {
-    box-sizing: border-box;
     width: 30%;
     padding: 5px 0 0 10px;
 }

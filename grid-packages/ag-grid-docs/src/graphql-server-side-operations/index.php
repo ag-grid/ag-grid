@@ -226,7 +226,7 @@ export default schema;
     <p>
         Hosting our GraphQL endpoint is done with the help of the <code>express-graphql</code> npm package. It is supplied
         with the schema we defined above.
-    <p/>
+    </p>
 
 <snippet>
 // server/server.js

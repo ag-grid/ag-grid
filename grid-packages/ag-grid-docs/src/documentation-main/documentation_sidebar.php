@@ -85,7 +85,7 @@
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 13th-14th</p>
 
-        <p/>
+        <p></p>
 
         <h6 class="card-subtitle mb-2 text-muted">React</h6>
         <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px">

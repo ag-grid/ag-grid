@@ -216,7 +216,7 @@ gridOptions.api.setServerSideDatasource(datasource);
     Hosting our server endpoint <code>/olympicWinners</code> which accepts json requests is done with the help of
     the <code>express</code> and
     <code>body-parser</code> npm packages.
-<p/>
+</p>
 
 <snippet>
 // server/server.js
