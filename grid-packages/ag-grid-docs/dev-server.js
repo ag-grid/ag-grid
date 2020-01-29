@@ -114,9 +114,12 @@ function serveModules(app, gridCommunityModules, gridEnterpriseModules, chartCom
     });
 }
 
-function launchTSCCheck() {
-    const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
+function getTscPath() {
+    return WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
+}
 
+function launchTSCCheck() {
+    const tscPath = getTscPath();
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
 
     tsChecker.stdout.on('data', data => {
@@ -395,9 +398,9 @@ function watchCssModules() {
 
 function watchModules() {
     console.log("Watching TS files only...");
-    const tsc = WINDOWS ? '.\\node_modules\\.bin\\tsc' : './node_modules/.bin/tsc';
+    const tsc = getTscPath();
     const node = 'node';
-    const tsWatch = cp.spawn(node, [tsc, "--build", "--preserveWatchOutput", '--watch'], {
+    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
@@ -412,7 +415,7 @@ function watchModules() {
 
 function buildModules() {
     console.log("Building Modules...");
-    const tsc = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : './node_modules/.bin/tsc';
+    const tsc = getTscPath();
     const result = cp.spawnSync(tsc, ['--build'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
