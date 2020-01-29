@@ -62,7 +62,7 @@ export class LineSeries extends CartesianSeries {
         this.addEventListener('update', update);
 
         const { marker } = this;
-        marker.fill = '#f3622d';
+        marker.fill = palette.fills[0];
         marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addPropertyListener('enabled', event => {
             if (!event.value) {
