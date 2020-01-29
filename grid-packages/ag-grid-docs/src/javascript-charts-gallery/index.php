@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about the: <a href="../javascript-grid-charts-standalone-features/">Standalone Chart Features</a>.
+        Continue to the next section to learn about the: <a href="../javascript-charts-features/">Standalone Chart Features</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

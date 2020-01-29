@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Next Up</h2>
 
     <p>
-        Continue to the next section to learn about the: <a href="../javascript-grid-charts-standalone-api/">Standalone Chart API</a>.
+        Continue to the next section to learn about the: <a href="../javascript-charts-api/">Standalone Chart API</a>.
     </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

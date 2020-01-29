@@ -120,7 +120,7 @@ const chart = AgChart.create({
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about the: <a href="../javascript-grid-charts-standalone-gallery/">Legend Layout</a>.
+    Continue to the next section to learn about the <a href="../javascript-charts-legend/">Legend and its layout</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -988,35 +988,35 @@
           },
           {
             "title": "Standalone",
-            "url": "javascript-grid-charts-standalone-overview/",
+            "url": "javascript-charts-overview/",
             "items": [
               {
                 "title": "Getting Started",
-                "url": "javascript-grid-charts-standalone-getting-started/"
+                "url": "javascript-charts-getting-started/"
               },
               {
                 "title": "Gallery",
-                "url": "javascript-grid-charts-standalone-gallery/"
+                "url": "javascript-charts-gallery/"
               },
               {
                 "title": "Features",
-                "url": "javascript-grid-charts-standalone-features/",
+                "url": "javascript-charts-features/",
                 "items": [
                   {
                     "title": "Layout",
-                    "url": "javascript-grid-charts-standalone-layout/",
+                    "url": "javascript-charts-layout/",
                     "enterprise": true
                   },
                   {
                     "title": "Legend",
-                    "url": "javascript-grid-charts-standalone-legend/",
+                    "url": "javascript-charts-legend/",
                     "enterprise": true
                   }
                 ]
               },
               {
                 "title": "API",
-                "url": "javascript-grid-charts-standalone-api/"
+                "url": "javascript-charts-api/"
               }
             ]
           },
