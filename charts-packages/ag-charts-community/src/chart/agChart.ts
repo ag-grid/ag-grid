@@ -101,7 +101,7 @@ const chartMappings = {
                 markerShape: undefined,
                 markerSize: 15,
                 strokeWidth: 1,
-                textColor: 'black',
+                color: 'black',
                 fontStyle: undefined,
                 fontWeight: undefined,
                 fontSize: 12,

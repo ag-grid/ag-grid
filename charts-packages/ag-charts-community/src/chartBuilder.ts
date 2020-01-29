@@ -556,7 +556,7 @@ export class ChartBuilder {
                 this.setValueIfExists(legend, 'fontSize', label.fontSize);
                 this.setValueIfExists(legend, 'fontStyle', label.fontStyle);
                 this.setValueIfExists(legend, 'fontWeight', label.fontWeight);
-                this.setValueIfExists(legend, 'textColor', label.color);
+                this.setValueIfExists(legend, 'color', label.color);
             }
 
             if (marker) {

@@ -58,10 +58,10 @@ export class MarkerLabel extends Group {
         return this.label.fontFamily;
     }
 
-    set textColor(value: string | undefined) {
+    set color(value: string | undefined) {
         this.label.fill = value;
     }
-    get textColor(): string | undefined {
+    get color(): string | undefined {
         return this.label.fill;
     }
 

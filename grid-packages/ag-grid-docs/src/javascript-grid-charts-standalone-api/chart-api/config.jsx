@@ -180,7 +180,7 @@ export const generalConfig = Object.freeze({
             min: 0,
             max: 10,
         },
-        textColor: {
+        color: {
             default: 'black',
             description: 'Colour of the text.',
             editor: ColourEditor
