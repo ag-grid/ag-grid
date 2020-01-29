@@ -6,6 +6,23 @@
 
     @include ag-grid-theme();
 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 12px;
+
+    .ag-filter-toolpanel-header,
+    .ag-status-bar,
+    .ag-header-row {
+        font-weight: 600;
+        color: $ag-header-foreground-color;
+    }
+    .ag-column-drop-vertical-empty-message, .ag-status-bar {
+        font-weight: 600;
+        color: $ag-disabled-foreground-color;
+    }
+    .ag-dnd-ghost {
+        font-weight: 600;
+    }
+
     .ag-tab {
         border: 1px solid transparent;
         padding: $ag-grid-size $ag-grid-size * 2;

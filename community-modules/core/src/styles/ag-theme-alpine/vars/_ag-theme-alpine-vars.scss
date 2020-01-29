@@ -32,10 +32,9 @@ $ag-checkbox-checked-border-color: $ag-alpine-active-color !default;
 
 $ag-toggle-button-color: $ag-alpine-active-color !default;
 
-
-
 // BORDERS
-$ag-borders: (critical, primary, secondary);
+$ag-borders: true;
+$ag-borders-side-button: false;
 $ag-border-radius: 3px !default;
 $ag-selected-tab-underline-transition-speed: 0.3s;
 
@@ -58,11 +57,7 @@ $ag-cell-widget-spacing: $ag-grid-size * 2;
 // FONTS
 
 $ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
-$ag-font-size: 14px !default;
-$ag-font-weight: 400 !default;
-$ag-secondary-font-family: $ag-font-family !default;
-$ag-secondary-font-size: 13px !default;
-$ag-secondary-font-weight: 700 !default;
+$ag-font-size: 13px !default;
 
 
 // MISC

@@ -54,9 +54,6 @@
 
     .ag-column-drop-vertical-empty-message {
         color: $ag-disabled-foreground-color;
-        font-weight: $ag-secondary-font-weight;
-        font-size: $ag-secondary-font-size;
-        font-family: $ag-secondary-font-family;
         margin-top: $ag-grid-size;
 
         @include ag-theme-rtl((

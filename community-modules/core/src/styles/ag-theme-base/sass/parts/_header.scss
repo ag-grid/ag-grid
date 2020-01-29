@@ -8,9 +8,6 @@
     
     .ag-header-row {
         color: $ag-header-foreground-color;
-        font-weight: $ag-secondary-font-weight;
-        font-size: $ag-secondary-font-size;
-        font-family: $ag-secondary-font-family;
     }
 
     .ag-pinned-right-header {
@@ -108,9 +105,6 @@
 
     .ag-dnd-ghost {
         @include ag-card();
-
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 14px;
         overflow: hidden;
         padding: 3px;
         position: absolute;
@@ -119,9 +113,6 @@
         z-index: 10;
         @include ag-grid-border(secondary);
         color: $ag-secondary-foreground-color;
-        font-weight: $ag-secondary-font-weight;
-        font-size: $ag-secondary-font-size;
-        font-family: $ag-secondary-font-family;
         height: $ag-header-height !important;
         line-height: $ag-header-height;
         margin: 0;

@@ -3,10 +3,6 @@
     background-color: $ag-color-primary;
 }
 
-%form-font {
-    font: $ag-font-form-element;
-}
-
 %custom-selection {
     &::selection {
         @include ag-active-invert();
@@ -15,7 +11,7 @@
 }
 
 %input-box {
-    @extend %halo, %form-font, %custom-selection;
+    @extend %halo, %custom-selection;
     appearance: none;
     -webkit-appearance: none;
     border-radius: $ag-border-radius;
@@ -28,10 +24,6 @@
 
 %input-text {
     @extend %input-box;
-}
-
-%label {
-    @extend %form-font;
 }
 
 // TODO remove this and use icon font
@@ -61,7 +53,7 @@
 }
 
 %button {
-    @extend %form-font, %halo;
+    @extend %halo;
 
     appearance: none;
     -webkit-appearance: none;

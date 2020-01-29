@@ -329,8 +329,6 @@
         background-color: $ag-header-background-color;
         color: $ag-header-foreground-color;
         height: $ag-header-height;
-        font-weight: $ag-secondary-font-weight;
-        font-family: $ag-secondary-font-family;
         padding: $ag-grid-size $ag-cell-horizontal-padding;
         @include ag-grid-border(primary, bottom);
     }

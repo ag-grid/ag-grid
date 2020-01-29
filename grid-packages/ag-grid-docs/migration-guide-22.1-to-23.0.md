@@ -68,6 +68,8 @@ $ag-customize-buttons, $ag-button-color, $ag-button-text-transform, $ag-button-b
 
 $ag-scroll-spacer-border: removed. Now drawn as a 'critical' level border controlled by $ag-borders.
 
+$ag-font-weight, $ag-secondary-font-family, $ag-secondary-font-size, $ag-secondary-font-weight - removed. Use css selectors to style the desired elements appropriately. $ag-font-family, $ag-font-size are still available.
+
 ## CSS class renames
 
 ag-group-component

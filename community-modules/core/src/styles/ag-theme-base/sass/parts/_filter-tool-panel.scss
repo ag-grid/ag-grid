@@ -1,11 +1,4 @@
 @mixin ag-theme-base-part-filter-tool-panel {
-    .ag-filter-toolpanel {
-        color: $ag-header-foreground-color;
-        font-weight: $ag-secondary-font-weight;
-        font-size: $ag-secondary-font-size;
-        font-family: $ag-secondary-font-family;
-    }
-
     .ag-filter-toolpanel-header {
         height: $ag-filter-tool-panel-sub-level-row-height;
         @include ag-theme-rtl(( padding-left: $ag-grid-size ));
@@ -44,9 +37,5 @@
     .ag-filter-air {
         @include ag-grid-border(primary, (top, bottom));
         padding-top: $ag-grid-size;
-        color: $ag-foreground-color;
-        font-weight: $ag-font-weight;
-        font-size: $ag-font-size;
-        font-family: $ag-font-family;
     }
 }

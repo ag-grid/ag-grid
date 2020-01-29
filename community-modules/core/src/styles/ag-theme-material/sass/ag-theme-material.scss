@@ -7,6 +7,16 @@
 
     @include ag-grid-theme();
 
+    .ag-filter-toolpanel-header,
+    .ag-status-bar,
+    .ag-header-row,
+    .ag-panel-title-bar-title,
+    .ag-side-button-button {
+        font-size: $ag-font-size - 1;
+        font-weight: 600;
+        color: $ag-header-foreground-color;
+    }
+
     .ag-tab {
         height: $ag-grid-size * 4.5;
     }
@@ -46,9 +56,6 @@
 
     .ag-side-button-button {
         color: $ag-secondary-foreground-color;
-        font-family: $ag-secondary-font-family;
-        font-size: $ag-secondary-font-size;
-        font-weight: $ag-secondary-font-weight;
     }
 
     .ag-column-drop-vertical {
@@ -63,6 +70,12 @@
 
     .ag-column-drop-vertical-cell {
         margin-left: 0;
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        font-size: $ag-font-size - 1;
+        font-weight: 600;
+        color: $ag-disabled-foreground-color;
     }
 
     .ag-status-bar {
@@ -122,5 +135,10 @@
         margin: 0;
         padding: 0;
         text-transform: uppercase;
+    }
+    
+    .ag-dnd-ghost {
+        font-size: $ag-font-size - 1;
+        font-weight: 600;
     }
 }
