@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Position</h2>
 
 <p>
-    A legend can be positioned to any side of a chart:
+    A legend can be positioned to any side of a chart using the <code>position</code> config:
 </p>
 
 <p>
@@ -115,6 +115,72 @@ legend: {
 <snippet language="ts">
 legend: {
     itemSpacing: 8
+}
+</snippet>
+
+<h2>Fonts</h2>
+
+<p>
+    There are a number of configs that affect the <code>fontSize</code>, <code>fontStyle</code>,
+    <code>fontWeight</code>, <code>fontFamily</code>, and <code>color</code> of the legend item labels:
+</p>
+
+<p>
+    <img alt="Legend Font Configs" src="legend-font-configs.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
+</p>
+
+<snippet language="ts">
+legend: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    fontFamily: 'Papyrus',
+    color: 'red'
+}
+</snippet>
+
+<h2>Markers</h2>
+
+<h4>Marker Size and Stroke</h4>
+
+<p>
+    All legend items use the same size and stroke width, regardless of the size and stroke width
+    used by the series they represent. It's possible to adjust the default size and stroke width
+    using the following configs:
+</p>
+
+<p>
+    <img alt="Legend Marker Size and Stroke" src="legend-marker-size-stroke.gif" style="margin-bottom: 0px; max-width: 100%">
+</p>
+
+<snippet language="ts">
+legend: {
+    markerSize: 20,
+    strokeWidth: 3
+}
+</snippet>
+
+<h4>Marker Shape</h4>
+
+<p>
+    Normally, the legend mirrors the marker shapes used by the series, unless the series
+    in question doesn't support markers (for example, <code>column</code> series), in
+    which case the legend will use the <code>square</code> marker shape for that series.
+</p>
+
+<p>
+    It's also possible to override the default behavior and make the legend use
+    the specified marker shape for all legend items, regardless of the shapes the series
+    are using.
+</p>
+
+<p>
+    <img alt="Legend Marker Shape" src="legend-marker-shape.gif" style="margin-bottom: 0px; max-width: 100%">
+</p>
+
+<snippet language="ts">
+legend: {
+    markerShape: 'circle' // 'square', 'diamond', 'cross', 'plus', 'triangle'
 }
 </snippet>
 
