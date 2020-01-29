@@ -177,7 +177,7 @@ export class RowNode implements IEventEmitter {
     public __autoHeightChanged = false;
 
     /** cell renderer elements required to recalculate auto row heights, e.g. through column resizing */
-    public __autoHeightCellRendererElements: {[colId: string]: {element: HTMLElement, async: boolean}} = {};
+    public __autoHeightCellRendererElements: {[colId: string]: {element: HTMLElement, async: boolean}};
 
     /** a separate row height that is used in auto row height calculations to prevent unnecessary row redraws */
     public __autoRowHeight: number;

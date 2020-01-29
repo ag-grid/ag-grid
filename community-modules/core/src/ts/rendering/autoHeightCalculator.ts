@@ -56,7 +56,7 @@ export class AutoHeightCalculator {
             const colId = dummyCellComps[i].getColumn().getColId();
 
             // sync heights need to be cached as they could contain the max cell height
-            this.addCellHeight(rowNode, colId, child);
+            this.cacheCellElement(rowNode, colId, child);
         }
 
         this.calculateRowHeight(rowNode);
@@ -85,6 +85,11 @@ export class AutoHeightCalculator {
         const autoRowHeightCols = this.columnController.getAllAutoRowHeightCols();
         const visibleAutoRowHeightCols = autoRowHeightCols.filter(col => col.isVisible());
 
+        // first time in and after row comps are destroyed the element cache doesn't to manage the memory footprint
+        if (!rowNode.__autoHeightCellRendererElements) {
+            rowNode.__autoHeightCellRendererElements = {};
+        }
+
         // we don't need / want to create cell comps for async comps, however if there are no existing cell
         const elements = rowNode.__autoHeightCellRendererElements;
         return visibleAutoRowHeightCols
@@ -98,9 +103,10 @@ export class AutoHeightCalculator {
 
     public onCellRendererHeightChanged = (event: CellRendererHeightChangedEvent) => {
         const rowNode = event.rowNode;
+
         const previousRowHeight = rowNode.__autoRowHeight;
 
-        this.addCellHeight(rowNode, event.column.getColId(), event.cellRendererGui, true);
+        this.cacheCellElement(rowNode, event.column.getColId(), event.cellRendererGui, true);
         this.calculateRowHeight(rowNode);
 
         if (rowNode.__autoRowHeight !== previousRowHeight) {
@@ -110,19 +116,20 @@ export class AutoHeightCalculator {
     };
 
     public onCellValueChanged = (event: CellValueChangedEvent) => {
-        if (event.colDef.autoHeight) {
-            event.node.__autoHeightChanged = true;
-            this.gridPanel.redrawRowsDebounced();
-        }
+        event.node.__autoHeightChanged = true;
+        this.gridPanel.redrawRowsDebounced();
     };
 
     private calculateRowHeight(rowNode: RowNode) {
-        const heights = Object.values(rowNode.__autoHeightCellRendererElements).map(e => e.element.offsetHeight);
-        rowNode.__autoRowHeight = Math.max(...heights);
+        if (rowNode.__autoHeightCellRendererElements) {
+            const heights = Object.values(rowNode.__autoHeightCellRendererElements).map(e => e.element.offsetHeight);
+            rowNode.__autoRowHeight = Math.max(...heights);
+        }
     }
 
-    private addCellHeight(rowNode: RowNode, colId: string, element: HTMLElement, async = false) {
-        if (element) {
+    private cacheCellElement(rowNode: RowNode, colId: string, element: HTMLElement, async = false) {
+        // ensure cache exists as elements can arrive asynchronously after the row comp and cache is removed
+        if (rowNode.__autoHeightCellRendererElements && element) {
             rowNode.__autoHeightCellRendererElements[colId] = {element, async};
         }
     }
