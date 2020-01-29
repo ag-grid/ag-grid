@@ -184,7 +184,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'legend.item.label.fontStyle': 'legend.fontStyle',
             'legend.item.label.fontWeight': 'legend.fontWeight',
             'legend.item.label.fontSize': 'legend.fontSize',
-            'legend.item.label.color': 'legend.textColor',
+            'legend.item.label.color': 'legend.color',
             'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
             'legend.item.paddingY': 'legend.layoutVerticalSpacing',
         };

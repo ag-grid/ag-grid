@@ -82,7 +82,7 @@ export class Legend extends Observable {
     @reactive('layoutChange') markerSize = 15;
     @reactive('change') strokeWidth = 1;
 
-    @reactive('change') textColor = 'black';
+    @reactive('change') color = 'black';
     @reactive('layoutChange') fontStyle?: FontStyle;
     @reactive('layoutChange') fontWeight?: FontWeight;
     @reactive('layoutChange') fontSize = 12;
@@ -315,7 +315,7 @@ export class Legend extends Observable {
             markerLabel.markerFillOpacity = marker.fillOpacity;
             markerLabel.markerStrokeOpacity = marker.strokeOpacity;
             markerLabel.opacity = datum.enabled ? 1 : 0.5;
-            markerLabel.textColor = this.textColor;
+            markerLabel.color = this.color;
         });
     }
 
