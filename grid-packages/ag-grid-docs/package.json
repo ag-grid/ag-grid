@@ -6,7 +6,7 @@
     "postinstall": "webdriver-manager update",
     "start": "npm-run-all --parallel start-server start-sass",
     "start-server": "gulp serve",
-    "start-sass": "./sass-native-watch.sh",
+    "start-sass": "sh ./sass-native-watch.sh",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5"
