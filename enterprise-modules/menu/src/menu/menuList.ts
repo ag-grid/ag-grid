@@ -160,11 +160,10 @@ export class MenuList extends Component {
 
         this.activeMenuItemParams = menuItemParams;
         this.activeMenuItem = menuItem;
-        _.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+        const eGui = menuItem.getGui();
+        _.addCssClass(eGui, 'ag-menu-option-active');
 
-        if (!this.getGui().contains(document.activeElement)) {
-            this.getGui().focus();
-        }
+        eGui.focus();
 
         if (openSubMenu && menuItemParams.subMenu) {
             this.addHoverForChildPopup(menuItem, menuItemParams);
@@ -204,7 +203,7 @@ export class MenuList extends Component {
         if (e.keyCode === Constants.KEY_ESCAPE) {
             let parent = this.getParentComponent();
             while (true) {
-                const nextParent = parent.getParentComponent();
+                const nextParent = parent && parent.getParentComponent && parent.getParentComponent();
                 if (!nextParent || (!(nextParent instanceof MenuList || nextParent instanceof MenuItemComponent))) {
                     break;
                 }
@@ -241,14 +240,13 @@ export class MenuList extends Component {
         const parentItem = this.getParentComponent();
         if (parentItem && parentItem instanceof MenuItemComponent) {
             const parentMenuList = parentItem.getParentComponent() as MenuList;
-            // this focuses the parent MenuList
-            parentMenuList.getGui().focus();
+            parentItem.getGui().focus();
             parentMenuList.removeChildPopup();
         }
     }
 
     private openChild(): void {
-        if (this.activeMenuItemParams.subMenu) {
+        if (this.activeMenuItemParams && this.activeMenuItemParams.subMenu) {
             this.showChildMenu(this.activeMenuItem, this.activeMenuItemParams, null);
             setTimeout(() => {
                 const subMenu = this.subMenuComp;
