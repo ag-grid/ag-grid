@@ -98,7 +98,7 @@ export type RowContainerComponentNames =
     'floatingBottom' |
     'floatingBottomPinnedLeft' |
     'floatingBottomPinnedRight' |
-    'floatingBottomFullWith';
+    'floatingBottomFullWidth';
 
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
@@ -1075,7 +1075,7 @@ export class GridPanel extends Component {
             floatingBottom: new RowContainerComponent({eContainer: this.eBottomContainer}),
             floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.eLeftBottom}),
             floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightBottom}),
-            floatingBottomFullWith: new RowContainerComponent({
+            floatingBottomFullWidth: new RowContainerComponent({
                 eContainer: this.eBottomFullWidthContainer,
                 hideWhenNoChildren: true
             }),

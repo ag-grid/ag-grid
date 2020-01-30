@@ -296,7 +296,7 @@ export class RowRenderer extends BeanStub {
             this.rowContainers.floatingBottomPinnedLeft,
             this.rowContainers.floatingBottomPinnedRight,
             this.rowContainers.floatingBottom,
-            this.rowContainers.floatingBottomFullWith
+            this.rowContainers.floatingBottomFullWidth
         );
     }
 
