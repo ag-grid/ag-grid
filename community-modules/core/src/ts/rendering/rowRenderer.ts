@@ -1196,6 +1196,12 @@ export class RowRenderer extends BeanStub {
         // the spanning.
         this.ensureCellVisible(nextCell); // ensureCellVisible first, to make sure nextCell is rendered
         const cellComp = this.getComponentForCell(nextCell);
+
+        // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
+        if (!cellComp) {
+            return;
+        }
+
         nextCell = cellComp.getCellPosition();
 
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
