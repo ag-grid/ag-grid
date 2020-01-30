@@ -1,4 +1,13 @@
-import { Autowired, Component, MenuItemDef, PopupService, _, PostConstruct, Constants, GridOptionsWrapper } from "@ag-grid-community/core";
+import {
+    Autowired,
+    Component,
+    Constants,
+    GridOptionsWrapper,
+    MenuItemDef,
+    PopupService,
+    PostConstruct,
+    _
+} from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
@@ -78,7 +87,10 @@ export class MenuList extends Component {
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu && !menuItemDef.action) {
-                this.showChildMenu(cMenuItem, menuItemDef, event.mouseEvent);
+                this.showChildMenu(cMenuItem, menuItemDef);
+                if (event.event.type === 'keydown') {
+                    this.subMenuComp.activateFirstItem();
+                }
             } else {
                 this.dispatchEvent(event);
             }
@@ -201,18 +213,28 @@ export class MenuList extends Component {
         }
 
         if (e.keyCode === Constants.KEY_ESCAPE) {
-            let parent = this.getParentComponent();
-            while (true) {
-                const nextParent = parent && parent.getParentComponent && parent.getParentComponent();
-                if (!nextParent || (!(nextParent instanceof MenuList || nextParent instanceof MenuItemComponent))) {
-                    break;
-                }
-                parent = nextParent;
-            }
+            const parent = this.findTopMenu();
             if (parent) {
                 parent.getGui().focus();
             }
         }
+    }
+
+    private findTopMenu(): MenuList | undefined {
+        let parent = this.getParentComponent();
+        
+        if (!parent && this instanceof MenuList) { return this; }
+
+        while (true) {
+            const nextParent = parent && parent.getParentComponent && parent.getParentComponent();
+
+            if (!nextParent || (!(nextParent instanceof MenuList || nextParent instanceof MenuItemComponent))) {
+                break;
+            }
+            parent = nextParent;
+        }
+
+        return parent instanceof MenuList ? parent : undefined;
     }
 
     private handleNavKey(key: number): void {
@@ -247,7 +269,7 @@ export class MenuList extends Component {
 
     private openChild(): void {
         if (this.activeMenuItemParams && this.activeMenuItemParams.subMenu) {
-            this.showChildMenu(this.activeMenuItem, this.activeMenuItemParams, null);
+            this.showChildMenu(this.activeMenuItem, this.activeMenuItemParams);
             setTimeout(() => {
                 const subMenu = this.subMenuComp;
                 subMenu.activateFirstItem();
@@ -289,7 +311,7 @@ export class MenuList extends Component {
             const showingThisMenu = this.subMenuParentComp === menuItemComp;
             const menuItemIsActive = this.activeMenuItem === menuItemComp;
             if (this.isAlive() && menuItemIsActive && !showingThisMenu) {
-                this.showChildMenu(menuItemComp, menuItemDef, null);
+                this.showChildMenu(menuItemComp, menuItemDef);
             }
         }, 300);
     }
@@ -298,7 +320,7 @@ export class MenuList extends Component {
         this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     }
 
-    private showChildMenu(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef, mouseEvent: MouseEvent | null): void {
+    private showChildMenu(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef): void {
         this.removeChildPopup();
 
         const childMenu = new MenuList();
@@ -310,12 +332,7 @@ export class MenuList extends Component {
         const ePopup = _.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');
         ePopup.appendChild(childMenu.getGui());
 
-        const hidePopupFunc = this.popupService.addAsModalPopup(
-            ePopup,
-            false,
-            undefined,
-            mouseEvent
-        );
+        const hidePopupFunc = this.popupService.addAsModalPopup(ePopup, false);
 
         this.popupService.positionPopupForMenu({
             eventSource: menuItemComp.getGui(),

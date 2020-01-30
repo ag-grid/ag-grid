@@ -417,6 +417,8 @@ export class ClipboardService implements IClipboardService {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
 
+        const focusedCell = this.focusController.getFocusedCell();
+
         const selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
@@ -436,6 +438,15 @@ export class ClipboardService implements IClipboardService {
             // of exactly one cell (hence the first 'if' above didn't
             // get executed).
             this.copySelectedRangeToClipboard(includeHeaders);
+        }
+
+        if (focusedCell) {
+            this.focusController.setFocusedCell(
+                focusedCell.rowIndex,
+                focusedCell.column,
+                focusedCell.rowPinned, 
+                true
+            );
         }
     }
 

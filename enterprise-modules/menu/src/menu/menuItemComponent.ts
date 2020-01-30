@@ -2,12 +2,13 @@ import {
     AgEvent,
     Autowired,
     Component,
+    Constants,
     GridOptionsWrapper,
     MenuItemDef,
     PostConstruct,
+    RefSelector,
     TooltipManager,
-    _,
-    RefSelector
+    _
 } from "@ag-grid-community/core";
 
 export interface MenuItemSelectedEvent extends AgEvent {
@@ -20,7 +21,7 @@ export interface MenuItemSelectedEvent extends AgEvent {
     subMenu?: (MenuItemDef | string)[];
     cssClasses?: string[];
     tooltip?: string;
-    mouseEvent: MouseEvent;
+    event: MouseEvent | KeyboardEvent;
 }
 
 export class MenuItemComponent extends Component {
@@ -102,7 +103,16 @@ export class MenuItemComponent extends Component {
             _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         } else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
+            this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+                if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
+                    this.onOptionSelected(e);
+                }
+            });
         }
+
+        this.addGuiEventListener('focus', (e: FocusEvent) => {
+            console.log(e);
+        });
 
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
@@ -117,8 +127,8 @@ export class MenuItemComponent extends Component {
         return undefined;
     }
 
-    private onOptionSelected(mouseEvent: MouseEvent): void {
-        const event: MenuItemSelectedEvent = {
+    private onOptionSelected(event: MouseEvent | KeyboardEvent): void {
+        const e: MenuItemSelectedEvent = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,
@@ -129,9 +139,11 @@ export class MenuItemComponent extends Component {
             shortcut: this.params.shortcut,
             subMenu: this.params.subMenu,
             tooltip: this.params.tooltip,
-            mouseEvent: mouseEvent
+            event
         };
-        this.dispatchEvent(event);
+
+        this.dispatchEvent(e);
+
         if (this.params.action) {
             this.params.action();
         }

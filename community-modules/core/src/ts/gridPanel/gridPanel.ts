@@ -712,17 +712,8 @@ export class GridPanel extends Component {
 
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return; }
 
-        const focusedCell = this.focusController.getFocusedCell();
-
         this.clipboardService.copyToClipboard();
         event.preventDefault();
-
-        // the copy operation results in loosing focus on the cell,
-        // because of the trickery the copy logic uses with a temporary
-        // widget. so we set it back again.
-        if (focusedCell) {
-            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
-        }
     }
 
     private onCtrlAndV(): void {
