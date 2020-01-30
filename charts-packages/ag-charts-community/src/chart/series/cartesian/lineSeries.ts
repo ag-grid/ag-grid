@@ -285,7 +285,7 @@ export class LineSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, stroke: color, title, tooltipRenderer } = this;
+        const { xName, yName, stroke: color, tooltipRenderer } = this;
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -294,10 +294,11 @@ export class LineSeries extends CartesianSeries {
                 xName,
                 yKey,
                 yName,
-                title,
-                color,
+                title: this.title,
+                color
             });
         } else {
+            const title = this.title || yName;
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;

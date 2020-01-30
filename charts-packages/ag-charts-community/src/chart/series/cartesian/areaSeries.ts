@@ -27,7 +27,6 @@ interface MarkerSelectionDatum extends SeriesNodeDatum {
     y: number;
     fill?: string;
     stroke?: string;
-    text?: string;
     yKey: string;
     yValue: number;
 }
@@ -310,8 +309,7 @@ export class AreaSeries extends CartesianSeries {
                         x,
                         y,
                         fill: fills[j % fills.length],
-                        stroke: strokes[j % strokes.length],
-                        text: yNames[j]
+                        stroke: strokes[j % strokes.length]
                     });
                 }
 
@@ -480,7 +478,6 @@ export class AreaSeries extends CartesianSeries {
         }
 
         const { xName, yKeys, yNames, fills, tooltipRenderer } = this;
-        const { text } = nodeDatum;
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
@@ -492,19 +489,18 @@ export class AreaSeries extends CartesianSeries {
                 xName,
                 yKey,
                 yName,
-                title: text,
-                color,
+                color
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const title = text ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${text}</div>` : '';
+            const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);
             const yString = typeof yValue === 'number' ? toFixed(yValue) : String(yValue);
 
-            return `${title}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
+            return `${titleString}<div class="${Chart.defaultTooltipClass}-content">${xString}: ${yString}</div>`;
         }
     }
 

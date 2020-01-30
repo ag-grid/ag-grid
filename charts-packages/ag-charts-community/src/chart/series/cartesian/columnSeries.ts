@@ -541,7 +541,6 @@ export class ColumnSeries extends CartesianSeries {
         const yKeyIndex = yKeys.indexOf(yKey);
         const yName = yNames[yKeyIndex];
         const color = fills[yKeyIndex % fills.length];
-        const title = yName;
 
         if (tooltipRenderer) {
             return tooltipRenderer({
@@ -550,12 +549,11 @@ export class ColumnSeries extends CartesianSeries {
                 xName,
                 yKey,
                 yName,
-                title,
-                color,
+                color
             });
         } else {
             const titleStyle = `style="color: white; background-color: ${color}"`;
-            const titleString = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
+            const titleString = yName ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${yName}</div>` : '';
             const xValue = datum[xKey];
             const yValue = datum[yKey];
             const xString = typeof xValue === 'number' ? toFixed(xValue) : String(xValue);

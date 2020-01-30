@@ -287,7 +287,6 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const {
-            title,
             tooltipRenderer,
             xName,
             yName,
@@ -311,10 +310,11 @@ export class ScatterSeries extends CartesianSeries {
                 yName,
                 sizeName,
                 labelName,
-                title,
+                title: this.title,
                 color
             });
         } else {
+            const title = this.title || yName;
             const titleStyle = `style="color: white; background-color: ${color}"`;
             const titleHtml = title ? `<div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>${title}</div>` : '';
             const seriesDatum = nodeDatum.seriesDatum;
