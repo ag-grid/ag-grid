@@ -60,162 +60,105 @@ series: [{
 </p>
 
 <p>
-    <img alt="Line Series X/Y" src="line-series-x-y.png" style="margin-bottom: 0px; height: 200px; max-width: 70%">
+    <img alt="Line Series X/Y" src="line-series-x-y.png" style="margin-bottom: 0px; height: 200px;">
 </p>
 
-<h2>Visibility</h2>
+<h2>Multiple Series</h2>
 
 <p>
-    A legend is shown by default. To hide it, use the <code>enabled</code> config:
-</p>
-
-<p>
-    <img alt="Legend Enabled" src="legend-enabled.gif" style="margin-bottom: 0px; max-width: 70%">
+    Now that we understand how the line series plots the data, let's plot more of it and use two line series to do it:
 </p>
 
 <snippet language="ts">
-legend: {
-    enabled: false
-}
+const fuelSpending = [
+    {
+        quarter: 'Q1',
+        gas: 200,
+        diesel: 100
+    },
+    {
+        quarter: 'Q2',
+        gas: 300,
+        diesel: 130
+    },
+    {
+        quarter: 'Q3',
+        gas: 350,
+        diesel: 160
+    },
+    {
+        quarter: 'Q4',
+        gas: 400,
+        diesel: 200
+    }
+];
+
+AgChart.create({
+    width: 400,
+    height: 300,
+    data: fuelSpending,
+    container: document.body,
+
+    series: [{
+        xKey: 'quarter',
+        yKey: 'gas',
+        yName: 'Gas'
+    }, {
+        xKey: 'quarter',
+        yKey: 'diesel',
+        yName: 'Diesel'
+    }],
+
+    title: {
+        text: 'Fuel Spending (2019)'
+    }
+});
 </snippet>
 
-<h2>Layout</h2>
-
 <p>
-    Whenever the size of a chart changes, the legend layout is triggered.
-    If the legend is vertical (positioned to the <code>right</code> or <code>left</code> of a chart),
-    the layout algorithm tries to use the minimum number of columns possible to render all legend items
-    using current constraints. Notice how the number of columns in a legend increases as the height of
-    a chart shrinks:
+    Here, we use two config objects in the <code>series</code> array, one for each series.
+    Since both series show fuel spending per quarter, the <code>xKey</code> for both is the same,
+    but the <code>yKey</code>s that show spending per fuel type are different.
 </p>
 
 <p>
-    <img alt="Legend Vertical Layout Size" src="layout-vertical-size.gif" style="margin-bottom: 0px; height: 250px; max-width: 100%">
+    By default the legend shows the actual name of the key used to fetch the series data,
+    and that name may not be very presentable. In our case, the <code>gas</code> and <code>diesel</code> keys
+    inside the data objects are not capitalized. We can pass a more descriptive and presentable name
+    to the <code>yName</code> config, and the legend will show that instead.
 </p>
 
 <p>
-    If the legend is horizontal (positioned to the <code>bottom</code> or <code>top</code> of a chart),
-    the layout algorithm tries to use the minimum possible number of rows. If a chart is not wide enough,
-    the legend will keep subdividing its items into rows until everything fits:
+    <img alt="Two Line Series" src="two-line-series.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
-<p>
-    <img alt="Legend Horizontal Layout Size" src="layout-horizontal-size.gif" style="margin-bottom: 0px; width: 100%">
-</p>
-
-<h2>Constraints</h2>
+<h2>Colors</h2>
 
 <p>
-    A few things other than the width and height of a chart can affect legend's layout and that is the amout of spacing
-    between and within the legend items. For example, <code>layoutHorizontalSpacing</code> controls the amount
-    of spacing between adjacent horizontal legend items:
-</p>
-
-<p>
-    <img alt="Legend Horizontal Spacing Size" src="layout-horizontal-spacing.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
+    The chart above is not complicated, but it could still benefit from more visual separation.
+    Currently both series use the same colors. Let's change that by making diesel look more like diesel.
+    If we just add the following two configs to the second series:
 </p>
 
 <snippet language="ts">
-legend: {
-    layoutHorizontalSpacing: 16
+stroke: 'black',
+marker: {
+    fill: 'gray'
 }
 </snippet>
 
 <p>
-    <code>layoutVerticalSpacing</code> controls the amount of spacing between adjacent vertical legend items.
-    Notice how in this case the increased vertical spacing even forces the legend to use another column to fit
-    all of its items:
+    we'll get a result like this:
 </p>
 
 <p>
-    <img alt="Legend Vertical Spacing Size" src="layout-vertical-spacing.gif" style="margin-bottom: 0px; height: 250px; max-width: 100%">
-</p>
-
-<snippet language="ts">
-legend: {
-    layoutVerticalSpacing: 8
-}
-</snippet>
-
-<p>
-    And the <code>itemSpacing</code> config is responsible for the amount of spacing within a legend item, between the marker
-    and the label:
+    <img alt="Two Colored Line Series" src="two-colored-line-series.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
 <p>
-    <img alt="Legend Item Spacing Size" src="layout-item-spacing.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
+    The <code>stroke</code> config sets the color of the stroke of the series line.
+    It also affects the color of the stroke of the series' markers, if it's not specified
+    inside the <code>marker</code> config explicitly.
 </p>
-
-<snippet language="ts">
-legend: {
-    itemSpacing: 8
-}
-</snippet>
-
-<h2>Fonts</h2>
-
-<p>
-    There are a number of configs that affect the <code>fontSize</code>, <code>fontStyle</code>,
-    <code>fontWeight</code>, <code>fontFamily</code>, and <code>color</code> of the legend item labels:
-</p>
-
-<p>
-    <img alt="Legend Font Configs" src="legend-font-configs.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
-</p>
-
-<snippet language="ts">
-legend: {
-    fontSize: 14,
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-    fontFamily: 'Papyrus',
-    color: 'red'
-}
-</snippet>
-
-<h2>Markers</h2>
-
-<h4>Marker Size and Stroke</h4>
-
-<p>
-    All legend items use the same size and stroke width, regardless of the size and stroke width
-    used by the series they represent. It's possible to adjust the default size and stroke width
-    using the following configs:
-</p>
-
-<p>
-    <img alt="Legend Marker Size and Stroke" src="legend-marker-size-stroke.gif" style="margin-bottom: 0px; max-width: 100%">
-</p>
-
-<snippet language="ts">
-legend: {
-    markerSize: 20,
-    strokeWidth: 3
-}
-</snippet>
-
-<h4>Marker Shape</h4>
-
-<p>
-    Normally, the legend mirrors the marker shapes used by the series, unless the series
-    in question doesn't support markers (for example, <code>column</code> series), in
-    which case the legend will use the <code>square</code> marker shape for that series.
-</p>
-
-<p>
-    It's also possible to override the default behavior and make the legend use
-    the specified marker shape for all legend items, regardless of the shapes the series
-    are using.
-</p>
-
-<p>
-    <img alt="Legend Marker Shape" src="legend-marker-shape.gif" style="margin-bottom: 0px; max-width: 100%">
-</p>
-
-<snippet language="ts">
-legend: {
-    markerShape: 'circle' // 'square', 'diamond', 'cross', 'plus', 'triangle'
-}
-</snippet>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
