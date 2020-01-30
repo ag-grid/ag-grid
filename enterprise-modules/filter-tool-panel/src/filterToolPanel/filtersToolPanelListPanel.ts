@@ -311,8 +311,8 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     public performFilterSearch(searchText: string) {
-        this.searchFilterText = searchText;
-        this.searchFilters(searchText);
+        this.searchFilterText = _.exists(searchText) ? searchText.toLowerCase() : null;
+        this.searchFilters(this.searchFilterText);
     }
 
     private searchFilters(searchFilter: string | null) {
