@@ -5,7 +5,7 @@ import {RowNode} from "../entities/rowNode";
 import {CellComp} from "./cellComp";
 import {ColumnController} from "../columnController/columnController";
 import {_} from "../utils";
-import {CellRendererHeightChangedEvent, CellValueChangedEvent, Events} from "../events";
+import {CellRendererHeightChangedEvent, Events} from "../events";
 
 @Bean('autoHeightCalculator')
 export class AutoHeightCalculator {
@@ -19,10 +19,7 @@ export class AutoHeightCalculator {
 
     @PostConstruct
     private init(): void {
-        if(this.columnController.isAutoRowHeightActive()){
-            this.beans.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
-            this.beans.eventService.addEventListener(Events.EVENT_CELL_RENDERER_HEIGHT_CHANGED, this.onCellRendererHeightChanged);
-        }
+        this.beans.eventService.addEventListener(Events.EVENT_CELL_RENDERER_HEIGHT_CHANGED, this.onCellRendererHeightChanged);
     }
 
     public registerGridComp(gridPanel: GridPanel): void {
@@ -115,13 +112,6 @@ export class AutoHeightCalculator {
             rowNode.__autoHeightChanged = true;
             this.gridPanel.redrawRowsDebounced();
         }
-    };
-
-    public onCellValueChanged = (event: CellValueChangedEvent) => {
-        _.debounce(() => {
-            event.node.__autoHeightChanged = true;
-            this.gridPanel.redrawRowsDebounced();
-        }, 100);
     };
 
     private calculateRowHeight(rowNode: RowNode) {

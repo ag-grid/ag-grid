@@ -1,8 +1,9 @@
 var columnDefs = [
     {
-        field: 'name',
+        headerName: 'Row #',
+        field: 'rowNumber',
         cellClass: 'cell-wrap-text',
-        width: 100
+        width: 70
     },
     {
         field: 'autoA',
@@ -20,6 +21,29 @@ var columnDefs = [
         autoHeight: true
     }
 ];
+
+var gridOptions = {
+    defaultColDef: {
+        width: 240,
+        sortable: true,
+        resizable: true,
+        editable: true
+    },
+    rowHeight: 275,
+    columnDefs: columnDefs,
+    rowData: createRowData(),
+    onColumnResized: onColumnResized
+};
+
+function onColumnResized(params) {
+    params.api.resetRowHeights();
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function () {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
+});
 
 function createRowData() {
     var latinSentence = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
@@ -40,7 +64,7 @@ function createRowData() {
     // create 100 rows
     for (var i = 0; i < 100; i++) {
         var item = {
-            name: 'Row ' + i,
+            rowNumber: 'Row ' + i,
             autoA: generateRandomSentence(i, 1),
             autoB: generateRandomSentence(i, 2),
             autoC: generateRandomSentence(i, 3)
@@ -50,33 +74,3 @@ function createRowData() {
 
     return rowData;
 }
-
-function onColumnResized() {
-    gridOptions.api.resetRowHeights();
-}
-
-var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    rowHeight: 275,
-    onColumnResized: onColumnResized,
-    onGridReady: function(params) {
-
-        // in this example, the CSS styles are loaded AFTER the grid is created,
-        // so we put this in a timeout, so height is calculated after styles are applied.
-        setTimeout(function () {
-            params.api.setRowData(createRowData());
-        }, 2000);
-    }
-};
-
-
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-});

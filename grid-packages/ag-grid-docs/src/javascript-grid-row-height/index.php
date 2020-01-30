@@ -14,8 +14,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        You cannot use variable row height when using
-        <a href="../javascript-grid-viewport/">viewport</a> or
+        You cannot use variable row height when using <a href="../javascript-grid-viewport/">Viewport Row Model</a>.
         This is because this row model needs to work out the position of rows that are not loaded and hence needs to
         assume the row height is fixed.
     </note>
