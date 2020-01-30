@@ -26,8 +26,7 @@ var gridOptions = {
     defaultColDef: {
         width: 240,
         sortable: true,
-        resizable: true,
-        editable: true
+        resizable: true
     },
     rowHeight: 275,
     columnDefs: columnDefs,
