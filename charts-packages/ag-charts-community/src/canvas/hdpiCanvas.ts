@@ -17,7 +17,7 @@ export class HdpiCanvas {
         this.element.style.userSelect = 'none';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
-        this.resize(this._width = width, this._height = height, false);
+        this.resize(this._width = width, this._height = height);
     }
 
     private _container: HTMLElement | undefined = undefined;
@@ -158,28 +158,18 @@ export class HdpiCanvas {
         return this._height;
     }
 
-    resize(width: number, height: number, preventFlicker = true) {
-        const { element: canvas, context, pixelRatio } = this;
-
+    resize(width: number, height: number) {
         this._width = width;
         this._height = height;
 
-        const doResize = () => {
-            canvas.width = Math.round(width * pixelRatio);
-            canvas.height = Math.round(height * pixelRatio);
-            canvas.style.width = Math.round(width) + 'px';
-            canvas.style.height = Math.round(height) + 'px';
-        }
-        
-        if (preventFlicker) {
-            const imageData = context.getImageData(0, 0, canvas.width * pixelRatio, canvas.height * pixelRatio);
-            doResize();
-            context.putImageData(imageData, 0, 0);
-        } else {
-            doResize();
-        }
-
-        context.resetTransform();
+        requestAnimationFrame(() => {
+            const { element, context, pixelRatio } = this;
+            element.width = Math.round(width * pixelRatio);
+            element.height = Math.round(height * pixelRatio);
+            element.style.width = Math.round(width) + 'px';
+            element.style.height = Math.round(height) + 'px';
+            context.resetTransform();
+        });
     }
 
     // 2D canvas context used for measuring text.
