@@ -23,13 +23,13 @@ var rowData = [
 ];
 
 var minRowHeight = 25;
-var currentRowHeight = minRowHeight;
+var currentRowHeight;
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     onGridReady: function(params) {
-        minRowHeight = 25;
+        minRowHeight = params.api.getSizesForCurrentTheme().rowHeight;
         currentRowHeight = minRowHeight;
         params.api.sizeColumnsToFit();
     },

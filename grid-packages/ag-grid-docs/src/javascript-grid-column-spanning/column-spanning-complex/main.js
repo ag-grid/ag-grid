@@ -61,7 +61,9 @@ var rowData = [
 
 var gridOptions = {
     getRowHeight: function(params) {
-        return isHeaderRow(params) ? 40 : 25;
+        if (isHeaderRow(params)) {
+            return 60;
+        }
     },
     columnDefs: columnDefs,
     rowData: rowData,

@@ -551,6 +551,13 @@ export class GridApi {
         return this.rowModel.getRowNode(id);
     }
 
+    public getSizesForCurrentTheme() {
+        return {
+            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+        };
+    }
+
     public expandAll() {
         if (_.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');

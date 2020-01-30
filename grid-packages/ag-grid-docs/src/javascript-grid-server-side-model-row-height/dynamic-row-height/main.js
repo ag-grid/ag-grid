@@ -91,11 +91,8 @@ var gridOptions = {
         params.api.sizeColumnsToFit();
     },
     getRowHeight: function(params) {
-        // top level group gets height of 50
         if (params.node.level === 0) {
-            return 40;
-        } else {
-            return 25;
+            return 75;
         }
     }
 };

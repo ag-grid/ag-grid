@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/javascript-grid-filter-provided-simple/custom-filter-options/data/data.json'})
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/src/javascript-grid-filter-provided-simple/custom-filter-options/data/data.json'})
         .then(function (data) {
             gridOptions.api.setRowData(data);
         }

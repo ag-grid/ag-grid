@@ -48,7 +48,7 @@ DetailCellRenderer.prototype.getTemplate = function(data) {
     '    <div class="full-width-detail"><b>Name: </b>'+data.name+'</div>' +
     '    <div class="full-width-detail"><b>Account: </b>'+data.account+'</div>' +
     '  </div>'+
-    '  <div class="full-width-grid"></div>' +
+    '  <div class="full-width-grid ag-theme-balham"></div>' +
     '</div>';
 
   return template;

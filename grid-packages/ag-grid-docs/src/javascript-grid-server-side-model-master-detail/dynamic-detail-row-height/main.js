@@ -37,15 +37,13 @@ var gridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
+    
     getRowHeight: function (params) {
         if (params.node && params.node.detail) {
-            var offset = 80;
-            var allDetailRowHeight = params.data.callRecords.length * 28;
-
-            return allDetailRowHeight + offset;
-        } else {
-            // otherwise return fixed master row height
-            return 30;
+            var offset = 60;
+            var sizes = params.api.getSizesForCurrentTheme();
+            var allDetailRowHeight = params.data.callRecords.length * sizes.rowHeight;
+            return allDetailRowHeight + sizes.headerHeight + offset;
         }
     },
     onGridReady: function(params) {
@@ -106,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/packages/ag-grid-docs/src/callData.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/latest/grid-packages/ag-grid-docs/src/callData.json'}).then(function(data) {
         var server = new FakeServer(data);
         var datasource = new ServerSideDatasource(server);
         gridOptions.api.setServerSideDatasource(datasource);

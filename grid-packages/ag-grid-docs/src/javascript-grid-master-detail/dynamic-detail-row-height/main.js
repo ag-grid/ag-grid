@@ -33,11 +33,8 @@ var gridOptions = {
     getRowHeight: function(params) {
         if (params.node && params.node.detail) {
             var offset = 80;
-            var allDetailRowHeight = params.data.callRecords.length * 28;
-            return allDetailRowHeight + offset;
-        } else {
-            // otherwise return fixed master row height
-            return 60;
+            var allDetailRowHeight = params.data.callRecords.length  * params.api.getSizesForCurrentTheme().rowHeight;
+            return allDetailRowHeight + params.api.getHeaderHeight() + offset;
         }
     },
     onFirstDataRendered: onFirstDataRendered

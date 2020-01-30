@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>getRowHeight(params)</th>
-            <td>Callback version of property 'rowHeight'. Function should return a positive number.</td>
+            <td>Callback version of property 'rowHeight'. Function should return a positive number, or return null/undefined to use the default row height.</td>
         </tr>
         <tr>
             <th>headerCellRenderer(params)</th>

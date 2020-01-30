@@ -377,7 +377,10 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-cell-editor/#accessing-cell-editor-instances">Cell Editor Instances</a>.
             </td>
         </tr>
-
+        <tr>
+            <th>getSizesForCurrentTheme()</th>
+            <td>Gets the sizes that various UI elements will be rendered at with the current theme. Returns an object containing the keys <code>rowHeight</code> and <code>headerHeight</code>. If you override the row or header height using <code>gridOptions</code>, the override value you provided will be returned.</td>
+        </tr>
     </table>
 <h2>Scrolling</h2>
     <table class="table reference">

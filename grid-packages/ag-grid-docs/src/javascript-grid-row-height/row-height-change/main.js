@@ -11,8 +11,7 @@ var columnDefs = [
     {headerName: "Total", field: "total"}
 ];
 
-var swimmingHeight = 50;
-var groupHeight = 25;
+var swimmingHeight, groupHeight;
 
 var gridOptions = {
     columnDefs: columnDefs,
@@ -23,8 +22,6 @@ var gridOptions = {
             return groupHeight;
         } else if (params.data && params.data.sport==='Swimming') {
             return swimmingHeight;
-        } else {
-            return 25;
         }
     }
 };
@@ -41,7 +38,7 @@ function setGroupHeight(height) {
 
 function setZimbabweHeight(height) {
     gridOptions.api.forEachNode( function(rowNode) {
-        if (rowNode.data && rowNode.data.country === 'Zimbabwe') {
+        if (rowNode.data && rowNode.data.country === 'Russia') {
             rowNode.setRowHeight(height);
         }
     });

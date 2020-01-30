@@ -186,7 +186,7 @@ gridOptions.getRowHeight = function(params) {
 
     <ul class="content">
         <li><b>Top Level Groups:</b> The row height for the groups is changed by calling api.resetRowHeights().
-        This gets the grid to call <code>api.getRowHeight()</code> again for each row.</li>
+        This gets the grid to call <code>gridOptions.getRowHeight()</code> again for each row.</li>
         <li><b>Swimming Leaf Rows:</b> Same technique is used here as above above. You will need to expand
         a group with swimming (eg America) and the grid works out all row heights again.</li>
         <li><b>Zimbabwe Leaf Rows:</b> The row height is set directly on the rowNode. Then the grid

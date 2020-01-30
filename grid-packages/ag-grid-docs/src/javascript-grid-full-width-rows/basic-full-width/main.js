@@ -85,9 +85,7 @@ var gridOptions = {
         var isBodyRow = params.node.rowPinned === undefined;
         var isFullWidth = params.node.data.fullWidth;
         if (isBodyRow && isFullWidth) {
-            return 55;
-        } else {
-            return 25;
+            return 75;
         }
     }
 };

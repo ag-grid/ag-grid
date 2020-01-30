@@ -143,7 +143,9 @@ var gridOptions = {
     rowData: rowData,
     getRowHeight: function (params) {
         // return 100px height for full width rows
-        return isFullWidth(params.data) ? 100 : 25;
+        if (isFullWidth(params.data)) {
+            return 100;
+        }
     },
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();
