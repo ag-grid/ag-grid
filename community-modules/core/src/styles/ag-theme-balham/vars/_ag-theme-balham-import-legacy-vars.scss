@@ -5,7 +5,7 @@
 @if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 
   @if (variable-exists("active") and not variable-exists("ag-active")) {
-    $ag-balham-active: $active !global;
+    $ag-balham-active-color: $active !global;
   }
   
   @if (variable-exists("alt-background") and not variable-exists("ag-alt-background")) {

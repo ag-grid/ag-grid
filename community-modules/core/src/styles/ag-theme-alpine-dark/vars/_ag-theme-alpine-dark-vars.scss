@@ -1,38 +1,17 @@
-@import '../../ag-theme-alpine/vars/colors';
-
-$ag-background-color: $ag-alpine-black !default;
-$ag-color-foreground: $ag-alpine-white !default;
 
 
-$ag-color-background-alt: $ag-alpine-gray-1 !default;
+$ag-alpine-active-color: #2196f3 !default;
+$ag-background-color: #181d1f !default;
+$ag-foreground-color: #fff !default;
+$ag-border-color: #68686e !default;
+$ag-secondary-border-color: rgba(#585652, 0.5) !default;
+$ag-header-background-color: #222628 !default;
+$ag-odd-row-background-color: #222628 !default;
+$ag-range-selection-border-color: #ff9800 !default;
+$ag-control-panel-background-color: #222628 !default;
+$ag-subheader-background-color: #000 !default;
 
-$ag-color-primary: $ag-alpine-blue !default;
-$ag-color-secondary: $ag-alpine-orange !default;
-
-$ag-header-background-color: $ag-alpine-gray-1 !default;
-$ag-odd-row-background-color: $ag-alpine-gray-1 !default;
-
-// selection
-$ag-color-background-range-selection: darken($ag-color-secondary, 34) !default;
-$ag-color-background-range-selected-1: lighten($ag-color-background-range-selection, 10) !default;
-$ag-color-background-range-selected-2: lighten($ag-color-background-range-selection, 20) !default;
-$ag-color-background-range-selected-3: lighten($ag-color-background-range-selection, 30) !default;
-$ag-color-background-range-selected-4: lighten($ag-color-background-range-selection, 40) !default;
-
-$ag-border-color: $ag-alpine-gray-3 !default;
-$ag-secondary-border-color: transparentize($ag-alpine-gray-2, 0.5) !default;
-
-$ag-color-row-hover: transparentize($ag-color-primary, 0.8) !default;
-
-// dropdown arrow
-$ag-url-data-image-dropdown-arrow: url($ag-white-dropdown-arrow) !default;
-$ag-url-hover-data-image-dropdown-arrow: url($ag-blue-dropdown-arrow) !default;
-$ag-url-pressed-data-image-dropdown-arrow: url($ag-black-dropdown-arrow) !default;
-
-// switch needs to be a bit darker
-$ag-color-background-toggle-button: $ag-alpine-gray-3 !default;
-
-// shadow should be darker (instead of inverted) for a natural look
-$ag-color-chrome-shadow: $ag-alpine-black !default;
+// TODO var removed, what's the new equivilent?
+// $ag-color-background-toggle-button: $ag-alpine-gray-3 !default;
 
 @import "../../ag-theme-alpine/vars/ag-theme-alpine-vars";

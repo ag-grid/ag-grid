@@ -9,6 +9,8 @@
     .ag-menu-list {
         cursor: default;
         width: 100%;
+        padding-top: $ag-grid-size;
+        padding-bottom: $ag-grid-size;
     }
 
     .ag-menu-option-part {
@@ -29,7 +31,7 @@
     }
 
     .ag-menu-option-icon {
-        padding-left: $ag-grid-size;
+        padding-left: $ag-grid-size * 2;
         padding-right: $ag-grid-size;
         min-width: $ag-icon-size + $ag-grid-size * 2;
     }
@@ -82,10 +84,6 @@
 
     .ag-tab-selected {
         border-bottom-color: $ag-selected-tab-underline-color;
-    }
-
-    .ag-tabs-body {
-        padding: $ag-grid-size / 2 0;
     }
 
     .ag-menu-header {

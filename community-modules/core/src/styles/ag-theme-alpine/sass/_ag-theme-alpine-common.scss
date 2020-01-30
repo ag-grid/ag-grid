@@ -20,7 +20,8 @@
     }
 
     %ag-text-input {
-        height: $ag-grid-size * 4;
+        min-height: $ag-grid-size * 4;
+        border-radius: $ag-border-radius;
     }
 
     .ag-tab {
@@ -40,20 +41,13 @@
         padding-top: 1px; // hack to align column menu tab header border with header row border
     }
 
-    .ag-tabs-body {
-        padding: 0;
-    }
-
     .ag-charts-minichart-group-title-bar {
         padding: $ag-grid-size $ag-grid-size * 2;
         line-height: $ag-icon-size + $ag-grid-size - 2;
         @include ag-grid-border(secondary, bottom);
     }
 
-    .ag-charts-data-group-title-bar,
-    .ag-charts-format-group-title-bar,
-    .ag-chart-settings-nav-bar,
-    .ag-charts-format-sub-level-group-title-bar {
+    .ag-group-title-bar {
         @include ag-grid-border(secondary, bottom);
     }
     
@@ -61,4 +55,51 @@
         font-size: $ag-font-size - 1;
         font-weight: 700;
     }
+
+    .ag-side-buttons {
+        width: $ag-grid-size * 5;
+    }
+
+    .ag-filter-filter {
+        margin: $ag-grid-size * 2;
+        margin-bottom: $ag-grid-size;
+    }
+
+    .ag-set-filter-item {
+        margin: $ag-grid-size * 2;
+
+        &:first-child, &:last-child {
+            margin-top: $ag-grid-size;
+            margin-bottom: $ag-grid-size;
+        }
+    }
+
+    .ag-standard-button {
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: $ag-border-radius;
+        border: 1px solid $ag-alpine-active-color;
+        color: $ag-alpine-active-color;
+        background: $ag-background-color;
+        font-weight: 600;
+        padding: $ag-grid-size $ag-grid-size * 2;
+        // transition: all 0.1s;
+    
+        &:hover {
+            border-color: $ag-alpine-active-color;
+            background-color: transparentize($ag-alpine-active-color, 0.9);
+            color: $ag-alpine-active-color;
+        }
+    
+        &:active {
+            border-color: $ag-alpine-active-color;
+            background-color: transparentize($ag-alpine-active-color, 0.1);
+            color: $ag-background-color;
+        }
+    }
+
+    .ag-menu-header {
+        min-width: 240px;
+    }
+    
 }

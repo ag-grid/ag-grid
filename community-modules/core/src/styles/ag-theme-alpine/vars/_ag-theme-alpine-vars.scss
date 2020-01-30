@@ -11,14 +11,13 @@ $ag-header-background-color: #f8f8f8 !default;
 $ag-odd-row-background-color: #fcfcfc !default;
 $ag-range-selection-border-color: #ff9800 !default;
 $ag-border-color: #babfc7 !default;
-$ag-selected-tab-underline-color: $ag-alpine-active-color !default;
-$ag-row-hover-color: transparentize($ag-alpine-active-color, 0.9) !default;
-$ag-chip-background-color: rgba($ag-foreground-color, 0.07) !default;
-
 $ag-control-panel-background-color: #f8f8f8 !default;
 $ag-subheader-background-color: #fff !default;
 
 // derived colours (shared by alpine-dark)
+$ag-selected-tab-underline-color: $ag-alpine-active-color !default;
+$ag-row-hover-color: transparentize($ag-alpine-active-color, 0.9) !default;
+$ag-chip-background-color: rgba($ag-foreground-color, 0.07) !default;
 $ag-secondary-foreground-color: $ag-foreground-color !default;
 $ag-disabled-foreground-color: $ag-foreground-color !default;
 $ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color, 20%) !default;
@@ -48,7 +47,6 @@ $ag-icon-size: 16px !default;
 $ag-row-height: $ag-grid-size * 7 !default;          // if changed, update environment.ts
 $ag-header-height: $ag-grid-size * 8 !default;       // if changed, update environment.ts
 $ag-virtual-item-height: $ag-grid-size * 5 !default; // if changed, update environment.ts
-$ag-row-group-indent-size: $ag-grid-size + $ag-icon-size !default;
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2;

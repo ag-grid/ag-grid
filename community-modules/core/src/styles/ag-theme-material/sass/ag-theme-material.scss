@@ -26,6 +26,10 @@
         background-color: $ag-subheader-background-color;
     }
 
+    .ag-tabs-body {
+        padding: $ag-grid-size / 2 0;
+    }
+
     .ag-radio-button {
         input {
             &:focus, &:checked {

@@ -15,11 +15,13 @@
 
 @mixin ag-grid-theme() {
     -webkit-font-smoothing: antialiased;
-    background-color: $ag-background-color;
     color: $ag-foreground-color;
     font-family: $ag-font-family;
     font-size: $ag-font-size;
     line-height: normal;
+    .ag-root-wrapper {
+        background-color: $ag-background-color;
+    }
     @include ag-icons-webfont();
 
     @include ag-theme-base-part-reset();

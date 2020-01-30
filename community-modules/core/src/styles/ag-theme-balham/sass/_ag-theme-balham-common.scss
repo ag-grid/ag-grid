@@ -36,6 +36,10 @@
         border-bottom-color: transparent;
     }
 
+    .ag-tabs-body {
+        padding: $ag-grid-size / 2 0;
+    }
+
     .ag-column-drop-cell {
         min-height: $ag-grid-size * 6;
     }

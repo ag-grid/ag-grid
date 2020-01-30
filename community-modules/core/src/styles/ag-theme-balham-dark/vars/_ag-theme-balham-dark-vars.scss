@@ -9,14 +9,14 @@ $ag-header-background-color: #1c1c1c !default;
 $ag-subheader-background-color: #111 !default;
 $ag-control-panel-background-color: #202020 !default;
 
-$ag-balham-active: #00B0FF !default;
+$ag-balham-active-color: #00B0FF !default;
 $ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5) !default;
 $ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5) !default;
 $ag-border-color: #424242 !default;
 $ag-row-border-color: #5c5c5c;
 $ag-odd-row-background-color: darken($ag-background-color, 3) !default;
 $ag-row-hover-color: lighten($ag-background-color, 7) !default;
-$ag-selected-row-background-color: darken($ag-balham-active, 25) !default;
+$ag-selected-row-background-color: darken($ag-balham-active-color, 25) !default;
 
 $ag-input-border-color: #f0f0f0 !default;
 $ag-input-disabled-background-color: rgba(48, 46, 46, 0.3) !default;

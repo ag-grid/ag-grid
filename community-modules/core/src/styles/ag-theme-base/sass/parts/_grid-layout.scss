@@ -129,6 +129,13 @@
         padding-right: $ag-cell-horizontal-padding - 1px;
     }
 
+    // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
+    // in which case we need to apply the padding to the cell renderer's wrapper.
+    .ag-row > .ag-cell-wrapper {
+        padding-left: $ag-cell-horizontal-padding - 1px;
+        padding-right: $ag-cell-horizontal-padding - 1px;
+    }
+
     .ag-row-dragging {
         cursor: move;
     }
@@ -161,7 +168,7 @@
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: rgba($ag-background-color, 0.5);
+        background-color: rgba($ag-background-color, 0.66);
     }
 
     .ag-overlay-loading-center {
