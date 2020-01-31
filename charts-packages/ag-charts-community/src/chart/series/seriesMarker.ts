@@ -12,7 +12,7 @@ export class SeriesMarker extends Observable {
      */
     @reactive('change') shape: string | (new () => Marker) = Circle;
 
-    @reactive('change') size = 8;
+    @reactive('change') size = 16;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
@@ -20,13 +20,13 @@ export class SeriesMarker extends Observable {
      * within the `[minSize, size]` range, where the largest values will correspond to the `size`
      * and the lowest to the `minSize`.
      */
-    @reactive('change') minSize = 4;
+    @reactive('change') minSize = 8;
 
     @reactive('change') fill?: string;
 
     @reactive('change') stroke?: string;
 
-    @reactive('change') strokeWidth?: number;
+    @reactive('change') strokeWidth?: number = 1;
 }
 
 export interface SeriesMarkerFormatterParams {

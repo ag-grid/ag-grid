@@ -64,8 +64,6 @@ export class LineSeries extends CartesianSeries {
         const { marker } = this;
         marker.fill = palette.fills[0];
         marker.stroke = palette.strokes[0];
-        marker.size = 6;
-        marker.strokeWidth = 1;
         marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addPropertyListener('enabled', event => {
             if (!event.value) {
