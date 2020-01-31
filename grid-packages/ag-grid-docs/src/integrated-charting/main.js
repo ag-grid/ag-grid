@@ -65,7 +65,8 @@
             opts.seriesDefaults.tooltip.enabled = true;
             opts.seriesDefaults.tooltip.renderer = function(params) {
                 var value = '$' + params.datum[params.yKey].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-                return '<div style="padding: 5px"><b>' + params.title + '</b>: ' + value + '</div>';
+                var title = params.title || params.yName;
+                return '<div style="padding: 5px"><b>' + title + '</b>: ' + value + '</div>';
             };
 
             return opts;

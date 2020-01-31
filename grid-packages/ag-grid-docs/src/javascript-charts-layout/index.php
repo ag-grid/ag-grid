@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Chart Layout";
-$pageDescription = "ag-Grid is a feature-rich data grid that can also chart data out of the box. Learn how to chart data directly from inside ag-Grid.";
+$pageDescription = "ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1013,6 +1013,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Markers",
+                    "url": "javascript-charts-markers/",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Line",
                     "url": "javascript-charts-line-series/",
                     "enterprise": true
