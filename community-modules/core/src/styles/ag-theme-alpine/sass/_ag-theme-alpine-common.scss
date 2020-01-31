@@ -101,5 +101,45 @@
     .ag-menu-header {
         min-width: 240px;
     }
+
+    .ag-column-drop-vertical {
+        padding-top: 0;
+    }
+
+    .ag-tool-panel-wrapper {
+        width: 250px;
+    }
+
+    .ag-column-drop-vertical-title-bar {
+        background-color: $ag-background-color;
+        // TODO widget-group-padding
+        padding: $ag-grid-size * 2;
+        @include ag-grid-border(secondary, bottom);
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        opacity: 0.5;
+        border: 1px dashed $ag-border-color;
+        margin: $ag-grid-size * 2;
+        // TODO !important required because base theme applied more specific styles in .ag-ltr
+        padding: $ag-grid-size * 2 !important;
+    }
+
+    .ag-filter-toolpanel-instance-filter {
+        border: none;
+        padding-left: $ag-grid-size * 3;
+    }
+
+    .ag-status-bar {
+        font-weight: normal;
+    }
+
+    .ag-status-name-value-value {
+        font-weight: 700;
+    }
+
+    .ag-paging-number, .ag-paging-row-summary-panel-number {
+        font-weight: 700;
+    }
     
 }

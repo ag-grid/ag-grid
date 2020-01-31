@@ -86,14 +86,14 @@
 
     .ag-rich-select-value {
         padding: 0 $ag-grid-size 0 $ag-cell-horizontal-padding;
-        height: $ag-rich-select-item-height;
+        height: $ag-row-height;
         
         @include ag-grid-border(secondary, bottom);
     }
 
     .ag-rich-select-virtual-list-item {
         cursor: default;
-        height: $ag-rich-select-item-height;
+        height: $ag-virtual-item-height;
 
         &:hover {
             background-color: $ag-row-hover-color;

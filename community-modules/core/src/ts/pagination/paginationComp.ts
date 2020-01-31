@@ -106,11 +106,11 @@ export class PaginationComp extends Component {
 
         return `<div class="ag-paging-panel ag-unselectable">
                 <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-                    <span ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-separator"></span>
+                    <span ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     ${strTo}
-                    <span ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-separator"></span>
+                    <span ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     ${strOf}
-                    <span ref="lbRecordCount" class="ag-paging-row-summary-panel-separator"></span>
+                    <span ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
                     <div ref="btFirst" class="ag-paging-button-wrapper">
@@ -119,9 +119,12 @@ export class PaginationComp extends Component {
                     <div ref="btPrevious" class="ag-paging-button-wrapper">
                         <button type="button" class="ag-paging-button">${strPrevious}</button>
                     </div>
-                    ${strPage}
-                    <span ref="lbCurrent" class="ag-paging-number"></span>
-                    ${strOf}
+                    <span class="ag-paging-description">
+                        ${strPage}
+                        <span ref="lbCurrent" class="ag-paging-number"></span>
+                        ${strOf}
+                        <span ref="lbTotal" class="ag-paging-number"></span>
+                    </span>
                     <span ref="lbTotal" class="ag-paging-number"></span>
                     <div ref="btNext" class="ag-paging-button-wrapper">
                         <button type="button" class="ag-paging-button">${strNext}</button>

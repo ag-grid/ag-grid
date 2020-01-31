@@ -23,7 +23,7 @@ export class ToolPanelFilterComp extends Component {
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
+            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;
@@ -110,7 +110,7 @@ export class ToolPanelFilterComp extends Component {
         if (this.expanded) return;
 
         this.expanded = true;
-        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`);
+        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-toolpanel-instance-filter" />`);
 
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {

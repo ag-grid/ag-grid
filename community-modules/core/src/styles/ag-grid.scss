@@ -769,6 +769,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     z-index: 1;
 }
 
+.ag-large-text-input {
+    display: block;
+}
+
 /**
  ****************************
  * Virtual Lists
@@ -1058,14 +1062,6 @@ $ag-handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
-}
-
-.ag-paging-row-summary-panel {
-    display: flex;
-}
-
-.ag-paging-row-summary-panel-separator {
-    margin: 0 3px;
 }
 
 .ag-paging-page-summary-panel {
