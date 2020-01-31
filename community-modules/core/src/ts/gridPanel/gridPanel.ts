@@ -297,6 +297,18 @@ export class GridPanel extends Component {
                 viewport, this.onCenterViewportResized.bind(this));
             this.addDestroyFunc(() => unsubscribeFromResize());
         });
+
+        [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
+            this.addDestroyableEventListener(element, 'focusin', () => {
+                _.addCssClass(element, 'ag-has-focus');
+            });
+
+            this.addDestroyableEventListener(element, 'focusout', (e: FocusEvent) => {
+                if (!element.contains(e.relatedTarget as HTMLElement)) {
+                    _.removeCssClass(element, 'ag-has-focus');
+                }
+            });
+        });
     }
 
     private onDomLayoutChanged(): void {

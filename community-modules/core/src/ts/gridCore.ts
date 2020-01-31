@@ -98,17 +98,6 @@ export class GridCore extends Component {
         this.logger.log('ready');
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-        const gridPanelEl = this.gridPanel.getGui();
-
-        this.addDestroyableEventListener(gridPanelEl, 'focusin', () => {
-            _.addCssClass(gridPanelEl, 'ag-has-focus');
-        });
-
-        this.addDestroyableEventListener(gridPanelEl, 'focusout', (e: FocusEvent) => {
-            if (!gridPanelEl.contains(e.relatedTarget as HTMLElement)) {
-                _.removeCssClass(gridPanelEl, 'ag-has-focus');
-            }
-        });
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
