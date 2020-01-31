@@ -23,7 +23,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
     fontFamily: {
         default: 'Verdana, sans-serif',
-        options: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
+        suggestions: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
         description: `The font family to use for the ${name}.`,
         editor: PresetEditor,
     },
@@ -71,7 +71,7 @@ export const generalConfig = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart canvas element into.'
+        description: 'The element to place the rendered chart <code>canvas</code> element into.'
     },
     width: {
         default: 800,
@@ -127,7 +127,7 @@ export const generalConfig = Object.freeze({
     legend: {
         enabled: {
             default: true,
-            description: 'Configures whether to show the legend.',
+            description: 'Whether to show the legend.',
             editor: BooleanEditor,
         },
         position: {
@@ -284,7 +284,7 @@ export const axisConfig = Object.freeze({
         },
         parallel: {
             default: false,
-            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <true> will render them parallel to the line instead.',
+            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <code>true</code> will render them parallel to the line instead.',
             editor: BooleanEditor,
         },
         format: {
@@ -315,7 +315,7 @@ export const axisConfig = Object.freeze({
         },
         lineDash: {
             default: [4, 2],
-            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.',
+            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
             editor: ArrayEditor,
         }
     }

@@ -535,11 +535,6 @@ table.reference {
     margin-bottom: 3rem;
     width: 100%;
 
-    th:first-child,
-    td:first-child {
-        width: 40%;
-    }
-
     td,
     th {
         border-bottom: 1px solid $border-color;
@@ -553,6 +548,22 @@ table.reference {
         th {
             background-color: $offwhite;
         }
+    }
+
+    .reference__name {
+        code {
+            font-weight: bold;
+            color: inherit;
+            word-break: keep-all;
+        }
+    }
+
+    .reference__required {
+        color: $red;
+    }
+
+    .reference__code pre {
+        margin: 0.5em 0;
     }
 }
 

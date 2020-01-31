@@ -4,6 +4,7 @@ include_once '../example-runner/utils.php';
 include_once '../react-runner/react-utils.php';
 include_once '../includes/html-helpers.php';
 include_once '../php-utils/printPropertiesTable.php';
+include_once '../php-utils/apiDocumentation.php';
 $DONT_USE_FONT_AWESOME = true;
 $version = 'latest';
 $latest_hash = '';
