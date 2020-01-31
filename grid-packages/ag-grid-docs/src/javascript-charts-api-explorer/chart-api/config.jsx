@@ -60,6 +60,10 @@ const getPaddingOption = position => ({
 const getChartContainer = () => document.querySelector('.container__chart') || {};
 
 export const generalConfig = Object.freeze({
+    meta: {
+        displayName: 'General Configuration',
+        description: 'Configuration common to all charts.',
+    },
     data: {
         type: 'object[]',
         isRequired: true,
@@ -190,6 +194,10 @@ export const generalConfig = Object.freeze({
 });
 
 export const axisConfig = Object.freeze({
+    meta: {
+        displayName: 'Axis Configuration',
+        description: 'Configuration used for axes in cartesian charts.',
+    },
     type: {
         type: 'string',
         description: 'The type of the axis.',
@@ -597,6 +605,9 @@ const getHighlightConfig = (name = 'markers') => ({
 });
 
 export const barSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Bar/Column Series Configuration',
+    },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
     grouped: {
@@ -621,6 +632,9 @@ export const barSeriesConfig = Object.freeze({
 });
 
 export const lineSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Line Series Configuration',
+    },
     ...getCartesianKeyConfig(),
     ...seriesConfig,
     title: {
@@ -634,6 +648,9 @@ export const lineSeriesConfig = Object.freeze({
 });
 
 export const areaSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Area Series Configuration',
+    },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
     normalizedTo: {
@@ -650,6 +667,9 @@ export const areaSeriesConfig = Object.freeze({
 });
 
 export const scatterSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Scatter/Bubble Series Configuration',
+    },
     ...getCartesianKeyConfig(),
     sizeKey: {
         type: 'string',
@@ -698,6 +718,9 @@ export const scatterSeriesConfig = Object.freeze({
 });
 
 export const pieSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Pie/Doughnut Series Configuration',
+    },
     angleKey: {
         type: 'string',
         isRequired: true,

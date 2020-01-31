@@ -1,5 +1,9 @@
 {
   "generalConfig": {
+    "meta": {
+      "displayName": "General Configuration",
+      "description": "Configuration common to all charts."
+    },
     "data": {
       "type": "object[]",
       "isRequired": true,
@@ -299,6 +303,10 @@
     }
   },
   "axisConfig": {
+    "meta": {
+      "displayName": "Axis Configuration",
+      "description": "Configuration used for axes in cartesian charts."
+    },
     "type": {
       "type": "string",
       "description": "The type of the axis.",
@@ -521,6 +529,9 @@
     }
   },
   "barSeriesConfig": {
+    "meta": {
+      "displayName": "Bar/Column Series Configuration"
+    },
     "xKey": {
       "type": "string",
       "isRequired": true,
@@ -674,6 +685,9 @@
     }
   },
   "lineSeriesConfig": {
+    "meta": {
+      "displayName": "Line Series Configuration"
+    },
     "xKey": {
       "type": "string",
       "isRequired": true,
@@ -826,6 +840,9 @@
     }
   },
   "areaSeriesConfig": {
+    "meta": {
+      "displayName": "Area Series Configuration"
+    },
     "xKey": {
       "type": "string",
       "isRequired": true,
@@ -1037,6 +1054,9 @@
     }
   },
   "scatterSeriesConfig": {
+    "meta": {
+      "displayName": "Scatter/Bubble Series Configuration"
+    },
     "xKey": {
       "type": "string",
       "isRequired": true,
@@ -1220,6 +1240,9 @@
     }
   },
   "pieSeriesConfig": {
+    "meta": {
+      "displayName": "Pie/Doughnut Series Configuration"
+    },
     "angleKey": {
       "type": "string",
       "isRequired": true,
