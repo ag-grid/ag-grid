@@ -105,6 +105,10 @@ export abstract class Chart extends Observable {
         return this.pendingSize ? this.pendingSize[1] : this.scene.height;
     }
 
+    download(fileName?: string) {
+        this.scene.download(fileName);
+    }
+
     @reactive('layoutChange') padding = new Padding(20);
     @reactive('layoutChange') title?: Caption;
     @reactive('layoutChange') subtitle?: Caption;
