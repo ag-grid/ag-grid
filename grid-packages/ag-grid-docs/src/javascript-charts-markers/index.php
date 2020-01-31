@@ -44,4 +44,64 @@ marker: {
     <img alt="Marker Size" src="marker-size.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
+<h2>Custom Markers</h2>
+
+<p>
+    It's possible to define custom marker shapes with relative ease. All one has to do is
+    to extend the <code>Marker</code> class and define a single method called
+    <code>updatePath</code>:
+</p>
+
+<snippet language="ts">
+import { Marker } from "./marker";
+
+export class Heart extends Marker {
+    rad(degree: number) {
+        return degree / 180 * Math.PI;
+    }
+
+    updatePath() {
+        let { x, path, size, rad } = this;
+        const r = size / 4;
+        const y = this.y + r / 2;
+
+        path.clear();
+        path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0);
+        path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0);
+        path.lineTo(x, y + r);
+        path.closePath();
+    }
+}
+</snippet>
+
+<p>
+    Inside the marker object, you have access to the <code>size</code> of the marker,
+    the <code>x</code>, <code>y</code> coordinates of the data point and the <code>path</code>
+    instance, which you can use to issue draw commands. If you are familiar with HTML5 Canvas
+    API, you'll feel right at home here. The <code>path</code> API is very similar to that of
+    <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>.
+</p>
+
+<p>
+    All we do is render two partial circles with the <code>cubicArc</code> command and
+    then two straight lines using the <code>lineTo</code> and <code>closePath</code> commands
+    to get the shape of a heart.
+</p>
+
+<p>
+    And then inside the marker config of a series we can use the marker's constructor function
+    itself rather than using one of the predefined shape names:
+</p>
+
+<snippet language="ts">
+marker: {
+    shape: Heart,
+    size: 16
+}
+</snippet>
+
+<p>
+    <img alt="Custom Marker" src="custom-marker.png" style="margin-bottom: 0px; height: 300px;">
+</p>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
