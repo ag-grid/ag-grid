@@ -2,6 +2,7 @@ import { Square } from "./square";
 import { Circle } from "./circle";
 import { Cross } from "./cross";
 import { Diamond } from "./diamond";
+import { Heart } from "./heart";
 import { Plus } from "./plus";
 import { Triangle } from "./triangle";
 import { Marker } from "./marker";
@@ -18,6 +19,8 @@ export function getMarker(shape: string | (new () => Marker) = Square) {
                 return Cross;
             case 'diamond':
                 return Diamond;
+            case 'heart':
+                return Heart;
             case 'plus':
                 return Plus;
             case 'triangle':
