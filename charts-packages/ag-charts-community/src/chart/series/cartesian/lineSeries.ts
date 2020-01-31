@@ -43,7 +43,7 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') stroke: string = palette.strokes[0];
+    @reactive('update') stroke: string = palette.fills[0];
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
@@ -63,6 +63,9 @@ export class LineSeries extends CartesianSeries {
 
         const { marker } = this;
         marker.fill = palette.fills[0];
+        marker.stroke = palette.strokes[0];
+        marker.size = 6;
+        marker.strokeWidth = 1;
         marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addPropertyListener('enabled', event => {
             if (!event.value) {
