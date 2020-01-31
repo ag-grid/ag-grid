@@ -1026,7 +1026,13 @@
               },
               {
                 "title": "API",
-                "url": "javascript-charts-api/"
+                "url": "javascript-charts-api/",
+                "items": [
+                  {
+                    "title": "API Explorer",
+                    "url": "javascript-charts-api-explorer/",
+                  }
+                ]
               }
             ]
           },
