@@ -81,8 +81,8 @@ export class TabbedLayout extends Component {
     }
 
     private addItem(item: TabbedItem): void {
-
         const eHeaderButton = document.createElement('span');
+        eHeaderButton.tabIndex = -1;
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);

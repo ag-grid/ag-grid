@@ -110,10 +110,6 @@ export class MenuItemComponent extends Component {
             });
         }
 
-        this.addGuiEventListener('focus', (e: FocusEvent) => {
-            console.log(e);
-        });
-
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(it => _.addCssClass(this.getGui(), it));
         }
