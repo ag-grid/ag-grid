@@ -105,6 +105,7 @@
         &:focus {
             border-bottom: 2px solid $ag-mat-primary-color;
             outline: none;
+            box-shadow: none;
         }
 
         &::placeholder {

@@ -146,6 +146,9 @@ $ag-toggle-button-switch-border-width: 1px !default;
 $ag-toggle-button-height: $ag-checkbox-size !default;
 $ag-toggle-button-width: $ag-toggle-button-height * 2 !default;
 
+$ag-input-focus-box-shadow: null !default;
+$ag-input-focus-border-color: null !default;
+
 // chart settings
 $ag-minichart-selected-chart-color: $ag-checkbox-checked-color !default; // color of border around selected minichart
 $ag-minichart-selected-page-color: $ag-checkbox-checked-color !default; // color of dot representing selected chart page

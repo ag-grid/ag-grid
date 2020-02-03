@@ -41,10 +41,22 @@
                 border-color: rgba($ag-input-border-color, 0.3);
             }
         }
+
+        &:focus {
+            outline: none;
+            box-shadow: $ag-input-focus-box-shadow;
+            border-color: $ag-input-focus-border-color;
+        }
     }
 
     input[type='range'] {
         padding: 0;
+    }
+
+    input[type='button'], button {
+        &:focus {
+            box-shadow: $ag-input-focus-box-shadow;
+        }
     }
 
     .ag-drag-handle {
@@ -373,6 +385,7 @@
     
     &:focus {
         outline: none;
+        box-shadow: $ag-input-focus-box-shadow;
     }
 
     @if $ag-checkbox-click-flash {
@@ -447,7 +460,8 @@
     flex: none;
 
     &:focus {
-        box-shadow: none;
+        outline: none;
+        box-shadow: $ag-input-focus-box-shadow;
     }
 
     &:checked {
@@ -511,7 +525,7 @@
 }
 
 @mixin ag-internal-focus-range-thumb {
-    // TODO focus halo
+    box-shadow: $ag-input-focus-box-shadow;
     @if mixin-exists(ag-focus-range-thumb) {
         @include ag-focus-range-thumb
     }
