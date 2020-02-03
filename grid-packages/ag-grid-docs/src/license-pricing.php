@@ -532,32 +532,6 @@ gtm_data_layer('community-enterprise');
                         </div>
                     </div>
                 </div>
-                <div>
-                    <div>
-                        <img src="./images/svg/production.svg">
-                    </div>
-                    <div>
-                        <span>Production Environment</span>
-                        <p>
-                            One production deployment of the application (distinct, top-level URL or a place a
-                            customer visits to access the data and services presented in the UI). Multiple instances
-                            of the application within an application cluster are considered part of the same production
-                            environment and do not need separate licensing.
-                        </p>
-                        <div class="example card">
-                            <div class="card-header">Detail</div>
-                            <div class="card-body">
-                                <div class="card-text">
-                                    In a cloud context a single production environment will encompass all identical
-                                    copies made for geographic availability irrespective of the underlying resources.
-                                    In an OEM context a back-end installation would represent a single production
-                                    environment. If you are planning to ship a self-contained application (doesn’t
-                                    call a service) to a desktop email us on info@ag-grid.com
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </section>
 
         </div>
