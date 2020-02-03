@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "toJson.js",
   "module": "main.js",
+  "scripts": {
+    "generate-config": "node -r esm toJson.js"
+  },
   "dependencies": {
     "react-color": "^2.18.0"
   },
