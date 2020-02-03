@@ -7,22 +7,10 @@
         }
     }
 
-    .ag-checkbox input {
-        @extend %ag-checkbox;
-    }
-
-    .ag-radio-button input {
-        @extend %radio-button;
-    }
-
     .ag-toggle-button {
         flex: none;
         width: unset;
         min-width: unset;
-        input {
-            @extend %ag-toggle-button;
-        }
-        
     }
 
     .ag-label-align-right .ag-label {
@@ -122,11 +110,6 @@
         color: $ag-secondary-foreground-color;
         display: block;
     }
-
-    .ag-selection-checkbox input {
-        // TODO remove placeholder selectors and use e.g. input[type='checkbox']
-        @extend %ag-checkbox;
-    }
     
     .ag-group-title-bar-icon {
         color: $ag-secondary-foreground-color;
@@ -192,30 +175,6 @@
         border-radius: 3px;
         background-color: #4c4c4c;
     }
-
-    .ag-toggle-button-input-wrapper {
-        height: $ag-icon-size;
-        width: 40px;
-        background-color: $ag-background-color;
-        border: 1px solid $ag-checkbox-border-color;
-        border-radius: 500rem;
-    }
-    .ag-selected .ag-toggle-button-input-wrapper {
-        background-color: $ag-checkbox-check-color;
-    }
-
-    .ag-toggle-button-icon {
-        background-color: $ag-background-color;
-        width: $ag-icon-size;
-        height: $ag-icon-size;
-        border: 1px solid $ag-checkbox-border-color;
-        border-radius: 500rem;
-        right: calc(100% - #{$ag-icon-size} + 1px);
-    }
-    .ag-selected .ag-toggle-button-icon {
-        right: -1px;
-    }
-
 
     .ag-picker-field-wrapper {
         border: 1px solid $ag-border-color;
@@ -366,5 +325,130 @@
     .ag-column-select-header-icon {
         cursor: pointer;
         margin: 0 $ag-grid-size;
+    }
+}
+
+@mixin ag-native-inputs {
+    input[type='checkbox']:not(.ag-toggle-button-input) {
+        @extend %ag-checkbox;
+    }
+    input[type='checkbox'].ag-toggle-button-input {
+        @extend %ag-toggle-button;
+    }
+    input[type='radio'] {
+        @extend %ag-radio-button;
+    }
+}
+
+%ag-checkbox {
+    -webkit-appearance: none;
+    width: $ag-checkbox-size;
+    height: $ag-checkbox-size;
+    font-size: $ag-checkbox-size;
+    line-height: $ag-checkbox-size;
+    background-color: $ag-checkbox-background-color;
+    border-radius: $ag-checkbox-border-radius;
+    margin: 0;
+    font-family: $ag-icon-font-family;
+    display: block;
+    
+    &:focus {
+        outline: none;
+    }
+
+    @if $ag-checkbox-click-flash {
+        &::before {
+            content: ' ';
+            position: absolute;
+            margin-top: 1px;
+            margin-left: 1px;
+            width: $ag-checkbox-size - 2px;
+            height: $ag-checkbox-size - 2px;
+            background: $ag-checkbox-background-color;
+            display: block;
+            visibility: hidden;
+            opacity: 1;
+            transition: opacity .3s;
+            border-radius: $ag-checkbox-border-radius;
+        }
+
+        &.ag-input-click-animation::before {
+            visibility: visible;
+            opacity: 0;
+        }
+    }
+
+    &::after {
+        content: $ag-icon-checkbox-unchecked;
+        color: $ag-checkbox-unchecked-color;
+    }
+
+    &:checked::after {
+        content: $ag-icon-checkbox-checked;
+        color: $ag-checkbox-checked-color;
+    }
+
+    &:indeterminate::after {
+        content: $ag-icon-checkbox-indeterminate;
+        color: $ag-checkbox-indeterminate-color;
+    }
+}
+
+%ag-radio-button {
+    @extend %ag-checkbox;
+    
+    border-radius: $ag-checkbox-size;
+
+    @if $ag-checkbox-click-flash {
+        &::before {
+            border-radius: $ag-checkbox-size;
+        }
+    }
+
+    &::after {
+        content: $ag-icon-radio-button-off;
+        color: $ag-checkbox-unchecked-color;
+    }
+
+    &:checked::after {
+        content: $ag-icon-radio-button-on;
+        color: $ag-checkbox-checked-color;
+    }
+}
+
+%ag-toggle-button {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    width: $ag-toggle-button-width;
+    height: $ag-toggle-button-height;
+    background-color: $ag-toggle-button-off-color;
+    border-radius: $ag-toggle-button-height / 2;
+    margin: 0;
+    position: relative;
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:checked {
+        background-color: $ag-checkbox-checked-color;
+    }
+
+    &::before {
+        content: ' ';
+        position: absolute;
+        display: block;
+        box-sizing: border-box;
+        height: $ag-toggle-button-height;
+        width: $ag-toggle-button-height;
+        background: $ag-toggle-button-switch-color;
+        border-radius: $ag-toggle-button-height / 2;
+        transition: transform 100ms;
+        border: $ag-toggle-button-switch-border-width solid $ag-toggle-button-off-color;
+    }
+
+    &:checked::before {
+        transform: translateX($ag-toggle-button-width - $ag-toggle-button-height);
+        border-color: $ag-toggle-button-on-color;
     }
 }

@@ -12,10 +12,6 @@
         margin-left: $ag-grid-size;
 
         @include ag-theme-rtl(( margin-left: $ag-grid-size ));
-
-        input {
-            @extend %ag-checkbox;
-        }
     }
 
     .ag-column-panel-column-select {
@@ -25,10 +21,6 @@
     .ag-column-select-header {
         height: $ag-header-height;
         align-items: center;
-
-        .ag-checkbox {
-            @extend %ag-checkbox;
-        }
     }
 
     .ag-column-panel-column-select {

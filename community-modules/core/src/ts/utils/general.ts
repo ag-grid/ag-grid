@@ -1361,9 +1361,6 @@ export class Utils {
         checkboxChecked: 'checkbox-checked',
         checkboxUnchecked: 'checkbox-unchecked',
         checkboxIndeterminate: 'checkbox-indeterminate',
-        checkboxCheckedReadOnly: 'checkbox-checked-readonly',
-        checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
-        checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
         // "go to first" button in pagination controls
         first: 'first',
         // "go to previous" button in pagination controls
