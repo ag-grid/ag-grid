@@ -39,7 +39,7 @@ const FunctionDefinition = ({ definition }) => {
     const lines = [`function(params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
         '',
         'interface ParamsType {',
-        ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
+    ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
         '}',
     ];
 
@@ -72,7 +72,8 @@ const Option = ({ name, isVisible, isRequired, type, description, defaultValue, 
 
 const Search = ({ text, onChange }) => {
     return <div className="search">
-        Search: <input className="search__input" type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} />
+        <div className="search__title"><h2>Options</h2></div>
+        <div className="search__box">Search: <input className="search__input" type="text" value={text} maxLength={20} onChange={event => onChange(event.target.value)} /></div>
     </div>;
 };
 

@@ -108,12 +108,18 @@
 }
 
 .search {
+    width: 100%;
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
     background-color: #f1f7ff;
-    text-align: right;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-width: 1px 1px 0 0;
     border-top-right-radius: 10px;
+}
+
+.search__title h2 {
+    margin: 0;
 }
 
 .search__input {
