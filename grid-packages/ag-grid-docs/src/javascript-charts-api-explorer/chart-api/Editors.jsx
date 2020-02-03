@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Editors.css';
 import { HuePicker, AlphaPicker } from 'react-color';
 
-export const NumberEditor = ({ value, min, max, step, onChange }) => {
+export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = event => {
         const { value } = event.target;
@@ -36,6 +36,7 @@ export const NumberEditor = ({ value, min, max, step, onChange }) => {
     return <span className="number-editor">
         {min != null && max != null && <input type="range" className="number-editor__slider" {...props} />}
         <input type="number" className="number-editor__input" {...props} />
+        {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
     </span>;
 };
 

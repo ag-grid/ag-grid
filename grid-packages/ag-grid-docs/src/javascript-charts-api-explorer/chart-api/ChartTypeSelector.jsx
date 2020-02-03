@@ -4,11 +4,11 @@ import { PresetEditor } from "./Editors.jsx";
 
 export const ChartTypeSelector = ({ type, onChange }) => {
     const options = {
-        bar: 'Bar',
+        bar: 'Bar / Column',
         line: 'Line',
-        scatter: 'Scatter/Bubble',
+        scatter: 'Scatter / Bubble',
         area: 'Area',
-        pie: 'Pie/Doughnut',
+        pie: 'Pie / Doughnut',
     };
 
     return <div className="chart-type-selector"><PresetEditor value={type} options={options} onChange={onChange} /></div>;

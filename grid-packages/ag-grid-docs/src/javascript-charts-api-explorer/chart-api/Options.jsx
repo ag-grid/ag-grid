@@ -55,7 +55,7 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
     </div>;
 };
 
-const ComplexOption = ({ name, isVisible, isAlternate, isSearching, children }) => {
+const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching, children }) => {
     const [isExpanded, setExpanded] = useState(false);
     const contentIsExpanded = isExpanded || isSearching;
 
@@ -64,14 +64,13 @@ const ComplexOption = ({ name, isVisible, isAlternate, isSearching, children }) 
             <span className="option__name">{name}</span>
             <span className="option__type">Object</span>
             <span className={`option__expander ${contentIsExpanded ? 'option__expander--expanded' : ''}`}>❯</span><br />
-            <span className="option__description">This section is about the {name} object.</span>
+            {description && <span className="option__description" dangerouslySetInnerHTML={{ __html: description }}></span>}
         </div>
         <div className={`option__content ${contentIsExpanded ? '' : 'option__content--hidden'}`}>
             {children}
         </div>
     </div>;
 };
-
 
 const Search = ({ text, onChange }) => {
     return <div className="search">
@@ -99,6 +98,7 @@ export class Options extends React.PureComponent {
             const componentKey = `${this.props.chartType}_${key}`;
             const config = options[name];
             const {
+                meta,
                 type,
                 isRequired,
                 description,
@@ -122,13 +122,14 @@ export class Options extends React.PureComponent {
                 elements.push(<ComplexOption
                     key={componentKey}
                     name={name}
+                    description={meta && meta.description}
                     isVisible={isVisible || this.childMatchesSearch(config)} isSearching={isSearching}
                     isAlternate={isAlternate}>
                     {this.generateOptions(
                         config,
                         `${key}.`,
                         parentMatchesSearch || (isSearching && this.matchesSearch(name)),
-                        requiresWholeObject || config.meta && config.meta.requiresWholeObject,
+                        requiresWholeObject || meta && meta.requiresWholeObject,
                         !isAlternate)}
                 </ComplexOption>);
             } else {

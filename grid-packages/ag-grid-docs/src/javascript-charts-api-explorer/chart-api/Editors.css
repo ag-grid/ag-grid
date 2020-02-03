@@ -17,7 +17,7 @@
 }
 
 .number-editor__slider {
-    width: 100%;
+    flex-grow: 1;
     vertical-align: middle;
 }
 
@@ -74,14 +74,14 @@
 
 .colour-editor__sample {
     position: absolute;
-    width: 13px;
-    height: 13px;
+    width: 15px;
+    height: 15px;
     border: solid 1px black;
     top: 5px;
-    right: 6px;
+    right: 5px;
 }
 
 .colour-editor__slider {
-    width: 30%;
-    padding: 5px 0 0 10px;
+    flex-grow: 1;
+    margin: 5px 0 0 15px;
 }

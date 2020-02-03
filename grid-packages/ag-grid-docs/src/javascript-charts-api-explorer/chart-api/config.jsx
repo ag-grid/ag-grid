@@ -16,10 +16,11 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
     fontSize: {
         default: fontSize,
-        description: `The font size to use for the ${name}.`,
+        description: `The font size in pixels to use for the ${name}.`,
         editor: NumberEditor,
         min: 1,
         max: 30,
+        unit: 'px',
     },
     fontFamily: {
         default: 'Verdana, sans-serif',
@@ -29,10 +30,13 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
 });
 
-const getCaptionOptions = (name, defaultText, fontSize = 10, fontWeight = 'normal') => ({
+const getCaptionOptions = (name, description, defaultText, fontSize = 10, fontWeight = 'normal') => ({
+    meta: {
+        description,
+    },
     enabled: {
         default: true,
-        description: `Whether the ${name} should be shown or not.`,
+        description: `Whether or not the ${name} should be shown.`,
         editor: BooleanEditor,
     },
     text: {
@@ -51,7 +55,7 @@ const getCaptionOptions = (name, defaultText, fontSize = 10, fontWeight = 'norma
 
 const getPaddingOption = position => ({
     default: 20,
-    description: `Padding at the ${position} of the chart area.`,
+    description: `The number of pixels of padding at the ${position} of the chart area.`,
     editor: NumberEditor,
     min: 0,
     max: 40,
@@ -75,22 +79,24 @@ export const generalConfig = Object.freeze({
     },
     width: {
         default: 800,
-        description: 'The width of the chart.',
+        description: 'The width of the chart in pixels.',
         editor: NumberEditor,
         min: 1,
         max: () => getChartContainer().offsetWidth - (getChartContainer().offsetWidth % 10),
+        unit: 'px',
     },
     height: {
         default: 400,
-        description: 'The height of the chart.',
+        description: 'The height of the chart in pixels.',
         editor: NumberEditor,
         min: 1,
         max: () => getChartContainer().offsetHeight - (getChartContainer().offsetHeight % 10),
+        unit: 'px',
     },
     tooltipOffset: {
         type: '[number, number]',
         default: [20, 20],
-        description: 'Offset of a tooltip from the cursor, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
+        description: 'Offset of a tooltip from the cursor in pixels, specified as <code>[xOffset,&nbsp;yOffset]</code>.',
         editor: ArrayEditor,
     },
     tooltipClass: {
@@ -98,12 +104,18 @@ export const generalConfig = Object.freeze({
         description: 'A class to be added to tooltips in the chart.',
     },
     padding: {
+        meta: {
+            description: 'Configuration for the padding shown around the chart.',
+        },
         top: getPaddingOption('top'),
         right: getPaddingOption('right'),
         bottom: getPaddingOption('bottom'),
         left: getPaddingOption('left'),
     },
     background: {
+        meta: {
+            description: 'Configuration for the background shown behind the chart.',
+        },
         fill: {
             default: '#FFFFFF',
             description: 'Colour of the chart background.',
@@ -111,23 +123,21 @@ export const generalConfig = Object.freeze({
         },
         visible: {
             default: true,
-            description: 'Whether the background should be visible or not.',
+            description: 'Whether or not the background should be visible.',
             editor: BooleanEditor,
         }
     },
-    title: getCaptionOptions('title', 'Title', 18, 'bold'),
+    title: getCaptionOptions('title', 'Configuration for the title shown at the top of the chart.', 'Title', 18, 'bold'),
     subtitle: {
-        ...getCaptionOptions('subtitle', 'Subtitle', 14, 'normal'),
-        enabled: {
-            default: true,
-            description: `Whether the subtitle should be shown or not. Note: a subtitle will only be shown if a title is also visible.`,
-            editor: BooleanEditor,
-        },
+        ...getCaptionOptions('subtitle', 'Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present.', 'Subtitle', 14, 'normal'),
     },
     legend: {
+        meta: {
+            description: 'Configuration for the chart legend.',
+        },
         enabled: {
             default: true,
-            description: 'Whether to show the legend.',
+            description: 'Whether or not to show the legend.',
             editor: BooleanEditor,
         },
         position: {
@@ -138,31 +148,35 @@ export const generalConfig = Object.freeze({
         },
         spacing: {
             default: 20,
-            description: 'The spacing to use outside the legend.',
+            description: 'The spacing in pixels to use outside the legend.',
             editor: NumberEditor,
             min: 0,
             max: 40,
+            unit: 'px',
         },
         layoutHorizontalSpacing: {
             default: 16,
-            description: 'The horizontal spacing to use between legend items.',
+            description: 'The horizontal spacing in pixels to use between legend items.',
             editor: NumberEditor,
             min: 0,
             max: 40,
+            unit: 'px',
         },
         layoutVerticalSpacing: {
             default: 8,
-            description: 'The vertical spacing to use between legend items.',
+            description: 'The vertical spacing in pixels to use between legend items.',
             editor: NumberEditor,
             min: 0,
             max: 40,
+            unit: 'px',
         },
         itemSpacing: {
             default: 8,
-            description: 'The spacing between a legend marker and the corresponding label.',
+            description: 'The spacing in pixels between a legend marker and the corresponding label.',
             editor: NumberEditor,
             min: 0,
             max: 40,
+            unit: 'px',
         },
         markerShape: {
             default: 'square',
@@ -172,21 +186,23 @@ export const generalConfig = Object.freeze({
         },
         markerSize: {
             default: 15,
-            description: 'The size of the markers in the legend.',
+            description: 'The size in pixels of the markers in the legend.',
             editor: NumberEditor,
             min: 0,
             max: 30,
+            unit: 'px',
         },
         strokeWidth: {
             default: 1,
-            description: 'The width of the stroke for markers in the legend.',
+            description: 'The width in pixels of the stroke for markers in the legend.',
             editor: NumberEditor,
             min: 0,
             max: 10,
+            unit: 'px',
         },
         color: {
             default: 'black',
-            description: 'Colour of the text.',
+            description: 'The colour of the text.',
             editor: ColourEditor
         },
         ...getFontOptions('legend'),
@@ -196,7 +212,7 @@ export const generalConfig = Object.freeze({
 export const axisConfig = Object.freeze({
     meta: {
         displayName: 'Axis Configuration',
-        description: 'Configuration used for axes in cartesian charts.',
+        description: 'Configuration for axes in cartesian charts.',
     },
     type: {
         type: 'string',
@@ -213,39 +229,48 @@ export const axisConfig = Object.freeze({
         type: 'number',
         description: 'The rotation of the axis in degrees.',
     },
-    title: getCaptionOptions('axis title', 'Axis Title', 14, 'bold'),
+    title: getCaptionOptions('axis title', 'Configuration for the title shown next to the axis.', 'Axis Title', 14, 'bold'),
     line: {
+        meta: {
+            description: 'Configuration for the axis line.',
+        },
         width: {
             default: 1,
-            description: 'Width of the axis line.',
+            description: 'The width in pixels of the axis line.',
             editor: NumberEditor,
             min: 0,
             max: 10,
+            unit: 'px',
         },
         color: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the axis line.',
+            description: 'The colour of the axis line.',
             editor: ColourEditor,
         }
     },
     tick: {
+        meta: {
+            description: 'Configuration for the axis ticks.',
+        },
         width: {
             default: 1,
-            description: 'Width of the axis ticks (and corresponding grid line).',
+            description: 'The width in pixels of the axis ticks (and corresponding grid line).',
             editor: NumberEditor,
             min: 0,
             max: 10,
+            unit: 'px',
         },
         size: {
             default: 6,
-            description: 'Length of the axis ticks.',
+            description: 'The length in pixels of the axis ticks.',
             editor: NumberEditor,
             min: 0,
             max: 20,
+            unit: 'px',
         },
         color: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the axis ticks.',
+            description: 'The colour of the axis ticks.',
             editor: ColourEditor,
         },
         count: {
@@ -257,6 +282,9 @@ export const axisConfig = Object.freeze({
         }
     },
     label: {
+        meta: {
+            description: 'Configuration for the axis labels, shown next to the ticks.',
+        },
         ...getFontOptions('labels'),
         color: {
             default: '#000000',
@@ -265,17 +293,19 @@ export const axisConfig = Object.freeze({
         },
         padding: {
             default: 5,
-            description: 'Padding between the axis label and the tick.',
+            description: 'Padding in pixels between the axis label and the tick.',
             editor: NumberEditor,
             min: 0,
             max: 20,
+            unit: 'px',
         },
         rotation: {
             default: 0,
-            description: 'Rotation of the axis labels.',
+            description: 'The rotation of the axis labels in degrees.',
             editor: NumberEditor,
             min: -359,
-            max: 359
+            max: 359,
+            unit: '&deg;',
         },
         mirrored: {
             default: false,
@@ -307,15 +337,16 @@ export const axisConfig = Object.freeze({
     gridStyle: {
         meta: {
             requiresWholeObject: true,
+            description: 'Configuration of the lines used to form the grid in the chart area.',
         },
         stroke: {
             default: 'rgba(195, 195, 195, 1)',
-            description: 'Colour of the grid line.',
+            description: 'The colour of the grid line.',
             editor: ColourEditor,
         },
         lineDash: {
             default: [4, 2],
-            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
+            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
             editor: ArrayEditor,
         }
     }
@@ -329,12 +360,12 @@ const seriesConfig = {
     },
     visible: {
         default: true,
-        description: 'Whether to display the series or not.',
+        description: 'Whether or not to display the series.',
         editor: BooleanEditor,
     },
     showInLegend: {
         default: true,
-        description: 'Whether to include the series in the legend.',
+        description: 'Whether or not to include the series in the legend.',
         editor: BooleanEditor,
     },
     tooltipEnabled: {
@@ -361,9 +392,12 @@ const seriesConfig = {
 
 const markerConfig = {
     marker: {
+        meta: {
+            description: 'Configuration for the markers used in the series.',
+        },
         enabled: {
             default: true,
-            description: 'Whether to show markers or not.',
+            description: 'Whether or not to show markers.',
             editor: BooleanEditor,
         },
         shape: {
@@ -375,17 +409,19 @@ const markerConfig = {
         },
         size: {
             default: 8,
-            description: 'The size of the markers.',
+            description: 'The size in pixels of the markers.',
             editor: NumberEditor,
             min: 1,
             max: 20,
+            unit: 'px',
         },
         minSize: {
             default: 12,
-            description: 'For series where the size of the marker is determined by the data, this determines the smallest size a marker can be.',
+            description: 'For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.',
             editor: NumberEditor,
             min: 1,
             max: 20,
+            unit: 'px',
         },
         fill: {
             type: 'string',
@@ -399,10 +435,11 @@ const markerConfig = {
         },
         strokeWidth: {
             type: 'number',
-            description: 'The width of the marker stroke. If this is not specified, the markers will take their stroke width from the series.',
+            description: 'The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series.',
             editor: NumberEditor,
             min: 0,
             max: 10,
+            unit: 'px',
         },
         formatter: {
             type: {
@@ -497,7 +534,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
         if (hasMultipleSeries) {
             config.fills = {
                 default: fills,
-                description: `Colours to cycle through for the fills of the ${name}.`,
+                description: `The colours to cycle through for the fills of the ${name}.`,
             };
         } else {
             config.fill = {
@@ -520,7 +557,7 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
     if (hasMultipleSeries) {
         config.strokes = {
             default: strokes,
-            description: `Colours to cycle through for the strokes of the ${name}.`,
+            description: `The colours to cycle through for the strokes of the ${name}.`,
         };
     } else {
         config.stroke = {
@@ -541,10 +578,11 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
 
     config.strokeWidth = {
         default: 1,
-        description: `The width of the stroke for the ${name}.`,
+        description: `The width in pixels of the stroke for the ${name}.`,
         editor: NumberEditor,
         min: 0,
         max: 20,
+        unit: 'px',
     };
 
     return config;
@@ -552,36 +590,42 @@ const getColourConfig = (name = 'markers', hasMultipleSeries = false, includeFil
 
 const shadowConfig = {
     shadow: {
+        meta: {
+            description: 'Configuration for the shadow used behind the chart series.',
+        },
         enabled: {
             default: true,
-            description: 'Whether the shadow is visible or not.',
+            description: 'Whether or not the shadow is visible.',
             editor: BooleanEditor,
         },
         color: {
             default: 'rgba(0, 0, 0, 0.5)',
-            description: 'Colour of the shadow.',
+            description: 'The colour of the shadow.',
             editor: ColourEditor,
         },
         xOffset: {
             default: 0,
-            description: 'Horizontal offset for the shadow.',
+            description: 'The horizontal offset in pixels for the shadow.',
             editor: NumberEditor,
             min: -20,
             max: 20,
+            unit: 'px',
         },
         yOffset: {
             default: 0,
-            description: 'Vertical offset for the shadow.',
+            description: 'The vertical offset in pixels for the shadow.',
             editor: NumberEditor,
             min: -20,
             max: 20,
+            unit: 'px',
         },
         blur: {
             default: 5,
-            description: 'How much to blur the shadow.',
+            description: 'How much in pixels to blur the shadow.',
             editor: NumberEditor,
             min: 0,
             max: 20,
+            unit: 'px',
         }
     },
 };
@@ -590,6 +634,7 @@ const getHighlightConfig = (name = 'markers') => ({
     highlightStyle: {
         meta: {
             requiresWholeObject: true,
+            description: `Configuration for the highlighting used when the ${name} are hovered over.`,
         },
         fill: {
             default: 'yellow',
@@ -607,6 +652,7 @@ const getHighlightConfig = (name = 'markers') => ({
 export const barSeriesConfig = Object.freeze({
     meta: {
         displayName: 'Bar/Column Series Configuration',
+        description: 'Configuration for bar/column series.',
     },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
@@ -634,6 +680,7 @@ export const barSeriesConfig = Object.freeze({
 export const lineSeriesConfig = Object.freeze({
     meta: {
         displayName: 'Line Series Configuration',
+        description: 'Configuration for line series.',
     },
     ...getCartesianKeyConfig(),
     ...seriesConfig,
@@ -643,13 +690,14 @@ export const lineSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig('lines', false, false),
-    ...getHighlightConfig(),
     ...markerConfig,
+    ...getHighlightConfig(),
 });
 
 export const areaSeriesConfig = Object.freeze({
     meta: {
         displayName: 'Area Series Configuration',
+        description: 'Configuration for area series.',
     },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
@@ -661,14 +709,15 @@ export const areaSeriesConfig = Object.freeze({
         max: 100,
     },
     ...getColourConfig('areas', true),
-    ...getHighlightConfig(),
     ...markerConfig,
+    ...getHighlightConfig(),
     ...shadowConfig,
 });
 
 export const scatterSeriesConfig = Object.freeze({
     meta: {
         displayName: 'Scatter/Bubble Series Configuration',
+        description: 'Configuration for scatter/bubble series.',
     },
     ...getCartesianKeyConfig(),
     sizeKey: {
@@ -713,13 +762,14 @@ export const scatterSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig(),
-    ...getHighlightConfig(),
     ...markerConfig,
+    ...getHighlightConfig(),
 });
 
 export const pieSeriesConfig = Object.freeze({
     meta: {
         displayName: 'Pie/Doughnut Series Configuration',
+        description: 'Configuration for pie/doughnut series.',
     },
     angleKey: {
         type: 'string',
@@ -750,34 +800,40 @@ export const pieSeriesConfig = Object.freeze({
     ...seriesConfig,
     rotation: {
         default: 0,
-        description: 'The rotation of the pie series.',
+        description: 'The rotation of the pie series in degrees.',
         editor: NumberEditor,
         min: -359,
         max: 359,
+        unit: '&deg',
     },
     innerRadiusOffset: {
         default: 0,
-        description: 'The offset of the inner radius of the series. Used to construct doughnut charts.',
+        description: 'The offset in pixels of the inner radius of the series. Used to construct doughnut charts.',
         editor: NumberEditor,
         min: -50,
         max: 50,
+        unit: 'px',
     },
     outerRadiusOffset: {
         default: 0,
-        description: 'The offset of the outer radius of the series. Used to construct doughnut charts.',
+        description: 'The offset in pixels of the outer radius of the series. Used to construct doughnut charts.',
         editor: NumberEditor,
         min: -50,
         max: 50,
+        unit: 'px',
     },
     title: {
-        ...getCaptionOptions('title'),
+        ...getCaptionOptions('title', 'Configuration for the series title.'),
     },
     ...getColourConfig('segments', true),
     ...getHighlightConfig('segments'),
     label: {
+        meta: {
+            description: 'Configuration for the labels used for the segments.',
+        },
         enabled: {
             default: true,
-            description: `Whether the labels should be shown or not.`,
+            description: `Whether or not the labels should be shown.`,
             editor: BooleanEditor,
         },
         color: {
@@ -788,37 +844,44 @@ export const pieSeriesConfig = Object.freeze({
         ...getFontOptions('labels'),
         offset: {
             default: 3,
-            description: 'Distance between the callout line and the label text.',
+            description: 'Distance in pixels between the callout line and the label text.',
             editor: NumberEditor,
             min: 0,
             max: 20,
+            unit: 'px',
         },
         minAngle: {
             default: 20,
-            description: 'Minimum angle required for a segment to show a label.',
+            description: 'Minimum angle in degrees required for a segment to show a label.',
             editor: NumberEditor,
             min: 0,
             max: 360,
+            unit: '&deg;'
         },
     },
     callout: {
+        meta: {
+            description: 'Configuration for the callouts used with the labels for the segments.',
+        },
         colors: {
             default: strokes,
-            description: 'Colours to cycle through for the strokes of the callouts.',
+            description: 'The colours to cycle through for the strokes of the callouts.',
         },
         strokeWidth: {
             default: 1,
-            description: 'Width of the stroke for callout lines.',
+            description: 'The width in pixels of the stroke for callout lines.',
             editor: NumberEditor,
             min: 1,
             max: 10,
+            unit: 'px',
         },
         length: {
             default: 10,
-            description: 'The length of the callout lines.',
+            description: 'The length in pixels of the callout lines.',
             editor: NumberEditor,
             min: 0,
             max: 20,
+            unit: 'px',
         },
     },
     ...shadowConfig,
