@@ -61,18 +61,23 @@
     }
 }
 
+@mixin ag-use-icon-font($size) {
+    font-family: '#{$ag-icon-font-family}';
+    font-size: $size;
+    line-height: $size;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 @mixin ag-icons-webfont() {
   .ag-icon {
-      font-family: '#{$ag-icon-font-family}';
-      font-size: $ag-icon-size;
-      font-style: normal;
-      font-weight: normal;
-      font-variant: normal;
-      text-transform: none;
-      
-      /* Better Font Rendering =========== */
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      @include ag-use-icon-font($ag-icon-size);
   }
 
   @include ag-icon-element('aggregation', $ag-icon-aggregation);

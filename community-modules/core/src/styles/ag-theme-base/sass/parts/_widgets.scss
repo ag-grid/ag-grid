@@ -328,29 +328,48 @@
     }
 }
 
-@mixin ag-native-inputs {
-    input[type='checkbox']:not(.ag-toggle-button-input) {
-        @extend %ag-checkbox;
+// Apply theme styles to input elements. By default, all elements are styled. To disable one or
+// more elements so that you can apply your own styles, pass e.g.
+//     ag-native-inputs((checkbox: false))
+// Names of elements to disable include:
+//     checkbox:         <input type=checkbox>
+//     toggle-button:    <input type=checkbox class=toggle-button>
+//     radio:            <input type=radio>
+//     range:            <input type=range>
+@mixin ag-native-inputs($type-map: ()) {
+    @if not map-has-key($type-map, checkbox) or map-get($type-map, checkbox) {
+        input[type='checkbox']:not(.ag-toggle-button-input) {
+            @extend %ag-checkbox;
+        }
     }
-    input[type='checkbox'].ag-toggle-button-input {
-        @extend %ag-toggle-button;
+    @if not map-has-key($type-map, toggle-button) or map-get($type-map, toggle-button) {
+        input[type='checkbox'].ag-toggle-button-input {
+            @extend %ag-toggle-button;
+        }
     }
-    input[type='radio'] {
-        @extend %ag-radio-button;
+    @if not map-has-key($type-map, radio) or map-get($type-map, radio) {
+        input[type='radio'] {
+            @extend %ag-radio;
+        }
+    }
+    @if not map-has-key($type-map, range) or map-get($type-map, range) {
+        input[type='range'] {
+            @extend %ag-range;
+        }
     }
 }
 
 %ag-checkbox {
+    @include ag-use-icon-font($ag-checkbox-size);
+
     -webkit-appearance: none;
     width: $ag-checkbox-size;
     height: $ag-checkbox-size;
-    font-size: $ag-checkbox-size;
-    line-height: $ag-checkbox-size;
     background-color: $ag-checkbox-background-color;
     border-radius: $ag-checkbox-border-radius;
     margin: 0;
-    font-family: $ag-icon-font-family;
     display: block;
+    flex: none;
     
     &:focus {
         outline: none;
@@ -394,7 +413,7 @@
     }
 }
 
-%ag-radio-button {
+%ag-radio {
     @extend %ag-checkbox;
     
     border-radius: $ag-checkbox-size;
@@ -425,6 +444,7 @@
     border-radius: $ag-toggle-button-height / 2;
     margin: 0;
     position: relative;
+    flex: none;
 
     &:focus {
         box-shadow: none;
@@ -450,5 +470,109 @@
     &:checked::before {
         transform: translateX($ag-toggle-button-width - $ag-toggle-button-height);
         border-color: $ag-toggle-button-on-color;
+    }
+}
+
+@mixin ag-internal-range-track {
+    @if mixin-exists(ag-range-track) {
+        @include ag-range-track
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 3px;
+        background-color: $ag-border-color;
+        border-radius: $ag-border-radius;
+        border-radius: $ag-checkbox-border-radius;
+    }
+}
+
+@mixin ag-internal-focus-range-track {
+    @if mixin-exists(ag-focus-range-track) {
+        @include ag-focus-range-track
+    }
+}
+
+@mixin ag-internal-range-thumb {
+    @if mixin-exists(ag-range-thumb) {
+        @include ag-range-thumb
+    }
+    @else {
+        margin: 0;
+        padding: 0;
+        -webkit-appearance: none;
+        width: $ag-icon-size;
+        height: $ag-icon-size;
+        background: $ag-checkbox-background-color;
+        border: 1px solid $ag-checkbox-unchecked-color;
+        border-radius: $ag-icon-size;
+    }
+}
+
+@mixin ag-internal-focus-range-thumb {
+    // TODO focus halo
+    @if mixin-exists(ag-focus-range-thumb) {
+        @include ag-focus-range-thumb
+    }
+    @else {
+        border-color: $ag-checkbox-checked-color;
+    }
+}
+
+%ag-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: $ag-checkbox-size;
+    background: none;
+    overflow: visible;
+
+    &::-webkit-slider-runnable-track {
+        @include ag-internal-range-track;
+    }
+
+    &::-moz-ag-range-track {
+        @include ag-internal-range-track;
+    }
+
+    &::-ms-track {
+        @include ag-internal-range-track;
+    }
+
+    &::-webkit-slider-thumb {
+        @include ag-internal-range-thumb;
+        transform: translateY(-$ag-icon-size / 2 + 1.5px);
+    }
+
+    &::-ms-thumb {
+        @include ag-internal-range-thumb;
+        // height: 8.4px;
+    }
+    &::-moz-ag-range-thumb {
+        @include ag-internal-range-thumb;
+    }
+
+    &:focus {
+        outline: none;
+
+        &::-webkit-slider-runnable-track {
+            @include ag-internal-focus-range-track;
+        }
+        &::-moz-ag-range-track {
+            @include ag-internal-focus-range-track;
+        }
+        &::-ms-track {
+            @include ag-internal-focus-range-track;
+        }
+
+        &::-webkit-slider-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
+        &::-ms-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
+        &::-moz-ag-range-thumb {
+            @include ag-internal-focus-range-thumb;
+        }
     }
 }
