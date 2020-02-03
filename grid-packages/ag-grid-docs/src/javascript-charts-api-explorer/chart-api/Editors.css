@@ -39,6 +39,7 @@
     padding: 8px 4px;
     text-align: center;
     cursor: pointer;
+    background-color: white;
 }
 
 .preset-editor__option:first-child {

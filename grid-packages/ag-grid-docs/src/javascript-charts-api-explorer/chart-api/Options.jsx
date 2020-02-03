@@ -5,21 +5,6 @@ import * as Config from './config.jsx';
 import { CodeSnippet } from './CodeSnippet.jsx';
 import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 
-const Section = ({ title, isVisible, children, isSearching }) => {
-    const [isExpanded, setExpanded] = useState(false);
-    const sectionIsExpanded = isExpanded || isSearching;
-
-    return <div className={`section ${isVisible ? '' : 'section--hidden'} ${sectionIsExpanded ? 'section--expanded' : ''}`}>
-        <h2 className={`section__heading ${sectionIsExpanded ? 'section__heading--expanded' : ''}`}
-            onClick={() => setExpanded(!isExpanded)}>
-            {title}
-        </h2>
-        <div className={`section__content ${sectionIsExpanded ? '' : 'section__content--hidden'}`}>
-            {children}
-        </div>
-    </div>;
-};
-
 const getType = value => {
     if (value == null) {
         return null;
@@ -55,11 +40,11 @@ const FunctionDefinition = ({ definition }) => {
     return <CodeSnippet language="ts" lines={lines} />;
 };
 
-const Option = ({ name, isVisible, isRequired, type, description, defaultValue, Editor, editorProps }) => {
+const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || getType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
 
-    return <div className={`option ${isVisible ? '' : 'option--hidden'}`}>
+    return <div className={`option ${isVisible ? '' : 'option--hidden'} ${isAlternate ? 'option--alternate' : ''}`}>
         <span className="option__name">{name}</span>
         {derivedType && <span className="option__type">{isFunction ? 'Function' : derivedType}</span>}
         {isRequired ? <div className="option__required">Required</div> : <div className="option__default">Default: {defaultValue != null ? <code className="option__code">{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
@@ -69,6 +54,24 @@ const Option = ({ name, isVisible, isRequired, type, description, defaultValue, 
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code></span>}
     </div>;
 };
+
+const ComplexOption = ({ name, isVisible, isAlternate, isSearching, children }) => {
+    const [isExpanded, setExpanded] = useState(false);
+    const contentIsExpanded = isExpanded || isSearching;
+
+    return <div className={`option ${isVisible ? '' : 'option--hidden'} ${isAlternate ? 'option--alternate' : ''}`}>
+        <div className="option--expandable" onClick={() => setExpanded(!isExpanded)}>
+            <span className="option__name">{name}</span>
+            <span className="option__type">Object</span>
+            <span className={`option__expander ${contentIsExpanded ? 'option__expander--expanded' : ''}`}>❯</span><br />
+            <span className="option__description">This section is about the {name} object.</span>
+        </div>
+        <div className={`option__content ${contentIsExpanded ? '' : 'option__content--hidden'}`}>
+            {children}
+        </div>
+    </div>;
+};
+
 
 const Search = ({ text, onChange }) => {
     return <div className="search">
@@ -87,7 +90,7 @@ export class Options extends React.PureComponent {
     matchesSearch = name => name.toLowerCase().indexOf(this.getTrimmedSearchText().toLowerCase()) >= 0;
     childMatchesSearch = config => typeof config === 'object' && !config.description && Object.keys(config).some(key => this.matchesSearch(key) || this.childMatchesSearch(config[key]));
 
-    generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false) => {
+    generateOptions = (options, prefix = '', parentMatchesSearch = false, requiresWholeObject = false, isAlternate = false) => {
         let elements = [];
         const isSearching = this.getTrimmedSearchText() !== '';
 
@@ -104,19 +107,38 @@ export class Options extends React.PureComponent {
                 ...editorProps
             } = config;
 
-            const isVisible = !isSearching || parentMatchesSearch || this.matchesSearch(name);
+            const isComplexOption = !config.description;
+
+            const isVisible = !isSearching ||
+                parentMatchesSearch ||
+                this.matchesSearch(name) ||
+                (isComplexOption && this.childMatchesSearch(config));
 
             if (isVisible) {
                 this.setState({ hasResults: true });
             }
 
-            if (config.description) {
+            if (isComplexOption) {
+                elements.push(<ComplexOption
+                    key={componentKey}
+                    name={name}
+                    isVisible={isVisible || this.childMatchesSearch(config)} isSearching={isSearching}
+                    isAlternate={isAlternate}>
+                    {this.generateOptions(
+                        config,
+                        `${key}.`,
+                        parentMatchesSearch || (isSearching && this.matchesSearch(name)),
+                        requiresWholeObject || config.meta && config.meta.requiresWholeObject,
+                        !isAlternate)}
+                </ComplexOption>);
+            } else {
                 this.props.updateOptionDefault(key, defaultValue);
 
                 elements.push(<Option
                     key={componentKey}
                     name={name}
                     isVisible={isVisible}
+                    isAlternate={isAlternate}
                     type={type}
                     isRequired={isRequired}
                     description={description}
@@ -127,10 +149,10 @@ export class Options extends React.PureComponent {
                         onChange: newValue => this.props.updateOption(key, newValue, requiresWholeObject)
                     }}
                 />);
-            } else {
-                elements.push(<Section key={componentKey} title={name} isVisible={isVisible || this.childMatchesSearch(config)} isSearching={isSearching}>
-                    {this.generateOptions(config, `${key}.`, parentMatchesSearch || (isSearching && this.matchesSearch(name)), requiresWholeObject || config.meta && config.meta.requiresWholeObject)}
-                </Section>);
+            }
+
+            if (isVisible) {
+                isAlternate = !isAlternate;
             }
         });
 

@@ -17,6 +17,7 @@ html {
 
 .container__left {
     width: 45%;
+    max-width: 500px;
 }
 
 .container__options {
@@ -27,7 +28,7 @@ html {
 
 .container__right {
     flex-direction: column;
-    width: 55%;
+    flex-grow: 1;
 }
 
 .container__chart {
