@@ -24,7 +24,8 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout
+    TabbedLayout,
+    FocusController
 } from "@ag-grid-community/core";
 import { MenuList } from "./menuList";
 import { MenuItemComponent } from "./menuItemComponent";
@@ -40,6 +41,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('focusController') private focusController: FocusController;
 
     private lastSelectedTab: string;
 
@@ -151,9 +153,7 @@ export class EnterpriseMenu extends BeanStub {
     public static TAB_FILTER = 'filterMenuTab';
     public static TAB_GENERAL = 'generalMenuTab';
     public static TAB_COLUMNS = 'columnsMenuTab';
-
     public static TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
-
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('columnController') private columnController: ColumnController;
@@ -275,18 +275,22 @@ export class EnterpriseMenu extends BeanStub {
 
     private onTabItemClicked(event: any): void {
         let key: string | null = null;
+
         switch (event.item) {
             case this.tabItemColumns: key = EnterpriseMenu.TAB_COLUMNS; break;
             case this.tabItemFilter: key = EnterpriseMenu.TAB_FILTER; break;
             case this.tabItemGeneral: key = EnterpriseMenu.TAB_GENERAL; break;
         }
-        if (key) {
-            const ev: TabSelectedEvent = {
-                type: EnterpriseMenu.EVENT_TAB_SELECTED,
-                key: key
-            };
-            this.dispatchEvent(ev);
-        }
+
+        if (key) { this.activateTab(key); }
+    }
+
+    private activateTab(tab: string): void {
+        const ev: TabSelectedEvent = {
+            type: EnterpriseMenu.EVENT_TAB_SELECTED,
+            key: tab
+        };
+        this.dispatchEvent(ev);
     }
 
     public destroy(): void {
@@ -375,12 +379,11 @@ export class EnterpriseMenu extends BeanStub {
         result.push('resetColumns');
 
         // only add grouping expand/collapse if grouping in the InMemoryRowModel
-
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-
         let allowExpandAndContract = false;
+
         if (isInMemoryRowModel) {
             if (usingTreeData) {
                 allowExpandAndContract = true;
@@ -388,6 +391,7 @@ export class EnterpriseMenu extends BeanStub {
                 allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
             }
         }
+
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
@@ -397,7 +401,6 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createMainPanel(): TabbedItem {
-
         this.mainMenuList = new MenuList();
         this.getContext().wireBean(this.mainMenuList);
 
@@ -448,7 +451,6 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createColumnsPanel(): TabbedItem {
-
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
@@ -467,6 +469,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         });
+
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
@@ -504,7 +507,6 @@ export class EnterpriseMenu extends BeanStub {
         };
 
         this.addDestroyFunc(params.hidePopup);
-
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 

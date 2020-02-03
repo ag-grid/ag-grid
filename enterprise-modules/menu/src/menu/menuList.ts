@@ -46,14 +46,7 @@ export class MenuList extends Component {
 
     @PostConstruct
     public init(): void {
-        const eGui = this.getGui();
-        window.setTimeout(() => {
-            if (eGui && this.isAlive() && !this.getParentComponent()) {
-                eGui.focus();
-            }
-        }, 0);
-
-        this.addDestroyableEventListener(eGui, 'keydown', this.handleKeyDown.bind(this));
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
     public clearActiveItem(): void {
@@ -62,9 +55,8 @@ export class MenuList extends Component {
     }
 
     public addMenuItems(menuItems: (MenuItemDef | string)[] | undefined): void {
-        if (!menuItems || _.missing(menuItems)) {
-            return;
-        }
+        if (!menuItems || _.missing(menuItems)) { return; }
+
         menuItems.forEach((menuItemOrString: MenuItemDef | string) => {
             if (menuItemOrString === 'separator') {
                 this.addSeparator();
@@ -81,8 +73,8 @@ export class MenuList extends Component {
         const cMenuItem = new MenuItemComponent(menuItemDef);
         this.getContext().wireBean(cMenuItem);
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
-        this.getGui().appendChild(cMenuItem.getGui());
 
+        this.getGui().appendChild(cMenuItem.getGui());
         this.addDestroyFunc(() => cMenuItem.destroy());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
@@ -214,6 +206,7 @@ export class MenuList extends Component {
 
         if (e.keyCode === Constants.KEY_ESCAPE) {
             const parent = this.findTopMenu();
+
             if (parent) {
                 parent.getGui().focus();
             }

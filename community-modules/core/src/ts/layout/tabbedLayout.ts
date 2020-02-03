@@ -6,16 +6,16 @@ export class TabbedLayout extends Component {
 
     @RefSelector('eHeader') private eHeader: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
+
     private params: TabbedLayoutParams;
-
     private afterAttachedParams: any;
-
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
 
     constructor(params: TabbedLayoutParams) {
         super(TabbedLayout.getTemplate(params.cssClass));
         this.params = params;
+
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
         }
@@ -33,7 +33,6 @@ export class TabbedLayout extends Component {
     }
 
     public getMinDimensions(): {width: number, height: number} {
-
         const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
         const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
 
@@ -63,15 +62,9 @@ export class TabbedLayout extends Component {
             }
         });
 
-        // finally check the parent tabs are no wider, as if they
-        // are, then these are the min width and not the child tabs
-        // if (minWidth<this.eGui.offsetWidth) {
-        //     minWidth = this.eGui.offsetWidth;
-        // }
-
         this.getGui().removeChild(eDummyContainer);
 
-        return {height: minHeight, width: minWidth};
+        return { height: minHeight, width: minWidth };
     }
 
     public showFirstItem(): void {
@@ -109,13 +102,16 @@ export class TabbedLayout extends Component {
         if (this.params.onItemClicked) {
             this.params.onItemClicked({item: wrapper.tabbedItem});
         }
+
         if (this.activeItem === wrapper) {
             _.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
+
         _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
+            body.focus();
         });
 
         if (this.activeItem) {

@@ -11,14 +11,10 @@ import { _ } from "../utils";
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
 
-    @Autowired('eventService')
-    private eventService: EventService;
-    @Autowired('filterManager')
-    private filterManager: FilterManager;
-    @Autowired('popupService')
-    private popupService: PopupService;
-    @Autowired('gridOptionsWrapper')
-    private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') private eventService: EventService;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('popupService') private popupService: PopupService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private hidePopup: () => void;
 
@@ -51,9 +47,8 @@ export class StandardMenuFactory implements IMenuFactory {
 
     public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void): void {
         const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
-
         const eMenu = document.createElement('div');
-        eMenu.tabIndex = -1;
+
         _.addCssClass(eMenu, 'ag-menu');
         filterWrapper.guiPromise.promise.then(gui => {
             eMenu.appendChild(gui);
