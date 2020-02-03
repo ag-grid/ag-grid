@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
        simplify state management.
     </p>
 
-<note>Be sure to refer to the <a href="../react-more-details/react-15#react-redux-hoc">React/Redux More Details</a> section
+<note>Be sure to refer to the <a href="../react-apis/#react-redux-hoc">React/Redux More Details</a> section
     for more details around configuration.</note>
 <p>
         We will use the concrete example of a file view component to demonstrate how to move local component state to
