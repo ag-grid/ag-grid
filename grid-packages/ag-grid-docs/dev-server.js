@@ -383,7 +383,7 @@ function watchCssModules() {
     console.log("Watching CSS only...");
     const cssScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
     const node = 'node';
-    const cssWatch = cp.spawn(node, [cssScript, " --watchBeta"], {
+    const cssWatch = cp.spawn(node, [cssScript, "--watchBeta"], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });

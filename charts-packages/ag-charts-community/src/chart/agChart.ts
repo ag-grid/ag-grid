@@ -67,9 +67,9 @@ const chartMappings = {
                 text: 'Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 18,
+                fontSize: 16,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'black'
+                color: 'rgba(70, 70, 70, 1)'
             }
         }
     },
@@ -82,9 +82,9 @@ const chartMappings = {
                 text: 'Subtitle',
                 fontStyle: undefined,
                 fontWeight: undefined,
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'black'
+                color: 'rgba(140, 140, 140, 1)'
             }
         }
     },
@@ -293,8 +293,7 @@ const mappings = {
                         xName: '',
                         yKey: '',
                         yName: '',
-                        fill: palette.fills[0],
-                        stroke: palette.strokes[0],
+                        stroke: palette.fills[0],
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,

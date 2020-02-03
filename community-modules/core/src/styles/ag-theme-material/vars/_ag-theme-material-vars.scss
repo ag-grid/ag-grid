@@ -21,19 +21,8 @@ $ag-row-hover-color: #fafafa !default;
 $ag-control-panel-background-color: #fafafa !default;
 $ag-selected-row-background-color: #eee !default;
 $ag-range-selection-border-color: $ag-mat-primary-color;
-
-$ag-checkbox-size: 18px !default;
-$ag-checkbox-check-size: 2px !default;
-$ag-checkbox-border-size: 2px !default;
-$ag-checkbox-border-radius: 2px !default;
-$ag-checkbox-check-color: $ag-background-color !default;
-$ag-checkbox-background-color: $ag-background-color !default;
-$ag-checkbox-checked-background-color: $ag-mat-accent-color !default;
-$ag-checkbox-indeterminate-background-color: $ag-foreground-color !default;
-$ag-checkbox-checked-border-color: $ag-mat-accent-color !default;
-$ag-checkbox-indeterminate-border-color: $ag-checkbox-indeterminate-background-color !default;
-$ag-checkbox-border-color: $ag-foreground-color !default;
-$ag-toggle-button-color: $ag-mat-accent-color !default;
+$ag-checkbox-checked-color: $ag-mat-accent-color !default;
+$ag-checkbox-unchecked-color: #333 !default;
 
 // Borders
 $ag-borders: false;
@@ -50,6 +39,9 @@ $ag-virtual-item-height: $ag-grid-size * 5;
 $ag-row-group-indent-size: $ag-grid-size * 3 + $ag-icon-size !default;
 $ag-filter-tool-panel-top-level-row-height: $ag-grid-size * 7 !default;
 $ag-filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
+$ag-checkbox-size: 24px;
+$ag-toggle-button-switch-border-width: 2px !default;
+$ag-toggle-button-height: $ag-icon-size;
 
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default;

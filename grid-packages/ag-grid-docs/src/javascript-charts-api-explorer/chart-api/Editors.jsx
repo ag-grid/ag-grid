@@ -64,22 +64,24 @@ export const ArrayEditor = props =>
 
 export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
 
-export const PresetEditor = ({ value, options, breakIndex, onChange }) => {
+export const PresetEditor = ({ value, options, suggestions, breakIndex, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
     const inputOnChange = newValue => {
         setValueChange(newValue);
         onChange(newValue);
     };
 
+    const optionsToUse = options || suggestions;
+
     const createOptionElement = o => <div
         key={o}
         className={`preset-editor__option ${stateValue === o ? 'preset-editor__option--selected' : ''}`}
-        onClick={() => inputOnChange(o)}>{Array.isArray(options) ? o.toString() : options[o]}</div>;
+        onClick={() => inputOnChange(o)}>{Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}</div>;
 
     const elementsBeforeBreak = [];
     const elementsAfterBreak = [];
 
-    (Array.isArray(options) ? options : Object.keys(options)).forEach((option, i) => {
+    (Array.isArray(optionsToUse) ? optionsToUse : Object.keys(optionsToUse)).forEach((option, i) => {
         const element = createOptionElement(option);
 
         if (breakIndex && i >= breakIndex) {

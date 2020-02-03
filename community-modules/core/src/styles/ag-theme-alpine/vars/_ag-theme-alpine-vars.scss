@@ -14,22 +14,20 @@ $ag-border-color: #babfc7 !default;
 $ag-control-panel-background-color: #f8f8f8 !default;
 $ag-subheader-background-color: #fff !default;
 
+$ag-checkbox-checked-color: $ag-alpine-active-color !default;
+$ag-checkbox-unchecked-color: #999 !default;
+$ag-checkbox-click-flash: true !default;
+$ag-checkbox-background-color: $ag-background-color !default;
+
 // derived colours (shared by alpine-dark)
 $ag-selected-tab-underline-color: $ag-alpine-active-color !default;
+$ag-selected-row-background-color: $ag-alpine-active-color !default;
 $ag-row-hover-color: transparentize($ag-alpine-active-color, 0.9) !default;
 $ag-chip-background-color: rgba($ag-foreground-color, 0.07) !default;
 $ag-secondary-foreground-color: $ag-foreground-color !default;
 $ag-disabled-foreground-color: $ag-foreground-color !default;
 $ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color, 20%) !default;
 $ag-input-border-color: $ag-border-color !default;
-
-$ag-checkbox-check-color: $ag-background-color !default;
-$ag-checkbox-background-color: $ag-background-color !default;
-$ag-checkbox-checked-background-color: $ag-alpine-active-color !default;
-$ag-checkbox-indeterminate-background-color: $ag-checkbox-checked-background-color !default;
-$ag-checkbox-checked-border-color: $ag-alpine-active-color !default;
-
-$ag-toggle-button-color: $ag-alpine-active-color !default;
 
 // BORDERS
 $ag-borders: true;
@@ -50,6 +48,12 @@ $ag-virtual-item-height: $ag-grid-size * 5 !default; // if changed, update envir
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2;
+
+// $ag-toggle-button-off-color: $ag-border-color !default;
+// $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;
+// $ag-toggle-button-switch-color: $ag-background-color !default;
+$ag-toggle-button-height: 18px;
+$ag-toggle-button-width: 28px;
 
 
 // FONTS

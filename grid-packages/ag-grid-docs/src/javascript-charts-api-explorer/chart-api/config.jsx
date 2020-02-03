@@ -23,7 +23,7 @@ const getFontOptions = (name, fontWeight = 'normal', fontSize = 12) => ({
     },
     fontFamily: {
         default: 'Verdana, sans-serif',
-        options: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
+        suggestions: ['Verdana, sans-serif', 'Arial, sans-serif', 'Times New Roman, serif'],
         description: `The font family to use for the ${name}.`,
         editor: PresetEditor,
     },
@@ -60,6 +60,10 @@ const getPaddingOption = position => ({
 const getChartContainer = () => document.querySelector('.container__chart') || {};
 
 export const generalConfig = Object.freeze({
+    meta: {
+        displayName: 'General Configuration',
+        description: 'Configuration common to all charts.',
+    },
     data: {
         type: 'object[]',
         isRequired: true,
@@ -67,7 +71,7 @@ export const generalConfig = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart canvas element into.'
+        description: 'The element to place the rendered chart <code>canvas</code> element into.'
     },
     width: {
         default: 800,
@@ -123,7 +127,7 @@ export const generalConfig = Object.freeze({
     legend: {
         enabled: {
             default: true,
-            description: 'Configures whether to show the legend.',
+            description: 'Whether to show the legend.',
             editor: BooleanEditor,
         },
         position: {
@@ -190,6 +194,10 @@ export const generalConfig = Object.freeze({
 });
 
 export const axisConfig = Object.freeze({
+    meta: {
+        displayName: 'Axis Configuration',
+        description: 'Configuration used for axes in cartesian charts.',
+    },
     type: {
         type: 'string',
         description: 'The type of the axis.',
@@ -276,7 +284,7 @@ export const axisConfig = Object.freeze({
         },
         parallel: {
             default: false,
-            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <true> will render them parallel to the line instead.',
+            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <code>true</code> will render them parallel to the line instead.',
             editor: BooleanEditor,
         },
         format: {
@@ -307,7 +315,7 @@ export const axisConfig = Object.freeze({
         },
         lineDash: {
             default: [4, 2],
-            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, [6, 3] means dash of length 6 and gap of length 3.',
+            description: 'Defines how the gridlines are rendered. Every number in the array specifies the length of alternating dashes and gaps. For example, <code>[6, 3]</code> means dashes with a length of <code>6</code> pixels with gaps between of <code>3</code> pixels.',
             editor: ArrayEditor,
         }
     }
@@ -597,6 +605,9 @@ const getHighlightConfig = (name = 'markers') => ({
 });
 
 export const barSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Bar/Column Series Configuration',
+    },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
     grouped: {
@@ -621,6 +632,9 @@ export const barSeriesConfig = Object.freeze({
 });
 
 export const lineSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Line Series Configuration',
+    },
     ...getCartesianKeyConfig(),
     ...seriesConfig,
     title: {
@@ -634,6 +648,9 @@ export const lineSeriesConfig = Object.freeze({
 });
 
 export const areaSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Area Series Configuration',
+    },
     ...getCartesianKeyConfig(true),
     ...seriesConfig,
     normalizedTo: {
@@ -650,6 +667,9 @@ export const areaSeriesConfig = Object.freeze({
 });
 
 export const scatterSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Scatter/Bubble Series Configuration',
+    },
     ...getCartesianKeyConfig(),
     sizeKey: {
         type: 'string',
@@ -698,6 +718,9 @@ export const scatterSeriesConfig = Object.freeze({
 });
 
 export const pieSeriesConfig = Object.freeze({
+    meta: {
+        displayName: 'Pie/Doughnut Series Configuration',
+    },
     angleKey: {
         type: 'string',
         isRequired: true,

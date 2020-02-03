@@ -34,7 +34,7 @@
         }
     }
 
-    .ag-filter-air {
+    .ag-filter-toolpanel-instance-filter {
         @include ag-grid-border(primary, (top, bottom));
         padding-top: $ag-grid-size;
     }

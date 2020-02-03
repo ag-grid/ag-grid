@@ -20,6 +20,7 @@
         bottom: 0;
         left: 0;
         padding: 0;
+        width: $ag-icon-size;
     }
     .ag-disabled .ag-paging-button {
         cursor: default;
@@ -30,7 +31,7 @@
         cursor: default;
     }
 
-    .ag-paging-number, .ag-paging-button-wrapper {
+    .ag-paging-button-wrapper, .ag-paging-description {
         margin: 0 $ag-grid-size;
     }
 

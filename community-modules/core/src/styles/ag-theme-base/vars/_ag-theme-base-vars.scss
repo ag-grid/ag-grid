@@ -57,7 +57,7 @@ $ag-selected-tab-underline-width: 0 !default;
 $ag-selected-tab-underline-transition-speed: null !default;
 
 // Background colour for cells that provide categories to the current range chart
-$ag-range-selection-chart-category-background-color: rgba($ag-range-selection-background-color, 0.3) !default;
+$ag-range-selection-chart-category-background-color: rgba($ag-range-selection-background-color, 0.4) !default;
 
 // Background colour for cells that provide data to the current range chart
 $ag-range-selection-chart-background-color: $ag-range-selection-background-color !default;
@@ -131,29 +131,24 @@ $ag-header-column-resize-handle: false !default;
 $ag-input-disabled-background-color: null !default;
 $ag-input-border-color: null !default;
 
-$ag-checkbox-size: 15px !default;
-$ag-checkbox-check-size: 1px !default;
+$ag-checkbox-background-color: null !default;
 $ag-checkbox-border-radius: $ag-border-radius !default;
-$ag-checkbox-border-size: 1px !default;
+$ag-checkbox-checked-color: $ag-foreground-color !default;
+$ag-checkbox-unchecked-color: $ag-foreground-color !default;
+$ag-checkbox-indeterminate-color: $ag-checkbox-unchecked-color !default;
+$ag-checkbox-size: $ag-icon-size !default;
+$ag-checkbox-click-flash: false !default; // provide feedback on click by flashing
 
-$ag-checkbox-check-color: $ag-foreground-color !default;
-$ag-checkbox-disabled-color: $ag-disabled-foreground-color !default;
+$ag-toggle-button-off-color: $ag-checkbox-unchecked-color !default;
+$ag-toggle-button-on-color: $ag-checkbox-checked-color !default;
+$ag-toggle-button-switch-color: $ag-background-color !default;
+$ag-toggle-button-switch-border-width: 1px !default;
+$ag-toggle-button-height: $ag-checkbox-size !default;
+$ag-toggle-button-width: $ag-toggle-button-height * 2 !default;
 
-$ag-checkbox-background-color: $ag-background-color !default;
-$ag-checkbox-checked-background-color: $ag-background-color !default;
-$ag-checkbox-indeterminate-background-color: $ag-checkbox-background-color !default;
-$ag-checkbox-disabled-background-color: $ag-input-disabled-background-color !default;
-
-$ag-checkbox-border-color: $ag-border-color !default;
-$ag-checkbox-checked-border-color: $ag-foreground-color !default;
-$ag-checkbox-indeterminate-border-color: $ag-checkbox-checked-border-color !default;
-$ag-checkbox-disabled-border-color: transparentize($ag-border-color, 0.7) !default;
-
-$ag-toggle-button-color: $ag-foreground-color !default;
-$ag-toggle-button-background-color: $ag-background-color !default;
-$ag-toggle-button-height: 18px !default;
-$ag-toggle-button-width: 28px !default;
-
+// chart settings
+$ag-minichart-selected-chart-color: $ag-checkbox-checked-color !default; // color of border around selected minichart
+$ag-minichart-selected-page-color: $ag-checkbox-checked-color !default; // color of dot representing selected chart page
 
 // The main control for affecting how tightly data and UI elements are packed together.
 // All block sizes, margins and padding in the grid are defined as a multiple of $ag-grid-size,
@@ -162,7 +157,6 @@ $ag-grid-size: 4px !default;
 $ag-icon-size: 12px !default;
 $ag-row-height: $ag-grid-size * 6 + 1 !default;
 $ag-header-height: $ag-row-height !default;
-$ag-rich-select-item-height: $ag-row-height !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
 $ag-virtual-item-height: $ag-grid-size * 5 !default;

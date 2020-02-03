@@ -41,7 +41,7 @@
         }
 
         &.ag-selected {
-            border-color: $ag-checkbox-check-color;
+            border-color: $ag-minichart-selected-chart-color;
         }
     }
 
@@ -52,7 +52,7 @@
         border-radius: 4px;
 
         &.ag-selected {
-            background-color: $ag-checkbox-check-color;
+            background-color: $ag-minichart-selected-page-color;
         }
     }
 

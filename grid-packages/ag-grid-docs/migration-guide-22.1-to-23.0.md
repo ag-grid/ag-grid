@@ -1,20 +1,26 @@
-In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. There will be breaking changes for most custom themes. We want to explain why we are doing this, and let you know how to update your custom themes.
+In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. Most custom themes will need updating to use the new system. We want to explain why we're doing this, and tell you how to upgradew your themes.
 
-In previous versions of the grid, our philosophy was to provide Sass variables to allow the grid to be customised. The CSS classes on the DOM were considered an implementation detail to support the variables, not a public API for creating themes. However from our own experience writing themes and from user feedback, we knew that in practice the variables were not enough, and theme authors had to write CSS. This meant that most themes ended up relying on implementation details (DOM class names) to apply their styles. Sometimes the CSS required to achieve quite a simple effect was quite complex. And as a result of this complexity, CSS rules would often require updating for minor releases.
+## Why we're updating our themes
 
-In v23.0 we have done a lot of work to make it easier to style the grid using plain CSS:
+In the past, the primary way of customising a theme was to define Sass variables that themes supported, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable. We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach:
 
-- We have added new class names to the DOM to make it easier to target specific elements. For example, overriding the colour of a child-level heading in the filter tool panel previously required the following CSS rule: `.ag-tool-panel-wrapper .ag-filter-panel .ag-group-component-container .ag-group-item { color: red }` and now the same effect can be achieved with: `.ag-filter-toolpanel-group-level-1-header { color: red }`.
-- We have renamed classes and variables to make them consistent throughout the grid.
-- We have rewritten and simplified our provided themes to take advantage of these new classes. Extending and customising provided themes will now be easier.
-- Some variables were only really necessary because of the difficulty of using CSS selectors. These have been removed.
-- In order to support the next major version of Sass, we have changed the way we handle renamed variables. Previously we automatically imported old variables. Now we will issue a warning when an old variable name is used to notify you to update it to the new name.
+1. There were never enough variables - every custom theme wants to make changes that we don't provide variables for, so needs to contain CSS rules as well as variable definitions.
+2. There were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to read a class name.
+3. "Clever" variables that do more than one thing cause issues. For example, `$ag-accent-color` changed the colour of certain important elements, but in practice every custom theme has a different idea of which elements should be accented.
+4. Because our DOM and class name structures weren't designed as public APIs, the CSS rules required in custom themes were often complicated, deeply nested, and inconsistent. This lead to brittleness: minor releases of Ag-Grid could break people's themes.
+5. The base theme made some opinionated design decisions like adding borders and padding. Themes that didn't want those borders and padding to remove them with rules like `... some complex selector ... { border: none , padding: 0}`.
 
+So in the latest release of ag-Grid we have added many new css classes, renamed existing ones, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
 
+* The primary way of customising elements is now CSS. In the vast majority of cases you should only need a single class name in your selector, e.g. `.ag-component-name { padding: 10px }`.
+* Variables now do one thing only, and we have removed variables that do something that can be easily achieved with a CSS selector.
+* Our base theme still has opinionated design features, but themes can opt-out. If you have a different idea about where borders should be drawn, you can define `$ag-borders: false` and the base theme will not add any borders, giving you a clean slate to add your own borders.
 
-// TODO change this to use tables with old on left and new on right
+The net effect is that custom themes will be simpler to write, and will break less between releases.
 
+## The effect on existing custom themes
 
+This is a big change, and all custom themes will require updating. But once they have been updated, they should be easier to maintain in the future.
 
 
 ## Placeholders removed
@@ -69,6 +75,8 @@ $ag-customize-buttons, $ag-button-color, $ag-button-text-transform, $ag-button-b
 $ag-scroll-spacer-border: removed. Now drawn as a 'critical' level border controlled by $ag-borders.
 
 $ag-font-weight, $ag-secondary-font-family, $ag-secondary-font-size, $ag-secondary-font-weight - removed. Use css selectors to style the desired elements appropriately. $ag-font-family, $ag-font-size are still available.
+
+$ag-rich-select-item-height: removed. In practice, this caused issues if it was different from $ag-virtual-item-height, so use $ag-virtual-item-height instead.
 
 ## CSS class renames
 
@@ -147,6 +155,8 @@ ag-filter-toolpanel-header > ag-filter-toolpanel-instance-header
 ag-filter-panel-group-title -> ag-filter-toolpanel-group-title
 ag-filter-panel-group-title-bar -> ag-filter-toolpanel-group-title-bar
 ag-filter-panel-group-item -> ag-filter-toolpanel-group-item
+ag-filter-toolpanel-body > ag-filter-toolpanel-instance-body
+ag-filter-air > ag-filter-toolpanel-instance-filter
 
 ag-stub-cell > ag-loading
 

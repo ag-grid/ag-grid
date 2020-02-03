@@ -51,7 +51,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     line-height: normal;
     position: relative;
-    overflow: hidden;
 }
 
 // setting shake class to an item will give it a left ot right animation
@@ -769,6 +768,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     z-index: 1;
 }
 
+.ag-large-text-input {
+    display: block;
+}
+
 /**
  ****************************
  * Virtual Lists
@@ -1058,14 +1061,6 @@ $ag-handleSize: 5px;
     align-items: center;
     display: flex;
     justify-content: flex-end;
-}
-
-.ag-paging-row-summary-panel {
-    display: flex;
-}
-
-.ag-paging-row-summary-panel-separator {
-    margin: 0 3px;
 }
 
 .ag-paging-page-summary-panel {

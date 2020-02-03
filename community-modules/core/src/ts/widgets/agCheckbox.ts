@@ -102,5 +102,8 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     private onCheckboxClick(e: MouseEvent) {
         this.selected = (e.target as HTMLInputElement).checked;
         this.dispatchChange(this.selected);
+        const input = this.eInput;
+        _.addCssClass(input, 'ag-input-click-animation');
+        setTimeout(() => _.removeCssClass(input, 'ag-input-click-animation'), 500);
     }
 }

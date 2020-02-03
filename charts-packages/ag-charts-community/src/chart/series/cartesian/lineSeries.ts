@@ -43,7 +43,7 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') stroke: string = palette.strokes[0];
+    @reactive('update') stroke: string = palette.fills[0];
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
@@ -63,6 +63,7 @@ export class LineSeries extends CartesianSeries {
 
         const { marker } = this;
         marker.fill = palette.fills[0];
+        marker.stroke = palette.strokes[0];
         marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
         marker.addPropertyListener('enabled', event => {
             if (!event.value) {
@@ -127,10 +128,6 @@ export class LineSeries extends CartesianSeries {
             const x = datum[xKey];
             const y = datum[yKey];
 
-            if (x == null || (isContinuousX && isNaN(x)) || y == null || isNaN(y)) {
-                continue;
-            }
-
             xData.push(x);
             yData.push(y);
         }
@@ -183,6 +180,7 @@ export class LineSeries extends CartesianSeries {
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
+        const isContinuousX = xScale instanceof ContinuousScale;
 
         const {
             data,
@@ -196,23 +194,31 @@ export class LineSeries extends CartesianSeries {
         const linePath = lineNode.path;
 
         linePath.clear();
+        let moveTo = true;
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
-            const x = xScale.convert(xDatum) + xOffset;
-            const y = yScale.convert(yDatum) + yOffset;
+            const isGap = (xDatum == null || (isContinuousX && isNaN(xDatum)) || yDatum == null || isNaN(yDatum));
 
-            if (i > 0) {
-                linePath.lineTo(x, y);
+            if (isGap) {
+                moveTo = true;
             } else {
-                linePath.moveTo(x, y);
-            }
+                const x = xScale.convert(xDatum) + xOffset;
+                const y = yScale.convert(yDatum) + yOffset;
 
-            if (marker) {
-                groupSelectionData.push({
-                    seriesDatum: data[i],
-                    x,
-                    y
-                });
+                if (moveTo) {
+                    linePath.moveTo(x, y);
+                    moveTo = false;
+                } else {
+                    linePath.lineTo(x, y);
+                }
+
+                if (marker) {
+                    groupSelectionData.push({
+                        seriesDatum: data[i],
+                        x,
+                        y
+                    });
+                }
             }
         });
 

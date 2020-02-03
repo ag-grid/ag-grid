@@ -76,6 +76,9 @@ $ag-icon-arrows: "\f0b2";
 $ag-icon-asc: "\f062";
 $ag-icon-cancel: "\f057";
 $ag-icon-chart: "\f080";
+$ag-icon-checkbox-checked: "\f14a";
+$ag-icon-checkbox-indeterminate: "\f146";
+$ag-icon-checkbox-unchecked: "\f0c8";
 $ag-icon-color-picker: "\f576";
 $ag-icon-column: "\f142";
 $ag-icon-columns: "\f0db";
@@ -109,6 +112,8 @@ $ag-icon-pin: "\f276";
 $ag-icon-pivot: "\f074";
 $ag-icon-plus: "\f067";
 $ag-icon-previous: "\f104";
+$ag-icon-radio-button-off: "\f111";
+$ag-icon-radio-button-on: "\f058";
 $ag-icon-right: "\f061";
 $ag-icon-save: "\f0c7";
 $ag-icon-small-down: "\f107";
@@ -166,15 +171,6 @@ columnGroupClosed
 columnSelectOpen
 columnSelectClosed
 columnSelectIndeterminate
-
-// grid checkboxes
-checkboxChecked
-checkboxUnchecked
-checkboxIndeterminate
-
-// grid radio buttons
-radioButtonOn
-radioButtonOff
 
 // when moving columns
 columnMovePin // when column is to the left, before it gets pinned

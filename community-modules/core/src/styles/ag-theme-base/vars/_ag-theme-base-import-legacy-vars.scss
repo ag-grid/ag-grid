@@ -131,10 +131,6 @@
     $ag-range-selection-chart-category-background-color: $range-selection-chart-category-background-color !global;
   }
 
-  @if (variable-exists("rich-select-item-height") and not variable-exists("ag-rich-select-item-height")) {
-    $ag-rich-select-item-height: $rich-select-item-height !global;
-  }
-
   @if (variable-exists("row-group-indent-size") and not variable-exists("ag-row-group-indent-size")) {
     $ag-row-group-indent-size: $row-group-indent-size !global;
   }
@@ -225,5 +221,13 @@
 
   @if (variable-exists("filter-tool-panel-sub-level-row-height") and not variable-exists("ag-filter-tool-panel-sub-level-row-height")) {
     $ag-filter-tool-panel-sub-level-row-height: $filter-tool-panel-sub-level-row-height !global;
+  }
+
+  @if (variable-exists("ag-filter-air") and not variable-exists("ag-filter-toolpanel-instance-filter")) {
+    $ag-filter-toolpanel-instance-filter: $ag-filter-air !global;
+  }
+
+  @if (variable-exists("ag-filter-toolpanel-body") and not variable-exists("ag-filter-toolpanel-instance-body")) {
+    $ag-filter-toolpanel-instance-body: $ag-filter-toolpanel-body !global;
   }
 }
