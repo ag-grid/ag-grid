@@ -77,7 +77,7 @@ export class Heart extends Marker {
 <p>
     Inside the marker object, you have access to the <code>size</code> of the marker,
     the <code>x</code>, <code>y</code> coordinates of the data point and the <code>path</code>
-    instance, which you can use to issue draw commands. If you are familiar with HTML5 Canvas
+    instance, which you can use to issue draw commands. If you are familiar with the standard Canvas
     API, you'll feel right at home here. The <code>path</code> API is very similar to that of
     <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">CanvasRenderingContext2D</a>.
 </p>

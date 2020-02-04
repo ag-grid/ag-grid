@@ -67,7 +67,7 @@ const chartMappings = {
                 text: 'Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 16,
+                fontSize: 14,
                 fontFamily: 'Verdana, sans-serif',
                 color: 'rgba(70, 70, 70, 1)'
             }

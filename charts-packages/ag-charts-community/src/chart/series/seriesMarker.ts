@@ -12,7 +12,7 @@ export class SeriesMarker extends Observable {
      */
     @reactive('change') shape: string | (new () => Marker) = Circle;
 
-    @reactive('change') size = 16;
+    @reactive('change') size = 8;
 
     /**
      * In case a series has the `sizeKey` set, the `sizeKey` values along with the `minSize/size` configs
