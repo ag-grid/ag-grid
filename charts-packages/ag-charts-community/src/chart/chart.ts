@@ -143,21 +143,24 @@ export abstract class Chart extends Observable {
         scene.container = this._element = document.createElement('div');
         scene.canvas.element.style.display = 'block';
 
-        const resizeObserver = new (window as any).ResizeObserver((entries: any) => {
-            for (let entry of entries) {
-                // let cs = window.getComputedStyle(entry.target);
-                // console.log('watching element:', entry.target);
-                // console.log(entry.contentRect.top, ' is ', cs.paddingTop);
-                // console.log(entry.contentRect.left, ' is ', cs.paddingLeft);
-                // if (entry.target.handleResize) {
-                    // entry.target.handleResize(entry);
-                // }
-                const { width, height } = entry.contentRect;
-                this.width = width;
-                // this.height = height;
-            }
-        });
-        resizeObserver.observe(this._element);
+        // TODO - Fix me!
+        if ((window as any).ResizeObserver) {
+            const resizeObserver = new (window as any).ResizeObserver((entries: any) => {
+                for (let entry of entries) {
+                    // let cs = window.getComputedStyle(entry.target);
+                    // console.log('watching element:', entry.target);
+                    // console.log(entry.contentRect.top, ' is ', cs.paddingTop);
+                    // console.log(entry.contentRect.left, ' is ', cs.paddingLeft);
+                    // if (entry.target.handleResize) {
+                        // entry.target.handleResize(entry);
+                    // }
+                    const { width, height } = entry.contentRect;
+                    this.width = width;
+                    // this.height = height;
+                }
+            });
+            resizeObserver.observe(this._element);
+        }
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange);
