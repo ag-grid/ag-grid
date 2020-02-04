@@ -142,7 +142,7 @@ interface ProcessChartOptionsParams {
     </li>
 </ul>
 
-<?= example('Charts in Grid Popup Window', 'chart-api', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Charts in Grid Popup Window', 'chart-api', 'generated', array("enterprise" => true)) ?>
 
 <h3>Example: Charts in Dashboard</h3>
 
@@ -166,7 +166,7 @@ interface ProcessChartOptionsParams {
     </li>
 </ul>
 
-<?= example('Charts in Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
+<?= grid_example('Charts in Dashboard', 'dashboard', 'generated', array("enterprise" => true, "exampleHeight" => 700)) ?>
 
 <h2>Pivot Charts</h2>
 
@@ -192,7 +192,7 @@ interface CreatePivotChartParams {
 
 <p>This is an example showing the pivot chart API in action, using a specified chart container.</p>
 
-<?= example('Pivot Chart', 'pivot-chart-api', 'generated', array("enterprise" => true, "exampleHeight" => 900)) ?>
+<?= grid_example('Pivot Chart', 'pivot-chart-api', 'generated', array("enterprise" => true, "exampleHeight" => 900)) ?>
 
 <h2>Saving and Restoring Charts</h2>
 
@@ -238,7 +238,7 @@ interface GetChartImageDataUrlParams {
     <li>Click "Open JPG" to open a JPG format image of the chart in a new window</li>
 </ul>
 
-<?= example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', array("exampleHeight" => 800,"enterprise" => true)) ?>
+<?= grid_example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', array("exampleHeight" => 800,"enterprise" => true)) ?>
 
 <h2>Next Up</h2>
 

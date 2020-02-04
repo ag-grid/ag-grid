@@ -129,7 +129,7 @@ gridOptions: {
         after you press the button.
     </p>
 
-    <?= example('Column Resizing', 'column-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Resizing', 'column-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2>Sizing Columns By Default</h2>
 
@@ -146,7 +146,7 @@ gridOptions: {
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
 
     <h2>Column Flex</h1>
 
@@ -189,7 +189,7 @@ gridOptions: {
             by its minWidth/maxWidth rules, in which case it should take up the remaining available space.</li>
     </ul>
 
-    <?= example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -217,7 +217,7 @@ gridOptions: {
     </ul>
     </p>
 
-    <?= example('Shift Resizing', 'shift-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Shift Resizing', 'shift-resizing', 'generated', array("processVue" => true)) ?>
     <h2>Resizing Groups</h2>
 
     <p>
@@ -232,7 +232,7 @@ gridOptions: {
                 in the groups have <code>resizable=false</code>.</li>
         </ul>
 
-    <?= example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Renderered</h2>
 <p>There are two scenarios main where scenarios where you might want to resize columns based on grid data:</p>

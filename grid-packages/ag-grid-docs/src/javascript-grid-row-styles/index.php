@@ -150,7 +150,7 @@ gridOptions.rowClassRules: {
             and <code>api.updateRowData</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
     </ul>
 
-    <?= example('Row Class Rules', 'row-class-rules', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Class Rules', 'row-class-rules', 'generated', array('processVue' => true)) ?>
 
     <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
 
@@ -177,6 +177,6 @@ gridOptions.rowClassRules: {
         </li>
     </ul>
 
-    <?= example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', array('processVue' => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

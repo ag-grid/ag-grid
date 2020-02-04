@@ -191,7 +191,7 @@ will be empty.
     second is on the Year column.
 </p>
 
-<?= example('Filter Component', 'custom-filter') ?>
+<?= grid_example('Filter Component', 'custom-filter') ?>
 
 <h2>Custom Filters Containing a Popup Element</h2>
 

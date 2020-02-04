@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
         to <code>scroll !important</code>. The <code>!important</code> is necessary to override the inline styling.
     </p>
 
-    <?= example('Always visible scrollbars', 'scrollbars', 'vanilla') ?>
+    <?= grid_example('Always visible scrollbars', 'scrollbars', 'vanilla') ?>
 
     <h2>Auto Height, Full Width & Pagination</h2>
 
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
             page, 5 rows on the second page).</li>
     </ul>
 
-    <?= example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', array("enterprise" => 1)) ?>
 
 
     <h2>Expanding Groups &amp; Vertical Scroll Location</h2>
@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
         children of the group are visible.
     </p>
 
-    <?= example('Row Group Scroll', 'row-group-scroll', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('Row Group Scroll', 'row-group-scroll', 'vanilla', array("enterprise" => 1)) ?>
 
 
 

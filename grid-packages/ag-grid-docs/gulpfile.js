@@ -20,7 +20,6 @@ const {updateBetweenStrings, getAllModules} = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateExamples = require('./example-generator');
-const buildPackagedExamples = require('./packaged-example-builder');
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
@@ -68,7 +67,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`)
     });
 
-    const utilFileContent = fs.readFileSync('./dist/example-runner/utils.php', 'UTF-8');
+    const utilFileContent = fs.readFileSync('./dist/example-runner/example-mappings.php', 'UTF-8');
     let updatedUtilFileContent = updateBetweenStrings(utilFileContent,
         '/* START OF GRID MODULES DEV - DO NOT DELETE */',
         '/* END OF GRID MODULES DEV - DO NOT DELETE */',
@@ -85,7 +84,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         () => {},
         () => {});
 
-    fs.writeFileSync('./dist/example-runner/utils.php', updatedUtilFileContent, 'UTF-8');
+    fs.writeFileSync('./dist/example-runner/example-mappings.php', updatedUtilFileContent, 'UTF-8');
 
     done();
 };
@@ -229,10 +228,6 @@ gulp.task('generate-examples-dev', (done) => {
         gridEnterpriseModules
     )();
 });
-gulp.task('build-packaged-examples', (done) => buildPackagedExamples(() => {
-    console.log("Packaged Examples Built");
-    done();
-}));
 gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('update-dist-systemjs-files', updateFrameworkBoilerplateSystemJsEntry);
 gulp.task('process-src', processSource);
@@ -240,8 +235,8 @@ gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('release-archive', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
-gulp.task('release', series(parallel('generate-examples-release', 'build-packaged-examples'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
+gulp.task('release-archive', series(parallel('generate-examples-release'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
+gulp.task('release', series(parallel('generate-examples-release'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 gulp.task('generate-examples', series('generate-examples-dev'));

@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     <br/>
 
-    <?= example('Context Object', 'context', 'vanilla') ?>
+    <?= grid_example('Context Object', 'context', 'vanilla') ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -22,9 +22,9 @@ var data = [
     }
 ];
 
-var chart = AgChart.create({
+var chart = agCharts.AgChart.create({
     data: data,
-    container: document.body,
+    container: document.querySelector('#myChart'),
     title: {
         text: 'Beverage Expenses'
     },

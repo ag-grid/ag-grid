@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Column Moving Simple', 'moving-simple', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Column Moving Simple', 'moving-simple', 'generated', array("processVue" => true)) ?>
 
 <h2>Moving Animation</h2>
 
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Column Suppress & Lock', 'suppress-and-lock', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Column Suppress & Lock', 'suppress-and-lock', 'generated', array("processVue" => true)) ?>
 
 <h2>Advanced Locked Position Example</h2>
 
@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Advanced Lock', 'advanced-lock', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Advanced Lock', 'advanced-lock', 'generated', array("processVue" => true)) ?>
 
 <h2>Lock Visible</h2>
 
@@ -217,7 +217,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

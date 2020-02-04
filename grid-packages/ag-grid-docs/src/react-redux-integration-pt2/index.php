@@ -446,7 +446,7 @@ autoGroupColumnDef = {
         <li>Click and Drag on the move icon to move files and folders.</li>
     </ul>
 
-    <?= example('Redux File Browser', 'redux-file-browser', 'react', array("enterprise" => 1, "extras" => array( "fontawesome" ))) ?>
+    <?= grid_example('Redux File Browser', 'redux-file-browser', 'react', array("enterprise" => 1, "extras" => array( "fontawesome" ))) ?>
 
     <h2 id="conclusion">Conclusion</h2>
     <p>

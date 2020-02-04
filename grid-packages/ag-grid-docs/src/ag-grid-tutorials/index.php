@@ -36,29 +36,29 @@ include '../getting-started/header.php';
 
     <h2>Step 1 - Basic Grid</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/OEy2CL4jQvU" frameborder="0" allowfullscreen></iframe>
-    <?= example('Basic Grid', 'start') ?>
+    <?= grid_example('Basic Grid', 'start') ?>
 
     <h2>Step 2 - Loading Data</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/BR-ARyQZm4E" frameborder="0" allowfullscreen></iframe>
-    <?= example('Loading Data', 'load-data') ?>
+    <?= grid_example('Loading Data', 'load-data') ?>
 
     <h2>Step 3 - Value Getters</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/hZGHoo3RPGI" frameborder="0" allowfullscreen></iframe>
-    <?= example('Value Getters', 'value-getters') ?>
+    <?= grid_example('Value Getters', 'value-getters') ?>
 
     <h2>Step 4 - Cell Class Rules</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/MRDG741Wz0k" frameborder="0" allowfullscreen></iframe>
-    <?= example('Cell Class Rules', 'cell-class-rules') ?>
+    <?= grid_example('Cell Class Rules', 'cell-class-rules') ?>
 
     <h2>Step 5 - Cell Renderer</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/6Ha1pEuYb6w" frameborder="0" allowfullscreen></iframe>
 
-    <?= example('Cell Renderer', 'cell-renderer') ?>
+    <?= grid_example('Cell Renderer', 'cell-renderer') ?>
 
     <h2>Step 6 - Expressions</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/qPKG7KRNbnk" frameborder="0" allowfullscreen></iframe>
 
-    <?= example('Expressions', 'expressions') ?>
+    <?= grid_example('Expressions', 'expressions') ?>
 
 <hr>
 

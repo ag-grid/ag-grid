@@ -317,7 +317,7 @@ interface SuppressKeyboardEventParams {
     </li>
 </ul>
 
-<?= example('Editor Component', 'vanilla-editor-component', 'vanilla', array("enterprise" => 1)) ?>
+<?= grid_example('Editor Component', 'vanilla-editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
 <h2 id="accessing-cell-editor-instances">Accessing Cell Editor Instances</h2>
 
@@ -368,7 +368,7 @@ if (instances.length > 0) {
     </ul>
 </p>
 
-<?= example('Get Editor Instance', 'get-editor-instance', 'vanilla', array("enterprise" => 1)) ?>
+<?= grid_example('Get Editor Instance', 'get-editor-instance', 'vanilla', array("enterprise" => 1)) ?>
 
 <p>
     If your are using a framework component (detailed below), then the returned object

@@ -80,7 +80,7 @@ const chart = AgChart.create({
 });
 </snippet>
 
-<?= example('Basic Column Chart', 'basic-column', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Basic Column Chart', 'basic-column', 'generated', array("enterprise" => true)) ?>
 
 <h2>Series</h2>
 

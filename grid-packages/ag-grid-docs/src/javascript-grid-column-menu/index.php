@@ -161,7 +161,7 @@ menuItems.push('separator')</snippet>
         <li><code>postProcessPopup</code> is used on the Gold column to reposition the menu 25px lower.</li>
     </ul>
 
-    <?= example('Column Menu', 'column-menu', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Column Menu', 'column-menu', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Popup Parent</h2>
 

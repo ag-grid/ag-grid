@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <p>In this example the grid only receives the updated rows and uses the <a href="../javascript-grid-data-update">Transaction</a> method
         of row updates.</p>
 
-    <?= example('RxJS - With updated rows only supplied to the grid', 'rxjs-row', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
+    <?= grid_example('RxJS - With updated rows only supplied to the grid', 'rxjs-row', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
 
     <h2>With full data set supplied to the grid, with changed data within.</h2>
 
@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
     <p>In this example the grid only receives the the full row data via the 2nd subscription but makes uses of the <a href="../javascript-grid-data-update">deltaRowDataMode</a> method
         of row updates for improved performance.</p>
 
-    <?= example('RxJS - With full data set supplied to the grid', 'rxjs-bulk', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
+    <?= grid_example('RxJS - With full data set supplied to the grid', 'rxjs-bulk', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

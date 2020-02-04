@@ -11,7 +11,7 @@
 
 <p> Using React Components in the Cell Renderers </p>
 
-<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'react', 'extras' => array('fontawesome', "bootstrap"))) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'react', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
 <h3 id="react-props"> React Props</h3>
 

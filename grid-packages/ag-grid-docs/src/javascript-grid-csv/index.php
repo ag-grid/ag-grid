@@ -65,7 +65,7 @@ include_once '../php-utils/printPropertiesTable.php';
             visible in Excel.</li>
     </ul>
 
-    <?= example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>
+    <?= grid_example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

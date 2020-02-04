@@ -63,7 +63,7 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
         files.forEach(file => {
             const contents = fs.readFileSync(file, {encoding: 'utf8'});
             const section = path.dirname(file).replace('src/', '');
-            const exampleRegEx = /example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g;
+            const exampleRegEx = /grid_example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g;
 
             let matches;
             while ((matches = exampleRegEx.exec(contents))) {

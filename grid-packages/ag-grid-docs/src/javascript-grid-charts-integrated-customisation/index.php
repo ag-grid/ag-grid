@@ -79,7 +79,7 @@ type ChartType =
     <li><b>Doughnut</b> charts have the legend docked to the <code>right</code>.</li>
 </ul>
 
-<?= example('Customising Charts', 'custom-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Customising Charts', 'custom-chart', 'generated', array("enterprise" => true)) ?>
 
 <h2>Saving User Preferences</h2>
 
@@ -105,6 +105,6 @@ type ChartType =
         the <code>savedLegendUserPreference</code> object to globally keep track of legend preferences.</li>
 </ul>
 
-<?= example('Saving User Preferences', 'saving-user-preferences', 'generated', array("exampleHeight" => 660,"enterprise" => true)) ?>
+<?= grid_example('Saving User Preferences', 'saving-user-preferences', 'generated', array("exampleHeight" => 660,"enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -1,38 +1,9 @@
 <?php
-include dirname(__FILE__) . '/../config.php';
-
-function getReactExampleInfo()
-{
-    $preview = isset($_GET['preview']);
-
-    $exampleDir = basename($_GET['example']);
-    $exampleSection = basename($_GET['section']);
-
-    $appRoot = path_combine('..', $exampleSection, $exampleDir);
-
-    $files = getDirContents($appRoot);
-
-    $styles = getStyles($files, $appRoot, $preview);
-    $scripts = getScripts($files, $appRoot, $preview);
-    $documents = getDocuments($files, $appRoot, $preview);
-
-    $boilerplatePath = "app-boilerplate/";
-    $appLocation = $appRoot . "/";
-
-    return array(
-        "preview" => $preview,
-        "boilerplatePath" => $boilerplatePath,
-        "appLocation" => $appLocation,
-        "styles" => $styles,
-        "scripts" => $scripts,
-        "documents" => $documents
-    );
-}
+require_once dirname(__DIR__) . '/config.php';
+require_once dirname(__DIR__) . '/example-runner/example-runner.php';
 
 function reactApp($dir, $id, $options = array())
 {
-    $options['skipDirs'] = $options['skipDirs'] ? $options['skipDirs'] : array();
-
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
 
     $config = array(
@@ -62,9 +33,9 @@ function reactApp($dir, $id, $options = array())
 
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
-    $entry['files'] = getDirContents($dir, $options['skipDirs']);
+    $entry['files'] = getDirContents($dir);
 
-     $entry['boilerplatePath'] = "../react-runner/app-boilerplate";
+    $entry['boilerplatePath'] = "../react-runner/app-boilerplate";
     $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
 
     $entry['resultUrl'] = "../react-runner/react-app.php?$queryString";

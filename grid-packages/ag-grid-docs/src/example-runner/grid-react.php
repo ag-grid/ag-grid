@@ -1,6 +1,7 @@
 <?php
-include 'utils.php';
-$example = getExampleInfo('react');
+require_once 'example-runner.php';
+
+$example = getExampleInfo('grid','react');
 $generated = isset($_GET['generated']);
 if ($generated) {
     echo "<!DOCTYPE html>\n";

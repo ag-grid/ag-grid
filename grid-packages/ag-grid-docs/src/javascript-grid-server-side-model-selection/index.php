@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 
-<?= example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
 
         </li>
     </ul>
-<?= example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 <h2>Providing Node ID's</h2>

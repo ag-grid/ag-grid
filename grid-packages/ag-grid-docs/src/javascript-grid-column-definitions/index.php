@@ -185,7 +185,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<?= example('Column Definition Example', 'column-definition', 'generated', array("processVue" => true, 'grid' => array('height' => '100%'))) ?>
+<?= grid_example('Column Definition Example', 'column-definition', 'generated', array("processVue" => true, 'grid' => array('height' => '100%'))) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -242,7 +242,7 @@ var gridOptions = {
     </li>
 </ul>
 
-<?= example('Column IDs', 'column-ids', 'generated') ?>
+<?= grid_example('Column IDs', 'column-ids', 'generated') ?>
 
 <h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
@@ -296,7 +296,7 @@ Examples of state include column visibility, width, row groups and values.
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Column State Example', 'column-state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
@@ -375,7 +375,7 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2 id="delta-columns">Delta Columns</h2>
 
@@ -461,6 +461,6 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

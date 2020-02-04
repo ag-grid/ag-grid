@@ -14,7 +14,7 @@ include('../includes/mediaHeader.php');
     <div class="row">
         <div class="col-md-8">
 
-            <?= example('Load and Stress Test of ag-Grid', 'load-and-stress-test-mod', 'vanilla', array('enterprise' => true)) ?>
+            <?= grid_example('Load and Stress Test of ag-Grid', 'load-and-stress-test-mod', 'vanilla', array('enterprise' => true)) ?>
 
         </div>
     </div>

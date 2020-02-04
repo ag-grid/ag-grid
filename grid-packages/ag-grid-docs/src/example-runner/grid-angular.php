@@ -1,13 +1,17 @@
 <?php
-include 'utils.php';
-$example = getExampleInfo('vue');
+require_once 'example-runner.php';
+
+$example = getExampleInfo('grid', 'angular');
+$generated = isset($_GET['generated']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Vue example</title>
+    <title>Angular 2 example</title>
+    <script>document.write('<base href="' + document.location + '" />');</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <style media="only screen">
       html, body {
         height: 100%;
@@ -28,26 +32,29 @@ $example = getExampleInfo('vue');
         overflow: auto;
       }
     </style>
-<?php renderExampleExtras($_GET) ?>
+<?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
-  </head>
-  <body>
-    <div id="app" style="height: 100%">
-        <my-component>Loading Vue example&hellip;</my-component>
-    </div>
+<?php renderNonGeneratedScripts($example['scripts']); ?>
+
+    <!-- Polyfills -->
+    <script src="https://unpkg.com/core-js@2.6.5/client/shim.min.js"></script>
+    <script src="https://unpkg.com/zone.js@0.8.17/dist/zone.js"></script>
+    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
 
     <script>
-        var appLocation = '<?= $example['appLocation'] ?>';
-        var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
+        var appLocation = '<?= $example["appLocation"] ?>';
+        var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
         var systemJsMap = <?= json_encode($gridSystemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
         var systemJsPaths = <?= json_encode($example['gridSettings']['enterprise'] ? $gridSystemJsEnterprisePaths : $gridSystemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
     </script>
 
-    <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
     <script>
-      System.import('<?=$example['appLocation']?>main.js').catch(function(err) { console.error(err); })
+      System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err) { console.error(err); });
     </script>
+  </head>
+  <body>
+    <my-app>Loading Angular example&hellip;</my-app>
   </body>
 </html>

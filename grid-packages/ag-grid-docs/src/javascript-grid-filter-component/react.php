@@ -95,4 +95,4 @@ laterOnInYourApplicationSomewhere() {
     lifecycle events.
 </p>
 
-<?= example('React Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('React Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>

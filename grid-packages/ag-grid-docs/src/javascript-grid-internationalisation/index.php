@@ -237,7 +237,7 @@ localeText = {
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
 }</snippet>
 
-    <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
+    <?= grid_example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
 
     <h2>Using <code>localeTextFunc</code></h2>
 

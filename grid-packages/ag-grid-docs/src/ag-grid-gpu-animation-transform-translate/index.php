@@ -79,7 +79,7 @@ eRow.style.top = '500px';
             Notice how smooth the animation is (or is not) which we will compare with the next example.
         </p>
 
-        <?= example('Example Absolute', 'example-absolute', 'vanilla') ?>
+        <?= grid_example('Example Absolute', 'example-absolute', 'vanilla') ?>
 
         <h2>Using Transform</h2>
 
@@ -118,7 +118,7 @@ eRow.style.transform = 'translateY(500px)';
             in the animation experience.
         </p>
 
-        <?= example('Example Transform', 'example-transform', 'vanilla') ?>
+        <?= grid_example('Example Transform', 'example-transform', 'vanilla') ?>
 
         <h2>Usage in ag-Grid</h2>
 

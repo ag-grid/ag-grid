@@ -86,7 +86,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
     provided UMD bundles. If you'd like to create a custom UMD bundle please see the section following the examples on
     how to do so.</p>
 
-<?= example('Using Modules', 'module-grid', 'multi', array("enterprise" => 1, "showResult" => false)) ?>
+<?= grid_example('Using Modules', 'module-grid', 'multi', array("enterprise" => 1, "showResult" => false)) ?>
 <?//= example('Using Modules', 'module-grid', 'multi', array("exampleHeight" => 170)) ?>
 
 <note>Full working examples of this can be found on <a

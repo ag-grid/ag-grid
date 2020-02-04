@@ -166,7 +166,7 @@ gridOptions.api.setServerSideDatasource(datasource);
     via the gridOptions.</li>
 </ul>
 
-<?= example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Next Up</h2>
 

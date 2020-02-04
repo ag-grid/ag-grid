@@ -1,6 +1,5 @@
 <?php
-include '../example-runner/utils.php';
-include 'react-utils.php';
+include '../example-runner/example-runner.php';
 $example = getReactExampleInfo();
 ?>
 <!DOCTYPE html>

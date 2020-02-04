@@ -1,6 +1,6 @@
 <?php
 $navKey = "demo";
-require "example-runner/utils.php";
+require "example-runner/example-runners.php";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>

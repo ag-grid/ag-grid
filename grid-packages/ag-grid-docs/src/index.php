@@ -1,5 +1,5 @@
 <?php
-require "example-runner/utils.php";
+require "example-runner/example-runners.php";
 require "includes/html-helpers.php";
 define('HOMEPAGE', true);
 gtm_data_layer('home');

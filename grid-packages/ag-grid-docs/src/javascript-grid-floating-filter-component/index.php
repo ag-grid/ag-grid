@@ -204,7 +204,7 @@ interface IFloatingFilterParams {
     </li>
 </ol>
 
-<?= example('Custom Floating Filter', 'custom-floating-filter') ?>
+<?= grid_example('Custom Floating Filter', 'custom-floating-filter') ?>
 
 
 <h3>Custom Filter And Custom Floating Filter Example</h3>
@@ -234,7 +234,7 @@ interface IFloatingFilterParams {
     </li>
 </ol>
 
-<?= example('Custom Filter and Floating Filter', 'custom-filter-and-floating-filter') ?>
+<?= grid_example('Custom Filter and Floating Filter', 'custom-filter-and-floating-filter') ?>
 
 <h3>Custom Filter And Read-Only Floating Filter Example</h3>
 
@@ -249,7 +249,7 @@ interface IFloatingFilterParams {
     have a read-only floating filter that gets updated as you change the values from their parent filter
 </p>
 
-<?= example('Custom Filter Only', 'custom-filter') ?>
+<?= grid_example('Custom Filter Only', 'custom-filter') ?>
 
 <h2>Complex example with JQuery</h2>
 
@@ -267,7 +267,7 @@ interface IFloatingFilterParams {
     <li>All the other columns have the standard 500ms debounce</i></li>
 </ul>
 
-<?= example('Custom Complex Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
+<?= grid_example('Custom Complex Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>

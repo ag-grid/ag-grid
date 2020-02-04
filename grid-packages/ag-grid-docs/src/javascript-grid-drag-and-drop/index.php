@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Simple', 'simple', 'generated') ?>
+    <?= grid_example('Simple', 'simple', 'generated') ?>
 
     <h2>Dragging Between Grids</h2>
 
@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Two Grids', 'two-grids', 'multi') ?>
+    <?= grid_example('Two Grids', 'two-grids', 'multi') ?>
 
     <p>
         Note that there is no specific drop zone logic in the grid. This was done on purpose after analysis.
@@ -149,7 +149,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Custom Drag Data', 'custom-drag-data', 'generated') ?>
+    <?= grid_example('Custom Drag Data', 'custom-drag-data', 'generated') ?>
 
     <h2>Custom Drag Component</h2>
 
@@ -173,7 +173,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Custom Drag Component', 'custom-drag-comp', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Custom Drag Component', 'custom-drag-comp', 'generated', array("enterprise" => 1)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

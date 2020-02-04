@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
 
     <h2>Configuring Filters to Columns</h2>
 

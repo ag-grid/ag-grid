@@ -11,7 +11,6 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator');
-const buildPackagedExamples = require('./packaged-example-builder');
 const {updateBetweenStrings, getAllModules} = require("./utils");
 const docsLock = require('./../../scripts/docsLock');
 
@@ -289,7 +288,7 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
 function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
     console.log("updating util.php -> systemjs mapping with modules...");
 
-    const utilityFilename = 'src/example-runner/utils.php';
+    const utilityFilename = 'src/example-runner/example-mappings.php';
     const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
 
     const cssFiles = glob.sync(`../../community-modules/all-modules/dist/styles/*.css`)
@@ -574,11 +573,6 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-charts-angular');
             serveFramework(app, 'ag-charts-vue');
 
-            // build "packaged" landing page examples (for performance reasons)
-            // these aren't watched and regenerated like the other examples
-            // commented out by default - add if you want to test as part of the dev build (or run separately - see at the end of the file)
-            // buildPackagedExamples(() => console.log("Packaged Examples Built")); // scope - for eg react-grid
-
             // regenerate examples
             watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules);
 
@@ -619,8 +613,6 @@ if (process.argv.length >= 3) {
             const {gridCommunityModules, gridEnterpriseModules} = getAllModules();
             generateExamples(() => console.log('generation done.'), exampleDir, true, gridCommunityModules, gridEnterpriseModules);
         }
-    } else if (execFunc === 'prebuild-examples') {
-        buildPackagedExamples(() => console.log("Packaged Examples Built"), exampleDir || undefined);
     }
 }
 

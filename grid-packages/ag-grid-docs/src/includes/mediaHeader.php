@@ -19,7 +19,7 @@ if ($canonical) {
 $navKey = "blog";
 $version = 'latest';
 require_once dirname(__FILE__) . '/html-helpers.php';
-require_once dirname(__FILE__) . '/../example-runner/utils.php';
+require_once dirname(__FILE__) . '/../example-runner/example-runners.php';
 gtm_data_layer('blogs');
 ?>
 

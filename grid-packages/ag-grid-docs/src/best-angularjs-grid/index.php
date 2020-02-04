@@ -169,7 +169,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
 
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
 
 
 <h2>Events & Digest Cycle</h2>
@@ -195,7 +195,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
@@ -233,7 +233,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </ul>
 </p>
 
-<?= example('Components', 'components', 'vanilla', array("exampleHeight" => 400, 'extras' => array('angularjs1', 'ui-bootstrap'))) ?>
+<?= grid_example('Components', 'components', 'vanilla', array("exampleHeight" => 400, 'extras' => array('angularjs1', 'ui-bootstrap'))) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS
@@ -288,7 +288,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
 </ul>
 
-<?= example('Angular compiling', 'compiling', 'vanilla', array('extras' => array('angularjs1'))) ?>
+<?= grid_example('Angular compiling', 'compiling', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <note>
     When scrolling the example above up and down, the cells rendered using Angular are blank
@@ -329,7 +329,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 </note>
 
-<?= example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
+<?= grid_example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
 
 <h2 id="next-steps">Next Steps</h2>
 

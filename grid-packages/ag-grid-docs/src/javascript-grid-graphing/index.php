@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     data that when clicked on provides a simple time-series chart of the corresponding data. Multiple rows (or stocks) can be
     selected to provide a comparison between stocks.</p>
 
-<?= example('External Graphs using D3', 'stocks-master-detail', 'vanilla', array("enterprise" => 1, "exampleHeight" => 820)) ?>
+<?= grid_example('External Graphs using D3', 'stocks-master-detail', 'vanilla', array("enterprise" => 1, "exampleHeight" => 820)) ?>
 
     <h2>Inline Graphs using jQuery Sparklines</h2>
 
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         <li>Expenditure: Expenditure shown in a Pie Chart.</li>
     </ul>
 
-    <?= example('Inline Graphs', 'inline-graphs', 'vanilla', array("enterprise" => 1, "exampleHeight" => 850, "extras" => array("lodash", "d3", "jquery", "sparkline"))) ?>
+    <?= grid_example('Inline Graphs', 'inline-graphs', 'vanilla', array("enterprise" => 1, "exampleHeight" => 850, "extras" => array("lodash", "d3", "jquery", "sparkline"))) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -11,4 +11,4 @@
     The below example show how to create a custom floating filter reusing the out of the box number filter with React.
 </p>
 
-<?= example('React Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('React Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>

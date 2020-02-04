@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('No Grouping', 'no-grouping', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= grid_example('No Grouping', 'no-grouping', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Pagination with Groups</h2>
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= grid_example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Pagination with Child Rows</h2>
 
@@ -123,7 +123,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Next Up</h2>
 

@@ -11,4 +11,4 @@
     The below example show how to create a custom floating filter reusing the out of the box number filter with Angular.
 </p>
 
-<?= example('Angular Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('Angular Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>

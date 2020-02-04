@@ -113,6 +113,6 @@ interface PieTooltipRendererParams {
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= example('Pie/Doughnut Chart Customisations', 'custom-pie-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Pie/Doughnut Chart Customisations', 'custom-pie-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

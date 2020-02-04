@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
         an RTL language, however none of us in ag-Grid knows any RTL languages, so we are sticking with English.
     </p>
 
-    <?= example('RTL Simple', 'rtl-simple', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('RTL Simple', 'rtl-simple', 'generated', array('processVue' => true)) ?>
 
     <h2>Complex Example</h2>
 
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         is using ag-Grid Enterprise - hence the tool panel and context menu's are active.
     </p>
 
-    <?= example('RTL Complex', 'rtl-complex', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('RTL Complex', 'rtl-complex', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>How it Works</h2>
 

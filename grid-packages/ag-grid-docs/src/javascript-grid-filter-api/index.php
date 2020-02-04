@@ -102,7 +102,7 @@ gridApi.onFilterChanged();</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filter API', 'filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Reset Individual Filters</h2>
 
@@ -168,7 +168,7 @@ gridApi.onFilterChanged();</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

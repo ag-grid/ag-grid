@@ -93,6 +93,6 @@ interface INoRowsOverlayParams {
     <li><b>Custom No Rows Overlay Renderer Parameters</b> are supplied using <code>gridOptions.noRowsOverlayComponentParams</code>.</li>
 </ul>
 
-<?= example('Custom Overlay Components', 'custom-overlay-components', 'generated', array('enterprise' => false, 'processVue' => true, 'extras' => array('fontawesome')) ) ?>
+<?= grid_example('Custom Overlay Components', 'custom-overlay-components', 'generated', array('enterprise' => false, 'processVue' => true, 'extras' => array('fontawesome')) ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

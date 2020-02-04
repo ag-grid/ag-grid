@@ -118,6 +118,6 @@ enableCellChangeFlash: true,
     <li><b>Redo API</b>: use the 'Redo' button to invoke <code>gridApi.redoCellEditing().</code></li>
 </ul>
 
-<?= example('Undo / Redo', 'undo-redo', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+<?= grid_example('Undo / Redo', 'undo-redo', 'generated', array("enterprise" => true, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

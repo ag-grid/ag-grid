@@ -115,6 +115,6 @@ interface ScatterTooltipRendererParams {
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= example('Scatter/Bubble Chart Customisations', 'custom-scatter-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Scatter/Bubble Chart Customisations', 'custom-scatter-chart', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

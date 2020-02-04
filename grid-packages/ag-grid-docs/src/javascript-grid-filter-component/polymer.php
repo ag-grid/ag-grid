@@ -168,5 +168,5 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Polymer Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<?= example('Polymer Filter Component', 'polymer-filter', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 360)) ?>
+<?= grid_example('Polymer Filter Component', 'polymer-filter', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 360)) ?>
 

@@ -76,7 +76,7 @@ private getCountryFilterParams():any {
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
-    <?= example('ag-Grid in Angular with Markup', 'angular-rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
+    <?= grid_example('ag-Grid in Angular with Markup', 'angular-rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
 </div>
 

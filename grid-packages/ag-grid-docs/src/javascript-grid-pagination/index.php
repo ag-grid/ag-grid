@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
-    <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="clientPagination">Supported Row Models</h2>
 
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         automatically changes. To view this, open the example up in a new tab and resize your browser.
     </p>
 
-    <?= example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <note>
         Each pagination page must have the same number of rows.
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
             <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
     </ul>
 
-    <?= example('Custom Paging', 'custom-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Custom Paging', 'custom-paging', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
     <p>The example also sets property <code>suppressScrollOnNewData=true</code>, which tells the grid to NOT
     scroll to the top when the page changes.</p>
 
-    <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="childRows">Pagination & Child Rows</h2>
 
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Grouping Normal', 'grouping-normal', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Grouping Normal', 'grouping-normal', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Mode 2: Paginate All Rows, Including Children</h3>
 
@@ -159,7 +159,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Fallback to Mode 2</h3>
 

@@ -99,7 +99,7 @@ interface GridStyle {
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= example('Cartesian Chart Customisations', 'custom-cartesian-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Cartesian Chart Customisations', 'custom-cartesian-chart', 'generated', array("enterprise" => true)) ?>
 
 <h2>Axis Types</h2>
 
@@ -206,6 +206,6 @@ This is a continuous axis used for plotting date/time values. It is used automat
     Date column.
 </p>
 
-<?= example('Time Series', 'time-series', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Time Series', 'time-series', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

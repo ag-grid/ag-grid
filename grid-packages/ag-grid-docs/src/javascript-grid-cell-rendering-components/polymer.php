@@ -11,7 +11,7 @@
 <h3 id="example-rendering-using-polymer-components">Example: Rendering using Polymer Components</h3>
 
 <p> Using Polymer Components in the Cell Renderers </p>
-<?= example('Simple Dynamic Component', 'polymer-dynamic', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 460)) ?>
+<?= grid_example('Simple Dynamic Component', 'polymer-dynamic', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 460)) ?>
 
 <h3 id="polymer-methods-lifecycle"> Polymer Methods / Lifecycle</h3>
 

@@ -15,7 +15,7 @@
 
 <h3>Example: Rendering using Angular Components</h3>
 
-<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'angular', 'extras' => array('fontawesome', "bootstrap"))) ?>
+<?= grid_example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'angular', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
 <h3>Angular Methods / Lifecycle</h3>
 
@@ -55,4 +55,4 @@
     Using more complex Angular Components in the Cell Renderers - specifically how you can use nested <code>NgModule</code>'s
     within the grid.
 </p>
-<?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>
+<?= grid_example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>

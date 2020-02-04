@@ -1,4 +1,5 @@
 <?php
+include '../example-runner/example-mappings.php';
 include '../example-runner/utils.php';
 include 'react-utils.php';
 $example = getReactExampleInfo();

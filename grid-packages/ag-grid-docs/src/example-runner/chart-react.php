@@ -1,23 +1,21 @@
 <?php
-include '../example-runner/utils.php';
-include 'react-utils.php';
+include '../example-runner/example-runner.php';
 $example = getReactExampleInfo();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Vue example</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>ag-Grid React Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style media="only screen">
-        html, body {
+        html, body, #root {
             height: 100%;
             width: 100%;
             margin: 0;
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch;
         }
-
         html {
             position: absolute;
             top: 0;
@@ -25,7 +23,6 @@ $example = getReactExampleInfo();
             padding: 0;
             overflow: auto;
         }
-
         body {
             padding: 1rem;
             overflow: auto;
@@ -33,12 +30,10 @@ $example = getReactExampleInfo();
     </style>
 </head>
 <body>
-<div id="app" style="height: 100%">
-    <my-component>Loading Vue example&hellip;</my-component>
-</div>
+<div id="root">Loading&hellip;</div>
 
 <script>
-    var systemJsMap = <?= json_encode($chartSystemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
+    var systemJsMap = <?= json_encode($chartSystemJsMap); ?>;
 <?php
         if(!empty($chartSystemJsCommunityPaths)) {
 ?>
@@ -49,12 +44,11 @@ $example = getReactExampleInfo();
 </script>
 
 <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
+<!-- leave the next line as is - is replaced when deploying to archives or production -->
 <script src="systemjs.config.js"></script>
 
 <script>
-    System.import('main.js').catch(function (err) {
-        console.error(err);
-    })
+    System.import('index.jsx').catch( function(err) { console.error(err); })
 </script>
 </body>
 </html>

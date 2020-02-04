@@ -177,7 +177,7 @@ include '../documentation-main/documentation_header.php';
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("enterprise" => true)) ?>
 
 
 

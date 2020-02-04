@@ -96,7 +96,7 @@ interface ITooltipParams {
     <li><b>Custom Tooltip Parameters</b> are supplied using <code>colDef.tooltipComponentParams</code>.</li>
 </ul>
 
-<?= example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
+<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
 
 <h2>Showing Blank Values</h2>
 
@@ -136,7 +136,7 @@ interface ITooltipParams {
     </li>
 </ul>
 
-<?= example('Blank Values', 'blank-values', 'generated') ?>
+<?= grid_example('Blank Values', 'blank-values', 'generated') ?>
 
 <h2>Header Tooltip with Custom Tooltip</h2>
 
@@ -166,7 +166,7 @@ interface ITooltipParams {
     does not contain a <code>rowIndex</code> value.
 </ul>
 
-<?= example('Header Custom Tooltip', 'header-tooltip', 'generated') ?>
+<?= grid_example('Header Custom Tooltip', 'header-tooltip', 'generated') ?>
 
 <h2>Example: Tooltips with RowGroups</h2>
 
@@ -181,7 +181,7 @@ interface ITooltipParams {
     </li>
 </ul>
 
-<?= example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', array("enterprise" => 1, 'processVue' => true) ) ?>
+<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', array("enterprise" => 1, 'processVue' => true) ) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 
@@ -189,6 +189,6 @@ interface ITooltipParams {
     The example below demonstrates how to use the default browser tooltips.
 </p>
 
-<?= example('Default Browser Tooltip', 'default-tooltip', 'vanilla', array('processVue' => true) ) ?>
+<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'vanilla', array('processVue' => true) ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

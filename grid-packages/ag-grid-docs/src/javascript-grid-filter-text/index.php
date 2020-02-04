@@ -150,7 +150,7 @@ function(s){
     <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
 </ul>
 
-<?= example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Text Filter', 'text-filter', 'generated', array("processVue" => true)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

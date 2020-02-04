@@ -81,4 +81,4 @@ laterOnInYourApplicationSomewhere() {
     vueFilterInstance.componentMethod();
 }</snippet>
 
-<?= example('Vue Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'vue', "processVue" => true, 'extras' => array("bootstrap"))) ?>
+<?= grid_example('Vue Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'vue', "processVue" => true, 'extras' => array("bootstrap"))) ?>

@@ -173,7 +173,7 @@ type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUn
     <li><b>Unlink Toolbar Item</b> - has been removed from the toolbar.</li>
 </ul>
 
-<?= example('Custom Toolbar', 'custom-toolbar', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Custom Toolbar', 'custom-toolbar', 'generated', array("enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 

@@ -75,6 +75,6 @@ interface IDateParams {
     Our way of fixing this problem is to add the <code>ag-custom-component-popup</code> class to the floating calendar.
 </p>
 
-<?= example('Custom Date Component', 'custom-date', 'generated', array("processVue" => true, "extras" => array("fontawesome", "flatpickr"))) ?>
+<?= grid_example('Custom Date Component', 'custom-date', 'generated', array("processVue" => true, "extras" => array("fontawesome", "flatpickr"))) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

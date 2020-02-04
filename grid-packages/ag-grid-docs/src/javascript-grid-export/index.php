@@ -63,7 +63,7 @@ include_once '../php-utils/printPropertiesTable.php';
         <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
-    <?= example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>
         What Gets Exported
@@ -110,7 +110,7 @@ include_once '../php-utils/printPropertiesTable.php';
         <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
-    <?= example('Formatting exported data', 'formatting', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Formatting exported data', 'formatting', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Custom Headers and Footers</h2>
 

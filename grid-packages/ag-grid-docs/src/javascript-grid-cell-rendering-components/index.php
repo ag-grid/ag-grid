@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     symbol instead of the medal count.
 </p>
 
-<?= example('Simple Cell Renderer', 'simple-javascript', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
+<?= grid_example('Simple Cell Renderer', 'simple-javascript', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
 
 <h2>Cell Renderer Component</h2>
 
@@ -376,7 +376,7 @@ colDef.cellRenderer = function(params) {
     <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>
 </ul>
 
-<?= example('Cell Renderer', 'cell-renderer') ?>
+<?= grid_example('Cell Renderer', 'cell-renderer') ?>
 
 <h2 id="accessing-cell-renderer-instances">Accessing Cell Renderer Instances</h2>
 
@@ -445,7 +445,7 @@ if (instances.length > 0) {
     </ul>
 </p>
 
-<?= example('Get Cell Renderer', 'get-cell-renderer') ?>
+<?= grid_example('Get Cell Renderer', 'get-cell-renderer') ?>
 
 <p>
     If your are using a framework component (detailed below), then the returned object

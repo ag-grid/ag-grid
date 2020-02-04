@@ -100,7 +100,7 @@ IServerSideGetRowsRequest {
             see Athlete is sorted. </li>
     </ul>
 
-<?= example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <note>
     When the grid sort changes, only impacted rows will get reloaded. For example if grouping by Country
@@ -182,7 +182,7 @@ gridOptions.getChildCount = function(data) {
     </li>
 </ul>
 
-<?= example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <h2>Preserving Group State</h2>
 
@@ -234,7 +234,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 
 <h2>Complex Columns</h2>
@@ -272,7 +272,7 @@ row = {
     with dot notation, ie <code>year.name</code>
 </p>
 
-<?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
+<?= grid_example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Next Up</h2>

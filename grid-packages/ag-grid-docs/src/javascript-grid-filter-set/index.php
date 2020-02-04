@@ -171,7 +171,7 @@ include '../documentation-main/documentation_header.php';
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Asynchronous Values</h2>
 
@@ -214,7 +214,7 @@ filterParams: {
             the values are not loaded again.</li>
         </ul>
 
-    <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Sorting And Formatting Set Filter Values List</h2>
 
@@ -234,7 +234,7 @@ filterParams: {
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Refresh After Edit or Transcation Update</h2>
 
@@ -321,7 +321,7 @@ filterParams: {
             </li>
         </ul>
 
-    <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 
     <h2>New Rows Action and Values Example</h2>
@@ -353,7 +353,7 @@ filterParams: {
         no longer exist in the new set.
     </note>
 
-    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2>Set Filter Model</h2>
 
@@ -443,6 +443,6 @@ gridOptions.api.onFilterChanged();
         end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
-    <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

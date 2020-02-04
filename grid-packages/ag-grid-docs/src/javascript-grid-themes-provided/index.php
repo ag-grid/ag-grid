@@ -109,11 +109,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>Example Alpine Light (ag-theme-alpine)</p>
 
-    <?= example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= grid_example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
     <p>Example Alpine Dark (ag-theme-alpine-dark)</p>
 
-    <?= example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= grid_example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
     <h3>Customizing the Alpine Theme</h3>
 
@@ -244,11 +244,11 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
     <p>Example Balham Light (ag-theme-balham)</p>
 
-<?= example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+<?= grid_example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
     <p>Example Balham Dark (ag-theme-balham-dark)</p>
 
-<?= example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+<?= grid_example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
 
     <h3>Change the Theme Accent Color</h3>
 
@@ -279,7 +279,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
 
-    <?= example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'processVue' => true, 'extras' => array("roboto") )) ?>
+    <?= grid_example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'processVue' => true, 'extras' => array("roboto") )) ?>
 
     <h3>Include the Roboto Font</h3>
 

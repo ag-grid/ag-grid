@@ -98,6 +98,6 @@ type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle
     demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= example('General Chart Customisations', 'custom-general', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('General Chart Customisations', 'custom-general', 'generated', array("enterprise" => true)) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

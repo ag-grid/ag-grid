@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>
 
-<?= example('Defining categories and series', 'defining-categories-and-series', 'generated', array("exampleHeight" => 610, "enterprise" => true)) ?>
+<?= grid_example('Defining categories and series', 'defining-categories-and-series', 'generated', array("exampleHeight" => 610, "enterprise" => true)) ?>
 
     <h2>Next Up</h2>
 

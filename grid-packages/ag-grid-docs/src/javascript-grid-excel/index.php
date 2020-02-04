@@ -253,7 +253,7 @@ var gridOptions = {
             </li>
         </ul>
 
-        <?= example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+        <?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
         <h2>Example - Styling Row Groups</h2>
 
@@ -261,7 +261,7 @@ var gridOptions = {
             If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
             <code>colDef.cellClass</code> and <code>processRowGroupCallback</code>:</p>
 
-        <?= example('Styling Row Groups', 'styling-row-groups', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 300)) ?>
+        <?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 300)) ?>
         
         <h2>Dealing With Errors In Excel</h2>
 
@@ -299,7 +299,7 @@ var gridOptions = {
             it shows 39923. You need to add the formatting inside Excel</li>
         </ul>
 
-        <?= example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 200)) ?>
+        <?= grid_example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 200)) ?>
 
     </article>
 

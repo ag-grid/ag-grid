@@ -118,7 +118,7 @@ colDef = {
         </li>
     </ul>
 
-<?= example('Quick Filter', 'quick-filter', 'vanilla') ?>
+<?= grid_example('Quick Filter', 'quick-filter', 'vanilla') ?>
 
 <h2>Server Side Data</h2>
 

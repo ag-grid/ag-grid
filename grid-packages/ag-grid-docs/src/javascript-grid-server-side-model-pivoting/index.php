@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Pivoting Challenges</h2>
 

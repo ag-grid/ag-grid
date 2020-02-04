@@ -89,6 +89,6 @@ gridOptions: {
         Panel Component with the grid and include it the Side Bar:
     </p>
 
-<?= example('Custom Stats', 'custom-stats', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome')) ) ?>
+<?= grid_example('Custom Stats', 'custom-stats', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome')) ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
