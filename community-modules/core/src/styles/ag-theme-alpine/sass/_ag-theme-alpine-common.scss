@@ -143,5 +143,13 @@
     .ag-paging-number, .ag-paging-row-summary-panel-number {
         font-weight: 700;
     }
+
+    .ag-column-drop-cell-button {
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 0.75;
+        }
+    }
     
 }

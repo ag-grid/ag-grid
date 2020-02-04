@@ -136,14 +136,13 @@ $ag-checkbox-border-radius: $ag-border-radius !default;
 $ag-checkbox-checked-color: $ag-foreground-color !default;
 $ag-checkbox-unchecked-color: $ag-foreground-color !default;
 $ag-checkbox-indeterminate-color: $ag-checkbox-unchecked-color !default;
-$ag-checkbox-size: $ag-icon-size !default;
 $ag-checkbox-click-flash: false !default; // provide feedback on click by flashing
 
 $ag-toggle-button-off-color: $ag-checkbox-unchecked-color !default;
 $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;
 $ag-toggle-button-switch-color: $ag-background-color !default;
 $ag-toggle-button-switch-border-width: 1px !default;
-$ag-toggle-button-height: $ag-checkbox-size !default;
+$ag-toggle-button-height: $ag-icon-size !default;
 $ag-toggle-button-width: $ag-toggle-button-height * 2 !default;
 
 $ag-input-focus-box-shadow: null !default;

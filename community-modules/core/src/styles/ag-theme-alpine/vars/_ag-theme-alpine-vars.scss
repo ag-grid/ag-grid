@@ -21,7 +21,7 @@ $ag-checkbox-background-color: $ag-background-color !default;
 
 // derived colours (shared by alpine-dark)
 $ag-selected-tab-underline-color: $ag-alpine-active-color !default;
-$ag-selected-row-background-color: $ag-alpine-active-color !default;
+$ag-selected-row-background-color: rgba($ag-alpine-active-color, 0.3) !default;
 $ag-row-hover-color: transparentize($ag-alpine-active-color, 0.9) !default;
 $ag-chip-background-color: rgba($ag-foreground-color, 0.07) !default;
 $ag-secondary-foreground-color: $ag-foreground-color !default;
@@ -33,7 +33,7 @@ $ag-input-border-color: $ag-border-color !default;
 $ag-borders: true !default;
 $ag-borders-side-button: false !default;
 $ag-border-radius: 3px !default;
-$ag-selected-tab-underline-transition-speed: 0.3s;
+$ag-selected-tab-underline-transition-speed: 0.3s !default;
 
 $ag-header-column-resize-handle: true !default;
 $ag-header-column-resize-handle-width: 2px !default;
@@ -47,7 +47,7 @@ $ag-header-height: $ag-grid-size * 8 !default;       // if changed, update envir
 $ag-virtual-item-height: $ag-grid-size * 5 !default; // if changed, update environment.ts
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
-$ag-cell-widget-spacing: $ag-grid-size * 2;
+$ag-cell-widget-spacing: $ag-grid-size * 2 !default;
 
 // $ag-toggle-button-off-color: $ag-border-color !default;
 // $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;

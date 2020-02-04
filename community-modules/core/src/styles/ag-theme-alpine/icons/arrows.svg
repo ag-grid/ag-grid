@@ -1,12 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
-    <title>arrows</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="arrows" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group" transform="translate(16.000000, 16.000000) rotate(45.000000) translate(-16.000000, -16.000000) translate(6.000000, 6.000000)" fill="#000000" fill-rule="nonzero">
-            <path d="M2,14 L2,18 L6,18 L6,20 L0,20 L0,14 L2,14 Z M2,6 L0,6 L0,5.68434189e-14 L6,5.68434189e-14 L6,2 L2,2 L2,6 Z M14,2 L14,5.68434189e-14 L20,5.68434189e-14 L20,6 L18,6 L18,2 L14,2 Z M18,14 L20,14 L20,20 L14,20 L14,18 L18,18 L18,14 Z M8.04020203,8 L12.040202,8 L12.040202,12 L8.04020203,12 L8.04020203,8 Z" id="Combined-Shape"></path>
-        </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g id="Combined-Shape" transform="matrix(0.707107,0.707107,-0.707107,0.707107,16,1.85786)">
+        <path d="M0.586,9.757L0.586,19.414L10.243,19.414L10.243,21.414L-1.414,21.414L-1.414,9.757L0.586,9.757ZM9.757,0.586L9.757,-1.414L21.414,-1.414L21.414,10.243L19.414,10.243L19.414,0.586L9.757,0.586ZM8.04,8L12.04,8L12.04,12L8.04,12L8.04,8Z" style="fill-rule:nonzero;"/>
     </g>
 </svg>

@@ -393,15 +393,16 @@
 }
 
 %ag-checkbox {
-    @include ag-icon($ag-checkbox-size);
+    @include ag-icon($ag-icon-size);
 
     -webkit-appearance: none;
-    width: $ag-checkbox-size;
-    height: $ag-checkbox-size;
+    width: $ag-icon-size;
+    height: $ag-icon-size;
     background-color: $ag-checkbox-background-color;
     border-radius: $ag-checkbox-border-radius;
     margin: 0;
-    display: block;
+    display: inline-block;
+    vertical-align: middle;
     flex: none;
     
     &:focus {
@@ -415,8 +416,8 @@
             position: absolute;
             margin-top: 1px;
             margin-left: 1px;
-            width: $ag-checkbox-size - 2px;
-            height: $ag-checkbox-size - 2px;
+            width: $ag-icon-size - 2px;
+            height: $ag-icon-size - 2px;
             background: $ag-checkbox-background-color;
             display: block;
             visibility: hidden;
@@ -450,11 +451,11 @@
 %ag-radio {
     @extend %ag-checkbox;
     
-    border-radius: $ag-checkbox-size;
+    border-radius: $ag-icon-size;
 
     @if $ag-checkbox-click-flash {
         &::before {
-            border-radius: $ag-checkbox-size;
+            border-radius: $ag-icon-size;
         }
     }
 
@@ -558,7 +559,7 @@
 %ag-range {
     -webkit-appearance: none;
     width: 100%;
-    height: $ag-checkbox-size;
+    height: $ag-icon-size;
     background: none;
     overflow: visible;
 
