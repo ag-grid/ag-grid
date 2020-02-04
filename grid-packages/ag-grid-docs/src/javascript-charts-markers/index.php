@@ -21,9 +21,51 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet language="ts">
-marker: {
-    shape: 'square'
-}
+AgChart.create({
+    width: 400,
+    height: 300,
+    container: document.body,
+    data: [{
+        quarter: 'Q1',
+        gas: 200,
+        diesel: 100
+    }, {
+        quarter: 'Q2',
+        gas: 300,
+        diesel: 130
+    }, {
+        quarter: 'Q3',
+        gas: 350,
+        diesel: 160
+    }, {
+        quarter: 'Q4',
+        gas: 400,
+        diesel: 200
+    }],
+    title: {
+        text: 'Fuel Spending (2019)'
+    },
+    series: [{
+        xKey: 'quarter',
+        yKey: 'gas',
+        title: 'Gas',
+        marker: {
+            size: 16,
+            shape: 'heart'
+        }
+    }, {
+        xKey: 'quarter',
+        yKey: 'diesel',
+        title: 'Diesel',
+        stroke: 'black',
+        marker: {
+            shape: 'plus',
+            size: 16,
+            fill: 'gray',
+            stroke: 'black'
+        }
+    }]
+});
 </snippet>
 
 <p>

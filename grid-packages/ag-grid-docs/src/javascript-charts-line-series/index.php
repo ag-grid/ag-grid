@@ -9,15 +9,18 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Standalone Charts - Line Series</h1>
 
 <p class="lead">
-    This section covers the most common series type - Line series.
+    This section covers the most common series type &mdash; Line series.
 </p>
-
-<h2>Introduction</h2>
 
 <p>
     Line series is a great choice in many situations. It's the series of choice when you need to spot a trend,
-    render large amounts of data or create a real-time chart.
+    render large amounts of data or create a real-time chart. Line series is also the preferred choice for
+    rendering impcomplete data that has some values missing.
 </p>
+
+<h2>First Line Chart</h2>
+
+<?= chart_example('Basic Line Chart', 'basic-line'); ?>
 
 <p>
     Since this series type is so common, the chart factory (<code>AgChart.create</code> method) uses it
@@ -31,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 <snippet language="ts">
 series: [{
     // type: 'line' <-- assumed
-    xKey: 'quarter',
+    xKey: 'year',
     yKey: 'spending'
 }]
 </snippet>
@@ -40,27 +43,8 @@ series: [{
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
     is a table row or a database record and each key is a column. To plot anything on a plane, we need at least
     two coordinates: <code>x</code> and <code>y</code>. The <code>xKey</code> and <code>yKey</code> line series
-    configs tell the series what keys should be used to fetch the values from each object in the <code>data</code>
-    array. For example, for a data like this:
-</p>
-
-<snippet language="ts">
-[{
-    quarter: 'Q1',
-    spending: 200
-}, {
-    quarter: 'Q2',
-    spending: 300
-}]
-</snippet>
-
-<p>
-    the line series will fetch <code>(Q1, 200)</code> and <code>(Q2, 300)</code>
-    for the first and second data points and plot them:
-</p>
-
-<p>
-    <img alt="Line Series X/Y" src="line-series-x-y.png" style="margin-bottom: 0px; height: 200px;">
+    configs tell the series what keys should be used to fetch the values of these coordinates from each object
+    in the <code>data</code> array.
 </p>
 
 <h2>Multiple Series</h2>
@@ -68,52 +52,6 @@ series: [{
 <p>
     Now that we understand how the line series plots the data, let's plot more of it and use two line series to do it:
 </p>
-
-<snippet language="ts">
-const fuelSpending = [
-    {
-        quarter: 'Q1',
-        gas: 200,
-        diesel: 100
-    },
-    {
-        quarter: 'Q2',
-        gas: 300,
-        diesel: 130
-    },
-    {
-        quarter: 'Q3',
-        gas: 350,
-        diesel: 160
-    },
-    {
-        quarter: 'Q4',
-        gas: 400,
-        diesel: 200
-    }
-];
-
-AgChart.create({
-    width: 400,
-    height: 300,
-    data: fuelSpending,
-    container: document.body,
-
-    series: [{
-        xKey: 'quarter',
-        yKey: 'gas',
-        yName: 'Gas'
-    }, {
-        xKey: 'quarter',
-        yKey: 'diesel',
-        yName: 'Diesel'
-    }],
-
-    title: {
-        text: 'Fuel Spending (2019)'
-    }
-});
-</snippet>
 
 <p>
     Here, we use two config objects in the <code>series</code> array, one for each series.
@@ -132,7 +70,7 @@ AgChart.create({
     <img alt="Two Line Series" src="two-line-series.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
-<h2>Colors</h2>
+<h2>Line and Marker Colors</h2>
 
 <p>
     The chart above is not complicated, but it could still benefit from more visual separation.
@@ -151,80 +89,20 @@ marker: {
     we'll get a result like this:
 </p>
 
+<?= chart_example('Multiple Line Series', 'multi-line'); ?>
+
 <p>
     <img alt="Two Colored Line Series" src="two-colored-line-series.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
 <p>
-    The <code>stroke</code> config sets the color of the stroke of the series line.
-    It also affects the color of the stroke of the series' markers, if it's not specified
-    inside the <code>marker</code> config explicitly.
+    The <code>stroke</code> config sets the color of the stroke of the series' line.
+    It also affects the color of the stroke of the series' markers, if the <code>stroke</code>
+    is not specified inside the <code>marker</code> config explicitly.
 </p>
 
-<h2>Discontinous Data</h2>
+<h2>Missing Data</h2>
 
-<snippet language="ts">
-const discontinousData = [{
-    year: '2005',
-    visitors: 191000
-}, {
-    year: '2006',
-    visitors: 45000
-}, {
-    year: '2007',
-    visitors: 100000
-}, {
-    year: '2008',
-    visitors: null
-}, {
-    year: '2009',
-    visitors: 78000
-}, {
-    year: '2010',
-    visitors: 136000
-}, {
-    year: '2011',
-    visitors: null
-}, {
-    year: '2012',
-    visitors: 74000
-}, {
-    year: '2013',
-    visitors: 67000
-}, {
-    year: '2014',
-    visitors: 74000
-}, {
-    year: '2015',
-    visitors: 174000
-}, {
-    year: '2016',
-    visitors: 76000
-}, {
-    year: '2017',
-    visitors: 56000
-}];
-
-AgChart.create({
-    width: 700,
-    height: 400,
-    data: discontinousData,
-    container: document.body,
-    title: {
-        text: 'Visitors to website'
-    },
-    subtitle: {
-        text: '2005-2017'
-    },
-    series: [{
-        xKey: 'year',
-        yKey: 'visitors'
-    }]
-});
-</snippet>
-
-<p>
-    <img alt="Line series with gaps" src="line-with-gaps.png" style="margin-bottom: 0px; height: 400px;">
-</p>
+<?= chart_example('Line Series with Incomplete Data', 'gap-line'); ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
