@@ -1,26 +1,24 @@
 const { JSDOM } = require('jsdom');
-const {window, document} = new JSDOM('<html></html>');
+const { window, document } = new JSDOM('<html></html>');
+
 window.Date = Date;
 global.window = window;
 global.document = document;
-const jQuery = require('jquery');
 
+const jQuery = require('jquery');
 const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
-const mkdirp = require('mkdirp');
-const fsExtra = require('fs-extra');
-
 const prettier = require('prettier');
 
 function copyFilesSync(files, dest) {
-    files.forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
+    files.forEach(file => fs.copyFileSync(file, path.join(dest, path.basename(file))));
 }
 
 function moveScriptsWithoutToken(scripts, dest, token) {
-    let removeTokenFromFile = file => {
-        let filename = path.basename(file);
-        fsExtra.rename(dest + '/' + filename, dest + '/' + filename.replace(token, ''));
+    const removeTokenFromFile = file => {
+        const filename = path.basename(file);
+        fs.renameSync(path.join(dest, filename), path.join(dest, filename.replace(token, '')));
     };
 
     copyFilesSync(scripts, dest);
@@ -31,10 +29,6 @@ function moveScriptsWithoutToken(scripts, dest, token) {
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
 function extractComponentFileNames(scripts, token) {
     return scripts.map(script => path.basename(script).replace(token, ''));
-}
-
-function copyGlobSync(globString, dest) {
-    copyFilesSync(glob.sync(globString), dest);
 }
 
 function phpArrayToJSON(string) {
@@ -50,195 +44,211 @@ function phpArrayToJSON(string) {
         .replace(/\(/g, '{')
         .replace(/\)/g, '}')
         .replace(/=>/g, ':');
+
     try {
         return JSON.parse(replaced);
     } catch (e) {
         console.error(replaced, e);
-        throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./example-generator.js');
+        throw new Error('The hackish conversion of PHP syntax to JSON failed. Check ./example-generator.js');
     }
 }
 
-function forEachExampleToGenerate(cb, final, scope = '*') {
-    glob(`src/${scope}/*.php`, {}, (er, files) => {
+function getFileContents(path) {
+    return fs.readFileSync(path, { encoding: 'utf8' });
+}
+
+function forEachExampleToGenerate(generateExample, finish, scope = '*') {
+    glob(`src/${scope}/*.php`, {}, (_, files) => {
         files.forEach(file => {
-            const contents = fs.readFileSync(file, {encoding: 'utf8'});
+            const contents = getFileContents(file);
             const section = path.dirname(file).replace('src/', '');
             const exampleRegEx = /grid_example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g;
 
             let matches;
+
             while ((matches = exampleRegEx.exec(contents))) {
                 const [example, type, options] = matches.slice(1);
 
                 if (type === 'generated') {
                     try {
-                        cb(section, example, phpArrayToJSON(options));
+                        generateExample(section, example, phpArrayToJSON(options));
                     } catch (error) {
-                        console.error(`Could not process example ${example } in ${file}. Does the example directory exist?`);
-                        console.error(`The error: ${error.message}`);
+                        console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
+                        console.error(`Error: ${error.message}`);
                     }
                 }
             }
         });
-        final();
+
+        finish();
     });
 }
 
-module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
+module.exports = (scope, isDev, communityModules, enterpriseModules) => {
     require('ts-node').register();
 
-    const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');
-    const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
-    const {vanillaToAngular} = require('./src/example-runner/vanilla-to-angular.ts');
-    const {appModuleAngular} = require('./src/example-runner/grid-angular-app-module.ts');
+    const { vanillaToVue } = require('./src/example-runner/vanilla-to-vue.ts');
+    const { vanillaToReact } = require('./src/example-runner/vanilla-to-react.ts');
+    const { vanillaToAngular } = require('./src/example-runner/vanilla-to-angular.ts');
+    const { appModuleAngular } = require('./src/example-runner/grid-angular-app-module.ts');
 
+    const startTime = Date.now();
     let count = 0;
 
     forEachExampleToGenerate(
         (section, example, options) => {
-            count++;
+            //    src section                        example        glob
+            // eg src/javascript-grid-accessing-data/using-for-each/*.js
+            const createExamplePath = pattern => path.join('./src', section, example, pattern);
+            const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
-            //    src section                        example        index.html
-            // eg src/javascript-grid-accessing-data/using-for-each/index.html
-            const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
+            const document = getMatchingPaths('index.html')[0];
+            let scripts = getMatchingPaths('*.js');
+            let mainScript = scripts[0];
 
-            let script, scripts;
-            if (glob.sync(path.join('./src', section, example, '*.js')).length > 1) {
+            if (scripts.length > 1) {
                 // multiple scripts - main.js is the main one, the rest are supplemental
-                script = glob.sync(path.join('./src', section, example, 'main.js'))[0];
+                mainScript = getMatchingPaths('main.js')[0];
 
                 // get the rest of the scripts
-                scripts = glob.sync(
-                    path.join('./src', section, example, '*.js'),
-                    {ignore: ['**/main.js', '**/*_angular.js', '**/*_react.js', '**/*_vanilla.js', '**/*_vue.js']}
-                );
+                scripts = getMatchingPaths('*.js', { ignore: ['**/main.js', '**/*_{angular,react,vanilla,vue}.js'] });
             } else {
-                // only one script - name isn't important
-                script = glob.sync(path.join('./src', section, example, '*.js'))[0];
+                // only one script, which is the main one
                 scripts = [];
             }
 
             // any associated css
-            const stylesGlob = path.join('./src', section, example, '*.css');
+            const stylesheets = getMatchingPaths('*.css');
 
             // read the main script (js) and the associated index.html
-            const [mainJs, indexHtml] = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
+            const mainJs = getFileContents(mainScript);
+            const indexHtml = getFileContents(document);
 
             // this examples _gen directory
-            // eg src/javascript-grid-accessing-data/using-for-each/_gen
-            const _gen = path.join('./src', section, example, '_gen');
-
-            let source, indexJSX, mainApp;
-
-            let inlineStyles;
-            const style = jQuery(`<div>${indexHtml}</div>`).find('style');
+            const _gen = createExamplePath('_gen');
+            const format = (source, parser) => prettier.format(source, { parser, printWidth: 120 });
 
             // inline styles in the examples index.html
             // will be added to styles.css in the various generated fw examples
-            if (style.length) {
-                inlineStyles = prettier.format(style.text(), {parser: 'css'});
-            }
+            const style = jQuery(`<div>${indexHtml}</div>`).find('style');
+            let inlineStyles = style.length > 0 && format(style.text(), 'css');
 
-            const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
+            const reactScripts = getMatchingPaths('*_react*');
+            let indexJSX;
+
             try {
-                source = vanillaToReact(mainJs, indexHtml, options, extractComponentFileNames(reactScripts, '_react'), isDev, communityModules, enterpriseModules);
-                indexJSX = prettier.format(source, {parser: 'babel', printWidth: 120});
+                const source = vanillaToReact(
+                    mainJs,
+                    indexHtml,
+                    options,
+                    extractComponentFileNames(reactScripts, '_react'),
+                    isDev,
+                    communityModules,
+                    enterpriseModules);
+
+                indexJSX = format(source, 'babel');
             } catch (e) {
-                console.error(`Failed at ./src/${section}/${example}`, e);
+                console.error(`Failed to process React example for ./src/${section}/${example}`, e);
                 return;
             }
 
-            const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
-            let angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
+            const angularScripts = getMatchingPaths('*_angular*');
+            const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
             let appComponentTS, appModuleTS;
-            try {
-                source = vanillaToAngular(mainJs, indexHtml, options, angularComponentFileNames, isDev, communityModules, enterpriseModules);
 
-                appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
-                appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {
-                    printWidth: 120,
-                    parser: 'typescript'
-                });
+            try {
+                const source = vanillaToAngular(
+                    mainJs,
+                    indexHtml,
+                    options,
+                    angularComponentFileNames,
+                    isDev,
+                    communityModules,
+                    enterpriseModules);
+
+                appComponentTS = format(source, 'typescript');
+                appModuleTS = format(appModuleAngular(angularComponentFileNames), 'typescript');
             } catch (e) {
-                console.error(`Failed at ./src/${section}/${example}`, e);
+                console.error(`Failed to process Angular example for ./src/${section}/${example}`, e);
                 return;
             }
 
-            const vueScripts = glob.sync(path.join('./src', section, example, '*_vue*'));
+            const vueScripts = getMatchingPaths('*_vue*');
+            let mainApp;
+
             try {
                 // vue is still new - only process examples marked as tested and good to go
                 // when all examples have been tested this check can be removed
-                if(options.processVue || options.processVue === undefined) {
-                    source = vanillaToVue(mainJs, indexHtml, options, extractComponentFileNames(vueScripts, '_vue'), isDev, communityModules, enterpriseModules);
-                    mainApp = prettier.format(source, {parser: 'babel', printWidth: 120});
+                if (options.processVue || options.processVue === undefined) {
+                    const source = vanillaToVue(
+                        mainJs,
+                        indexHtml,
+                        options,
+                        extractComponentFileNames(vueScripts, '_vue'),
+                        isDev,
+                        communityModules,
+                        enterpriseModules);
+
+                    mainApp = format(source, 'babel');
                 }
             } catch (e) {
-                console.error(`Failed at ./src/${section}/${example}`, e);
+                console.error(`Failed to process Vue example for ./src/${section}/${example}`, e);
                 return;
             }
 
-            // fetch and move react files to _gen/react
-            const reactPath = path.join(_gen, 'react');
-            mkdirp.sync(reactPath);
-            fs.writeFileSync(path.join(reactPath, 'index.jsx'), indexJSX);
-            if (inlineStyles) {
-                fs.writeFileSync(path.join(reactPath, 'styles.css'), inlineStyles);
-            }
-            copyGlobSync(stylesGlob, reactPath);
-            copyFilesSync(scripts, reactPath);
-            moveScriptsWithoutToken(reactScripts, reactPath, '_react');
+            const writeExampleFiles = (framework, frameworkScripts, files, subdirectory) => {
+                const basePath = path.join(_gen, framework);
+                const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            // fetch and move angular files to _gen/angular
-            const angularPath = path.join(_gen, 'angular');
-            mkdirp.sync(path.join(angularPath, 'app'));
-            fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
-            fs.writeFileSync(path.join(angularPath, 'app', 'app.module.ts'), appModuleTS);
-            if (inlineStyles) {
-                fs.writeFileSync(path.join(angularPath, 'styles.css'), inlineStyles);
-            }
-            copyGlobSync(stylesGlob, angularPath);
-            copyFilesSync(scripts, angularPath);
-            moveScriptsWithoutToken(angularScripts, angularPath + '/app', '_angular');
+                fs.mkdirSync(scriptsPath, { recursive: true });
+
+                Object.keys(files).forEach(name => {
+                    fs.writeFileSync(path.join(scriptsPath, name), files[name], 'utf8');
+                });
+
+                if (inlineStyles) {
+                    fs.writeFileSync(path.join(basePath, 'styles.css'), inlineStyles, 'utf8');
+                }
+
+                copyFilesSync(stylesheets, basePath);
+                copyFilesSync(scripts, basePath);
+                moveScriptsWithoutToken(frameworkScripts, scriptsPath, `_${framework}`);
+            };
+
+            writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
+
+            writeExampleFiles('angular', angularScripts, {
+                'app.component.ts': appComponentTS,
+                'app.module.ts': appModuleTS,
+            }, 'app');
 
             // vue is still new - only process examples marked as tested and good to go
             // when all examples have been tested this check can be removed
-            if(options.processVue || options.processVue === undefined) {
-                // fetch and move react files to _gen/vue
-                const vuePath = path.join(_gen, 'vue');
-                mkdirp.sync(vuePath);
-                fs.writeFileSync(path.join(vuePath, 'main.js'), mainApp);
-                copyGlobSync(stylesGlob, vuePath);
-                copyFilesSync(scripts, vuePath);
-                moveScriptsWithoutToken(vueScripts, vuePath, '_vue');
-                if (inlineStyles) {
-                    fs.writeFileSync(path.join(vuePath, 'styles.css'), inlineStyles);
-                }
+            if (options.processVue || options.processVue === undefined) {
+                writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
             }
 
-            // fetch and move vanilla files to _gen/vanilla
-            const vanillaPath = path.join(_gen, 'vanilla');
-            mkdirp(vanillaPath);
-            const vanillaScripts = glob.sync(
-                path.join('./src', section, example, '*.{html,js,css}'),
-                {ignore: ['**/*_angular.js', '**/*_react.js', '**/*_vue.js']}
-            );
-            moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
+            inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
+
+            const vanillaScripts = getMatchingPaths('*.{html,js,css}', { ignore: ['**/*_{angular,react,vue}.js'] });
+            writeExampleFiles('vanilla', vanillaScripts, {});
 
             // allow developers to override the example theme with an environment variable
             const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
+
             if (themeOverride) {
-                const generatedFiles = glob.sync(
-                    path.join(_gen, '**/*.{html,js}')
-                );
+                const generatedFiles = glob.sync(path.join(_gen, '**/*.{html,js}'));
+
                 generatedFiles.forEach(file => {
-                    let content = fs.readFileSync(file, {encoding: 'utf8'});
-                    content = content.replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`)
+                    let content = getFileContents(file).replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`);
                     fs.writeFileSync(file, content, 'utf8');
                 });
             }
+
+            count++;
         },
         () => {
-            console.log(`// ${count} examples generated`);
-            cb();
-        }
-        , scope);
+            console.log(`-> ${count} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+        },
+        scope);
 };

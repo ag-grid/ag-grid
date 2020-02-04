@@ -11,7 +11,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator');
-const {updateBetweenStrings, getAllModules} = require("./utils");
+const { updateBetweenStrings, getAllModules } = require("./utils");
 const docsLock = require('./../../scripts/docsLock');
 
 const lnk = require('lnk').sync;
@@ -27,7 +27,7 @@ if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
 }
 
 function reporter(middlewareOptions, options) {
-    const {log, state, stats} = options;
+    const { log, state, stats } = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -79,13 +79,13 @@ function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: {AG_DEV: 'true'}
+        env: { AG_DEV: 'true' }
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -150,7 +150,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -212,23 +212,23 @@ const exampleDirMatch = new RegExp('src/([-\\w]+)/');
 function watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules) {
     const callback = file => {
         let dir;
+
         if (file) {
-            console.log(`${file} changed, regenerating`);
+            console.log(`${file} changed, re-generating`);
+
             try {
                 dir = file.replace(/\\/g, '/').match(exampleDirMatch)[1];
             } catch (e) {
                 throw new Error(`'${exampleDirMatch}' did not extract the example dir from '${file}'. Fix the regexp in dev-server.js`);
             }
         }
-        console.log('regenerating examples...');
-        // generateExamples(() => console.log('generation done.'), 'javascript-grid-column-header', true, gridCommunityModules, gridEnterpriseModules);
-        generateExamples(() => console.log('generation done.'), dir, true, gridCommunityModules, gridEnterpriseModules);
+
+        genExamples(dir, gridCommunityModules, gridEnterpriseModules)();
     };
 
     callback();
 
-    chokidar.watch('./src/*/*.php').on('change', callback);
-    chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
+    chokidar.watch(['./src/*/*.php', './src/*/*/*.{html,css,js}']).on('change', callback);
 }
 
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
@@ -433,7 +433,7 @@ function buildCss() {
         `node .\\scripts\\modules\\lernaWatch.js --buildBeta`
         :
         `node ./scripts/modules/lernaWatch.js --buildBeta`
-    ;
+        ;
     require('child_process').execSync(lernaScript, {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
@@ -470,7 +470,7 @@ defaultExtension: 'js'
         );
 
         fs.writeFileSync(systemJsFile, updateFileLines, 'UTF-8');
-    })
+    });
 }
 
 module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, done) => {
@@ -502,12 +502,12 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 process.exit(0);
             });
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function (req, res, next) {
+            app.use(function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -584,34 +584,36 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 launchTSCCheck(gridCommunityModules, gridEnterpriseModules);
             }
 
-            app.listen(EXPRESS_PORT, function () {
+            app.listen(EXPRESS_PORT, function() {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();
-        })
+        });
 };
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-const genExamples = (exampleDir) => {
+const genExamples = (dir, gridCommunityModules, gridEnterpriseModules) => {
     return () => {
-        console.log('regenerating examples...');
-        const {gridCommunityModules, gridEnterpriseModules} = getAllModules();
-        generateExamples(() => console.log('generation done.'), exampleDir, true, gridCommunityModules, gridEnterpriseModules);
+        console.log('Re-generating examples... ');
+        generateExamples(dir, true, gridCommunityModules, gridEnterpriseModules);
     };
 };
 
-// dont remove these unused vars
+// *** Don't remove these unused vars! ***
 const [cmd, script, execFunc, exampleDir, watch] = process.argv;
+
 if (process.argv.length >= 3) {
     if (execFunc === 'generate-examples') {
-        if (exampleDir && watch) {
+        const { gridCommunityModules, gridEnterpriseModules } = getAllModules();
+        const genExamplesFunc = genExamples(exampleDir, gridCommunityModules, gridEnterpriseModules);
+
+        if (watch && exampleDir) {
             const examplePath = path.resolve('./src/', exampleDir);
-            chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
+
+            chokidar.watch(`${examplePath}/**/*`, { ignored: ['**/_gen/**/*'] }).on('change', genExamplesFunc);
         } else {
-            console.log('regenerating examples...');
-            const {gridCommunityModules, gridEnterpriseModules} = getAllModules();
-            generateExamples(() => console.log('generation done.'), exampleDir, true, gridCommunityModules, gridEnterpriseModules);
+            genExamplesFunc();
         }
     }
 }
