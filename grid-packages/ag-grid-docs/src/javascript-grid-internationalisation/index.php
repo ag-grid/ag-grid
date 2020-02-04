@@ -36,7 +36,6 @@ localeText = {
 
         // for number filter and text filter
         filterOoo: 'daFilter...',
-        applyFilter: 'daApplyFilter...',
         equals: 'daEquals',
         notEqual: 'daNotEqual',
 
@@ -56,6 +55,11 @@ localeText = {
         // filter conditions
         andCondition: 'daAND',
         orCondition: 'daOR',
+
+        // filter buttons
+        applyFilter: 'daApplyFilter...',
+        resetFilter: 'daResetFilter...',
+        clearFilter: 'daClearFilter...',
 
         // the header of the default group column
         group: 'laGroup',

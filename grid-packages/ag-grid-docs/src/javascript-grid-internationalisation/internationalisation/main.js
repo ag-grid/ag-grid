@@ -57,7 +57,6 @@ var gridOptions = {
 
         // for number filter and text filter
         filterOoo: 'daFilter...',
-        applyFilter: 'daApplyFilter...',
         equals: 'daEquals',
         notEqual: 'daNotEqual',
 
@@ -77,6 +76,11 @@ var gridOptions = {
         // filter conditions
         andCondition: 'daAND',
         orCondition: 'daOR',
+
+        // filter buttons
+        applyFilter: 'daApplyFilter...',
+        resetFilter: 'daResetFilter...',
+        clearFilter: 'daClearFilter...',
 
         // the header of the default group column
         group: 'laGroup',
