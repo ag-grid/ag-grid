@@ -54,13 +54,13 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
     console.log("updating fw systemjs boilerplate config...");
 
     const boilerPlateLocation = [
-        './dist/example-runner/angular-boilerplate/',
-        './dist/example-runner/vue-boilerplate/',
-        './dist/example-runner/react-boilerplate/',
+        './dist/example-runner/grid-angular-boilerplate/',
+        './dist/example-runner/grid-vue-boilerplate/',
+        './dist/example-runner/grid-react-boilerplate/',
+        './dist/example-runner/chart-boilerplate/',
+        './dist/example-runner/chart-boilerplate/',
+        './dist/example-runner/chart-boilerplate/',
         './dist/react-runner/app-boilerplate/',
-        './dist/react-runner/react-boilerplate/',
-        './dist/react-runner/vue-boilerplate/',
-        './dist/react-runner/angular-boilerplate/',
     ];
 
     boilerPlateLocation.forEach(boilerPlateLocation => {

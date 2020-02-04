@@ -444,9 +444,9 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     console.log("updating fw systemjs boilerplate config with modules...");
 
     const systemJsFiles = [
-        './src/example-runner/angular-boilerplate/systemjs.config.js',
-        './src/example-runner/react-boilerplate/systemjs.config.js',
-        './src/example-runner/vue-boilerplate/systemjs.config.js'];
+        './src/example-runner/grid-angular-boilerplate/systemjs.config.js',
+        './src/example-runner/grid-react-boilerplate/systemjs.config.js',
+        './src/example-runner/grid-vue-boilerplate/systemjs.config.js'];
 
     systemJsFiles.forEach(systemJsFile => {
         const fileLines = fs.readFileSync(systemJsFile, 'UTF-8');
