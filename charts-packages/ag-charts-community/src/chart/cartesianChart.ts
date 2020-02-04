@@ -141,6 +141,7 @@ export class CartesianChart extends Chart {
                     axis.gridLength = shrinkRect.width;
                     break;
             }
+            // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
 
         this.series.forEach(series => {
