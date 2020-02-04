@@ -49,7 +49,6 @@ var gridOptions = {
 
 function onPinnedRowTopCount() {
     var headerRowsToFloat = document.getElementById('top-row-count').value;
-    console.log('xxxx', headerRowsToFloat);
     var count = Number(headerRowsToFloat);
     var rows = createData(count, 'Top');
     gridOptions.api.setPinnedTopRowData(rows);

@@ -148,8 +148,6 @@ class ExampleRunnerController {
     setType(type: string) {
         const typeConfig = this.config.types[type];
 
-        console.log('xxx', JSON.stringify(typeConfig));
-
         this.boilerplateFiles = typeConfig.boilerplateFiles || [];
         this.boilerplatePath = typeConfig.boilerplatePath;
 
