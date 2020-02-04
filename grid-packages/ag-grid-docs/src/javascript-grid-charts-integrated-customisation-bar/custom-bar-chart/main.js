@@ -82,7 +82,7 @@ function processChartOptions(params) {
     options.seriesDefaults.tooltip.renderer = function(params) {
         var x = params.datum[params.xKey];
         var y = params.datum[params.yKey];
-        return '<u style="color: ' + params.color + '">' + params.title + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
+        return '<u style="color: ' + params.color + '">' + (params.title || params.yName) + '</u><br><br><b>' + params.xName.toUpperCase() + ':</b> ' + x + '<br/><b>' + params.yName.toUpperCase() + ':</b> ' + y;
     };
 
     return options;
