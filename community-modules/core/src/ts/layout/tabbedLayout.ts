@@ -51,7 +51,7 @@ export class TabbedLayout extends Component {
     }
 
     private handleTabKey(e: KeyboardEvent) {
-        const focusableItems = this.focusController.findFocusableElements(this.eBody, 'ag-set-filter-list *, ag-menu-list *');
+        const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
         const activeElement = document.activeElement as HTMLElement;
 
         if (this.eHeader.contains(activeElement)) {

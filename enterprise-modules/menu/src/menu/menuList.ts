@@ -90,36 +90,36 @@ export class MenuList extends Component {
 
         cMenuItem.setParentComponent(this);
 
-        const handleMouseEnter = (cMenuItem: MenuItemComponent, menuItemDef: MenuItemDef) => {
+        const handleMouseEnter = (cMenuItem: MenuItemComponent, menuItemParams: MenuItemDef) => {
             if (this.subMenuShowTimer) {
                 window.clearTimeout(this.subMenuShowTimer);
                 this.subMenuShowTimer = 0;
             }
 
             if (!this.subMenuHideTimer) {
-                this.mouseEnterItem(cMenuItem, menuItemDef)
+                this.mouseEnterItem(cMenuItem, menuItemParams)
             } else {
                 this.subMenuShowTimer = window.setTimeout(() => {
-                    handleMouseEnter(cMenuItem, menuItemDef)
+                    handleMouseEnter(cMenuItem, menuItemParams)
                 }, MenuList.HIDE_MENU_DELAY);
             }
         }
 
-        const handleMouseLeave = (e: MouseEvent, cMenuItem: MenuItemComponent) => {
+        const handleMouseLeave = (e: MouseEvent, cMenuItem: MenuItemComponent, menuItemParams: MenuItemDef) => {
             if (this.subMenuParentComp === cMenuItem) {
                 if (this.subMenuHideTimer) { return; }
 
                 this.subMenuHideTimer = window.setTimeout(
-                    () => this.mouseLeaveItem(e, cMenuItem),
+                    () => this.mouseLeaveItem(e, cMenuItem, menuItemParams),
                     MenuList.HIDE_MENU_DELAY
                 );
             } else if (!this.subMenuHideTimer) {
-                this.mouseLeaveItem(e, cMenuItem);
+                this.mouseLeaveItem(e, cMenuItem, menuItemParams);
             }
         }
 
         cMenuItem.addGuiEventListener('mouseenter', () => handleMouseEnter(cMenuItem, menuItemDef));
-        cMenuItem.addGuiEventListener('mouseleave', (e) => handleMouseLeave(e, cMenuItem));
+        cMenuItem.addGuiEventListener('mouseleave', (e) => handleMouseLeave(e, cMenuItem, menuItemDef));
     }
 
     public activateFirstItem(): void {
@@ -133,7 +133,7 @@ export class MenuList extends Component {
         this.activateItem(menuItem, menuItemParams, true);
     }
 
-    private mouseLeaveItem(e: MouseEvent, menuItem: MenuItemComponent) {
+    private mouseLeaveItem(e: MouseEvent, menuItem: MenuItemComponent, menuItemParams: MenuItemDef) {
         const isParent = this.subMenuComp && this.subMenuComp.getParentComponent() === menuItem;
         const subMenuGui = isParent && this.subMenuComp.getGui();
         const relatedTarget = (e.relatedTarget as HTMLElement);
@@ -145,7 +145,7 @@ export class MenuList extends Component {
             (subMenuGui.contains(relatedTarget) || relatedTarget.contains(subMenuGui))
         ) { return; }
 
-        this.deactivateItem(menuItem);
+        this.deactivateItem(menuItem, menuItemParams);
     }
 
     private activateItem(menuItem: MenuItemComponent, menuItemParams: MenuItemDef, openSubMenu?: boolean): void {
@@ -174,12 +174,13 @@ export class MenuList extends Component {
         }
     }
 
-    private deactivateItem(menuItem?: MenuItemComponent) {
+    private deactivateItem(menuItem?: MenuItemComponent, menuItemParams?: MenuItemDef) {
         if (!menuItem && this.activeMenuItem) {
             menuItem = this.activeMenuItem;
+            menuItemParams = this.activeMenuItemParams;
         }
 
-        if (!menuItem) { return; }
+        if (!menuItem || menuItemParams.disabled) { return; }
 
         _.removeCssClass(menuItem.getGui(), 'ag-menu-option-active');
 

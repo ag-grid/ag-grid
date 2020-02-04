@@ -112,7 +112,7 @@ export class FocusController {
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string): HTMLElement[] {
         const focusableString = '[tabindex], input, select, button';
-        let excludeString = 'ag-hidden';
+        let excludeString = '.ag-hidden, .ag-hidden *';
 
         if (exclude) {
             excludeString += ', ' + exclude;
