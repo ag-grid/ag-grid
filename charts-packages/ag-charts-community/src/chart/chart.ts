@@ -67,11 +67,24 @@ export abstract class Chart extends Observable {
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
     tooltipOffset: [number, number] = [20, 20];
 
+    private _container: HTMLElement | undefined = undefined;
     set container(value: HTMLElement | undefined) {
-        this.scene.container = value;
+        if (this._container !== value) {
+            const { parentNode } = this.element;
+
+            if (parentNode != null) {
+                parentNode.removeChild(this.element);
+            }
+
+            if (value) {
+                value.appendChild(this.element);
+            }
+
+            this._container = value;
+        }
     }
     get container(): HTMLElement | undefined {
-        return this.scene.container;
+        return this._container;
     }
 
     private _data: any[] = [];
@@ -127,6 +140,24 @@ export abstract class Chart extends Observable {
         const scene = new Scene(document);
         this.scene = scene;
         scene.root = root;
+        scene.container = this._element = document.createElement('div');
+        scene.canvas.element.style.display = 'block';
+
+        const resizeObserver = new (window as any).ResizeObserver((entries: any) => {
+            for (let entry of entries) {
+                // let cs = window.getComputedStyle(entry.target);
+                // console.log('watching element:', entry.target);
+                // console.log(entry.contentRect.top, ' is ', cs.paddingTop);
+                // console.log(entry.contentRect.left, ' is ', cs.paddingLeft);
+                // if (entry.target.handleResize) {
+                    // entry.target.handleResize(entry);
+                // }
+                const { width, height } = entry.contentRect;
+                this.width = width;
+                // this.height = height;
+            }
+        });
+        resizeObserver.observe(this._element);
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange);
@@ -184,8 +215,9 @@ export abstract class Chart extends Observable {
         this.layoutPending = true;
     }
 
+    protected _element: HTMLElement;
     get element(): HTMLElement {
-        return this.scene.canvas.element;
+        return this._element;
     }
 
     abstract get seriesRoot(): Node;
