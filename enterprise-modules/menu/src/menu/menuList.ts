@@ -204,11 +204,15 @@ export class MenuList extends Component {
             this.handleNavKey(e.keyCode);
         }
 
+        if (e.keyCode === Constants.KEY_TAB && e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+
         if (e.keyCode === Constants.KEY_ESCAPE) {
-            const parent = this.findTopMenu();
+            const topMenu = this.findTopMenu();
 
             if (parent) {
-                parent.getGui().focus();
+                topMenu.getGui().focus();
             }
         }
     }
@@ -251,9 +255,10 @@ export class MenuList extends Component {
         }
     }
 
-    private closeIfIsChild(): void {
+    private closeIfIsChild(e?: KeyboardEvent): void {
         const parentItem = this.getParentComponent();
         if (parentItem && parentItem instanceof MenuItemComponent) {
+            if (e) { e.preventDefault(); }
             const parentMenuList = parentItem.getParentComponent() as MenuList;
             parentItem.getGui().focus();
             parentMenuList.removeChildPopup();

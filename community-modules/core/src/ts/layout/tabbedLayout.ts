@@ -1,6 +1,8 @@
 import { Promise, _ } from '../utils';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
+import { PostConstruct } from '../context/context';
+import { Constants } from '../constants';
 
 export class TabbedLayout extends Component {
 
@@ -18,6 +20,35 @@ export class TabbedLayout extends Component {
 
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
+        }
+    }
+
+    @PostConstruct
+    public init(): void {
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.keyCode === Constants.KEY_TAB) {
+            e.preventDefault();
+            if (this.eBody.contains(document.activeElement)) {
+                this.activeItem.eHeaderButton.focus();
+            } else {
+                const focusable = this.eBody.querySelector('[tabindex="-1"], input, button, select') as HTMLElement;
+                if (focusable) { focusable.focus(); }
+            }
+        }
+
+        if (e.keyCode === Constants.KEY_RIGHT || e.keyCode === Constants.KEY_LEFT) {
+            if (!this.eHeader.contains(document.activeElement)) { return; }
+            const currentPosition = this.items.indexOf(this.activeItem);
+            const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+
+            if (currentPosition === nextPosition) { return; }
+            const nextItem = this.items[nextPosition];
+
+            this.showItemWrapper(nextItem);
+            nextItem.eHeaderButton.focus();
         }
     }
 

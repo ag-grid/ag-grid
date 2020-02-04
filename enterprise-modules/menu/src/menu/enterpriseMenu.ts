@@ -24,8 +24,7 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout,
-    FocusController
+    TabbedLayout
 } from "@ag-grid-community/core";
 import { MenuList } from "./menuList";
 import { MenuItemComponent } from "./menuItemComponent";
@@ -41,7 +40,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('focusController') private focusController: FocusController;
 
     private lastSelectedTab: string;
 
@@ -212,6 +210,7 @@ export class EnterpriseMenu extends BeanStub {
             onItemClicked: this.onTabItemClicked.bind(this)
         });
 
+        this.getContext().wireBean(this.tabbedLayout);
         this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
