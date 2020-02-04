@@ -23,21 +23,21 @@ $ag-checkbox-background-color: $ag-background-color !default;
 $ag-value-change-value-highlight-background-color: rgba(#16a085, 0.5) !default;
 $ag-balham-tooltip-background-color: #cbd0d3 !default;
 
-$ag-input-focus-box-shadow: 0 0 2px 1px #719ECE !default;
 $ag-input-focus-border-color: #719ECE !default;
+$ag-input-focus-box-shadow: 0 0 2px 1px $ag-input-focus-border-color !default;
 
 // derived colours (shared by balham-dark)
 $ag-range-selection-background-color: rgba($ag-balham-active-color, 0.2) !default;
-$ag-range-selection-border-color: $ag-balham-active-color;
+$ag-range-selection-border-color: $ag-balham-active-color !default;
 $ag-range-selection-highlight-color: $ag-balham-active-color !default;
 
 $ag-selected-row-background-color: lighten($ag-balham-active-color, 40) !default;
 $ag-chip-background-color: mix($ag-control-panel-background-color, $ag-foreground-color, 80%) !default;
 $ag-header-cell-moving-background-color: $ag-background-color !default;
 
-$ag-header-column-separator: true;
+$ag-header-column-separator: true !default;
 $ag-header-column-separator-color: rgba($ag-border-color, 0.5) !default;
-$ag-header-column-separator-height: 50%;
+$ag-header-column-separator-height: 50% !default;
 
 
 

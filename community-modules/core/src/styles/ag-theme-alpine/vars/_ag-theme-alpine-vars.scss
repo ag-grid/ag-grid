@@ -30,8 +30,8 @@ $ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color,
 $ag-input-border-color: $ag-border-color !default;
 
 // BORDERS
-$ag-borders: true;
-$ag-borders-side-button: false;
+$ag-borders: true !default;
+$ag-borders-side-button: false !default;
 $ag-border-radius: 3px !default;
 $ag-selected-tab-underline-transition-speed: 0.3s;
 
@@ -52,10 +52,11 @@ $ag-cell-widget-spacing: $ag-grid-size * 2;
 // $ag-toggle-button-off-color: $ag-border-color !default;
 // $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;
 // $ag-toggle-button-switch-color: $ag-background-color !default;
-$ag-toggle-button-height: 18px;
-$ag-toggle-button-width: 28px;
+$ag-toggle-button-height: 18px !default;
+$ag-toggle-button-width: 28px !default;
 
-$ag-input-focus-box-shadow: 0 0 2px 0.1rem rgba($ag-alpine-active-color, 0.4);
+$ag-input-focus-border-color: rgba($ag-alpine-active-color, 0.4) !default;
+$ag-input-focus-box-shadow: 0 0 2px 0.1rem $ag-input-focus-border-color !default;
 
 
 // FONTS
@@ -65,8 +66,8 @@ $ag-font-size: 13px !default;
 
 
 // MISC
-$ag-selected-tab-underline-color: $ag-alpine-active-color;
-$ag-selected-tab-underline-width: 2px;
+$ag-selected-tab-underline-color: $ag-alpine-active-color !default;
+$ag-selected-tab-underline-width: 2px !default;
 $ag-full-width-tabs: true !default;
 
 $ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4) !default;
