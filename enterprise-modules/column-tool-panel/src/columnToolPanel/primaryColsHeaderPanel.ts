@@ -50,7 +50,7 @@ export class PrimaryColsHeaderPanel extends Component {
                 <div ref="eSelect" class="ag-column-select-header-icon"></div>
                 <div class="ag-input-wrapper ag-column-select-header-filter-wrapper" ref="eFilterWrapper" role="presentation">
                     <input class="ag-column-select-header-filter" ref="eFilterTextField" type="text" placeholder="${translate(
-                    "SearchOoo",
+                    "searchOoo",
                     "Search..."
                     )}">
                 </div>
