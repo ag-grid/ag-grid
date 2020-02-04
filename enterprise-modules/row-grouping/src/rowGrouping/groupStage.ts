@@ -126,7 +126,7 @@ export class GroupStage implements IRowNodeStage {
 
     private handleTransaction(details: GroupingDetails): void {
         const tran = details.transaction;
-        // AG-3818 - remove nodes first in case a node is removed and re-added in the same transaction
+        // remove nodes first in case a node is removed and re-added in the same transaction
         if (tran.remove) {
             this.removeNodes(tran.remove, details);
         }
