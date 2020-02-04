@@ -30,6 +30,7 @@ body {
             @extend .col-lg-2;
 
             font-size: 90%;
+            padding-right: 0;
 
             ul {
                 list-style: none;
@@ -40,8 +41,13 @@ body {
             @extend .col-md;
 
             background-color: $white;
-            padding-left: 2rem;
-            padding-right: 2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+
+            @include media-breakpoint-up(lg) {
+                padding-left: 3rem;
+                padding-right: 1rem;
+            }
         }
 
         & > section.skip-in-page-nav {
@@ -127,6 +133,10 @@ body {
             @extend .d-lg-block;
             // @include media-breakpoint-up(lg) { @extend .d-block; }
 
+            @include media-breakpoint-down(md) {
+                margin-top: 1rem;
+            }
+
             /*
             @extend .d-none, .d-lg-block;
 
@@ -169,13 +179,16 @@ body {
             > li > a::after,
             > li > span::after {
                 color: $gray-600;
-                content: "❯ ";
+                content: "❯";
                 display: inline-block;
                 float: right;
                 font-size: 80%;
                 line-height: 1.8rem;
-                margin-right: 1rem;
                 transition: transform 0.3s ease-out;
+
+                @include media-breakpoint-down(sm) {
+                    margin-right: 1rem;
+                }
             }
 
             > li.expanded > a::after,
@@ -240,7 +253,7 @@ body {
             font-size: 90%;
             height: calc(100% - 4rem);
             overflow: auto;
-            padding-left: 0;
+            padding-left: 2rem;
 
             > ul {
                 border-left: 1px solid $border-color;
@@ -293,7 +306,6 @@ body {
                 display: block;
                 flex: 0 0 100% / 12 * 2.5;
                 max-width: 100% / 12 * 2.5;
-                padding-left: 2rem;
                 position: sticky;
                 top: 4rem;
             }
@@ -302,7 +314,6 @@ body {
                 display: block;
                 left: calc(50% + #{$max-width / 2 - 10});
                 max-width: unset;
-                padding-left: 3rem;
                 position: absolute;
                 top: auto;
                 width: calc((100vw - #{$max-width}) / 2);

@@ -1,8 +1,8 @@
 .search-wrapper {
     margin-bottom: 2rem;
 
-    @include media-breakpoint-down(lg) {
-        width: 80%;
+    @include media-breakpoint-down(md) {
+        width: calc(100% - 4rem);
     }
 }
 
