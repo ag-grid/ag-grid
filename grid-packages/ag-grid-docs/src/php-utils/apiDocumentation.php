@@ -7,8 +7,7 @@
     function createPropertyTable($title, $properties, $prefix = null) {
         $toProcess = [];
         $displayName = $properties->meta->displayName ?? $title;
-        $newPrefix = isset($prefix) ? "$prefix--$title" : $title;
-
+        $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
         $headerTag = isset($prefix) ? "h3" : "h2";
 
         echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
@@ -103,11 +102,23 @@
         echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
     }
 
-    function createDocumentationFromFile($path) {
+    function createDocumentationFromFile($path, $expression = null) {
         $properties = getJsonFromFile("../javascript-charts-api-explorer/config.json");
 
-        foreach ($properties as $key => $val) {
-            createPropertyTable($key, $val);
+        if (isset($expression)) {
+            $keys = explode(".", $expression);
+            $key = null;
+
+            while (count($keys) > 0) {
+                $key = array_shift($keys);
+                $properties = $properties->$key;
+            }
+
+            createPropertyTable($key, $properties, $expression);
+        } else {
+            foreach ($properties as $key => $val) {
+                createPropertyTable($key, $val);
+            }
         }
     }
 

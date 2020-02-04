@@ -104,4 +104,8 @@ marker: {
     <img alt="Custom Marker" src="custom-marker.png" style="margin-bottom: 0px; height: 300px;">
 </p>
 
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig.marker") ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
