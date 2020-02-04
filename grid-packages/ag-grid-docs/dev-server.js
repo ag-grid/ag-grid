@@ -613,12 +613,7 @@ if (process.argv.length >= 3) {
     if (execFunc === 'generate-examples') {
         if (exampleDir && watch) {
             const examplePath = path.resolve('./src/', exampleDir);
-            chokidar.watch(`
-$
-{
-    examplePath
-}
-/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
+            chokidar.watch(`${examplePath}/**/*`, {ignored: ['**/_gen/**/*']}).on('change', genExamples(exampleDir));
         } else {
             console.log('regenerating examples...');
             const {gridCommunityModules, gridEnterpriseModules} = getAllModules();
