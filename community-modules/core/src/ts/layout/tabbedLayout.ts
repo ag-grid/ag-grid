@@ -1,10 +1,13 @@
 import { Promise, _ } from '../utils';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { PostConstruct } from '../context/context';
+import { PostConstruct, Autowired } from '../context/context';
 import { Constants } from '../constants';
+import { FocusController } from '../focusController';
 
 export class TabbedLayout extends Component {
+
+    @Autowired('focusController') private focusController: FocusController;
 
     @RefSelector('eHeader') private eHeader: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
@@ -31,12 +34,7 @@ export class TabbedLayout extends Component {
     private handleKeyDown(e: KeyboardEvent): void {
         if (e.keyCode === Constants.KEY_TAB) {
             e.preventDefault();
-            if (this.eBody.contains(document.activeElement)) {
-                this.activeItem.eHeaderButton.focus();
-            } else {
-                const focusable = this.eBody.querySelector('[tabindex="-1"], input, button, select') as HTMLElement;
-                if (focusable) { focusable.focus(); }
-            }
+            this.handleTabKey(e);
         }
 
         if (e.keyCode === Constants.KEY_RIGHT || e.keyCode === Constants.KEY_LEFT) {
@@ -49,6 +47,29 @@ export class TabbedLayout extends Component {
 
             this.showItemWrapper(nextItem);
             nextItem.eHeaderButton.focus();
+        }
+    }
+
+    private handleTabKey(e: KeyboardEvent) {
+        const focusableItems = this.focusController.findFocusableElements(this.eBody, 'ag-set-filter-list *, ag-menu-list *');
+        const activeElement = document.activeElement as HTMLElement;
+
+        if (this.eHeader.contains(activeElement)) {
+            if (focusableItems.length) {
+                focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
+            }
+        } else {
+            const focusedPosition = focusableItems.indexOf(activeElement);
+            const nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            if (nextPosition < 0 || nextPosition >= focusableItems.length) {
+                this.activeItem.eHeaderButton.focus();
+                return;
+            }
+
+            const nextItem = focusableItems[nextPosition];
+            if (nextItem) {
+                nextItem.focus();
+            }
         }
     }
 

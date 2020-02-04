@@ -74,7 +74,7 @@
         justify-content: center;
 
         &:focus {
-            outline: 1px solid $ag-secondary-foreground-color;
+            outline: 1px solid $ag-input-focus-border-color;
             outline-offset: -4px;
         }
 

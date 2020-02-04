@@ -4,7 +4,8 @@ import {
     Component,
     ToolPanelColumnCompParams,
     RefSelector,
-    IPrimaryColsPanel
+    IPrimaryColsPanel,
+    _
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";

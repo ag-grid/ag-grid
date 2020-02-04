@@ -110,6 +110,25 @@ export class FocusController {
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
+    public findFocusableElements(rootNode: HTMLElement, exclude?: string): HTMLElement[] {
+        const focusableString = '[tabindex], input, select, button';
+        let excludeString = 'ag-hidden';
+
+        if (exclude) {
+            excludeString += ', ' + exclude;
+        }
+
+        const nodes = Array.from(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
+        const excludeNodes = Array.from(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
+
+        if (!excludeNodes.length) {
+            return nodes;
+        }
+
+        const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter(element => b.indexOf(element) === -1);
+        return diff(nodes, excludeNodes);
+    }
+
     private onCellFocused(forceBrowserFocus: boolean): void {
         const event: CellFocusedEvent = {
             type: Events.EVENT_CELL_FOCUSED,
