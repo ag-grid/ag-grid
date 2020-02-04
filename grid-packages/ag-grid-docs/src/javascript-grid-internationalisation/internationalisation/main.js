@@ -78,9 +78,9 @@ var gridOptions = {
         orCondition: 'daOR',
 
         // filter buttons
-        applyFilter: 'daApplyFilter...',
-        resetFilter: 'daResetFilter...',
-        clearFilter: 'daClearFilter...',
+        applyFilter: 'daApply',
+        resetFilter: 'daReset',
+        clearFilter: 'daClear',
 
         // the header of the default group column
         group: 'laGroup',
