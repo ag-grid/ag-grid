@@ -150,21 +150,4 @@
         line-height: 1.5;
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
-
-    .ag-column-select-column-group,
-    .ag-column-select-column {
-        height: $ag-grid-size * 4;
-    }
-
-    .ag-column-select-checkbox,
-    .ag-column-select-column-label,
-    .ag-column-group-icons {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
-    }
-
-    .ag-column-select-list {
-        @include ag-grid-border(secondary, top);
-        padding-top: $ag-grid-size;
-    }
 }

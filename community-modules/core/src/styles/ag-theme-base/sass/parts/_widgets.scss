@@ -323,6 +323,8 @@
             opacity: 0;
         }
     }
+
+    // Column select
     
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
@@ -330,13 +332,32 @@
         }
     }
 
-    .ag-column-select-add-group-indent {
-        @include ag-theme-rtl(( margin-left: $ag-icon-size + $ag-grid-size ));
-    }
-
     .ag-column-select-header-icon {
         cursor: pointer;
         margin: 0 $ag-grid-size;
+    }
+
+    .ag-column-select-column-group,
+    .ag-column-select-column {
+        height: $ag-grid-size * 4;
+    }
+
+    .ag-column-select-checkbox,
+    .ag-column-select-column-label,
+    .ag-column-group-icons {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
+    }
+
+    // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
+    // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
+    .ag-column-select-add-group-indent {
+        @include ag-theme-rtl(( margin-left: $ag-icon-size + $ag-grid-size * 2 ));
+    }
+
+    .ag-column-select-list {
+        @include ag-grid-border(secondary, top);
+        padding-top: $ag-grid-size;
     }
 }
 
