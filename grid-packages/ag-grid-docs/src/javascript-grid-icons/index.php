@@ -80,13 +80,10 @@ $ag-icon-checkbox-checked: "\f14a";
 $ag-icon-checkbox-indeterminate: "\f146";
 $ag-icon-checkbox-unchecked: "\f0c8";
 $ag-icon-color-picker: "\f576";
-$ag-icon-column: "\f142";
 $ag-icon-columns: "\f0db";
 $ag-icon-contracted: "\f146";
 $ag-icon-copy: "\f0c5";
 $ag-icon-cross: "\f00d";
-$ag-icon-cut: "\f0c4";
-$ag-icon-data: "\f1c0";
 $ag-icon-desc: "\f063";
 $ag-icon-expanded: "\f0fe";
 $ag-icon-eye-slash: "\f070";
@@ -95,31 +92,26 @@ $ag-icon-filter: "\f0b0";
 $ag-icon-first: "\f100";
 $ag-icon-grip: "\f58e";
 $ag-icon-group: "\f5fd";
-$ag-icon-indeterminate: "\f06e";
-$ag-icon-linked: "\f0c1";
 $ag-icon-last: "\f101";
 $ag-icon-left: "\f060";
+$ag-icon-linked: "\f0c1";
 $ag-icon-loading: "\f110";
 $ag-icon-maximize: "\f2d0";
 $ag-icon-menu: "\f0c9";
 $ag-icon-minimize: "\f2d1";
-$ag-icon-minus: "\f068";
 $ag-icon-next: "\f105";
 $ag-icon-none: "\f338";
 $ag-icon-not-allowed: "\f05e";
 $ag-icon-paste: "\f0ea";
 $ag-icon-pin: "\f276";
 $ag-icon-pivot: "\f074";
-$ag-icon-plus: "\f067";
 $ag-icon-previous: "\f104";
 $ag-icon-radio-button-off: "\f111";
 $ag-icon-radio-button-on: "\f058";
 $ag-icon-right: "\f061";
 $ag-icon-save: "\f0c7";
-$ag-icon-small-down: "\f107";
 $ag-icon-small-left: "\f104";
 $ag-icon-small-right: "\f105";
-$ag-icon-small-up: "\f106";
 $ag-icon-tick: "\f00c";
 $ag-icon-tree-closed: "\f105";
 $ag-icon-tree-indeterminate: "\f068";
@@ -151,84 +143,116 @@ $ag-icon-unlinked: "\f127";
 </p>
 
 <snippet>
-// column header items
-menu
-filter
-columns
-sortAscending
-sortDescending
-sortUnSort
 
-// expand / contract row group
-groupExpanded
-groupContracted
-
-// expand / contract column group
-columnGroupOpened
-columnGroupClosed
-
-// tool panel column group open / close
-columnSelectOpen
-columnSelectClosed
-columnSelectIndeterminate
-
-// when moving columns
-columnMovePin // when column is to the left, before it gets pinned
-columnMoveAdd // when adding a column
-columnMoveHide // when removing a column
-columnMoveMove // when moving a column
-columnMoveLeft // when moving and scrolling left
-columnMoveRight // when moving and scrolling right
-columnMoveGroup // when about to drop into group panel
-columnMoveValue // when about to drop into value panel
-columnMovePivot // when about to drop into pivot panel
-dropNotAllowed // when trying to drop column into group/value/pivot panel and column doesn't support it
-
-// menu
-menuPin // beside the column pin menu item
-menuValue // beside the column value menu item
-menuAddRowGroup // beside the column row group menu item
-menuRemoveRowGroup // beside the column row group menu item
-clipboardCopy // beside the copy to clipboard menu item
-clipboardCut // beside the cut to clipboard menu item
-clipboardPaste // beside the paste from clipboard menu item
-
-// column drop panels
-rowGroupPanel // beside where to drop columns for row group
-pivotPanel // beside where to drop columns for pivot
-valuePanel // beside where to drop columns for valuePanel
-
-// drag
-rowDrag // the row drag icon
-columnDrag // the column drag icon
-
-// panels and dialogs
-close
-maximize
-minimize
-
-// paging toolbar
-first
-previous
-next
-last
-
-// chevrons (small arrows)
-smallLeft
-smallRight
-smallUp
-smallDown
-
-// generic
-chart
-cancel
-check 
-colorPicker
-groupLoading
-data
-save
-linked
-unlinked
+// header column group shown when expanded (click to contract)
+columnGroupOpened: 'expanded',
+// header column group shown when contracted (click to expand)
+columnGroupClosed: 'contracted',
+// tool panel column group contracted (click to expand)
+columnSelectClosed: 'tree-closed',
+// tool panel column group expanded (click to contract)
+columnSelectOpen: 'tree-open',
+// column tool panel header expand/collapse all button, shown when some children are expanded and
+//     others are collapsed
+columnSelectIndeterminate: 'tree-indeterminate',
+// shown on ghost icon while dragging column to the side of the grid to pin
+columnMovePin: 'pin',
+// shown on ghost icon while dragging over part of the page that is not a drop zone
+columnMoveHide: 'eye-slash',
+// shown on ghost icon while dragging columns to reorder
+columnMoveMove: 'arrows',
+// animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
+columnMoveLeft: 'left',
+// animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
+columnMoveRight: 'right',
+// shown on ghost icon while dragging over Row Groups drop zone
+columnMoveGroup: 'group',
+// shown on ghost icon while dragging over Values drop zone
+columnMoveValue: 'aggregation',
+// shown on ghost icon while dragging over pivot drop zone
+columnMovePivot: 'pivot',
+// shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
+//     string column over aggregation drop zone
+dropNotAllowed: 'not-allowed',
+// shown on row group when contracted (click to expand)
+groupContracted: 'tree-closed',
+// shown on row group when expanded (click to contract)
+groupExpanded: 'tree-open',
+// context menu chart item
+chart: 'chart',
+// chart window title bar
+close: 'cross',
+// X (remove) on column 'pill' after adding it to a drop zone list
+cancel: 'cancel',
+// indicates the currently active pin state in the "Pin column" sub-menu of the column menu
+check: 'tick',
+// state icons for checkboxes
+checkboxChecked: 'checkbox-checked',
+checkboxUnchecked: 'checkbox-unchecked',
+checkboxIndeterminate: 'checkbox-indeterminate',
+// "go to first" button in pagination controls
+first: 'first',
+// "go to previous" button in pagination controls
+previous: 'previous',
+// "go to next" button in pagination controls
+next: 'next',
+// "go to last" button in pagination controls
+last: 'last',
+// shown on top right of chart when chart is linked to range data (click to unlink)
+linked: 'linked',
+// shown on top right of chart when chart is not linked to range data (click to link)
+unlinked: 'unlinked',
+// "Choose colour" button on chart settings tab
+colorPicker: 'color-picker',
+// on and off state for radio buttons
+radioButtonOn: 'radio-button-on',
+radioButtonOff: 'radio-button-off',
+// rotating spinner shown by the loading cell renderer
+groupLoading: 'loading',
+// button to launch enterprise column menu
+menu: 'menu',
+// filter tool panel tab
+filter: 'filter',
+// column tool panel tab
+columns: 'columns',
+// button in chart regular size window title bar (click to maximise)
+maximize: 'maximize',
+// button in chart maximised window title bar (click to make regular size)
+minimize: 'minimize',
+// "Pin column" item in column header menu
+menuPin: 'pin',
+// "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
+menuValue: 'aggregation',
+// "Group by {column-name}" item in column header menu
+menuAddRowGroup: 'group',
+// "Un-Group by {column-name}" item in column header menu
+menuRemoveRowGroup: 'group',
+// context menu copy item
+clipboardCopy: 'copy',
+// context menu paste item
+clipboardPaste: 'paste',
+// identifies the pivot drop zone
+pivotPanel: 'pivot',
+// "Row groups" drop zone in column tool panel
+rowGroupPanel: 'group',
+// columns tool panel Values drop zone
+valuePanel: 'aggregation',
+// drag handle used to pick up draggable columns
+columnDrag: 'grip',
+// drag handle used to pick up draggable rows
+rowDrag: 'grip',
+// context menu export item
+save: 'save',
+// version of small-right used in RTL mode
+smallLeft: 'small-left',
+// separater between column 'pills' when you add multiple columns to the header drop zone
+smallRight: 'small-right',
+// show on column header when column is sorted ascending
+sortAscending: 'asc',
+// show on column header when column is sorted descending
+sortDescending: 'desc',
+// show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
+sortUnSort: 'none'
 </snippet>
 <p>
     Setting the icons on the column definitions is identical, except group icons are not used in column definitions.

@@ -393,7 +393,7 @@
 }
 
 %ag-checkbox {
-    @include ag-use-icon-font($ag-checkbox-size);
+    @include ag-icon($ag-checkbox-size);
 
     -webkit-appearance: none;
     width: $ag-checkbox-size;

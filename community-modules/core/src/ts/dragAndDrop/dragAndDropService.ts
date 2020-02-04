@@ -83,7 +83,6 @@ export class DragAndDropService {
     @Autowired('environment') private environment: Environment;
 
     public static ICON_PINNED = 'pinned';
-    public static ICON_ADD = 'add';
     public static ICON_MOVE = 'move';
     public static ICON_LEFT = 'left';
     public static ICON_RIGHT = 'right';
@@ -113,7 +112,6 @@ export class DragAndDropService {
     private lastDropTarget: DropTarget;
 
     private ePinnedIcon: HTMLElement;
-    private ePlusIcon: HTMLElement;
     private eHiddenIcon: HTMLElement;
     private eMoveIcon: HTMLElement;
     private eLeftIcon: HTMLElement;
@@ -126,7 +124,6 @@ export class DragAndDropService {
     @PostConstruct
     private init(): void {
         this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
         this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
         this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
         this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
@@ -405,7 +402,6 @@ export class DragAndDropService {
         let eIcon: HTMLElement;
 
         switch (iconName) {
-            case DragAndDropService.ICON_ADD: eIcon = this.ePlusIcon; break;
             case DragAndDropService.ICON_PINNED: eIcon = this.ePinnedIcon; break;
             case DragAndDropService.ICON_MOVE: eIcon = this.eMoveIcon; break;
             case DragAndDropService.ICON_LEFT: eIcon = this.eLeftIcon; break;

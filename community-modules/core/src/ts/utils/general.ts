@@ -1306,9 +1306,7 @@ export class Utils {
     //
     // IMPORTANT NOTE!
     //
-    // The comments below provide one example of how each icon is used, so that you can find
-    // an instance of it in the UI and see what it looks like in the UI. Many icons are used
-    // in multiple places.
+    // If you change the list below, copy/paste the new content into the docs page javascript-grid-icons
     //
 
     static iconNameClassMap: { [key: string]: string; } = {
@@ -1325,8 +1323,6 @@ export class Utils {
         columnSelectIndeterminate: 'tree-indeterminate',
         // shown on ghost icon while dragging column to the side of the grid to pin
         columnMovePin: 'pin',
-        // ??? doesn't seem to be used?
-        columnMoveAdd: 'plus',
         // shown on ghost icon while dragging over part of the page that is not a drop zone
         columnMoveHide: 'eye-slash',
         // shown on ghost icon while dragging columns to reorder
@@ -1381,8 +1377,6 @@ export class Utils {
         radioButtonOff: 'radio-button-off',
         // rotating spinner shown by the loading cell renderer
         groupLoading: 'loading',
-        // ??? doesn't seem to be used?
-        data: 'data',
         // button to launch enterprise column menu
         menu: 'menu',
         // filter tool panel tab
@@ -1403,8 +1397,6 @@ export class Utils {
         menuRemoveRowGroup: 'group',
         // context menu copy item
         clipboardCopy: 'copy',
-        // ??? doesn't seem toi be used?
-        clipboardCut: 'cut',
         // context menu paste item
         clipboardPaste: 'paste',
         // identifies the pivot drop zone
@@ -1423,10 +1415,6 @@ export class Utils {
         smallLeft: 'small-left',
         // separater between column 'pills' when you add multiple columns to the header drop zone
         smallRight: 'small-right',
-        // ??? doesn't seem to be used?
-        smallUp: 'small-up',
-        // ??? doesn't seem to be used?
-        smallDown: 'small-down',
         // show on column header when column is sorted ascending
         sortAscending: 'asc',
         // show on column header when column is sorted descending

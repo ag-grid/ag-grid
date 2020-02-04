@@ -61,7 +61,7 @@
     }
 }
 
-@mixin ag-use-icon-font($size) {
+@mixin ag-icon($size) {
     font-family: '#{$ag-icon-font-family}';
     font-size: $size;
     line-height: $size;
@@ -77,7 +77,7 @@
 
 @mixin ag-icons-webfont() {
   .ag-icon {
-      @include ag-use-icon-font($ag-icon-size);
+      @include ag-icon($ag-icon-size);
   }
 
   @include ag-icon-element('aggregation', $ag-icon-aggregation);
@@ -86,13 +86,10 @@
   @include ag-icon-element('cancel', $ag-icon-cancel);
   @include ag-icon-element('chart', $ag-icon-chart);
   @include ag-icon-element('color-picker', $ag-icon-color-picker);
-  @include ag-icon-element('column', $ag-icon-column);
   @include ag-icon-element('columns', $ag-icon-columns);
   @include ag-icon-element('contracted', $ag-icon-contracted);
   @include ag-icon-element('copy', $ag-icon-copy);
   @include ag-icon-element('cross', $ag-icon-cross);
-  @include ag-icon-element('cut', $ag-icon-cut);
-  @include ag-icon-element('data', $ag-icon-data);
   @include ag-icon-element('desc', $ag-icon-desc);
   @include ag-icon-element('expanded', $ag-icon-expanded);
   @include ag-icon-element('eye-slash', $ag-icon-eye-slash);
@@ -101,7 +98,6 @@
   @include ag-icon-element('first', $ag-icon-first);
   @include ag-icon-element('grip', $ag-icon-grip);
   @include ag-icon-element('group', $ag-icon-group);
-  @include ag-icon-element('indeterminate', $ag-icon-indeterminate);
   @include ag-icon-element('last', $ag-icon-last);
   @include ag-icon-element('left', $ag-icon-left);
   @include ag-icon-element('linked', $ag-icon-linked);
@@ -109,21 +105,17 @@
   @include ag-icon-element('maximize', $ag-icon-maximize);
   @include ag-icon-element('menu', $ag-icon-menu);
   @include ag-icon-element('minimize', $ag-icon-minimize);
-  @include ag-icon-element('minus', $ag-icon-minus);
   @include ag-icon-element('next', $ag-icon-next);
   @include ag-icon-element('none', $ag-icon-none);
   @include ag-icon-element('not-allowed', $ag-icon-not-allowed);
   @include ag-icon-element('paste', $ag-icon-paste);
   @include ag-icon-element('pin', $ag-icon-pin);
   @include ag-icon-element('pivot', $ag-icon-pivot);
-  @include ag-icon-element('plus', $ag-icon-plus);
   @include ag-icon-element('previous', $ag-icon-previous);
   @include ag-icon-element('right', $ag-icon-right);
   @include ag-icon-element('save', $ag-icon-save);
-  @include ag-icon-element('small-down', $ag-icon-small-down);
   @include ag-icon-element('small-left', $ag-icon-small-left);
   @include ag-icon-element('small-right', $ag-icon-small-right);
-  @include ag-icon-element('small-up', $ag-icon-small-up);
   @include ag-icon-element('tick', $ag-icon-tick);
   @include ag-icon-element('tree-closed', $ag-icon-tree-closed);
   @include ag-icon-element('tree-indeterminate', $ag-icon-tree-indeterminate);
