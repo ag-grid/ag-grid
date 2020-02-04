@@ -89,7 +89,7 @@ module.exports = (cb, scope, isDev, communityModules, enterpriseModules) => {
     const {vanillaToVue} = require('./src/example-runner/vanilla-to-vue.ts');
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
     const {vanillaToAngular} = require('./src/example-runner/vanilla-to-angular.ts');
-    const {appModuleAngular} = require('./src/example-runner/angular-app-module.ts');
+    const {appModuleAngular} = require('./src/example-runner/grid-angular-app-module.ts');
 
     let count = 0;
 
