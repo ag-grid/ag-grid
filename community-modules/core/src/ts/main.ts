@@ -239,7 +239,7 @@ export { Constants } from "./constants";
 export { Grid, GridParams } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
-export { FocusedCellController } from "./focusedCellController";
+export { FocusController } from "./focusController";
 export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";

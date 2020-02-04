@@ -1,23 +1,75 @@
 import { Promise, _ } from '../utils';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
+import { PostConstruct, Autowired } from '../context/context';
+import { Constants } from '../constants';
+import { FocusController } from '../focusController';
 
 export class TabbedLayout extends Component {
 
+    @Autowired('focusController') private focusController: FocusController;
+
     @RefSelector('eHeader') private eHeader: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
+
     private params: TabbedLayoutParams;
-
     private afterAttachedParams: any;
-
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
 
     constructor(params: TabbedLayoutParams) {
         super(TabbedLayout.getTemplate(params.cssClass));
         this.params = params;
+
         if (params.items) {
             params.items.forEach(item => this.addItem(item));
+        }
+    }
+
+    @PostConstruct
+    public init(): void {
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.keyCode === Constants.KEY_TAB) {
+            e.preventDefault();
+            this.handleTabKey(e);
+        }
+
+        if (e.keyCode === Constants.KEY_RIGHT || e.keyCode === Constants.KEY_LEFT) {
+            if (!this.eHeader.contains(document.activeElement)) { return; }
+            const currentPosition = this.items.indexOf(this.activeItem);
+            const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+
+            if (currentPosition === nextPosition) { return; }
+            const nextItem = this.items[nextPosition];
+
+            this.showItemWrapper(nextItem);
+            nextItem.eHeaderButton.focus();
+        }
+    }
+
+    private handleTabKey(e: KeyboardEvent) {
+        const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
+        const activeElement = document.activeElement as HTMLElement;
+
+        if (this.eHeader.contains(activeElement)) {
+            if (focusableItems.length) {
+                focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
+            }
+        } else {
+            const focusedPosition = focusableItems.indexOf(activeElement);
+            const nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            if (nextPosition < 0 || nextPosition >= focusableItems.length) {
+                this.activeItem.eHeaderButton.focus();
+                return;
+            }
+
+            const nextItem = focusableItems[nextPosition];
+            if (nextItem) {
+                nextItem.focus();
+            }
         }
     }
 
@@ -33,7 +85,6 @@ export class TabbedLayout extends Component {
     }
 
     public getMinDimensions(): {width: number, height: number} {
-
         const eDummyContainer = this.getGui().cloneNode(true) as HTMLElement;
         const eDummyBody = eDummyContainer.querySelector('[ref="eBody"]') as HTMLElement;
 
@@ -63,15 +114,9 @@ export class TabbedLayout extends Component {
             }
         });
 
-        // finally check the parent tabs are no wider, as if they
-        // are, then these are the min width and not the child tabs
-        // if (minWidth<this.eGui.offsetWidth) {
-        //     minWidth = this.eGui.offsetWidth;
-        // }
-
         this.getGui().removeChild(eDummyContainer);
 
-        return {height: minHeight, width: minWidth};
+        return { height: minHeight, width: minWidth };
     }
 
     public showFirstItem(): void {
@@ -81,8 +126,8 @@ export class TabbedLayout extends Component {
     }
 
     private addItem(item: TabbedItem): void {
-
         const eHeaderButton = document.createElement('span');
+        eHeaderButton.tabIndex = -1;
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
@@ -109,13 +154,16 @@ export class TabbedLayout extends Component {
         if (this.params.onItemClicked) {
             this.params.onItemClicked({item: wrapper.tabbedItem});
         }
+
         if (this.activeItem === wrapper) {
             _.callIfPresent(this.params.onActiveItemClicked);
             return;
         }
+
         _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
+            body.focus();
         });
 
         if (this.activeItem) {

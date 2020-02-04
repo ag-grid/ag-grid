@@ -9,7 +9,6 @@ import {
     Component,
     Events,
     EventService,
-    GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams
@@ -27,7 +26,6 @@ export class PrimaryColsListPanel extends Component {
 
     public static TEMPLATE = `<div class="ag-column-select-list"></div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
     @Autowired('eventService') private eventService: EventService;

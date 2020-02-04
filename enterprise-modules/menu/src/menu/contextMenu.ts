@@ -1,27 +1,30 @@
 import {
-    _,
     Autowired,
     Bean,
     BeanStub,
+    CellPosition,
     Column,
     ColumnController,
     Component,
     Context,
     EventService,
+    FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
     GridOptionsWrapper,
     IAfterGuiAttachedParams,
     IComponent,
     IContextMenuFactory,
-    IRowModel,
     MenuItemDef,
     ModuleNames,
+    ModuleRegistry,
     PopupService,
     PostConstruct,
     RowNode,
     Optional,
-    IRangeController, ModuleRegistry
+    IRangeController,
+    CellPositionUtils,
+    _
 } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
@@ -33,20 +36,13 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
 
     private activeMenu: ContextMenu | null;
 
-    @PostConstruct
-    private init(): void {
-    }
-
     public hideActiveMenu(): void {
-        if (!this.activeMenu) {
-            return;
-        }
+        if (!this.activeMenu) { return; }
 
         this.activeMenu.destroy();
     }
@@ -59,9 +55,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
-        } else {
-            // if user clicks outside of a cell (eg below the rows, or not rows present)
-            // nothing to show, perhaps tool panels???
         }
 
         if (this.gridOptionsWrapper.isEnableCharts() &&
@@ -110,9 +103,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
         const menuItems = this.getMenuItems(node, column, value);
 
-        if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
-            return;
-        }
+        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
 
         const menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
@@ -141,6 +132,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         });
 
         this.activeMenu = menu;
+
         menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
             if (this.activeMenu === menu) {
                 this.activeMenu = null;
@@ -153,8 +145,13 @@ class ContextMenu extends Component implements IComponent<any> {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
+
 
     private menuItems: (MenuItemDef | string)[];
+    private menuList: MenuList | null = null;
+    private focusedCell: CellPosition | null = null;
 
     constructor(menuItems: (MenuItemDef | string)[]) {
         super('<div class="ag-menu"></div>');
@@ -171,6 +168,7 @@ class ContextMenu extends Component implements IComponent<any> {
         menuList.addMenuItems(menuItemsMapped);
 
         this.appendChild(menuList);
+        this.menuList = menuList;
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
@@ -179,7 +177,24 @@ class ContextMenu extends Component implements IComponent<any> {
             this.addDestroyFunc(params.hidePopup);
         }
 
+        this.focusedCell = this.focusController.getFocusedCell();
+
+        if (this.menuList) {
+            this.menuList.getGui().focus();
+        }
+
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+    }
+
+    public destroy(): void {
+        const currentFocusedCell = this.focusController.getFocusedCell();
+
+        if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
+            const { rowIndex, rowPinned, column } = this.focusedCell;
+            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+        }
+
+        super.destroy();
     }
 }

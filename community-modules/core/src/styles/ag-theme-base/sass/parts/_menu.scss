@@ -73,6 +73,11 @@
         align-items: center;
         justify-content: center;
 
+        &:focus {
+            outline: 1px solid $ag-input-focus-border-color;
+            outline-offset: -4px;
+        }
+
         @if $ag-full-width-tabs {
             flex: 1 1 auto;
         }

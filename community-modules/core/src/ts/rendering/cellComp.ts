@@ -120,7 +120,7 @@ export class CellComp extends Component {
         this.createGridCellVo();
 
         this.rangeSelectionEnabled = this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
-        this.cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
+        this.cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
         this.firstRightPinned = this.column.isFirstRightPinned();
         this.lastLeftPinned = this.column.isLastLeftPinned();
 
@@ -1241,7 +1241,7 @@ export class CellComp extends Component {
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
-            if (this.beans.focusedCellController.isCellFocused(this.cellPosition)) {
+            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
                 this.focusCell(true);
             }
         }
@@ -1324,7 +1324,7 @@ export class CellComp extends Component {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     }
 
     public setFocusInOnEditor(): void {
@@ -2029,7 +2029,7 @@ export class CellComp extends Component {
     }
 
     public onCellFocused(event?: any): void {
-        const cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
+        const cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {

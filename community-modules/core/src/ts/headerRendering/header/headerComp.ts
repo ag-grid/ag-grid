@@ -145,6 +145,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
         // so we need to make sure to destroy both listeners here
         this.addDestroyFunc(() => touchListener.destroy());
+
         if (tapMenuButton) {
             this.addDestroyFunc(() => menuTouchListener.destroy());
         }

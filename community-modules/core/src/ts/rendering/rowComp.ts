@@ -145,7 +145,7 @@ export class RowComp extends Component {
     }
 
     public init(): void {
-        this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
 
@@ -694,7 +694,7 @@ export class RowComp extends Component {
 
         // we want to try and keep editing and focused cells
         const editing = renderedCell.isEditing();
-        const focused = this.beans.focusedCellController.isCellFocused(renderedCell.getCellPosition());
+        const focused = this.beans.focusController.isCellFocused(renderedCell.getCellPosition());
 
         const mightWantToKeepCell = editing || focused;
 
@@ -1423,7 +1423,7 @@ export class RowComp extends Component {
     }
 
     private onCellFocusChanged(): void {
-        const rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach(row => _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused));
