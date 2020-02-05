@@ -1009,23 +1009,19 @@
                 "items": [
                   {
                     "title": "Layout",
-                    "url": "javascript-charts-layout/",
-                    "enterprise": true
+                    "url": "javascript-charts-layout/"
                   },
                   {
                     "title": "Legend",
-                    "url": "javascript-charts-legend/",
-                    "enterprise": true
+                    "url": "javascript-charts-legend/"
                   },
                   {
                     "title": "Markers",
-                    "url": "javascript-charts-markers/",
-                    "enterprise": true
+                    "url": "javascript-charts-markers/"
                   },
                   {
                     "title": "Line",
-                    "url": "javascript-charts-line-series/",
-                    "enterprise": true
+                    "url": "javascript-charts-line-series/"
                   }
                 ]
               },
