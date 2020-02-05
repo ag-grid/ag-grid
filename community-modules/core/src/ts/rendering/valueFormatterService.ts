@@ -14,17 +14,25 @@ export class ValueFormatterService {
     public formatValue(column: Column,
                        rowNode: RowNode | null,
                        $scope: any,
-                       value: any): string {
+                       value: any,
+                       suppliedFormatter?: (value: any) => string): string {
 
+        let result: string = null;
         let formatter: (value: any) => string;
         const colDef = column.getColDef();
-        // if floating, give preference to the floating formatter
-        if (rowNode && rowNode.rowPinned) {
-            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+
+        if (suppliedFormatter) {
+            // favour supplied, e.g. set filter items can have their own value formatters
+            formatter = suppliedFormatter;
         } else {
-            formatter = colDef.valueFormatter;
+            // if floating, give preference to the floating formatter
+            if (rowNode && rowNode.rowPinned) {
+                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+            } else {
+                formatter = colDef.valueFormatter;
+            }
         }
-        let result: string = null;
+
         if (formatter) {
             const params: ValueFormatterParams = {
                 value: value,

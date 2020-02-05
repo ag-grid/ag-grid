@@ -101,9 +101,13 @@ export class SetFilterListItem extends Component {
 
     public render(): void {
         const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
         const colDef = this.column.getColDef();
+
+        const filterValueFormatter = this.getFilterValueFormatter(colDef);
+
+        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+
         const params = {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -119,5 +123,9 @@ export class SetFilterListItem extends Component {
                 this.addDestroyFunc(component.destroy.bind(component));
             }
         });
+    }
+
+    private getFilterValueFormatter(colDef: ColDef) {
+        return colDef.filterParams ? (<ISetFilterParams>colDef.filterParams).valueFormatter : undefined;
     }
 }
