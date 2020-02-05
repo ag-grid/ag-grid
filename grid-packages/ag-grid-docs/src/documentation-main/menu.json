@@ -400,6 +400,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Filtering / Sorting",
+                    "url": "javascript-grid-server-side-model-filtering",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Row Selection",
                     "url": "javascript-grid-server-side-model-selection/",
                     "enterprise": true
