@@ -50,8 +50,44 @@ series: [{
 <h2>Multiple Series</h2>
 
 <p>
-    Now that we understand how the line series plots the data, let's plot more of it and use two line series to do it:
+    If we have more than two fields inside each object in the <code>data</code> array, we can create
+    a multi-series line chart. For example, if our datums look like this:
 </p>
+
+<snippet language="ts">
+{
+    quarter: 'Q1',
+    gas: 200,
+    diesel: 100
+}
+</snippet>
+
+<p>
+    then we can use the same <code>quarter</code> key as <code>xKey</code> for both series
+    and <code>gas</code> and <code>diesel</code> keys for <code>yKey</code> of the first
+    and second line series, respectively.
+</p>
+
+<p>
+    To create multiple line series we need to provide two config objects in the
+    <code>series</code> array:
+</p>
+
+<snippet language="ts">
+series: [{
+    xKey: 'quarter',
+    yKey: 'gas'
+}, {
+    xKey: 'quarter',
+    yKey: 'diesel'
+}]
+</snippet>
+
+<p>
+    And we get a result like this:
+</p>
+
+<?= chart_example('Multiple Line Series', 'multi-line'); ?>
 
 <p>
     Here, we use two config objects in the <code>series</code> array, one for each series.
@@ -88,8 +124,6 @@ marker: {
 <p>
     we'll get a result like this:
 </p>
-
-<?= chart_example('Multiple Line Series', 'multi-line'); ?>
 
 <p>
     <img alt="Two Colored Line Series" src="two-colored-line-series.png" style="margin-bottom: 0px; height: 300px;">
