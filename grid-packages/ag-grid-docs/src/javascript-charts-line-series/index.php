@@ -18,17 +18,17 @@ include '../documentation-main/documentation_header.php';
     rendering impcomplete data that has some values missing.
 </p>
 
-<h2>First Line Chart</h2>
-
-<?= chart_example('Basic Line Chart', 'basic-line'); ?>
+<h2>Single Series</h2>
 
 <p>
-    Since this series type is so common, the chart factory (<code>AgChart.create</code> method) uses it
-    as the default type, so it doesn't have to be specified explicitly.
+    Since <code>'line'</code> series type is so common, the chart factory
+    (<code>AgChart.create</code> method) uses it as the default type, so it doesn't have
+    to be specified explicitly.
 </p>
 
 <p>
-    The simplest line series config therefore only requires two properties: <code>xKey</code> and <code>yKey</code>.
+    The simplest line series config therefore only requires two properties:
+    <code>xKey</code> and <code>yKey</code>:
 </p>
 
 <snippet language="ts">
@@ -38,6 +38,8 @@ series: [{
     yKey: 'spending'
 }]
 </snippet>
+
+<?= chart_example('Basic Line Chart', 'basic-line'); ?>
 
 <p>
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
@@ -89,21 +91,37 @@ series: [{
 
 <?= chart_example('Multiple Line Series', 'multi-line'); ?>
 
-<p>
-    Here, we use two config objects in the <code>series</code> array, one for each series.
-    Since both series show fuel spending per quarter, the <code>xKey</code> for both is the same,
-    but the <code>yKey</code>s that show spending per fuel type are different.
-</p>
+<h2>Legend and Tooltip information</h2>
 
 <p>
     By default the legend shows the actual name of the key used to fetch the series data,
     and that name may not be very presentable. In our case, the <code>gas</code> and <code>diesel</code> keys
-    inside the data objects are not capitalized. We can pass a more descriptive and presentable name
-    to the <code>yName</code> config, and the legend will show that instead.
+    inside the data objects are not capitalized. We can provide a more descriptive and presentable name
+    to the <code>yName</code> config, and the legend will show that name instead.
 </p>
 
+<snippet language="ts">
+series: [{
+    xKey: 'quarter',
+    yKey: 'gas',
+    yName: 'Gas'
+}, {
+    xKey: 'quarter',
+    yKey: 'diesel',
+    yName: 'Diesel'
+}]
+</snippet>
+
+<?= chart_example('Legend and Tooltip information', 'legend-info'); ?>
+
 <p>
-    <img alt="Two Line Series" src="two-line-series.png" style="margin-bottom: 0px; height: 300px;">
+    The provided <code>yName</code> will also show up in tooltip titles:
+</p>
+
+<p style="text-align: center;">
+    <img alt="Tooltip with no title" src="no-title-tooltip.png" style="margin-bottom: 0px; height: 123px;">
+    <span style="width: 50px; display: inline-block;">--></span>
+    <img alt="Tooltip with title" src="title-tooltip.png" style="margin-bottom: 0px; height: 158px;">
 </p>
 
 <h2>Line and Marker Colors</h2>
@@ -117,7 +135,8 @@ series: [{
 <snippet language="ts">
 stroke: 'black',
 marker: {
-    fill: 'gray'
+    fill: 'gray',
+    stroke: 'black'
 }
 </snippet>
 
@@ -125,15 +144,7 @@ marker: {
     we'll get a result like this:
 </p>
 
-<p>
-    <img alt="Two Colored Line Series" src="two-colored-line-series.png" style="margin-bottom: 0px; height: 300px;">
-</p>
-
-<p>
-    The <code>stroke</code> config sets the color of the stroke of the series' line.
-    It also affects the color of the stroke of the series' markers, if the <code>stroke</code>
-    is not specified inside the <code>marker</code> config explicitly.
-</p>
+<?= chart_example('Line and Marker Colors', 'line-marker-colors'); ?>
 
 <h2>Missing Data</h2>
 
