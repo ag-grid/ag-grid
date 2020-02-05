@@ -29,7 +29,9 @@ FakeServer.prototype.getData = function (request) {
 FakeServer.prototype.doFilter = function(data, filterModel) {
     var filterPresent = filterModel && Object.keys(filterModel).length > 0;
     if (!filterPresent) return data;
-    return data.filter(d => filterModel.country.values.indexOf(d.country.code) > -1);
+    return data.filter(function(d) {
+        return filterModel.country.values.indexOf(d.country.code) > -1;
+    });
 };
 
 FakeServer.prototype.doSort = function (data, sortModel) {

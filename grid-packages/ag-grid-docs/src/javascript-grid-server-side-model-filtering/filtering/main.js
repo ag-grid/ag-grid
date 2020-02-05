@@ -43,6 +43,20 @@ function countryFilterValueFormatter(params) {
     return name + '(' + code + ')';
 }
 
+
+function ServerSideDatasource(fakeServer) {
+    this.fakeServer = fakeServer;
+}
+
+ServerSideDatasource.prototype.getRows = function (params) {
+    var response = this.fakeServer.getData(params.request);
+
+    setTimeout(function() {
+        params.successCallback(response.data, response.lastRow);
+    }, 500);
+};
+
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
@@ -58,18 +72,3 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     );
 });
-
-function ServerSideDatasource(fakeServer) {
-    this.fakeServer = fakeServer;
-}
-
-ServerSideDatasource.prototype.getRows = function (params) {
-    //console.log(params.request);
-
-    var response = this.fakeServer.getData(params.request);
-
-    setTimeout(function() {
-        params.successCallback(response.data, response.lastRow);
-    }, 500);
-};
-
