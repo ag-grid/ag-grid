@@ -17,14 +17,14 @@ export class SizeMonitor {
     static init() {
         const NativeResizeObserver = (window as any).ResizeObserver;
 
-        if (NativeResizeObserver) {
+        if (false) { // NativeResizeObserver
             this.resizeObserver = new NativeResizeObserver((entries: any) => {
                 for (const entry of entries) {
                     const { width, height } = entry.contentRect;
                     this.checkSize(this.elements.get(entry.target), entry.target, width, height);
                 }
             });
-        } else { // polyfill
+        } else { // polyfill (more reliable even in browsers that support ResizeObserver)
             const step = () => {
                 this.elements.forEach((entry, element) => {
                     const width = element.clientWidth ? element.clientWidth : 0;

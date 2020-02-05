@@ -119,6 +119,25 @@ export abstract class Chart extends Observable {
         return this.pendingSize ? this.pendingSize[1] : this.scene.height;
     }
 
+    protected _autosize = false;
+    set autosize(value: boolean) {
+        if (this._autosize !== value) {
+            this._autosize = value;
+            if (value) {
+                const chart = this; // capture `this` for IE11
+                SizeMonitor.observe(this.element, size => {
+                    chart.width = size.width;
+                    chart.height = size.height;
+                });
+            } else {
+                SizeMonitor.unobserve(this.element);
+            }
+        }
+    }
+    get autosize(): boolean {
+        return this._autosize;
+    }
+
     download(fileName?: string) {
         this.scene.download(fileName);
     }
@@ -138,16 +157,15 @@ export abstract class Chart extends Observable {
         background.fill = 'white';
         root.appendChild(background);
 
+        const element = this._element = document.createElement('div');
+        element.style.boxSizing = 'border-box';
+        element.style.height = '100%';
+
         const scene = new Scene(document);
         this.scene = scene;
         scene.root = root;
-        scene.container = this._element = document.createElement('div');
-
-        const chart = this;
-        SizeMonitor.observe(this._element, size => {
-            chart.width = size.width;
-            // TODO: update height too
-        });
+        scene.container = element;
+        this.autosize = true;
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange);
