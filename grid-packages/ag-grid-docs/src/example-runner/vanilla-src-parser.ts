@@ -341,4 +341,9 @@ export function parser(js, html, exampleSettings) {
     return bindings;
 }
 
+export function getFunctionName(code) {
+    let matches = /function ([^\(]*)/.exec(code);
+    return matches && matches.length === 2 ? matches[1].trim() : null;
+}
+
 export default parser;

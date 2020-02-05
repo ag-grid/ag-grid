@@ -1,25 +1,20 @@
-import { recognizedDomEvents } from './vanilla-src-parser';
+import { recognizedDomEvents, getFunctionName } from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
-function getFunctionName(code) {
-    let matches = /function ([^\(]*)/.exec(code);
-    return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-
-function isInstanceMethod(instance: any, property: any) {
+function isInstanceMethod(instance: any, property: any): boolean {
     const instanceMethods = instance.map(getFunctionName);
     return instanceMethods.filter(methodName => methodName === property.name).length > 0;
 }
 
-function convertFunctionToProperty(definition: string) {
+function convertFunctionToProperty(definition: string): string {
     return definition.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
 }
 
-function toTitleCase(s) {
-    return s[0].toUpperCase() + s.slice(1);
+function toTitleCase(value: string): string {
+    return value[0].toUpperCase() + value.slice(1);
 }
 
-function getImports(bindings, componentFilenames) {
+function getImports(bindings: any, componentFilenames: string[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
@@ -48,7 +43,7 @@ function getImports(bindings, componentFilenames) {
     return imports;
 }
 
-function getTemplate(bindings, componentAttributes) {
+function getTemplate(bindings: any, componentAttributes: string[]): string {
     const { gridSettings } = bindings;
     const agGridTag = `<div
                 id="myGrid"
@@ -93,7 +88,7 @@ function getTemplate(bindings, componentAttributes) {
     return styleConvertor(template);
 }
 
-function createIndexJsx(bindings, componentFilenames) {
+export function vanillaToReact(bindings: any, componentFilenames: string[]): string {
     const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
     const imports = getImports(bindings, componentFilenames);
     const stateProperties = [`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
@@ -212,10 +207,6 @@ render(
     document.querySelector('#root')
 )
 `;
-}
-
-export function vanillaToReact(bindings, componentFilenames) {
-    return createIndexJsx(bindings, componentFilenames);
 }
 
 if (typeof window !== 'undefined') {
