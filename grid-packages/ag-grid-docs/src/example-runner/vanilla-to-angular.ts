@@ -1,6 +1,6 @@
 import { recognizedDomEvents, getFunctionName } from './vanilla-src-parser';
 
-function removeFunctionKeyword(code) {
+function removeFunctionKeyword(code): string {
     return code.replace(/^function /, '');
 }
 
