@@ -15,15 +15,94 @@ function convertFunctionToProperty(definition: string) {
     return definition.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
 }
 
-function indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules) {
-    const imports = [];
-    const propertyAssignments = [`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
-    const componentAttributes = ["modules={this.state.modules}"];
+function toTitleCase(s) {
+    return s[0].toUpperCase() + s.slice(1);
+}
 
+function getImports(bindings, componentFilenames) {
+    const imports = [
+        "import React, { Component } from 'react';",
+        "import { render } from 'react-dom';",
+        "import { AgGridReact } from '@ag-grid-community/react';"
+    ];
+
+    if (bindings.gridSettings.enterprise) {
+        imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
+    } else {
+        imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
+    }
+
+    imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
+
+    if (componentFilenames) {
+        componentFilenames.forEach(filename => {
+            const componentName = toTitleCase(filename.split('.')[0]);
+            imports.push(`import ${componentName} from './${filename}';`);
+        });
+    }
+
+    return imports;
+}
+
+function getTemplate(bindings, componentAttributes) {
+    const { gridSettings } = bindings;
+    const agGridTag = `<div
+                id="myGrid"
+                style={{
+                    height: '${gridSettings.height}',
+                    width: '${gridSettings.width}'}}
+                    className="${gridSettings.theme}">
+            <AgGridReact
+                ${componentAttributes.join('\n')}
+            />
+            </div>`;
+
+    let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
+
+    recognizedDomEvents.forEach(event => {
+        const jsEvent = `on${toTitleCase(event)}`;
+        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
+
+        template = template
+            .replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`)
+            .replace(/, event\)/g, ")")
+            .replace(/, event,/g, ", ");
+    });
+
+    // react events are case sensitive - could do something tricky here, but as there are only 2 events affected so far
+    // I'll keep it simple
+    const domEventsCaseSensitive = [
+        { name: 'ondragover', replacement: 'onDragOver' },
+        { name: 'ondragstart', replacement: 'onDragStart' },
+    ];
+
+    domEventsCaseSensitive.forEach(event => {
+        template = template.replace(new RegExp(event.name, 'ig'), event.replacement);
+    });
+
+    template = template
+        .replace(/\(this\, \)/g, '(this)')
+        .replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />')
+        .replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />')
+        .replace(/ class=/g, " className=");
+
+    return styleConvertor(template);
+}
+
+function createIndexJsx(bindings, componentFilenames) {
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
+    const imports = getImports(bindings, componentFilenames);
+    const stateProperties = [`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
+    const componentAttributes = ['modules={this.state.modules}'];
     const instanceBindings = [];
-    bindings.properties.filter(property => property.name != 'onGridReady').forEach(property => {
-        if (componentFilenames.length > 0 && property.name === "components") {
-            property.name = "frameworkComponents";
+
+    properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+        if (componentFilenames.length > 0 && property.name === 'components') {
+            property.name = 'frameworkComponents';
         }
 
         if (property.value === 'true' || property.value === 'false') {
@@ -37,7 +116,7 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
             if (isInstanceMethod(bindings.instance, property)) {
                 instanceBindings.push(`this.${property.name}=${property.value}`);
             } else {
-                propertyAssignments.push(`${property.name}: ${property.value}`);
+                stateProperties.push(`${property.name}: ${property.value}`);
                 componentAttributes.push(`${property.name}={this.state.${property.name}}`);
             }
         }
@@ -48,47 +127,28 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
     componentAttributes.push('onGridReady={this.onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    if (bindings.gridSettings.enterprise) {
-        imports.push('import {AllModules} from "@ag-grid-enterprise/all-modules";');
-    } else {
-        imports.push('import {AllCommunityModules} from "@ag-grid-community/all-modules";');
-    }
-
-    imports.push('import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";');
-
-    // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
-
-    if (componentFilenames) {
-        let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
-        componentFilenames.forEach(filename => {
-            let componentName = titleCase(filename).split('.')[0];
-            imports.push('import ' + componentName + ' from "./' + filename + '";');
-        });
-    }
-
     const additionalInReady = [];
 
-    if (bindings.data) {
-        let setRowDataBlock = bindings.data.callback;
-        if (bindings.data.callback.indexOf('api.setRowData') !== -1) {
-            if (propertyAssignments.filter(item => item.indexOf('rowData') !== -1).length === 0) {
-                propertyAssignments.push('rowData: []');
+    if (data) {
+        let setRowDataBlock = data.callback;
+
+        if (data.callback.indexOf('api.setRowData') >= 0) {
+            if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                stateProperties.push('rowData: []');
             }
-            if (componentAttributes.filter(item => item.indexOf('rowData') !== -1).length === 0) {
+
+            if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
                 componentAttributes.push('rowData={this.state.rowData}');
             }
 
-            setRowDataBlock = bindings.data.callback.replace("params.api.setRowData(data);", "this.setState({ rowData: data });");
+            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
         }
 
         additionalInReady.push(`
             const httpRequest = new XMLHttpRequest();
             const updateData = (data) => ${setRowDataBlock};
 
-            httpRequest.open('GET', ${bindings.data.url});
+            httpRequest.open('GET', ${data.url});
             httpRequest.send();
             httpRequest.onreadystatechange = () => {
                 if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -97,68 +157,24 @@ function indexTemplate(bindings, componentFilenames, isDev, communityModules, en
             };`);
     }
 
-    if (bindings.onGridReady) {
-        const hackedHandler = bindings.onGridReady.replace(/^\{|\}$/g, '');
+    if (onGridReady) {
+        const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
         additionalInReady.push(hackedHandler);
     }
 
-    if (bindings.resizeToFit) {
+    if (resizeToFit) {
         additionalInReady.push('params.api.sizeColumnsToFit();');
     }
 
-    const agGridTag = `<div
-                id="myGrid"
-                style={{
-                    height: '${bindings.gridSettings.height}',
-                    width: '${bindings.gridSettings.width}'}}
-                    className="${bindings.gridSettings.theme}">
-            <AgGridReact
-                ${componentAttributes.join('\n')}
-            />
-            </div>`;
-
-    let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
-
-    recognizedDomEvents.forEach(event => {
-        const jsEvent = 'on' + event[0].toUpperCase() + event.substr(1, event.length);
-        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
-
-        template = template.replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`);
-        template = template.replace(/, event\)/g, ")");
-        template = template.replace(/, event,/g, ", ");
-    });
-    recognizedDomEvents.forEach(event => {
-        // react events are case sensitive - could do something tricky here, but as there are only 2 events effected so far
-        // I'll keep it simple
-        const domEventsCaseSensitive = [
-            { name: 'ondragover', replacement: 'onDragOver' },
-            { name: 'ondragstart', replacement: 'onDragStart' }
-        ];
-
-        domEventsCaseSensitive.forEach(event => {
-            template = template.replace(new RegExp(event.name, 'ig'), event.replacement);
-        });
-    });
-    template = template.replace(/\(this\, \)/g, '(this)');
-
-    template = template.replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />');
-    template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');
-    template = template.replace(/ class=/g, " className=");
-
-    template = styleConvertor(template);
-
+    const template = getTemplate(bindings, componentAttributes);
     const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
-    const instance = bindings.instance.map(body => convertFunctionToProperty(body));
-
-    const style = bindings.gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
+    const instance = bindings.instance.map(convertFunctionToProperty);
+    const style = gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
 
     return `
 'use strict'
 
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { AgGridReact } from '@ag-grid-community/react';
 ${imports.join('\n')}
 
 class GridExample extends Component {
@@ -166,7 +182,7 @@ class GridExample extends Component {
         super(props);
 
         this.state = {
-            ${propertyAssignments.join(',\n    ')}
+            ${stateProperties.join(',\n    ')}
         };
 
         ${instanceBindings.join(';\n    ')}
@@ -198,9 +214,9 @@ render(
 `;
 }
 
-export function vanillaToReact(js, html, exampleSettings, componentFilenames, isDev, communityModules, enterpriseModules) {
+export function vanillaToReact(js, html, exampleSettings, componentFilenames) {
     const bindings = parser(js, html, exampleSettings);
-    return indexTemplate(bindings, componentFilenames, isDev, communityModules, enterpriseModules);
+    return createIndexJsx(bindings, componentFilenames);
 }
 
 if (typeof window !== 'undefined') {
