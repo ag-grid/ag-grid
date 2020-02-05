@@ -237,7 +237,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
             const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
 
             if (themeOverride) {
-                const generatedFiles = glob.sync(path.join(_gen, '**/*.{html,js}'));
+                const generatedFiles = glob.sync(path.join(_gen, '**/*.{html,js,jsx,ts}'));
 
                 generatedFiles.forEach(file => {
                     let content = getFileContents(file).replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`);
