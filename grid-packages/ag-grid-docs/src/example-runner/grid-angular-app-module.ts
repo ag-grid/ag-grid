@@ -1,57 +1,55 @@
-export function appModuleAngular(componentFileNames) {
+function push<T>(arr: T[], s: T) {
+    arr.unshift(s);
+    return arr;
+}
+
+export function appModuleAngular(componentFileNames: string[]) {
     const components = [];
-    const imports = [];
+    const imports = [
+        "import { NgModule } from '@angular/core';",
+        "import { BrowserModule } from '@angular/platform-browser';",
+        "import { FormsModule } from '@angular/forms'; // <-- NgModel lives here",
+        "import { HttpClientModule } from '@angular/common/http';	// HttpClient",
+        "",
+        "// ag-grid",
+        "import { AgGridModule } from '@ag-grid-community/angular';",
+        "import { AppComponent } from './app.component';",
+        "",
+    ];
 
     if (componentFileNames) {
-        let titleCase = (s) => {
-            let camelCased = s.replace(/-([a-z])/g, g => g[1].toUpperCase());
-            return camelCased.charAt(0).toUpperCase() + camelCased.slice(1);
+        const toTitleCase = value => {
+            let camelCased = value.replace(/-([a-z])/g, g => g[1].toUpperCase());
+            return camelCased[0].toUpperCase() + camelCased.slice(1);
         };
 
         componentFileNames.forEach(filename => {
-            let fileFragments = filename.split('.');
-            let componentName = titleCase(fileFragments[0]);
-            components.push(componentName);
-            imports.push('import { ' + componentName + ' } from "./' + fileFragments[0] + '.component";');
+            let componentName = filename.split('.')[0];
+            let componentNameTitleCase = toTitleCase(componentName);
+            components.push(componentNameTitleCase);
+            imports.push(`import { ${componentNameTitleCase} } from './${componentName}.component';`);
         });
     }
 
+    return `
+        ${imports.join('\n')}
 
-    return `	
-        import { NgModule }      from '@angular/core';	
-        import { BrowserModule } from '@angular/platform-browser';	
-        import { FormsModule }   from '@angular/forms'; // <-- NgModel lives here	
-        // HttpClient	
-        import {HttpClientModule} from '@angular/common/http';	
-        	
-        // ag-grid	
-        import { AgGridModule }  from "@ag-grid-community/angular";	
-        import { AppComponent }  from './app.component';	
-        	
-        ${imports.join('\n')}	
-        	
-        @NgModule({	
-          imports: [	
-            BrowserModule,	
-            FormsModule, // <-- import the FormsModule before binding with [(ngModel)]	
-            HttpClientModule,	
-            AgGridModule.withComponents([${components.join(',')}])	
-          ],	
-          declarations: [	
-            ${push(components,'AppComponent').join(',')}	
-          ],	
-          bootstrap: [ AppComponent ]	
-        })	
-        export class AppModule { }	
+        @NgModule({
+          imports: [
+            BrowserModule,
+            FormsModule, // <-- import the FormsModule before binding with [(ngModel)]
+            HttpClientModule,
+            AgGridModule.withComponents([${components.join(',')}])
+          ],
+          declarations: [
+            ${push(components, 'AppComponent').join(',')}
+          ],
+          bootstrap: [ AppComponent ]
+        })
+        export class AppModule { }
     `;
 }
 
 if (typeof window !== 'undefined') {
     (<any>window).appModuleAngular = appModuleAngular;
-}
-
-
-function push(arr, s) {
-    arr.unshift(s);
-    return arr;
 }

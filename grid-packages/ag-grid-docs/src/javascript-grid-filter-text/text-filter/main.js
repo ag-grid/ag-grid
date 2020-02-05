@@ -1,56 +1,78 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', filterParams:{
-        filterOptions:['contains', 'notContains'],
-        textFormatter: function(r){
-            if (r==null) return null;
-            r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
-            r = r.replace(new RegExp("æ", 'g'),"ae");
-            r = r.replace(new RegExp("ç", 'g'),"c");
-            r = r.replace(new RegExp("[èéêë]", 'g'),"e");
-            r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
-            r = r.replace(new RegExp("ñ", 'g'),"n");
-            r = r.replace(new RegExp("[òóôõøö]", 'g'),"o");
-            r = r.replace(new RegExp("œ", 'g'),"oe");
-            r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
-            r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-            return r;
-        },
-        debounceMs:0,
-        caseSensitive:true,
-        suppressAndOrCondition:true
-    }},
-    {headerName: "Country", field: "country", width: 120, filterParams:{
-        filterOptions:['contains'],
-        textCustomComparator: function  (filter, value, filterText) {
-            var filterTextLoweCase = filterText.toLowerCase();
-            var valueLowerCase = value.toString().toLowerCase();
-            var aliases={
-                usa:'united states',
-                holland:'netherlands',
-                vodka:'russia',
-                niall:'ireland',
-                sean:'south africa',
-                alberto:'mexico',
-                john:'australia',
-                xi:'china'
-            };
+    {
+        headerName: "Athlete",
+        field: "athlete",
+        width: 150,
+        filter: 'agTextColumnFilter',
+        filterParams: {
+            filterOptions: ['contains', 'notContains'],
+            textFormatter: function(r) {
+                if (r == null) return null;
+                r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
+                r = r.replace(new RegExp("æ", 'g'), "ae");
+                r = r.replace(new RegExp("ç", 'g'), "c");
+                r = r.replace(new RegExp("[èéêë]", 'g'), "e");
+                r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
+                r = r.replace(new RegExp("ñ", 'g'), "n");
+                r = r.replace(new RegExp("[òóôõøö]", 'g'), "o");
+                r = r.replace(new RegExp("œ", 'g'), "oe");
+                r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
+                r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+                return r;
+            },
+            debounceMs: 0,
+            caseSensitive: true,
+            suppressAndOrCondition: true
+        }
+    },
+    {
+        headerName: "Country",
+        field: "country",
+        width: 120,
+        filterParams: {
+            filterOptions: ['contains'],
+            textCustomComparator: function(_, value, filterText) {
+                var filterTextLowerCase = filterText.toLowerCase();
+                var valueLowerCase = value.toString().toLowerCase();
+                var aliases = {
+                    usa: 'united states',
+                    holland: 'netherlands',
+                    vodka: 'russia',
+                    niall: 'ireland',
+                    sean: 'south africa',
+                    alberto: 'mexico',
+                    john: 'australia',
+                    xi: 'china'
+                };
 
-            function contains (target, lookingFor){
-                if (target === null) return false;
-                return target.indexOf(lookingFor) >= 0
-            }
+                function contains(target, lookingFor) {
+                    return target && target.indexOf(lookingFor) >= 0;
+                }
 
-            var literalMatch = contains(valueLowerCase, filterTextLoweCase);
-            return literalMatch || contains(valueLowerCase, aliases[filterTextLoweCase]);
-        },
-        debounceMs:2000
-    }},
-    {headerName: "Year", field: "year", width: 90, filter:'agNumberColumnFilter', filterParams:{
-        filterOptions:['inRange']
-    }},
-    {headerName: "Sport", field: "sport", width: 90, filter: 'agTextColumnFilter', filterParams:{
-        defaultOption:'startsWith'
-    }}
+                var literalMatch = contains(valueLowerCase, filterTextLowerCase);
+                return literalMatch || contains(valueLowerCase, aliases[filterTextLowerCase]);
+            },
+            debounceMs: 2000
+        }
+    },
+    {
+        headerName: "Year",
+        field: "year",
+        width: 90,
+        filter: 'agNumberColumnFilter',
+        filterParams: {
+            filterOptions: ['inRange']
+        }
+    },
+    {
+        headerName: "Sport",
+        field: "sport",
+        width: 90,
+        filter: 'agTextColumnFilter',
+        filterParams: {
+            defaultOption: 'startsWith'
+        }
+    }
 ];
 
 var gridOptions = {
@@ -60,7 +82,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    floatingFilter:true
+    floatingFilter: true
 };
 
 // setup the grid after the page has finished loading

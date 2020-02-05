@@ -142,9 +142,13 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const { gridSettings } = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
-    const agGridTag = `<ag-grid-vue ${style} class="${gridSettings.theme}" id="myGrid"
-                :gridOptions="gridOptions"
-                @grid-ready="onGridReady"${attributes.join('\n                ')}></ag-grid-vue>`;
+    const agGridTag = `<ag-grid-vue
+    ${style}
+    class="${gridSettings.theme}"
+    id="myGrid"
+    :gridOptions="gridOptions"
+    @grid-ready="onGridReady"
+    ${attributes.join('\n    ')}></ag-grid-vue>`;
 
     let template = agGridTag;
 

@@ -128,7 +128,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
 
             // this examples _gen directory
             const _gen = createExamplePath('_gen');
-            const format = (source, parser) => prettier.format(source, { parser, printWidth: 120 });
+            const format = (source, parser) => prettier.format(source, { parser, singleQuote: true });
 
             // inline styles in the examples index.html
             // will be added to styles.css in the various generated fw examples
