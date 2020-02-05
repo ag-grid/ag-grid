@@ -87,6 +87,7 @@ function forEachExampleToGenerate(generateExample, finish, scope = '*') {
 module.exports = (scope, isDev, communityModules, enterpriseModules) => {
     require('ts-node').register();
 
+    const { parser } = require('./src/example-runner/vanilla-src-parser.ts');
     const { vanillaToVue } = require('./src/example-runner/vanilla-to-vue.ts');
     const { vanillaToReact } = require('./src/example-runner/vanilla-to-react.ts');
     const { vanillaToAngular } = require('./src/example-runner/vanilla-to-angular.ts');
@@ -123,6 +124,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
             // read the main script (js) and the associated index.html
             const mainJs = getFileContents(mainScript);
             const indexHtml = getFileContents(document);
+            const bindings = parser(mainJs, indexHtml, options);
 
             // this examples _gen directory
             const _gen = createExamplePath('_gen');
@@ -138,9 +140,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
 
             try {
                 const source = vanillaToReact(
-                    mainJs,
-                    indexHtml,
-                    options,
+                    bindings,
                     extractComponentFileNames(reactScripts, '_react'),
                     isDev,
                     communityModules,
@@ -158,9 +158,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
 
             try {
                 const source = vanillaToAngular(
-                    mainJs,
-                    indexHtml,
-                    options,
+                    bindings,
                     angularComponentFileNames,
                     isDev,
                     communityModules,
@@ -181,9 +179,7 @@ module.exports = (scope, isDev, communityModules, enterpriseModules) => {
                 // when all examples have been tested this check can be removed
                 if (options.processVue || options.processVue === undefined) {
                     const source = vanillaToVue(
-                        mainJs,
-                        indexHtml,
-                        options,
+                        bindings,
                         extractComponentFileNames(vueScripts, '_vue'),
                         isDev,
                         communityModules,

@@ -1,4 +1,4 @@
-import parser, {recognizedDomEvents} from './vanilla-src-parser';
+import { recognizedDomEvents } from './vanilla-src-parser';
 
 function removeFunction(code) {
     return code.replace(/^function /, '');
@@ -10,11 +10,11 @@ function getFunctionName(code) {
 }
 
 function onGridReadyTemplate(gridSettings: any,
-                             readyCode: string,
-                             resizeToFit: boolean,
-                             propertyAttributes: string[],
-                             propertyVars: string[],
-                             data: { url: string, callback: string }) {
+    readyCode: string,
+    resizeToFit: boolean,
+    propertyAttributes: string[],
+    propertyVars: string[],
+    data: { url: string, callback: string; }) {
     let resize = '', getData = '';
 
     if (!readyCode) {
@@ -44,14 +44,14 @@ function onGridReadyTemplate(gridSettings: any,
         getData = `
             const httpRequest = new XMLHttpRequest();
             const updateData = (data) => ${setRowDataBlock};
-    
+
             httpRequest.open('GET', ${data.url});
             httpRequest.send();
             httpRequest.onreadystatechange = () => {
                 if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                     updateData(JSON.parse(httpRequest.responseText));
                 }
-            };`
+            };`;
     }
 
     return `onGridReady(params) {
@@ -137,7 +137,7 @@ function getPropertyBindings(bindings, componentFileNames) {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
                 // tabToNextCell needs to be bound to the react component
-                if(!isInstanceMethod(bindings.instance, property)) {
+                if (!isInstanceMethod(bindings.instance, property)) {
                     propertyAttributes.push(toInput(property));
                     propertyVars.push(toMember(property));
                 }
@@ -148,7 +148,7 @@ function getPropertyBindings(bindings, componentFileNames) {
     return [propertyAssignments, propertyVars, propertyAttributes];
 }
 
-let parseTemplateFromBinding = function (bindings, agGridTag: string) {
+let parseTemplateFromBinding = function(bindings, agGridTag: string) {
     let template = bindings.template;
 
     recognizedDomEvents.forEach(event => {
@@ -228,11 +228,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-        .concat(externalEventHandlers)
-        .concat(gridReadyTemplate)
-        .concat(instanceFunctions)
-        .map(snippet => `${snippet.trim()},`)
-        .join('\n')}
+            .concat(externalEventHandlers)
+            .concat(gridReadyTemplate)
+            .concat(instanceFunctions)
+            .map(snippet => `${snippet.trim()},`)
+            .join('\n')}
     }
 }
 
@@ -247,8 +247,7 @@ new Vue({
 `;
 }
 
-export function vanillaToVue(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
-    const bindings = parser(js, html, exampleSettings);
+export function vanillaToVue(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     return componentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 

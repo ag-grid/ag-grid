@@ -1,4 +1,4 @@
-import parser, { recognizedDomEvents } from './vanilla-src-parser';
+import { recognizedDomEvents } from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function getFunctionName(code) {
@@ -214,8 +214,7 @@ render(
 `;
 }
 
-export function vanillaToReact(js, html, exampleSettings, componentFilenames) {
-    const bindings = parser(js, html, exampleSettings);
+export function vanillaToReact(bindings, componentFilenames) {
     return createIndexJsx(bindings, componentFilenames);
 }
 

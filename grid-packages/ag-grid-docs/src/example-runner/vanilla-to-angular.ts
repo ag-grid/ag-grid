@@ -1,4 +1,4 @@
-import parser, {recognizedDomEvents} from './vanilla-src-parser';
+import { recognizedDomEvents } from './vanilla-src-parser';
 
 function removeFunction(code) {
     return code.replace(/^function /, '');
@@ -9,7 +9,7 @@ function getFunctionName(code) {
     return matches && matches.length === 2 ? matches[1] : null;
 }
 
-function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
+function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }) {
     let resize = '', getData = '';
 
     if (!readyCode) {
@@ -25,7 +25,7 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
             const setRowDataBlock = data.callback.replace("params.api.setRowData(data);", "this.rowData = data");
             getData = `this.http.get(${data.url}).subscribe( data => ${setRowDataBlock} );`;
         } else {
-            getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
+            getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`;
         }
     }
 
@@ -105,7 +105,7 @@ function appComponentTemplate(bindings, componentFileNames, isDev, communityModu
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the angular component
-            if(!isInstanceMethod(bindings.instance, property)) {
+            if (!isInstanceMethod(bindings.instance, property)) {
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toMember(property));
             }
@@ -175,19 +175,18 @@ export class AppComponent {
     }
 
     ${eventHandlers
-        .concat(externalEventHandlers)
-        .concat(additional)
-        .concat(instance)
-        .map(snippet => snippet.trim())
-        .join('\n\n')}
+            .concat(externalEventHandlers)
+            .concat(additional)
+            .concat(instance)
+            .map(snippet => snippet.trim())
+            .join('\n\n')}
 }
 
 ${bindings.utils.join('\n')}
 `;
 }
 
-export function vanillaToAngular(js, html, exampleSettings, componentFileNames, isDev, communityModules, enterpriseModules) {
-    const bindings = parser(js, html, exampleSettings);
+export function vanillaToAngular(bindings, componentFileNames, isDev, communityModules, enterpriseModules) {
     return appComponentTemplate(bindings, componentFileNames, isDev, communityModules, enterpriseModules);
 }
 

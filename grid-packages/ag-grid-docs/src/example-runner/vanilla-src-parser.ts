@@ -129,7 +129,7 @@ function extractUnboundInstanceMethods(tree) {
         });
 };
 
-export default function parser(js, html, exampleSettings) {
+export function parser(js, html, exampleSettings) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -340,3 +340,5 @@ export default function parser(js, html, exampleSettings) {
 
     return bindings;
 }
+
+export default parser;
