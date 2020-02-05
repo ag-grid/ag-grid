@@ -8,6 +8,7 @@ import { Rect } from "../scene/shape/rect";
 import { Legend, LegendDatum } from "./legend";
 import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
+import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
 import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
@@ -141,26 +142,12 @@ export abstract class Chart extends Observable {
         this.scene = scene;
         scene.root = root;
         scene.container = this._element = document.createElement('div');
-        scene.canvas.element.style.display = 'block';
 
-        // TODO - Fix me!
-        if ((window as any).ResizeObserver) {
-            const resizeObserver = new (window as any).ResizeObserver((entries: any) => {
-                for (let entry of entries) {
-                    // let cs = window.getComputedStyle(entry.target);
-                    // console.log('watching element:', entry.target);
-                    // console.log(entry.contentRect.top, ' is ', cs.paddingTop);
-                    // console.log(entry.contentRect.left, ' is ', cs.paddingLeft);
-                    // if (entry.target.handleResize) {
-                        // entry.target.handleResize(entry);
-                    // }
-                    const { width, height } = entry.contentRect;
-                    this.width = width;
-                    // this.height = height;
-                }
-            });
-            resizeObserver.observe(this._element);
-        }
+        const chart = this;
+        SizeMonitor.observe(this._element, size => {
+            chart.width = size.width;
+            // TODO: update height too
+        });
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange);

@@ -15,6 +15,7 @@ export class HdpiCanvas {
         this.document = document;
         this.element = document.createElement('canvas');
         this.element.style.userSelect = 'none';
+        this.element.style.display = 'block';
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
         this.resize(this._width = width, this._height = height);
