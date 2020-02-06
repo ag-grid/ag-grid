@@ -23,12 +23,12 @@ function generateSpiralData() {
     // r = a + bθ
     // x = r * Math.cos(θ)
     // y = r * Math.sin(θ)
-    const a = 1;
-    const b = 1;
-    const data = [];
-    const step = 0.1;
-    for (let th = 1; th < 50; th += step) {
-        const r = (a + b * th);
+    var a = 1;
+    var b = 1;
+    var data = [];
+    var step = 0.1;
+    for (var th = 1; th < 50; th += step) {
+        var r = (a + b * th);
         data.push({
             x: r * Math.cos(th),
             y: r * Math.sin(th)
