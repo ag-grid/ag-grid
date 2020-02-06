@@ -39,7 +39,7 @@ series: [{
 }]
 </snippet>
 
-<?= chart_example('Basic Line Chart', 'basic-line'); ?>
+<?= chart_example('Single Line Series', 'basic-line'); ?>
 
 <p>
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
@@ -148,6 +148,16 @@ marker: {
 
 <h2>Missing Data</h2>
 
+<p>
+    In a perfect world all data would be 100% complete. Unfortunatelly, in the real one, data for certain
+    items or time periods might be missing or corrupted. But that shouldn't result in corrupted charts,
+    and ag-Charts support correct rendering of incomplete data:
+</p>
+
 <?= chart_example('Line Series with Incomplete Data', 'gap-line'); ?>
+
+<p>
+    If the <code>yKey</code> values are <code>null</code>, <code>undefined</code>, <code>NaN</code>
+</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
