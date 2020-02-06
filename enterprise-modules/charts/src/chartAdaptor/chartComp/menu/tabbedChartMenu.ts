@@ -61,6 +61,7 @@ export class TabbedChartMenu extends Component {
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
+        this.getContext().wireBean(this.tabbedLayout);
     }
 
     private createTab(

@@ -637,9 +637,7 @@ export class RowNode implements IEventEmitter {
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams): number {
-
         const groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-
         const newValue = params.newValue === true;
         const clearSelection = params.clearSelection === true;
         const suppressFinishActions = params.suppressFinishActions === true;
@@ -726,12 +724,11 @@ export class RowNode implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(): number {
-        let updatedCount = 0;
-
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         const lastSelectedNode = this.selectionController.getLastSelectedNode();
-
         const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
+
+        let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
             if (rowNode.group && groupsSelectChildren) {
