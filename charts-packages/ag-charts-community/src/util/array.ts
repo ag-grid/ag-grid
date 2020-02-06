@@ -10,11 +10,11 @@ export function extent<T>(values: T[]): [T, T] | undefined {
     let min;
     let max;
 
-    while (++i < n) { // Find the first comparable value.
-        if ((value = values[i]) != null && value >= value) {
+    while (++i < n) { // Find the first comparable finite value.
+        if ((value = values[i]) != null && value >= value && isFinite(value as any)) {
             min = max = value;
             while (++i < n) { // Compare the remaining values.
-                if ((value = values[i]) != null) {
+                if ((value = values[i]) != null && isFinite(value as any)) {
                     if (min > value) {
                         min = value;
                     }
