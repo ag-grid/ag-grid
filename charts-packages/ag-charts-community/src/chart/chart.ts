@@ -131,8 +131,10 @@ export abstract class Chart extends Observable {
                     chart.width = size.width;
                     chart.height = size.height;
                 });
+                this.element.style.display = 'block';
             } else {
                 SizeMonitor.unobserve(this.element);
+                this.element.style.display = 'inline-block';
             }
         }
     }
