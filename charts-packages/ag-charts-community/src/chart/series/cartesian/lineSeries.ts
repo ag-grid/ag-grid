@@ -197,7 +197,8 @@ export class LineSeries extends CartesianSeries {
         let moveTo = true;
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
-            const isGap = (xDatum == null || (isContinuousX && isNaN(xDatum)) || yDatum == null || isNaN(yDatum));
+            const isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
+                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
 
             if (isGap) {
                 moveTo = true;
