@@ -18,6 +18,10 @@ include '../documentation-main/documentation_header.php';
         Remember Row Grouping works with all frameworks eg Angular and React as well as plain JavaScript.
     </p>
 
+    <?php
+        printVideoSection("https://www.youtube.com/embed/2NOsirWWl_o", "row-grouping-video", "Row Grouping Video Tutorial");
+    ?>
+
     <h2 id="specifying-group-columns">Specifying Group Columns</h2>
 
     <p>
