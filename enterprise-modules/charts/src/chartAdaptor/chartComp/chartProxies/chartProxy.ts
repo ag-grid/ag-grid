@@ -439,16 +439,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected destroyChart(): void {
-        const { parentElement } = this.chartProxyParams;
-        const canvas = parentElement.querySelector('canvas');
-
-        if (canvas) {
-            parentElement.removeChild(canvas);
-        }
-
         if (this.chart) {
             this.chart.destroy();
-            this.chart = null;
+            this.chart = undefined;
         }
     }
 }
