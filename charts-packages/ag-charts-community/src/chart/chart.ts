@@ -159,6 +159,7 @@ export abstract class Chart extends Observable {
 
         const element = this._element = document.createElement('div');
         element.style.boxSizing = 'border-box';
+        element.style.overflow = 'hidden';
         element.style.height = '100%';
 
         const scene = new Scene(document);
