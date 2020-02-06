@@ -157,7 +157,10 @@ marker: {
 <?= chart_example('Line Series with Incomplete Data', 'gap-line'); ?>
 
 <p>
-    If the <code>yKey</code> values are <code>null</code>, <code>undefined</code>, <code>NaN</code>
+    If the <code>yKey</code> value of a data point is positive or negative <code>Infinity</code>,
+    <code>null</code>, <code>undefined</code> or <code>NaN</code>, that data point will be rendered as a gap.
+    The same is true for the <code>xKey</code>, if the bottom axis is continuous, for example,
+    <code>'number'</code> axis.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

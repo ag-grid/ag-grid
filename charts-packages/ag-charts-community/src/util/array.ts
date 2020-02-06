@@ -11,6 +11,32 @@ export function extent<T>(values: T[]): [T, T] | undefined {
     let max;
 
     while (++i < n) { // Find the first comparable finite value.
+        if ((value = values[i]) != null && value >= value) {
+            min = max = value;
+            while (++i < n) { // Compare the remaining values.
+                if ((value = values[i]) != null) {
+                    if (min > value) {
+                        min = value;
+                    }
+                    if (max < value) {
+                        max = value;
+                    }
+                }
+            }
+        }
+    }
+
+    return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
+}
+
+export function finiteExtent<T>(values: T[]): [T, T] | undefined {
+    const n = values.length;
+    let i = -1;
+    let value;
+    let min;
+    let max;
+
+    while (++i < n) { // Find the first comparable finite value.
         if ((value = values[i]) != null && value >= value && isFinite(value as any)) {
             min = max = value;
             while (++i < n) { // Compare the remaining values.
@@ -45,7 +71,7 @@ export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[])
  * @param values
  */
 export function numericExtent<T>(values: T[]): [number, number] | undefined {
-    const calculatedExtent = extent(values);
+    const calculatedExtent = finiteExtent(values);
 
     if (typeof calculatedExtent === 'undefined') {
         return;
