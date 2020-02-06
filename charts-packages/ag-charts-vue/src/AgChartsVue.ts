@@ -1,5 +1,5 @@
-import {Component, Vue} from 'vue-property-decorator';
-import {AgChart, Chart} from 'ag-charts-community';
+import { Component, Vue } from 'vue-property-decorator';
+import { AgChart, Chart } from 'ag-charts-community';
 
 export interface AgLegendProps {
     enabled?: boolean;
@@ -40,7 +40,7 @@ export class AgChartsVue extends Vue {
     private options!: AgChartOptions;
 
     public render(h: any) {
-        return h('div');
+        return h('div', { style: { height: '100%' } });
     }
 
     public mounted() {
@@ -51,6 +51,7 @@ export class AgChartsVue extends Vue {
         this.$watch('options', (newValue, oldValue) => {
             this.processChanges(newValue, oldValue);
         });
+
         this.isCreated = true;
     }
 
@@ -59,6 +60,7 @@ export class AgChartsVue extends Vue {
             if (this.chart) {
                 this.chart.destroy();
             }
+
             this.isDestroyed = true;
         }
     }
@@ -74,6 +76,6 @@ export class AgChartsVue extends Vue {
             return propsOptions;
         }
 
-        return {...propsOptions, container: this.$el};
+        return { ...propsOptions, container: this.$el };
     }
 }

@@ -203,7 +203,11 @@ export class App extends React.Component {
     };
 
     updateChartType = type => {
-        this.setState({ chartType: type, defaults: {}, options: {} });
+        this.setState(prevState => {
+            if (prevState.chartType === type) { return null; }
+
+            return { chartType: type, defaults: {}, options: {} };
+        });
     };
 
     getCurrentFramework() {

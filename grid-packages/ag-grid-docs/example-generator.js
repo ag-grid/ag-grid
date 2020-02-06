@@ -11,18 +11,22 @@ const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
 
-function copyFilesSync(files, dest) {
-    files.forEach(file => fs.copyFileSync(file, path.join(dest, path.basename(file))));
-}
+function copyFilesSync(files, dest, tokenToRemove) {
+    files.forEach(sourceFile => {
+        const filename = path.basename(sourceFile);
+        const destinationFile = path.join(dest, tokenToRemove ? filename.replace(tokenToRemove, '') : filename);
+        const extension = path.extname(sourceFile).slice(1);
+        const parsers = {
+            js: 'babel',
+            jsx: 'babel',
+            ts: 'typescript',
+        };
 
-function moveScriptsWithoutToken(scripts, dest, token) {
-    const removeTokenFromFile = file => {
-        const filename = path.basename(file);
-        fs.renameSync(path.join(dest, filename), path.join(dest, filename.replace(token, '')));
-    };
+        const parser = parsers[extension] || extension;
+        const content = format(getFileContents(sourceFile), parser);
 
-    copyFilesSync(scripts, dest);
-    scripts.forEach(file => removeTokenFromFile(file));
+        fs.writeFileSync(destinationFile, content, 'utf8');
+    });
 }
 
 // childMessageRenderer_react.jsx -> childMessageRenderer.jsx
@@ -88,6 +92,8 @@ function forEachExample(name, regex, generateExample, scope = '*') {
     });
 }
 
+const format = (source, parser) => prettier.format(source, { parser, singleQuote: true, trailingComma: 'es5' });
+
 function createExampleGenerator(prefix) {
     const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix);
 
@@ -122,7 +128,6 @@ function createExampleGenerator(prefix) {
 
         // this examples _gen directory
         const _gen = createExamplePath('_gen');
-        const format = (source, parser) => prettier.format(source, { parser, singleQuote: true });
 
         // inline styles in the examples index.html
         // will be added to styles.css in the various generated fw examples
@@ -187,7 +192,7 @@ function createExampleGenerator(prefix) {
 
             copyFilesSync(stylesheets, basePath);
             copyFilesSync(scripts, basePath);
-            moveScriptsWithoutToken(frameworkScripts, scriptsPath, `_${framework}`);
+            copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`);
         };
 
         writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
@@ -205,7 +210,7 @@ function createExampleGenerator(prefix) {
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
-        const vanillaScripts = getMatchingPaths('*.{html,js,css}', { ignore: ['**/*_{angular,react,vue}.js'] });
+        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
         writeExampleFiles('vanilla', vanillaScripts, {});
 
         // allow developers to override the example theme with an environment variable
