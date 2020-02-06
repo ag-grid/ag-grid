@@ -114,8 +114,6 @@ const chartMappings = {
 const chartDefaults = {
     container: undefined,
     data: [],
-    width: 800,
-    height: 400,
     padding: new Padding(20),
     title: undefined,
     subtitle: undefined,
