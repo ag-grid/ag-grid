@@ -177,10 +177,16 @@
 
     .ag-loading {
         padding-left: $ag-cell-horizontal-padding;
-        padding-top: $ag-grid-size;
+        display: flex;
+        height: 100%;
+        align-items: center;
     }
 
     .ag-loading-icon {
+        padding-right: $ag-cell-widget-spacing;
+    }
+
+    .ag-icon-loading {
         animation-name: spin;
         animation-duration: 1000ms;
         animation-iteration-count: infinite;
@@ -194,11 +200,6 @@
         to {
             transform: rotate(360deg);
         }
-    }
-
-    .ag-loading-text {
-        margin-left: $ag-grid-size;
-        margin-top: $ag-grid-size;
     }
 
     .ag-floating-top {
