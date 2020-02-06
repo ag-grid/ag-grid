@@ -100,6 +100,7 @@ export abstract class Chart extends Observable {
     private pendingSize?: [number, number];
 
     set width(value: number) {
+        this.autosize = false;
         if (this.width !== value) {
             this.pendingSize = [value, this.height];
             this.fireEvent({ type: 'layoutChange' });
@@ -110,6 +111,7 @@ export abstract class Chart extends Observable {
     }
 
     set height(value: number) {
+        this.autosize = false;
         if (this.height !== value) {
             this.pendingSize = [this.width, value];
             this.fireEvent({ type: 'layoutChange' });
