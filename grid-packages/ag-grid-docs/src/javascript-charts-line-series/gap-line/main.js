@@ -22,7 +22,7 @@ agCharts.AgChart.create({
         visitors: 136000
     }, {
         year: '2014',
-        visitors: null
+        visitors: undefined
     }, {
         year: '2015',
         visitors: NaN

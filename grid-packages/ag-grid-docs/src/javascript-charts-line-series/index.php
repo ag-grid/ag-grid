@@ -13,9 +13,9 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Line series is a great choice in many situations. It's the series of choice when you need to spot a trend,
+    Line series can be used in many situations. It's the series of choice when you need to spot a trend,
     render large amounts of data or create a real-time chart. Line series is also the preferred choice for
-    rendering impcomplete data that has some values missing.
+    rendering continuous data with irregular intervals or incomplete data that has some values missing.
 </p>
 
 <h2>Single Series</h2>
@@ -159,8 +159,12 @@ marker: {
 <p>
     If the <code>yKey</code> value of a data point is positive or negative <code>Infinity</code>,
     <code>null</code>, <code>undefined</code> or <code>NaN</code>, that data point will be rendered as a gap.
-    The same is true for the <code>xKey</code>, if the bottom axis is continuous, for example,
-    <code>'number'</code> axis.
+    The same is true for the <code>xKey</code>, if the bottom axis is also continuous (for example,
+    if it's a <code>'number'</code> axis too).
 </p>
+
+<h2>Continuous Data</h2>
+
+<?= chart_example('Continuous Data - Spiral Curve', 'two-number-axes'); ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
