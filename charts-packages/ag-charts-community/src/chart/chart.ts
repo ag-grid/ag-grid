@@ -128,8 +128,10 @@ export abstract class Chart extends Observable {
             if (value) {
                 const chart = this; // capture `this` for IE11
                 SizeMonitor.observe(this.element, size => {
-                    chart.width = size.width;
-                    chart.height = size.height;
+                    if (size.width !== chart.width || size.height !== chart.height) {
+                        chart.pendingSize = [size.width, size.height];
+                        chart.fireEvent({ type: 'layoutChange' });
+                    }
                 });
                 this.element.style.display = 'block';
             } else {
