@@ -237,7 +237,10 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>getFocusedCell()</th>
-            <td>Returns the focused cell as an object containing the rowIndex, column and floating (top, bottom or null).</td>
+            <td>
+                Returns the focused cell (or the last focused cell if the grid lost focus) as an object containing 
+                the rowIndex, column and floating (top, bottom or null).
+            </td>
         </tr>
         <tr>
             <th>setFocusedCell(rowIndex, colKey, floating)</th>
