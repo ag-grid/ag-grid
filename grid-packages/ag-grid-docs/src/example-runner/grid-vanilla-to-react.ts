@@ -1,4 +1,4 @@
-import { recognizedDomEvents, getFunctionName } from './vanilla-src-parser';
+import { recognizedDomEvents, getFunctionName } from './grid-vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function isInstanceMethod(instance: any, property: any): boolean {

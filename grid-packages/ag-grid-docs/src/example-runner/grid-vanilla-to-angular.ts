@@ -1,4 +1,4 @@
-import { recognizedDomEvents, getFunctionName } from './vanilla-src-parser';
+import { recognizedDomEvents, getFunctionName } from './grid-vanilla-src-parser';
 
 function removeFunctionKeyword(code): string {
     return code.replace(/^function /, '');

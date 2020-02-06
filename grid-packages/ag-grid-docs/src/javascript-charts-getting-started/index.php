@@ -6,7 +6,8 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<?= chart_example('Basic Column Chart', 'basic-column'); ?>
+<?= chart_example('Basic Column Chart', 'basic-column', 'generated') ?>
+
 <h1 class="heading-enterprise">Charts Standalone - Getting Started</h1>
 
 <p class="lead">

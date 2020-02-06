@@ -4,6 +4,7 @@
 .idea/codeStyles/Project.xml
 .idea/encodings.xml
 /.idea/atlassian-ide-plugin.xml
+.vscode
 
 .lernaBuildChain.cache.json
 
