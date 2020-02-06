@@ -80,6 +80,8 @@ export class PrimaryColsListPanel extends Component {
         const pivotModeActive = this.columnController.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
+
+        this.setFilterText(this.filterText);
     }
 
     public syncColumnLayout(): void {
