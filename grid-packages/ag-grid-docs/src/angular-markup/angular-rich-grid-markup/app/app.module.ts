@@ -13,7 +13,7 @@ import {HeaderGroupComponent} from "./header-group-component/header-group.compon
 @NgModule({
     imports: [
         BrowserModule,
-        FormsModule, // <-- import the FormsModule before binding with [(ngModel)]
+        FormsModule,
         AgGridModule.withComponents([
             DateComponent,
             HeaderComponent,

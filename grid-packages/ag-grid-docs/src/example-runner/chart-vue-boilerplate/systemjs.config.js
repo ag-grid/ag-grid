@@ -33,7 +33,7 @@
                 'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
                 'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
 
-                app: 'app'
+                app: appLocation + 'app'
             },
             systemJsMap
         ), // systemJsMap comes from index.html

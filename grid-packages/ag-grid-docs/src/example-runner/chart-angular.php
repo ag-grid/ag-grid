@@ -1,6 +1,6 @@
 <?php
-include '../example-runner/example-runner.php';
-$example = getReactExampleInfo();
+require_once 'example-runner.php';
+$example = getExampleInfo('chart', 'angular');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +38,7 @@ $example = getReactExampleInfo();
 
     <script>
         var appLocation = '<?= $example["appLocation"] ?>';
+        var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
         var systemJsMap = <?= json_encode($chartSystemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
 <?php
         if(!empty($chartSystemJsCommunityPaths)) {
@@ -48,10 +49,9 @@ $example = getReactExampleInfo();
 ?>
     </script>
 
-    <script src="systemjs.config.js"></script>
-
+    <script src="<?= $example["boilerplatePath"] ?>systemjs.config.js"></script>
     <script>
-      System.import('main.ts').catch(function(err) { console.error(err); });
+        System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err) { console.error(err); });
     </script>
   </head>
   <body>

@@ -37,7 +37,7 @@ export function appModuleAngular(componentFileNames: string[]) {
         @NgModule({
           imports: [
             BrowserModule,
-            FormsModule, // <-- import the FormsModule before binding with [(ngModel)]
+            FormsModule,
             HttpClientModule,
             AgGridModule.withComponents([${components.join(',')}])
           ],

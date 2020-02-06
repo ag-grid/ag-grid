@@ -52,7 +52,6 @@ const VueExample = {
     },
     methods: {
         fillLarge() {
-          console.log("here");
             this.setWidthAndHeight('100%', '100%');
         },
         fillMedium() {

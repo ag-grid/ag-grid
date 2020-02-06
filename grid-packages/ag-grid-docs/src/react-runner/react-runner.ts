@@ -10,24 +10,15 @@ const docs: angular.IModule = angular.module("documentation");
 
 class ReactRunner {
     private ready: boolean = false;
-
-
     private showFrameworksDropdown: boolean;
-
-
-
     private resultUrl: string;
-
-
     private title: string;
     private section: string;
     private name: string;
-
     private currentType: string;
     private noPlunker: boolean;
 
     private boilerplatePath: string;
-
     private id: string;
     private titles: { [key: string]: string; };
 
@@ -204,9 +195,9 @@ class ReactRunner {
 
     getSource(framework: string, file: string): string {
         if (file === 'index.html') {
-            return `/example-runner/chart-${framework}.php?${this.resultUrl}&section=example-runner&example=chart-vanilla-boilerplate`;
+            return `/example-runner/chart-${framework}.php?${this.resultUrl}&&plunkerView=true&section=example-runner&example=chart-vanilla-boilerplate`;
         }
-        return `/example-runner/chart-${framework}-boilerplate/${this.config.sourcePrefix}/${file}`;
+        return `/example-runner/chart-${framework}-boilerplate/${this.config.sourcePrefix}/${file}?plunkerView=true`;
     }
 
     setAndPersistType(type: string) {

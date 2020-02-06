@@ -97,7 +97,7 @@
 
 
                 // our app is within the app folder, appLocation comes from index.html
-                app: "app",
+                app: appLocation + "app",
 
                 rxjs: "npm:rxjs@6.1.0/bundles/rxjs.umd.min.js"
             },
@@ -110,7 +110,7 @@
                 defaultExtension: "ts",
                 meta: {
                     "./*.ts": {
-                        loader: "systemjs-angular-loader.js"
+                        loader: boilerplatePath + "systemjs-angular-loader.js"
                     }
                 }
             },

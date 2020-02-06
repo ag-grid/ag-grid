@@ -1,6 +1,6 @@
 <?php
 include '../example-runner/example-runner.php';
-$example = getReactExampleInfo();
+$example = getExampleInfo('chart', 'react');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +33,8 @@ $example = getReactExampleInfo();
 <div id="root">Loading&hellip;</div>
 
 <script>
+    var appLocation = '<?= $example["appLocation"] ?>';
+    var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
     var systemJsMap = <?= json_encode($chartSystemJsMap); ?>;
 <?php
         if(!empty($chartSystemJsCommunityPaths)) {
@@ -44,11 +46,9 @@ $example = getReactExampleInfo();
 </script>
 
 <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
-<!-- leave the next line as is - is replaced when deploying to archives or production -->
-<script src="systemjs.config.js"></script>
-
+<script src="<?= $example["boilerplatePath"] ?>systemjs.config.js"></script>
 <script>
-    System.import('index.jsx').catch( function(err) { console.error(err); })
+    System.import('<?=$example['appLocation']?>index.jsx').catch(function(err) { console.error(err); });
 </script>
 </body>
 </html>

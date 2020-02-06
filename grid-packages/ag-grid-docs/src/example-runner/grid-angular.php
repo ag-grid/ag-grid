@@ -1,8 +1,6 @@
 <?php
 require_once 'example-runner.php';
-
 $example = getExampleInfo('grid', 'angular');
-$generated = isset($_GET['generated']);
 ?>
 <!DOCTYPE html>
 <html lang="en">

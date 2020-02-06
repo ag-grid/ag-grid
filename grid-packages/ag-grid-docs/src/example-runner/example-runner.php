@@ -266,7 +266,7 @@ function getExampleInfo($exampleType, $boilerplatePrefix)
     );
 }
 
-function getReactExampleInfo()
+function getReactAppInfo()
 {
     $exampleDir = basename($_GET['example']);
     $exampleSection = basename($_GET['section']);

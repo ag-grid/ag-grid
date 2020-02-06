@@ -91,13 +91,13 @@
                 "@angular/cdk/text-field": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-text-field.umd.js",
                 "@angular/cdk/tree": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-tree.umd.js",
                 "@angular/cdk/stepper": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-stepper.umd.js",
+
                 ts: "npm:plugin-typescript@5.2.7/lib/plugin.js",
                 tslib: "npm:tslib@1.7.1/tslib.js",
                 typescript: "npm:typescript@2.3.2/lib/typescript.js",
 
-
                 // our app is within the app folder, appLocation comes from index.html
-                app: "app",
+                app: appLocation + "app",
 
                 rxjs: "npm:rxjs@6.1.0/bundles/rxjs.umd.min.js"
             },
@@ -110,7 +110,7 @@
                 defaultExtension: "ts",
                 meta: {
                     "./*.ts": {
-                        loader: "systemjs-angular-loader.js"
+                        loader: boilerplatePath + "systemjs-angular-loader.js"
                     }
                 }
             },
