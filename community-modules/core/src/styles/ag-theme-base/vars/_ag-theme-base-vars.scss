@@ -136,7 +136,7 @@ $ag-checkbox-border-radius: $ag-border-radius !default;
 $ag-checkbox-checked-color: $ag-foreground-color !default;
 $ag-checkbox-unchecked-color: $ag-foreground-color !default;
 $ag-checkbox-indeterminate-color: $ag-checkbox-unchecked-color !default;
-$ag-checkbox-click-flash: false !default; // provide feedback on click by flashing
+$ag-checkbox-click-flash-color: false !default; // provide feedback on click by flashing, or false to disable
 
 $ag-toggle-button-off-color: $ag-checkbox-unchecked-color !default;
 $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;

@@ -70,7 +70,7 @@ export class BarSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }

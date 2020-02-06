@@ -138,7 +138,7 @@ export class ChartDataPanel extends Component {
                 .setLabel(this.chartTranslator.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(40)
+                .setInputWidth(45)
                 .setValue(chartProxy.getSeriesOption('paired') || false)
                 .onValueChange(newValue => {
                     chartProxy.setSeriesOption('paired', newValue);

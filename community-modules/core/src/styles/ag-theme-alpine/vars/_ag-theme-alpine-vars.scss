@@ -16,7 +16,6 @@ $ag-subheader-background-color: #fff !default;
 
 $ag-checkbox-checked-color: $ag-alpine-active-color !default;
 $ag-checkbox-unchecked-color: #999 !default;
-$ag-checkbox-click-flash: true !default;
 $ag-checkbox-background-color: $ag-background-color !default;
 
 // derived colours (shared by alpine-dark)
@@ -28,6 +27,7 @@ $ag-secondary-foreground-color: $ag-foreground-color !default;
 $ag-disabled-foreground-color: $ag-foreground-color !default;
 $ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color, 20%) !default;
 $ag-input-border-color: $ag-border-color !default;
+$ag-checkbox-click-flash-color: $ag-background-color !default;
 
 // BORDERS
 $ag-borders: true !default;

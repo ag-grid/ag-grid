@@ -5,7 +5,8 @@
     @include ag-theme-balham();
 
     input,
-    select {
+    select,
+    button {
         background-color: $ag-odd-row-background-color;
         color: $ag-foreground-color;
     }

@@ -1,7 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
-    <g transform="matrix(0.5,0,0,0.5,0,0)">
-        <path d="M4,26L28,26L28,22L4,22L4,26ZM4,18L28,18L28,14L4,14L4,18ZM4,6L4,10L28,10L28,6L4,6Z" style="fill-rule:nonzero;"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="menu" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(6.000000, 9.000000)" fill="#000000" fill-rule="nonzero" id="Shape">
+            <path d="M20,14 L0,14 L0,12 L20,12 L20,14 Z M20,8 L0,8 L0,6 L20,6 L20,8 Z M20,2 L0,2 L0,0 L20,0 L20,2 Z"></path>
+        </g>
     </g>
 </svg>

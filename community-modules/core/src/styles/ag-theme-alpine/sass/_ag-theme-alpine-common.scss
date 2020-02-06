@@ -46,11 +46,6 @@
     .ag-charts-minichart-group-title-bar {
         padding: $ag-grid-size $ag-grid-size * 2;
         line-height: $ag-icon-size + $ag-grid-size - 2;
-        @include ag-grid-border(secondary, bottom);
-    }
-
-    .ag-group-title-bar {
-        @include ag-grid-border(secondary, bottom);
     }
     
     .ag-dnd-ghost {
@@ -120,7 +115,7 @@
     }
 
     .ag-column-drop-vertical-empty-message {
-        opacity: 0.5;
+        color: rgba($ag-foreground-color, 0.75);
         border: 1px dashed $ag-border-color;
         margin: $ag-grid-size * 2;
         // TODO !important required because base theme applied more specific styles in .ag-ltr
@@ -149,6 +144,14 @@
 
         &:hover {
             opacity: 0.75;
+        }
+    }
+
+    .ag-header-cell-menu-button,
+    .ag-side-button-button,
+    .ag-tab {
+        &:hover {
+            color: $ag-alpine-active-color;
         }
     }
     

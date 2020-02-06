@@ -43,7 +43,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setReadOnly(readOnly: boolean): void {
-        this.eInput.readOnly = readOnly;
+        this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
     }
 
@@ -103,7 +103,9 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         this.selected = (e.target as HTMLInputElement).checked;
         this.dispatchChange(this.selected);
         const input = this.eInput;
-        _.addCssClass(input, 'ag-input-click-animation');
-        setTimeout(() => _.removeCssClass(input, 'ag-input-click-animation'), 500);
+        setTimeout(() => {
+            _.addCssClass(input, 'ag-input-click-animation');
+            setTimeout(() => _.removeCssClass(input, 'ag-input-click-animation'), 500);
+        }, 50);
     }
 }

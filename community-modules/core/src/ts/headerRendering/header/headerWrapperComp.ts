@@ -6,7 +6,7 @@ import {
     DropTarget
 } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
-import { IHeaderComp, IHeaderParams } from "./headerComp";
+import { IHeaderComp, IHeaderParams, IHeader } from "./headerComp";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
 import { HorizontalResizeService } from "../horizontalResizeService";
@@ -54,6 +54,8 @@ export class HeaderWrapperComp extends Component {
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
+    private headerComp: IHeaderComp;
+
     private readonly column: Column;
     private readonly dragSourceDropTarget: DropTarget;
     private readonly pinned: string;
@@ -93,6 +95,7 @@ export class HeaderWrapperComp extends Component {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
+        this.addMouseListeners();
 
         this.addFeature(new HoverFeature([this.column], this.getGui()));
 
@@ -117,6 +120,18 @@ export class HeaderWrapperComp extends Component {
     private onColumnHover(): void {
         const isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+    }
+
+    private addMouseListeners(): void {
+        const listener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener("mouseenter", listener);
+        this.addGuiEventListener("mouseleave", listener);
+    }
+
+    private onMouseOverOut(e: MouseEvent): void {
+        if (this.headerComp && this.headerComp.setMouseOverParent) {
+            this.headerComp.setMouseOverParent(e.type === "mouseenter");
+        }
     }
 
     private setupSortableClass(enableSorting: boolean): void {
@@ -159,6 +174,7 @@ export class HeaderWrapperComp extends Component {
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.appendChild(headerComp);
         this.setupMove(headerComp.getGui(), displayName);
+        this.headerComp = headerComp;
     }
 
     private onColumnMovingChanged(): void {

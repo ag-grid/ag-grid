@@ -72,6 +72,7 @@
         flex: none;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
 
         &:focus {
             outline: 1px solid $ag-input-focus-border-color;

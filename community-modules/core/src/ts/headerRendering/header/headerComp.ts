@@ -32,7 +32,7 @@ export interface IHeader {
 }
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-
+    setMouseOverParent?(overParent: boolean): void;
 }
 
 export class HeaderComp extends Component implements IHeaderComp {
@@ -170,16 +170,16 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
-            this.addGuiEventListener('mouseover', () => {
-                this.eMenu.style.opacity = '1';
-            });
-            this.addGuiEventListener('mouseout', () => {
-                this.eMenu.style.opacity = '0';
-            });
         }
         const style = this.eMenu.style as any;
         style.transition = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
+    }
+
+    public setMouseOverParent(overParent: boolean): void {
+        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
+            this.eMenu.style.opacity = overParent ? '1' : '0';
+        }
     }
 
     public showMenu(eventSource: HTMLElement) {

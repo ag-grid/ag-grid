@@ -410,7 +410,7 @@
         box-shadow: $ag-input-focus-box-shadow;
     }
 
-    @if $ag-checkbox-click-flash {
+    @if $ag-checkbox-click-flash-color {
         &::before {
             content: ' ';
             position: absolute;
@@ -418,17 +418,17 @@
             margin-left: 1px;
             width: $ag-icon-size - 2px;
             height: $ag-icon-size - 2px;
-            background: $ag-checkbox-background-color;
+            background: $ag-checkbox-click-flash-color;
             display: block;
             visibility: hidden;
             opacity: 1;
-            transition: opacity .3s;
             border-radius: $ag-checkbox-border-radius;
         }
 
         &.ag-input-click-animation::before {
             visibility: visible;
             opacity: 0;
+            transition: opacity .3s;
         }
     }
 
@@ -446,6 +446,10 @@
         content: $ag-icon-checkbox-indeterminate;
         color: $ag-checkbox-indeterminate-color;
     }
+    
+    &:disabled {
+        opacity: 0.5;
+    }
 }
 
 %ag-radio {
@@ -453,7 +457,7 @@
     
     border-radius: $ag-icon-size;
 
-    @if $ag-checkbox-click-flash {
+    @if $ag-checkbox-click-flash-color {
         &::before {
             border-radius: $ag-icon-size;
         }
@@ -484,6 +488,10 @@
     &:focus {
         outline: none;
         box-shadow: $ag-input-focus-box-shadow;
+    }
+
+    &:disabled {
+        opacity: 0.5;
     }
 
     &:checked {
@@ -530,6 +538,17 @@
     }
 }
 
+@mixin ag-internal-active-range-track {
+    @if mixin-exists(ag-focus-range-track) {
+        @include ag-focus-range-track
+    }
+    @else {
+        @if $ag-input-focus-border-color {
+            background-color: mix($ag-border-color, $ag-input-focus-border-color, 50%);
+        }
+    }
+}
+
 @mixin ag-internal-range-thumb {
     @if mixin-exists(ag-range-thumb) {
         @include ag-range-thumb
@@ -540,7 +559,7 @@
         -webkit-appearance: none;
         width: $ag-icon-size;
         height: $ag-icon-size;
-        background: $ag-checkbox-background-color;
+        background: $ag-background-color;
         border: 1px solid $ag-checkbox-unchecked-color;
         border-radius: $ag-icon-size;
     }
@@ -553,6 +572,17 @@
     }
     @else {
         border-color: $ag-checkbox-checked-color;
+    }
+}
+
+@mixin ag-internal-active-range-thumb {
+    @if mixin-exists(ag-active-range-thumb) {
+        @include ag-active-range-thumb
+    }
+    @else {
+        @if $ag-input-focus-border-color {
+            box-shadow: $ag-input-focus-box-shadow, inset 0 0 5px $ag-input-focus-border-color;
+        }
     }
 }
 
@@ -610,5 +640,31 @@
         &::-moz-ag-range-thumb {
             @include ag-internal-focus-range-thumb;
         }
+    }
+
+    &:active {
+        &::-webkit-slider-runnable-track {
+            @include ag-internal-active-range-track;
+        }
+        &::-moz-ag-range-track {
+            @include ag-internal-active-range-track;
+        }
+        &::-ms-track {
+            @include ag-internal-active-range-track;
+        }
+
+        &::-webkit-slider-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+        &::-ms-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+        &::-moz-ag-range-thumb {
+            @include ag-internal-active-range-thumb;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.5;
     }
 }
