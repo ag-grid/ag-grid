@@ -1,23 +1,28 @@
 <?php
-$navKey = "support";
+header("HTTP/1.1 301 Moved Permanently");
+header("Location: https://www.ag-grid.com/");
+?>
+
+<?php
+/*$navKey = "support";
 include_once 'includes/html-helpers.php';
 gtm_data_layer('support');
-?>
+*/?><!--
 <!DOCTYPE html>
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links("How to get Support for ag-Grid", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
-?>
+/*meta_and_links("How to get Support for ag-Grid", "ag-Grid Javascript Grid Support", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
+*/?>
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
 
 <body>
 <header id="nav" class="compact">
-<?php 
+<?php /*
 $version = 'latest';
 include './includes/navbar.php';
-?>
+*/?>
 </header>
 
 <div class="info-page">
@@ -155,7 +160,7 @@ include './includes/navbar.php';
 
 </div>
 
-<?php include_once("./includes/footer.php"); ?>
-<?php include_once("./includes/analytics.php"); ?>
+<?php /*include_once("./includes/footer.php"); */?>
+<?php /*include_once("./includes/analytics.php"); */?>
 </body>
-</html>
+</html>-->
