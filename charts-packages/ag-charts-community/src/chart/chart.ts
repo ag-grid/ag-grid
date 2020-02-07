@@ -100,7 +100,7 @@ export abstract class Chart extends Observable {
     private pendingSize?: [number, number];
 
     set width(value: number) {
-        this.autosize = false;
+        this.autoSize = false;
         if (this.width !== value) {
             this.pendingSize = [value, this.height];
             this.fireEvent({ type: 'layoutChange' });
@@ -111,7 +111,7 @@ export abstract class Chart extends Observable {
     }
 
     set height(value: number) {
-        this.autosize = false;
+        this.autoSize = false;
         if (this.height !== value) {
             this.pendingSize = [this.width, value];
             this.fireEvent({ type: 'layoutChange' });
@@ -121,10 +121,10 @@ export abstract class Chart extends Observable {
         return this.pendingSize ? this.pendingSize[1] : this.scene.height;
     }
 
-    protected _autosize = false;
-    set autosize(value: boolean) {
-        if (this._autosize !== value) {
-            this._autosize = value;
+    protected _autoSize = false;
+    set autoSize(value: boolean) {
+        if (this._autoSize !== value) {
+            this._autoSize = value;
             if (value) {
                 const chart = this; // capture `this` for IE11
                 SizeMonitor.observe(this.element, size => {
@@ -140,8 +140,8 @@ export abstract class Chart extends Observable {
             }
         }
     }
-    get autosize(): boolean {
-        return this._autosize;
+    get autoSize(): boolean {
+        return this._autoSize;
     }
 
     download(fileName?: string) {
@@ -172,7 +172,7 @@ export abstract class Chart extends Observable {
         this.scene = scene;
         scene.root = root;
         scene.container = element;
-        this.autosize = true;
+        this.autoSize = true;
 
         const { legend } = this;
         legend.addEventListener('layoutChange', this.onLayoutChange);
@@ -215,6 +215,7 @@ export abstract class Chart extends Observable {
         if (tooltipParent) {
             tooltipParent.removeChild(this.tooltipElement);
         }
+        this.container = undefined;
 
         this.legend.removeEventListener('layoutChange', this.onLayoutChange);
         this.cleanupListeners(this.scene.canvas.element);

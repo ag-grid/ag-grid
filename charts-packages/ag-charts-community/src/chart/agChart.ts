@@ -28,7 +28,12 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
+        // special handling when both `autoSize` and `width` / `height` are present in the options
+        const autoSize = options && options.autoSize;
         const chart = create(options);
+        if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
+            chart.autoSize = true;
+        }
         // console.log(JSON.stringify(flattenObject(options), null, 4));
         return chart;
     }
