@@ -1,5 +1,6 @@
 .search-wrapper {
     margin-bottom: 2rem;
+    margin-right: 5px;
 
     @include media-breakpoint-down(md) {
         width: calc(100% - 4rem);
