@@ -60,7 +60,13 @@
             } else {
                 // this must be the parent of a child object
                 $targetId = "$newPrefix--$name";
-                echo "</td><td>See <a href='#$targetId'>$name</a> for details of this configuration object.</td></tr>";
+                echo "</td><td>";
+
+                if (isset($definition->meta->description)) {
+                    echo $definition->meta->description . " ";
+                }
+
+                echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td></tr>";
                 $toProcess[$name] = $definition;
             }
         }

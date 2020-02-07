@@ -83,7 +83,7 @@ export const generalConfig = Object.freeze({
         editor: BooleanEditor,
     },
     width: {
-        default: 800,
+        type: 'number',
         description: 'The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
@@ -91,7 +91,7 @@ export const generalConfig = Object.freeze({
         unit: 'px',
     },
     height: {
-        default: 400,
+        type: 'number',
         description: 'The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
