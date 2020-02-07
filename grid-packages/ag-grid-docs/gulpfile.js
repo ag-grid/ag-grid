@@ -19,7 +19,8 @@ const PurgecssPlugin = require('purgecss-webpack-plugin');
 const {updateBetweenStrings, getAllModules} = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const generateExamples = require('./example-generator');
+const generateGridExamples = require('./example-generator').generateGridExamples;
+const generateChartExamples = require('./example-generator').generateChartExamples;
 
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
@@ -34,10 +35,10 @@ const populateDevFolder = () => {
         .concat(gridEnterpriseModules)
         .concat(chartCommunityModules)
         .forEach(module => {
-        copyTasks.push(
-            gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], {cwd: `${module.rootDir}/`})
-                .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
-    });
+            copyTasks.push(
+                gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], {cwd: `${module.rootDir}/`})
+                    .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
+        });
 
     const react = gulp.src(['../../community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../community-modules/react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
     const angular = gulp.src(['../../community-modules/angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
@@ -57,9 +58,9 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         './dist/example-runner/grid-angular-boilerplate/',
         './dist/example-runner/grid-vue-boilerplate/',
         './dist/example-runner/grid-react-boilerplate/',
-        './dist/example-runner/chart-boilerplate/',
-        './dist/example-runner/chart-boilerplate/',
-        './dist/example-runner/chart-boilerplate/',
+        './dist/example-runner/chart-angular-boilerplate/',
+        './dist/example-runner/chart-vue-boilerplate/',
+        './dist/example-runner/chart-react-boilerplate/',
         './dist/react-runner/app-boilerplate/',
     ];
 
@@ -73,16 +74,20 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
         '/* END OF GRID MODULES DEV - DO NOT DELETE */',
         [],
         [],
-        () => {},
-        () => {});
+        () => {
+        },
+        () => {
+        });
 
     updatedUtilFileContent = updateBetweenStrings(updatedUtilFileContent,
         '/* START OF CHART MODULES DEV - DO NOT DELETE */',
         '/* END OF CHART MODULES DEV - DO NOT DELETE */',
         [],
         [],
-        () => {},
-        () => {});
+        () => {
+        },
+        () => {
+        });
 
     fs.writeFileSync('./dist/example-runner/example-mappings.php', updatedUtilFileContent, 'UTF-8');
 
@@ -202,30 +207,18 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest('./dist'));
 };
 
-gulp.task('generate-examples-release', (done) => {
-    generateExamples.bind(
+gulp.task('generate-grid-examples', (done) => {
+    generateGridExamples.bind(
         null,
-        () => {
-            console.log('generation done.');
-            done();
-        },
-        undefined,
-        false,
-        gridCommunityModules,
-        gridEnterpriseModules
+        '*',
+        done
     )();
 });
-gulp.task('generate-examples-dev', (done) => {
-    generateExamples.bind(
+gulp.task('generate-chart-examples', (done) => {
+    generateChartExamples.bind(
         null,
-        () => {
-            console.log('generation done.');
-            done();
-        },
-        undefined,
-        true,
-        gridCommunityModules,
-        gridEnterpriseModules
+        '*',
+        done,
     )();
 });
 gulp.task('populate-dev-folder', populateDevFolder);
@@ -235,11 +228,11 @@ gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('release-archive', series(parallel('generate-examples-release'), 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
-gulp.task('release', series(parallel('generate-examples-release'), 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
+gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
+gulp.task('release-archive', series('generate-examples', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
+gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
-gulp.task('generate-examples', series('generate-examples-dev'));
 
 // buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false
 gulp.task('serve-legacy', require('./dev-server').bind(null, false, true, false));
