@@ -39,7 +39,11 @@ export abstract class AgChart {
     }
 
     static update(chart: any, options: any) {
-        return update(chart, Object.create(options));
+        const autoSize = options && options.autoSize;
+        update(chart, Object.create(options));
+        if (chart && autoSize) {
+            chart.autoSize = true;
+        }
     }
 }
 
