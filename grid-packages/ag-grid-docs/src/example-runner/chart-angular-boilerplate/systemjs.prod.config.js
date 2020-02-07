@@ -9,6 +9,11 @@
     var ANGULAR_CDK_VERSION = "5.2.5";
     var ANGULAR_MATERIAL_VERSION = "5.2.5";
 
+    var sjsPaths = {};
+    if(typeof systemJsPaths !== "undefined") {
+        sjsPaths = systemJsPaths;
+    }
+
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
@@ -30,10 +35,10 @@
             },
             '*.css': {loader: 'css'}
         },
-        paths: {
+        paths: Object.assign({
             // paths serve as alias
-            "npm:": "https://unpkg.com/"
-        },
+            "npm:": "https://unpkg.com/",
+        }, sjsPaths),
         // RxJS makes a lot of requests to unpkg. This guy addressed it:
         // https://github.com/OasisDigital/rxjs-system-bundle.
         bundles: {

@@ -24,45 +24,47 @@ foreach ($files as $file) {
     $filePath = path_combine($path, $file);
     $info = pathinfo($filePath);
     switch ($info['extension']) {
-    case 'js':
-        $scripts[] = $plunkerView ? $file : $filePath;
-        break;
-    case 'css':
-        $styles[] = $plunkerView ? $file : $filePath;
-        break;
+        case 'js':
+            $scripts[] = $plunkerView ? $file : $filePath;
+            break;
+        case 'css':
+            $styles[] = $plunkerView ? $file : $filePath;
+            break;
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script>var __basePath = '<?= $plunkerView ? "" : $path ?>';</script>
+<head>
+    <script>var __basePath = '<?= $plunkerView ? "" : rtrim($path, '/') . '/'; ?>';</script>
     <style media="only screen">
-      html, body {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-        -webkit-overflow-scrolling: touch;
-      }
-      html {
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 0;
-        overflow: auto;
-      }
-      body {
-        padding: 1rem;
-        overflow: auto;
-      }
-    </style>
-<?php renderExampleExtras($_GET) ?>
-<?= globalAgGridScript(isset($_GET["enterprise"])) . "\n" ?>
-<?php renderStyles($styles); ?>
-  </head>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch;
+        }
 
-  <body>
+        html {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 0;
+            overflow: auto;
+        }
+
+        body {
+            padding: 1rem;
+            overflow: auto;
+        }
+    </style>
+    <?php renderExampleExtras($_GET) ?>
+    <?= globalAgGridScript(isset($_GET["enterprise"])) . "\n" ?>
+    <?php renderStyles($styles); ?>
+</head>
+
+<body>
 
 <?php
 include path_combine($path, 'index.html');
@@ -73,5 +75,5 @@ foreach ($scripts as $script) {
     }
 }
 ?>
-  </body>
+</body>
 </html>

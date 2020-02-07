@@ -1,7 +1,7 @@
 <?php
-include '../example-runner/example-mappings.php';
-include '../example-runner/utils.php';
-include 'react-utils.php';
+require_once '../example-runner/example-mappings.php';
+require_once '../example-runner/utils.php';
+require_once 'react-utils.php';
 $example = getReactAppInfo();
 ?>
 <!DOCTYPE html>

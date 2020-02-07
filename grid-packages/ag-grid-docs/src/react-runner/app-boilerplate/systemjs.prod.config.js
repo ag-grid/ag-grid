@@ -12,18 +12,17 @@
     }
 
     var sjsPaths = {};
-    if(typeof xxx !== "undefined") {
+    if (typeof systemJsPaths !== "undefined") {
         sjsPaths = systemJsPaths;
     }
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths:
-            Object.assign(
-                {
-                    // paths serve as alias
-                    "npm:": "https://unpkg.com/",
-                }, sjsPaths),
+        paths: Object.assign(
+            {
+                // paths serve as alias
+                "npm:": "https://unpkg.com/",
+            }, sjsPaths),
         map: assign(
             {
                 // css plugin

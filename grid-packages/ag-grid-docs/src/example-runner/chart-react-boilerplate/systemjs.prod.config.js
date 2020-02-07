@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
 // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -11,12 +11,18 @@
         return result;
     }
 
+    var sjsPaths = {};
+    if(typeof systemJsPaths !== "undefined") {
+        sjsPaths = systemJsPaths;
+    }
+
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: {
-            'npm:': 'https://unpkg.com/'
-        },
+        paths: Object.assign({
+            // paths serve as alias
+            "npm:": "https://unpkg.com/",
+        }, sjsPaths),
         map: assign(
             {
                 // css plugin
