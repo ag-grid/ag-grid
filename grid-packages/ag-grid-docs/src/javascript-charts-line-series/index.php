@@ -167,4 +167,74 @@ marker: {
 
 <?= chart_example('Continuous Data - Spiral Curve', 'two-number-axes'); ?>
 
+<h2>Time-Series Data</h2>
+
+<p>
+    The following example shows how line series can be used to render time-series data.
+    In this case, we have two ambient temperature sensors that give us two independent data sets
+    with different number of readings taken at different intervals and irregular intervals at that:
+</p>
+
+<?= chart_example('Time Data - Temperature Sensors', 'time-line'); ?>
+
+<p>
+    Because we want to use a non-standard axis configuration (<code>'time'</code> axis on the bottom rather
+    than the <code>'category'</code> axis and temperature units for the <code>'number'</code> axis),
+    we have to be explicit about the <code>axes</code> config we want to use:
+</p>
+
+<snippet language="ts">
+axes: [{
+    type: 'time',
+    position: 'bottom',
+}, {
+    type: 'number',
+    position: 'left',
+    label: {
+        formatter: function (params) {
+            return params.value + ' C°';
+        }
+    }
+}]
+</snippet>
+
+<p>
+    Because we have two separate data sets, we are using the <code>series.data</code> property
+    of each series, rather than the <code>data</code> property of the chart itself:
+</p>
+
+<snippet language="ts">
+series: [{
+    data: [{
+        time: new Date('01 Jan 2020 13:25:30 GMT'),
+        sensor: 25
+    }, {
+        time: new Date('01 Jan 2020 13:26:30 GMT'),
+        sensor: 24
+    }],
+    ...
+}, {
+    data: [{
+        time: Date.parse('01 Jan 2020 13:25:00 GMT'),
+        sensor: 21
+    }, {
+        time: Date.parse('01 Jan 2020 13:26:00 GMT'),
+        sensor: 22
+    }],
+    ...
+}]
+</snippet>
+
+<p>
+    Notice that even though one data set has dates as <code>Date</code> objects and another
+    uses timestamps, it doesn't present a problem and both series render just fine.
+</p>
+
+<p>
+    The time axis automatically selects an appropriate label format depending on the time
+    span of the data to prevent the labels from overlapping. Though please keep in mind
+    that the axis can only do so much, and if you have a really small chart, the labels
+    might still overlap.
+</p>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

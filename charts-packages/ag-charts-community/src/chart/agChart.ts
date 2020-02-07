@@ -18,6 +18,7 @@ import { Series } from "./series/series";
 import palette from "./palettes";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
+import { TimeAxis } from "./axis/timeAxis";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -284,6 +285,14 @@ const mappings = {
             [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
+                    setAsIs: ['gridStyle'],
+                    ...axisDefaults
+                },
+                ...axisMappings
+            },
+            [TimeAxis.type]: {
+                meta: {
+                    constructor: TimeAxis,
                     setAsIs: ['gridStyle'],
                     ...axisDefaults
                 },
