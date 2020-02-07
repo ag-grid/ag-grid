@@ -364,8 +364,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 fill: this.getBackgroundColor(),
                 visible: true,
             },
-            width: 800,
-            height: 400,
             padding: {
                 top: 20,
                 right: 20,

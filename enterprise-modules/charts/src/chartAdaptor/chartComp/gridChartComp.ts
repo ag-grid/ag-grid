@@ -296,6 +296,10 @@ export class GridChartComp extends Component {
     }
 
     public refreshCanvasSize(): void {
+        if (!this.params.insideDialog) {
+            return;
+        }
+
         const { chartProxy, eChart } = this;
 
         if (this.chartMenu.isVisible()) {

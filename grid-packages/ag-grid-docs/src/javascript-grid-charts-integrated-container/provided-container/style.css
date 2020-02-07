@@ -2,16 +2,20 @@
     display: flex;
     flex-direction: column;
     border: 2px solid darkslategray;
-    height: 440px;
+    height: 410px;
     overflow: hidden;
 }
 
 .chart-wrapper-top {
-    height: 40px;
+    height: 50px;
     padding: 10px;
     text-align: center;
 }
 
 .chart-wrapper-title {
     font-weight: bold;
+}
+
+.chart-wrapper-body {
+    height: 100%;
 }
