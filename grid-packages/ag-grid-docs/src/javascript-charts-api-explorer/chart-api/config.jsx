@@ -75,11 +75,16 @@ export const generalConfig = Object.freeze({
     },
     container: {
         type: 'HTMLElement',
-        description: 'The element to place the rendered chart <code>canvas</code> element into.'
+        description: 'The element to place the rendered chart into.'
+    },
+    autoSize: {
+        default: true,
+        description: 'By default, the chart will resize automatically to fill the container element. Set this to <code>false</code> to disable this behaviour. If either the <code>width</code> or <code>height</code> are set, auto-sizing will be disabled unless this is explicitly set to <code>true</code>.',
+        editor: BooleanEditor,
     },
     width: {
         default: 800,
-        description: 'The width of the chart in pixels.',
+        description: 'The width of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
         max: () => getChartContainer().offsetWidth - (getChartContainer().offsetWidth % 10),
@@ -87,7 +92,7 @@ export const generalConfig = Object.freeze({
     },
     height: {
         default: 400,
-        description: 'The height of the chart in pixels.',
+        description: 'The height of the chart in pixels. Has no effect if <code>autoSize</code> is set to <code>true</code>.',
         editor: NumberEditor,
         min: 1,
         max: () => getChartContainer().offsetHeight - (getChartContainer().offsetHeight % 10),

@@ -30,7 +30,6 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
 
     if (props.max && stateValue > props.max) {
         setValueChange(props.max);
-        onChange(props.max);
     }
 
     return <span className="number-editor">
