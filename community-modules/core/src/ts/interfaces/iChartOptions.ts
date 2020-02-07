@@ -26,8 +26,8 @@ export interface SeriesOptions {
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
     seriesDefaults: T;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     padding: PaddingOptions;
     background: BackgroundOptions;
     title: CaptionOptions;
