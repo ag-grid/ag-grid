@@ -10,15 +10,9 @@
     margin-bottom: 5px;
 }
 
-.ag-theme-balham-dark .ag-floating-top {
+.ag-floating-top .ag-row {
     background-color: black;
 }
-.ag-theme-balham-dark .ag-floating-top .ag-row {
-    background-color: black;
-}
-.ag-theme-balham-dark .ag-floating-bottom {
-    background-color: black;
-}
-.ag-theme-balham-dark .ag-floating-bottom .ag-row {
+.ag-floating-bottom .ag-row {
     background-color: black;
 }

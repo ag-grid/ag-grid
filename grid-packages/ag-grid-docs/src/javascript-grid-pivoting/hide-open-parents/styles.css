@@ -10,8 +10,8 @@
     margin-bottom: 5px;
 }
 
-.ag-theme-balham .ag-row {
-    border-bottom: 1px solid lightgrey;
+.ag-row {
+    border-color: #ccc !important;
 }
 .ag-row-level-0 {
     background-color: #fff !important;
