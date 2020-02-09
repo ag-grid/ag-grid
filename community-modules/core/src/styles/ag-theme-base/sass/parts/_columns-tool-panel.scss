@@ -32,36 +32,6 @@
         margin-right: $ag-grid-size;
     }
 
-    .ag-column-drop-vertical {
-        @include ag-grid-border(secondary, bottom);
-        min-height: 50px;
-        padding-bottom: $ag-grid-size * 2;
-
-        &.ag-last-column-drop {
-            @include ag-grid-border(secondary, bottom, $none: true);
-        }
-    }
-
-    .ag-column-drop-vertical-icon {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
-    }
-
-    .ag-column-drop-vertical-empty-message {
-        color: $ag-disabled-foreground-color;
-        margin-top: $ag-grid-size;
-
-        @include ag-theme-rtl((
-            padding-left: $ag-icon-size + $ag-grid-size * 2,
-            padding-right: $ag-grid-size
-        ));
-    }
-
-    .ag-column-drop-vertical-list {
-        cursor: default;
-        margin-top: $ag-grid-size;
-    }
-
     .ag-column-group-icons,
     .ag-column-select-header-icon {
         color: $ag-secondary-foreground-color;

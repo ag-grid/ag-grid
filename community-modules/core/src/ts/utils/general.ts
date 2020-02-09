@@ -1411,10 +1411,13 @@ export class Utils {
         rowDrag: 'grip',
         // context menu export item
         save: 'save',
+        // icon on dropdown editors
+        smallDown: 'small-down',
         // version of small-right used in RTL mode
         smallLeft: 'small-left',
         // separater between column 'pills' when you add multiple columns to the header drop zone
         smallRight: 'small-right',
+        smallUp: 'small-up',
         // show on column header when column is sorted ascending
         sortAscending: 'asc',
         // show on column header when column is sorted descending

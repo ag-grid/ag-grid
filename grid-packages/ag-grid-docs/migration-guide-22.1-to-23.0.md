@@ -2,19 +2,20 @@ In v23 we are releasing a major rewrite of our themes with the goal of making it
 
 ## Why we're updating our themes
 
-In the past, the primary way of customising a theme was to define Sass variables that themes supported, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable. We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach:
+Prior to this release, the primary way of customising a theme in ag-Grid was to define Sass variables, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable. We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach:
 
 1. There were never enough variables - every custom theme wants to make changes that we don't provide variables for, so needs to contain CSS rules as well as variable definitions.
-2. There were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to read a class name.
+2. There were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to find out a class name.
 3. "Clever" variables that do more than one thing cause issues. For example, `$ag-accent-color` changed the colour of certain important elements, but in practice every custom theme has a different idea of which elements should be accented.
-4. Because our DOM and class name structures weren't designed as public APIs, the CSS rules required in custom themes were often complicated, deeply nested, and inconsistent. This lead to brittleness: minor releases of Ag-Grid could break people's themes.
+4. Because our DOM and class name structures weren't designed as public APIs, the CSS rules required in custom themes were often complicated, deeply nested, and inconsistent beween grid features. This lead to brittleness: upgrading to a minor release could break people's themes.
 5. The base theme made some opinionated design decisions like adding borders and padding. Themes that didn't want those borders and padding to remove them with rules like `... some complex selector ... { border: none , padding: 0}`.
 
-So in the latest release of ag-Grid we have added many new css classes, renamed existing ones, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
+So in the latest release of ag-Grid we have added many new css classes, renamed existing ones for consistency, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
 
-* The primary way of customising elements is now CSS. In the vast majority of cases you should only need a single class name in your selector, e.g. `.ag-component-name { padding: 10px }`.
-* Variables now do one thing only, and we have removed variables that do something that can be easily achieved with a CSS selector.
-* Our base theme still has opinionated design features, but themes can opt-out. If you have a different idea about where borders should be drawn, you can define `$ag-borders: false` and the base theme will not add any borders, giving you a clean slate to add your own borders.
+* The primary way of customising elements is now CSS. In the majority of cases you should only need a single class name in your selector, e.g. `.ag-component-name { padding: 10px }`.
+* Variables in the base theme now do one thing only, and opinionated variables have been moved from the base theme to the provided themes.
+* We have removed variables that do something that can be easily achieved with a CSS selector.
+* Our base theme still has contains opinionated design features, but themes can opt-out. If you have a different idea about where borders should be drawn, you can define `$ag-borders: false` and the base theme will not add any borders, giving you a clean slate to add your own borders.
 
 The net effect is that custom themes will be simpler to write, and will break less between releases.
 
@@ -47,7 +48,7 @@ $ag-primary-color removed. Use $ag-range-selection-border-color and $ag-selected
 
 $ag-tooltip-background-color, $ag-tooltip-border-color, $ag-tooltip-border-radius, $ag-tooltip-border-style, $ag-tooltip-border-width, $ag-tooltip-foreground-color, $ag-tooltip-padding: removed. Use a CSS rule like .ag-tooltip { padding: 10px; }
 
-$ag-accent-color > $ag-checkbox-check-color
+$ag-accent-color > removed. If extending the base theme, use specific colour variables like $ag-checkbox-check-color or use CSS selectors to change element colors. If extending a provided theme, check the theme's ag-theme-{themename}-vars.scss file for theme-specific variables to achieve the same effect. Fopr example, the material theme provides `$ag-mat-accent-color`.
 
 Variables starting `$ag-dialog-` and `$ag-dialog-title-` have been removed. Instead of using these variables, use a css selector like `.ag-panel { ... }` or `.ag-panel-title { ... }`. The full list of removed variables is: $ag-dialog-background-color, $ag-dialog-border-size, $ag-dialog-border-style, $ag-dialog-border-color, $ag-dialog-title-background-color, $ag-dialog-title-foreground-color, $ag-dialog-title-height, $ag-dialog-title-font-family, $ag-dialog-title-font-size, $ag-dialog-title-font-weight, $ag-dialog-title-padding, $ag-dialog-title-icon-size, 
 

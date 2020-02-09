@@ -114,8 +114,10 @@
   @include ag-icon-element('previous', $ag-icon-previous);
   @include ag-icon-element('right', $ag-icon-right);
   @include ag-icon-element('save', $ag-icon-save);
+  @include ag-icon-element('small-down', $ag-icon-small-down);
   @include ag-icon-element('small-left', $ag-icon-small-left);
   @include ag-icon-element('small-right', $ag-icon-small-right);
+  @include ag-icon-element('small-up', $ag-icon-small-up);
   @include ag-icon-element('tick', $ag-icon-tick);
   @include ag-icon-element('tree-closed', $ag-icon-tree-closed);
   @include ag-icon-element('tree-indeterminate', $ag-icon-tree-indeterminate);

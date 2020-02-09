@@ -405,31 +405,9 @@
     vertical-align: middle;
     flex: none;
     
-    &:focus {
+    &:focus, &:active {
         outline: none;
         box-shadow: $ag-input-focus-box-shadow;
-    }
-
-    @if $ag-checkbox-click-flash-color {
-        &::before {
-            content: ' ';
-            position: absolute;
-            margin-top: 1px;
-            margin-left: 1px;
-            width: $ag-icon-size - 2px;
-            height: $ag-icon-size - 2px;
-            background: $ag-checkbox-click-flash-color;
-            display: block;
-            visibility: hidden;
-            opacity: 1;
-            border-radius: $ag-checkbox-border-radius;
-        }
-
-        &.ag-input-click-animation::before {
-            visibility: visible;
-            opacity: 0;
-            transition: opacity .3s;
-        }
     }
 
     &::after {
@@ -456,12 +434,6 @@
     @extend %ag-checkbox;
     
     border-radius: $ag-icon-size;
-
-    @if $ag-checkbox-click-flash-color {
-        &::before {
-            border-radius: $ag-icon-size;
-        }
-    }
 
     &::after {
         content: $ag-icon-radio-button-off;

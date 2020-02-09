@@ -100,7 +100,12 @@
     }
 
     .ag-column-drop-vertical {
-        padding-top: 0;
+        min-height: 75px;
+    }
+
+    .ag-column-drop-vertical-list {
+        min-height: 75px;
+        position: relative;
     }
 
     .ag-tool-panel-wrapper {
