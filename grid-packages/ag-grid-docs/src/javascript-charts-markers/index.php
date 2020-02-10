@@ -12,79 +12,29 @@ include '../documentation-main/documentation_header.php';
     This section covers markers used by Line, Area and Scatter series.
 </p>
 
-<h2>Introduction</h2>
-
 <p>
-    If we continue with our <a href="../javascript-charts-line-series/#colors">line series example</a> and want
-    to make the Diesel series markers square, we can achieve this by using the <code>shape</code> property
-    inside the <code>marker</code> config.
-</p>
-
-<snippet language="ts">
-AgChart.create({
-    width: 400,
-    height: 300,
-    container: document.body,
-    data: [{
-        quarter: 'Q1',
-        gas: 200,
-        diesel: 100
-    }, {
-        quarter: 'Q2',
-        gas: 300,
-        diesel: 130
-    }, {
-        quarter: 'Q3',
-        gas: 350,
-        diesel: 160
-    }, {
-        quarter: 'Q4',
-        gas: 400,
-        diesel: 200
-    }],
-    title: {
-        text: 'Fuel Spending (2019)'
-    },
-    series: [{
-        xKey: 'quarter',
-        yKey: 'gas',
-        title: 'Gas',
-        marker: {
-            size: 16,
-            shape: 'heart'
-        }
-    }, {
-        xKey: 'quarter',
-        yKey: 'diesel',
-        title: 'Diesel',
-        stroke: 'black',
-        marker: {
-            shape: 'plus',
-            size: 16,
-            fill: 'gray',
-            stroke: 'black'
-        }
-    }]
-});
-</snippet>
-
-<p>
-    <img alt="Marker Shape" src="marker-shape-square.png" style="margin-bottom: 0px; height: 300px;">
-</p>
-
-<p>
-    We can also configure the size of the markers like so:
+    The shape of the marker can be changed by using the <code>shape</code> config.
+    The <code>size</code>, <code>fill</code> and <code>stroke</code> are also valid configs:
 </p>
 
 <snippet language="ts">
 marker: {
-    size: 16
+    shape: 'square', // defaults to `shape: 'circle'`
+    size: 20,
+    fill: 'red',
+    stroke: 'maroon'
 }
 </snippet>
 
 <p>
-    <img alt="Marker Size" src="marker-size.png" style="margin-bottom: 0px; height: 300px;">
+    For example:
 </p>
+
+<?= chart_example('Marker Shape, Size and Color', 'marker-shape'); ?>
+
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig.marker") ?>
 
 <h2>Custom Markers</h2>
 
@@ -141,13 +91,5 @@ marker: {
     size: 16
 }
 </snippet>
-
-<p>
-    <img alt="Custom Marker" src="custom-marker.png" style="margin-bottom: 0px; height: 300px;">
-</p>
-
-<h2>API Reference</h2>
-
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig.marker") ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
