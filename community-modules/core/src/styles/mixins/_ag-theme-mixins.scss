@@ -61,10 +61,10 @@
     }
 }
 
-@mixin ag-icon($size) {
+@mixin ag-icon() {
     font-family: '#{$ag-icon-font-family}';
-    font-size: $size;
-    line-height: $size;
+    font-size: $ag-icon-size;
+    line-height: $ag-icon-size;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
@@ -77,7 +77,7 @@
 
 @mixin ag-icons-webfont() {
   .ag-icon {
-      @include ag-icon($ag-icon-size);
+      @include ag-icon();
   }
 
   @include ag-icon-element('aggregation', $ag-icon-aggregation);

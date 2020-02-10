@@ -18,7 +18,6 @@
     }
 
     input,
-    select,
     button {
         background-color: $ag-background-color;
         color: inherit;
@@ -402,10 +401,15 @@
             @extend %ag-range;
         }
     }
+    @if not map-has-key($type-map, select) or map-get($type-map, select) {
+        select {
+            @extend %ag-select;
+        }
+    }
 }
 
 %ag-checkbox {
-    @include ag-icon($ag-icon-size);
+    @include ag-icon();
 
     -webkit-appearance: none;
     width: $ag-icon-size;
@@ -650,5 +654,18 @@
 
     &:disabled {
         opacity: 0.5;
+    }
+}
+
+%ag-select {
+    // TODO re-do this with SVG?
+    height: $ag-grid-size * 2 + $ag-icon-size;
+    border: 1px solid $ag-border-color;
+    background: $ag-background-color;
+    color: $ag-foreground-color;
+    
+    &:focus {
+        outline: none;
+        box-shadow: $ag-input-focus-box-shadow;
     }
 }

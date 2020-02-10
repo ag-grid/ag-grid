@@ -123,6 +123,11 @@
         @include ag-theme-rtl((padding-left: $ag-grid-size));
     }
 
+    .ag-filter-condition {
+        margin-left: $ag-grid-size;
+        margin-right: $ag-grid-size;
+    }
+
     // string filter type
     .ag-filter-select {
         margin: $ag-grid-size;
