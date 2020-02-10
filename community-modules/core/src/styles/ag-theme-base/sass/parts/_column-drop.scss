@@ -76,6 +76,10 @@
         }
     }
 
+    .ag-column-drop-vertical {
+        padding-top: $ag-grid-size * 2;
+    }
+
     .ag-column-drop-vertical-icon {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;
@@ -84,12 +88,6 @@
     .ag-column-drop-vertical-empty-message {
         color: $ag-disabled-foreground-color;
         margin-top: $ag-grid-size;
-        position: absolute;
-
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
 
         @include ag-theme-rtl((
             padding-left: $ag-icon-size + $ag-grid-size * 2,

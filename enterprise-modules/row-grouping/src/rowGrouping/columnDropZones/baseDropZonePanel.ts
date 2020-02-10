@@ -426,7 +426,7 @@ export abstract class BaseDropZonePanel extends Component {
         const eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
         this.addElementClasses(eMessage, 'empty-message');
-        this.getGui().appendChild(eMessage);
+        this.eColumnDropList.appendChild(eMessage);
     }
 
     private addArrow(eParent: HTMLElement): void {
