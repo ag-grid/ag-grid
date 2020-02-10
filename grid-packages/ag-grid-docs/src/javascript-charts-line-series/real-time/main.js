@@ -9,7 +9,7 @@ for (var i = 0; i < 20; i++) {
 
 var chart = agCharts.AgChart.create({
     container: document.getElementById('myChart'),
-    data,
+    data: data,
     series: [{
         xKey: 'time',
         yKey: 'voltage',
