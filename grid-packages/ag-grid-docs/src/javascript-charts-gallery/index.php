@@ -17,21 +17,21 @@ define("skipInPageNav", true);
 
 <div class="chart-gallery">
 <div class="chart-gallery-item">
-    <a href="./column-chart.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-chart.png" /><br />
-        <div class="chart-gallery-item__name">Column Chart</div>
+    <a href="./simple-column.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-column.png" /><br />
+        <div class="chart-gallery-item__name">Simple Column</div>
     </a>
 </div>
 <div class="chart-gallery-item">
-    <a href="./bar-chart.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-chart.png" /><br />
-        <div class="chart-gallery-item__name">Bar Chart</div>
+    <a href="./simple-bar.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-bar.png" /><br />
+        <div class="chart-gallery-item__name">Simple Bar</div>
     </a>
 </div>
 <div class="chart-gallery-item">
-    <a href="./line-chart.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/line-chart.png" /><br />
-        <div class="chart-gallery-item__name">Line Chart</div>
+    <a href="./simple-line.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-line.png" /><br />
+        <div class="chart-gallery-item__name">Simple Line</div>
     </a>
 </div>
 </div>

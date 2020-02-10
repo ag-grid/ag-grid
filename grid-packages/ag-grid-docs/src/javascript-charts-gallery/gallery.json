@@ -1,11 +1,11 @@
 {
-    "Column Chart": {
+    "Simple Column": {
         "description": "The column chart represents data as a series of vertical columns."
     },
-    "Bar Chart": {
+    "Simple Bar": {
         "description": "The bar chart represents data as a series of horizontal bars."
     },
-    "Line Chart": {
+    "Simple Line": {
         "description": "The line chart represents data using a number of lines."
     }
 }

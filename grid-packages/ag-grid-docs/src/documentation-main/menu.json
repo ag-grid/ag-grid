@@ -1004,16 +1004,16 @@
                 "url": "javascript-charts-gallery/",
                 "items": [
                   {
-                    "title": "Column Chart",
-                    "url": "javascript-charts-gallery/column-chart.php"
+                    "title": "Simple Column",
+                    "url": "javascript-charts-gallery/simple-column.php"
                   },
                   {
-                    "title": "Bar Chart",
-                    "url": "javascript-charts-gallery/bar-chart.php"
+                    "title": "Simple Bar",
+                    "url": "javascript-charts-gallery/simple-bar.php"
                   },
                   {
-                    "title": "Line Chart",
-                    "url": "javascript-charts-gallery/line-chart.php"
+                    "title": "Simple Line",
+                    "url": "javascript-charts-gallery/simple-line.php"
                   }
                 ]
               },
