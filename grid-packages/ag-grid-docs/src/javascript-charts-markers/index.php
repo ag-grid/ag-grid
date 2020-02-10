@@ -92,4 +92,10 @@ marker: {
 }
 </snippet>
 
+<p>
+    And the final result is:
+</p>
+
+<?= chart_example('Custom Marker', 'custom-marker'); ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
