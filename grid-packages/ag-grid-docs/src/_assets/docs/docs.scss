@@ -532,29 +532,36 @@ body {
         display: flex;
         flex-wrap: wrap;
 
-        &__item {
-            box-sizing: border-box;
+        .chart-gallery-item {
             max-width: calc(33% - 10px);
             border: 1px solid $border-color;
             border-radius: 10px;
             overflow: hidden;
             text-align: center;
             margin: 0 10px 10px 0;
+            transition: transform 0.5s, box-shadow 0.5s;
 
             &:hover {
-                box-shadow: inset 0 0 5px $border-color;
+                transform: translateY(-5px);
+                box-shadow: 0 8px 6px -6px $secondary;
+            }
+
+            &__link {
+                display: block;
+                text-decoration: none;
+            }
+
+            &__thumbnail {
+                width: 100%;
+            }
+
+            &__name {
+                padding: 10px;
+                background-color: $offwhite;
             }
         }
 
-        &__link {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-        }
 
-        &__thumbnail {
-            width: 100%;
-        }
     }
 
     .chart-navigation {

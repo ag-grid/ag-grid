@@ -5,6 +5,7 @@ $pageDescription = "ag-Charts is a highly performant charting library with a cle
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
+define("skipInPageNav", true);
 ?>
 
 <h1 class="heading">Charts Standalone Gallery: Line Chart</h1>

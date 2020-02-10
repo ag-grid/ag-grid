@@ -35,6 +35,7 @@ $pageDescription = "ag-Charts is a highly performant charting library with a cle
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
+define("skipInPageNav", true);
 ?>`;
 }
 
@@ -108,10 +109,10 @@ ${Object.keys(galleryConfig).map(getGalleryItem).join('\n')}
 function getGalleryItem(name) {
     const kebabCase = toKebabCase(name);
 
-    return `<div class="chart-gallery__item">
-    <a href="./${getPageName(name)}" class="chart-gallery__link">
-        <img class="chart-gallery__thumbnail" src="./thumbnails/${kebabCase}.png" /><br />
-        ${name}
+    return `<div class="chart-gallery-item">
+    <a href="./${getPageName(name)}" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/${kebabCase}.png" /><br />
+        <div class="chart-gallery-item__name">${name}</div>
     </a>
 </div>`;
 }
@@ -150,7 +151,7 @@ function generateThumbnails(galleryConfig) {
         const kebabCase = toKebabCase(name);
 
         try {
-            execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=400,300 "http://localhost:8080/example-runner/chart-vanilla.php?section=javascript-charts-gallery&example=${kebabCase}&generated=1"`);
+            execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,600 "http://localhost:8080/example-runner/chart-vanilla.php?section=javascript-charts-gallery&example=${kebabCase}&generated=1"`);
             fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${kebabCase}.png`));
         } catch (e) {
             console.error(`Failed to generate screenshot for ${name}`, e);
