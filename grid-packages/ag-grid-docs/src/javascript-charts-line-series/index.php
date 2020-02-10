@@ -239,6 +239,19 @@ series: [{
 
 <h2>Real-Time Data</h2>
 
+<p>
+    To create a real-time chart the only thing one should do is to periodically update
+    the chart's or series' <code>data</code> property. In the example below we treat
+    the <code>data</code> array as a queue. Every second we remove the first element
+    from the start of the queue and add a new element to the end of the queue.
+</p>
+
 <?= chart_example('Real-Time Chart - Core Voltage', 'real-time'); ?>
+
+<p>
+    This example uses the <code>'time'</code> axis which is configured to show a tick
+    every 5 seconds and to use the <code>%H:%M:%S</code> label format to show colon separated
+    hours, minutes and seconds.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
