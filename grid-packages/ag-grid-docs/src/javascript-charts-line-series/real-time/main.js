@@ -28,7 +28,7 @@ var chart = agCharts.AgChart.create({
         type: 'number',
         position: 'left',
         label: {
-            formatter: function (params) {
+            formatter: function(params) {
                 return params.value + 'v';
             }
         }
@@ -41,7 +41,7 @@ var chart = agCharts.AgChart.create({
     }
 });
 
-setInterval(function () {
+setInterval(function() {
     data.shift();
     data.push({
         time: new Date(lastTime += 1000),
