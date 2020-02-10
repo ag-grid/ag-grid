@@ -295,24 +295,23 @@ export class RowNode implements IEventEmitter {
 
     public setDataAndId(data: any, id: string | undefined): void {
         const oldNode = _.exists(this.id) ? this.createDaemonNode() : null;
-
         const oldData = this.data;
+
         this.data = data;
         this.updateDataOnDetailNode();
-
         this.setId(id);
-
         this.selectionController.syncInRowNode(this, oldNode);
-
         this.checkRowSelectable();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+
         this.dispatchLocalEvent(event);
     }
 
     private checkRowSelectable() {
         const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         const shouldInvokeIsRowSelectable = isRowSelectableFunc && _.exists(this);
+
         this.setRowSelectable(shouldInvokeIsRowSelectable ? isRowSelectableFunc(this) : true);
     }
 
@@ -328,6 +327,7 @@ export class RowNode implements IEventEmitter {
     public setId(id: string): void {
         // see if user is providing the id's
         const getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+
         if (getRowNodeId) {
             // if user is providing the id's, then we set the id only after the data has been set.
             // this is important for virtual pagination and viewport, where empty rows exist.
@@ -354,59 +354,57 @@ export class RowNode implements IEventEmitter {
     }
 
     public setFirstChild(firstChild: boolean): void {
-        if (this.firstChild === firstChild) {
-            return;
-        }
+        if (this.firstChild === firstChild) { return; }
+
         this.firstChild = firstChild;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_FIRST_CHILD_CHANGED));
         }
     }
 
     public setLastChild(lastChild: boolean): void {
-        if (this.lastChild === lastChild) {
-            return;
-        }
+        if (this.lastChild === lastChild) { return; }
+
         this.lastChild = lastChild;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_LAST_CHILD_CHANGED));
         }
     }
 
     public setChildIndex(childIndex: number): void {
-        if (this.childIndex === childIndex) {
-            return;
-        }
+        if (this.childIndex === childIndex) { return; }
+
         this.childIndex = childIndex;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_CHILD_INDEX_CHANGED));
         }
     }
 
     public setRowTop(rowTop: number | null): void {
-        if (this.rowTop === rowTop) {
-            return;
-        }
+        if (this.rowTop === rowTop) { return; }
+
         this.rowTop = rowTop;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
         }
     }
 
     public setDragging(dragging: boolean): void {
-        if (this.dragging === dragging) {
-            return;
-        }
+        if (this.dragging === dragging) { return; }
+
         this.dragging = dragging;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     }
 
     public setHighlighted(highlighted: 'above' | 'below' | null): void {
-        if (highlighted === this.highlighted) {
-            return;
-        }
+        if (highlighted === this.highlighted) { return; }
 
         this.highlighted = highlighted;
 
@@ -470,7 +468,7 @@ export class RowNode implements IEventEmitter {
     }
 
     private createGlobalRowEvent(type: string): RowEvent {
-        const event: RowGroupOpenedEvent = {
+        return {
             type: type,
             node: this,
             data: this.data,
@@ -480,7 +478,6 @@ export class RowNode implements IEventEmitter {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
-        return event;
     }
 
     private dispatchLocalEvent(event: AgEvent): void {
@@ -496,6 +493,7 @@ export class RowNode implements IEventEmitter {
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any): void {
         const column = this.columnController.getPrimaryColumn(colKey);
+
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue);
     }
@@ -503,9 +501,7 @@ export class RowNode implements IEventEmitter {
     public setGroupValue(colKey: string | Column, newValue: any): void {
         const column = this.columnController.getGridColumn(colKey);
 
-        if (_.missing(this.groupData)) {
-            this.groupData = {};
-        }
+        if (_.missing(this.groupData)) { this.groupData = {}; }
 
         this.groupData[column.getColId()] = newValue;
         this.dispatchCellChangedEvent(column, newValue);
@@ -577,8 +573,8 @@ export class RowNode implements IEventEmitter {
         let atLeastOneSelected = false;
         let atLeastOneDeSelected = false;
         let atLeastOneMixed = false;
-
         let newSelectedValue: boolean;
+
         if (this.childrenAfterGroup) {
             for (let i = 0; i < this.childrenAfterGroup.length; i++) {
                 const child = this.childrenAfterGroup[i];
@@ -610,6 +606,7 @@ export class RowNode implements IEventEmitter {
         } else {
             newSelectedValue = undefined;
         }
+
         this.selectThisNode(newSelectedValue);
     }
 
@@ -710,6 +707,7 @@ export class RowNode implements IEventEmitter {
                 this.selectionController.setLastSelectedNode(this);
             }
         }
+
         return updatedCount;
     }
 
@@ -767,6 +765,7 @@ export class RowNode implements IEventEmitter {
         }
 
         const event: RowSelectedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED);
+
         this.mainEventService.dispatchEvent(event);
 
         return true;
@@ -812,13 +811,12 @@ export class RowNode implements IEventEmitter {
 
     public getFirstChildOfFirstChild(rowGroupColumn: Column | null): RowNode {
         let currentRowNode: RowNode = this;
-
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
         let isCandidate = true;
         let foundFirstChildPath = false;
         let nodeToSwapIn: RowNode;
 
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             const parentRowNode = currentRowNode.parent;
             const firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
@@ -840,6 +838,7 @@ export class RowNode implements IEventEmitter {
 
     public isFullWidthCell(): boolean {
         const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
+
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
 }
