@@ -54,9 +54,17 @@
     .ag-column-drop-vertical-cell-text {
         margin-left: $ag-grid-size * 2;
     }
+    
+    .ag-column-drop-vertical-icon {
+        color: $ag-secondary-foreground-color;
+    }
 
     .ag-column-drop-horizontal {
         height: $ag-header-height;
+    }
+
+    .ag-column-drop-empty {
+        color: $ag-disabled-foreground-color;
     }
 
     .ag-column-drop-horizontal-cell-text {

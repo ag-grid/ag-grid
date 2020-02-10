@@ -255,6 +255,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     }
 

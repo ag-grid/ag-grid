@@ -91,6 +91,7 @@ class SideBarButtonComp extends Component {
         this.setTemplate(template);
         this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addDestroyableEventListener(this.eToggleButton, 'focus', blurCurrentTarget);
     }
 
     private createTemplate(): string {
@@ -115,3 +116,5 @@ class SideBarButtonComp extends Component {
         this.addOrRemoveCssClass('ag-selected', selected);
     }
 }
+
+const blurCurrentTarget = (e: MouseEvent) => (e.currentTarget as HTMLElement).blur();

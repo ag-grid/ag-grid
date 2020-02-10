@@ -349,6 +349,11 @@
         margin-right: $ag-grid-size;
     }
 
+    .ag-column-select-column-readonly,
+    .ag-column-select-column-group-readonly {
+        color: $ag-disabled-foreground-color;
+    }
+
     // note - this applies a margin of the same width as a .ag-column-group-icons element, to indent columns
     // wihtout icons to the same level as siblings with icons. If changing .ag-column-group-icons, change this too.
     .ag-column-select-add-group-indent {

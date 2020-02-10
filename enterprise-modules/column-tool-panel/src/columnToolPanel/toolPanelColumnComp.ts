@@ -297,6 +297,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         }
 
         this.cbSelect.setReadOnly(checkboxReadOnly);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', checkboxReadOnly);
 
         const checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);

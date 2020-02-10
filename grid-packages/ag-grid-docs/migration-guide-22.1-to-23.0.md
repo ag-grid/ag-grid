@@ -87,11 +87,13 @@ ag-group-component-title-bar-icon
 ag-group-component-title
 ag-group-component-container
 ag-group-component-toolbar
+Are now ag-group, ag-group-title-bar etc
 
 .ag-row-stub > .ag-row-loading
 
-Are now ag-group, ag-group-title-bar etc
+.ag-faded > removed. This was only used on column-drop icons and titles when the component was empty. Use the new `.ag-column-drop-empty` class.
 
+.title (in the vertical column drop component) > .ag-column-drop-vertical-title
 
 .ag-alignment-stretch, .ag-alignment-start, .ag-alignment-end
 are now

@@ -19,10 +19,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     visibility: hidden !important;
 }
 
-.ag-faded {
-    opacity: 0.3;
-}
-
 .ag-drag-handle {
     cursor: move; // IE fallback
     cursor: grab;
@@ -704,9 +700,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-// the ghost header cell doesn't live inside the grid, it's parent is the body element,
-// so we cannot style using standard themes. hence we break the rules, and style it here
+.ag-dnd-wrapper {
+    position: absolute;
+}
+
 .ag-dnd-ghost {
+    position: absolute;
     display: flex;
     align-items: center;
     cursor: move;

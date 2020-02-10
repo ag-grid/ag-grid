@@ -393,20 +393,18 @@ export abstract class BaseDropZonePanel extends Component {
     }
 
     private addIconAndTitleToGui(): void {
-        const iconFaded = this.horizontal && this.isExistingColumnsEmpty();
         const eGroupIcon = this.params.icon;
         const eTitleBar = document.createElement('div');
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
-        _.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-drop-empty', this.isExistingColumnsEmpty());
+        
         eTitleBar.appendChild(eGroupIcon);
-
+        
         if (!this.horizontal) {
             const eTitle = document.createElement('span');
-            _.addCssClass(eTitle, 'title');
+            this.addElementClasses(eTitle, 'title');
             eTitle.innerHTML = this.params.title;
-            _.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
 
             eTitleBar.appendChild(eTitle);
         }

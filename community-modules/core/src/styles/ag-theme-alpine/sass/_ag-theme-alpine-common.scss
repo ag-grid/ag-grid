@@ -63,12 +63,8 @@
     }
 
     .ag-set-filter-item {
-        margin: $ag-grid-size * 2;
-
-        &:first-child, &:last-child {
-            margin-top: $ag-grid-size;
-            margin-bottom: $ag-grid-size;
-        }
+        margin-left: $ag-grid-size * 2;
+        margin-right: $ag-grid-size * 2;
     }
 
     .ag-standard-button {
@@ -159,6 +155,10 @@
         &:hover {
             color: $ag-alpine-active-color;
         }
+    }
+
+    .ag-column-drop-empty-message {
+        color: $ag-foreground-color;
     }
     
 }

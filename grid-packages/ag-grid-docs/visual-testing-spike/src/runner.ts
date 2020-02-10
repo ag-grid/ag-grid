@@ -12,7 +12,7 @@ import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
 const defaultSpecPath = '/example.php';
 const defaultSelector = '.ag-root-wrapper';
-const exampleBasePath = '/example-runner/vanilla.php';
+const exampleBasePath = '/example-runner/grid-vanilla.php';
 const maxParallelPageLoads = 8;
 const failedTestsFile = 'tmp-failed-tests.txt';
 
