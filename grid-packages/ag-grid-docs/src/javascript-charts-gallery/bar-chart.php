@@ -15,4 +15,9 @@ include '../documentation-main/documentation_header.php';
 
 <?= chart_example('Bar Chart', 'bar-chart', 'generated') ?>
 
+<div class="chart-navigation">
+    <a class="chart-navigation__left" href="./column-chart.php">❮&nbsp;&nbsp;Column Chart</a>
+    <a class="chart-navigation__right" href="./line-chart.php">Line Chart&nbsp;&nbsp;❯</a>
+</div>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -1010,6 +1010,10 @@
                   {
                     "title": "Bar Chart",
                     "url": "javascript-charts-gallery/bar-chart.php"
+                  },
+                  {
+                    "title": "Line Chart",
+                    "url": "javascript-charts-gallery/line-chart.php"
                   }
                 ]
               },

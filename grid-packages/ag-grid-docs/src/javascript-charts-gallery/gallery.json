@@ -4,5 +4,8 @@
     },
     "Bar Chart": {
         "description": "The bar chart represents data as a series of horizontal bars."
+    },
+    "Line Chart": {
+        "description": "The line chart represents data using a number of lines."
     }
 }

@@ -27,6 +27,12 @@ include '../documentation-main/documentation_header.php';
         Bar Chart
     </a>
 </div>
+<div class="chart-gallery__item">
+    <a href="./line-chart.php" class="chart-gallery__link">
+        <img class="chart-gallery__thumbnail" src="./thumbnails/line-chart.png" /><br />
+        Line Chart
+    </a>
+</div>
 </div>
 
 <h2>Next Up</h2>

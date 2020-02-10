@@ -40,10 +40,22 @@ include '../documentation-main/documentation_header.php';
 
 function generateGalleryPages(galleryConfig) {
     console.log('Generating gallery pages...');
+    const names = Object.keys(galleryConfig);
 
-    Object.keys(galleryConfig).forEach(name => {
+    Object.keys(galleryConfig).forEach((name, i) => {
         const config = galleryConfig[name];
         const title = `Charts Standalone Gallery: ${name}`;
+        const navigation = [];
+
+        if (i > 0) {
+            const previousName = names[i - 1];
+            navigation.push(`<a class="chart-navigation__left" href="./${getPageName(previousName)}">\u276e&nbsp;&nbsp;${previousName}</a>`);
+        }
+
+        if (i < names.length - 1) {
+            const nextName = names[i + 1];
+            navigation.push(`<a class="chart-navigation__right" href="./${getPageName(nextName)}">${nextName}&nbsp;&nbsp;\u276f</a>`);
+        }
 
         const contents = `${getHeader(title)}
 
@@ -54,6 +66,10 @@ function generateGalleryPages(galleryConfig) {
 </p>
 
 <?= chart_example('${name}', '${toKebabCase(name)}', 'generated') ?>
+
+<div class="chart-navigation">
+    ${navigation.join('\n    ')}
+</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>`;
 

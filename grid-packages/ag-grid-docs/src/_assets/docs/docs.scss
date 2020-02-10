@@ -556,6 +556,16 @@ body {
             width: 100%;
         }
     }
+
+    .chart-navigation {
+        &__left {
+            float: left;
+        }
+
+        &__right {
+            float: right;
+        }
+    }
 }
 
 .new-marker {
