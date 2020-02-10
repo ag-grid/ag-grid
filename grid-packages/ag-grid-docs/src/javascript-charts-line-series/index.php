@@ -237,4 +237,8 @@ series: [{
     might still overlap.
 </p>
 
+<h2>Real-Time Data</h2>
+
+<?= chart_example('Real-Time Chart - Core Voltage', 'real-time'); ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
