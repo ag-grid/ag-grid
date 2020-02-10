@@ -12,6 +12,8 @@ include '../documentation-main/documentation_header.php';
     This section covers how filtering and sorting is achieved with the Server-side Row Model.
 </p>
 
+<?= grid_example('Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+
 <p>
 
 </p>
