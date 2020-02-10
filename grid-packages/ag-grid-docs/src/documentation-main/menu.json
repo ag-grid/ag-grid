@@ -1001,7 +1001,17 @@
               },
               {
                 "title": "Gallery",
-                "url": "javascript-charts-gallery/"
+                "url": "javascript-charts-gallery/",
+                "items": [
+                  {
+                    "title": "Column Chart",
+                    "url": "javascript-charts-gallery/column-chart.php"
+                  },
+                  {
+                    "title": "Bar Chart",
+                    "url": "javascript-charts-gallery/bar-chart.php"
+                  }
+                ]
               },
               {
                 "title": "Features",

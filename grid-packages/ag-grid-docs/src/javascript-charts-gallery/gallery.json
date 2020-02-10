@@ -1,0 +1,8 @@
+{
+    "Column Chart": {
+        "description": "The column chart represents data as a series of vertical columns."
+    },
+    "Bar Chart": {
+        "description": "The bar chart represents data as a series of horizontal bars."
+    }
+}
