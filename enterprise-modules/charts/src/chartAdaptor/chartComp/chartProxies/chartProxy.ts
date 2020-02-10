@@ -211,9 +211,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
             'tooltip.enabled': 'tooltipEnabled',
-            'callout.colors': 'calloutColors',
-            'callout.strokeWidth': 'calloutStrokeWidth',
-            'callout.length': 'calloutLength',
+            'callout.colors': 'calloutColors'
         };
 
         const series = this.chart.series;
