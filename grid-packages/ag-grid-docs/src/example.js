@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     gridDiv = document.querySelector('#myGrid');
 
-    onThemeChanged();
+    onThemeChanged(true);
 
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
@@ -1101,7 +1101,7 @@ function rowSelected(event) {
     }
 }
 
-function onThemeChanged() {
+function onThemeChanged(initial) {
     var newTheme = document.querySelector('#grid-theme').value;
     var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
     themedElements.forEach(function (el) {
@@ -1120,6 +1120,18 @@ function onThemeChanged() {
         document.body.classList.add('dark');
     } else {
         document.body.classList.remove('dark');
+    }
+
+    if (!initial) {
+        var newUrl;
+        var attrRegex = /theme=ag-theme-[\w-]+/;
+        if (attrRegex.test(location.href)) {
+            newUrl = location.href.replace(attrRegex, "theme=" + newTheme);
+        } else {
+            var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
+            newUrl = location.href + sep + "theme=" + newTheme;
+        }
+        history.replaceState(null, "", newUrl);
     }
 }
 

@@ -63,6 +63,10 @@
         margin-left: $ag-grid-size * 2;
     }
 
+    .ag-column-drop-vertical {
+        padding-top: $ag-grid-size * 2;
+    }
+
     .ag-column-select-column-group,
     .ag-column-select-column {
         height: $ag-grid-size * 5;

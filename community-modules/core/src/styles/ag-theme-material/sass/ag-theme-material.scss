@@ -52,7 +52,6 @@
     .ag-column-drop-vertical {
         border-bottom: solid 1px $ag-border-color;
         padding-top: $ag-grid-size;
-        padding-bottom: $ag-grid-size;
         
         &.ag-last-column-drop {
             border-bottom: none;
@@ -73,12 +72,12 @@
         border: solid 1px $ag-border-color;
     }
 
-    .ag-column-select {
-        border-bottom: solid 1px $ag-border-color;
+    .ag-column-panel-column-select {
+        border-top: solid 1px $ag-border-color;
     }
 
-    .ag-column-select-header, .ag-column-select-list {
-        border-top: solid 1px $ag-border-color;
+    .ag-column-select, .ag-column-select-header {
+        border-bottom: solid 1px $ag-border-color;
     }
 
     .ag-group-title-bar {
