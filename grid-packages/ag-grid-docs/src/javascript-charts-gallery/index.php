@@ -14,10 +14,20 @@ include '../documentation-main/documentation_header.php';
     visualisations of your data. Here are some examples.
 </p>
 
-<ul>
-<li><a href="./column-chart.php">Column Chart</a></li>
-<li><a href="./bar-chart.php">Bar Chart</a></li>
-</ul>
+<div class="chart-gallery">
+<div class="chart-gallery__item">
+    <a href="./column-chart.php" class="chart-gallery__link">
+        <img class="chart-gallery__thumbnail" src="./thumbnails/column-chart.png" /><br />
+        Column Chart
+    </a>
+</div>
+<div class="chart-gallery__item">
+    <a href="./bar-chart.php" class="chart-gallery__link">
+        <img class="chart-gallery__thumbnail" src="./thumbnails/bar-chart.png" /><br />
+        Bar Chart
+    </a>
+</div>
+</div>
 
 <h2>Next Up</h2>
 

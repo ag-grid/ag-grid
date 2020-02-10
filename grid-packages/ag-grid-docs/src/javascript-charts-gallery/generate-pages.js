@@ -4,6 +4,8 @@
     generated when they are picked up from the generated PHP pages.
 */
 const fs = require('fs');
+const Path = require('path');
+const { execSync } = require('child_process');
 
 console.log('Generating gallery using gallery.json');
 
@@ -12,11 +14,12 @@ const galleryConfig = getJson('gallery.json');
 generateGalleryPages(galleryConfig);
 generateIndexPage(galleryConfig);
 updateMenu(galleryConfig);
+generateThumbnails(galleryConfig);
 
 console.log('Finished!');
 
 function writeFile(path, contents) {
-    fs.writeFile(path, contents, 'utf8', function(err) {
+    fs.writeFileSync(path, contents, 'utf8', function(err) {
         if (err) {
             console.log(`An error occurred when writing to ${path} :(`);
             return console.log(err);
@@ -71,9 +74,9 @@ function generateIndexPage(galleryConfig) {
     visualisations of your data. Here are some examples.
 </p>
 
-<ul>
-${Object.keys(galleryConfig).map(name => `<li><a href="./${getPageName(name)}">${name}</a></li>`).join('\n')}
-</ul>
+<div class="chart-gallery">
+${Object.keys(galleryConfig).map(getGalleryItem).join('\n')}
+</div>
 
 <h2>Next Up</h2>
 
@@ -84,6 +87,17 @@ ${Object.keys(galleryConfig).map(name => `<li><a href="./${getPageName(name)}">$
 <?php include '../documentation-main/documentation_footer.php'; ?>`;
 
     writeFile('index.php', contents);
+}
+
+function getGalleryItem(name) {
+    const kebabCase = toKebabCase(name);
+
+    return `<div class="chart-gallery__item">
+    <a href="./${getPageName(name)}" class="chart-gallery__link">
+        <img class="chart-gallery__thumbnail" src="./thumbnails/${kebabCase}.png" /><br />
+        ${name}
+    </a>
+</div>`;
 }
 
 function updateMenu(galleryConfig) {
@@ -99,6 +113,33 @@ function updateMenu(galleryConfig) {
     }));
 
     writeFile(menuPath, JSON.stringify(menu, null, 2));
+}
+
+function generateThumbnails(galleryConfig) {
+    if (process.argv.some(arg => arg === '--skip-thumbnails')) {
+        console.log("Skipping thumbnails.");
+        return;
+    }
+
+    console.log('Generating thumbnails...');
+
+    const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
+    const thumbnailDirectory = 'thumbnails';
+
+    if (!fs.existsSync(thumbnailDirectory)) {
+        fs.mkdirSync(thumbnailDirectory);
+    }
+
+    Object.keys(galleryConfig).forEach(name => {
+        const kebabCase = toKebabCase(name);
+
+        try {
+            execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=400,300 "http://localhost:8080/example-runner/chart-vanilla.php?section=javascript-charts-gallery&example=${kebabCase}&generated=1"`);
+            fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${kebabCase}.png`));
+        } catch (e) {
+            console.error(`Failed to generate screenshot for ${name}`, e);
+        }
+    });
 }
 
 function getPageName(name) {

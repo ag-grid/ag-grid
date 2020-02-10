@@ -526,6 +526,36 @@ body {
             margin-top: 2rem;
         }
     }
+
+    .chart-gallery {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+
+        &__item {
+            box-sizing: border-box;
+            max-width: calc(33% - 10px);
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            margin: 0 10px 10px 0;
+
+            &:hover {
+                box-shadow: inset 0 0 5px $border-color;
+            }
+        }
+
+        &__link {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+        &__thumbnail {
+            width: 100%;
+        }
+    }
 }
 
 .new-marker {

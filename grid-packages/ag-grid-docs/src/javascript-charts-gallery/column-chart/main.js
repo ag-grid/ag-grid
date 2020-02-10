@@ -22,7 +22,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Beverage Expenses'
+        text: 'Column Chart'
     },
     subtitle: {
         text: 'per quarter'
