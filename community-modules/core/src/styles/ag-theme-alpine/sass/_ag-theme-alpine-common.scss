@@ -100,7 +100,6 @@
     }
 
     .ag-column-drop-vertical-empty-message {
-
         display: flex;
         align-items: center;
     }
@@ -122,6 +121,10 @@
         margin: $ag-grid-size * 2;
         // TODO !important required because base theme applied more specific styles in .ag-ltr
         padding: $ag-grid-size * 2 !important;
+    }
+
+    .ag-column-drop-horizontal-empty-message {
+        color: $ag-foreground-color;
     }
 
     .ag-filter-toolpanel-instance-filter {
@@ -155,10 +158,6 @@
         &:hover {
             color: $ag-alpine-active-color;
         }
-    }
-
-    .ag-column-drop-empty-message {
-        color: $ag-foreground-color;
     }
     
 }

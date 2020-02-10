@@ -17,6 +17,13 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size));
     }
 
+    input,
+    select,
+    button {
+        background-color: $ag-background-color;
+        color: inherit;
+    }
+
     input:not([type]),
     input[type='text'],
     input[type='number'],
@@ -174,8 +181,8 @@
         width: 24px;
         height: 24px;
         border-radius: 12px;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.9);
-        background-color: #ffffff;
+        box-shadow: 0 0 2px $ag-foreground-color;
+        background-color: $ag-background-color;
     }
     .ag-angle-select-child-circle {
         top: 4px;
@@ -185,7 +192,7 @@
         margin-left: -3px;
         margin-top: -4px;
         border-radius: 3px;
-        background-color: #4c4c4c;
+        background-color: $ag-secondary-foreground-color;
     }
 
     .ag-picker-field-wrapper {
