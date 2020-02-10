@@ -2,8 +2,8 @@ import * as angular from "angular";
 // @ts-ignore
 import * as jQuery from "jquery";
 
-import {trackIfInViewPort, whenInViewPort} from "../lib/viewport";
-import {highlight} from "../lib/highlight";
+import { trackIfInViewPort, whenInViewPort } from "../lib/viewport";
+import { highlight } from "../lib/highlight";
 
 const docs: angular.IModule = angular.module("documentation");
 
@@ -76,7 +76,7 @@ class ExampleRunnerController {
         const options = this.config.options;
 
         if (options.exampleHeight) {
-            this.iframeStyle.height = options.exampleHeight + "px";
+            this.iframeStyle.height = isNaN(options.exampleHeight) ? options.exampleHeight : options.exampleHeight + "px";
         }
 
         this.selectedTab = options.showResult === false ? "code" : "result";

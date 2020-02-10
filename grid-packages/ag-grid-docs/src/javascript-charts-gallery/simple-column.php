@@ -14,7 +14,7 @@ define("skipInPageNav", true);
     The column chart represents data as a series of vertical columns.
 </p>
 
-<?= chart_example('Simple Column', 'simple-column', 'generated') ?>
+<?= chart_example('Simple Column', 'simple-column', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__right" href="./simple-bar.php">Simple Bar&nbsp;&nbsp;❯</a>

@@ -14,7 +14,7 @@ define("skipInPageNav", true);
     The bar chart represents data as a series of horizontal bars.
 </p>
 
-<?= chart_example('Simple Bar', 'simple-bar', 'generated') ?>
+<?= chart_example('Simple Bar', 'simple-bar', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-column.php">❮&nbsp;&nbsp;Simple Column</a>

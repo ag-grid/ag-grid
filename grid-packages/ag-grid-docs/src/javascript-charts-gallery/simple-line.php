@@ -14,7 +14,7 @@ define("skipInPageNav", true);
     The line chart represents data using a number of lines.
 </p>
 
-<?= chart_example('Simple Line', 'simple-line', 'generated') ?>
+<?= chart_example('Simple Line', 'simple-line', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-bar.php">❮&nbsp;&nbsp;Simple Bar</a>
