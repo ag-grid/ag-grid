@@ -45,9 +45,7 @@ export interface CellChangedEvent extends RowNodeEvent {
 }
 
 export class RowNode implements IEventEmitter {
-
     private static OBJECT_ID_SEQUENCE = 0;
-
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
@@ -214,15 +212,14 @@ export class RowNode implements IEventEmitter {
 
     public setData(data: any): void {
         const oldData = this.data;
+
         this.data = data;
-
         this.valueCache.onDataChanged();
-
         this.updateDataOnDetailNode();
-
         this.checkRowSelectable();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
+
         this.dispatchLocalEvent(event);
     }
 
@@ -259,15 +256,14 @@ export class RowNode implements IEventEmitter {
     // dataChanged event, will refresh the cells rather than rip them all out (so user can show transitions).
     public updateData(data: any): void {
         const oldData = this.data;
+
         this.data = data;
-
         this.updateDataOnDetailNode();
-
         this.checkRowSelectable();
-
         this.updateDataOnDetailNode();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, true);
+
         this.dispatchLocalEvent(event);
     }
 
@@ -276,13 +272,14 @@ export class RowNode implements IEventEmitter {
             return 't-' + this.rowIndex;
         } else if (this.rowPinned === Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
-        } else {
-            return this.rowIndex.toString();
         }
+
+        return this.rowIndex.toString();
     }
 
     private createDaemonNode(): RowNode {
         const oldNode = new RowNode();
+
         this.context.wireBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
@@ -292,6 +289,7 @@ export class RowNode implements IEventEmitter {
         oldNode.daemon = true;
         oldNode.selected = this.selected;
         oldNode.level = this.level;
+
         return oldNode;
     }
 
@@ -418,10 +416,10 @@ export class RowNode implements IEventEmitter {
     }
 
     public setAllChildrenCount(allChildrenCount: number | null): void {
-        if (this.allChildrenCount === allChildrenCount) {
-            return;
-        }
+        if (this.allChildrenCount === allChildrenCount) { return; }
+
         this.allChildrenCount = allChildrenCount;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
@@ -430,6 +428,7 @@ export class RowNode implements IEventEmitter {
     public setRowHeight(rowHeight: number | undefined | null, estimated = false): void {
         this.rowHeight = rowHeight;
         this.rowHeightEstimated = estimated;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HEIGHT_CHANGED));
         }
@@ -437,28 +436,27 @@ export class RowNode implements IEventEmitter {
 
     public setRowIndex(rowIndex: number): void {
         this.rowIndex = rowIndex;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_INDEX_CHANGED));
         }
     }
 
     public setUiLevel(uiLevel: number): void {
-        if (this.uiLevel === uiLevel) {
-            return;
-        }
+        if (this.uiLevel === uiLevel) { return; }
 
         this.uiLevel = uiLevel;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_UI_LEVEL_CHANGED));
         }
     }
 
     public setExpanded(expanded: boolean): void {
-        if (this.expanded === expanded) {
-            return;
-        }
+        if (this.expanded === expanded) { return; }
 
         this.expanded = expanded;
+
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
@@ -515,7 +513,6 @@ export class RowNode implements IEventEmitter {
 
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
-
         // find out all keys that could potentially change
         const colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
 
@@ -562,9 +559,7 @@ export class RowNode implements IEventEmitter {
 
     public isSelected(): boolean {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
-        if (this.footer) {
-            return this.sibling.isSelected();
-        }
+        if (this.footer) { return this.sibling.isSelected(); }
 
         return this.selected;
     }
@@ -698,7 +693,6 @@ export class RowNode implements IEventEmitter {
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-
                 this.selectionController.updateGroupsFromChildrenSelections();
 
                 // this is the very end of the 'action node', so we are finished all the updates,
@@ -716,7 +710,6 @@ export class RowNode implements IEventEmitter {
                 this.selectionController.setLastSelectedNode(this);
             }
         }
-
         return updatedCount;
     }
 
@@ -731,9 +724,7 @@ export class RowNode implements IEventEmitter {
         let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && groupsSelectChildren) {
-                return;
-            }
+            if (rowNode.group && groupsSelectChildren) { return; }
 
             const nodeWasSelected = rowNode.selectThisNode(true);
             if (nodeWasSelected) {
@@ -755,12 +746,14 @@ export class RowNode implements IEventEmitter {
 
     public isParentOfNode(potentialParent: RowNode): boolean {
         let parentNode = this.parent;
+
         while (parentNode) {
             if (parentNode === potentialParent) {
                 return true;
             }
             parentNode = parentNode.parent;
         }
+
         return false;
     }
 
@@ -782,10 +775,10 @@ export class RowNode implements IEventEmitter {
     private selectChildNodes(newValue: boolean, groupSelectsFiltered: boolean): number {
         const children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
 
+        if (_.missing(children)) { return; }
+
         let updatedCount = 0;
-        if (_.missing(children)) {
-            return;
-        }
+
         for (let i = 0; i < children.length; i++) {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
@@ -794,6 +787,7 @@ export class RowNode implements IEventEmitter {
                 groupSelectsFiltered
             });
         }
+
         return updatedCount;
     }
 
@@ -821,13 +815,11 @@ export class RowNode implements IEventEmitter {
 
         // if we are hiding groups, then if we are the first child, of the first child,
         // all the way up to the column we are interested in, then we show the group cell.
-
         let isCandidate = true;
         let foundFirstChildPath = false;
         let nodeToSwapIn: RowNode;
 
         while (isCandidate && !foundFirstChildPath) {
-
             const parentRowNode = currentRowNode.parent;
             const firstChild = _.exists(parentRowNode) && currentRowNode.firstChild;
 
