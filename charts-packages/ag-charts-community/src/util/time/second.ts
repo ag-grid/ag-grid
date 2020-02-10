@@ -11,5 +11,5 @@ function count(start: Date, end: Date): number {
     return (end.getTime() - start.getTime()) / durationSecond;
 }
 
-const second = new CountableTimeInterval(floor, offset, count);
+export const second = new CountableTimeInterval(floor, offset, count);
 export default second;

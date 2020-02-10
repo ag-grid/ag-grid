@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getMinutes();
 }
 
-const minute = new CountableTimeInterval(floor, offset, count, field);
+export const minute = new CountableTimeInterval(floor, offset, count, field);
 export default minute;

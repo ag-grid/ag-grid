@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getUTCMonth();
 }
 
-const utcMonth = new CountableTimeInterval(floor, offset, count, field);
+export const utcMonth = new CountableTimeInterval(floor, offset, count, field);
 export default utcMonth;

@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getUTCHours();
 }
 
-const utcHour = new CountableTimeInterval(floor, offset, count, field);
+export const utcHour = new CountableTimeInterval(floor, offset, count, field);
 export default utcHour;

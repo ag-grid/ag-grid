@@ -14,5 +14,5 @@ function field(date: Date): number {
     return date.getUTCFullYear();
 }
 
-const utcYear = new CountableTimeInterval(floor, offset, count, field);
+export const utcYear = new CountableTimeInterval(floor, offset, count, field);
 export default utcYear;

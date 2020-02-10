@@ -30,4 +30,17 @@ export * from "./scene/shape/shape";
 export * from "./util/angle";
 export * from "./util/array";
 export * from "./util/padding";
+export * from "./util/time/millisecond";
+export * from "./util/time/second";
+export * from "./util/time/minute";
+export * from "./util/time/hour";
+export * from "./util/time/day";
+export * from "./util/time/week";
+export * from "./util/time/month";
+export * from "./util/time/year";
+export * from "./util/time/utcMinute";
+export * from "./util/time/utcHour";
+export * from "./util/time/utcDay";
+export * from "./util/time/utcMonth";
+export * from "./util/time/utcYear";
 export * from "./chart/agChart"
