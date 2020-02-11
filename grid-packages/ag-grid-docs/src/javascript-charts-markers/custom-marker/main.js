@@ -1,16 +1,14 @@
-// ES5 version of the custom marker class:
+// Our examples use vanilla ES5, so we have to use the ES5
+// version of the custom marker class here (please see the
+// ES6 version in the comment at the bottom):
 function Heart() {
     agCharts.Marker.call(this);
 }
 Heart.className = 'Heart';
 Heart.prototype = Object.create(agCharts.Marker.prototype);
 Heart.prototype.constructor = Heart;
-Heart.prototype.rad = function (degree) {
-    return degree / 180 * Math.PI;
-};
 Heart.prototype.updatePath = function updatePath() {
     var path = this.path;
-    var rad = this.rad;
     var x = this.x;
     var r = this.size / 4;
     var y = this.y + r / 2;
@@ -21,6 +19,9 @@ Heart.prototype.updatePath = function updatePath() {
     path.lineTo(x, y + r);
     path.closePath();
 };
+function rad(degree) {
+    return degree / 180 * Math.PI;
+}
 
 agCharts.AgChart.create({
     container: document.getElementById('myChart'),
