@@ -72,9 +72,10 @@
     }
 
     .ag-column-drop-vertical {
-        @include ag-grid-border(secondary, bottom);
         min-height: 50px;
-
+        max-height: 150px;
+        
+        @include ag-grid-border(secondary, bottom);
         &.ag-last-column-drop {
             @include ag-grid-border(secondary, bottom, $none: true);
         }

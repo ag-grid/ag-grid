@@ -42,6 +42,10 @@
         min-height: $ag-grid-size * 6;
     }
 
+    .ag-column-drop-vertical-title {
+        color: $ag-foreground-color;
+    }
+
     .ag-column-drop-vertical-cell {
         margin-left: $ag-grid-size * 2;
         margin-right: $ag-grid-size * 2;
