@@ -21,21 +21,28 @@
 [submodule "charts-packages/ag-charts-react-example"]
 	path = examples-charts/ag-charts-react-example
 	url = https://github.com/ag-grid/ag-charts-react-example.git
+	branch = latest
 [submodule "charts-packages/ag-charts-vue-example"]
 	path = examples-charts/ag-charts-vue-example
 	url = https://github.com/ag-grid/ag-charts-vue-example.git
+	branch = latest
 [submodule "charts-packages/ag-charts-polymer-example"]
 	path = examples-charts/ag-charts-polymer-example
 	url = https://github.com/ag-grid/ag-charts-polymer-example.git
+	branch = latest
 [submodule "charts-packages/ag-charts-angular-example"]
 	path = examples-charts/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git
+	branch = latest
 [submodule "examples-grid/ag-grid-vue-package-example"]
 	path = examples-grid/ag-grid-vue-package-example
 	url = https://github.com/seanlandsman/ag-grid-vue-package-example.git
+	branch = latest
 [submodule "examples-grid/ag-grid-react-package-example"]
 	path = examples-grid/ag-grid-react-package-example
 	url = https://github.com/seanlandsman/ag-grid-react-package-example.git
+	branch = latest
 [submodule "examples-grid/ag-grid-angular-cli-package-example"]
 	path = examples-grid/ag-grid-angular-cli-package-example
 	url = https://github.com/seanlandsman/ag-grid-angular-cli-package-example.git
+	branch = latest
