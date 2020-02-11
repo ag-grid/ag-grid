@@ -76,7 +76,7 @@ function createSlider(options) {
     label.style.marginRight = '5px';
 
     if (values) {
-        values.forEach((value, index) => {
+        values.forEach(function (value, index) {
             var option = document.createElement('option');
             option.setAttribute('value', String(index));
             option.setAttribute('label', String(value));
