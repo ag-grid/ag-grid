@@ -37,29 +37,46 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-// create ServerSideDatasource with a reference to your server
-function ServerSideDatasource(server) {
-    this.server = server;
+function ServerSideDatasource() {
+    var server = getServer();
+
+    return {
+        getRows: function(params) {
+           // invoke your server with request params supplied by grid
+           var response = server.getResponse(params.request);
+
+           if (response.success) {
+                // call the success callback
+                params.successCallback(response.rows, response.lastRow);
+            } else {
+                // inform the grid request failed
+                params.failCallback();
+            }
+      };
 }
 
-ServerSideDatasource.prototype.getRows = function(params) {
-    // invoke your server with request params supplied by grid
-    var response = server.getResponse(params.request);
-
-    if (response.success) {
-        // call the success callback
-        params.successCallback(response.rows, response.lastRow);
-    } else {
-        // inform the grid the request failed
-        params.failCallback();
-    }
-};
-
 // register Server-side Datasource with the grid
-var server = getServer();
-var datasource = new ServerSideDatasource(server);
+var datasource = new ServerSideDatasource();
 gridOptions.api.setServerSideDatasource(datasource);
 </snippet>
+
+
+<h2>Example - Infinite Scroll</h2>
+
+<p>
+    The example below demonstrates infinite scrolling along with some of the above configuration options:
+</p>
+
+<ul class="content">
+    <li><b>Enabling Server-side Row Model: </b> via the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
+    <li><b>Lazy-loading:</b> with the grid options property: <code>cacheBlockSize = 100</code> data will be fetched
+        in blocks of 100 rows at a time.
+    </li>
+    <li><b>Auto Purge Cache:</b> to limit the amount of data cached in the grid you can set <code>maxBlocksInCache</code>
+        via the gridOptions.</li>
+</ul>
+
+<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Server-side Cache</h2>
 
@@ -146,27 +163,7 @@ gridOptions.api.setServerSideDatasource(datasource);
                applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
         </td>
     </tr>
-
-
-
 </table>
-
-<h2>Example - Infinite Scroll</h2>
-
-<p>
-    The example below demonstrates infinite scrolling along with some of the above configuration options:
-</p>
-
-<ul class="content">
-    <li><b>Enabling Server-side Row Model: </b> via the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
-    <li><b>Lazy-loading:</b> with the grid options property: <code>cacheBlockSize = 100</code> data will be fetched
-        in blocks of 100 rows at a time.
-    </li>
-    <li><b>Auto Purge Cache:</b> to limit the amount of data cached in the grid you can set <code>maxBlocksInCache</code>
-    via the gridOptions.</li>
-</ul>
-
-<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Next Up</h2>
 

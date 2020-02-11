@@ -1,7 +1,6 @@
 var columnDefs = [
-    {field: 'id'},
-    {field: 'athlete', width: 150},
-    {field: 'age'},
+    {field: 'id', maxWidth: 80},
+    {field: 'athlete'},
     {field: 'country'},
     {field: 'year'},
     {field: 'sport'},
@@ -11,11 +10,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
+
     defaultColDef: {
-        width: 120,
+        flex: 1,
+        minWidth: 150,
         resizable: true
     },
-    columnDefs: columnDefs,
 
     // use the server-side row model
     rowModelType: 'serverSide',
@@ -49,42 +50,40 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function ServerSideDatasource(server) {
-  return {
-    getRows: function(params) {
-      // adding delay to simulate real sever call
-      setTimeout(function () {
+    return {
+        getRows: function(params) {
+            // adding delay to simulate real sever call
+            setTimeout(function () {
+                var response = server.getResponse(params.request);
 
-        var response = server.getResponse(params.request);
-
-        if (response.success) {
-          // call the success callback
-          params.successCallback(response.rows, response.lastRow);
-        } else {
-          // inform the grid request failed
-          params.failCallback();
+                if (response.success) {
+                    // call the success callback
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    // inform the grid request failed
+                    params.failCallback();
+                }
+            }, 500);
         }
-
-      }, 500);
-    }
-  };
+    };
 }
 
 function FakeServer(allData) {
-  return {
-    getResponse: function(request) {
-      console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
+    return {
+        getResponse: function(request) {
+            console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
-      // take a slice of the total rows
-      var rowsThisPage = allData.slice(request.startRow, request.endRow);
+            // take a slice of the total rows
+            var rowsThisPage = allData.slice(request.startRow, request.endRow);
 
-      // if on or after the last page, work out the last row.
-      var lastRow = allData.length <= request.endRow ? data.length : -1;
+            // if on or after the last page, work out the last row.
+            var lastRow = allData.length <= request.endRow ? allData.length : -1;
 
-      return {
-        success: true,
-        rows: rowsThisPage,
-        lastRow: lastRow
-      };
-    }
-  };
+            return {
+                success: true,
+                rows: rowsThisPage,
+                lastRow: lastRow
+            };
+        }
+    };
 }
