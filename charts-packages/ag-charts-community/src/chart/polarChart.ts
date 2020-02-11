@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
 import { reactive } from "../util/observable";
-import { Padding } from "../main";
+import { Padding } from "../util/padding";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
