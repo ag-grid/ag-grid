@@ -51,20 +51,12 @@ legend: {
     a chart shrinks:
 </p>
 
-<p>
-    <img alt="Legend Vertical Layout Size" src="layout-vertical-size.gif" style="margin-bottom: 0px; height: 250px; max-width: 100%">
-</p>
-
 <?= chart_example('Vertical Legend Layout', 'legend-layout-vertical'); ?>
 
 <p>
     If the legend is horizontal (positioned to the <code>bottom</code> or <code>top</code> of a chart),
     the layout algorithm tries to use the minimum possible number of rows. If a chart is not wide enough,
     the legend will keep subdividing its items into rows until everything fits:
-</p>
-
-<p>
-    <img alt="Legend Horizontal Layout Size" src="layout-horizontal-size.gif" style="margin-bottom: 0px; width: 100%">
 </p>
 
 <?= chart_example('Horizontal Legend Layout', 'legend-layout-horizontal'); ?>
