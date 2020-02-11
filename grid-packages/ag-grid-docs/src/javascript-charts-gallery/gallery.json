@@ -7,5 +7,8 @@
     },
     "Simple Line": {
         "description": "The line chart represents data using a number of lines."
+    },
+    "Line With Gaps": {
+        "description": "This example shows how the line series handles gaps in the data."
     }
 }

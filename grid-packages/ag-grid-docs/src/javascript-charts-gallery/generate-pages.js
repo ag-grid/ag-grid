@@ -188,7 +188,7 @@ function findItemWithUrl(items, url) {
 }
 
 function toKebabCase(name) {
-    return name.replace(/ [A-Z]/g, v => `-${v.trim().toLowerCase()}`).toLowerCase();
+    return name.replace(/ \w/g, v => `-${v.trim().toLowerCase()}`).toLowerCase();
 }
 
 function getJson(path) {

@@ -34,6 +34,12 @@ define("skipInPageNav", true);
         <div class="chart-gallery-item__name">Simple Line</div>
     </a>
 </div>
+<div class="chart-gallery-item">
+    <a href="./line-with-gaps.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/line-with-gaps.png" /><br />
+        <div class="chart-gallery-item__name">Line With Gaps</div>
+    </a>
+</div>
 </div>
 
 <h2>Next Up</h2>
