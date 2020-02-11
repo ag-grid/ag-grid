@@ -44,7 +44,7 @@ $ag-grid-size: 6px !default;
 $ag-icon-size: 16px !default;
 $ag-row-height: $ag-grid-size * 7 !default;          // if changed, update environment.ts
 $ag-header-height: $ag-grid-size * 8 !default;       // if changed, update environment.ts
-$ag-virtual-item-height: $ag-grid-size * 5 !default; // if changed, update environment.ts
+$ag-list-item-height: $ag-grid-size * 5 !default; // if changed, update environment.ts
 $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2 !default;

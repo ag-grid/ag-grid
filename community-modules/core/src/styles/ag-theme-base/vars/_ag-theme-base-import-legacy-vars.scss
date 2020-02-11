@@ -238,4 +238,8 @@
   @if (variable-exists("ag-filter-tool-panel-sub-level-row-height")) {
     // TODO warn of use of deprecated variable
   }
+
+  @if (variable-exists("ag-virtual-item-height") and not variable-exists("ag-list-item-height")) {
+      $ag-list-item-height: $ag-virtual-item-height;
+  }
 }

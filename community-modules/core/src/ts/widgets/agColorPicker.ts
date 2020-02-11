@@ -26,7 +26,6 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
     protected postConstruct() {
         super.postConstruct();
-        _.addCssClass(this.getGui(), this.className);
         this.addDestroyableEventListener(this.eDisplayField, 'click', () => this.showPicker());
 
         if (this.value) {

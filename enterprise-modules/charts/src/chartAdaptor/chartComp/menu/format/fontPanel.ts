@@ -145,6 +145,7 @@ export class FontPanel extends Component {
         const options = families.sort().map(value => ({ value, text: value }));
 
         this.familySelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(`${initialValue}`)
             .onValueChange(newValue => this.params.setFont({ family: newValue }));
     }
@@ -160,6 +161,7 @@ export class FontPanel extends Component {
         const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
 
         this.sizeSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(`${size}`)
             .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue, 10) }));
 
@@ -189,6 +191,7 @@ export class FontPanel extends Component {
         }));
 
         this.weightStyleSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(selectedOption.name)
             .onValueChange(newValue => {
                 const selectedWeightStyle = _.find(weightStyles, x => x.name === newValue);

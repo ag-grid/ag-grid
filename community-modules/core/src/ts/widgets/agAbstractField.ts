@@ -10,6 +10,12 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
 
     protected value: T;
 
+    protected postConstruct(): void {
+        super.postConstruct();
+
+        _.addCssClass(this.getGui(), this.className);
+    }
+
     public onValueChange(callbackFn: (newValue: T) => void) {
         this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.getValue());

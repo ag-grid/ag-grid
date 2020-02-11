@@ -113,7 +113,7 @@
   @if variable-exists(ag-mat-header-height) { $ag-header-height: $ag-mat-header-height !global; }
   @if variable-exists(ag-mat-row-height) { $ag-row-height: $ag-mat-row-height !global; }
   @if variable-exists(ag-mat-cell-horizontal-padding) { $ag-cell-horizontal-padding: $ag-mat-cell-horizontal-padding !global; }
-  @if variable-exists(ag-mat-virtual-item-height) { $ag-virtual-item-height: $ag-mat-virtual-item-height !global; }
+  @if variable-exists(ag-mat-virtual-item-height) { $ag-list-item-height: $ag-mat-virtual-item-height !global; }
 
   @if variable-exists(ag-mat-font-family) { $ag-font-family: $ag-mat-font-family !global; }
   @if variable-exists(ag-mat-font-size) { $ag-font-size: $ag-mat-font-size !global; }

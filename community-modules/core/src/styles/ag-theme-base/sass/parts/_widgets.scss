@@ -76,7 +76,7 @@
     ////////////////////////////////////////
     
     .ag-virtual-list-item {
-        height: $ag-virtual-item-height;
+        height: $ag-list-item-height;
     }
 
     ////////////////////////////////////////
@@ -101,7 +101,7 @@
 
     .ag-rich-select-virtual-list-item {
         cursor: default;
-        height: $ag-virtual-item-height;
+        height: $ag-list-item-height;
 
         &:hover {
             background-color: $ag-row-hover-color;
