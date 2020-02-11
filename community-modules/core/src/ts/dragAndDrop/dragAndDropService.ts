@@ -29,6 +29,8 @@ export interface DragSource {
     getDragItem: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string | (() => string) | null;
+    /** Icon to show when not over a drop zone */
+    defaultIconName?: string;
     /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
@@ -90,6 +92,7 @@ export class DragAndDropService {
     public static ICON_AGGREGATE = 'aggregate';
     public static ICON_PIVOT = 'pivot';
     public static ICON_NOT_ALLOWED = 'notAllowed';
+    public static ICON_HIDE = 'hide';
 
     public static GHOST_TEMPLATE =
         '<div ref="eWrapper" class="ag-dnd-wrapper"><div class="ag-dnd-ghost">' +
@@ -112,7 +115,7 @@ export class DragAndDropService {
     private lastDropTarget: DropTarget;
 
     private ePinnedIcon: HTMLElement;
-    private eHiddenIcon: HTMLElement;
+    private eHideIcon: HTMLElement;
     private eMoveIcon: HTMLElement;
     private eLeftIcon: HTMLElement;
     private eRightIcon: HTMLElement;
@@ -124,7 +127,7 @@ export class DragAndDropService {
     @PostConstruct
     private init(): void {
         this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eHideIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
         this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
         this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
         this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
@@ -401,24 +404,30 @@ export class DragAndDropService {
 
         let eIcon: HTMLElement;
 
-        switch (iconName) {
-            case DragAndDropService.ICON_PINNED: eIcon = this.ePinnedIcon; break;
-            case DragAndDropService.ICON_MOVE: eIcon = this.eMoveIcon; break;
-            case DragAndDropService.ICON_LEFT: eIcon = this.eLeftIcon; break;
-            case DragAndDropService.ICON_RIGHT: eIcon = this.eRightIcon; break;
-            case DragAndDropService.ICON_GROUP: eIcon = this.eGroupIcon; break;
-            case DragAndDropService.ICON_AGGREGATE: eIcon = this.eAggregateIcon; break;
-            case DragAndDropService.ICON_PIVOT: eIcon = this.ePivotIcon; break;
-            case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
-            default: eIcon = this.eHiddenIcon; break;
+        if (!iconName) {
+            iconName = this.dragSource.defaultIconName || DragAndDropService.ICON_NOT_ALLOWED;
         }
 
-        // if we are dragging out of the grid but suppressDragLeaveHidesColumns
-        // is true then no icon should be added.
-        if (eIcon !== this.eHiddenIcon || !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
-            this.eGhostIcon.appendChild(eIcon);
+        switch (iconName) {
+            case DragAndDropService.ICON_PINNED:      eIcon = this.ePinnedIcon; break;
+            case DragAndDropService.ICON_MOVE:        eIcon = this.eMoveIcon; break;
+            case DragAndDropService.ICON_LEFT:        eIcon = this.eLeftIcon; break;
+            case DragAndDropService.ICON_RIGHT:       eIcon = this.eRightIcon; break;
+            case DragAndDropService.ICON_GROUP:       eIcon = this.eGroupIcon; break;
+            case DragAndDropService.ICON_AGGREGATE:   eIcon = this.eAggregateIcon; break;
+            case DragAndDropService.ICON_PIVOT:       eIcon = this.ePivotIcon; break;
+            case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
+            case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
         }
 
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+
+        if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            return;
+        }
+
+        if (eIcon) {
+            this.eGhostIcon.appendChild(eIcon);
+        }
     }
 }

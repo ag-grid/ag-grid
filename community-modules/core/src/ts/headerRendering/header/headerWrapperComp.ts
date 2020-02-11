@@ -204,6 +204,7 @@ export class HeaderWrapperComp extends Component {
             const dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
+                defaultIconName: DragAndDropService.ICON_HIDE,
                 getDragItem: () => this.createDragItem(),
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
