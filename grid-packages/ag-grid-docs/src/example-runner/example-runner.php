@@ -3,22 +3,40 @@ require_once 'example-mappings.php';
 require_once 'utils.php';
 
 // helpers in the example render, shared between angular and react
-function renderStyles($styles)
+function getStyleTags($styles)
 {
-    foreach ($styles as $style) {
-        echo '    <link rel="stylesheet" href="' . $style . '">' . "\n";
+    if (empty($styles)) {
+        return;
     }
+
+    return join("\n    ", array_map(function($style) { return "<link rel=\"stylesheet\" href=\"$style\">"; }, $styles)) . "\n";
 }
 
 // helpers in the example render, shared between angular, react & vue
-function renderNonGeneratedScripts($scripts, $skip_main = FALSE)
+function getNonGeneratedScriptTags($scripts, $skipMain = FALSE)
 {
+    $shouldRenderMainJs = false;
+    $scriptNames = [];
+    $mainJsName = 'main.js';
+
     foreach ($scripts as $script) {
-        if ($script === 'main.js' && $skip_main === TRUE) {
+        if ($script === $mainJsName) {
+            $shouldRenderMainJs = !$skipMain;
             continue;
         }
-        echo '    <script src="' . $script . '"></script>' . "\n";
+
+        $scriptNames[] = $script;
     }
+
+    if ($shouldRenderMainJs) {
+        $scriptNames[] = $mainJsName;
+    }
+
+    if (empty($scriptNames)) {
+        return;
+    }
+
+    return join("\n    ", array_map(function($script) { return "<script src=\"$script\"></script>"; }, $scriptNames)) . "\n";
 }
 
 function moveVanillaFirst($a, $b)

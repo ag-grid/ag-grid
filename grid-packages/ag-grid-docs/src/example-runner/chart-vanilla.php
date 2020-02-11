@@ -16,26 +16,12 @@ if ($multi) {
 }
 
 $files = getDirContents($path);
-$scripts = array();
-$styles = array();
-
-foreach ($files as $file) {
-    $filePath = path_combine($path, $file);
-    $info = pathinfo($filePath);
-    switch ($info['extension']) {
-        case 'js':
-            $scripts[] = $plunkerView ? $file : $filePath;
-            break;
-        case 'css':
-            $styles[] = $plunkerView ? $file : $filePath;
-            break;
-    }
-}
+$scripts = getScripts($files, $path, $plunkerView);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>var __basePath = '<?= $plunkerView ? "" : rtrim($path, '/') . '/'; ?>';</script>
+<script>var __basePath = '<?= $plunkerView ? "" : rtrim($path, '/') . '/'; ?>';</script>
     <style media="only screen">
         html, body {
             height: 100%;
@@ -58,19 +44,11 @@ foreach ($files as $file) {
             overflow: auto;
         }
     </style>
-    <?= globalAgChartsScript() . "\n" ?>
+    <?= getGlobalAgChartsScriptTag() ?>
 </head>
-
 <body>
+    <?php include path_combine($path, 'index.html'); ?>
 
-<?php
-include path_combine($path, 'index.html');
-echo "\n";
-foreach ($scripts as $script) {
-    if ($script !== 'worker.js') {
-        echo "    <script src=\"$script\"></script>\n";
-    }
-}
-?>
+    <?= getNonGeneratedScriptTags($scripts); ?>
 </body>
 </html>

@@ -17,21 +17,8 @@ if ($multi) {
 }
 
 $files = getDirContents($path);
-$scripts = array();
-$styles = array();
-
-foreach ($files as $file) {
-    $filePath = path_combine($path, $file);
-    $info = pathinfo($filePath);
-    switch ($info['extension']) {
-        case 'js':
-            $scripts[] = $plunkerView ? $file : $filePath;
-            break;
-        case 'css':
-            $styles[] = $plunkerView ? $file : $filePath;
-            break;
-    }
-}
+$scripts = getScripts($files, $path, $plunkerView);
+$styles = getStyles($files, $path, $plunkerView);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,19 +48,12 @@ foreach ($files as $file) {
     </style>
     <?php renderExampleExtras($_GET) ?>
     <?= globalAgGridScript(isset($_GET["enterprise"])) . "\n" ?>
-    <?php renderStyles($styles); ?>
+    <?= getStyleTags($styles); ?>
 </head>
 
 <body>
+    <?php include path_combine($path, 'index.html'); ?>
 
-<?php
-include path_combine($path, 'index.html');
-echo "\n";
-foreach ($scripts as $script) {
-    if ($script !== 'worker.js') {
-        echo "    <script src=\"$script\"></script>\n";
-    }
-}
-?>
+    <?= getNonGeneratedScriptTags($scripts); ?>
 </body>
 </html>

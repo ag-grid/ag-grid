@@ -33,8 +33,8 @@ if ($generated) {
       }
     </style>
 <?php renderExampleExtras($_GET); ?>
-<?php renderStyles($example['styles']); ?>
-<?php renderNonGeneratedScripts($example['scripts']); ?>
+    <?= getStyleTags($example['styles']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
   </head>
   <body>
     <div id="root">Loading React example&hellip;</div>
