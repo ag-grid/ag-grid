@@ -100,7 +100,7 @@ IServerSideGetRowsRequest {
             see Athlete is sorted. </li>
     </ul>
 
-<?= grid_example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <note>
     When the grid sort changes, only impacted rows will get reloaded. For example if grouping by Country
