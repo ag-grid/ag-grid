@@ -19,15 +19,13 @@ include '../documentation-main/documentation_header.php';
     A legend can be positioned to any side of a chart using the <code>position</code> config:
 </p>
 
-<p>
-    <img alt="Legend Positon" src="legend-position.gif" style="margin-bottom: 0px; max-width: 70%">
-</p>
-
 <snippet language="ts">
 legend: {
     position: 'right' // 'bottom', 'left', 'top'
 }
 </snippet>
+
+<?= chart_example('Legend Position', 'legend-position'); ?>
 
 <h2>Visibility</h2>
 
@@ -35,15 +33,13 @@ legend: {
     A legend is shown by default. To hide it, use the <code>enabled</code> config:
 </p>
 
-<p>
-    <img alt="Legend Enabled" src="legend-enabled.gif" style="margin-bottom: 0px; max-width: 70%">
-</p>
-
 <snippet language="ts">
 legend: {
     enabled: false
 }
 </snippet>
+
+<?= chart_example('Legend Visibility', 'legend-enabled'); ?>
 
 <h2>Layout</h2>
 
