@@ -22,23 +22,16 @@
         overflow: hidden;
     }
 }
-body:not(.dark) .good-score {
-    background-color: rgba(0, 200, 0, 0.4);
-}
-
-body:not(.dark) .bad-score {
-    background-color: rgba(200, 0, 0, 0.4);
-}
 
 .dark .star {
     filter: invert(100%);
 }
 
-.good-score {
-    background-color: rgba(185, 246, 202, 0.4) !important;
+body:not(.dark) .good-score {
+    background-color: rgba(185, 246, 202, 0.4);
 }
-.bad-score {
-    background-color: rgba(255, 128, 171, 0.4) !important;
+body:not(.dark) .bad-score {
+    background-color: rgba(255, 128, 171, 0.4);
 }
 
 body:not(.dark) {
