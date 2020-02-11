@@ -1,5 +1,6 @@
 import { Component } from "./component";
 import { _ } from "../utils";
+import { AgAbstractField } from "./agAbstractField";
 
 export interface ListOption {
     value: string;
@@ -41,7 +42,8 @@ export class AgList extends Component {
 
         this.itemEls.push(itemEl);
         this.addDestroyableEventListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem((e.target as HTMLElement)));
-        this.addDestroyableEventListener(itemEl, 'click', (e: MouseEvent) => {
+        this.addDestroyableEventListener(itemEl, 'mouseleave', () => this.clearHighlighted());
+        this.addDestroyableEventListener(itemEl, 'click', () => {
             const idx = this.itemEls.indexOf(itemEl);
             this.setValueByIndex(idx);
         });
@@ -85,6 +87,15 @@ export class AgList extends Component {
         return this.displayValue;
     }
 
+    public refreshHighlighted(): void {
+        this.clearHighlighted();
+        const idx = _.findIndex(this.options, option => option.value === this.value);
+
+        if (idx !== -1) {
+            this.highlightItem(this.itemEls[idx]);
+        }
+    }
+
     private reset(): void {
         this.value = null;
         this.displayValue = null;
@@ -99,10 +110,11 @@ export class AgList extends Component {
     }
 
     private clearHighlighted(): void {
+        if (!this.highlightedEl || !this.highlightedEl.offsetParent) { return; }
         _.removeCssClass(this.highlightedEl, 'ag-active-item');
     }
 
     private fireChangeEvent(): void {
-        this.dispatchEvent({ type: 'valueChange' });
+        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
     }
 }

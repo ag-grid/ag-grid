@@ -4,6 +4,7 @@ import { ListOption, AgList } from "./agList";
 import { _ } from "../utils";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
+import { AgAbstractField } from "./agAbstractField";
 
 type AgSelectConfig = ListOption & IAgLabel;
 
@@ -26,6 +27,17 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     public init(): void {
         this.listComponent = new AgList();
         this.getContext().wireBean(this.listComponent);
+
+        this.listComponent.addDestroyableEventListener(
+            this.listComponent,
+            AgAbstractField.EVENT_CHANGED,
+            () => {
+                this.setValue(this.listComponent.getValue(), false, true);
+                if (this.hideList) {
+                    this.hideList();
+                }
+            }
+        );
     }
 
     protected showPicker() {
@@ -35,13 +47,9 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         }
 
         const listGui = this.listComponent.getGui();
-        const listComponentListener = this.addDestroyableEventListener(this.listComponent, 'changeValue', () => {
-
-        });
 
         this.hideList = this.popupService.addPopup(true, listGui, true, () => {
             this.hideList = null;
-            listComponentListener();
         });
 
         _.setElementWidth(listGui, _.getAbsoluteWidth(this.getGui()));
@@ -52,6 +60,8 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             eventSource: this.getGui(),
             ePopup: listGui
         });
+
+        this.listComponent.refreshHighlighted();
     }
 
     public addOptions(options: ListOption[]): this {
@@ -66,10 +76,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return this;
     }
 
-    public setValue(value: string, silent?: boolean): this {
+    public setValue(value: string, silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value) { return; }
 
-        this.listComponent.setValue(value, true);
+        if (!fromPicker) {
+            this.listComponent.setValue(value, true);
+        }
 
         const newValue = this.listComponent.getValue();
 
@@ -86,5 +98,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         if (this.hideList) {
             this.hideList();
         }
+
+        this.listComponent.destroy();
     }
 }
