@@ -1,10 +1,14 @@
 import { Chart } from "./chart";
 import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
+import { reactive } from "../util/observable";
+import { Padding } from "../main";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
     static type = 'polar';
+
+    @reactive('layoutChange') padding = new Padding(40);
 
     constructor(document = window.document) {
         super(document);

@@ -405,7 +405,8 @@ const mappings = {
             constructor: PolarChart,
             ...chartMeta,
             defaults: {
-                ...chartDefaults
+                ...chartDefaults,
+                padding: new Padding(40),
             }
         },
         ...chartMappings,
@@ -475,7 +476,7 @@ const mappings = {
         }
     }
 } as any;
-
+debugger;
 // Amend the `mappings` object with aliases for different chart types.
 {
     const typeToAliases: { [key in string]: string[] } = {
