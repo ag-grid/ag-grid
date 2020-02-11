@@ -66,25 +66,20 @@ include '../documentation-main/documentation_header.php';
     <h2 id="what-to-style-via-themes">What to Style via Themes</h2>
 
     <p>
-        Any of the CSS classes described below can have style associated with them.  
-        However you should be cautious about overriding style that is associated outside of the theme.
-        For example, the ag-pinned-cols-viewport, has the following style:
+        In general, themes can change how elements look, but not how they work or where they are positioned.
     </p>
 
-    <snippet language="css">
-   .ag-pinned-cols-viewport {
-        float: left;
-        position: absolute;
-        overflow: hidden;
-    }</snippet>
-
-    <p>
-        The style attributes float, position and overflow are intrinsic to how the grid works. Changing
-        these values will change how the grid operates. If unsure, take a look at the styles associated
-        with an element using your browsers developer tools. If still unsure, try it out, if the style
-        you want to apply breaks the grid, then it's not a good style to apply.
-    </p>
-
-
+    <ul>
+        <li>Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change
+            by the theme.
+        <li>Setting a component to <code>display: flex</code> and changing flex child layout properties like
+            <code>align-items</code>, <code>align-self</code> and <code>flex-direction</code> is probably OK
+            if you're trying to change how something looks, e.g. to align some items vertically; but if you're trying
+            to change how the grid works e.g. turning a scrolling container into an auto-sizing container, you
+            are likely to break Grid features.
+        <li>The style properties <code>position</code>, <code>overflow</code> and <code>pointer-events</code>
+            are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break
+            functionality now or in future minor releases.
+    </ul>
 
 <?php include '../documentation-main/documentation_footer.php';?>

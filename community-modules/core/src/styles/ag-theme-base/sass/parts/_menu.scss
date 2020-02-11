@@ -100,11 +100,14 @@
     // Value Set Filter
     ////////////////////////////////////////
 
-    .ag-filter-condition-option-button {
-        margin: 0 3px 0 6px;
+    .ag-filter-condition-operator {
         width: 12px;
         height: 17px;
         vertical-align: top;
+    }
+
+    .ag-filter-condition-operator-or {
+        @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
 
     .ag-filter-select,
@@ -154,7 +157,8 @@
         display: flex;
         justify-content: flex-end;
         padding: $ag-grid-size;
-        padding-top: $ag-grid-size * 2;
+
+        @include ag-grid-border(secondary, top);
     }
     
     .ag-filter-apply-panel-button {

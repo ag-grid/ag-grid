@@ -44,7 +44,7 @@
 
     For example:
 
-    .ag-theme-balham {
+    .ag-theme-xyz {
         .foo {
             @include ag-theme-rtl((margin-left: 10px));
         }
@@ -52,10 +52,10 @@
 
     Will emit:
 
-    .ag-theme-balham .ag-ltr .foo {
+    .ag-theme-xyz .ag-ltr .foo {
       margin-left: 10px;
     }
-    .ag-theme-balham .ag-rtl .foo {
+    .ag-theme-xyz .ag-rtl .foo {
       margin-right: 10px;
     }
 

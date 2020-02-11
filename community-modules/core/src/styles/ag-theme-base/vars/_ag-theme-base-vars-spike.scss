@@ -9,10 +9,10 @@ $ag-base-vars: (
 
     // Colour of text and icons in UI elements that need to be slightly less emphasised
     // to avoid distracting attention from data
-    secondary-foreground-color: ag-derived(foreground-color)
+    secondary-foreground-color: ag-derived(foreground-color),
 
     // Colour of text and icons in the header
-    header-foreground-color: ag-derived(secondary-foreground-color)
+    header-foreground-color: ag-derived(secondary-foreground-color),
 
     // The disabled foreground colour / opacity is used for text and icons in elements that
     // can't be interacted with because they are in a disabled state

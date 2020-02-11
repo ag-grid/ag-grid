@@ -476,7 +476,7 @@ const mappings = {
         }
     }
 } as any;
-debugger;
+
 // Amend the `mappings` object with aliases for different chart types.
 {
     const typeToAliases: { [key in string]: string[] } = {

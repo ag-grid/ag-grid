@@ -322,6 +322,11 @@ columnDefs = [
                 The column visibility is not changed while the columns are grouped
                 and un-grouped.
             </li>
+            <li>
+                While dragging the column header over the drop zone, before it is
+                dropped, the column appears translucent to indicate that the grouping
+                has not yet been applied.
+            </li>
         </ul>
     </p>
 

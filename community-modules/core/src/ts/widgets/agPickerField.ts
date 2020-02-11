@@ -30,9 +30,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected postConstruct() {
         super.postConstruct();
 
-        this.addDestroyableEventListener(this.eButton, 'click', () => {
-            this.showPicker();
-        });
+        const clickHandler = () => this.showPicker();
+        this.addDestroyableEventListener(this.eButton, 'click', clickHandler);
+        this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
             this.eButton.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));

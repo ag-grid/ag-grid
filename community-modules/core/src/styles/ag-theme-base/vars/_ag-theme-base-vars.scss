@@ -57,10 +57,10 @@ $ag-selected-tab-underline-width: 0 !default;
 $ag-selected-tab-underline-transition-speed: null !default;
 
 // Background colour for cells that provide categories to the current range chart
-$ag-range-selection-chart-category-background-color: rgba($ag-range-selection-background-color, 0.4) !default;
+$ag-range-selection-chart-category-background-color: rgba(#00FF84, 0.1) !default;
 
 // Background colour for cells that provide data to the current range chart
-$ag-range-selection-chart-background-color: $ag-range-selection-background-color !default;
+$ag-range-selection-chart-background-color: rgba(#0058FF, 0.1) !default;
 
 // Rollover colour for header cells
 $ag-header-cell-hover-background-color: null !default;

@@ -9,7 +9,6 @@ $ag-foreground-color: #181d1f !default;
 $ag-secondary-border-color: #dde2eb !default;
 $ag-header-background-color: #f8f8f8 !default;
 $ag-odd-row-background-color: #fcfcfc !default;
-$ag-range-selection-border-color: #ff9800 !default;
 $ag-border-color: #babfc7 !default;
 $ag-control-panel-background-color: #f8f8f8 !default;
 $ag-subheader-background-color: #fff !default;
@@ -27,6 +26,8 @@ $ag-secondary-foreground-color: $ag-foreground-color !default;
 $ag-input-disabled-background-color: mix($ag-border-color, $ag-background-color, 20%) !default;
 $ag-disabled-foreground-color: rgba($ag-foreground-color, 0.5) !default;
 $ag-input-border-color: $ag-border-color !default;
+$ag-header-cell-moving-background-color: $ag-background-color !default;
+$ag-range-selection-border-color: #2196f3 !default;
 
 // BORDERS
 $ag-borders: true !default;

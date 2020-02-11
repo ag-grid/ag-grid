@@ -23,7 +23,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected eLabel: HTMLElement;
+    @RefSelector('eLabel') protected eLabel: HTMLLabelElement;
     @RefSelector('eWrapper') protected eWrapper: HTMLElement;
     @RefSelector('eInput') protected eInput: T;
 
@@ -34,6 +34,10 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         _.addCssClass(this.eLabel, `${this.className}-label`);
         _.addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
         _.addCssClass(this.eInput, `${this.className}-input`);
+
+        const inputId = this.eInput.id ? this.eInput.id : `ag-input-id-${this.getCompId()}`;
+        this.eLabel.htmlFor = inputId;
+        this.eInput.id = inputId;
 
         const { width, value } = this.config;
 

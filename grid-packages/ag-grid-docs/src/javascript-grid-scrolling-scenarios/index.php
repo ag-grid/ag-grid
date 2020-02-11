@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         It is possible to show scrollbars even when there is not enough data to need scrolling.
         This voids visual table 'jumps' when toggling short and long data sets.
-        To make that work, override the <code>overflow</code> of the <code>.ag-grid-body-viewport</code>
+        To make that work, override the <code>overflow</code> of the <code>.ag-body-viewport</code>
         to <code>scroll !important</code>. The <code>!important</code> is necessary to override the inline styling.
     </p>
 

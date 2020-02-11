@@ -1,6 +1,5 @@
 @import '../vars/ag-theme-alpine-vars';
 @import '../../ag-theme-base/sass/ag-theme-base';
-// @import './ag-theme-alpine-mixins';
 
 @include ag-icons-font-face();
 
@@ -34,13 +33,17 @@
         color: $ag-alpine-active-color;
     }
 
-    .ag-tabs-header {
-        @include ag-grid-border(primary, bottom);
+    .ag-menu {
+        background-color: $ag-control-panel-background-color;
     }
 
     .ag-menu-header {
-        background-color: $ag-header-background-color;
+        background-color: $ag-control-panel-background-color;
         padding-top: 1px; // hack to align column menu tab header border with header row border
+    }
+    
+    .ag-tabs-header {
+        @include ag-grid-border(primary, bottom);
     }
 
     .ag-charts-minichart-group-title-bar {

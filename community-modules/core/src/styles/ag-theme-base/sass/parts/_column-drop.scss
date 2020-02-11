@@ -25,6 +25,10 @@
         margin-left: $ag-grid-size * 2;
     }
 
+    .ag-column-drop-cell-ghost {
+        opacity: 0.5;
+    }
+
     // HORIZONTAL COLUMN DROP
     
     .ag-column-drop-horizontal {

@@ -38,10 +38,6 @@
         border-bottom-color: transparent;
     }
 
-    .ag-tabs-body {
-        padding: $ag-grid-size / 2 0;
-    }
-
     .ag-column-drop-cell {
         min-height: $ag-grid-size * 6;
     }
@@ -93,10 +89,6 @@
         border: 1px solid $ag-border-color;
         color: $ag-foreground-color;
         padding: $ag-grid-size * 4;
-    }
-
-    .ag-filter-apply-panel {
-        border-top: 1px solid $ag-border-color;
     }
 
     .ag-tooltip {
