@@ -41,7 +41,8 @@ var chart = agCharts.AgChart.create({
     }]
 });
 
-function createSlider(options = {}) {
+function createSlider(options) {
+    option = options || {};
     var values = options.values;
     var n = values && values.length;
     var id = String(Date.now());
