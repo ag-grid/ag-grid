@@ -77,8 +77,11 @@
       <excludeFolder url="file://$MODULE_DIR$/examples-charts/ag-charts-react-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/examples-charts/ag-charts-vue-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-package-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-package-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-vue-example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-vue-package-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/build" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-react-example/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-charts-vue-example/dist" />
