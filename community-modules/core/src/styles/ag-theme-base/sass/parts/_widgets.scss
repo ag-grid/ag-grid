@@ -72,11 +72,43 @@
     }
 
     ////////////////////////////////////////
-    // Virtual List
+    // Lists
     ////////////////////////////////////////
+
+    .ag-list {
+        background-color: $ag-control-panel-background-color;
+    }
     
-    .ag-virtual-list-item {
+    .ag-list-item, .ag-virtual-list-item {
         height: $ag-list-item-height;
+    }
+
+    .ag-list-item {
+        padding-left: 4px;
+        padding-right: 4px;
+        white-space: nowrap;
+        align-items: center;
+        display: flex;
+        user-select: none;
+        cursor: default;
+    }
+
+    .ag-list-item.ag-active-item {
+        background-color: $ag-row-hover-color;
+    }
+
+    .ag-select {
+        background-color: $ag-background-color;
+        .ag-picker-field-wrapper {
+            height: $ag-row-height;
+            align-items: center;
+        }
+        .ag-picker-field-display {
+            margin: 4px;
+        }
+        .ag-picker-field-button {
+            height: 100%
+        }
     }
 
     ////////////////////////////////////////
