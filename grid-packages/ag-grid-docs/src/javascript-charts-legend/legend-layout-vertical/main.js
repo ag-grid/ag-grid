@@ -1,19 +1,5 @@
-var container = document.getElementById('myChart');
-var slider = createSlider({
-    text: 'chart.height',
-    min: 200,
-    max: 500,
-    value: 500,
-    showValue: true,
-    action: function (value) {
-        chart.height = value;
-    }
-});
-slider.style.position = 'absolute';
-container.appendChild(slider);
-
-var chart = agCharts.AgChart.create({
-    container: container,
+var options = {
+    container: document.getElementById('myChart'),
     data: [
         { label: 'USA', value: 56.9 },
         { label: 'UK', value: 22.5 },
@@ -39,76 +25,7 @@ var chart = agCharts.AgChart.create({
         labelKey: 'label',
         strokeWidth: 3
     }]
-});
+};
+var chart = agCharts.AgChart.create(options);
 
-function createSlider(options) {
-    option = options || {};
-    var values = options.values;
-    var n = values && values.length;
-    var id = String(Date.now());
-    var sliderId = 'slider-' + id;
-
-    var wrapper = document.createElement('div');
-    wrapper.style.display = 'inline-flex';
-    wrapper.style.alignItems = 'center';
-    wrapper.style.width = (options.width || 300) + 'px';
-    wrapper.style.padding = '5px 10px';
-    wrapper.style.margin = '5px';
-    wrapper.style.border = '1px solid lightgray';
-    wrapper.style.borderRadius = '5px';
-    wrapper.style.backgroundColor = 'white';
-
-    var slider = document.createElement('input');
-    slider.type = 'range';
-    slider.setAttribute('id', sliderId);
-    slider.style.height = '1.8em';
-    slider.style.flex = '1';
-
-    function updateValue(value) {
-        if (options.showValue) {
-            label.innerHTML = options.text + ': ' + String(value);
-        }
-    }
-
-    var label = document.createElement('label');
-    label.setAttribute('for', sliderId);
-    label.style.font = '12px sans-serif';
-    label.style.marginRight = '5px';
-
-    if (values) {
-        values.forEach(function (value, index) {
-            var option = document.createElement('option');
-            option.setAttribute('value', String(index));
-            option.setAttribute('label', String(value));
-        });
-        slider.min = '0';
-        slider.max = String(n - 1);
-        slider.step = '1';
-        slider.value = '0';
-    } else {
-        slider.min = String(options.min || 0);
-        slider.max = String(options.max || 100);
-        slider.step = String(options.step || 1);
-        slider.value = String(options.value || 0);
-    }
-    updateValue(slider.value);
-
-    wrapper.appendChild(label);
-    wrapper.appendChild(slider);
-    document.body.appendChild(wrapper);
-
-    var action = options.action;
-    if (action) {
-        slider.addEventListener('input', function (e) {
-            var value = +e.target.value;
-            if (values) {
-                value = values[value];
-            }
-            action(value);
-            if (options.showValue) {
-                label.innerHTML = options.text + ': ' + String(value);
-            }
-        });
-    }
-    return wrapper;
-}
+createChartHeightSlider('toolpanel', chart);

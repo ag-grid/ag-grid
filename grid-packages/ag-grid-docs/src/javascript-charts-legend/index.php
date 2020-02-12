@@ -25,7 +25,7 @@ legend: {
 }
 </snippet>
 
-<?= chart_example('Legend Position', 'legend-position'); ?>
+<?= chart_example('Legend Position', 'legend-position', 'generated') ?>
 
 <h2>Visibility</h2>
 
@@ -39,7 +39,7 @@ legend: {
 }
 </snippet>
 
-<?= chart_example('Legend Visibility', 'legend-enabled'); ?>
+<?= chart_example('Legend Visibility', 'legend-enabled', 'generated') ?>
 
 <h2>Layout</h2>
 
@@ -51,7 +51,7 @@ legend: {
     a chart shrinks:
 </p>
 
-<?= chart_example('Vertical Legend Layout', 'legend-layout-vertical'); ?>
+<?= chart_example('Vertical Legend Layout', 'legend-layout-vertical', 'generated') ?>
 
 <p>
     If the legend is horizontal (positioned to the <code>bottom</code> or <code>top</code> of a chart),
@@ -59,7 +59,7 @@ legend: {
     the legend will keep subdividing its items into rows until everything fits:
 </p>
 
-<?= chart_example('Horizontal Legend Layout', 'legend-layout-horizontal'); ?>
+<?= chart_example('Horizontal Legend Layout', 'legend-layout-horizontal', 'generated') ?>
 
 <h2>Constraints</h2>
 

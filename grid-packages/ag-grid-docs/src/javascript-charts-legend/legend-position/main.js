@@ -16,7 +16,4 @@ var chart = agCharts.AgChart.create({
     }]
 });
 
-var index = 0;
-setInterval(function () {
-    chart.legend.position = ['bottom', 'left', 'top', 'right'][index++ % 4];
-}, 1000);
+createChartLegendPositionSlider('toolpanel', chart);
