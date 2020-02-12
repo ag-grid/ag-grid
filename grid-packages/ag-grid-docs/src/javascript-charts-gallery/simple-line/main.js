@@ -2,7 +2,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Road fuel prices',
+        text: 'Road fuel prices (2019)',
         fontSize: 18,
     },
     subtitle: {
