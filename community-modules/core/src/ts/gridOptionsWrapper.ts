@@ -1212,7 +1212,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.headerHeight;
         }
 
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getSassVariable(25, 'headerHeight');
     }
 
     public getFloatingFiltersHeight(): number {
@@ -1220,7 +1220,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.floatingFiltersHeight;
         }
 
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getSassVariable(25, 'headerHeight');
     }
 
     public getGroupHeaderHeight(): number {
@@ -1278,11 +1278,11 @@ export class GridOptionsWrapper {
     }
 
     public getMinColWidth() {
-        if (this.gridOptions.minColWidth && this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
-
-        return GridOptionsWrapper.MIN_COL_WIDTH;
+        const measuredMin = this.getSassVariable(null, 'headerCellMinWidth');
+        return Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH);
     }
 
     public getMaxColWidth() {
@@ -1696,7 +1696,7 @@ export class GridOptionsWrapper {
     }
 
     public getVirtualItemHeight() {
-        return this.specialForNewMaterial(20, 'virtualItemHeight');
+        return this.getSassVariable(20, 'virtualItemHeight');
     }
 
     public chartMenuPanelWidth() {
@@ -1709,16 +1709,15 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
+    private getSassVariable(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }
-
         return defaultValue;
     }
 
     private getDefaultRowHeight(): number {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getSassVariable(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }

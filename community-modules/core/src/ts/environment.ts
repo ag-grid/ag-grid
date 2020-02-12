@@ -2,10 +2,10 @@ import { Bean, Autowired } from './context/context';
 import { _ } from './utils';
 
 
-export type SASS_PROPERTIES = 'headerHeight' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
+export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 interface HardCodedSize {
     [key: string]: {
-        [key in SASS_PROPERTIES]?: number;
+        [key in SASS_PROPERTIES]: number;
     };
 }
 
@@ -18,24 +18,28 @@ const HARD_CODED_SIZES: HardCodedSize = {
     // this item is required for custom themes
     'ag-theme-custom': {
         headerHeight: 25,
+        headerCellMinWidth: 24,
         virtualItemHeight: BASE_GRID_SIZE * 5,
         rowHeight: 25,
         chartMenuPanelWidth: 220
     },
     'ag-theme-material': {
         headerHeight: MAT_GRID_SIZE * 7,
+        headerCellMinWidth: 48,
         virtualItemHeight: MAT_GRID_SIZE * 5,
         rowHeight: MAT_GRID_SIZE * 6,
         chartMenuPanelWidth: 240
     },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
+        headerCellMinWidth: 24,
         virtualItemHeight: BALHAM_GRID_SIZE * 7,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
+        headerCellMinWidth: 36,
         virtualItemHeight: ALPINE_GRID_SIZE * 5,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
@@ -53,6 +57,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
  */
 const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     headerHeight: ['ag-header-row'],
+    headerCellMinWidth: ['ag-header-cell'],
     virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
     rowHeight: ['ag-row'],
     chartMenuPanelWidth: ['ag-chart-docked-container']
@@ -98,6 +103,10 @@ export class Environment {
                 calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
                 document.body.removeChild(div);
             }
+        }
+
+        if (!calculatedValue) {
+            alert(`getSassVariable(${key}) returned ${calculatedValue}`);
         }
 
         CALCULATED_SIZES[theme][key] = calculatedValue || defaultValue;
