@@ -134,12 +134,13 @@ gtm_data_layer('community-enterprise');
                             <img src="./images/pricing/SA.svg" alt="Single Application">
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Single Application</h2>
-                            <h3>Developer License</h3>
+                            <h3>Development License</h3>
 
                         </div>
                         <h4>
+                            <div style="font-size: 0.9rem;">Starting at</div>
                             &dollar;750.<span style="font-size: small">00</span>
-                            <p>1 project / 1 developer</p>
+                            <p>Per Developer</p>
                         </h4>
                         <div>
                             <a class="btn" style="color: #009ede; border-color: #009ede" href="../ecommerce/#/ecommerce/?licenseType=single">BUY</a>
@@ -153,11 +154,12 @@ gtm_data_layer('community-enterprise');
                             <img src="./images/pricing/MA.svg" alt="Multiple Applications">
                             <h3>ag-Grid Enterprise</h3>
                             <h2>Multiple Applications</h2>
-                            <h3>Developer License</h3>
+                            <h3>Development License</h3>
                         </div>
                         <h4>
+                            <div style="font-size: 0.9rem;">Starting at</div>
                             &dollar;1,200.<span style="font-size: small">00</span>
-                            <p>unlimited projects / 1 developer</p>
+                            <p>Per Developer</p>
                         </h4>
                         <div>
                             <a class="btn" style="color: #009d70; border-color: #009d70" href="../ecommerce/#/ecommerce/?licenseType=multi">BUY</a>
@@ -174,12 +176,13 @@ gtm_data_layer('community-enterprise');
                             <h3>Add-on</h3>
                         </div>
                         <h4>
+                            <div style="font-size: 0.9rem;">Starting at</div>
                             &dollar;750.<span style="font-size: small">00</span>
-                            <p>1 project / 1 production environment</p>
+                            <p>Per Application Production Environment</p>
                         </h4>
                         <div>
                             <span style="display: inline-block; padding: 0.5rem 1rem; font-size: 1.25rem; line-height: 1.5; border-radius: 0.3rem; ">
-                                Buy with a Developer License
+                                Buy with a Development License
                             </span>
 <!--
                             <a class="btn" style="color: #fbad18;border-color: #fbad18" href="mailto:info@ag-grid.com">CONTACT US</a>
@@ -192,8 +195,8 @@ gtm_data_layer('community-enterprise');
                 <div>
                     <div style="text-align: center;">
                         <div style="max-width: 800px; display: inline-block;">
-                            Bulk pricing available. For up to 10 licenses please use our e-commerce configurator to see pricing.
-                            For more than 10 licenses or any questions with regards your purchase, please email
+                            Bulk pricing available. For up to 10 developers please use our e-commerce configurator to see pricing.
+                            For more than 10 developers or any questions with regards your purchase, please email
                             <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>
                         </div>
                     </div>
@@ -212,40 +215,46 @@ gtm_data_layer('community-enterprise');
                         <img src="./images/pricing/SA.svg">
                     </div>
                     <div>
-                        <span>Single Application Developer License (Enterprise)</span>
-
+                        <h3>Single Application Development License</h3>
+                        <p/>
                         <p>
-                            Allows one licensed developer to use ag-Grid Enterprise in <b>one application</b> in perpetuity.
-                            Includes a 1-year subscription to new versions, support and maintenance. Please note that
-                            developer licenses, by themselves, are restricted to internal applications only. For
-                            customer-facing applications, or selling applications that contain ag-Grid, you also need
-                            the Deployment License described below.
+                            Licenses <b>one application</b>, developed for internal use, to embed ag-Grid
+                            Enterprise in perpetuity.
                         </p>
+                        <ul>
+                            <li>
+                                Includes a 1-year subscription to new versions, support
+                                and maintenance.
+                            </li>
+                            <li>
+                                For customer-facing applications you will also need a Deployment
+                                License add-on.
+                            </li>
+                            <li>
+                                All concurrent, front-end, JavaScript developers working on the Application
+                                would need to be added to the license count, not just the ones working with
+                                ag-Grid.
+                            </li>
+                            <li>
+                                Developers within the Single Application Development License count are
+                                unnamed, so long as the total licensed count isn’t exceeded.
+                            </li>
+                            <li>
+                                Single Application Development Licenses are bound to an application name
+                                and can’t be reused on other applications.
+                            </li>
+                        </ul>
 
-
+<!--
                         <div class="example card">
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    <ul>
-                                        <li>
-                                            We license all concurrent, front-end, JavaScript developers working on a
-                                            project using ag-Grid Enterprise, not just the ones directly working with
-                                            the grid.
-                                        </li>
-                                        <li>
-                                            Single Application Developer Licenses are bound to a unique project name
-                                            and can’t be reused on other projects.
-                                        </li>
-                                        <li>
-                                            You are free to reassign developers so long as the total number of
-                                            concurrent, front-end, JavaScript developers doesn’t exceed the number
-                                            of developer licenses you own for the project.
-                                        </li>
-                                    </ul>
+
                                 </div>
                             </div>
                         </div>
+-->
                     </div>
                 </div>
                 <div>
@@ -253,38 +262,49 @@ gtm_data_layer('community-enterprise');
                         <img src="./images/pricing/MA.svg">
                     </div>
                     <div>
-                        <span>Multiple Applications Developer License (Enterprise)</span>
+
+                        <h3>Multiple Application Development License</h3>
+                        <p/>
+
                         <p>
-                            Allows one licensed developer to use ag-Grid Enterprise in an <b>unlimited number of
-                            applications</b> in perpetuity. Includes a 1-year subscription to new versions, support
-                            and maintenance. Please note that developer licenses, by themselves, are restricted to
-                            internal applications only. For customer-facing applications, or selling applications that
-                            contain ag-Grid, you also need the Deployment License described below.
+                            Licenses <b>unlimited number of applications</b>, developed for internal use, to embed ag-Grid
+                            Enterprise in perpetuity.
                         </p>
 
+                        <ul>
+                            <li>
+                                Includes a 1-year subscription to new versions, support
+                                and maintenance.
+                            </li>
+                            <li>
+                                For customer-facing applications you will also need a Deployment
+                                License add-on.
+                            </li>
+                            <li>
+                                All concurrent, front-end, JavaScript developers working across the
+                                licensed Applications would need to be added to the license count,
+                                not just the ones working with ag-Grid.
+                            </li>
+                            <li>
+                                Developers within the Multiple Application Development License count are
+                                unnamed, so long as the total licensed count isn’t exceeded.
+                            </li>
+                            <li>
+                                Single Application Development Licenses are bound to named pool of
+                                developers can be applied to an unlimited number of applications.
+                            </li>
+                        </ul>
+
+<!--
                         <div class="example card">
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    <ul>
-                                        <li>
-                                            We license all concurrent, front-end, JavaScript developers working on a project using
-                                            ag-Grid Enterprise, not just the ones directly working with the grid.
-                                        </li>
-                                        <li>
-                                            Multiple Applications
-                                            Developer Licenses can be reused on an unlimited number of projects.
-                                        </li>
-                                        <li>
-                                            You are free to
-                                            reassign developers so long as the total number of concurrent, front-end, JavaScript
-                                            developers doesn’t exceed the number of developer licenses you own for your
-                                            company/department.
-                                        </li>
-                                    </ul>
+
                                 </div>
                             </div>
                         </div>
+-->
                     </div>
                 </div>
                 <div>
@@ -292,66 +312,74 @@ gtm_data_layer('community-enterprise');
                         <img src="./images/pricing/Deployment%20Add-on.svg">
                     </div>
                     <div>
-                        <span>Deployment License Add-on (Enterprise)</span>
+                        <h3>Deployment License Add-on</h3>
                         <p>
                             Allows licensed developers to sub-license ag-Grid for one application on one production
                             environment in perpetuity. Includes a 1-year subscription to new versions, support and
                             maintenance. Only available with a Developer License.
                         </p>
+
+                        <ul>
+                            <li>
+                                A Deployment License Add-on allows making a project available
+                                to individuals (eg your customers) outside of your orginisation
+                                (sub-license).
+                            </li>
+                            <li>
+                                One Deployment License Add-on covers one production environment
+                                for one project.
+                            </li>
+                            <li>
+                                Only production environments require licensing. All other environments
+                                (eg development, test, pre-production) do not require a license.
+                            </li>
+                            <li>
+                                We do not charge per server. A cluster of many servers
+                                part of one application installation is considered one deployment
+                                and requires one Deployment License. This is true so long as the
+                                application instances within the cluster are replicas of each other
+                                and server to provide load balancing and fail over only.
+                            </li>
+                            <li>
+                                Production failover deployments do not need to be licensed separately.
+                                They are considered part of the overall application production deployment.
+                            </li>
+                            <li>
+                                Multi-tennent deployments, where one application instance is serving
+                                many customers over different URLs, is considered one deployment, as
+                                each tennent is getting serviced by the same application instance.
+                            </li>
+                            <li>
+                                Different instances of the same application, where the instances
+                                are not part of a cluster for fail over or load balancing, are considered
+                                independent deployments and need a Deployment License for each
+                                individual application instance.
+                            </li>
+                            <li>
+                                Deploying an application to a cloud service (eg AWS or Docker) requires
+                                one Deployment License, regardless of how many virtual containers
+                                or servers the cloud application spawns for that one single instance
+                                of the application.
+                            </li>
+                        </ul>
+
+                        <p>
+                            If you have a deployment that doesn't fit within our licensing model,
+                            please start a conversation with us through
+                            <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> and we will do our
+                            best to get to something that works.
+                        </p>
+
+<!--
                         <div class="example card">
                             <div class="card-header">Detail</div>
                             <div class="card-body">
                                 <div class="card-text">
-                                    <ul>
-                                        <li>
-                                            A Deployment License Add-on allows making a project available
-                                            to individuals (eg your customers) outside of your orginisation
-                                            (sub-license).
-                                        </li>
-                                        <li>
-                                            One Deployment License Add-on covers one production environment
-                                            for one project.
-                                        </li>
-                                        <li>
-                                            Only production environments require licensing. All other environments
-                                            (eg development, test, pre-production) do not require a license.
-                                        </li>
-                                        <li>
-                                            We do not charge per server. A cluster of many servers
-                                            part of one application installation is considered one deployment
-                                            and requires one Deployment License. This is true so long as the
-                                            application instances within the cluster are replicas of each other
-                                            and server to provide load balancing and fail over only.
-                                        </li>
-                                        <li>
-                                            Production failover deployments do not need to be licensed separately.
-                                            They are considered part of the overall application production deployment.
-                                        </li>
-                                        <li>
-                                            Multi-tennent deployments, where one application instance is serving
-                                            many customers over different URLs, is considered one deployment, as
-                                            each tennent is getting serviced by the same application instance.
-                                        </li>
-                                        <li>
-                                            Different instances of the same application, where the instances
-                                            are not part of a cluster for fail over or load balancing, are considered
-                                            independent deployments and need a Deployment License for each
-                                            individual application instance.
-                                        </li>
-                                        <li>
-                                            Deploying an application to a cloud service (eg AWS or Docker) requires
-                                            one Deployment License, regardless of how many virtual containers
-                                            or servers the cloud application spawns for that one single instance
-                                            of the application.
-                                        </li>
-                                    </ul>
-                                    If you have a deployment that doesn't fit within our licensing model,
-                                    please start a conversation with us through
-                                    <a href="mailto:info@ag-grid.com>">info@ag-grid.com</a> and we will do our
-                                    best to get to something that works.
+
                                 </div>
                             </div>
                         </div>
+-->
                     </div>
                 </div>
             </section>
