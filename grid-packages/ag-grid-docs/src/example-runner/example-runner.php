@@ -123,14 +123,14 @@ function get_file_information_for_types($exampleType, $types, $dir, $multi, $gen
     foreach ($types as $theType) {
         $entry = array();
         if ($multi) {
-            $entry['files'] = getDirContents($dir . "/" . $theType);
+            $entry['files'] = getDirContents(path_combine($dir, $theType));
         } else if ($generated) {
-            $entry['files'] = getDirContents($dir . "/_gen/" . $theType);
+            $entry['files'] = getDirContents(path_combine($dir, "_gen", $theType));
         } else {
             $entry['files'] = getDirContents($dir);
         }
 
-        if ($theType != "vanilla" && $theType != "as-is") {
+        if ($theType !== 'vanilla' && $theType !== 'as-is') {
             $entry['boilerplatePath'] = "../example-runner/$exampleType-$theType-boilerplate";
             $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
         }
@@ -155,7 +155,7 @@ function grid_example($title, $dir, $type = 'vanilla', $options = array())
 
     if ($options['extras']) {
         foreach ($options['extras'] as $extra) {
-            $query[$extra] = "1";
+            $query[$extra] = '1';
         }
     }
 
@@ -270,10 +270,11 @@ function getExampleInfo($exampleType, $boilerplatePrefix)
         $appLocation = "";
     } else {
         $boilerplatePath = "$exampleType-$boilerplatePrefix-boilerplate/";
-        $appLocation = $appRoot . "/";
+        $appLocation = "$appRoot/";
     }
 
     return array(
+        "sourcePath" => $appRoot,
         "boilerplatePath" => $boilerplatePath,
         "appLocation" => $appLocation,
         "agGridScriptPath" => AG_GRID_SCRIPT_PATH,
@@ -298,7 +299,7 @@ function getReactAppInfo()
     $documents = getDocuments($files, $appRoot, false);
 
     $boilerplatePath = "app-boilerplate/";
-    $appLocation = $appRoot . "/";
+    $appLocation = "$appRoot/";
 
     return array(
         "boilerplatePath" => $boilerplatePath,

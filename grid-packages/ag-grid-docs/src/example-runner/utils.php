@@ -71,7 +71,7 @@ function toQueryString($key, $value)
 
 function path_combine(...$parts)
 {
-    return join("/", $parts);
+    return join('/', array_map(function($part) { return rtrim($part, '/'); }, $parts));
 }
 
 function filterByExt($files, $root, $plunkerView, $ext)
