@@ -12,24 +12,32 @@ function getStyleTags($styles)
     return join("\n    ", array_map(function($style) { return "<link rel=\"stylesheet\" href=\"$style\">"; }, $styles)) . "\n";
 }
 
+function endsWith($haystack, $needle)
+{
+    return substr($haystack, -strlen($needle)) === $needle;
+}
+
 // helpers in the example render, shared between angular, react & vue
 function getNonGeneratedScriptTags($scripts, $skipMain = FALSE)
 {
-    $shouldRenderMainJs = false;
+    $mainJsScript = null;
     $scriptNames = [];
     $mainJsName = 'main.js';
 
     foreach ($scripts as $script) {
-        if ($script === $mainJsName) {
-            $shouldRenderMainJs = !$skipMain;
+        if (endsWith($script, 'main.js')) {
+            if (!$skipMain) {
+                $mainJsScript = $script;
+            }
+
             continue;
         }
 
         $scriptNames[] = $script;
     }
 
-    if ($shouldRenderMainJs) {
-        $scriptNames[] = $mainJsName;
+    if (isset($mainJsScript)) {
+        $scriptNames[] = $mainJsScript;
     }
 
     if (empty($scriptNames)) {
