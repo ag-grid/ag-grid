@@ -21,7 +21,7 @@ export class ToolPanelFilterComp extends Component {
             <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
-                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
+                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
             </div>
             <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
 

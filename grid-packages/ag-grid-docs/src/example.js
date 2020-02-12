@@ -1501,7 +1501,13 @@ function CountryFloatingFilterComponent() {
 CountryFloatingFilterComponent.prototype.init = function(params) {
     this.params = params;
     this.eGui = document.createElement('div');
-    // this.eGui.style.borderBottom = '1px solid lightgrey';
+    this.eGui.style.overflow = 'hidden';
+    this.eGui.style.position = 'absolute';
+    this.eGui.style.left = '0';
+    this.eGui.style.right = '0';
+    this.eGui.style.top = '50%';
+    this.eGui.style.height = '16px';
+    this.eGui.style.marginTop = '-8px';
 };
 
 CountryFloatingFilterComponent.prototype.getGui = function() {

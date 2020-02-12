@@ -137,6 +137,7 @@
     }
     
     .ag-group-title-bar-icon {
+        cursor: pointer;
         color: $ag-secondary-foreground-color;
     }
     
@@ -344,6 +345,10 @@
 
     .ag-column-select-header-icon {
         cursor: pointer;
+        margin: 0 $ag-grid-size;
+    }
+
+    .ag-column-select-header-checkbox {
         margin: 0 $ag-grid-size;
     }
 

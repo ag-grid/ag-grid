@@ -47,7 +47,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.setTemplate(
             `<div class="ag-column-select-header" role="presentation">
                 <div ref="eExpand" class="ag-column-select-header-icon"></div>
-                <div ref="eSelect" class="ag-column-select-header-icon"></div>
+                <div ref="eSelect" class="ag-column-select-header-checkbox"></div>
                 <div class="ag-input-wrapper ag-column-select-header-filter-wrapper" ref="eFilterWrapper" role="presentation">
                     <input class="ag-column-select-header-filter" ref="eFilterTextField" type="text" placeholder="${translate(
                     "searchOoo",

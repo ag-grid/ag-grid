@@ -62,7 +62,6 @@
     .ag-charts-format-sub-level-group {
         border-left: dashed 1px $ag-border-color;
         padding-left: $ag-grid-size;
-        margin-top: $ag-grid-size * 2;
         margin-bottom: $ag-grid-size * 2;
     }
 
@@ -136,14 +135,13 @@
     .ag-column-drop-vertical-empty-message {
         display: flex;
         align-items: center;
-        color: rgba($ag-foreground-color, 0.75);
         border: dashed 1px $ag-border-color;
         margin: $ag-grid-size * 2;
         padding: $ag-grid-size * 2;
     }
 
-    .ag-column-drop-horizontal-empty-message {
-        color: $ag-foreground-color;
+    .ag-column-drop-empty-message {
+        color: rgba($ag-foreground-color, 0.75);
     }
 
     .ag-filter-toolpanel-instance-filter {
@@ -180,7 +178,10 @@
     .ag-group-expanded .ag-icon,
     .ag-group-contracted .ag-icon,
     .ag-chart-settings-prev,
-    .ag-chart-settings-next {
+    .ag-chart-settings-next,
+    .ag-group-title-bar-icon,
+    .ag-column-select-header-icon,
+    .ag-floating-filter-button-button {
         &:hover {
             color: $ag-alpine-active-color;
         }
@@ -196,5 +197,16 @@
             margin-right: $ag-grid-size
         ));
     }
-    
+
+    .ag-filter-toolpanel-group-container {
+        padding-left: $ag-grid-size;
+    }
+
+    .ag-filter-toolpanel-instance-filter {
+        background: rgba(0, 0, 0, 0.03);
+        border-left: dashed 1px $ag-border-color;
+        margin-left: $ag-grid-size + $ag-icon-size / 2 - 1px;
+        padding-left: $ag-icon-size / 2;
+        margin-right: $ag-grid-size * 2;
+    }
 }

@@ -42,4 +42,8 @@
         @include ag-border(primary, (top, bottom));
         padding-top: $ag-grid-size;
     }
+
+    .ag-filter-toolpanel-instance-header-icon {
+        @include ag-theme-rtl((margin-left: $ag-grid-size));
+    }
 }

@@ -672,6 +672,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 */
 
 .ag-floating-filter-body {
+    position: relative;
     display: flex;
     flex: 1 1 auto;
     height: 100%;
