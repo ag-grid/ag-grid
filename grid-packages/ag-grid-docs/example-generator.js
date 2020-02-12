@@ -1,5 +1,5 @@
-const {JSDOM} = require('jsdom');
-const {window, document} = new JSDOM('<html></html>');
+const { JSDOM } = require('jsdom');
+const { window, document } = new JSDOM('<html></html>');
 
 window.Date = Date;
 global.window = window;
@@ -58,7 +58,7 @@ function phpArrayToJSON(string) {
 }
 
 function getFileContents(path) {
-    return fs.readFileSync(path, {encoding: 'utf8'});
+    return fs.readFileSync(path, { encoding: 'utf8' });
 }
 
 function forEachExample(done, name, regex, generateExample, scope = '*') {
@@ -95,7 +95,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*') {
     });
 }
 
-const format = (source, parser) => prettier.format(source, {parser, singleQuote: true, trailingComma: 'es5'});
+const format = (source, parser) => prettier.format(source, { parser, singleQuote: true, trailingComma: 'es5' });
 
 function createExampleGenerator(prefix) {
     const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix);
@@ -115,7 +115,7 @@ function createExampleGenerator(prefix) {
             mainScript = getMatchingPaths('main.js')[0];
 
             // get the rest of the scripts
-            scripts = getMatchingPaths('*.js', {ignore: ['**/main.js', '**/*_{angular,react,vanilla,vue}.js']});
+            scripts = getMatchingPaths('*.js', { ignore: ['**/main.js', '**/*_{angular,react,vanilla,vue}.js'] });
         } else {
             // only one script, which is the main one
             scripts = [];
@@ -183,7 +183,7 @@ function createExampleGenerator(prefix) {
             const basePath = path.join(_gen, framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            fs.mkdirSync(scriptsPath, {recursive: true});
+            fs.mkdirSync(scriptsPath, { recursive: true });
 
             Object.keys(files).forEach(name => {
                 fs.writeFileSync(path.join(scriptsPath, name), files[name], 'utf8');
@@ -198,7 +198,7 @@ function createExampleGenerator(prefix) {
             copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`);
         };
 
-        writeExampleFiles('react', reactScripts, {'index.jsx': indexJSX});
+        writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
 
         writeExampleFiles('angular', angularScripts, {
             'app.component.ts': appComponentTS,
@@ -208,12 +208,12 @@ function createExampleGenerator(prefix) {
         // vue is still new - only process examples marked as tested and good to go
         // when all examples have been tested this check can be removed
         if (options.processVue || options.processVue === undefined) {
-            writeExampleFiles('vue', vueScripts, {'main.js': mainApp});
+            writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
         }
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
-        const vanillaScripts = getMatchingPaths('*.{html,js}', {ignore: ['**/*_{angular,react,vue}.js']});
+        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
         writeExampleFiles('vanilla', vanillaScripts, {});
 
         // allow developers to override the example theme with an environment variable
@@ -231,39 +231,33 @@ function createExampleGenerator(prefix) {
 }
 
 function getGeneratorCode(prefix) {
-    const {parser} = require(`${prefix}vanilla-src-parser.ts`);
-    const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react.ts`);
-    const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
-    const {appModuleAngular} = require(`${prefix}angular-app-module.ts`);
+    const { parser } = require(`${prefix}vanilla-src-parser.ts`);
+    const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
+    const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
+    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
+    const { appModuleAngular } = require(`${prefix}angular-app-module.ts`);
 
     return [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular];
 }
 
-function generateGridExamples(scope, done) {
-    const exampleGenerator = createExampleGenerator('./src/example-runner/grid-');
+function generateExamples(type, scope, done) {
+    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`);
+    const regex = new RegExp(`${type}_example\\('.+?'\\s*,\\s*'(.+?)'\\s*,\\s*'(.+?)'(.*?)\\);?\\s*\\?>`, 'g');
 
-    forEachExample(done, 'grid', /grid_example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g, exampleGenerator, scope);
-}
-
-function generateChartExamples(scope, done) {
-    const exampleGenerator = createExampleGenerator('./src/example-runner/chart-');
-
-    forEachExample(done, 'chart', /chart_example\('.+?',\s?'(.+?)',\s?'(.+?)'(.+)?\)\s?\?>/g, exampleGenerator, scope);
+    forEachExample(done, type, regex, exampleGenerator, scope);
 }
 
 module.exports.generateGridExamples = (scope, done) => {
     require('ts-node').register();
-    generateGridExamples(scope, done);
+    generateExamples('grid', scope, done);
 };
 
 module.exports.generateChartExamples = (scope, done) => {
     require('ts-node').register();
-    generateChartExamples(scope, done);
+    generateExamples('chart', scope, done);
 };
 
 module.exports.generateExamples = (scope) => {
-    require('ts-node').register();
-    generateGridExamples(scope);
-    generateChartExamples(scope);
+    module.exports.generateGridExamples(scope);
+    module.exports.generateChartExamples(scope);
 };
