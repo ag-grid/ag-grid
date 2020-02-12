@@ -5,7 +5,7 @@ import { _ } from './utils';
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 interface HardCodedSize {
     [key: string]: {
-        [key in SASS_PROPERTIES]: number;
+        [key in SASS_PROPERTIES]?: number;
     };
 }
 
