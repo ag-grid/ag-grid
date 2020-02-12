@@ -16,6 +16,6 @@ var chart = agCharts.AgChart.create({
     }]
 });
 
-setInterval(function () {
+document.getElementById('toggle').addEventListener('click', function () {
     chart.legend.enabled = !chart.legend.enabled;
-}, 1000);
+});
