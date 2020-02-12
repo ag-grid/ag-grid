@@ -39,10 +39,11 @@ export class AgList extends Component {
         const itemEl = document.createElement('div');
         const itemContentEl = document.createElement('span');
         _.addCssClass(itemEl, 'ag-list-item');
+        itemEl.tabIndex = -1;
         itemContentEl.innerHTML = innerText;
 
         this.itemEls.push(itemEl);
-        this.addDestroyableEventListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem((e.target as HTMLElement)));
+        this.addDestroyableEventListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
         this.addDestroyableEventListener(itemEl, 'mouseleave', () => this.clearHighlighted());
         this.addDestroyableEventListener(itemEl, 'click', () => {
             const idx = this.itemEls.indexOf(itemEl);
@@ -109,11 +110,13 @@ export class AgList extends Component {
         if (!el.offsetParent) { return; }
         _.radioCssClass(el, 'ag-active-item');
         this.highlightedEl = el;
+        this.highlightedEl.focus();
     }
 
     private clearHighlighted(): void {
         if (!this.highlightedEl || !this.highlightedEl.offsetParent) { return; }
         _.removeCssClass(this.highlightedEl, 'ag-active-item');
+        this.highlightedEl = null;
     }
 
     private fireChangeEvent(): void {

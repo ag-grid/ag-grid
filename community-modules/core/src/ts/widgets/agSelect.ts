@@ -2,7 +2,7 @@ import { AgPickerField } from "./agPickerField";
 import { IAgLabel } from "./agAbstractLabel";
 import { ListOption, AgList } from "./agList";
 import { _ } from "../utils";
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct, PreConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { AgAbstractField } from "./agAbstractField";
 
@@ -47,17 +47,23 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         }
 
         const listGui = this.listComponent.getGui();
+        const focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', (e: FocusEvent) => {
+            if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
+                this.hideList();
+            }
+        });
 
         this.hideList = this.popupService.addPopup(true, listGui, true, () => {
             this.hideList = null;
+            focusOutFunc();
         });
 
-        _.setElementWidth(listGui, _.getAbsoluteWidth(this.getGui()));
+        _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
         listGui.style.position = 'absolute';
 
         this.popupService.positionPopupUnderComponent({
             type: 'ag-list',
-            eventSource: this.getGui(),
+            eventSource: this.eWrapper,
             ePopup: listGui
         });
 
