@@ -1,6 +1,6 @@
 @import "./ag-grid-mixins";
 
-@mixin ag-grid-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
+@mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
     @if ag-should-draw-border($border-type) {
         @if $color == null {
             $color: if($border-type == secondary, $ag-secondary-border-color, $ag-border-color)
@@ -35,7 +35,7 @@
 }
 
 @mixin ag-card() {
-    @include ag-grid-border(primary);
+    @include ag-border(primary);
     
     background: $ag-background-color;
     border-radius: $ag-card-radius;

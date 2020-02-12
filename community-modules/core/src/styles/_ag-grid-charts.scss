@@ -98,9 +98,26 @@
 
 .ag-chart-settings-card-item {
     cursor: pointer;
-    opacity: 0.2;
-    &.ag-selected {
-        opacity: 1;
+    width: 10px;
+    height: 10px;
+    background-color: #000; // exception to the rule of no visual styles in functional stylesheet - without a background this element would be invisible
+    position: relative;
+    &.ag-not-selected {
+        opacity: 0.2;
+    }
+
+    &:before {
+        // make expanded click area
+        content: " ";
+        display: block;
+        position: absolute;
+        background-color: transparent;
+        left: 50%;
+        top: 50%;
+        margin-left: -10px;
+        margin-top: -10px;
+        width: 20px;
+        height: 20px;
     }
 }
 

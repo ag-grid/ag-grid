@@ -41,7 +41,7 @@ $example = getExampleInfo('chart', 'angular');
         var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
         var systemJsMap = <?= json_encode($chartSystemJsMap, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
 <?php
-        if(!empty($chartSystemJsCommunityPaths)) {
+        if (!empty($chartSystemJsCommunityPaths)) {
 ?>
         var systemJsPaths = <?= json_encode($chartSystemJsCommunityPaths, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) ?>;
 <?php
@@ -50,6 +50,7 @@ $example = getExampleInfo('chart', 'angular');
     </script>
 
     <script src="<?= $example["boilerplatePath"] ?>systemjs.config.js"></script>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
     <script>
         System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err) { console.error(err); });
     </script>

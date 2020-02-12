@@ -35,7 +35,7 @@
         background-color: $ag-header-background-color;
         color: $ag-secondary-foreground-color;
         height: $ag-row-height;
-        @include ag-grid-border(primary, bottom);
+        @include ag-border(primary, bottom);
 
         @include ag-theme-rtl(( padding-left: $ag-cell-horizontal-padding ));
     }
@@ -75,9 +75,9 @@
         min-height: 50px;
         max-height: 150px;
         
-        @include ag-grid-border(secondary, bottom);
+        @include ag-border(secondary, bottom);
         &.ag-last-column-drop {
-            @include ag-grid-border(secondary, bottom, $none: true);
+            @include ag-border(secondary, bottom, $none: true);
         }
     }
 
@@ -99,11 +99,6 @@
         overflow: hidden;
         color: $ag-disabled-foreground-color;
         margin-top: $ag-grid-size;
-
-        @include ag-theme-rtl((
-            padding-left: $ag-icon-size + $ag-grid-size * 2,
-            padding-right: $ag-grid-size
-        ));
     }
 
     .ag-select-agg-func-popup {

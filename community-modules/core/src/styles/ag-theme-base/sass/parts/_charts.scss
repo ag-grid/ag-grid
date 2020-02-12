@@ -63,7 +63,7 @@
     .ag-charts-minichart-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        @include ag-grid-border(secondary, top);
+        @include ag-border(secondary, top);
     }
 
     .ag-charts-minichart-group-container {
@@ -97,7 +97,6 @@
     .ag-chart-format-section {
         display: flex;
         margin: 0;
-        padding-bottom: $ag-grid-size * 0.5;
     }
 
     .ag-chart-menu-panel {

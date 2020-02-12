@@ -31,8 +31,8 @@ $example = getExampleInfo('grid', 'angular');
       }
     </style>
 <?php renderExampleExtras($_GET); ?>
-<?php renderStyles($example['styles']); ?>
-<?php renderNonGeneratedScripts($example['scripts']); ?>
+    <?= getStyleTags($example['styles']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
 
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js@2.6.5/client/shim.min.js"></script>

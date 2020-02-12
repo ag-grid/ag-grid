@@ -96,7 +96,7 @@
         padding: 0 $ag-grid-size 0 $ag-cell-horizontal-padding;
         height: $ag-row-height;
         
-        @include ag-grid-border(secondary, bottom);
+        @include ag-border(secondary, bottom);
     }
 
     .ag-rich-select-virtual-list-item {
@@ -130,6 +130,11 @@
         color: $ag-secondary-foreground-color;
         display: block;
     }
+
+    .ag-group-expanded .ag-icon,
+    .ag-group-contracted .ag-icon {
+        cursor: pointer;
+    }
     
     .ag-group-title-bar-icon {
         color: $ag-secondary-foreground-color;
@@ -150,9 +155,6 @@
     }
     
     .ag-group-toolbar {
-        @if $ag-subheader-background-color {
-            background-color: rgba($ag-subheader-background-color, 0.5);
-        }
         padding: $ag-grid-size;
     }
 
@@ -297,7 +299,7 @@
 
     .ag-dialog {
         border-radius: $ag-border-radius;
-        @include ag-grid-border(primary);
+        @include ag-border(primary);
     }
 
     .ag-panel {
@@ -309,7 +311,7 @@
         color: $ag-header-foreground-color;
         height: $ag-header-height;
         padding: $ag-grid-size $ag-cell-horizontal-padding;
-        @include ag-grid-border(primary, bottom);
+        @include ag-border(primary, bottom);
     }
 
     .ag-panel-title-bar-button {
@@ -323,7 +325,7 @@
         background-color: $ag-header-background-color;
         color: $ag-foreground-color;
         padding: $ag-grid-size;
-        @include ag-grid-border(primary);
+        @include ag-border(primary);
         border-radius: $ag-card-radius;
         transition: opacity 1s;
 
@@ -355,6 +357,7 @@
     .ag-column-group-icons {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;
+        cursor: pointer;
     }
 
     .ag-column-select-column-readonly,
@@ -369,7 +372,7 @@
     }
 
     .ag-column-select-list {
-        @include ag-grid-border(secondary, top);
+        @include ag-border(secondary, top);
         padding-top: $ag-grid-size;
     }
 }

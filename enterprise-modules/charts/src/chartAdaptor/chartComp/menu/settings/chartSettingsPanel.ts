@@ -58,8 +58,8 @@ export class ChartSettingsPanel extends Component {
     private postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
-        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallRight', this.gridOptionsWrapper));
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
+        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
 
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
@@ -110,15 +110,14 @@ export class ChartSettingsPanel extends Component {
         });
 
         _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.size <= 1);
+
+        const paletteIndex = this.paletteNames.indexOf(this.activePalette);
+        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
     private addCardLink(paletteName: ChartPaletteName): void {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
-
-        if (paletteName === this.activePalette) {
-            _.addCssClass(link, 'ag-selected');
-        }
 
         this.addDestroyableEventListener(link, 'click', () => {
             const { activePalette, isAnimating, paletteNames } = this;
@@ -173,7 +172,7 @@ export class ChartSettingsPanel extends Component {
     private setActivePalette(paletteName: ChartPaletteName, animationDirection: AnimationDirection) {
         const paletteIndex = this.paletteNames.indexOf(paletteName);
 
-        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
+        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
         const currentGui = currentPalette.getGui();

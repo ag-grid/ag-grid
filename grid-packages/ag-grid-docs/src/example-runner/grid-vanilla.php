@@ -1,42 +1,11 @@
 <?php
 require_once 'example-runner.php';
-
-$exampleDir = basename($_GET['example']);
-$exampleSection = basename($_GET['section']);
-$multi = isset($_GET['multi']);
-$generated = isset($_GET['generated']);
-$plunkerView = isset($_GET['plunkerView']);
-$gridDefaults = getGridSettings();
-
-if ($multi) {
-    $path = path_combine('..', $exampleSection, $exampleDir, 'vanilla');
-} else if ($generated) {
-    $path = path_combine('..', $exampleSection, $exampleDir, '_gen', 'vanilla');
-} else {
-    $path = path_combine('..', $exampleSection, $exampleDir);
-}
-
-$files = getDirContents($path);
-$scripts = array();
-$styles = array();
-
-foreach ($files as $file) {
-    $filePath = path_combine($path, $file);
-    $info = pathinfo($filePath);
-    switch ($info['extension']) {
-        case 'js':
-            $scripts[] = $plunkerView ? $file : $filePath;
-            break;
-        case 'css':
-            $styles[] = $plunkerView ? $file : $filePath;
-            break;
-    }
-}
+$example = getExampleInfo('grid', 'vanilla');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>var __basePath = '<?= $plunkerView ? "" : rtrim($path, '/') . '/'; ?>';</script>
+    <script>var __basePath = '<?= rtrim($example['appLocation'], '/') . '/' ?>';</script>
     <style media="only screen">
         html, body {
             height: 100%;
@@ -61,19 +30,12 @@ foreach ($files as $file) {
     </style>
     <?php renderExampleExtras($_GET) ?>
     <?= globalAgGridScript(isset($_GET["enterprise"])) . "\n" ?>
-    <?php renderStyles($styles); ?>
+    <?= getStyleTags($example['styles']); ?>
 </head>
 
 <body>
+    <?php include path_combine($example['sourcePath'], 'index.html'); ?>
 
-<?php
-include path_combine($path, 'index.html');
-echo "\n";
-foreach ($scripts as $script) {
-    if ($script !== 'worker.js') {
-        echo "    <script src=\"$script\"></script>\n";
-    }
-}
-?>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
 </body>
 </html>

@@ -32,8 +32,8 @@ $example = getReactAppInfo();
             overflow: auto;
         }
     </style>
-    <?php renderStyles($example['styles']); ?>
-    <?php renderNonGeneratedScripts($example['scripts']); ?>
+    <?= getStyleTags($example['styles']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
 </head>
 <body>
 <div id="root">Loading&hellip;</div>

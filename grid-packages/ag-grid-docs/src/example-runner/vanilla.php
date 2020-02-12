@@ -30,7 +30,7 @@ include 'react-utils.php';
             overflow: auto;
         }
     </style>
-    <?= globalAgChartsScript() . "\n" ?>
+    <?= getGlobalAgChartsScriptTag() ?>
 </head>
 
 

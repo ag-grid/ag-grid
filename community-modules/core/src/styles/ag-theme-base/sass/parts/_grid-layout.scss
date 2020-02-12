@@ -6,7 +6,7 @@
     }
 
     .ag-root-wrapper {
-        @include ag-grid-border(primary, $radius: $ag-border-radius);
+        @include ag-border(primary, $radius: $ag-border-radius);
     }
     
     // support 20 levels here because row group indentation is used for tree data which can be quite deep
@@ -64,10 +64,10 @@
 
         @if $ag-row-border-color {
             &:not(.ag-row-first) {
-                @include ag-grid-border(critical, top, $color: $ag-row-border-color);
+                @include ag-border(critical, top, $color: $ag-row-border-color);
             }
             &.ag-row-last {
-                @include ag-grid-border(critical, bottom, $color: $ag-row-border-color);
+                @include ag-border(critical, bottom, $color: $ag-row-border-color);
             }
         }
     }
@@ -101,10 +101,10 @@
 
     // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
     .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
-        @include ag-grid-border(critical, right);
+        @include ag-border(critical, right);
     }
     .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
-        @include ag-grid-border(critical, left);
+        @include ag-border(critical, left);
     }
 
     .ag-row-hover {
@@ -203,9 +203,9 @@
     }
 
     .ag-floating-top {
-        @include ag-grid-border(critical, bottom);
+        @include ag-border(critical, bottom);
     }
     .ag-floating-bottom {
-        @include ag-grid-border(critical, top);
+        @include ag-border(critical, top);
     }
 }

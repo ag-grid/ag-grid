@@ -22,10 +22,10 @@ function globalAgGridScript($enterprise = false)
 }
 
 /* used by both grid and charts examples - vanilla examples */
-function globalAgChartsScript()
+function getGlobalAgChartsScriptTag()
 {
     $path = AG_CHARTS_SCRIPT_PATH;
-    return "    <script src=\"$path\"></script>";
+    return "<script src=\"$path\"></script>\n";
 }
 
 /* general utilities */
@@ -71,12 +71,13 @@ function toQueryString($key, $value)
 
 function path_combine(...$parts)
 {
-    return join("/", $parts);
+    return join('/', array_map(function($part) { return rtrim($part, '/'); }, $parts));
 }
 
 function filterByExt($files, $root, $plunkerView, $ext)
 {
     $matching = array();
+
     foreach ($files as $file) {
         $path = path_combine($root, $file);
         $info = pathinfo($path);

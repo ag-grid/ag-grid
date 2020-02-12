@@ -1014,6 +1014,10 @@
                   {
                     "title": "Simple Line",
                     "url": "javascript-charts-gallery/simple-line.php"
+                  },
+                  {
+                    "title": "Line With Gaps",
+                    "url": "javascript-charts-gallery/line-with-gaps.php"
                   }
                 ]
               },
