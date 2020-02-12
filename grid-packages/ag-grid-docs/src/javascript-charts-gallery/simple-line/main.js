@@ -1,46 +1,54 @@
-var data = [{
-    beverage: 'Coffee',
-    Q1: 450,
-    Q2: 560,
-    Q3: 600,
-    Q4: 700
-}, {
-    beverage: 'Tea',
-    Q1: 270,
-    Q2: 380,
-    Q3: 450,
-    Q4: 520
-}, {
-    beverage: 'Milk',
-    Q1: 180,
-    Q2: 170,
-    Q3: 190,
-    Q4: 200
-}];
-
 var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Line Chart'
+        text: 'Road fuel prices',
+        fontSize: 18,
     },
     subtitle: {
-        text: 'per quarter'
+        text: 'Source: Department for Business, Energy & Industrial Strategy',
     },
-    padding: {
-        top: 40,
-        right: 40,
-        bottom: 40,
-        left: 40
-    },
-    series: [{
-        type: 'line',
-        xKey: 'beverage',
-        yKey: 'Q1'
-    }],
-    legend: {
-        spacing: 40
-    }
+    series: [
+        {
+            type: 'line',
+            xKey: 'date',
+            yKey: 'petrol',
+            stroke: '#01c185',
+            marker: {
+                stroke: '#01c185',
+                fill: '#01c185',
+            }
+        },
+        {
+            type: 'line',
+            xKey: 'date',
+            yKey: 'diesel',
+            stroke: '#000000',
+            marker: {
+                stroke: '#000000',
+                fill: '#000000',
+            }
+        }
+    ],
+    axes: [
+        {
+            position: 'bottom',
+            type: 'time',
+            tick: {
+                count: agCharts.month.every(2),
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        {
+            position: 'left',
+            type: 'number',
+            title: {
+                text: 'Price in pence'
+            }
+        }
+    ]
 };
 
 var chart = agCharts.AgChart.create(options);

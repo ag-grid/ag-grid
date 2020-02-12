@@ -18,7 +18,8 @@ function getImports(componentFilenames: string[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgChartsReact } from 'ag-charts-react';"
+        "import * as agCharts from 'ag-charts-community';",
+        "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
     if (componentFilenames) {

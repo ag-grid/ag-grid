@@ -18,6 +18,7 @@ function toAssignment(property: any): string {
 function getImports(): string[] {
     return [
         "import Vue from 'vue';",
+        "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue';",
     ];
 }

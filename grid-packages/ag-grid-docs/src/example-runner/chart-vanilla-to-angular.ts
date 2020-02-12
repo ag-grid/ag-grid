@@ -16,7 +16,8 @@ function isInstanceMethod(instance: any, property: any) {
 function getImports(): string[] {
     return [
         "import { Component } from '@angular/core';",
-        "import { AgChartOptions } from 'ag-charts-angular';"
+        "import * as agCharts from 'ag-charts-community';",
+        "import { AgChartOptions } from 'ag-charts-angular';",
     ];
 }
 
