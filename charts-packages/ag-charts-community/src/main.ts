@@ -31,17 +31,34 @@ export * from "./scene/shape/shape";
 export * from "./util/angle";
 export * from "./util/array";
 export * from "./util/padding";
-export * from "./util/time/millisecond";
-export * from "./util/time/second";
-export * from "./util/time/minute";
-export * from "./util/time/hour";
-export * from "./util/time/day";
-export * from "./util/time/week";
-export * from "./util/time/month";
-export * from "./util/time/year";
-export * from "./util/time/utcMinute";
-export * from "./util/time/utcHour";
-export * from "./util/time/utcDay";
-export * from "./util/time/utcMonth";
-export * from "./util/time/utcYear";
-export * from "./chart/agChart"
+
+import { millisecond } from "./util/time/millisecond";
+import { second } from "./util/time/second";
+import { minute } from "./util/time/minute";
+import { hour } from "./util/time/hour";
+import { day } from "./util/time/day";
+import { sunday, monday, tuesday, wednesday, thursday, friday, saturday } from "./util/time/week";
+import { month } from "./util/time/month";
+import { year } from "./util/time/year";
+import { utcMinute } from "./util/time/utcMinute";
+import { utcHour } from "./util/time/utcHour";
+import { utcDay } from "./util/time/utcDay";
+import { utcMonth } from "./util/time/utcMonth";
+import { utcYear } from "./util/time/utcYear";
+export const time = {
+    millisecond,
+    second,
+    minute,
+    hour,
+    day,
+    sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+    month,
+    year,
+    utcMinute,
+    utcHour,
+    utcDay,
+    utcMonth,
+    utcYear
+};
+
+export * from "./chart/agChart";

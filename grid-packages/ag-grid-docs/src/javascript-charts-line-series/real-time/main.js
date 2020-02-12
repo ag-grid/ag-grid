@@ -19,7 +19,7 @@ var chart = agCharts.AgChart.create({
         type: 'time',
         position: 'bottom',
         tick: {
-            count: agCharts.second.every(5)
+            count: agCharts.time.second.every(5)
         },
         label: {
             format: '%H:%M:%S'
