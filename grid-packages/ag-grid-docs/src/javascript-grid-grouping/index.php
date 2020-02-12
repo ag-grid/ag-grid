@@ -14,10 +14,6 @@ include '../documentation-main/documentation_header.php';
 
     <? enterprise_feature("Row Grouping"); ?>
 
-    <p>
-        Remember Row Grouping works with all frameworks eg Angular and React as well as plain JavaScript.
-    </p>
-
     <?php
         printVideoSection("https://www.youtube.com/embed/2NOsirWWl_o", "row-grouping-video", "Row Grouping Video Tutorial");
     ?>
