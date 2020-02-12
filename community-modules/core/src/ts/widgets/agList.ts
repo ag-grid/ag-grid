@@ -37,8 +37,9 @@ export class AgList extends Component {
 
     private renderOption(innerText: string): void {
         const itemEl = document.createElement('div');
+        const itemContentEl = document.createElement('span');
         _.addCssClass(itemEl, 'ag-list-item');
-        itemEl.innerHTML = innerText;
+        itemContentEl.innerHTML = innerText;
 
         this.itemEls.push(itemEl);
         this.addDestroyableEventListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem((e.target as HTMLElement)));
@@ -47,6 +48,7 @@ export class AgList extends Component {
             const idx = this.itemEls.indexOf(itemEl);
             this.setValueByIndex(idx);
         });
+        itemEl.appendChild(itemContentEl);
         this.getGui().appendChild(itemEl);
     }
 

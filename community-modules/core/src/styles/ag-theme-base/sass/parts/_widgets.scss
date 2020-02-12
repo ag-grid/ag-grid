@@ -77,6 +77,8 @@
 
     .ag-list {
         background-color: $ag-control-panel-background-color;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     
     .ag-list-item, .ag-virtual-list-item {
@@ -84,13 +86,17 @@
     }
 
     .ag-list-item {
-        padding-left: 4px;
-        padding-right: 4px;
-        white-space: nowrap;
-        align-items: center;
         display: flex;
-        user-select: none;
+        align-items: center;
+        margin-left: 4px;
+        margin-right: 4px;
         cursor: default;
+        user-select: none;
+        span {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
     }
 
     .ag-list-item.ag-active-item {
@@ -98,13 +104,16 @@
     }
 
     .ag-select {
-        background-color: $ag-background-color;
         .ag-picker-field-wrapper {
+            background-color: $ag-background-color;
             height: $ag-row-height;
             align-items: center;
         }
         .ag-picker-field-display {
             margin: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .ag-picker-field-button {
             height: 100%
