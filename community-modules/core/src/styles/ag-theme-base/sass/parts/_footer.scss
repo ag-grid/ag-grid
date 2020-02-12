@@ -36,7 +36,7 @@
     }
 
     .ag-status-bar {
-        @include ag-grid-border(primary, top);
+        @include ag-border(primary, top);
         color: $ag-disabled-foreground-color;
         padding-right: $ag-grid-size * 4;
         padding-left: $ag-grid-size * 4;

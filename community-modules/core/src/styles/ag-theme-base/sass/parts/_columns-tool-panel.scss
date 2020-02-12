@@ -20,7 +20,7 @@
     }
     
     .ag-column-panel-column-select {
-        @include ag-grid-border(secondary, (bottom, top));
+        @include ag-border(secondary, (bottom, top));
     }
 
     .ag-column-select-header-filter-wrapper {

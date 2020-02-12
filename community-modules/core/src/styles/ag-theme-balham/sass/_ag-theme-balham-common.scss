@@ -58,6 +58,13 @@
     .ag-column-drop-vertical-icon {
         color: $ag-secondary-foreground-color;
     }
+    
+    .ag-column-drop-vertical-empty-message {
+        @include ag-theme-rtl((
+            padding-left: $ag-icon-size + $ag-grid-size * 2,
+            padding-right: $ag-grid-size
+        ));
+    }
 
     .ag-column-drop-horizontal {
         height: $ag-header-height;
@@ -102,5 +109,20 @@
 
     .ag-panel-title-bar-button-icon {
         font-size: $ag-icon-size + $ag-grid-size;
+    }
+    
+    .ag-chart-data-section,
+    .ag-chart-format-section {
+        padding-bottom: $ag-grid-size * 0.5;
+    }
+    
+    .ag-group-toolbar {
+        @if $ag-subheader-background-color {
+            background-color: rgba($ag-subheader-background-color, 0.5);
+        }
+    }
+
+    .ag-chart-tab {
+        padding-top: $ag-grid-size / 2;
     }
 }

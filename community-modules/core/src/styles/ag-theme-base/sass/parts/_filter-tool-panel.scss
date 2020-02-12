@@ -18,7 +18,7 @@
     }
 
     .ag-filter-toolpanel-group-level-0 {
-        @include ag-grid-border(secondary, top);
+        @include ag-border(secondary, top);
     }
 
     .ag-filter-toolpanel-expand,
@@ -39,7 +39,7 @@
     }
 
     .ag-filter-toolpanel-instance-filter {
-        @include ag-grid-border(primary, (top, bottom));
+        @include ag-border(primary, (top, bottom));
         padding-top: $ag-grid-size;
     }
 }

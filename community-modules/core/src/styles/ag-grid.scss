@@ -513,6 +513,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     overflow-x: auto;
 }
 
+.ag-column-drop-empty .ag-column-drop-vertical-list {
+    overflow: hidden;
+}
+
 .ag-column-drop-vertical-empty-message {
     display: block;
 }

@@ -43,12 +43,37 @@
     }
     
     .ag-tabs-header {
-        @include ag-grid-border(primary, bottom);
+        @include ag-border(primary, bottom);
     }
 
     .ag-charts-minichart-group-title-bar {
         padding: $ag-grid-size $ag-grid-size * 2;
         line-height: $ag-icon-size + $ag-grid-size - 2;
+    }
+
+    .ag-chart-mini-thumbnail {
+        background-color: $ag-background-color;
+    }
+    
+    .ag-chart-settings-nav-bar {
+        @include ag-border(secondary, top);
+    }
+
+    .ag-charts-format-sub-level-group {
+        border-left: dashed 1px $ag-border-color;
+        padding-left: $ag-grid-size;
+        margin-top: $ag-grid-size * 2;
+        margin-bottom: $ag-grid-size * 2;
+    }
+
+    .ag-charts-format-sub-level-group-title-bar {
+        padding-top: 0;
+        background: none;
+        font-weight: 700;
+    }
+
+    .ag-charts-format-sub-level-group-container {
+        padding-bottom: 0;
     }
     
     .ag-dnd-ghost {
@@ -79,7 +104,6 @@
         &:hover {
             border-color: $ag-alpine-active-color;
             background-color: transparentize($ag-alpine-active-color, 0.9);
-            color: $ag-alpine-active-color;
         }
     
         &:active {
@@ -98,11 +122,6 @@
         max-height: 175px;
     }
 
-    .ag-column-drop-vertical-empty-message {
-        display: flex;
-        align-items: center;
-    }
-
     .ag-tool-panel-wrapper {
         width: 250px;
     }
@@ -111,15 +130,16 @@
         background-color: $ag-background-color;
         // TODO widget-group-padding
         padding: $ag-grid-size * 2;
-        @include ag-grid-border(secondary, bottom);
+        @include ag-border(secondary, bottom);
     }
 
     .ag-column-drop-vertical-empty-message {
+        display: flex;
+        align-items: center;
         color: rgba($ag-foreground-color, 0.75);
-        border: 1px dashed $ag-border-color;
+        border: dashed 1px $ag-border-color;
         margin: $ag-grid-size * 2;
-        // TODO !important required because base theme applied more specific styles in .ag-ltr
-        padding: $ag-grid-size * 2 !important;
+        padding: $ag-grid-size * 2;
     }
 
     .ag-column-drop-horizontal-empty-message {
@@ -153,10 +173,28 @@
 
     .ag-header-cell-menu-button,
     .ag-side-button-button,
-    .ag-tab {
+    .ag-tab,
+    .ag-panel-title-bar-button,
+    .ag-header-expand-icon,
+    .ag-column-group-icons,
+    .ag-group-expanded .ag-icon,
+    .ag-group-contracted .ag-icon,
+    .ag-chart-settings-prev,
+    .ag-chart-settings-next {
         &:hover {
             color: $ag-alpine-active-color;
         }
+    }
+
+    .ag-chart-settings-card-item.ag-not-selected:hover {
+        opacity: 0.35;
+    }
+
+    .ag-panel-title-bar-button {
+        @include ag-theme-rtl((
+            margin-left: $ag-grid-size * 2,
+            margin-right: $ag-grid-size
+        ));
     }
     
 }

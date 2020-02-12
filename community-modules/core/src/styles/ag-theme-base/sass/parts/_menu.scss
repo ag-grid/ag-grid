@@ -48,7 +48,7 @@
     .ag-menu-separator-cell:after {
         content: "";
         display: block;
-        @include ag-grid-border(secondary, top);
+        @include ag-border(secondary, top);
     }
 
     .ag-menu-option-popup-pointer {
@@ -149,7 +149,7 @@
     }
 
     .ag-filter-header-container {
-        @include ag-grid-border(secondary, bottom);
+        @include ag-border(secondary, bottom);
         padding-bottom: $ag-grid-size / 2;
     }
 
@@ -158,7 +158,7 @@
         justify-content: flex-end;
         padding: $ag-grid-size;
 
-        @include ag-grid-border(secondary, top);
+        @include ag-border(secondary, top);
     }
     
     .ag-filter-apply-panel-button {

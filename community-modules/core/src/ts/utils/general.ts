@@ -928,21 +928,21 @@ export class Utils {
      * This method adds a class to an element and remove that class from all siblings.
      * Useful for toggling state.
      * @param {HTMLElement} element The element to receive the class
-     * @param {string} className The class to be assigned to the element
-     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
-     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
+     * @param {string} elementClass The class to be assigned to the element
+     * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
      */
-    static radioCssClass(element: HTMLElement, className: string, inverted?: boolean) {
+    static radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
         const parent = element.parentElement;
 
         let sibling = parent.firstChild as HTMLElement;
 
         while (sibling) {
-            _.addOrRemoveCssClass(
-                sibling,
-                className,
-                inverted ? (sibling !== element) : (sibling === element)
-            );
+            if (elementClass) {
+                _.addOrRemoveCssClass(sibling, elementClass, sibling === element);
+            }
+            if (otherElementClass) {
+                _.addOrRemoveCssClass(sibling, otherElementClass, sibling !== element);
+            }
             sibling = sibling.nextSibling as HTMLElement;
         }
     }
