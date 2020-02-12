@@ -3,6 +3,7 @@ import { Autowired } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
+import { Component } from "./component";
 
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE =
@@ -14,11 +15,12 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
             </div>
         </div>`;
 
-    protected abstract showPicker(): void;
+    protected abstract showPicker(): Component;
     protected abstract pickerIcon: string;
     protected value: K;
-    protected displayedPicker: boolean = false;
     protected isDestroyingPicker: boolean = false;
+    private skipClick: boolean = false;
+    private pickerComponent: Component;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -30,8 +32,29 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected postConstruct() {
         super.postConstruct();
 
-        const clickHandler = () => this.showPicker();
-        this.addDestroyableEventListener(this.eButton, 'click', clickHandler);
+        const clickHandler = () => {
+            if (this.skipClick) {
+                this.skipClick = false;
+                return;
+            }
+            this.pickerComponent = this.showPicker();
+        };
+
+        const eGui = this.getGui();
+
+        this.addDestroyableEventListener(eGui, 'mousedown', (e: MouseEvent) => {
+            if (
+                !this.skipClick &&
+                this.pickerComponent &&
+                this.pickerComponent.isAlive() &&
+                _.isVisible(this.pickerComponent.getGui()) &&
+                eGui.contains(e.target as HTMLElement)
+            ) {
+                this.skipClick = true;
+            }
+        });
+
+        this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
         this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {

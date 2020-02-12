@@ -25,8 +25,9 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
     @PostConstruct
     public init(): void {
-        this.listComponent = new AgList();
+        this.listComponent = new AgList('select');
         this.getContext().wireBean(this.listComponent);
+        this.listComponent.setParentComponent(this);
 
         this.listComponent.addDestroyableEventListener(
             this.listComponent,
@@ -41,14 +42,18 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     protected showPicker() {
-        if (this.displayedPicker) {
-            this.displayedPicker = false;
-            return;
-        }
-
         const listGui = this.listComponent.getGui();
+        const mouseWheelFunc = this.addDestroyableEventListener(document.body, 'wheel', (e: MouseEvent) => {
+            if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
+                this.hideList();
+            }
+        });
         const focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', (e: FocusEvent) => {
-            if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
+            if (
+                !listGui.contains(e.relatedTarget as HTMLElement) &&
+                !this.getGui().contains(e.relatedTarget as HTMLElement) &&
+                this.hideList
+            ) {
                 this.hideList();
             }
         });
@@ -56,18 +61,24 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.hideList = this.popupService.addPopup(true, listGui, true, () => {
             this.hideList = null;
             focusOutFunc();
+            mouseWheelFunc();
         });
 
         _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
+        listGui.style.maxHeight = _.getInnerHeight(this.popupService.getPopupParent()) + 'px';
+
         listGui.style.position = 'absolute';
 
         this.popupService.positionPopupUnderComponent({
             type: 'ag-list',
             eventSource: this.eWrapper,
-            ePopup: listGui
+            ePopup: listGui,
+            keepWithinBounds: true
         });
 
         this.listComponent.refreshHighlighted();
+
+        return this.listComponent;
     }
 
     public addOptions(options: ListOption[]): this {

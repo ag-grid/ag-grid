@@ -14,10 +14,13 @@ export class AgList extends Component {
     private highlightedEl: HTMLElement;
     private value: string | null;
     private displayValue: string | null;
-    private static TEMPLATE = `<div class="ag-list"></div>`;
 
-    constructor() {
-        super(AgList.TEMPLATE);
+    constructor(private cssIdentifier = 'default') {
+        super(AgList.getTemplate(cssIdentifier));
+    }
+
+    private static getTemplate(cssIdentifier: string) {
+        return `<div class="ag-list ag-${cssIdentifier}-list"></div>`;
     }
 
     public addOptions(listOptions: ListOption[]): this {
@@ -38,17 +41,21 @@ export class AgList extends Component {
     private renderOption(innerText: string): void {
         const itemEl = document.createElement('div');
         const itemContentEl = document.createElement('span');
+
         _.addCssClass(itemEl, 'ag-list-item');
+        _.addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
+
         itemEl.tabIndex = -1;
         itemContentEl.innerHTML = innerText;
-
         this.itemEls.push(itemEl);
+
         this.addDestroyableEventListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
         this.addDestroyableEventListener(itemEl, 'mouseleave', () => this.clearHighlighted());
         this.addDestroyableEventListener(itemEl, 'click', () => {
             const idx = this.itemEls.indexOf(itemEl);
             this.setValueByIndex(idx);
         });
+
         itemEl.appendChild(itemContentEl);
         this.getGui().appendChild(itemEl);
     }
