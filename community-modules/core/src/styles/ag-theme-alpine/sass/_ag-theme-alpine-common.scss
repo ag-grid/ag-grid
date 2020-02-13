@@ -48,8 +48,8 @@
     }
 
     .ag-set-filter-select-all {
-        // default size is $ag-virtual-item-height, make it a little larger
-        height: $ag-virtual-item-height + $ag-grid-size * 2;
+        // default size is $ag-list-item-height, make it a little larger
+        height: $ag-list-item-height + $ag-grid-size * 2;
     }
 
     .ag-charts-minichart-group-title-bar {
