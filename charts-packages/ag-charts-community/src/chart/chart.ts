@@ -29,14 +29,10 @@ const defaultTooltipCss = `
     border-radius: 5px;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
     opacity: 0;
-    transform: scale(0.90);
-    transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    transition-property: opacity, transform;
 }
 
 .ag-chart-tooltip-visible {
     opacity: 1;
-    transform: scale(1);
 }
 
 .ag-chart-tooltip-title {
