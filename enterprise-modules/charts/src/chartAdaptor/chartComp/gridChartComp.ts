@@ -198,8 +198,8 @@ export class GridChartComp extends Component {
             movable: true,
             maximizable: true,
             title,
-            width: chart.width,
-            height: chart.height,
+            width: 800,
+            height: 400,
             component: this,
             centered: true,
             closable: true
