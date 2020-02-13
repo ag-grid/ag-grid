@@ -10,7 +10,6 @@ export interface IInputField extends IAgLabel {
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
-    protected abstract className: string;
     protected abstract inputType: string;
 
     protected config: IInputField = {};
@@ -30,7 +29,6 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     protected postConstruct() {
         super.postConstruct();
         this.setInputType();
-        _.addCssClass(this.getGui(), this.className);
         _.addCssClass(this.eLabel, `${this.className}-label`);
         _.addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
         _.addCssClass(this.eInput, `${this.className}-input`);

@@ -9,6 +9,13 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
     protected abstract className: string;
 
     protected value: T;
+    protected disabled: boolean = false;
+
+    protected postConstruct(): void {
+        super.postConstruct();
+
+        _.addCssClass(this.getGui(), this.className);
+    }
 
     public onValueChange(callbackFn: (newValue: T) => void) {
         this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
@@ -42,5 +49,24 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
         }
 
         return this;
+    }
+
+    public setDisabled(disabled: boolean): this {
+        disabled = !!disabled;
+        const eGui = this.getGui();
+
+        if (disabled) {
+            eGui.setAttribute('disabled', 'true');
+        }
+
+        _.addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+
+        this.disabled = disabled;
+
+        return this;
+    }
+
+    public isDisabled(): boolean {
+        return !!this.disabled;
     }
 }

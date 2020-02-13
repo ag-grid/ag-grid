@@ -157,7 +157,7 @@ $ag-row-height: $ag-grid-size * 6 + 1 !default;
 $ag-header-height: $ag-row-height !default;
 
 // height of items in lists (example of lists are rich select editors and column menu set filters)
-$ag-virtual-item-height: $ag-grid-size * 5 !default;
+$ag-list-item-height: $ag-grid-size * 5 !default;
 
 // How much to indent child columns in the column tool panel relative to their parent
 $ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;

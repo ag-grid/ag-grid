@@ -26,8 +26,6 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
     protected postConstruct() {
         super.postConstruct();
-        _.addCssClass(this.getGui(), this.className);
-        this.addDestroyableEventListener(this.eDisplayField, 'click', () => this.showPicker());
 
         if (this.value) {
             this.setValue(this.value);
@@ -35,11 +33,6 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
     }
 
     protected showPicker() {
-        if (this.displayedPicker) {
-            this.displayedPicker = false;
-            return;
-        }
-
         const eGuiRect = this.getGui().getBoundingClientRect();
         const colorDialog = new AgDialog({
             closable: false,
@@ -72,7 +65,6 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
         colorDialog.addDestroyFunc(() => {
             const wasDestroying = this.isDestroyingPicker;
-            this.displayedPicker = false;
 
             // here we check if the picker was already being
             // destroyed to avoid a stackoverflow
@@ -85,6 +77,8 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
                 this.isDestroyingPicker = false;
             }
         });
+
+        return colorDialog;
     }
 
     public setValue(color: string): this {

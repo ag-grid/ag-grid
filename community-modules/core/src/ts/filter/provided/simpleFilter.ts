@@ -3,6 +3,7 @@ import {RefSelector} from "../../widgets/componentAnnotations";
 import {OptionsFactory} from "./optionsFactory";
 import {IProvidedFilterParams, ProvidedFilter} from "./providedFilter";
 import {_} from "../../utils";
+import { AgSelect } from "../../widgets/agSelect";
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string) [];
@@ -64,23 +65,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public static STARTS_WITH = 'startsWith';
     public static ENDS_WITH = 'endsWith';
 
-    @RefSelector('eOptions1')
-    private eType1: HTMLSelectElement;
-
-    @RefSelector('eOptions2')
-    private eType2: HTMLSelectElement;
-
-    @RefSelector('eJoinOperatorAnd')
-    private eJoinOperatorAnd: HTMLInputElement;
-
-    @RefSelector('eJoinOperatorOr')
-    private eJoinOperatorOr: HTMLInputElement;
-
-    @RefSelector('eCondition2Body')
-    private eCondition2Body: HTMLElement;
-
-    @RefSelector('eJoinOperatorPanel')
-    private eJoinOperatorPanel: HTMLElement;
+    @RefSelector('eOptions1') private eType1: AgSelect;
+    @RefSelector('eOptions2') private eType2: AgSelect;
+    @RefSelector('eJoinOperatorAnd') private eJoinOperatorAnd: HTMLInputElement;
+    @RefSelector('eJoinOperatorOr') private eJoinOperatorOr: HTMLInputElement;
+    @RefSelector('eCondition2Body') private eCondition2Body: HTMLElement;
+    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
 
@@ -136,8 +126,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected setTypeFromFloatingFilter(type: string): void {
-        this.eType1.value = type;
-        this.eType2.value = null;
+        this.eType1.setValue(type);
+        this.eType2.setValue(null);
         this.eJoinOperatorAnd.checked = true;
     }
 
@@ -152,18 +142,18 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
                 condition2: this.createCondition(ConditionPosition.Two)
             };
             return res;
-        } else {
-            const res: M = this.createCondition(ConditionPosition.One);
-            return res;
         }
+
+        const res: M = this.createCondition(ConditionPosition.One);
+        return res;
     }
 
     protected getCondition1Type(): string {
-        return this.eType1.value;
+        return this.eType1.getValue();
     }
 
     protected getCondition2Type(): string {
-        return this.eType2.value;
+        return this.eType2.getValue();
     }
 
     protected getJoinOperator(): string {
@@ -214,8 +204,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.eJoinOperatorAnd.checked = !orChecked;
             this.eJoinOperatorOr.checked = orChecked;
 
-            this.eType1.value = combinedModel.condition1.type;
-            this.eType2.value = combinedModel.condition2.type;
+            this.eType1.setValue(combinedModel.condition1.type);
+            this.eType2.setValue(combinedModel.condition2.type);
 
             this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
             this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
@@ -226,8 +216,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.eJoinOperatorAnd.checked = true;
             this.eJoinOperatorOr.checked = false;
 
-            this.eType1.value = simpleModel.type;
-            this.eType2.value = this.optionsFactory.getDefaultOption();
+            this.eType1.setValue(simpleModel.type);
+            this.eType2.setValue(this.optionsFactory.getDefaultOption());
 
             this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
@@ -248,15 +238,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
             if (combinedModel.operator === 'AND') {
                 return firstResult && secondResult;
-            } else {
-                return firstResult || secondResult;
             }
 
-        } else {
-            const simpleModel = model as ISimpleFilterModel;
-            const result = this.individualConditionPasses(params, simpleModel);
-            return result;
+            return firstResult || secondResult;
         }
+
+        const simpleModel = model as ISimpleFilterModel;
+        const result = this.individualConditionPasses(params, simpleModel);
+
+        return result;
     }
 
     protected setParams(params: ISimpleFilterParams): void {
@@ -270,7 +260,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.allowTwoConditions = !params.suppressAndOrCondition;
 
         this.putOptionsIntoDropdown();
-        this.addChangedListeners();
+        // add a timeout here because we don't want the initial change
+        // to fire the changeEvent.
+        window.setTimeout(() => {
+            this.addChangedListeners();
+        }, 10);
     }
 
     private putOptionsIntoDropdown(): void {
@@ -281,19 +275,19 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
                 const key = (typeof option === 'string') ? option : option.displayKey;
                 const localName = this.translate(key);
 
-                const eOption = document.createElement(`option`);
-                eOption.text = localName;
-                eOption.value = key;
-
-                return eOption;
+                return {
+                    value: key,
+                    text: localName
+                };
             };
-            this.eType1.add(createOption());
-            this.eType2.add(createOption());
+
+            this.eType1.addOption(createOption());
+            this.eType2.addOption(createOption());
         });
 
         const readOnly = filterOptions.length <= 1;
-        this.eType1.disabled = readOnly;
-        this.eType2.disabled = readOnly;
+        this.eType1.setDisabled(readOnly);
+        this.eType2.setDisabled(readOnly);
     }
 
     public isAllowTwoConditions(): boolean {
@@ -301,10 +295,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected createBodyTemplate(): string {
-        const optionsTemplate1 = `<select class="ag-filter-select" ref="eOptions1"></select>`;
+        const optionsTemplate1 = `<ag-select class="ag-filter-select" ref="eOptions1"></ag-select>`;
         const valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
 
-        const optionsTemplate2 = `<select class="ag-filter-select" ref="eOptions2"></select>`;
+        const optionsTemplate2 = `<ag-select class="ag-filter-select" ref="eOptions2"></ag-select>`;
         const valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
 
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
@@ -337,7 +331,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
         _.setDisplayed(this.eCondition2Body, showSecondFilter);
-        _.setDisplayed(this.eType2, showSecondFilter);
+        _.setDisplayed(this.eType2.getGui(), showSecondFilter);
         _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     }
 
@@ -345,8 +339,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eJoinOperatorAnd.checked = true;
 
         const defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.value = defaultOption;
-        this.eType2.value = defaultOption;
+        this.eType1.setValue(defaultOption);
+        this.eType2.setValue(defaultOption);
     }
 
     public translate(toTranslate: string): string {
@@ -363,8 +357,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     public addChangedListeners() {
         const listener = () => this.onUiChanged();
-        this.addDestroyableEventListener(this.eType1, "change", listener);
-        this.addDestroyableEventListener(this.eType2, "change", listener);
+        this.eType1.onValueChange(() => this.onUiChanged());
+        this.eType1.onValueChange(() => this.onUiChanged());
         this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);
         this.addDestroyableEventListener(this.eJoinOperatorAnd, "change", listener);
     }

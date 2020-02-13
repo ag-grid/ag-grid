@@ -1212,7 +1212,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.headerHeight;
         }
 
-        return this.getSassVariable(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     }
 
     public getFloatingFiltersHeight(): number {
@@ -1220,7 +1220,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.floatingFiltersHeight;
         }
 
-        return this.getSassVariable(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     }
 
     public getGroupHeaderHeight(): number {
@@ -1281,7 +1281,7 @@ export class GridOptionsWrapper {
         if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
-        const measuredMin = this.getSassVariable(null, 'headerCellMinWidth');
+        const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
         return Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH);
     }
 
@@ -1695,8 +1695,9 @@ export class GridOptionsWrapper {
         return typeof this.gridOptions.getRowHeight === 'function';
     }
 
-    public getVirtualItemHeight() {
-        return this.getSassVariable(20, 'virtualItemHeight');
+    public getListItemHeight() {
+        return this.getFromTheme(20, 'listItemHeight');
+
     }
 
     public chartMenuPanelWidth() {
@@ -1709,7 +1710,7 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private getSassVariable(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
+    private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
@@ -1718,6 +1719,6 @@ export class GridOptionsWrapper {
     }
 
     private getDefaultRowHeight(): number {
-        return this.getSassVariable(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }
