@@ -406,6 +406,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     ));
 }
 
+.ag-pinned-right-header .ag-header-cell-resize {
+    left: -4px; // pinned right headers always have their resize on the left, even in RTL mode
+}
+
 .ag-header-select-all {
     display: flex;
 }

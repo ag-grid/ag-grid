@@ -7,11 +7,11 @@
     }
 
     .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
-        @include ag-theme-rtl((border-left: 1px solid $ag-border-color));
+        border-left: 1px solid $ag-border-color;
     }
 
     .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
-        @include ag-theme-rtl((border-right: 1px solid $ag-border-color));
+        border-right: 1px solid $ag-border-color;
     }
     
     .ag-row-selected {
