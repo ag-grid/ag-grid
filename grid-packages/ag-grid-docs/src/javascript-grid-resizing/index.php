@@ -162,7 +162,7 @@ gridOptions: {
         their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
         the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
         with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
-        has twice the size with <code>flex: 1</code>. So final sizes will be: 100px, 100px, 200px.
+        has twice the size with <code>flex: 1</code>. So final sizes will be: 150px, 100px, 200px.
     </p>
 
     <note>
