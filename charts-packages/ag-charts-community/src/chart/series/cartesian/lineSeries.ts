@@ -141,9 +141,8 @@ export class LineSeries extends CartesianSeries {
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
             return this.xDomain;
-        } else {
-            return this.yDomain;
         }
+        return this.yDomain;
     }
 
     highlightStyle: {

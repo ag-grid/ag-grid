@@ -35,7 +35,7 @@ var options = {
             position: 'bottom',
             type: 'time',
             tick: {
-                count: agCharts.month.every(2),
+                count: agCharts.time.month.every(2),
             },
             title: {
                 text: 'Date'
