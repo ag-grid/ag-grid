@@ -1,5 +1,7 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
+import { PostConstruct } from "../context/context";
+import { Constants } from "../constants";
 import { _ } from "../utils";
 
 export interface ListOption {
@@ -14,13 +16,47 @@ export class AgList extends Component {
     private highlightedEl: HTMLElement;
     private value: string | null;
     private displayValue: string | null;
+    public static EVENT_ITEM_SELECTED = 'selectedItem';
 
     constructor(private cssIdentifier = 'default') {
         super(AgList.getTemplate(cssIdentifier));
     }
 
+    @PostConstruct
+    private init(): void {
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    }
+
     private static getTemplate(cssIdentifier: string) {
         return `<div class="ag-list ag-${cssIdentifier}-list"></div>`;
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        const key = e.keyCode;
+        switch (key) {
+            case Constants.KEY_ENTER:
+                if (!this.highlightedEl) {
+                    this.setValue(this.getValue());
+                } else {
+                    const pos = this.itemEls.indexOf(this.highlightedEl);
+                    this.setValueByIndex(pos);
+                }
+                break;
+            case Constants.KEY_DOWN:
+            case Constants.KEY_UP:
+                const isDown = key === Constants.KEY_DOWN;
+                let itemToHighlight: HTMLElement;
+                if (!this.highlightedEl) {
+                    itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
+                } else {
+                    const currentIdx = this.itemEls.indexOf(this.highlightedEl);
+                    let nextPos = currentIdx + (isDown ? 1 : -1);
+                    nextPos = Math.min(Math.max(nextPos, 0), this.itemEls.length - 1);
+                    itemToHighlight = this.itemEls[nextPos];
+                }
+                this.highlightItem(itemToHighlight);
+                break;
+        }
     }
 
     public addOptions(listOptions: ListOption[]): this {
@@ -61,7 +97,10 @@ export class AgList extends Component {
     }
 
     public setValue(value?: string, silent?: boolean): this {
-        if (this.value === value) { return this; }
+        if (this.value === value) {
+            this.fireItemSelected();
+            return this;
+        }
 
         if (value == null) {
             this.reset();
@@ -128,5 +167,10 @@ export class AgList extends Component {
 
     private fireChangeEvent(): void {
         this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.fireItemSelected();
+    }
+
+    private fireItemSelected(): void {
+        this.dispatchEvent({ type: AgList.EVENT_ITEM_SELECTED });
     }
 }

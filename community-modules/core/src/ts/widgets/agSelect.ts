@@ -28,15 +28,20 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.listComponent = new AgList('select');
         this.getContext().wireBean(this.listComponent);
         this.listComponent.setParentComponent(this);
+        this.eWrapper.tabIndex = -1;
+
+        this.listComponent.addDestroyableEventListener(
+            this.listComponent,
+            AgList.EVENT_ITEM_SELECTED,
+            () => { if (this.hideList) { this.hideList(); } }
+        );
 
         this.listComponent.addDestroyableEventListener(
             this.listComponent,
             AgAbstractField.EVENT_CHANGED,
             () => {
                 this.setValue(this.listComponent.getValue(), false, true);
-                if (this.hideList) {
-                    this.hideList();
-                }
+                if (this.hideList) { this.hideList(); }
             }
         );
     }
@@ -62,6 +67,9 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             this.hideList = null;
             focusOutFunc();
             mouseWheelFunc();
+            if (this.isAlive()) {
+                this.eWrapper.focus();
+            }
         });
 
         _.setElementWidth(listGui, _.getAbsoluteWidth(this.eWrapper));
