@@ -10,7 +10,12 @@ export const wait = async (ms: number) =>
     });
 
 export const saveErrorFile = async (page: Page) => {
-    let html = await page.evaluate(() => document.body.innerHTML);
+    let html: string;
+    try {
+        html = await page.evaluate(() => document.body.innerHTML);
+    } catch (e) {
+        return `Failed to save page HTML to ${errorHtmlFile}, puppeteer error: ${e.message}`;
+    }
     html = `<!--\n${page.url()}\n-->${html}`;
     await fs.writeFile(errorHtmlFile, html);
     await page.screenshot({ path: errorScreenShotFile });
