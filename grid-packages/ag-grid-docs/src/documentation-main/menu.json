@@ -963,23 +963,23 @@
                     "enterprise": true
                   },
                   {
-                    "title": "Bar/Column",
-                    "url": "javascript-grid-charts-integrated-customisation-bar/",
-                    "enterprise": true
-                  },
-                  {
                     "title": "Line",
                     "url": "javascript-grid-charts-integrated-customisation-line/",
                     "enterprise": true
                   },
                   {
-                    "title": "Scatter/Bubble",
-                    "url": "javascript-grid-charts-integrated-customisation-scatter/",
+                    "title": "Bar/Column",
+                    "url": "javascript-grid-charts-integrated-customisation-bar/",
                     "enterprise": true
                   },
                   {
                     "title": "Area",
                     "url": "javascript-grid-charts-integrated-customisation-area/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-grid-charts-integrated-customisation-scatter/",
                     "enterprise": true
                   },
                   {
@@ -1026,6 +1026,26 @@
                 "url": "javascript-charts-features/",
                 "items": [
                   {
+                    "title": "Line",
+                    "url": "javascript-charts-line-series/"
+                  },
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-charts-bar-series/"
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-charts-area-series/"
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-charts-scatter-series/"
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-charts-pie-series/"
+                  },
+                  {
                     "title": "Layout",
                     "url": "javascript-charts-layout/"
                   },
@@ -1038,8 +1058,8 @@
                     "url": "javascript-charts-markers/"
                   },
                   {
-                    "title": "Line",
-                    "url": "javascript-charts-line-series/"
+                    "title": "Tooltips",
+                    "url": "javascript-charts-tooltips/"
                   }
                 ]
               },
