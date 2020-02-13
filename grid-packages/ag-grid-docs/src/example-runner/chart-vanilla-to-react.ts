@@ -1,4 +1,4 @@
-import { getFunctionName } from './chart-vanilla-src-parser';
+import { getFunctionName, recognizedDomEvents, templatePlaceholder } from './chart-vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function isInstanceMethod(instance: any, property: any): boolean {
@@ -10,6 +10,16 @@ function convertFunctionToProperty(definition: string): string {
     return definition.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
 }
 
+function wrapChartUpdateCode(code: string) {
+    if (code.indexOf('options.') < 0) {
+        return code;
+    }
+
+    return code.replace(
+        /(.*)\{(.*)\}/s,
+        '$1{\nconst options = cloneDeep(this.state.options);\n$2\nthis.setState({ options });\n}');
+}
+
 function toTitleCase(value: string): string {
     return value[0].toUpperCase() + value.slice(1);
 }
@@ -17,6 +27,7 @@ function toTitleCase(value: string): string {
 function getImports(componentFilenames: string[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
+        "import { cloneDeep } from 'lodash';",
         "import { render } from 'react-dom';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsReact } from 'ag-charts-react';",
@@ -37,13 +48,27 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
     ${componentAttributes.join('\n')}
 />`;
 
-    let template = bindings.template ? bindings.template.replace('$$CHART$$', agChartTag) : agChartTag;
+    let template = agChartTag;
 
-    template = template
-        .replace(/\(this\, \)/g, '(this)')
-        .replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />')
-        .replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />')
-        .replace(/ class=/g, " className=");
+    if (bindings.template) {
+        template = bindings.template.replace(templatePlaceholder, agChartTag);
+
+        recognizedDomEvents.forEach(event => {
+            const jsEvent = `on${toTitleCase(event)}`;
+            const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
+
+            template = template
+                .replace(matcher, `${jsEvent}={() => this.$1($2)}`)
+                .replace(/, event\)/g, ")")
+                .replace(/, event,/g, ", ");
+        });
+
+        template = template
+            .replace(/\(this\, \)/g, '(this)')
+            .replace(/<input type="(radio|checkbox|text)" (.+?[^=])>/g, '<input type="$1" $2 />')
+            .replace(/<input placeholder(.+?[^=])>/g, '<input placeholder$1 />')
+            .replace(/ class=/g, " className=");
+    }
 
     return styleConvertor(template);
 }
@@ -78,7 +103,8 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
     });
 
     const template = getTemplate(bindings, componentAttributes);
-    const instance = bindings.instance.filter(p => p.name === 'chart').map(convertFunctionToProperty);
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => wrapChartUpdateCode(convertFunctionToProperty(handler.body)));
+    const instance = bindings.instance.map(convertFunctionToProperty);
 
     return `
 'use strict'
@@ -95,12 +121,13 @@ class ChartExample extends Component {
 
         ${instanceBindings.join(';\n    ')}
     }
-${instance.join('\n\n   ')}
+
+${instance.concat(externalEventHandlers).join('\n\n   ')}
 
     render() {
-        return (
+        return <div style={{ height: '100%' }}>
             ${template}
-        );
+        </div>;
     }
 }
 

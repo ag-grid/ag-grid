@@ -2,6 +2,9 @@ import { generate } from 'escodegen';
 import * as esprima from 'esprima';
 import * as $ from 'jquery';
 
+export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
+export const templatePlaceholder = '$$CHART$$';
+
 const PROPERTIES = ['options'];
 
 const enum NodeType {
@@ -27,6 +30,11 @@ function nodeIsVarWithName(node, name) {
     return node.type === NodeType.Variable && node.declarations[0].id.name === name;
 }
 
+function nodeIsFunctionWithName(node, name) {
+    // eg: function someFunction() { }
+    return node.type === NodeType.Function && node.id.name === name;
+}
+
 function nodeIsInScope(node, unboundInstanceMethods) {
     return unboundInstanceMethods &&
         node.type === NodeType.Function &&
@@ -43,6 +51,32 @@ function nodeIsPropertyWithName(node, name) {
     // we skip { property: variable } - SPL why??
     // and get only inline property assignments
     return node.key.name == name && node.value.type != 'Identifier';
+}
+
+function flatMap(array, callback) {
+    return Array.prototype.concat.apply([], array.map(callback));
+};
+
+function extractEventHandlerBody(call) {
+    return call.match(/^(\w+)\((.*)\)/);
+}
+
+/*
+ * for each of the recognised events (click, change etc) extract the corresponding event handler, with (optional) params
+ * eg: onclick="refreshEvenRowsCurrencyData()"
+ */
+function extractEventHandlers(tree, eventNames: string[]) {
+    const getHandlerAttributes = event => {
+        const handlerName = `on${event}`;
+
+        return Array.prototype.map.call(tree.find(`[${handlerName}]`), el => el.getAttribute(handlerName));
+    };
+
+    return flatMap(eventNames, event => getHandlerAttributes(event).map(extractEventHandlerBody));
+}
+
+function generateWithOptionReferences(node, options?) {
+    return generate(node, options).replace(/chart\./g, 'options.');
 }
 
 // if a function is marked as "inScope" then they'll be marked as "instance" methods, as opposed to (global/unused)
@@ -65,12 +99,34 @@ export function parser(js, html) {
 
     domTree.find('style').remove();
 
+    const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
     const tree = esprima.parseScript(js, { comment: true });
     const collectors = [];
     const optionsCollectors = [];
     const indentOne = { format: { indent: { base: 1 } } };
     const optionsName = 'options';
     const registered = [optionsName, 'chart'];
+
+    // handler is the function name, params are any function parameters
+    domEventHandlers.forEach(([_, handler, params]) => {
+        if (registered.indexOf(handler) > -1) {
+            return;
+        }
+
+        registered.push(handler);
+
+        // one of the event handlers extracted earlier (onclick, onchange etc)
+        collectors.push({
+            matches: node => nodeIsFunctionWithName(node, handler),
+            apply: (bindings, node) => {
+                bindings.externalEventHandlers.push({
+                    name: handler,
+                    params: params,
+                    body: generateWithOptionReferences(node, null)
+                });
+            }
+        });
+    });
 
     // functions marked as "inScope" will be added to "instance" methods, as opposed to "global" ones
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
@@ -131,13 +187,15 @@ export function parser(js, html) {
         tree.body,
         {
             properties: [],
+            externalEventHandlers: [],
             instance: [],
-            globals: []
+            globals: [],
         },
         collectors
     );
 
-    domTree.find('#chart').replaceWith('$$CHART$$');
+    domTree.find('#myChart').replaceWith(templatePlaceholder);
+    bindings.template = domTree.html();
 
     return bindings;
 }

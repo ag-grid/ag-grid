@@ -63,7 +63,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
         const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
 
         template = template
-            .replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`)
+            .replace(matcher, `${jsEvent}={() => this.$1($2)}`)
             .replace(/, event\)/g, ")")
             .replace(/, event,/g, ", ");
     });
@@ -81,8 +81,8 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 
     template = template
         .replace(/\(this\, \)/g, '(this)')
-        .replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />')
-        .replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />')
+        .replace(/<input type="(radio|checkbox|text)" (.+?[^=])>/g, '<input type="$1" $2 />')
+        .replace(/<input placeholder(.+?[^=])>/g, '<input placeholder$1 />')
         .replace(/ class=/g, " className=");
 
     return styleConvertor(template);

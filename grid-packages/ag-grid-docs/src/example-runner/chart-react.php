@@ -28,6 +28,7 @@ $example = getExampleInfo('chart', 'react');
             overflow: auto;
         }
     </style>
+<?php renderExampleExtras($_GET); ?>
 </head>
 <body>
     <div id="root">Loading&hellip;</div>
