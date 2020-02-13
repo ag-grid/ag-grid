@@ -230,4 +230,12 @@
   @if (variable-exists("ag-filter-toolpanel-body") and not variable-exists("ag-filter-toolpanel-instance-body")) {
     $ag-filter-toolpanel-instance-body: $ag-filter-toolpanel-body !global;
   }
+
+  @if (variable-exists("ag-filter-tool-panel-top-level-row-height")) {
+    // TODO warn of use of deprecated variable
+  }
+
+  @if (variable-exists("ag-filter-tool-panel-sub-level-row-height")) {
+    // TODO warn of use of deprecated variable
+  }
 }

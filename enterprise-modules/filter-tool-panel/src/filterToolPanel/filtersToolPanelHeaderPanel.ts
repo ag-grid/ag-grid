@@ -38,7 +38,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         this.setTemplate(
-        `<div class="ag-filter-toolpanel-header ag-filter-toolpanel-search" role="presentation">
+        `<div class="ag-filter-toolpanel-search" role="presentation">
             <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
             <input ref="eFilterTextField" class="ag-filter-toolpanel-search-input" type="text" placeholder="${translate('searchOoo', 'Search...')}">
         </div>`);

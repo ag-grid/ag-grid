@@ -125,6 +125,53 @@ $ag-header-column-resize-handle: false !default;
     $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
 //
+// PADDING / SPACING
+//
+
+// The main control for affecting how tightly data and UI elements are packed together.
+// All padding and spacing in the grid is defined as a multiple of $ag-grid-size,
+// so increasing it will add empty space around text and icons without changing the text size.
+$ag-grid-size: 4px !default;
+
+// The size of square icons and icon-buttons
+$ag-icon-size: 12px !default;
+
+// default horizontal padding of containers that contain widgets
+$ag-horizontal-padding: $ag-grid-size * 2 !default;
+
+// default vertical padding of containers that contain widgets
+$ag-vertical-padding: $ag-grid-size !default;
+
+// default spacing between horizontally aligned widgets inside a container
+$ag-horizontal-spacing: $ag-grid-size * 2 !default;
+
+// default spacing between vertically aligned widgets inside a container
+$ag-vertical-spacing: $ag-grid-size !default;
+
+// horizontal padding for grid and header cells (vertical padding is not set explicitly, but
+// inferred from $ag-row-height / $ag-header-height
+$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
+$ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
+
+// height of grid rows
+$ag-row-height: $ag-grid-size * 6 + 1 !default;
+
+// height of header rows
+$ag-header-height: $ag-row-height !default;
+
+// height of items in lists (example of lists are rich select editors and column menu set filters)
+$ag-virtual-item-height: $ag-grid-size * 5 !default;
+
+// How much to indent child columns in the column tool panel relative to their parent
+$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
+
+// How much to indent child rows in the grid relative to their parent row
+$ag-row-group-indent-size: $ag-cell-widget-spacing + $ag-icon-size !default;
+
+// How much to indent child columns in the filters tool panel relative to their parent
+$ag-filter-tool-panel-group-indent: 16px !default;
+
+//
 // INPUTS
 //
 
@@ -150,22 +197,6 @@ $ag-input-focus-border-color: null !default;
 // chart settings
 $ag-minichart-selected-chart-color: $ag-checkbox-checked-color !default; // color of border around selected minichart
 $ag-minichart-selected-page-color: $ag-checkbox-checked-color !default; // color of dot representing selected chart page
-
-// The main control for affecting how tightly data and UI elements are packed together.
-// All block sizes, margins and padding in the grid are defined as a multiple of $ag-grid-size,
-// so increasing it will add empty space around text and icons without changing the text size.
-$ag-grid-size: 4px !default;
-$ag-icon-size: 12px !default;
-$ag-row-height: $ag-grid-size * 6 + 1 !default;
-$ag-header-height: $ag-row-height !default;
-$ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
-$ag-cell-widget-spacing: $ag-cell-horizontal-padding !default;
-$ag-virtual-item-height: $ag-grid-size * 5 !default;
-$ag-column-select-indent-size: $ag-grid-size + $ag-icon-size !default;
-$ag-row-group-indent-size: $ag-cell-widget-spacing + $ag-icon-size !default;
-$ag-filter-tool-panel-group-indent: 16px !default;
-$ag-filter-tool-panel-top-level-row-height: $ag-grid-size * 8 !default;
-$ag-filter-tool-panel-sub-level-row-height: $ag-grid-size * 6 !default;
 
 // Cause tabs to stretch across the full width of the tab panel header
 $ag-full-width-tabs: false !default;

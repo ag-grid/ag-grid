@@ -9,6 +9,7 @@
     @include ag-native-inputs();
 
     .ag-filter-toolpanel-header,
+    .ag-filter-toolpanel-search,
     .ag-status-bar,
     .ag-header-row,
     .ag-panel-title-bar-title {
@@ -181,7 +182,8 @@
     .ag-chart-settings-next,
     .ag-group-title-bar-icon,
     .ag-column-select-header-icon,
-    .ag-floating-filter-button-button {
+    .ag-floating-filter-button-button,
+    .ag-filter-toolpanel-expand {
         &:hover {
             color: $ag-alpine-active-color;
         }

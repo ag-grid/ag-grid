@@ -79,6 +79,11 @@ $ag-font-weight, $ag-secondary-font-family, $ag-secondary-font-size, $ag-seconda
 
 $ag-rich-select-item-height: removed. In practice, this caused issues if it was different from $ag-virtual-item-height, so use $ag-virtual-item-height instead.
 
+$ag-filter-tool-panel-top-level-row-height and $ag-filter-tool-panel-sub-level-row-height: removed. CSS selectors to set the height with one of these selectors:
+`.ag-filter-toolpanel-header`: all headers
+`.ag-filter-toolpanel-instance-header`: leaf level headers
+`.ag-filter-toolpanel-group-level-{X}-header`: specific level of header, e.g. `.ag-filter-toolpanel-group-level-0-header` for the top level
+
 ## CSS class renames
 
 ag-group-component
@@ -139,6 +144,7 @@ ag-primary-cols-filter > ag-column-select-header-filter
 ag-primary-cols-filter-wrapper > ag-column-select-header-filter-wrapper
 ag-primary-cols-list-panel > ag-column-select-list
 
+.ag-filter-toolpanel-header - this was set on headers and search. Now it is only set on headers. Use .ag-filter-toolpanel-search to style the search box.
 
 ag-filter-toolpanel-search
 ag-filter-toolpanel-group

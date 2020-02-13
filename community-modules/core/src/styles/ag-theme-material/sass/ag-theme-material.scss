@@ -10,6 +10,7 @@
     @include ag-native-inputs();
 
     .ag-filter-toolpanel-header,
+    .ag-filter-toolpanel-search,
     .ag-status-bar,
     .ag-header-row,
     .ag-panel-title-bar-title,
@@ -147,5 +148,13 @@
     .ag-dnd-ghost {
         font-size: $ag-font-size - 1;
         font-weight: 600;
+    }
+
+    .ag-filter-toolpanel-header {
+        height: $ag-grid-size * 4;
+    }
+
+    .ag-filter-toolpanel-group-level-0-header {
+        height: $ag-grid-size * 7;
     }
 }
