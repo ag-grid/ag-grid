@@ -47,6 +47,11 @@
         @include ag-border(primary, bottom);
     }
 
+    .ag-set-filter-select-all {
+        // default size is $ag-virtual-item-height, make it a little larger
+        height: $ag-virtual-item-height + $ag-grid-size * 2;
+    }
+
     .ag-charts-minichart-group-title-bar {
         padding: $ag-grid-size $ag-grid-size * 2;
         line-height: $ag-icon-size + $ag-grid-size - 2;
@@ -83,11 +88,6 @@
 
     .ag-side-buttons {
         width: $ag-grid-size * 5;
-    }
-
-    .ag-set-filter-item {
-        margin-left: $ag-grid-size * 2;
-        margin-right: $ag-grid-size * 2;
     }
 
     .ag-standard-button {
@@ -210,5 +210,10 @@
         margin-left: $ag-grid-size + $ag-icon-size / 2 - 1px;
         padding-left: $ag-icon-size / 2;
         margin-right: $ag-grid-size * 2;
+    }
+
+    .ag-set-filter-list {
+        padding-top: $ag-grid-size / 2;
+        padding-bottom: $ag-grid-size / 2;
     }
 }

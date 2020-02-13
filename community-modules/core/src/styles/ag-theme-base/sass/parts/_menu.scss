@@ -120,8 +120,9 @@
     }
 
     .ag-filter-filter {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
+        margin-left: $ag-widget-container-horizontal-padding;
+        margin-right: $ag-widget-container-horizontal-padding;
+        margin-top: $ag-widget-container-vertical-padding;
 
         @include ag-theme-rtl((padding-left: $ag-grid-size));
     }
@@ -145,18 +146,17 @@
     }
 
     .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
-        @include ag-theme-rtl((margin-left: 5px));
+        @include ag-theme-rtl((margin-left: $ag-widget-container-horizontal-padding));
     }
 
     .ag-filter-header-container {
         @include ag-border(secondary, bottom);
-        padding-bottom: $ag-grid-size / 2;
     }
 
     .ag-filter-apply-panel {
         display: flex;
         justify-content: flex-end;
-        padding: $ag-grid-size;
+        padding: $ag-widget-container-vertical-padding $ag-widget-container-horizontal-padding;
 
         @include ag-border(secondary, top);
     }
