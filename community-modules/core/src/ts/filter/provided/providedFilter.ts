@@ -105,8 +105,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected setParams(params: IProvidedFilterParams): void {
         this.providedFilterParams = params;
-
-
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
         if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
@@ -222,9 +220,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private createTemplate(): string {
-
         const body = this.createBodyTemplate();
-
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div>

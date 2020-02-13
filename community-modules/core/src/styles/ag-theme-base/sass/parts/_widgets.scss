@@ -72,11 +72,59 @@
     }
 
     ////////////////////////////////////////
-    // Virtual List
+    // Lists
     ////////////////////////////////////////
-    
-    .ag-virtual-list-item {
-        height: $ag-virtual-item-height;
+    .ag-list-item, .ag-virtual-list-item {
+        height: $ag-list-item-height;
+    }
+
+    .ag-select-list {
+        background-color: $ag-control-panel-background-color;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .ag-list-item {
+        display: flex;
+        align-items: center;
+        &.ag-active-item {
+            background-color: $ag-row-hover-color;
+        }
+    }
+
+    .ag-select-list-item {
+        padding-left: 4px;
+        padding-right: 4px;
+        cursor: default;
+        user-select: none;
+        span {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .ag-select {
+        .ag-picker-field-wrapper {
+            background-color: $ag-background-color;
+            min-height: $ag-list-item-height;
+            align-items: center;
+        }
+        .ag-picker-field-display {
+            margin: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ag-picker-field-button {
+            height: 100%
+        }
+        &.ag-disabled {
+            opacity: 0.5;
+            button {
+                cursor: default;
+            }
+        }
     }
 
     ////////////////////////////////////////
@@ -101,7 +149,7 @@
 
     .ag-rich-select-virtual-list-item {
         cursor: default;
-        height: $ag-virtual-item-height;
+        height: $ag-list-item-height;
 
         &:hover {
             background-color: $ag-row-hover-color;

@@ -42,7 +42,7 @@ export class VirtualList extends Component {
     }
 
     private getItemHeight(): number {
-        return this.gridOptionsWrapper.getVirtualItemHeight();
+        return this.gridOptionsWrapper.getListItemHeight();
     }
 
     public ensureIndexVisible(index: number): void {

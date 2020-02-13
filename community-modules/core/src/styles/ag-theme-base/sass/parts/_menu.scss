@@ -137,11 +137,11 @@
     }
 
     .ag-set-filter-list {
-        height: $ag-virtual-item-height * 6;
+        height: $ag-list-item-height * 6;
     }
 
     .ag-set-filter-item {
-        height: $ag-virtual-item-height;
+        height: $ag-list-item-height;
     }
 
     .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
