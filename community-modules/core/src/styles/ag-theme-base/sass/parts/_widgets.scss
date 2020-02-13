@@ -107,7 +107,7 @@
     .ag-select {
         .ag-picker-field-wrapper {
             background-color: $ag-background-color;
-            height: $ag-row-height;
+            min-height: $ag-list-item-height;
             align-items: center;
         }
         .ag-picker-field-display {
@@ -118,6 +118,12 @@
         }
         .ag-picker-field-button {
             height: 100%
+        }
+        &.ag-disabled {
+            opacity: 0.5;
+            button {
+                cursor: default;
+            }
         }
     }
 

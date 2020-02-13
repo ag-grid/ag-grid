@@ -1,10 +1,10 @@
+import { AgAbstractField } from "./agAbstractField";
 import { AgPickerField } from "./agPickerField";
 import { IAgLabel } from "./agAbstractLabel";
 import { ListOption, AgList } from "./agList";
-import { _ } from "../utils";
-import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
-import { AgAbstractField } from "./agAbstractField";
+import { _ } from "../utils";
 
 type AgSelectConfig = ListOption & IAgLabel;
 

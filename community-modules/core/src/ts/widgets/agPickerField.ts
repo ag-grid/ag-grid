@@ -37,6 +37,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 this.skipClick = false;
                 return;
             }
+            if (this.isDisabled()) {
+                return;
+            }
             this.pickerComponent = this.showPicker();
         };
 
