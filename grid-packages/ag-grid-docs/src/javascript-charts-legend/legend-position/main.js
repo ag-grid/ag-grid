@@ -1,4 +1,4 @@
-var chart = agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     data: [
         { label: 'Android', value: 56.9 },
@@ -14,6 +14,7 @@ var chart = agCharts.AgChart.create({
         labelKey: 'label',
         strokeWidth: 3
     }]
-});
+};
+var chart = agCharts.AgChart.create(options);
 
 createChartLegendPositionSlider('toolpanel', chart);

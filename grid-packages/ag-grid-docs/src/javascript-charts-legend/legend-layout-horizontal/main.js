@@ -1,4 +1,4 @@
-var chart = agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     data: [
         { label: 'USA', value: 56.9 },
@@ -28,6 +28,7 @@ var chart = agCharts.AgChart.create({
     legend: {
         position: 'bottom'
     }
-});
+};
+var chart = agCharts.AgChart.create(options);
 
 createChartWidthSlider('toolpanel', chart);
