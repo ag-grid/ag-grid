@@ -192,14 +192,13 @@ export class GridChartComp extends Component {
     private addDialog(): void {
         const title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
 
-        const chart = this.chartProxy.getChart() as any;
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
             title,
-            width: 800,
-            height: 400,
+            width: 850,
+            height: 470,
             component: this,
             centered: true,
             closable: true
