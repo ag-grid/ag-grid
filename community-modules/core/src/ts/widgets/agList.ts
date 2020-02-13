@@ -1,6 +1,6 @@
+import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { _ } from "../utils";
-import { AgAbstractField } from "./agAbstractField";
 
 export interface ListOption {
     value: string;
