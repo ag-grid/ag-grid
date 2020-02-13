@@ -105,10 +105,6 @@ export class Environment {
             }
         }
 
-        if (!calculatedValue) {
-            alert(`getSassVariable(${key}) returned ${calculatedValue}`);
-        }
-
         CALCULATED_SIZES[theme][key] = calculatedValue || defaultValue;
 
         return CALCULATED_SIZES[theme][key];
