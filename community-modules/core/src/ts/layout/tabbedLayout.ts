@@ -29,9 +29,13 @@ export class TabbedLayout extends Component {
     @PostConstruct
     public init(): void {
         this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addDestroyableEventListener(this.getGui(), 'mousedown', () => {
+            _.removeCssClass(this.getGui(), 'ag-keyboard');
+        });
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
+        _.addCssClass(this.getGui(), 'ag-keyboard');
         if (e.keyCode === Constants.KEY_TAB) {
             e.preventDefault();
             this.handleTabKey(e);
