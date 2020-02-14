@@ -71,6 +71,11 @@
         @include ag-theme-rtl((margin-right: $ag-grid-size))
     }
 
+    .ag-charts-format-top-level-group-toolbar {
+        margin-top: $ag-grid-size;
+        @include ag-theme-rtl((padding-left: $ag-icon-size / 2 + $ag-grid-size * 2));
+    }
+
     .ag-charts-format-sub-level-group {
         border-left: dashed 1px $ag-border-color;
         padding-left: $ag-grid-size;

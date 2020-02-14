@@ -20,6 +20,15 @@
     }
 }
 
+@mixin ag-vertical-widget-container {
+    padding: $ag-widget-container-vertical-padding $ag-widget-container-horizontal-padding;
+    padding-bottom: $ag-widget-container-vertical-padding - $ag-widget-vertical-spacing;
+
+    & > * {
+        margin-bottom: $ag-widget-vertical-spacing;
+    }
+}
+
 @function ag-should-draw-border($type) {
     $valid-types: (
         critical: $ag-borders-critical,

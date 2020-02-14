@@ -100,6 +100,10 @@
     // Value Set Filter
     ////////////////////////////////////////
 
+    .ag-filter-body-wrapper {
+        @include ag-vertical-widget-container();
+    }
+
     .ag-filter-condition-operator {
         width: 12px;
         height: 17px;
@@ -110,32 +114,17 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
 
-    .ag-filter-select,
-    .ag-filter-body {
-        margin-bottom: $ag-grid-size;
-    }
-
     .ag-filter-body {
         margin-top: 0;
     }
 
     .ag-filter-filter {
-        margin-left: $ag-widget-container-horizontal-padding;
-        margin-right: $ag-widget-container-horizontal-padding;
-        margin-top: $ag-widget-container-vertical-padding;
-
         @include ag-theme-rtl((padding-left: $ag-grid-size));
     }
 
     .ag-filter-condition {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;
-    }
-
-    // string filter type
-    .ag-filter-select {
-        margin: $ag-widget-container-horizontal-padding;
-        margin-bottom: 0;
     }
 
     .ag-set-filter-list {

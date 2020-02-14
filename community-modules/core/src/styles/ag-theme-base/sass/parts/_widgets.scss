@@ -190,11 +190,6 @@
         @include ag-theme-rtl(( margin-left: 2px ));
     }
 
-    .ag-group-item {
-        margin-top: $ag-grid-size / 2;
-        margin-bottom: $ag-grid-size / 2;
-    }
-
     .ag-group-title-bar {
         background-color: $ag-subheader-background-color;
         padding: $ag-grid-size;
