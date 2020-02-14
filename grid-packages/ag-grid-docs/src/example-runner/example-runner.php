@@ -216,6 +216,12 @@ function chart_example($title, $dir, $type = 'vanilla', $options = array())
     $types = $common_properties['types'];
     $query = $common_properties['query'];
 
+    if ($options['extras']) {
+        foreach ($options['extras'] as $extra) {
+            $query[$extra] = '1';
+        }
+    }
+
     $config = $common_properties['config'];
 
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));

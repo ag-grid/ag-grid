@@ -41,6 +41,10 @@ $ag-filter-tool-panel-sub-level-row-height: $ag-grid-size * 4 !default;
 $ag-checkbox-border-radius: 2px;
 $ag-toggle-button-switch-border-width: 2px !default;
 $ag-toggle-button-height: $ag-icon-size;
+$ag-widget-container-horizontal-padding: $ag-grid-size * 1.5 !default;
+$ag-widget-container-vertical-padding: $ag-grid-size * 2 !default;
+$ag-widget-horizontal-spacing: $ag-grid-size * 1.5 !default;
+$ag-widget-vertical-spacing: $ag-grid-size * 1.75 !default;
 
 // Fonts
 $ag-font-family: "Roboto", sans-serif !default;

@@ -91,7 +91,7 @@ function flatMap(array, callback) {
 };
 
 function extractEventHandlerBody(call) {
-    return call.match(/^([\w]+)\((.*)\)/);
+    return call.match(/^(\w+)\((.*)\)/);
 }
 
 /*

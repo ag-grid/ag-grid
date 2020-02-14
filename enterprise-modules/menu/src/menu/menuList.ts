@@ -193,28 +193,26 @@ export class MenuList extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        const navKeys = [
-            Constants.KEY_UP,
-            Constants.KEY_RIGHT,
-            Constants.KEY_DOWN,
-            Constants.KEY_LEFT
-        ];
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_LEFT:
+                e.preventDefault();
+                this.handleNavKey(e.keyCode);
+                break;
+            case Constants.KEY_TAB:
+                if (e.shiftKey) {
+                    this.closeIfIsChild(e);
+                }
+                break;
+            case Constants.KEY_ESCAPE:
+                const topMenu = this.findTopMenu();
 
-        if (navKeys.indexOf(e.keyCode) !== -1) {
-            e.preventDefault();
-            this.handleNavKey(e.keyCode);
-        }
-
-        if (e.keyCode === Constants.KEY_TAB && e.shiftKey) {
-            this.closeIfIsChild(e);
-        }
-
-        if (e.keyCode === Constants.KEY_ESCAPE) {
-            const topMenu = this.findTopMenu();
-
-            if (parent) {
-                topMenu.getGui().focus();
-            }
+                if (topMenu) {
+                    topMenu.getGui().focus();
+                }
+                break;
         }
     }
 
@@ -236,13 +234,15 @@ export class MenuList extends Component {
     }
 
     private handleNavKey(key: number): void {
-        if (key === Constants.KEY_UP || key === Constants.KEY_DOWN) {
-            const nextItem = this.findNextItem(key === Constants.KEY_UP);
-            if (nextItem && nextItem.comp !== this.activeMenuItem) {
-                this.deactivateItem();
-                this.activateItem(nextItem.comp, nextItem.params);
-            }
-            return;
+        switch (key) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+                const nextItem = this.findNextItem(key === Constants.KEY_UP);
+                if (nextItem && nextItem.comp !== this.activeMenuItem) {
+                    this.deactivateItem();
+                    this.activateItem(nextItem.comp, nextItem.params);
+                }
+                return;
         }
 
         if (!this.activateItem) { return; }

@@ -211,6 +211,7 @@ export abstract class Chart extends Observable {
         if (tooltipParent) {
             tooltipParent.removeChild(this.tooltipElement);
         }
+        SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
         this.legend.removeEventListener('layoutChange', this.onLayoutChange);

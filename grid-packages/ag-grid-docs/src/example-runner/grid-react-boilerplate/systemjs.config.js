@@ -175,7 +175,7 @@ defaultExtension: 'js'
                     react: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);

@@ -1022,8 +1022,8 @@
                 ]
               },
               {
-                "title": "Features",
-                "url": "javascript-charts-features/",
+                "title": "Series",
+                "url": "javascript-charts-series/",
                 "items": [
                   {
                     "title": "Line",
@@ -1044,7 +1044,13 @@
                   {
                     "title": "Pie/Doughnut",
                     "url": "javascript-charts-pie-series/"
-                  },
+                  }
+                ]
+              },
+              {
+                "title": "Features",
+                "url": "javascript-charts-features/",
+                "items": [
                   {
                     "title": "Layout",
                     "url": "javascript-charts-layout/"

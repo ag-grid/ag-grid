@@ -125,28 +125,25 @@ $ag-header-column-resize-handle: false !default;
     $ag-header-column-resize-handle-color: transparentize($ag-border-color, 0.5) !default;
 
 //
-// PADDING / SPACING
+// SIZING / PADDING / SPACING
 //
 
 // The main control for affecting how tightly data and UI elements are packed together.
 // All padding and spacing in the grid is defined as a multiple of $ag-grid-size,
-// so increasing it will add empty space around text and icons without changing the text size.
+// so increasing it will make most components larger by increasing their internal white
+// space while leaving the size of text and icons unchanged.
 $ag-grid-size: 4px !default;
 
 // The size of square icons and icon-buttons
 $ag-icon-size: 12px !default;
 
-// default horizontal padding of containers that contain widgets
-$ag-horizontal-padding: $ag-grid-size * 2 !default;
-
-// default vertical padding of containers that contain widgets
-$ag-vertical-padding: $ag-grid-size !default;
-
-// default spacing between horizontally aligned widgets inside a container
-$ag-horizontal-spacing: $ag-grid-size * 2 !default;
-
-// default spacing between vertically aligned widgets inside a container
-$ag-vertical-spacing: $ag-grid-size !default;
+// these 4 variables set the padding around and spacing between widgets in "widget containers"
+// which are parts of the UI that contain many related widgets, like the set filter menu,
+// charts settings tabs etc.
+$ag-widget-container-horizontal-padding: $ag-grid-size * 1.5 !default;
+$ag-widget-container-vertical-padding: $ag-grid-size * 1.5 !default;
+$ag-widget-horizontal-spacing: $ag-grid-size * 1.5 !default;
+$ag-widget-vertical-spacing: $ag-grid-size !default;
 
 // horizontal padding for grid and header cells (vertical padding is not set explicitly, but
 // inferred from $ag-row-height / $ag-header-height

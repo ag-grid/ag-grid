@@ -73,6 +73,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
         _.addCssClass(this.eDragHandle, 'ag-drag-handle');
+        _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');

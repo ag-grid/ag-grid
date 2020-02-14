@@ -55,7 +55,7 @@ export class SetFilter extends ProvidedFilter {
                         <div class="ag-input-wrapper" id="ag-mini-filter" role="presentation">
                             <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                         </div>
-                        <label ref="eSelectAllContainer" class="ag-set-filter-item">
+                        <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                             <div ref="eSelectAll" class="ag-set-filter-item-checkbox"></div><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
                     </div>

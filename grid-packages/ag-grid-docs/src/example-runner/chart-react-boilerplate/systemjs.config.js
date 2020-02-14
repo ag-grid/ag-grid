@@ -1,5 +1,5 @@
 (function(global) {
-// simplified version of Object.assign for es3
+    // simplified version of Object.assign for es3
     function assign() {
         var result = {};
         for (var i = 0, len = arguments.length; i < len; i++) {
@@ -33,6 +33,7 @@
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types',
+                'lodash': 'npm:lodash@4.17.15',
 
                 app: 'app'
             },
@@ -76,7 +77,7 @@
                     react: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);

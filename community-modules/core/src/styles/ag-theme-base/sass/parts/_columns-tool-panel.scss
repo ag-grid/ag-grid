@@ -9,23 +9,20 @@
     .ag-pivot-mode-select {
         display: flex;
         align-items: center;
-        margin-left: $ag-grid-size;
 
-        @include ag-theme-rtl(( margin-left: $ag-grid-size ));
+        @include ag-theme-rtl(( margin-left: $ag-widget-container-horizontal-padding ));
     }
     
     .ag-column-select-header {
         height: $ag-header-height;
         align-items: center;
+        padding: 0 $ag-widget-container-horizontal-padding;
+
+        @include ag-border(secondary, bottom);
     }
     
     .ag-column-panel-column-select {
         @include ag-border(secondary, (bottom, top));
-    }
-
-    .ag-column-select-header-filter-wrapper {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
     }
 
     .ag-column-group-icons,

@@ -49,6 +49,11 @@ $ag-column-select-indent-size: $ag-icon-size !default;
 $ag-cell-horizontal-padding: $ag-grid-size * 3 !default;
 $ag-cell-widget-spacing: $ag-grid-size * 2 !default;
 
+$ag-widget-container-vertical-padding: $ag-grid-size * 2 !default;
+$ag-widget-container-horizontal-padding: $ag-grid-size * 2 !default;
+$ag-widget-horizontal-spacing: $ag-grid-size * 2 !default;
+$ag-widget-vertical-spacing: $ag-grid-size * 1.5 !default;
+
 // $ag-toggle-button-off-color: $ag-border-color !default;
 // $ag-toggle-button-on-color: $ag-checkbox-checked-color !default;
 // $ag-toggle-button-switch-color: $ag-background-color !default;

@@ -77,7 +77,7 @@ $ag-scroll-spacer-border: removed. Now drawn as a 'critical' level border contro
 
 $ag-font-weight, $ag-secondary-font-family, $ag-secondary-font-size, $ag-secondary-font-weight - removed. Use css selectors to style the desired elements appropriately. $ag-font-family, $ag-font-size are still available.
 
-$ag-rich-select-item-height: removed. In practice, this caused issues if it was different from $ag-virtual-item-height, so use $ag-virtual-item-height instead.
+$ag-rich-select-item-height: removed. In practice, this caused issues if it was different from $ag-list-item-height, so use $ag-list-item-height instead.
 
 $ag-filter-tool-panel-top-level-row-height and $ag-filter-tool-panel-sub-level-row-height: removed. CSS selectors to set the height with one of these selectors:
 `.ag-filter-toolpanel-header`: all headers

@@ -393,24 +393,26 @@
 
     .ag-column-select-header-icon {
         cursor: pointer;
-        margin: 0 $ag-grid-size;
     }
 
-    .ag-column-select-header-checkbox {
-        margin: 0 $ag-grid-size;
+    .ag-column-group-icons,
+    .ag-column-select-header-icon,
+    .ag-column-select-header-checkbox,
+    .ag-column-select-header-filter-wrapper,
+    .ag-column-select-checkbox,
+    .ag-column-select-column-drag-handle,
+    .ag-column-select-column-group-drag-handle,
+    .ag-column-select-column-label {
+        &:not(:last-child) {
+            @include ag-theme-rtl((margin-right: $ag-widget-horizontal-spacing))
+        }
     }
 
     .ag-column-select-column-group,
     .ag-column-select-column {
-        height: $ag-grid-size * 4;
-    }
-
-    .ag-column-select-checkbox,
-    .ag-column-select-column-label,
-    .ag-column-group-icons {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
-        cursor: pointer;
+        &:not(:last-child) {
+            margin-bottom: $ag-widget-vertical-spacing;
+        }
     }
 
     .ag-column-select-column-readonly,
@@ -425,8 +427,7 @@
     }
 
     .ag-column-select-list {
-        @include ag-border(secondary, top);
-        padding-top: $ag-grid-size;
+        padding: $ag-widget-container-vertical-padding $ag-widget-container-horizontal-padding;
     }
 }
 
