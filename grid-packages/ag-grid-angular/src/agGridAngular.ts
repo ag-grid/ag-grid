@@ -520,6 +520,8 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnPivotChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnValueChangeRequest: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnAggFuncChangeRequest: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public keyboardFocus: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public mouseFocus: EventEmitter<any> = new EventEmitter<any>();
     // @END@
 }
 

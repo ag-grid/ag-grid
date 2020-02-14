@@ -12,12 +12,9 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
 
     private model: VirtualListModel;
-
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
-
     private componentCreator: (value: any) => Component;
-
     private rowHeight = 20;
 
     @Autowired('environment') private environment: Environment;
@@ -114,7 +111,6 @@ export class VirtualList extends Component {
     }
 
     private ensureRowsRendered(start: any, finish: any) {
-
         // at the end, this array will contain the items we need to remove
         const rowsToRemove = Object.keys(this.rowsInBodyContainer);
 

@@ -31,7 +31,7 @@ $example = getExampleInfo('chart', 'react');
 <?php renderExampleExtras($_GET); ?>
 </head>
 <body>
-    <div id="root">Loading&hellip;</div>
+    <div id="root" style="height: 100%">Loading&hellip;</div>
 
     <script>
         var appLocation = '<?= $example["appLocation"] ?>';

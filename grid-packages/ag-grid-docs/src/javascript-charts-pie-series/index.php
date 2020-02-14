@@ -13,8 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Pie series is used for showing how parts relate to the whole. For example when you want to show the ratios
-    in your dataset.
+    Pie series is used for showing how parts relate to the whole. For example when you want to show
+    market share of each competitor.
 </p>
 
 <h2>Basic Configuration</h2>
@@ -33,11 +33,6 @@ series: [{
 }]
 </snippet>
 
-<p>
-    Notice in the snippet above how instead of using <code>xKey</code> and <code>yKey</code> configs in other
-    series, all we have to specify in this case is the <code>angleKey</code>.
-</p>
-
 <h2>Example: Basic Pie Series</h2>
 
 <p>
@@ -47,14 +42,7 @@ series: [{
 
 <?= chart_example('Basic Pie Chart', 'basic-pie', 'generated') ?>
 
-<note>
-    Pie series is currently the only supported polar series. Polar means that instead of using
-    x/y coordinates to position things we use angle and radius. For this reason, pie series
-    configuration is slightly different compared to that of the other series.
-    Please keep this in mind when reading this chapter.
-</note>
-
-<h2>Slice Label</h2>
+<h2>Slice Labels</h2>
 
 <p>
     Notice how there's no legend or labels next to pie slices in the example above.
@@ -69,6 +57,8 @@ series: [{
     labelKey: 'label'
 }]
 </snippet>
+
+<h2>Example: Pie Chart with Labels</h2>
 
 <p>
     Now we get the labels, the legend, and the tooltips now show labels
@@ -98,19 +88,8 @@ label: {
 </snippet>
 
 <p>
-    The distance of the label from the callout line can be adjusted using
-    the <code>label.offset</code> config:
-</p>
-
-<snippet language="ts">
-label: {
-    offset: 3
-}
-</snippet>
-
-<p>
-    Finally, the callout itself can be configured to have a different <code>length</code>,
-    <code>color</code> and <code>strokeWidth</code>:
+    The label's callout can be configured to have a different <code>length</code>,
+    <code>color</code> and <code>strokeWidth</code>, for example:
 </p>
 
 <snippet language="ts">
@@ -121,23 +100,39 @@ callout: {
 }
 </snippet>
 
-<h2>Slice Radius</h2>
+<p>
+    Please refer to the API reference below to learn more about <code>label</code> and <code>callout</code>
+    configuration.
+</p>
+
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.label") ?>
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.callout") ?>
+
+<h2>Variable Slice Radius</h2>
 
 <p>
-    Going back to our previous example that shows the marker share of mobile operating systems,
-    we might have not just the market share data, but the level of user satisfaction
-    with any given OS. In such a case we could represent the safisfaction level
-    as the radius of a slice using the <code>radiusKey</code> config:
+    Let's say you have the data for both the market share of mobile operating systems
+    and the level of user satisfaction with each OS. In such a case we could represent
+    the safisfaction level as the radius of a slice using the <code>radiusKey</code> config
+    like so:
 </p>
 
 <snippet language="ts">
 series: [{
     type: 'pie',
-    angleKey: 'value',
-    labelKey: 'label',
+    labelKey: 'os',
+    angleKey: 'share',
     radiusKey: 'satisfaction'
 }]
 </snippet>
+
+<p>
+    A pie chart where slices can have different radii is also know as a <strong>rose chart</strong>.
+</p>
+
+<h2>Example: Rose Chart</h2>
 
 <?= chart_example('Slices with different radii', 'slice-radius', 'generated') ?>
 

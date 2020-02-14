@@ -123,7 +123,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
     const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
     const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
-    const style = gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
+    const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
     return `
 'use strict'

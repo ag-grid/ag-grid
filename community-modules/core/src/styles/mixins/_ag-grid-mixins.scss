@@ -137,3 +137,14 @@
     }
     @return $string;
 }
+
+@mixin ag-selectable($value) {
+    @if $value == null {
+        $value: none;
+    }
+
+    -moz-user-select: $value;
+    -webkit-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+}

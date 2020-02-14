@@ -96,7 +96,7 @@
         padding-left: 4px;
         padding-right: 4px;
         cursor: default;
-        user-select: none;
+        @include ag-selectable(none);
         span {
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -109,6 +109,7 @@
             background-color: $ag-background-color;
             min-height: $ag-list-item-height;
             align-items: center;
+            cursor: default;
         }
         .ag-picker-field-display {
             margin: 4px;
@@ -455,11 +456,6 @@
             @extend %ag-range;
         }
     }
-    @if not map-has-key($type-map, select) or map-get($type-map, select) {
-        select {
-            @extend %ag-select;
-        }
-    }
 }
 
 %ag-checkbox {
@@ -706,18 +702,5 @@
 
     &:disabled {
         opacity: 0.5;
-    }
-}
-
-%ag-select {
-    // TODO re-do this with SVG?
-    height: $ag-grid-size * 2 + $ag-icon-size;
-    border: 1px solid $ag-border-color;
-    background: $ag-background-color;
-    color: $ag-foreground-color;
-    
-    &:focus {
-        outline: none;
-        box-shadow: $ag-input-focus-box-shadow;
     }
 }

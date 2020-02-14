@@ -91,9 +91,7 @@ class ChartExample extends Component {
 ${instanceMethods.concat(externalEventHandlers).join('\n\n   ')}
 
     render() {
-        return <div style={{ height: '100%' }}>
-            ${template}
-        </div>;
+        return ${template};
     }
 }
 
