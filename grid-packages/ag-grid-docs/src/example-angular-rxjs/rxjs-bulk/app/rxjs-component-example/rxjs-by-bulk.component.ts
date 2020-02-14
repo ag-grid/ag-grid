@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 
-import {AllModules, GridOptions} from "@ag-grid-enterprise/all-modules";
+import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
@@ -17,7 +17,7 @@ export class RxJsComponentByFullSet {
     initialRowDataLoad$;
     rowDataUpdates$;
 
-    modules = AllModules;
+    modules = AllCommunityModules;
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
