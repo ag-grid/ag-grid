@@ -18,6 +18,8 @@ docs_are_running
 
 *.nosync
 
+**/cypress/videos
+
 # latest only
 dist
 

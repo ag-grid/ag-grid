@@ -13,6 +13,7 @@ import {
 } from "@angular/core";
 
 import {
+    ColDef,
     ColumnApi,
     ComponentUtil,
     Events,
@@ -21,14 +22,14 @@ import {
     GridOptions,
     GridOptionsWrapper,
     GridParams,
+    Module,
     Promise,
-    Utils as _,
-    Module
-} from "ag-grid-community";
+    Utils as _
+} from "@ag-grid-community/core";
 
-import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
-import { AgGridColumn } from "./agGridColumn";
-import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
+import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
+import {AngularFrameworkComponentWrapper} from "./angularFrameworkComponentWrapper";
+import {AgGridColumn} from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -88,7 +89,7 @@ export class AgGridAngular implements AfterViewInit {
 
         if (this.columns && this.columns.length > 0) {
             this.gridOptions.columnDefs = this.columns
-                .map((column: AgGridColumn) => {
+                .map((column: AgGridColumn): ColDef => {
                     return column.toColDef();
                 });
         }
