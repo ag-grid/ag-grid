@@ -1,18 +1,12 @@
-import { ANALYZE_FOR_ENTRY_COMPONENTS, ModuleWithProviders, NgModule } from '@angular/core';
+import {ANALYZE_FOR_ENTRY_COMPONENTS, ModuleWithProviders, NgModule} from '@angular/core';
 
-import { AgGridAngular } from './agGridAngular';
-import { AgGridColumn } from "./agGridColumn";
+import {AgGridAngular} from './ag-grid-angular.component';
+import {AgGridColumn} from './ag-grid-column.component';
 
 @NgModule({
+    declarations: [AgGridAngular, AgGridColumn],
     imports: [],
-    declarations: [
-        AgGridAngular,
-        AgGridColumn
-    ],
-    exports: [
-        AgGridAngular,
-        AgGridColumn
-    ]
+    exports: [AgGridAngular, AgGridColumn]
 })
 export class AgGridModule {
     static withComponents(components?: any): ModuleWithProviders {
@@ -32,4 +26,5 @@ export class AgGridModule {
             ],
         };
     }
+
 }
