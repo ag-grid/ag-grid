@@ -71,8 +71,7 @@
     }
 
     .ag-charts-data-group-container {
-        margin-left: $ag-grid-size * 2;
-        padding: $ag-grid-size;
+        @include ag-vertical-widget-container();
     }
 
     .ag-charts-format-top-level-group-container {
@@ -80,13 +79,12 @@
         padding: $ag-grid-size;
     }
 
-    .ag-charts-format-sub-level-group-container {
-        padding: $ag-grid-size;
+    .ag-charts-format-top-level-group-item {
+        margin: $ag-grid-size 0;
     }
 
-    .ag-charts-format-sub-level-group-item,
-    .ag-charts-format-top-level-group-item {
-        margin: $ag-grid-size * 1.2 0;
+    .ag-charts-format-sub-level-group-container {
+        @include ag-vertical-widget-container();
     }
 
     .ag-charts-group-container.ag-group-container-horizontal {

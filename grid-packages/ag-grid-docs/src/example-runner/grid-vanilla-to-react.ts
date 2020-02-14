@@ -1,18 +1,6 @@
-import { recognizedDomEvents, getFunctionName } from './grid-vanilla-src-parser';
-import styleConvertor from './lib/convert-style-to-react';
-
-function isInstanceMethod(instance: any, property: any): boolean {
-    const instanceMethods = instance.map(getFunctionName);
-    return instanceMethods.filter(methodName => methodName === property.name).length > 0;
-}
-
-function convertFunctionToProperty(definition: string): string {
-    return definition.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
-}
-
-function toTitleCase(value: string): string {
-    return value[0].toUpperCase() + value.slice(1);
-}
+import { isInstanceMethod } from './parser-utils';
+import { getImport, convertFunctionToProperty, convertTemplate } from './react-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getImports(bindings: any, componentFilenames: string[]): string[] {
     const imports = [
@@ -34,10 +22,7 @@ function getImports(bindings: any, componentFilenames: string[]): string[] {
     imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
 
     if (componentFilenames) {
-        componentFilenames.forEach(filename => {
-            const componentName = toTitleCase(filename.split('.')[0]);
-            imports.push(`import ${componentName} from './${filename}';`);
-        });
+        imports.push(...componentFilenames.map(getImport));
     }
 
     return imports;
@@ -56,36 +41,9 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
             />
             </div>`;
 
-    let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
+    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 
-    recognizedDomEvents.forEach(event => {
-        const jsEvent = `on${toTitleCase(event)}`;
-        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
-
-        template = template
-            .replace(matcher, `${jsEvent}={() => this.$1($2)}`)
-            .replace(/, event\)/g, ")")
-            .replace(/, event,/g, ", ");
-    });
-
-    // react events are case sensitive - could do something tricky here, but as there are only 2 events affected so far
-    // I'll keep it simple
-    const domEventsCaseSensitive = [
-        { name: 'ondragover', replacement: 'onDragOver' },
-        { name: 'ondragstart', replacement: 'onDragStart' },
-    ];
-
-    domEventsCaseSensitive.forEach(event => {
-        template = template.replace(new RegExp(event.name, 'ig'), event.replacement);
-    });
-
-    template = template
-        .replace(/\(this\, \)/g, '(this)')
-        .replace(/<input type="(radio|checkbox|text)" (.+?[^=])>/g, '<input type="$1" $2 />')
-        .replace(/<input placeholder(.+?[^=])>/g, '<input placeholder$1 />')
-        .replace(/ class=/g, " className=");
-
-    return styleConvertor(template);
+    return convertTemplate(template);
 }
 
 export function vanillaToReact(bindings: any, componentFilenames: string[]): string {
@@ -108,7 +66,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the react component
-            if (isInstanceMethod(bindings.instance, property)) {
+            if (isInstanceMethod(bindings.instanceMethods, property)) {
                 instanceBindings.push(`this.${property.name}=${property.value}`);
             } else {
                 stateProperties.push(`${property.name}: ${property.value}`);
@@ -164,7 +122,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
     const template = getTemplate(bindings, componentAttributes);
     const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
-    const instance = bindings.instance.map(convertFunctionToProperty);
+    const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
     const style = gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
 
     return `
@@ -189,7 +147,7 @@ class GridExample extends Component {
         ${additionalInReady.join('\n')}
     }
 
-${[].concat(eventHandlers, externalEventHandlers, instance).join('\n\n   ')}
+${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
     render() {
         return (

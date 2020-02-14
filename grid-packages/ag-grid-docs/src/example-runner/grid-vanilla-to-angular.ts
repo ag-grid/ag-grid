@@ -1,8 +1,6 @@
-import { recognizedDomEvents, getFunctionName } from './grid-vanilla-src-parser';
-
-function removeFunctionKeyword(code): string {
-    return code.replace(/^function /, '');
-}
+import { removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { toInput, toConst, toOutput, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }): string {
     const additionalLines = [];
@@ -33,16 +31,6 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }`;
 }
 
-const toInput = (property: any) => `[${property.name}]="${property.name}"`;
-const toConst = (property: any) => `[${property.name}]="${property.value}"`;
-const toOutput = (event: any) => `(${event.name})="${event.handlerName}($event)"`;
-const toMember = (property: any) => `private ${property.name};`;
-const toAssignment = (property: any) => `this.${property.name} = ${property.value}`;
-
-function isInstanceMethod(instance: any, property: any) {
-    return instance.map(getFunctionName).filter(name => name === property.name).length > 0;
-}
-
 function getImports(bindings: any, componentFileNames: string[]): string[] {
     const { gridSettings } = bindings;
     const imports = ["import { Component, ViewChild } from '@angular/core';"];
@@ -64,15 +52,7 @@ function getImports(bindings: any, componentFileNames: string[]): string[] {
     imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
-        const toTitleCase = value => {
-            let camelCased = value.replace(/-([a-z])/g, g => g[1].toUpperCase());
-            return camelCased[0].toUpperCase() + camelCased.slice(1);
-        };
-
-        componentFileNames.forEach(filename => {
-            let componentName = filename.split('.')[0];
-            imports.push(`import { ${toTitleCase(componentName)} } from './${componentName}.component';`);
-        });
+        imports.push(...componentFileNames.map(getImport));
     }
 
     return imports;
@@ -90,19 +70,9 @@ function getTemplate(bindings: any, attributes: string[]): string {
     ${attributes.join('\n    ')}
     ></ag-grid-angular>`;
 
-    let template = agGridTag;
+    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 
-    if (bindings.template) {
-        template = bindings.template;
-
-        recognizedDomEvents.forEach(event => {
-            template = template.replace(new RegExp(`on${event}=`, 'g'), `(${event})=`);
-        });
-
-        template = template.replace(/\(event\)/g, '($event)').replace('$$GRID$$', agGridTag);
-    }
-
-    return template;
+    return convertTemplate(template);
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): string {
@@ -132,7 +102,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the angular component
-            if (!isInstanceMethod(bindings.instance, property)) {
+            if (!isInstanceMethod(bindings.instanceMethods, property)) {
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toMember(property));
             }
@@ -149,7 +119,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
         propertyVars.push('private rowData: []');
     }
 
-    const instance = bindings.instance.map(removeFunctionKeyword);
+    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
 
@@ -181,7 +151,7 @@ export class AppComponent {
     ${eventHandlers
             .concat(externalEventHandlers)
             .concat(additional)
-            .concat(instance)
+            .concat(instanceMethods)
             .map(snippet => snippet.trim())
             .join('\n\n')}
 }

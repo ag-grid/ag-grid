@@ -1,24 +1,30 @@
-import { getFunctionName } from './chart-vanilla-src-parser';
+import { templatePlaceholder } from './chart-vanilla-src-parser';
+import { removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
 
-function removeFunctionKeyword(code): string {
-    return code.replace(/^function /, '');
+function wrapChartUpdateCode(code: string): string {
+    if (code.indexOf('options.') < 0) {
+        return code;
+    }
+
+    return code.replace(
+        /(.*)\{(.*)\}/s,
+        '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
 }
 
-const toInput = (property: any) => `[${property.name}]="${property.name}"`;
-const toConst = (property: any) => `[${property.name}]="${property.value}"`;
-const toMember = (property: any) => `private ${property.name};`;
-const toAssignment = (property: any) => `this.${property.name} = ${property.value}`;
-
-function isInstanceMethod(instance: any, property: any) {
-    return instance.map(getFunctionName).filter(name => name === property.name).length > 0;
-}
-
-function getImports(): string[] {
-    return [
+function getImports(componentFileNames: string[]): string[] {
+    const imports = [
+        "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartOptions } from 'ag-charts-angular';",
     ];
+
+    if (componentFileNames) {
+        imports.push(...componentFileNames.map(getImport));
+    }
+
+    return imports;
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
@@ -26,18 +32,14 @@ function getTemplate(bindings: any, attributes: string[]): string {
     ${attributes.join('\n    ')}
     ></ag-charts-angular>`;
 
-    let template = agChartTag;
+    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;
 
-    if (bindings.template) {
-        template = bindings.template.replace(/\(event\)/g, '($event)').replace('$$CHART$$', agChartTag);
-    }
-
-    return template;
+    return convertTemplate(template);
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): string {
     const { properties } = bindings;
-    const imports = getImports();
+    const imports = getImports(componentFileNames);
     const propertyAttributes = [];
     const propertyVars = [];
     const propertyAssignments = [];
@@ -55,7 +57,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the angular component
-            if (!isInstanceMethod(bindings.instance, property)) {
+            if (!isInstanceMethod(bindings.instanceMethods, property)) {
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toMember(property));
             }
@@ -64,8 +66,10 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
         }
     });
 
-    const instance = bindings.instance.map(removeFunctionKeyword);
+    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
     const template = getTemplate(bindings, propertyAttributes);
+    const externalEventHandlers = bindings.externalEventHandlers.map(
+        handler => wrapChartUpdateCode(removeFunctionKeyword(handler.body)));
 
     return `
 ${imports.join('\n')}
@@ -83,7 +87,7 @@ export class AppComponent {
         ${propertyAssignments.join(';\n')}
     }
 
-    ${instance.map(snippet => snippet.trim()).join('\n\n')}
+    ${instanceMethods.concat(externalEventHandlers).map(snippet => snippet.trim()).join('\n\n')}
 }
 
 ${bindings.globals.join('\n')}

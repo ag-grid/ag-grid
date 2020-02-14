@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function (global) {
+(function(global) {
     var ANGULAR_VERSION = "5.1.3";
     var ANGULAR_CDK_VERSION = "5.2.5";
     var ANGULAR_MATERIAL_VERSION = "5.2.5";
@@ -28,7 +28,7 @@
             typescript: {
                 exports: "ts"
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         },
         paths: {
             // paths serve as alias
@@ -99,7 +99,8 @@
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
 
-                rxjs: "npm:rxjs@6.1.0/bundles/rxjs.umd.min.js"
+                rxjs: "npm:rxjs@6.1.0/bundles/rxjs.umd.min.js",
+                lodash: 'npm:lodash@4.17.15',
             },
             systemJsMap
         ),

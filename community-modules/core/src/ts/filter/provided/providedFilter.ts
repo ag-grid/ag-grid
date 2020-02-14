@@ -59,6 +59,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract updateUiVisibility(): void;
 
     protected abstract createBodyTemplate(): string;
+    protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(): void;
 
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
@@ -224,7 +225,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div>
-                    <div class='ag-filter-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
+                    <div class='ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
                     <div class="ag-filter-apply-panel" ref="eButtonsPanel">
                         <button type="button" ref="eClearButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
                         <button type="button" ref="eResetButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>

@@ -100,9 +100,6 @@
     // Value Set Filter
     ////////////////////////////////////////
 
-    .ag-filter-body-wrapper {
-        @include ag-vertical-widget-container();
-    }
 
     .ag-filter-condition-operator {
         width: 12px;
@@ -114,25 +111,18 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
 
-    .ag-filter-body {
-        margin-top: 0;
-    }
-
-    .ag-filter-filter {
-        @include ag-theme-rtl((padding-left: $ag-grid-size));
-    }
-
-    .ag-filter-condition {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
-    }
-
     .ag-set-filter-list {
         height: $ag-list-item-height * 6;
     }
 
     .ag-set-filter-item {
         height: $ag-list-item-height;
+    }
+
+    .ag-set-filter-filter {
+        margin-top: $ag-widget-container-vertical-padding;
+        margin-left: $ag-widget-container-horizontal-padding;
+        margin-right: $ag-widget-container-horizontal-padding;
     }
 
     .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
@@ -154,5 +144,9 @@
     .ag-filter-apply-panel-button {
         line-height: 1.5;
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
+    }
+
+    .ag-simple-filter-body-wrapper {
+        @include ag-vertical-widget-container();
     }
 }
