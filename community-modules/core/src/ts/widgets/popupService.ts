@@ -1,5 +1,5 @@
 import { Constants } from "../constants";
-import { Autowired, Bean } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
@@ -34,15 +34,29 @@ export class PopupService {
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
 
+    @PostConstruct
+    private init(): void {
+        this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
+            this.popupList.forEach(popup => {
+                _.addCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+
+        this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
+            this.popupList.forEach(popup => {
+                _.removeCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+    }
+
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
 
     public getPopupParent(): HTMLElement {
         const ePopupParent = this.gridOptionsWrapper.getPopupParent();
-        if (ePopupParent) {
-            return ePopupParent;
-        }
+
+        if (ePopupParent) { return ePopupParent; }
 
         return this.gridCore.getRootGui();
     }

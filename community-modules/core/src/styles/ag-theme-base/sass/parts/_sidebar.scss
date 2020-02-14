@@ -32,6 +32,10 @@
 
         border: none;
         @include ag-border(side-button, (top, bottom), $color: transparent);
+
+        &:focus {
+            box-shadow: none;
+        }
     }
 
     .ag-selected .ag-side-button-button {

@@ -83,7 +83,7 @@
         }
     }
 
-    .ag-keyboard .ag-tab:focus {
+    .ag-keyboard-focus .ag-tab:focus {
         outline: 1px solid $ag-input-focus-border-color;
         outline-offset: -4px;
     }
