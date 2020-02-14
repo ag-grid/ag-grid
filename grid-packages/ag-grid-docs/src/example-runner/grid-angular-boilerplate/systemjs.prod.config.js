@@ -125,7 +125,7 @@
                 }
             },
             "@ag-grid-community/angular": {
-                main: "./main.js",
+                main: "./bundles/ag-grid-community-angular.umd.js",
                 defaultExtension: "js"
             },
             rxjs: {

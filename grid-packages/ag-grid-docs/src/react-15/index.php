@@ -7,10 +7,9 @@ include '../documentation-main/documentation_header.php';
 ?>
 <div>
 
-    <h1 id="react-15">ag-Grid with React 15+</h1>
+    <h1 id="react-15">ag-Grid with React 15.x.x</h1>
 
-    <note>Version 21.2.0 of <code>AgGridReact</code> is the last version that supports React 15+.</note>
-
+    <note>Version 21.2.0 of <code>AgGridReact</code> is the last version that supports both React 15.x.x and React 16.x.x. <br/><br/>Version 22 onwards of <code>AgGridReact</code> will support React 16+ only.</note>
 
     <h3>Control React Components Container</h3>
 

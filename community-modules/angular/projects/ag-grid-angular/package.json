@@ -1,0 +1,10 @@
+{
+  "name": "@ag-grid-community/angular",
+  "version": "22.1.1",
+  "peerDependencies": {
+    "@ag-grid-community/core": "^22.1.1",
+    "@angular/common": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "tslib": "^1.10.0"
+  }
+}

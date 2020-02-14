@@ -6,19 +6,31 @@ HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : 
 MouseEvent = typeof MouseEvent === 'undefined' ? function () {} : MouseEvent;
 
 /* Checks for missing gridOptions on agGridAngular */
-const {AgGridAngular} = require('./dist/agGridAngular');
+const {AgGridAngular, AgGridColumn} = require('./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js');
 const {ComponentUtil} = require("@ag-grid-community/core");
+
+const agGridColumnObject = new AgGridColumn();
+const agGridAngularObject = new AgGridAngular(
+    {nativeElement: null},
+    null,
+    null,
+    {
+        setViewContainerRef: () => {
+        },
+        setComponentFactoryResolver: () => {
+        }
+    });
 
 const missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
-    if (!AgGridAngular.propDecorators.hasOwnProperty(property)) {
+    if (!agGridAngularObject.hasOwnProperty(property)) {
         missingProperties.push(`Grid property ${property} does not exist on AgGridAngular`)
     }
 });
 
 const missingEvents = [];
 ComponentUtil.EVENTS.forEach((event) => {
-    if (!AgGridAngular.propDecorators.hasOwnProperty(event)) {
+    if (!agGridAngularObject.hasOwnProperty(event)) {
         missingEvents.push(`Grid event ${event} does not exist on AgGridAngular`)
     }
 });
@@ -34,7 +46,6 @@ if(missingProperties.length || missingEvents.length) {
 }
 
 /* Checks for missing colDef properties on agGridColumn.ts */
-const {AgGridColumn} = require('./dist/agGridColumn');
 const {ColDefUtil} = require("@ag-grid-community/core");
 
 // colDef properties that dont make sense in an angular context (or are private)
@@ -42,7 +53,7 @@ const skippableProperties = ['template', 'templateUrl', 'pivotKeys', 'pivotValue
 
 const missingColDefProperties = [];
 ColDefUtil.ALL_PROPERTIES.forEach((property) => {
-    if (skippableProperties.indexOf(property) === -1 && !AgGridColumn.propDecorators.hasOwnProperty(property)) {
+    if (skippableProperties.indexOf(property) === -1 && !agGridColumnObject.__proto__.constructor.__prop__metadata__.hasOwnProperty(property)) {
         missingColDefProperties.push(`ColDef property ${property} does not exist on AgGridColumn`)
     }
 });

@@ -90,7 +90,7 @@ const linkUmdForE2E = (done) => {
         })
     }
     if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
-        link('../../community-modules/grid-all-modules/dist/ag-grid-community.min.js', './cypress/integration/',{
+        link('../../community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/',{
             force: true,
             type: linkType
         })

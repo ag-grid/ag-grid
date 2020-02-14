@@ -1,58 +1,55 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "22.1.2",
-  "description": "ag-Grid Angular Component",
-  "main": "main.js",
-  "typings": "main.d.ts",
+  "version": "22.1.1",
   "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "npm run update-properties && ng build --prod && npm run verify-properties",
+    "build-cjs": "npm run build",
+    "test": "ng test --watch false --browsers ChromeHeadless",
+    "lint": "ng lint",
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
-    "verify-properties": "node agGridPropertiesCheck.js",
-    "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && npm run clean && npm run ngc-build && npm run verify-properties",
-    "ngc-build": "ngc -p tsconfig-src.json && gulp",
-    "build-cjs": "gulp update-properties-and-compile-source",
-    "clean-main": "rimraf main.metadata.json && rimraf main.js* && rimraf main.d.ts && rimraf aot",
-    "clean": "rimraf aot/* && rimraf dist/* && npm run clean-main"
+    "verify-properties": "node agGridPropertiesCheck.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ag-grid/ag-grid-angular.git"
+  "private": true,
+  "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
+  "module": "./dist/ag-grid-angular/fesm5/ag-grid-community-angular.js",
+  "typings": "./dist/ag-grid-angular/ag-grid-community-angular.d.ts",
+  "dependencies": {
+    "@angular/animations": "~9.0.0",
+    "@angular/common": "~9.0.0",
+    "@angular/compiler": "~9.0.0",
+    "@angular/core": "~9.0.0",
+    "@angular/forms": "~9.0.0",
+    "@angular/platform-browser": "~9.0.0",
+    "@angular/platform-browser-dynamic": "~9.0.0",
+    "@angular/router": "~9.0.0",
+    "rxjs": "~6.5.4",
+    "tslib": "^1.10.0",
+    "zone.js": "~0.10.2"
   },
-  "keywords": [
-    "grid",
-    "data",
-    "table",
-    "angular"
-  ],
-  "author": "Niall Crosby <niall.crosby@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ag-grid/ag-grid-angular/issues"
-  },
-  "homepage": "https://angular-grid.ag-grid.com",
   "devDependencies": {
-    "@ag-grid-community/core": "~22.1.1",
-    "@angular/compiler": "^4.0.0",
-    "@angular/compiler-cli": "^4.0.0",
-    "@angular/core": "^4.0.0",
-    "core-js": "^2.5.0",
-    "del": "^5.1.0",
-    "gulp": "^4.0.0",
-    "gulp-ngc": "~0.3.3",
-    "gulp-rename": "^1.4.0",
-    "gulp-typescript": "^5.0.0",
-    "replace-in-file": "^4.1.0",
-    "rimraf": "^3.0.0",
-    "rxjs": "^5.5.0",
-    "typescript": "^2.9.0",
-    "typescript-simple": "8.0.6"
-  },
-  "peerDependencies": {
-    "@ag-grid-community/core": "~22.1.1",
-    "@angular/compiler": ">=2.1.x",
-    "@angular/core": ">=2.1.x"
-  },
-  "publishConfig": {
-    "access": "public"
+    "@angular-devkit/build-angular": "~0.900.1",
+    "@angular-devkit/build-ng-packagr": "~0.900.1",
+    "@angular/cli": "~9.0.1",
+    "@angular/compiler-cli": "~9.0.0",
+    "@angular/language-service": "~9.0.0",
+    "@types/jasmine": "~3.5.0",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "^12.11.1",
+    "@ag-grid-community/core": "^22.1.1",
+    "codelyzer": "^5.1.2",
+    "jasmine-core": "~3.5.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.3.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage-istanbul-reporter": "~2.1.0",
+    "karma-jasmine": "~2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.2",
+    "ng-packagr": "^9.0.0",
+    "protractor": "~5.4.3",
+    "ts-node": "~8.3.0",
+    "tslint": "~5.18.0",
+    "typescript": "~3.7.5"
   }
 }

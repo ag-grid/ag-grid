@@ -4,6 +4,8 @@ const ngc = require('gulp-ngc');
 const rename = require("gulp-rename");
 const gridToNg = require('./updateGridAndColumnProperties');
 const del = require('del');
+const replace = require('gulp-replace');
+const merge = require('merge-stream');
 
 const compileMain = (callback) => {
     return gulp
@@ -38,19 +40,30 @@ const compileSource = (callback) => {
     return ngc('./tsconfig-src.json', callback);
 };
 
+const copyFromModuleSource = () => {
+    const copySource = gulp.src("../../community-modules/angular/src/**/*")
+        .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
+        .pipe(gulp.dest("./src"));
+
+    const copyExports = gulp.src("../../community-modules/angular/exports.ts")
+        .pipe(gulp.dest("./"));
+
+    return merge(copySource, copyExports);
+};
+
 const watch = () => {
     gulp.watch([
-            './node_modules/@ag-grid-community/core/src/ts/propertyKeys.ts',
-            './node_modules/@ag-grid-community/core/ts/components/colDefUtil.ts'
+            './node_modules/ag-grid-community/src/ts/propertyKeys.ts',
+            './node_modules/ag-grid-community/ts/components/colDefUtil.ts'
         ],
         series('update-properties'));
 };
 
+gulp.task('copy-from-module-source', copyFromModuleSource);
 gulp.task('compile-main', compileMain);
 gulp.task('clean-post-build-artifacts', cleanPostBuildArtifacts);
 gulp.task('main-post-compile-rename', mainPostCompileRename);
 gulp.task('update-properties', updateProperties);
 gulp.task('compile-source', compileSource);
-gulp.task('update-properties-and-compile-source', compileSource);
-gulp.task('watch', series('update-properties-and-compile-source', watch));
-gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename','clean-post-build-artifacts'));
+gulp.task('watch', series('update-properties', 'compile-source', watch));
+gulp.task('default', series('update-properties', 'compile-main', 'compile-source', 'main-post-compile-rename', 'clean-post-build-artifacts'));

@@ -134,7 +134,7 @@ const updateGridProperties = (resolve, getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const gridPropertiesAndEvents = getGridPropertiesAndEvents();
     const optionsForGrid = {
-        files: './src/agGridAngular.ts',
+        files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: /(\/\/ @START@)[^]*(\/\/ @END@)/,
         to: `// @START@\n${gridPropertiesAndEvents}    // @END@`,
     };
@@ -155,7 +155,7 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
     // extract the grid column properties our angular grid column component
     const gridColumnProperties = getGridColumnProperties();
     const optionsForGridColumn = {
-        files: './src/agGridColumn.ts',
+        files: './projects/ag-grid-angular/src/lib/ag-grid-column.component.ts',
         from: /(\/\/ @START@)[^]*(\s.*\/\/ @END@)/,
         to: `// @START@\n${gridColumnProperties}    // @END@`,
     };

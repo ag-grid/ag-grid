@@ -122,7 +122,7 @@
                 }
             },
             "@ag-grid-community/angular": {
-                main: "./main.js",
+                main: "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",
                 defaultExtension: "js"
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
