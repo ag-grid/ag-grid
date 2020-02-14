@@ -1,4 +1,3 @@
-import * as angular from "angular";
 import * as Prism from "prismjs";
 
 import "prismjs/components/prism-typescript";
@@ -9,7 +8,7 @@ import "prismjs/components/prism-sql";
 import "prismjs/components/prism-diff";
 import "prismjs/components/prism-scss";
 
-const LanguageMap: { [key: string]: Prism.LanguageDefinition } = {
+const LanguageMap: { [key: string]: Prism.LanguageDefinition; } = {
     js: Prism.languages.javascript,
     ts: Prism.languages.typescript,
     css: Prism.languages.css,

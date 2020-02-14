@@ -3,56 +3,24 @@ import * as esprima from 'esprima';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
+import {
+    NodeType,
+    recognizedDomEvents,
+    collect,
+    nodeIsVarWithName,
+    nodeIsFunctionWithName,
+    nodeIsPropertyWithName,
+    nodeIsInScope,
+    nodeIsUnusedFunction,
+    extractEventHandlers,
+    extractUnboundInstanceMethods,
+} from './parser-utils';
+
+export const templatePlaceholder = '$$GRID$$';
 
 const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
-
-const enum NodeType {
-    Variable = 'VariableDeclaration',
-    Function = 'FunctionDeclaration',
-    Expression = 'ExpressionStatement'
-};
-
-function collect(iterable, initialBindings, collectors) {
-    return iterable.reduce((bindings, value) => {
-        collectors.forEach(collector => {
-            if (collector.matches(value)) {
-                collector.apply(bindings, value);
-            }
-        });
-
-        return bindings;
-    }, initialBindings);
-}
-
-function nodeIsVarWithName(node, name) {
-    // eg: var currentRowHeight = 10;
-    return node.type === NodeType.Variable && node.declarations[0].id.name === name;
-}
-
-function nodeIsFunctionWithName(node, name) {
-    // eg: function someFunction() { }
-    return node.type === NodeType.Function && node.id.name === name;
-}
-
-function nodeIsInScope(node, unboundInstanceMethods) {
-    return unboundInstanceMethods &&
-        node.type === NodeType.Function &&
-        unboundInstanceMethods.indexOf(node.id.name) >= 0;
-}
-
-function nodeIsUnusedFunction(node, used, unboundInstanceMethods) {
-    return !nodeIsInScope(node, unboundInstanceMethods) &&
-        node.type === NodeType.Function &&
-        used.indexOf(node.id.name) < 0;
-}
-
-function nodeIsPropertyWithName(node, name) {
-    // we skip { property: variable } - SPL why??
-    // and get only inline property assignments
-    return node.key.name == name && node.value.type != 'Identifier';
-}
 
 function nodeIsDocumentContentLoaded(node) {
     try {
@@ -84,50 +52,11 @@ function nodeIsSimpleHttpRequest(node) {
     return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
 }
 
-export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
-
-function flatMap(array, callback) {
-    return Array.prototype.concat.apply([], array.map(callback));
-};
-
-function extractEventHandlerBody(call) {
-    return call.match(/^(\w+)\((.*)\)/);
-}
-
-/*
- * for each of the recognised events (click, change etc) extract the corresponding event handler, with (optional) params
- * eg: onclick="refreshEvenRowsCurrencyData()"
- */
-function extractEventHandlers(tree, eventNames: string[]) {
-    const getHandlerAttributes = event => {
-        const handlerName = `on${event}`;
-
-        return Array.prototype.map.call(tree.find(`[${handlerName}]`), el => el.getAttribute(handlerName));
-    };
-
-    return flatMap(eventNames, event => getHandlerAttributes(event).map(extractEventHandlerBody));
-}
-
 function generateWithReplacedGridOptions(node, options?) {
     return generate(node, options)
         .replace(/gridOptions\.api/g, 'this.gridApi')
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
-
-// if a function is marked as "inScope" then they'll be marked as "instance" methods, as opposed to (global/unused)
-// "util" ones
-function extractUnboundInstanceMethods(tree) {
-    const inScopeRegex = /inScope\[([\w-].*)]/;
-
-    return tree.comments
-        .map(comment => comment.value ? comment.value.trim() : '')
-        .filter(commentValue => commentValue.indexOf("inScope") === 0)
-        .map(commentValue => {
-            const result = commentValue.match(inScopeRegex);
-
-            return result && result.length > 0 ? result[1] : '';
-        });
-};
 
 export function parser(js, html, exampleSettings) {
     const domTree = $(`<div>${html}</div>`);
@@ -168,7 +97,7 @@ export function parser(js, html, exampleSettings) {
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
         matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instance.push(generate(node, indentOne))
+        apply: (bindings, node) => bindings.instanceMethods.push(generate(node, indentOne))
     });
 
     // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
@@ -246,7 +175,7 @@ export function parser(js, html, exampleSettings) {
         collectors.push({
             matches: node => nodeIsFunctionWithName(node, functionName),
             apply: (bindings, node) => {
-                bindings.instance.push(generateWithReplacedGridOptions(node, indentOne));
+                bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne));
                 bindings.properties.push({ name: functionName, value: null });
             }
         });
@@ -294,8 +223,8 @@ export function parser(js, html, exampleSettings) {
      * externalEventHandlers -> onclick, onchange etc in index.html
      * eventHandlers -> grid related events
      * properties -> grid related properties
-     * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (ie non-instance)
-     * instance -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
+     * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
+     * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
      * onGridReady -> any matching onGridReady method
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
@@ -305,14 +234,14 @@ export function parser(js, html, exampleSettings) {
         {
             eventHandlers: [],
             properties: [],
-            instance: [],
+            instanceMethods: [],
             externalEventHandlers: [],
             utils: []
         },
         collectors
     );
 
-    const gridElement = domTree.find('#myGrid').replaceWith('$$GRID$$');
+    const gridElement = domTree.find('#myGrid').replaceWith(templatePlaceholder);
     const inlineClass = gridElement.attr('class');
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
@@ -339,11 +268,6 @@ export function parser(js, html, exampleSettings) {
     }, exampleSettings);
 
     return bindings;
-}
-
-export function getFunctionName(code) {
-    let matches = /function ([^\(]*)/.exec(code);
-    return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
 export default parser;

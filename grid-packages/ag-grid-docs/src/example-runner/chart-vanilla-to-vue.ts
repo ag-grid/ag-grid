@@ -1,30 +1,19 @@
-import { getFunctionName } from './chart-vanilla-src-parser';
+import { getFunctionName, removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { templatePlaceholder } from './chart-vanilla-src-parser';
+import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
 
-function removeFunctionKeyword(code): string {
-    return code.replace(/^function /, '');
-}
-
-const toInput = property => `:${property.name}="${property.name}"`;
-const toConst = property => `:${property.name}="${property.value}"`;
-const toMember = property => `${property.name}: null`;
-
-function toAssignment(property: any): string {
-    // convert to arrow functions
-    const value = property.value.replace(/function\s*\(([^\)]+)\)/, '($1) =>');
-
-    return `this.${property.name} = ${value}`;
-};
-
-function getImports(): string[] {
-    return [
+function getImports(componentFileNames: string[]): string[] {
+    const imports = [
         "import Vue from 'vue';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue';",
     ];
-}
 
-function isInstanceMethod(instance: any, property: any): boolean {
-    return instance.map(getFunctionName).filter(name => name === property.name).length > 0;
+    if (componentFileNames) {
+        imports.push(...componentFileNames.map(getImport));
+    }
+
+    return imports;
 }
 
 function getPropertyBindings(bindings: any, componentFileNames: string[]): [string[], string[], string[]] {
@@ -46,7 +35,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
                 // tabToNextCell needs to be bound to the react component
-                if (!isInstanceMethod(bindings.instance, property)) {
+                if (!isInstanceMethod(bindings.instanceMethods, property)) {
                     propertyAttributes.push(toInput(property));
                     propertyVars.push(toMember(property));
                 }
@@ -62,19 +51,15 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-vue
           ${attributes.join('\n    ')}></ag-charts-vue>`;
 
-    let template = agChartTag;
+    const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;
 
-    if (bindings.template) {
-        template = bindings.template.replace("$$CHART$$", agChartTag);
-    }
-
-    return template;
+    return convertTemplate(template);
 };
 
-function getAllMethods(bindings) {
-    const instanceFunctions = bindings.instance.map(removeFunctionKeyword);
+function getAllMethods(bindings: any): [string[], string[]] {
+    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
 
-    const globalFunctions = bindings.globals.map(body => {
+    const globalMethods = bindings.globals.map(body => {
         const funcName = getFunctionName(body);
 
         if (funcName) {
@@ -85,13 +70,13 @@ function getAllMethods(bindings) {
         return body;
     });
 
-    return [instanceFunctions, globalFunctions];
+    return [instanceMethods, globalMethods];
 }
 
-export function vanillaToVue(bindings, componentFileNames) {
-    const imports = getImports();
+export function vanillaToVue(bindings: any, componentFileNames: string[]): string {
+    const imports = getImports(componentFileNames);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
-    const [instanceFunctions, globalFunctions] = getAllMethods(bindings);
+    const [instanceMethods, globalMethods] = getAllMethods(bindings);
     const template = getTemplate(bindings, propertyAttributes);
 
     return `
@@ -115,11 +100,11 @@ const ChartExample = {
     mounted() {
     },
     methods: {
-        ${instanceFunctions.map(snippet => `${snippet.trim()},`).join('\n')}
+        ${instanceMethods.map(snippet => `${snippet.trim()},`).join('\n')}
     }
 }
 
-${globalFunctions.map(snippet => `${snippet.trim()}`).join('\n\n')}
+${globalMethods.join('\n\n')}
 
 new Vue({
     el: '#app',
