@@ -57,8 +57,12 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         });
 
         this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_ENTER) {
-                clickHandler();
+            switch (e.keyCode) {
+                case Constants.KEY_DOWN:
+                case Constants.KEY_ENTER:
+                case Constants.KEY_SPACE:
+                    clickHandler();
+                    break;
             }
         });
 
