@@ -112,10 +112,10 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
             <div class="ag-input-wrapper" role="presentation">
-                <input class="ag-filter-filter" ref="eValueFrom${pos}" type="text" placeholder="${translate('filterOoo')}"/>
+                <input class="ag-filter-from ag-filter-filter" ref="eValueFrom${pos}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
              <div class="ag-input-wrapper ag-filter-number-to" ref="ePanel${pos}" role="presentation">
-                <input class="ag-filter-filter" ref="eValueTo${pos}" type="text" placeholder="${translate('filterOoo')}"/>
+                <input class="ag-filter-to ag-filter-filter" ref="eValueTo${pos}" type="text" placeholder="${translate('filterOoo')}"/>
             </div>
         </div>`;
     }
