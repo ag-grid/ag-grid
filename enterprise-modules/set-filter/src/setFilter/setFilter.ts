@@ -53,7 +53,7 @@ export class SetFilter extends ProvidedFilter {
                 <div>
                     <div class="ag-filter-header-container" role="presentation">
                         <div class="ag-input-wrapper" id="ag-mini-filter" role="presentation">
-                            <input ref="eMiniFilter" class="ag-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
+                            <input ref="eMiniFilter" class="ag-filter-filter ag-set-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
                         </div>
                         <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                             <div ref="eSelectAll" class="ag-set-filter-item-checkbox"></div><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
@@ -61,6 +61,10 @@ export class SetFilter extends ProvidedFilter {
                     </div>
                     <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
                 </div>`;
+    }
+
+    protected getCssIdentifier() {
+        return 'set-filter';
     }
 
     protected resetUiToDefaults(): void {

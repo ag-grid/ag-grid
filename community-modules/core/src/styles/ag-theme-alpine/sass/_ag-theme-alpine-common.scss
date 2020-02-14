@@ -84,12 +84,17 @@
 
     .ag-charts-format-sub-level-group-title-bar {
         padding-top: 0;
+        padding-bottom: 0;
         background: none;
         font-weight: 700;
     }
 
     .ag-charts-format-sub-level-group-container {
         padding-bottom: 0;
+    }
+
+    .ag-charts-format-sub-level-group-item:last-child {
+        margin-bottom: 0;
     }
     
     .ag-dnd-ghost {

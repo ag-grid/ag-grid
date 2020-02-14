@@ -327,6 +327,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return template;
     }
 
+    protected getCssIdentifier() {
+        return 'simple-filter';
+    }
+
     protected updateUiVisibility(): void {
         const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
