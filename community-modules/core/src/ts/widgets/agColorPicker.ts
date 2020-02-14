@@ -76,6 +76,10 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             } else {
                 this.isDestroyingPicker = false;
             }
+
+            if (this.isAlive()) {
+                this.eWrapper.focus();
+            }
         });
 
         return colorDialog;
