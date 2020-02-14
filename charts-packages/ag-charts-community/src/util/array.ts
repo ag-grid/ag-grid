@@ -1,3 +1,13 @@
+// Custom `Array.find` implementation for legacy browsers.
+export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
+    for (let i = 0, ln = arr.length; i < ln; i++) {
+        const value = arr[i];
+        if (predicate(value, i, arr)) {
+            return value;
+        }
+    }
+}
+
 /**
  * Returns the minimum and maximum value in the given iterable using natural order.
  * If the iterable contains no comparable values, returns `undefined`.
@@ -53,16 +63,6 @@ export function finiteExtent<T>(values: T[]): [T, T] | undefined {
     }
 
     return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
-}
-
-// Custom `Array.find` implementation for legacy browsers.
-export function find<T>(arr: T[], predicate: (value: T, index: number, arr: T[]) => boolean): T | undefined {
-    for (let i = 0, ln = arr.length; i < ln; i++) {
-        const value = arr[i];
-        if (predicate(value, i, arr)) {
-            return value;
-        }
-    }
 }
 
 /**
