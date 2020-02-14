@@ -192,7 +192,7 @@ const labelDefaults = {
     fontWeight: undefined,
     fontSize: 12,
     fontFamily: 'Verdana, sans-serif',
-    color: 'black'
+    color: 'rgba(70, 70, 70, 1)'
 } as any;
 
 const labelMapping = {

@@ -136,4 +136,71 @@ series: [{
 
 <?= chart_example('Slices with different radii', 'slice-radius', 'generated') ?>
 
+<h2>Donuts</h2>
+
+<p>
+    Pie series can be used to create a donut chart by using the <code>innerRadiusOffset</code>
+    config.
+</p>
+
+<snippet language="ts">
+series: [{
+    type: 'pie',
+    labelKey: 'os',
+    angleKey: 'share',
+    innerRadiusOffset: -70
+}]
+</snippet>
+
+<p>
+    The config specifies the offset value from the maximum pie radius which all pie
+    slices use by default (the maximum pie series radius is detetermed automatically by the
+    chart depending on chart's dimensions). <code>-70</code> in the snippet above means
+    the inner radius of the series should be 70 pixels smaller than the maximum radius.
+</p>
+
+<h2>Example: Donut Chart</h2>
+
+<?= chart_example('Donut Chart', 'donut-chart', 'generated') ?>
+
+<h2>Multiple Donuts</h2>
+
+<p>
+    Just like we can configure the <code>innerRadiusOffset</code> we can also configure the
+    <code>outerRadiusOffset</code>. This gives us an ability to prevent multiple pie series
+    from overlapping inside a single chart.
+</p>
+
+<snippet language="ts">
+series: [{
+    type: 'pie',
+    outerRadiusOffset: 0, // default
+    innerRadiusOffset: -40,
+    ...
+}, {
+    type: 'pie',
+    outerRadiusOffset: -100,
+    innerRadiusOffset: -140,
+    ...
+}]
+</snippet>
+
+<p>
+    In the snippet above we configure the <code>outerRadiusOffset</code> of the second (inner) series
+    to be smaller than the <code>innerRadiusOffset</code> of the first (outer) series.
+    The difference of <code>60</code> between these offsets will determine the amount of
+    gap between outer and inner series. And the difference between <code>outerRadiusOffset</code>
+    and <code>innerRadiusOffset</code> of each series, will determine the thickness of their rings.
+    In this case, <code>40</code> for both series.
+</p>
+
+<h2>Example: Multiple Donuts</h2>
+
+<p>
+    The example below uses one pie series to plot the market share of each operating system
+    and another pie series to plot user satisfaction level with each OS:
+</p>
+
+<?= chart_example('Donut Chart', 'multi-donut', 'generated') ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
