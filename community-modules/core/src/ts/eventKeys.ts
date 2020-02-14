@@ -178,4 +178,7 @@ export class Events {
     public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+
+    public static EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
+    public static EVENT_MOUSE_FOCUS = 'mouseFocus';
 }

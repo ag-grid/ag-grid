@@ -1302,8 +1302,8 @@ WinningsFilter.prototype.init = function(params) {
     this.filterChangedCallback = params.filterChangedCallback;
     this.eGui = document.createElement("div");
     this.eGui.innerHTML =
-        '<div style="margin: 5px; padding: 4px; border: 1px solid lightgray; position: relative; padding-top: 15px; border-radius: 5px; border-top-left-radius: 0;">' +
-        '<div style="position: absolute; font-weight: bold; margin-top: -22px; ">Example Custom Filter</div>' +
+        '<div style="position: relative; margin: 20px 10px 10px 10px; padding: 20px 10px 10px 10px; position: relative; border: 1px solid lightgray; border-radius: 3px;">' +
+        '<div style="position: absolute; font-weight: bold; margin-top: -32px; border: 1px solid lightgray; border-radius: 3px; padding: 2px 5px;">Example Custom Filter</div>' +
         '<div><label><input type="radio" name="filter"' + uniqueId + ' id="cbNoFilter" style="margin-right: 5px;">No filter</input></label></div>' +
         '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbPositive" style="margin-right: 5px;">Positive</input></label></div>' +
         '<div style="margin: 5px 0;"><label><input type="radio" name="filter"' + uniqueId + ' id="cbNegative" style="margin-right: 5px;">Negative</input></label></div>' +
@@ -1326,7 +1326,7 @@ WinningsFilter.prototype.init = function(params) {
 
 WinningsFilter.prototype.getGui = function() {
     var isDark = document.body.classList.contains('dark');
-    this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#2d3436' : 'white';
+    this.eGui.querySelectorAll('div')[1].style.backgroundColor = isDark ? '#222628' : 'white';
     return this.eGui;
 };
 

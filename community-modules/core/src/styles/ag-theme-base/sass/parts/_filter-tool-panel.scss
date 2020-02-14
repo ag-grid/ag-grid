@@ -10,6 +10,11 @@
         height: $ag-grid-size * 8;
     }
 
+    .ag-filter-toolpanel-group-item {
+        margin-top: $ag-grid-size / 2;
+        margin-bottom: $ag-grid-size / 2;
+    }
+
     .ag-filter-toolpanel-search {
         height: $ag-header-height;
     }

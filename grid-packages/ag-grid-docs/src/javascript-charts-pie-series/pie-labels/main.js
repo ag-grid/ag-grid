@@ -11,15 +11,8 @@ var options = {
     series: [{
         type: 'pie',
         angleKey: 'value',
-        labelKey: 'label',
-        strokeWidth: 3
-    }],
-    legend: {
-        enabled: true
-    }
+        labelKey: 'label'
+    }]
 };
-var chart = agCharts.AgChart.create(options);
 
-function toggle() {
-    chart.legend.enabled = !chart.legend.enabled;
-}
+agCharts.AgChart.create(options);

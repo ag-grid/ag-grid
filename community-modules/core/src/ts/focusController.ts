@@ -24,10 +24,14 @@ export class FocusController {
 
     @PostConstruct
     private init(): void {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+
         this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
+        eDocument.addEventListener('keydown', () => this.eventService.dispatchEvent({ type: Events.EVENT_KEYBOARD_FOCUS }));
+        eDocument.addEventListener('mousedown', () => this.eventService.dispatchEvent({ type: Events.EVENT_MOUSE_FOCUS }));
 
         // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
         // we can delete these three lines of code soon.
@@ -111,8 +115,8 @@ export class FocusController {
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string): HTMLElement[] {
-        const focusableString = '[tabindex], input, select, button';
-        let excludeString = '.ag-hidden, .ag-hidden *';
+        const focusableString = '[tabindex], input, select, button, textarea';
+        let excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
         if (exclude) {
             excludeString += ', ' + exclude;

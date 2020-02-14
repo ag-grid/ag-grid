@@ -401,9 +401,14 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 8px;
     cursor: col-resize;
 
+    // unpinned headers get their rezise handle on the right in normal mode and left in RTL mode
     @include ag-unthemed-rtl((
         right: -4px
     ));
+}
+
+.ag-pinned-left-header .ag-header-cell-resize {
+    right: -4px; // pinned left headers always have their resize on the right, even in RTL mode
 }
 
 .ag-pinned-right-header .ag-header-cell-resize {
@@ -1353,7 +1358,7 @@ $ag-handleSize: 5px;
     align-items: center;
 }
 
-.ag-picker-field-button {
+.ag-picker-field-icon {
     display: flex;
     border: 0;
     padding: 0;

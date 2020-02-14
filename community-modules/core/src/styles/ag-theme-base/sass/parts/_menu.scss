@@ -74,11 +74,6 @@
         justify-content: center;
         cursor: pointer;
 
-        &:focus {
-            outline: 1px solid $ag-input-focus-border-color;
-            outline-offset: -4px;
-        }
-
         @if $ag-full-width-tabs {
             flex: 1 1 auto;
         }
@@ -86,6 +81,11 @@
         @if $ag-selected-tab-underline-transition-speed {
             transition: border-bottom $ag-selected-tab-underline-transition-speed;
         }
+    }
+
+    .ag-keyboard-focus .ag-tab:focus {
+        outline: 1px solid $ag-input-focus-border-color;
+        outline-offset: -4px;
     }
 
     .ag-tab-selected {
@@ -100,6 +100,10 @@
     // Value Set Filter
     ////////////////////////////////////////
 
+    .ag-filter-body-wrapper {
+        @include ag-vertical-widget-container();
+    }
+
     .ag-filter-condition-operator {
         width: 12px;
         height: 17px;
@@ -110,31 +114,17 @@
         @include ag-theme-rtl((margin-left: $ag-grid-size * 2));
     }
 
-    .ag-filter-select,
-    .ag-filter-body {
-        margin-bottom: $ag-grid-size;
-    }
-
     .ag-filter-body {
         margin-top: 0;
     }
 
     .ag-filter-filter {
-        margin-left: $ag-widget-container-horizontal-padding;
-        margin-right: $ag-widget-container-horizontal-padding;
-        margin-top: $ag-widget-container-vertical-padding;
-
         @include ag-theme-rtl((padding-left: $ag-grid-size));
     }
 
     .ag-filter-condition {
         margin-left: $ag-grid-size;
         margin-right: $ag-grid-size;
-    }
-
-    // string filter type
-    .ag-filter-select {
-        margin: $ag-grid-size;
     }
 
     .ag-set-filter-list {

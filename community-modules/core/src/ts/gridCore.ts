@@ -107,6 +107,16 @@ export class GridCore extends Component {
         if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
             console.warn(`ag-Grid: "${theme}" theme is deprecated and will be removed in the next major release (v23)`);
         }
+
+        const eGui = this.getGui();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+            _.addCssClass(eGui, 'ag-keyboard-focus');
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+            _.removeCssClass(eGui, 'ag-keyboard-focus');
+        });
     }
 
     private createTemplate(): string {
@@ -125,7 +135,7 @@ export class GridCore extends Component {
             `<div class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>                    
+                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
                 ${statusBar}
