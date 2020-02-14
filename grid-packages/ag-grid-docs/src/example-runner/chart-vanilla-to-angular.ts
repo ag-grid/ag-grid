@@ -29,6 +29,7 @@ function getImports(componentFileNames: string[]): string[] {
 
 function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-angular
+    style="height: 100%"
     ${attributes.join('\n    ')}
     ></ag-charts-angular>`;
 

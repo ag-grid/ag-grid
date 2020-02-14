@@ -18,6 +18,7 @@ var options = {
         enabled: true
     }
 };
+
 var chart = agCharts.AgChart.create(options);
 
 function toggle() {
