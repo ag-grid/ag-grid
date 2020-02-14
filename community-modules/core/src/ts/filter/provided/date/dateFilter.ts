@@ -156,9 +156,9 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         const pos = positionOne ? '1' : '2';
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
-                    <div class="ag-filter-date-from" ref="ePanelFrom${pos}">
+                    <div class="ag-filter-from ag-filter-date-from" ref="ePanelFrom${pos}">
                     </div>
-                    <div class="ag-filter-date-to" ref="ePanelTo${pos}"">
+                    <div class="ag-filter-to ag-filter-date-to" ref="ePanelTo${pos}"">
                     </div>
                 </div>`;
     }
