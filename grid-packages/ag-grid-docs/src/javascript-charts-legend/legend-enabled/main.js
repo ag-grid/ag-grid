@@ -13,10 +13,13 @@ var options = {
         angleKey: 'value',
         labelKey: 'label',
         strokeWidth: 3
-    }]
+    }],
+    legend: {
+        enabled: true
+    }
 };
 var chart = agCharts.AgChart.create(options);
 
-document.getElementById('toggle').addEventListener('click', function () {
+function toggle() {
     chart.legend.enabled = !chart.legend.enabled;
-});
+}
