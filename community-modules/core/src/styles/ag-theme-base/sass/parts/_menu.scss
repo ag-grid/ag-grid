@@ -134,7 +134,8 @@
 
     // string filter type
     .ag-filter-select {
-        margin: $ag-grid-size;
+        margin: $ag-widget-container-horizontal-padding;
+        margin-bottom: 0;
     }
 
     .ag-set-filter-list {

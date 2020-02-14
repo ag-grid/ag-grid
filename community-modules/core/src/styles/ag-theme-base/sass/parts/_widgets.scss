@@ -116,14 +116,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .ag-picker-field-button {
-            height: 100%
+        .ag-picker-field-icon {
+            height: 100%;
         }
         &.ag-disabled {
             opacity: 0.5;
-            button {
-                cursor: default;
-            }
         }
     }
 
@@ -250,6 +247,9 @@
     .ag-picker-field-wrapper {
         border: 1px solid $ag-border-color;
         border-radius: 5px;
+        &:focus {
+            box-shadow: $ag-input-focus-box-shadow;
+        }
     }
 
     .ag-picker-field-display {

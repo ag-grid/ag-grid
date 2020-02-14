@@ -1,17 +1,18 @@
-import { RefSelector } from "./componentAnnotations";
-import { Autowired } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { Autowired } from "../context/context";
 import { Component } from "./component";
+import { Constants } from "../constants";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { RefSelector } from "./componentAnnotations";
+import { _ } from "../utils";
 
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     protected TEMPLATE =
-        `<div class="ag-picker-field">
+        `<div class="ag-picker-field" role="presentation">
             <label ref="eLabel"></label>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper">
+            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
                 <%displayField% ref="eDisplayField" class="ag-picker-field-display"></%displayField%>
-                <button ref="eButton" class="ag-picker-field-button"> </button>
+                <div ref="eIcon" class="ag-picker-field-icon"></div>
             </div>
         </div>`;
 
@@ -27,7 +28,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
     @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eWrapper') protected eWrapper: HTMLElement;
     @RefSelector('eDisplayField') protected eDisplayField: T;
-    @RefSelector('eButton') private eButton: HTMLButtonElement;
+    @RefSelector('eIcon') private eIcon: HTMLButtonElement;
 
     protected postConstruct() {
         super.postConstruct();
@@ -37,9 +38,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 this.skipClick = false;
                 return;
             }
-            if (this.isDisabled()) {
-                return;
-            }
+            if (this.isDisabled()) { return; }
             this.pickerComponent = this.showPicker();
         };
 
@@ -57,11 +56,17 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
             }
         });
 
+        this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_ENTER) {
+                clickHandler();
+            }
+        });
+
         this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
         this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
-            this.eButton.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
         }
     }
 
