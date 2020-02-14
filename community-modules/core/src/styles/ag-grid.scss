@@ -30,11 +30,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-unselectable {
-    user-select: none !important; // disable user mouse selection
+    @include ag-selectable(none);
 }
 
 .ag-selectable {
-    user-select: text !important;
+    @include ag-selectable(text);
 }
 
 .ag-select-agg-func-popup {

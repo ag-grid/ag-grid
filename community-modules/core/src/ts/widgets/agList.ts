@@ -85,7 +85,7 @@ export class AgList extends Component {
         itemContentEl.innerHTML = innerText;
         this.itemEls.push(itemEl);
 
-        this.addDestroyableEventListener(itemEl, 'mouseover', () => this.highlightItem(itemEl));
+        this.addDestroyableEventListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem(itemEl));
         this.addDestroyableEventListener(itemEl, 'mouseleave', () => this.clearHighlighted());
         this.addDestroyableEventListener(itemEl, 'click', () => {
             const idx = this.itemEls.indexOf(itemEl);
