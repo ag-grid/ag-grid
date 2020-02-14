@@ -7,6 +7,7 @@ function createSlider(options) {
 
     var wrapper = document.createElement('div');
     wrapper.style.display = 'inline-flex';
+    wrapper.style.flexDirection = 'column';
     wrapper.style.alignItems = 'center';
     wrapper.style.width = (options.width || 400) + 'px';
     wrapper.style.padding = '5px 10px';
@@ -25,7 +26,7 @@ function createSlider(options) {
     slider.type = 'range';
     slider.setAttribute('id', sliderId);
     slider.style.height = '1.8em';
-    slider.style.flex = '1';
+    slider.style.flex = '1 1 auto';
 
     var labelHTML = '<strong>' + options.text + '</strong>';
 
@@ -70,7 +71,7 @@ function createSlider(options) {
 
     var action = options.action;
     if (action) {
-        slider.addEventListener('input', function (e) {
+        slider.addEventListener('change', function (e) {
             updateValue(+e.target.value);
         });
     }
