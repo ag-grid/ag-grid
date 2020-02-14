@@ -52,7 +52,9 @@
         height: $ag-list-item-height + $ag-grid-size * 2;
     }
 
-    .ag-charts-minichart-group-title-bar {
+    .ag-charts-minichart-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-top-level-group-title-bar {
         padding: $ag-grid-size $ag-grid-size * 2;
         line-height: $ag-icon-size + $ag-grid-size - 2;
     }
@@ -63,6 +65,10 @@
     
     .ag-chart-settings-nav-bar {
         @include ag-border(secondary, top);
+    }
+    
+    .ag-group-title-bar-icon {
+        @include ag-theme-rtl((margin-right: $ag-grid-size))
     }
 
     .ag-charts-format-sub-level-group {
