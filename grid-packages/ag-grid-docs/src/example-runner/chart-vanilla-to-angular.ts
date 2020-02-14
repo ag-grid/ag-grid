@@ -1,4 +1,4 @@
-import { getFunctionName } from './chart-vanilla-src-parser';
+import { getFunctionName, recognizedDomEvents, templatePlaceholder } from './chart-vanilla-src-parser';
 
 function removeFunctionKeyword(code): string {
     return code.replace(/^function /, '');
@@ -13,8 +13,19 @@ function isInstanceMethod(instance: any, property: any) {
     return instance.map(getFunctionName).filter(name => name === property.name).length > 0;
 }
 
+function wrapChartUpdateCode(code: string) {
+    if (code.indexOf('options.') < 0) {
+        return code;
+    }
+
+    return code.replace(
+        /(.*)\{(.*)\}/s,
+        '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
+}
+
 function getImports(): string[] {
     return [
+        "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartOptions } from 'ag-charts-angular';",
@@ -29,7 +40,13 @@ function getTemplate(bindings: any, attributes: string[]): string {
     let template = agChartTag;
 
     if (bindings.template) {
-        template = bindings.template.replace(/\(event\)/g, '($event)').replace('$$CHART$$', agChartTag);
+        template = bindings.template;
+
+        recognizedDomEvents.forEach(event => {
+            template = template.replace(new RegExp(`on${event}=`, 'g'), `(${event})=`);
+        });
+
+        template = template.replace(/\(event\)/g, '($event)').replace(templatePlaceholder, agChartTag);
     }
 
     return template;
@@ -66,6 +83,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
 
     const instance = bindings.instance.map(removeFunctionKeyword);
     const template = getTemplate(bindings, propertyAttributes);
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => wrapChartUpdateCode(removeFunctionKeyword(handler.body)));
 
     return `
 ${imports.join('\n')}
@@ -83,7 +101,7 @@ export class AppComponent {
         ${propertyAssignments.join(';\n')}
     }
 
-    ${instance.map(snippet => snippet.trim()).join('\n\n')}
+    ${instance.concat(externalEventHandlers).map(snippet => snippet.trim()).join('\n\n')}
 }
 
 ${bindings.globals.join('\n')}
