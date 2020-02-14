@@ -50,7 +50,7 @@ $example = getExampleInfo('chart', 'angular');
     </script>
 
     <script src="<?= $example["boilerplatePath"] ?>systemjs.config.js"></script>
-    <?= getNonGeneratedScriptTags($example['scripts']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts'], true); ?>
     <script>
         System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err) { console.error(err); });
     </script>

@@ -1,4 +1,4 @@
-(function (global) {
+(function(global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -33,6 +33,7 @@
                 'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
                 'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
 
+                lodash: 'npm:lodash@4.17.15',
                 app: appLocation + 'app'
             },
             systemJsMap
@@ -68,7 +69,7 @@
                     es2015: true
                 }
             },
-            '*.css': {loader: 'css'}
+            '*.css': { loader: 'css' }
         }
     });
 })(this);

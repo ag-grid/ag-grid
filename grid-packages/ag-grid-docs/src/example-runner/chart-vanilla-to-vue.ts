@@ -2,9 +2,20 @@ import { getFunctionName, removeFunctionKeyword, isInstanceMethod } from './pars
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
 
+function wrapChartUpdateCode(code: string): string {
+    if (code.indexOf('options.') < 0) {
+        return code;
+    }
+
+    return code.replace(
+        /(.*)\{(.*)\}/s,
+        '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
+}
+
 function getImports(componentFileNames: string[]): string[] {
     const imports = [
         "import Vue from 'vue';",
+        "import { cloneDeep } from 'lodash';",
         "import * as agCharts from 'ag-charts-community';",
         "import { AgChartsVue } from 'ag-charts-vue';",
     ];
@@ -49,15 +60,19 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
 function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-vue
-          ${attributes.join('\n    ')}></ag-charts-vue>`;
+    ${attributes.join('\n    ')}></ag-charts-vue>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;
 
     return convertTemplate(template);
 };
 
-function getAllMethods(bindings: any): [string[], string[]] {
-    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
+function getAllMethods(bindings: any): [string[], string[], string[]] {
+    const externalEventHandlers = bindings.externalEventHandlers
+        .map(event => event.body)
+        .map(handler => wrapChartUpdateCode(removeFunctionKeyword(handler)));
+
+    const instanceMethods = bindings.instanceMethods.map(method => wrapChartUpdateCode(removeFunctionKeyword(method)));
 
     const globalMethods = bindings.globals.map(body => {
         const funcName = getFunctionName(body);
@@ -70,13 +85,13 @@ function getAllMethods(bindings: any): [string[], string[]] {
         return body;
     });
 
-    return [instanceMethods, globalMethods];
+    return [externalEventHandlers, instanceMethods, globalMethods];
 }
 
 export function vanillaToVue(bindings: any, componentFileNames: string[]): string {
     const imports = getImports(componentFileNames);
     const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
-    const [instanceMethods, globalMethods] = getAllMethods(bindings);
+    const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
     const template = getTemplate(bindings, propertyAttributes);
 
     return `
@@ -100,7 +115,7 @@ const ChartExample = {
     mounted() {
     },
     methods: {
-        ${instanceMethods.map(snippet => `${snippet.trim()},`).join('\n')}
+        ${instanceMethods.concat(externalEventHandlers).map(snippet => `${snippet.trim()},`).join('\n')}
     }
 }
 

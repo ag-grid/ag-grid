@@ -44,7 +44,7 @@ $example = getExampleInfo('chart', 'react');
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
     <script src="<?= $example["boilerplatePath"] ?>systemjs.config.js"></script>
-    <?= getNonGeneratedScriptTags($example['scripts']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts'], true); ?>
     <script>
         System.import('<?=$example['appLocation']?>index.jsx').catch(function(err) { console.error(err); });
     </script>
