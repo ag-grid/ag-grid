@@ -9,34 +9,24 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Standalone Charts - Pie Series</h1>
 
 <p class="lead">
-    Pie series is used for showing how parts relate to the whole.
+    This section shows how to create pie charts.
 </p>
 
-<note>
-    Pie series is currently the only supported polar series. Polar means that instead of using
-    x/y coordinates to position things we use angle and radius. For this reason, pie series
-    configuration is slightly different compared to that of the other series.
-    Please keep this in mind when reading this chapter.
-</note>
+<p>
+    Pie series is used for showing how parts relate to the whole. For example when you want to show the ratios
+    in your dataset.
+</p>
 
-<h2>Basic Pie</h2>
+<h2>Basic Configuration</h2>
 
 <p>
     To plot a basic pie all we need is an array of values that will determine the angle of each
-    pie slice. The total of all values will correspond to the full pie. Notice how instead of
-    using <code>xKey</code> and <code>yKey</code> configs in other series, all we have to
-    specify in this case is the <code>angleKey</code>:
+    pie slice. The total of all values will correspond to the full pie.
 </p>
 
+<p> A basic pie series configuration is shown below:</p>
+
 <snippet language="ts">
-data: [
-    { value: 56.9 },
-    { value: 22.5 },
-    { value: 6.8 },
-    { value: 8.5 },
-    { value: 2.6 },
-    { value: 1.9 }
-],
 series: [{
     type: 'pie',
     angleKey: 'value'
@@ -44,18 +34,25 @@ series: [{
 </snippet>
 
 <p>
-    And the generated chart will look like this:
+    Notice in the snippet above how instead of using <code>xKey</code> and <code>yKey</code> configs in other
+    series, all we have to specify in this case is the <code>angleKey</code>.
+</p>
+
+<h2>Example: Basic Pie Series</h2>
+
+<p>
+    The example below demonstrates a simple pie series, notice that
+    <a href="../javascript-charts-tooltips/">Tooltips</a> show the value of each pie slice.
 </p>
 
 <?= chart_example('Basic Pie Chart', 'basic-pie', 'generated') ?>
 
-<p>
-    Each slice value is shown in the tooltip on hover.
-</p>
-
-<p>
-    <img alt="" src="scatter-chart.jpg" style="margin-bottom: 0px; width: 600px; max-width: 100%">
-</p>
+<note>
+    Pie series is currently the only supported polar series. Polar means that instead of using
+    x/y coordinates to position things we use angle and radius. For this reason, pie series
+    configuration is slightly different compared to that of the other series.
+    Please keep this in mind when reading this chapter.
+</note>
 
 <h2>Slice Label</h2>
 
@@ -66,14 +63,6 @@ series: [{
 </p>
 
 <snippet language="ts">
-data: [
-    { label: 'Android', value: 56.9 },
-    { label: 'iOS', value: 22.5 },
-    { label: 'BlackBerry', value: 6.8 },
-    { label: 'Symbian', value: 8.5 },
-    { label: 'Bada', value: 2.6 },
-    { label: 'Windows', value: 1.9 }
-],
 series: [{
     type: 'pie',
     angleKey: 'value',
