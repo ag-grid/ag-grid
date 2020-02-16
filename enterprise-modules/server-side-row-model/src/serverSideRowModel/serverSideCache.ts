@@ -57,7 +57,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public getRowBounds(index: number): RowBounds {
-        this.logger.log(`getRowBounds(${index})`);
+        // this.logger.log(`getRowBounds(${index})`);
 
         // we return null if row not found
 
@@ -104,7 +104,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         // NOTE: what about purged blocks
 
-        this.logger.log(`getRowBounds(${index}), result = ${result}`);
+        // this.logger.log(`getRowBounds(${index}), result = ${result}`);
 
         return result;
     }
@@ -114,7 +114,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        this.logger.log(`getRowIndexAtPixel(${pixel})`);
+        // this.logger.log(`getRowIndexAtPixel(${pixel})`);
 
         // we return null if row not found
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
@@ -163,7 +163,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         //NOTE: purged
 
-        this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
+        // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
 
         return result;
     }
