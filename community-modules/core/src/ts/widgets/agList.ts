@@ -46,6 +46,9 @@ export class AgList extends Component {
             case Constants.KEY_UP:
                 const isDown = key === Constants.KEY_DOWN;
                 let itemToHighlight: HTMLElement;
+
+                e.preventDefault();
+
                 if (!this.highlightedEl) {
                     itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
                 } else {
