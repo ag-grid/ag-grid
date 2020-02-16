@@ -77,7 +77,7 @@ function createPivotColDefs(request, pivotFields) {
         if (parts.length === 0) return [];
 
         var first = parts.shift();
-        var existing = res.find(r => r.groupId === first);
+        var existing = res.find(function(r) { return r.groupId === first });
 
         if (existing) {
             existing['children'] = addColDef(colId, parts, existing.children);
@@ -88,7 +88,7 @@ function createPivotColDefs(request, pivotFields) {
                 colDef['groupId'] = first;
                 colDef['headerName'] = first;
             } else {
-                var valueCol = request.valueCols.find(r => r.field === first);
+                var valueCol = request.valueCols.find(function(r) { return r.field === first });
 
                 colDef['colId'] = colId;
                 colDef['headerName'] =  valueCol.displayName;

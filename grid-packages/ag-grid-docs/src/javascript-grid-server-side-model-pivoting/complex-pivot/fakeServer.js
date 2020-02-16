@@ -1,3 +1,6 @@
+// This fake server uses http://alasql.org/ to mimic how a real server
+// might generate sql queries from the Server-side Row Model request.
+// To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
@@ -60,7 +63,7 @@ function FakeServer(allData) {
 
     function doPivot(request, pivotCol, valueCol) {
         var groupKeys = request.groupKeys;
-        let groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
+        var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
         var selectGroupCols = groupsToUse.map(function(groupCol){ return groupCol.id }).join(", ");
 
         var SQL_TEMPLATE = 'SELECT {0}, ({1} + "_{2}") AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})' + whereSql(request);
@@ -79,7 +82,7 @@ function FakeServer(allData) {
         if (groupKeys) {
             for (var i = 0; i < groupKeys.length; i++) {
                 whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                whereClause += `${rowGroups[i].id} = '${groupKeys[i]}'`;
+                whereClause += rowGroups[i].id + ' = ' + groupKeys[i];
             }
         }
         return whereClause;
