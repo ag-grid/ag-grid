@@ -21,7 +21,7 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // fetch 100 rows per at a time
+    // fetch 100 rows at a time
     cacheBlockSize: 100,
 
     // only keep 10 blocks of rows
@@ -54,7 +54,7 @@ function ServerSideDatasource(server) {
         getRows: function(params) {
             // adding delay to simulate real sever call
             setTimeout(function () {
-                var response = server.getResponse(params.request);
+                var response = server.getData(params.request);
 
                 if (response.success) {
                     // call the success callback
@@ -70,7 +70,7 @@ function ServerSideDatasource(server) {
 
 function FakeServer(allData) {
     return {
-        getResponse: function(request) {
+        getData: function(request) {
             console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
             // take a slice of the total rows

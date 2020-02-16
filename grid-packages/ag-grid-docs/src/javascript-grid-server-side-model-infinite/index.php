@@ -168,7 +168,8 @@ gridOptions.api.setServerSideDatasource(datasource);
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to see how to lazy load data with: <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.
+    Continue to the next section to learn about
+     <a href="../javascript-grid-server-side-model-sorting-filtering/">Server-side Sorting / Filtering</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

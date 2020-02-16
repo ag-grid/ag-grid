@@ -29,8 +29,8 @@ function FakeServer(allData) {
         var selectSql = createSelectSql(request);
         var fromSql = ' FROM ?';
         var whereSql = createWhereSql(request);
-        var limitSql = createLimitSql(request);
         var groupBySql = createGroupBySql(request);
+        var limitSql = createLimitSql(request);
 
         return selectSql + fromSql + whereSql + groupBySql + limitSql;
     }

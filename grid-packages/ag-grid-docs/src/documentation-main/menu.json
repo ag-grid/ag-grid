@@ -385,6 +385,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Sorting / Filtering",
+                    "url": "javascript-grid-server-side-model-sort-filter/",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Row Grouping",
                     "url": "javascript-grid-server-side-model-grouping/",
                     "enterprise": true
@@ -397,11 +402,6 @@
                   {
                     "title": "Pagination",
                     "url": "javascript-grid-server-side-model-pagination/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Filtering / Sorting",
-                    "url": "javascript-grid-server-side-model-filtering",
                     "enterprise": true
                   },
                   {

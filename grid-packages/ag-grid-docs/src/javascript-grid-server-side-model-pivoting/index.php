@@ -26,6 +26,8 @@ include '../documentation-main/documentation_header.php';
     or pivoted) then the grid data is cleared out and loaded again from scratch using the new configuration.
 </p>
 
+<?= grid_example('Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+
 <h2>Example - Slice and Dice - Mocked Server</h2>
 <p>
     A mock data store running inside the browser is used in the example below. The purpose of the mock server is to

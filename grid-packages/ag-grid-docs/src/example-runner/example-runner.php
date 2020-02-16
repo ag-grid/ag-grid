@@ -350,6 +350,9 @@ function renderExampleExtras($config)
         'lodash' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
         ),
+        'alasql' => array(
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js')
+        ),
         'd3' => array(
             'scripts' => array('https://d3js.org/d3.v4.min.js')
         ),
