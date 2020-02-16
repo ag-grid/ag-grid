@@ -79,8 +79,8 @@ function FakeServer(allData) {
     getData: function(request) {
       console.log('[Datasource] - more rows requested: ' + request.startRow + ' to ' + request.endRow);
 
-      // take a slice of the total rows
-      var rowsThisPage = allData.slice(request.startRow, request.endRow);
+      // take a slice of the total rows for requested block
+      var rowsForBlock = allData.slice(request.startRow, request.endRow);
 
       // if on or after the last block, work out the last row.
       var lastRow = allData.length <= request.endRow ? data.length : -1;
@@ -90,7 +90,7 @@ function FakeServer(allData) {
 
       return {
         success: true,
-        rows: rowsThisPage,
+        rows: rowsForBlock,
         lastRow: lastRow,
       };
     },
