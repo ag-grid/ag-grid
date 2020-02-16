@@ -18,9 +18,9 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Simple Set Filtering</h2>
+<h2>Simple Set Filter</h2>
 
-<?= grid_example('Simple Set Filtering', 'simple-set-filtering', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Simple Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Provided Filters</h2>
 

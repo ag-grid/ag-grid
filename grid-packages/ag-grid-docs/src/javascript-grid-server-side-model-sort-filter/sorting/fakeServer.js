@@ -7,11 +7,10 @@ function FakeServer(allData) {
     return {
         getData: function (request) {
             var results = executeQuery(request);
-            var lastRowIndex = getLastRowIndex(request, results);
             return {
                 success: true,
                 rows: results,
-                lastRow: lastRowIndex,
+                lastRow: getLastRowIndex(request, results)
             };
         }
     };
@@ -54,9 +53,7 @@ function FakeServer(allData) {
     }
 
     function getLastRowIndex(request, results) {
-        if (results === null || results === undefined || results.length === 0) {
-            return null;
-        }
+        if (!results || results.length === 0) return -1;
         var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }

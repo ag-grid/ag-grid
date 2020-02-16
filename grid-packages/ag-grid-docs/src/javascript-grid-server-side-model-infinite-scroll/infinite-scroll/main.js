@@ -58,10 +58,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function ServerSideDatasource(server) {
   return {
     getRows: function(params) {
+      var request = params.request;
+
+      console.log('[Datasource] - rows requested: ' + request.startRow + ' to ' + request.endRow);
+
+      var response = server.getData(params.request);
+
       // adding delay to simulate real sever call
       setTimeout(function() {
-        var response = server.getData(params.request);
-
         if (response.success) {
           // call the success callback
           params.successCallback(response.rows, response.lastRow);
@@ -77,7 +81,6 @@ function ServerSideDatasource(server) {
 function FakeServer(allData) {
   return {
     getData: function(request) {
-      console.log('[Datasource] - more rows requested: ' + request.startRow + ' to ' + request.endRow);
 
       // take a slice of the total rows for requested block
       var rowsForBlock = allData.slice(request.startRow, request.endRow);

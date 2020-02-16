@@ -65,7 +65,7 @@ function getCountryValuesAsync(params) {
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
-            console.log('[Datasource] - more rows requested: ', params.request);
+            console.log('[Datasource] - rows requested: ', params.request);
 
             // get data for request from our fake server
             var response = server.getData(params.request);

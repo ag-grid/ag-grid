@@ -20,7 +20,7 @@ var gridOptions = {
     },
     rowModelType: 'serverSide',
     animateRows: true,
-    cacheBlockSize: 20,
+    cacheBlockSize: 40,
     // debug: true
 };
 
@@ -41,22 +41,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-var updateColDefs = true;
 
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
-            console.log('ServerSideDatasource - getRows()', params.request);
+            var request = params.request;
 
-            var response = server.getResponse(params.request);
+            console.log('[Datasource] - rows requested: ', request);
 
-            if (updateColDefs) {
-                // supply secondary columns to the grid
-                var pivotColDefs = createPivotColDefs(params.request, response.pivotFields);
-                params.columnApi.setSecondaryColumns(pivotColDefs);
+            var response = server.getData(request);
 
-                updateColDefs = false;
-            }
+            // add pivot colDefs in the grid based on the resulting data
+            addPivotColDefs(request, response, params.columnApi);
 
             // simulating real server call with a 500ms delay
             setTimeout(function () {
@@ -71,14 +67,28 @@ function ServerSideDatasource(server) {
     };
 }
 
+function addPivotColDefs(request, response, columnApi) {
+    // check if pivot colDefs already exist
+    var existingPivotColDefs = columnApi.getSecondaryColumns();
+    if (existingPivotColDefs && existingPivotColDefs.length > 0) {
+        return;
+    }
+
+    // create pivot colDef's based of data returned from the server
+    var pivotColDefs = createPivotColDefs(request, response.pivotFields);
+
+    // supply secondary columns to the grid
+    columnApi.setSecondaryColumns(pivotColDefs);
+}
+
 function createPivotColDefs(request, pivotFields) {
 
     function addColDef(colId, parts, res) {
         if (parts.length === 0) return [];
 
         var first = parts.shift();
-        var existing = res.find(function(r) { return r.groupId === first });
 
+        var existing = res.filter(function(r) { return r.groupId === first })[0];
         if (existing) {
             existing['children'] = addColDef(colId, parts, existing.children);
         } else {
@@ -88,8 +98,7 @@ function createPivotColDefs(request, pivotFields) {
                 colDef['groupId'] = first;
                 colDef['headerName'] = first;
             } else {
-                var valueCol = request.valueCols.find(function(r) { return r.field === first });
-
+                var valueCol = request.valueCols.filter(function(r) { return r.field === first })[0];
                 colDef['colId'] = colId;
                 colDef['headerName'] =  valueCol.displayName;
                 colDef['field'] = colId;

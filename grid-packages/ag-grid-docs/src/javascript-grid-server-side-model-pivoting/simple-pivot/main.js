@@ -1,6 +1,5 @@
 var columnDefs = [
     {headerName: "Country", field: "country", rowGroup: true, hide: true},
-    {headerName: "Sport", field: "sport", rowGroup: true, hide: true},
     {headerName: "Year", field: "year", pivot: true, hide: true},
     {headerName: "Total", field: "total", aggFunc: 'sum', hide: true},
 ];
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
-            console.log('[Datasource] - more rows requested: ', params.request);
+            console.log('[Datasource] - rows requested: ', params.request);
 
             // get data for request from our fake server
             var response = server.getData(params.request);

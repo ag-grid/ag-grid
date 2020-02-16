@@ -47,9 +47,7 @@ function FakeServer(allData) {
     }
 
     return {
-        getResponse: function(request) {
-            console.log('fetching rows: ' + request.startRow + ' to ' + request.endRow);
-
+        getData: function(request) {
             var filteredData = doFilter(allData, request.filterModel);
             var filteredAndSortedData = doSort(filteredData, request.sortModel);
 

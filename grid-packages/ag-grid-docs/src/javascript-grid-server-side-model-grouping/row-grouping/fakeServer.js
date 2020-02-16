@@ -1,7 +1,7 @@
 function FakeServer(allData) {
 
     return {
-        getResponse: function (request) {
+        getData: function (request) {
             var success = true;
             var rowsForBlock = [];
             var lastRowIndex = -1;

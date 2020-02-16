@@ -6,55 +6,49 @@ function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
-            var rowsForBlock = extractRowsForBlock(request, results);
-
+            var result = executeQuery(request);
             return {
                 success: true,
-                rows: rowsForBlock,
-                lastRow: results.length,
+                rows: result,
+                lastRow: getLastRowIndex(request, result),
                 pivotFields: getPivotFields(request)
             };
         }
     };
 
     function executeQuery(request) {
-        var numGroupKeys = request.groupKeys.length;
-        var groupToUse = request.rowGroupCols[numGroupKeys];
-
-        var SQL_TEMPLATE = 'SELECT {0}, ({1} + "_{2}") AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})' + whereSql(request);
-        var SQL = interpolate(SQL_TEMPLATE, [groupToUse.id, request.pivotCols[0].id, request.valueCols[0].id]);
+        var SQL_TEMPLATE = 'SELECT {0}, ({1} + "_{2}") AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})';
+        var args = [request.rowGroupCols[0].id, request.pivotCols[0].id, request.valueCols[0].id];
+        var SQL = interpolate(SQL_TEMPLATE, args);
 
         console.log('[FakeServer] - about to execute query:', SQL);
 
-        return alasql(SQL, [allData]);
+        var result = alasql(SQL, [allData]);
+
+        // workaround - 'alasql' doesn't support PIVOT + LIMIT
+        return extractRowsForBlock(request, result);
     }
 
-    function whereSql(args) {
-        var rowGroups = args.rowGroupCols;
-
-        var groupKeys = args.groupKeys;
-        var whereClause = '';
-        if (groupKeys) {
-            for (var i = 0; i < groupKeys.length; i++) {
-                whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                whereClause += rowGroups[i].id + ' = ' + groupKeys[i];
-            }
-        }
-        return whereClause;
+    function extractRowsForBlock(request, results) {
+        var blockSize = request.endRow - request.startRow + 1;
+        return results.slice(request.startRow, request.startRow + blockSize);
     }
 
     function getPivotFields(request) {
         var pivotCol = request.pivotCols[0];
         var valueCol = request.valueCols[0];
-        var SQL = interpolate('SELECT DISTINCT ({0} + "_{1}") AS {0} FROM ? ORDER BY {0}', [pivotCol.id, valueCol.id]);
-        var res = alasql(SQL, [allData]);
-        return res.map(function(r) { return r[pivotCol.id] });
+
+        var SQL_TEMPLATE = 'SELECT DISTINCT ({0} + "_{1}") AS {0} FROM ? ORDER BY {0}';
+        var SQL = interpolate(SQL_TEMPLATE, [pivotCol.id, valueCol.id]);
+        var result = alasql(SQL, [allData]);
+
+        return flatten(result.map(Object.values));
     }
 
-    function extractRowsForBlock(request, results) {
-        var blockSize = request.endRow - request.startRow;
-        return results.slice(request.startRow, request.startRow + blockSize);
+    function getLastRowIndex(request, results) {
+        if (!results || results.length === 0) return -1;
+        var currentLastRow = request.startRow + results.length;
+        return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }
 
@@ -66,4 +60,8 @@ function interpolate(str, o) {
             return typeof r === 'string' || typeof r === 'number' ? r : a;
         }
     );
+}
+
+function flatten(arrayOfArrays) {
+    return [].concat.apply([], arrayOfArrays);
 }

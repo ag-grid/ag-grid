@@ -61,9 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
+            console.log('[Datasource] - rows requested: ', params.request);
+
+            var response = server.getData(params.request);
+
             // adding delay to simulate real sever call
             setTimeout(function () {
-                var response = server.getResponse(params.request);
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
