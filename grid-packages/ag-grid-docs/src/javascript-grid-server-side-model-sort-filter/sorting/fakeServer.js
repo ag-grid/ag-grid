@@ -57,7 +57,7 @@ function FakeServer(allData) {
         if (results === null || results === undefined || results.length === 0) {
             return null;
         }
-        const currentLastRow = request.startRow + results.length;
+        var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }

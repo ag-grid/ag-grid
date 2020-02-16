@@ -17,7 +17,7 @@ function FakeServer(allData) {
         getCountries: function() {
             var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country asc';
             var res = alasql(SQL, [allData]);
-            return res.map(r => r.country);
+            return res.map(function(r) { return r.country });
         }
     };
 

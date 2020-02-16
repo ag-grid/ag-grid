@@ -6,8 +6,8 @@ function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var result = executeQuery(request);
-            var rowsForBlock = extractRowsForBlock(request, result);
+            var results = executeQuery(request);
+            var rowsForBlock = extractRowsForBlock(request, results);
 
             return {
                 success: true,
@@ -38,7 +38,7 @@ function FakeServer(allData) {
         if (groupKeys) {
             for (var i = 0; i < groupKeys.length; i++) {
                 whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                whereClause += `${rowGroups[i].id} = '${groupKeys[i]}'`;
+                whereClause += rowGroups[i].id + ' = ' + groupKeys[i];
             }
         }
         return whereClause;
@@ -49,7 +49,7 @@ function FakeServer(allData) {
         var valueCol = request.valueCols[0];
         var SQL = interpolate('SELECT DISTINCT ({0} + "_{1}") AS {0} FROM ? ORDER BY {0}', [pivotCol.id, valueCol.id]);
         var res = alasql(SQL, [allData]);
-        return res.map(r => r[pivotCol.id]);
+        return res.map(function(r) { return r[pivotCol.id] });
     }
 
     function extractRowsForBlock(request, results) {
