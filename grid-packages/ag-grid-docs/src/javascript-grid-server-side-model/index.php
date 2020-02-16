@@ -170,6 +170,12 @@ interface IServerSideGetRowsParams {
 
     // fail callback, tell the grid the call failed so it can adjust its state
     failCallback(): void;
+
+    // grid API
+    api: GridApi;
+
+    // column API
+    columnApi: ColumnApi;
 }</snippet>
 
 <p>
