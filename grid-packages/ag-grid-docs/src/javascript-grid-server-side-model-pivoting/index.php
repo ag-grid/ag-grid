@@ -28,6 +28,8 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
+<?= grid_example('Complex Pivot', 'complex-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+
 <h2>Example - Slice and Dice - Mocked Server</h2>
 <p>
     A mock data store running inside the browser is used in the example below. The purpose of the mock server is to
