@@ -26,6 +26,9 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Provided Filters', 'provided-filters', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
+<h2>Set Filter with Complex Object</h2>
+
+<?= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <p>
     Continue to the next section to learn about

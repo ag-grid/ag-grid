@@ -1,28 +1,46 @@
 var columnDefs = [
-    { field: 'athlete', menuTabs: false },
+    { field: 'athlete',  menuTabs: false },
     {
       field: 'country',
+      valueFormatter: countryValueFormatter,
       filter: 'agSetColumnFilter',
       filterParams: {
         newRowsAction: 'keep',
-        values: ['United States', 'Russia']
+        values: getCountryValuesAsync,
+        valueFormatter: countryFilterValueFormatter
       },
       menuTabs: ['filterMenuTab']
-    },
-    { field: 'year', filter: 'agNumberColumnFilter'},
-    { field: 'gold', aggFunc: 'sum'},
+    }
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        sortable: true,
-        enableRowGroup: true
+        sortable: true
     },
     rowModelType: 'serverSide',
     animateRows: true
 };
+
+function countryValueFormatter(params) {
+    if (params.value && params.value.code) {
+        return params.value.name + '(' + params.value.code + ')';
+    }
+}
+
+function getCountryValuesAsync(params) {
+    setTimeout(function() {
+        params.success(Object.keys(countryCodeMap))
+    }, 500);
+}
+
+function countryFilterValueFormatter(params) {
+    var code = params.value;
+    var name = countryCodeMap[code];
+    return name + '(' + code + ')';
+}
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -33,11 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json' })
         .then(function (data) {
-                var fakeServer = new FakeServer(data);
-                var datasource = new ServerSideDatasource(fakeServer);
-                gridOptions.api.setServerSideDatasource(datasource);
-            }
-        );
+            var fakeServer = new FakeServer(data);
+            var datasource = new ServerSideDatasource(fakeServer);
+            gridOptions.api.setServerSideDatasource(datasource);
+        }
+    );
 });
 
 function ServerSideDatasource(server) {
@@ -53,7 +71,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-            }, 200);
+            }, 500);
         }
     };
 }
