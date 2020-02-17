@@ -32,12 +32,13 @@ const generate = (theme) => {
             fontHeight: 1000,
             templateOptions: {
                 classPrefix: 'ag-icon-',
-                baseSelector: '.ag-icon'
+                baseSelector: '.ag-icon',
+                theme
             },
             types: formats,
             fixedWidth: false,
             dest: destFolder,
-            cssTemplate: './scss-template.hbs'
+            cssTemplate: './scss-template.hbs',
         },
         (err, res) => {
             if (err) {
@@ -54,7 +55,7 @@ const generate = (theme) => {
             const scssContents = res.generateCss(urls);
 
             mkdirp.sync(destFolder);
-            fs.writeFileSync(destFolder + '/_font-vars.scss', scssContents);
+            fs.writeFileSync(`${destFolder}/_ag-theme-${theme}-font-vars.scss`, scssContents);
         }
     );
 }

@@ -1,6 +1,7 @@
 @import "./ag-theme-base-import-legacy-vars";
+@import "./ag-theme-base-font-vars";
 
-$ag-base-vars: (
+$ag-base-params: (
     // Colour of text and icons in primary UI elements like menus
     foreground-color: #000,
 
@@ -57,16 +58,16 @@ $ag-base-vars: (
     selected-tab-underline-transition-speed: null,
 
     // Background colour for cells that provide categories to the current range chart
-    range-selection-chart-category-background-color: ag-derived(range-selection-background-color, $opacity: 0.4),
+    range-selection-chart-category-background-color: rgba(#00FF84, 0.1),
 
     // Background colour for cells that provide data to the current range chart
-    range-selection-chart-background-color: ag-derived(range-selection-background-color)
+    range-selection-chart-background-color: rgba(#0058FF, 0.1),
 
     // Rollover colour for header cells
     header-cell-hover-background-color: null,
 
     // Colour applied to header cells when the column is being dragged to a new position
-    header-cell-moving-background-color: ag-derived(header-cell-hover-background-color)
+    header-cell-moving-background-color: ag-derived(header-cell-hover-background-color),
 
     // Colour to apply when a cell value changes and enableCellChangeFlash is enabled
     value-change-value-highlight-background-color: rgba(#16A085, 0.5),
@@ -151,18 +152,51 @@ $ag-base-vars: (
     minichart-selected-chart-color: ag-derived(checkbox-checked-color) // color of border around selected minichart
     minichart-selected-page-color: ag-derived(checkbox-checked-color) // color of dot representing selected chart page
 
-    // The main control for affecting how tightly data and UI elements are packed together.
-    // All block sizes, margins and padding in the grid are defined as a multiple of grid-size,
-    // so increasing it will add empty space around text and icons without changing the text size.
+
+    //
+    // SIZING / PADDING / SPACING
+    //
+
+    // grid-size is the main control for affecting how tightly data and UI elements are packed together.
+    // All padding and spacing in the grid is defined as a multiple of grid-size,
+    // so increasing it will make most components larger by increasing their internal white
+    // space while leaving the size of text and icons unchanged.
     grid-size: 4px,
+
+    // The size of square icons and icon-buttons
     icon-size: 12px,
-    row-height: ag-derived(grid-size, $times: 6, $plus: 1),
-    header-height: ag-derived(row-height)
+
+    // These 4 variables set the padding around and spacing between widgets in "widget containers"
+    // which are parts of the UI that contain many related widgets, like the set filter menu,
+    // charts settings tabs etc.
+    widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
+    widget-container-vertical-padding: ag-derived(grid-size, $times: 1.5),
+    widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
+    widget-vertical-spacing: ag-derived(grid-size),
+
+    // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but
+    // inferred from $ag-row-height / $ag-header-height
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
+
+    // Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)
     cell-widget-spacing: ag-derived(cell-horizontal-padding)
-    virtual-item-height: ag-derived(grid-size, $times: 5),
+
+    // Height of grid rows
+    row-height: ag-derived(grid-size, $times: 6, $plus: 1),
+
+    // Height of header rows
+    header-height: ag-derived(row-height)
+
+    // Height of items in lists (example of lists are dropdown select inputs and column menu set filters)
+    list-item-height: ag-derived(grid-size, $times: 5),
+
+    // How much to indent child columns in the column tool panel relative to their parent
     column-select-indent-size: ag-derived(grid-size, $plus: icon-size),
+
+    // How much to indent child rows in the grid relative to their parent row
     row-group-indent-size: ag-derived(cell-widget-spacing, $plus: icon-size),
+
+    // How much to indent child columns in the filters tool panel relative to their parent
     filter-tool-panel-group-indent: 16px,
     filter-tool-panel-top-level-row-height: ag-derived(grid-size, $times: 8),
     filter-tool-panel-sub-level-row-height: ag-derived(grid-size, $times: 6),
@@ -173,7 +207,8 @@ $ag-base-vars: (
     // Fonts
     font-family: 'Helvetica Neue', sans-serif,
     font-size: 14px,
-
+    icon-font-family: $ag-theme-base-icon-font-family,
+    icons-data: $ag-theme-base-icons-data,
 
     // cards are elements that float above the UI
     card-radius: ag-derived(border-radius)
@@ -185,5 +220,3 @@ $ag-base-vars: (
     popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3),
 );
 
-// Icons
-@import "./font-vars";
