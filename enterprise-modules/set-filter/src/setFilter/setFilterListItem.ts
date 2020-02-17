@@ -1,5 +1,5 @@
 import {
-    _,
+    AgCheckbox,
     AgEvent,
     Autowired,
     ColDef,
@@ -12,7 +12,8 @@ import {
     Promise,
     UserComponentFactory,
     ValueFormatterService,
-    RefSelector
+    RefSelector,
+    _
 } from "@ag-grid-community/core";
 
 
@@ -27,16 +28,13 @@ export class SetFilterListItem extends Component {
 
     private static TEMPLATE = 
         `<label class="ag-set-filter-item">
-            <div ref="eCheckbox" class="ag-set-filter-item-checkbox"></div>
+            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
             <span class="ag-set-filter-item-value"></span>
         </label>`;
 
-    @RefSelector('eCheckbox') private eCheckbox: HTMLElement;
+    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
-    private eCheckboxInput: HTMLInputElement;
-    private eClickableArea: HTMLElement;
     private selected: boolean = true;
-
     private value: any;
     private column: Column;
 
@@ -63,27 +61,15 @@ export class SetFilterListItem extends Component {
 
     @PostConstruct
     private init(): void {
-        this.eCheckboxInput = document.createElement('input');
-        this.eCheckboxInput.type = 'checkbox';
-        this.eCheckboxInput.className = 'ag-checkbox';
-        this.eCheckbox.appendChild(this.eCheckboxInput);
-
-        this.eClickableArea = this.getGui();
-
-        this.updateCheckboxIcon();
         this.render();
 
-        const listener = (mouseEvent: MouseEvent) => {
-            mouseEvent.preventDefault();
-            _.addAgGridEventPath(mouseEvent);
-            this.selected = !this.selected;
-            this.updateCheckboxIcon();
+        this.eCheckbox.onValueChange((value) => {
+            this.selected = value;
             const event: SelectedEvent = {
                 type: SetFilterListItem.EVENT_SELECTED
             };
             return this.dispatchEvent(event);
-        };
-        this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
+        });
     }
 
     public isSelected(): boolean {
@@ -96,16 +82,13 @@ export class SetFilterListItem extends Component {
     }
 
     private updateCheckboxIcon() {
-        this.eCheckboxInput.checked = this.isSelected();
+        this.eCheckbox.setValue(this.isSelected(), true);
     }
 
     public render(): void {
         const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-
         const colDef = this.column.getColDef();
-
         const filterValueFormatter = this.getFilterValueFormatter(colDef);
-
         const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
 
         const params = {

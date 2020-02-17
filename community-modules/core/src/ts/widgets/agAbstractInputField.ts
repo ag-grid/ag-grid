@@ -89,4 +89,16 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
         return this;
     }
+
+    public setInputPlaceHolder(placeholder: string): this {
+        const eInput = this.eInput;
+
+        if (placeholder) {
+            eInput.setAttribute('placeholder', placeholder);
+        } else {
+            eInput.removeAttribute('placeholder');
+        }
+
+        return this;
+    }
 }

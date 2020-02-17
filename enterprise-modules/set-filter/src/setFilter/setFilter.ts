@@ -1,5 +1,6 @@
 import {
-    _,
+    AgCheckbox,
+    AgInputTextField,
     Autowired,
     CellValueChangedEvent,
     Component,
@@ -12,29 +13,27 @@ import {
     RefSelector,
     ValueFormatterService,
     VirtualList,
-    VirtualListModel
+    VirtualListModel,
+    _
 } from "@ag-grid-community/core";
 
 import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {SetFilterModel} from "./setFilterModel";
 
-enum CheckboxState { CHECKED, UNCHECKED, INTERMEDIATE }
-
 export class SetFilter extends ProvidedFilter {
 
     private valueModel: SetValueModel;
-    private eSelectAllCheckbox: HTMLInputElement;
 
-    @RefSelector('eSelectAll') private eSelectAll: HTMLInputElement;
+    @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
     @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
-    @RefSelector('eMiniFilter') private eMiniFilter: HTMLInputElement;
+    @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
     
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('eventService') private eventService: EventService;
 
-    private selectAllState: CheckboxState;
+    private selectAllState: boolean | undefined;
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
 
@@ -48,15 +47,12 @@ export class SetFilter extends ProvidedFilter {
 
     protected createBodyTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         return `<div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
                     <div class="ag-filter-header-container" role="presentation">
-                        <div class="ag-input-wrapper" id="ag-mini-filter" role="presentation">
-                            <input ref="eMiniFilter" class="ag-filter-filter ag-set-filter-filter" type="text" placeholder="${translate('searchOoo', 'Search...')}"/>
-                        </div>
+                        <ag-input-text-field class="eMiniFilter" class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                         <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
-                            <div ref="eSelectAll" class="ag-set-filter-item-checkbox"></div><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
+                            <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
                     </div>
                     <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
@@ -99,12 +95,9 @@ export class SetFilter extends ProvidedFilter {
         if (this.gridOptionsWrapper.isEnableOldSetFilterModel()) {
             // this is a hack, it breaks casting rules, to apply with old model
             return (values as any) as SetFilterModel;
-        } else {
-            return {
-                values: values,
-                filterType: 'set'
-            };
         }
+
+        return { values,  filterType: 'set' };
     }
 
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
@@ -117,11 +110,6 @@ export class SetFilter extends ProvidedFilter {
         this.checkSetFilterDeprecatedParams(params);
 
         this.setFilterParams = params;
-
-        this.eSelectAllCheckbox = document.createElement("input");
-        this.eSelectAllCheckbox.type = "checkbox";
-        this.eSelectAllCheckbox.className = "ag-checkbox";
-        this.eSelectAll.appendChild(this.eSelectAllCheckbox);
 
         this.initialiseFilterBodyUi();
 
@@ -176,8 +164,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateCheckboxIcon() {
-        this.eSelectAllCheckbox.checked = this.selectAllState === CheckboxState.CHECKED;
-        this.eSelectAllCheckbox.indeterminate = this.selectAllState === CheckboxState.INTERMEDIATE;
+        this.eSelectAll.setValue(this.selectAllState);
     }
 
     public setLoading(loading: boolean): void {
@@ -185,6 +172,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initialiseFilterBodyUi(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eMiniFilter.setInputPlaceHolder(translate('searchOoo', 'Search...'));
+
         this.virtualList = new VirtualList('filter');
         this.getContext().wireBean(this.virtualList);
         const eSetFilterList = this.getRefElement('eSetFilterList');
@@ -212,11 +202,11 @@ export class SetFilter extends ProvidedFilter {
         );
 
         this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        _.setDisplayed(this.getGui().querySelector('#ag-mini-filter') as HTMLElement, !this.setFilterParams.suppressMiniFilter);
+        _.setDisplayed(this.eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
 
-        this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
-        this.addDestroyableEventListener(this.eMiniFilter, 'input', this.onMiniFilterInput.bind(this));
-        this.addDestroyableEventListener(this.eMiniFilter, 'keypress', this.onMiniFilterKeyPress.bind(this));
+        this.eMiniFilter.setValue(this.valueModel.getMiniFilter() as any);
+        this.eMiniFilter.onValueChange(() => this.onMiniFilterInput());
+        this.addDestroyableEventListener(this.eMiniFilter.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
 
         this.updateCheckboxIcon();
 
@@ -247,7 +237,7 @@ export class SetFilter extends ProvidedFilter {
     // virtual row logic needs info about the gui state
     public afterGuiAttached(params: any): void {
         this.virtualList.refresh();
-        this.eMiniFilter.focus();
+        this.eMiniFilter.getFocusableElement().focus();
     }
 
     public refreshVirtualList(): void {
@@ -361,11 +351,11 @@ export class SetFilter extends ProvidedFilter {
 
     private updateSelectAll(): void {
         if (this.valueModel.isEverythingSelected()) {
-            this.selectAllState = CheckboxState.CHECKED;
+            this.selectAllState = true;
         } else if (this.valueModel.isNothingSelected()) {
-            this.selectAllState = CheckboxState.UNCHECKED;
+            this.selectAllState = false;
         } else {
-            this.selectAllState = CheckboxState.INTERMEDIATE;
+            this.selectAllState = undefined;
         }
         this.updateCheckboxIcon();
     }
@@ -384,7 +374,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onMiniFilterInput() {
-        const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.value);
+        const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.getValue());
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
@@ -394,16 +384,16 @@ export class SetFilter extends ProvidedFilter {
     private onSelectAll(event: Event) {
         event.preventDefault();
         _.addAgGridEventPath(event);
-        if (this.selectAllState === CheckboxState.CHECKED) {
-            this.selectAllState = CheckboxState.UNCHECKED;
+        if (this.selectAllState === true) {
+            this.selectAllState = false;
         } else {
-            this.selectAllState = CheckboxState.CHECKED;
+            this.selectAllState = true;
         }
         this.doSelectAll();
     }
 
     private doSelectAll(): void {
-        const checked = this.selectAllState === CheckboxState.CHECKED;
+        const checked = this.selectAllState === true;
         if (checked) {
             this.valueModel.selectAllUsingMiniFilter();
         } else {
@@ -428,7 +418,7 @@ export class SetFilter extends ProvidedFilter {
 
     public setMiniFilter(newMiniFilter: any): void {
         this.valueModel.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.value = this.valueModel.getMiniFilter() as any;
+        this.eMiniFilter.setValue(this.valueModel.getMiniFilter() as any);
     }
 
     public getMiniFilter() {
