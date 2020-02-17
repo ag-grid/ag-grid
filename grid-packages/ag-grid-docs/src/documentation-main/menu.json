@@ -997,7 +997,13 @@
             "items": [
               {
                 "title": "Getting Started",
-                "url": "javascript-charts-getting-started/"
+                "url": "javascript-charts-getting-started/",
+                "items": [
+                  {
+                    "title": "Vanilla JavaScript",
+                    "url": "javascript-charts/"
+                  }
+                ]
               },
               {
                 "title": "Gallery",

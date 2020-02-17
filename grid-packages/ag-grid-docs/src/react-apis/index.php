@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="react-components">React APIs with ag-Grid</h1>
+    <h1 id="react-components">Context API & Redux</h1>
 
     <h3 id="context-api">React Context API</h3>
 

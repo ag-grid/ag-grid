@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Getting Started: Choose Your Framework";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We support all the najor JavaScript frameworks, this page is the jumping off point for all the individual guides.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We support all the major JavaScript frameworks, this page is the jumping off point for all the individual guides.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

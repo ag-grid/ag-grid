@@ -26,6 +26,7 @@ class ExampleRunnerController {
     private type: string;
     private currentType: string;
     private noPlunker: boolean;
+    private noCode: boolean;
     private boilerplateFiles: string[];
     private boilerplatePath: string;
     private sourcePrefix: string;
@@ -166,6 +167,7 @@ class ExampleRunnerController {
         this.currentType = type;
 
         this.noPlunker = this.config.options.noPlunker;
+        this.noCode = this.config.options.noCode;
 
         this.loadAllSources();
 
@@ -324,6 +326,7 @@ docs.component("exampleRunner", {
             </example-tab>
 
             <example-tab
+                ng-hide="$ctrl.noCode"
                 value="'code'"
                 current-value="$ctrl.selectedTab"
                 title="'Code'"
