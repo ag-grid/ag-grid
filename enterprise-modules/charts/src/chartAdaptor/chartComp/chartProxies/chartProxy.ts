@@ -381,7 +381,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             legend: {
                 enabled: true,
                 position: LegendPosition.Right,
-                padding: 20,
+                spacing: 20,
                 item: {
                     label: {
                         ...fontOptions,

@@ -67,7 +67,7 @@ export interface CaptionOptions extends FontOptions {
 export interface LegendOptions {
     enabled: boolean;
     position: LegendPosition;
-    padding: number;
+    spacing: number;
     item: LegendItemOptions;
 }
 
