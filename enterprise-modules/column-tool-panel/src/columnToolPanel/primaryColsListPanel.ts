@@ -17,7 +17,7 @@ import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";
 import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
-import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
+import {EXPAND_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
@@ -71,6 +71,7 @@ export class PrimaryColsListPanel extends Component {
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
+
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -288,13 +289,13 @@ export class PrimaryColsListPanel extends Component {
                 this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
 
                 // update select all header with new state
-                const selectionState = this.selectAllChecked ? SELECTED_STATE.CHECKED : SELECTED_STATE.UNCHECKED;
+                const selectionState = this.selectAllChecked ? true : false;
                 this.dispatchEvent({type: 'selectionChanged', state: selectionState});
             }
         }
     }
 
-    private getSelectionState(): SELECTED_STATE {
+    private getSelectionState(): boolean | undefined {
         const allPrimaryColumns = this.columnController.getAllPrimaryColumns();
         let columns: Column[] = [];
         if (allPrimaryColumns !== null) {
@@ -339,12 +340,12 @@ export class PrimaryColsListPanel extends Component {
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) {
-            return SELECTED_STATE.INDETERMINATE;
+            return undefined;
         } else if (checkedCount === 0 || uncheckedCount > 0) {
-            return SELECTED_STATE.UNCHECKED;
-        } else {
-            return SELECTED_STATE.CHECKED;
+            return false
         }
+
+        return true;
     }
 
     public setFilterText(filterText: string) {

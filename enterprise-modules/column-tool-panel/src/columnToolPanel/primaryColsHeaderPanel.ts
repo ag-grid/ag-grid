@@ -10,12 +10,12 @@ import {
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
-    Constants
+    Constants,
+    AgCheckbox,
+    AgInputTextField
 } from "@ag-grid-community/core";
 
-
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
-export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -23,18 +23,15 @@ export class PrimaryColsHeaderPanel extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eSelect') private eSelect: HTMLElement;
-    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
-    @RefSelector('eFilterTextField') private eFilterTextField: HTMLInputElement;
+    @RefSelector('eSelect') private eSelect: AgCheckbox;
+    @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
 
-    private eSelectCheckbox: HTMLInputElement;
-
     private expandState: EXPAND_STATE;
-    private selectState: SELECTED_STATE;
+    private selectState: boolean | undefined;
 
     private onFilterTextChangedDebounced: () => void;
 
@@ -42,47 +39,36 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         this.setTemplate(
             `<div class="ag-column-select-header" role="presentation">
                 <div ref="eExpand" class="ag-column-select-header-icon"></div>
-                <div ref="eSelect" class="ag-column-select-header-checkbox"></div>
-                <div class="ag-input-wrapper ag-column-select-header-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                    <input class="ag-column-select-header-filter" ref="eFilterTextField" type="text" placeholder="${translate(
-                    "searchOoo",
-                    "Search..."
-                    )}">
-                </div>
+                <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
+                <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
             </div>`
         );
     }
 
     @PostConstruct
     public postConstruct(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         this.createExpandIcons();
-        this.eSelectCheckbox = document.createElement("input");
-        this.eSelectCheckbox.type = "checkbox";
-        this.eSelectCheckbox.className = "ag-checkbox";
-        this.eSelect.appendChild(this.eSelectCheckbox);
 
         this.addDestroyableEventListener(
             this.eExpand,
             "click",
             this.onExpandClicked.bind(this)
         );
-        this.addDestroyableEventListener(
-            this.eSelect,
-            "click",
+
+        this.addDestroyableEventListener(this.eSelect.getInputElement(),
+            'click',
             this.onSelectClicked.bind(this)
         );
+
+        this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
+        
         this.addDestroyableEventListener(
-            this.eFilterTextField,
-            "input",
-            this.onFilterTextChanged.bind(this)
-        );
-        this.addDestroyableEventListener(
-            this.eFilterTextField,
+            this.eFilterTextField.getInputElement(),
             "keypress",
             this.onMiniFilterKeyPress.bind(this)
         );
@@ -92,6 +78,8 @@ export class PrimaryColsHeaderPanel extends Component {
             Events.EVENT_NEW_COLUMNS_LOADED,
             this.showOrHideOptions.bind(this)
         );
+
+        this.eFilterTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -134,15 +122,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
 
-        _.setDisplayed(this.eFilterWrapper, showFilter);
-        _.setDisplayed(this.eSelect, showSelect);
+        _.setDisplayed(this.eFilterTextField.getGui(), showFilter);
+        _.setDisplayed(this.eSelect.getGui(), showSelect);
         _.setDisplayed(this.eExpand, showExpand && groupsPresent);
     }
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
             this.onFilterTextChangedDebounced = _.debounce(() => {
-                const filterText = this.eFilterTextField.value;
+                const filterText = this.eFilterTextField.getValue();
                 this.dispatchEvent({ type: "filterChanged", filterText: filterText });
             }, 300);
         }
@@ -157,7 +145,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     private onSelectClicked(): void {
-        const eventType = this.selectState === SELECTED_STATE.CHECKED ? "unselectAll" : "selectAll";
+        const eventType = this.selectState === true ? "unselectAll" : "selectAll";
         this.dispatchEvent({ type: eventType });
     }
 
@@ -183,9 +171,8 @@ export class PrimaryColsHeaderPanel extends Component {
         );
     }
 
-    public setSelectionState(state: SELECTED_STATE): void {
+    public setSelectionState(state?: boolean): void {
         this.selectState = state;
-        this.eSelectCheckbox.checked = this.selectState === SELECTED_STATE.CHECKED;
-        this.eSelectCheckbox.indeterminate = this.selectState === SELECTED_STATE.INDETERMINATE;
+        this.eSelect.setValue(this.selectState);
     }
 }
