@@ -21,7 +21,7 @@ const generate = (theme) => {
         ? 'agGridClassic'
         : ('agGrid' + theme[0].toUpperCase() + theme.substring(1));
     const themeFolder = `ag-theme-${theme}`;
-    const destFolder = `${themeFolder}/vars/`;
+    const destFolder = `${themeFolder}/params/`;
     console.log(`Generating webFont for ${theme} theme into ${destFolder}`)
     webfontsGenerator(
         {

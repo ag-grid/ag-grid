@@ -6,26 +6,26 @@
     }
 
     .ag-tool-panel-wrapper {
-        background-color: $ag-control-panel-background-color;
+        background-color: ag-param(control-panel-background-color);
     }
 
     .ag-side-buttons {
-        padding-top: $ag-grid-size * 4;
-        width: $ag-icon-size + 4;
+        padding-top: ag-param(grid-size) * 4;
+        width: ag-param(icon-size) + 4;
         position: relative;
-        color: $ag-foreground-color;
+        color: ag-param(foreground-color);
     }
 
     .ag-side-button-button {
         background: transparent;
-        padding: $ag-grid-size * 2 0 $ag-grid-size * 2 0;
-        @if $ag-borders-side-button {
+        padding: ag-param(grid-size) * 2 0 ag-param(grid-size) * 2 0;
+        @if ag-param(borders-side-button) {
             width: calc(100% + 1px);
         } @else {
             width: 100%;
         }
         margin: 0;
-        min-height: $ag-grid-size * 18;
+        min-height: ag-param(grid-size) * 18;
         background-position-y: center;
         background-position-x: center;
         background-repeat: no-repeat;
@@ -39,10 +39,10 @@
     }
 
     .ag-selected .ag-side-button-button {
-        @if $ag-borders-side-button {
-            background-color: $ag-control-panel-background-color;
-            border-top-color: $ag-border-color;
-            border-bottom-color: $ag-border-color;
+        @if ag-param(borders-side-button) {
+            background-color: ag-param(control-panel-background-color);
+            border-top-color: ag-param(border-color);
+            border-bottom-color: ag-param(border-color);
         }
     }
 
@@ -59,12 +59,12 @@
         }
 
         .ag-side-button-button {
-            border-right: $ag-selected-tab-underline-width solid transparent;
-            @if $ag-selected-tab-underline-transition-speed {
-                transition: border-right $ag-selected-tab-underline-transition-speed;
+            border-right: ag-param(selected-tab-underline-width) solid transparent;
+            @if ag-param(selected-tab-underline-transition-speed) {
+                transition: border-right ag-param(selected-tab-underline-transition-speed);
             }
             
-            @if $ag-borders-side-button {
+            @if ag-param(borders-side-button) {
                 // this enlarges the tab button to cover the tool panel border
                 margin-right: -1px;
                 padding-right: 1px;
@@ -72,7 +72,7 @@
         }
 
         .ag-selected .ag-side-button-button {
-            border-right-color: $ag-selected-tab-underline-color;
+            border-right-color: ag-param(selected-tab-underline-color);
         }
     }
 
@@ -86,12 +86,12 @@
         }
 
         .ag-side-button-button {
-            border-left: $ag-selected-tab-underline-width solid transparent;
-            @if $ag-selected-tab-underline-transition-speed {
-                transition: border-left $ag-selected-tab-underline-transition-speed;
+            border-left: ag-param(selected-tab-underline-width) solid transparent;
+            @if ag-param(selected-tab-underline-transition-speed) {
+                transition: border-left ag-param(selected-tab-underline-transition-speed);
             }
             
-            @if $ag-borders-side-button {
+            @if ag-param(borders-side-button) {
                 // this enlarges the tab button to cover the tool panel border
                 margin-left: -1px;
                 padding-left: 1px;
@@ -99,7 +99,7 @@
         }
 
         .ag-selected .ag-side-button-button {
-            border-left-color: $ag-selected-tab-underline-color;
+            border-left-color: ag-param(selected-tab-underline-color);
         }
     }
     

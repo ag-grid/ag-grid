@@ -1,7 +1,7 @@
 @mixin ag-theme-base-part-charts {
     .ag-chart-menu {
-        border-radius: $ag-card-radius;
-        background: $ag-background-color;
+        border-radius: ag-param(card-radius);
+        background: ag-param(background-color);
     }
 
     .ag-chart-menu-icon {
@@ -12,16 +12,16 @@
         height: 24px;
         margin: 2px 0;
         cursor: pointer;
-        border-radius: $ag-card-radius;
-        color: $ag-secondary-foreground-color;
+        border-radius: ag-param(card-radius);
+        color: ag-param(secondary-foreground-color);
     }
 
     .ag-chart-menu-icon:hover {
-        background-color: darken($ag-background-color, 10%);
+        background-color: darken(ag-param(background-color), 10%);
     }
 
     .ag-chart-mini-thumbnail {
-        border: 1px solid $ag-secondary-border-color;
+        border: 1px solid ag-param(secondary-border-color);
         border-radius: 5px;
         margin: 5px;
 
@@ -41,23 +41,23 @@
         }
 
         &.ag-selected {
-            border-color: $ag-minichart-selected-chart-color;
+            border-color: ag-param(minichart-selected-chart-color);
         }
     }
 
     .ag-chart-settings-card-item {
-        background: $ag-foreground-color;
+        background: ag-param(foreground-color);
         width: 8px;
         height: 8px;
         border-radius: 4px;
 
         &.ag-selected {
-            background-color: $ag-minichart-selected-page-color;
+            background-color: ag-param(minichart-selected-page-color);
         }
     }
 
     .ag-chart-data-column-drag-handle {
-        margin-left: $ag-grid-size;
+        margin-left: ag-param(grid-size);
     }
 
     .ag-charts-minichart-group-title-bar,
@@ -67,7 +67,7 @@
     }
 
     .ag-charts-minichart-group-container {
-        padding: $ag-grid-size;
+        padding: ag-param(grid-size);
     }
 
     .ag-charts-data-group-container {
@@ -75,12 +75,12 @@
     }
 
     .ag-charts-format-top-level-group-container {
-        margin-left: $ag-grid-size * 2;
-        padding: $ag-grid-size;
+        margin-left: ag-param(grid-size) * 2;
+        padding: ag-param(grid-size);
     }
 
     .ag-charts-format-top-level-group-item {
-        margin: $ag-grid-size 0;
+        margin: ag-param(grid-size) 0;
     }
 
     .ag-charts-format-sub-level-group-container {
@@ -88,7 +88,7 @@
     }
 
     .ag-charts-group-container.ag-group-container-horizontal {
-        padding: $ag-grid-size;
+        padding: ag-param(grid-size);
     }
 
     .ag-chart-data-section,
@@ -98,8 +98,8 @@
     }
 
     .ag-chart-menu-panel {
-        @include ag-theme-rtl((border-left: solid 1px $ag-border-color));
+        @include ag-theme-rtl((border-left: solid 1px ag-param(border-color)));
 
-        background-color: $ag-control-panel-background-color;
+        background-color: ag-param(control-panel-background-color);
     }
 }

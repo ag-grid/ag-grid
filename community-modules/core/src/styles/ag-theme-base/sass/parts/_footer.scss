@@ -2,13 +2,13 @@
 @mixin ag-theme-base-part-footer {
     
     .ag-paging-panel {
-        border-top: 1px solid $ag-border-color;
-        color: $ag-secondary-foreground-color;
-        height: $ag-header-height;
-        // padding: 0 $ag-cell-horizontal-padding;
+        border-top: 1px solid ag-param(border-color);
+        color: ag-param(secondary-foreground-color);
+        height: ag-param(header-height);
+        // padding: 0 ag-param(cell-horizontal-padding);
 
         > * {
-            margin: 0 $ag-cell-horizontal-padding;
+            margin: 0 ag-param(cell-horizontal-padding);
         }
     }
 
@@ -20,31 +20,31 @@
         bottom: 0;
         left: 0;
         padding: 0;
-        width: $ag-icon-size;
+        width: ag-param(icon-size);
     }
     .ag-disabled .ag-paging-button {
         cursor: default;
     }
 
     .ag-paging-button-wrapper.ag-disabled {
-        color: $ag-disabled-foreground-color;
+        color: ag-param(disabled-foreground-color);
         cursor: default;
     }
 
     .ag-paging-button-wrapper, .ag-paging-description {
-        margin: 0 $ag-grid-size;
+        margin: 0 ag-param(grid-size);
     }
 
     .ag-status-bar {
         @include ag-border(primary, top);
-        color: $ag-disabled-foreground-color;
-        padding-right: $ag-grid-size * 4;
-        padding-left: $ag-grid-size * 4;
+        color: ag-param(disabled-foreground-color);
+        padding-right: ag-param(grid-size) * 4;
+        padding-left: ag-param(grid-size) * 4;
         line-height: 1.5;
     }
 
     .ag-status-name-value-value {
-        color: $ag-foreground-color;
+        color: ag-param(foreground-color);
     }
 
     .ag-status-bar-center {
@@ -52,10 +52,10 @@
     }
 
     .ag-status-name-value {
-        margin-left: $ag-grid-size;
-        margin-right: $ag-grid-size;
-        padding-top: $ag-grid-size * 2;
-        padding-bottom: $ag-grid-size * 2;
+        margin-left: ag-param(grid-size);
+        margin-right: ag-param(grid-size);
+        padding-top: ag-param(grid-size) * 2;
+        padding-bottom: ag-param(grid-size) * 2;
     }
 
 }

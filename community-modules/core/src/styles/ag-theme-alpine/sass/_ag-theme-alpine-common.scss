@@ -13,32 +13,32 @@
     .ag-header-row,
     .ag-panel-title-bar-title {
         font-weight: 700;
-        color: $ag-header-foreground-color;
+        color: ag-param(header-foreground-color);
     }
 
     .ag-row {
-        font-size: $ag-font-size + 1;
+        font-size: ag-param(font-size) + 1;
     }
 
     %ag-text-input {
-        min-height: $ag-grid-size * 4;
-        border-radius: $ag-border-radius;
+        min-height: ag-param(grid-size) * 4;
+        border-radius: ag-param(border-radius);
     }
 
     .ag-tab {
-        padding: $ag-grid-size * 1.5;
+        padding: ag-param(grid-size) * 1.5;
         transition: color 0.4s;
     }
     .ag-tab-selected {
-        color: $ag-alpine-active-color;
+        color: ag-param(alpine-active-color);
     }
 
     .ag-menu {
-        background-color: $ag-control-panel-background-color;
+        background-color: ag-param(control-panel-background-color);
     }
 
     .ag-menu-header {
-        background-color: $ag-control-panel-background-color;
+        background-color: ag-param(control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border
     }
     
@@ -47,19 +47,19 @@
     }
 
     .ag-set-filter-select-all {
-        // default size is $ag-list-item-height, make it a little larger
-        height: $ag-list-item-height + $ag-grid-size * 2;
+        // default size is ag-param(list-item-height), make it a little larger
+        height: ag-param(list-item-height) + ag-param(grid-size) * 2;
     }
 
     .ag-charts-minichart-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
-        padding: $ag-grid-size $ag-grid-size * 2;
-        line-height: $ag-icon-size + $ag-grid-size - 2;
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        line-height: ag-param(icon-size) + ag-param(grid-size) - 2;
     }
 
     .ag-chart-mini-thumbnail {
-        background-color: $ag-background-color;
+        background-color: ag-param(background-color);
     }
     
     .ag-chart-settings-nav-bar {
@@ -67,18 +67,18 @@
     }
     
     .ag-group-title-bar-icon {
-        @include ag-theme-rtl((margin-right: $ag-grid-size))
+        @include ag-theme-rtl((margin-right: ag-param(grid-size)))
     }
 
     .ag-charts-format-top-level-group-toolbar {
-        margin-top: $ag-grid-size;
-        @include ag-theme-rtl((padding-left: $ag-icon-size / 2 + $ag-grid-size * 2));
+        margin-top: ag-param(grid-size);
+        @include ag-theme-rtl((padding-left: ag-param(icon-size) / 2 + ag-param(grid-size) * 2));
     }
 
     .ag-charts-format-sub-level-group {
-        border-left: dashed 1px $ag-border-color;
-        padding-left: $ag-grid-size;
-        margin-bottom: $ag-grid-size * 2;
+        border-left: dashed 1px ag-param(border-color);
+        padding-left: ag-param(grid-size);
+        margin-bottom: ag-param(grid-size) * 2;
     }
 
     .ag-charts-format-sub-level-group-title-bar {
@@ -97,34 +97,34 @@
     }
     
     .ag-dnd-ghost {
-        font-size: $ag-font-size - 1;
+        font-size: ag-param(font-size) - 1;
         font-weight: 700;
     }
 
     .ag-side-buttons {
-        width: $ag-grid-size * 5;
+        width: ag-param(grid-size) * 5;
     }
 
     .ag-standard-button {
         appearance: none;
         -webkit-appearance: none;
-        border-radius: $ag-border-radius;
-        border: 1px solid $ag-alpine-active-color;
-        color: $ag-alpine-active-color;
-        background: $ag-background-color;
+        border-radius: ag-param(border-radius);
+        border: 1px solid ag-param(alpine-active-color);
+        color: ag-param(alpine-active-color);
+        background: ag-param(background-color);
         font-weight: 600;
-        padding: $ag-grid-size $ag-grid-size * 2;
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
         // transition: all 0.1s;
     
         &:hover {
-            border-color: $ag-alpine-active-color;
-            background-color: transparentize($ag-alpine-active-color, 0.9);
+            border-color: ag-param(alpine-active-color);
+            background-color: transparentize(ag-param(alpine-active-color), 0.9);
         }
     
         &:active {
-            border-color: $ag-alpine-active-color;
-            background-color: transparentize($ag-alpine-active-color, 0.1);
-            color: $ag-background-color;
+            border-color: ag-param(alpine-active-color);
+            background-color: transparentize(ag-param(alpine-active-color), 0.1);
+            color: ag-param(background-color);
         }
     }
 
@@ -142,27 +142,27 @@
     }
 
     .ag-column-drop-vertical-title-bar {
-        background-color: $ag-background-color;
+        background-color: ag-param(background-color);
         // TODO widget-group-padding
-        padding: $ag-grid-size * 2;
+        padding: ag-param(grid-size) * 2;
         @include ag-border(secondary, bottom);
     }
 
     .ag-column-drop-vertical-empty-message {
         display: flex;
         align-items: center;
-        border: dashed 1px $ag-border-color;
-        margin: $ag-grid-size * 2;
-        padding: $ag-grid-size * 2;
+        border: dashed 1px ag-param(border-color);
+        margin: ag-param(grid-size) * 2;
+        padding: ag-param(grid-size) * 2;
     }
 
     .ag-column-drop-empty-message {
-        color: rgba($ag-foreground-color, 0.75);
+        color: rgba(ag-param(foreground-color), 0.75);
     }
 
     .ag-filter-toolpanel-instance-filter {
         border: none;
-        padding-left: $ag-grid-size * 3;
+        padding-left: ag-param(grid-size) * 3;
     }
 
     .ag-status-bar {
@@ -200,7 +200,7 @@
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand {
         &:hover {
-            color: $ag-alpine-active-color;
+            color: ag-param(alpine-active-color);
         }
     }
 
@@ -210,25 +210,25 @@
 
     .ag-panel-title-bar-button {
         @include ag-theme-rtl((
-            margin-left: $ag-grid-size * 2,
-            margin-right: $ag-grid-size
+            margin-left: ag-param(grid-size) * 2,
+            margin-right: ag-param(grid-size)
         ));
     }
 
     .ag-filter-toolpanel-group-container {
-        padding-left: $ag-grid-size;
+        padding-left: ag-param(grid-size);
     }
 
     .ag-filter-toolpanel-instance-filter {
         background: rgba(0, 0, 0, 0.03);
-        border-left: dashed 1px $ag-border-color;
-        margin-left: $ag-grid-size + $ag-icon-size / 2 - 1px;
-        padding-left: $ag-icon-size / 2;
-        margin-right: $ag-grid-size * 2;
+        border-left: dashed 1px ag-param(border-color);
+        margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
+        padding-left: ag-param(icon-size) / 2;
+        margin-right: ag-param(grid-size) * 2;
     }
 
     .ag-set-filter-list {
-        padding-top: $ag-grid-size / 2;
-        padding-bottom: $ag-grid-size / 2;
+        padding-top: ag-param(grid-size) / 2;
+        padding-bottom: ag-param(grid-size) / 2;
     }
 }

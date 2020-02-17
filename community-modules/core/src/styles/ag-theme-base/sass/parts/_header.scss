@@ -2,12 +2,12 @@
 @mixin ag-theme-base-part-header {
     
     .ag-header {
-        background-color: $ag-header-background-color;
+        background-color: ag-param(header-background-color);
         @include ag-border(critical, bottom);
     }
     
     .ag-header-row {
-        color: $ag-header-foreground-color;
+        color: ag-param(header-foreground-color);
     }
 
     .ag-pinned-right-header {
@@ -19,25 +19,25 @@
     }
 
     .ag-header-row {
-        height: $ag-header-height;
+        height: ag-param(header-height);
     }
 
     .ag-header-label-icon {
-        margin-left: $ag-grid-size;
+        margin-left: ag-param(grid-size);
     }
 
     .ag-header-cell,
     .ag-header-group-cell {
-        padding-left: $ag-cell-horizontal-padding;
-        padding-right: $ag-cell-horizontal-padding;
+        padding-left: ag-param(cell-horizontal-padding);
+        padding-right: ag-param(cell-horizontal-padding);
         
         &.ag-header-cell-moving {
-            background-color: $ag-header-cell-moving-background-color;
+            background-color: ag-param(header-cell-moving-background-color);
         }
     }
 
     .ag-header-icon {
-        color: $ag-secondary-foreground-color;
+        color: ag-param(secondary-foreground-color);
     }
 
     .ag-header-expand-icon {
@@ -59,30 +59,30 @@
     .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
     .ag-header-group-cell:first-of-type,
     .ag-header-cell:first-of-type {
-        @if ($ag-header-cell-hover-background-color and $ag-header-background-color != $ag-header-cell-hover-background-color) {
+        @if (ag-param(header-cell-hover-background-color) and ag-param(header-background-color) != ag-param(header-cell-hover-background-color)) {
             &:hover,
             &.ag-column-resizing {
-                background-color: $ag-header-cell-hover-background-color;
+                background-color: ag-param(header-cell-hover-background-color);
             }
         }
     }
     
-    @if $ag-header-column-separator {
+    @if ag-param(header-column-separator) {
         .ag-header-cell::after,
         .ag-header-group-cell::after {
             content: "";
             position: absolute;
             z-index: 1;
             display: block;
-            width: $ag-header-column-separator-width;
-            height: $ag-header-column-separator-height;
-            background-color: $ag-header-column-separator-color;
+            width: ag-param(header-column-separator-width);
+            height: ag-param(header-column-separator-height);
+            background-color: ag-param(header-column-separator-color);
 
             @include ag-theme-rtl(( right: 0 ));
         }
     }
     
-    @if $ag-header-column-resize-handle {
+    @if ag-param(header-column-resize-handle) {
         .ag-header-cell-resize {
             display: flex;
             align-items: center;
@@ -93,15 +93,15 @@
             position: absolute;
             z-index: 1;
             display: block;
-            left: calc(50% - #{$ag-header-column-resize-handle-width / 2});
-            width: $ag-header-column-resize-handle-width;
-            height: $ag-header-column-resize-handle-height;
-            background-color: $ag-header-column-resize-handle-color;
+            left: calc(50% - #{ag-param(header-column-resize-handle-width) / 2});
+            width: ag-param(header-column-resize-handle-width);
+            height: ag-param(header-column-resize-handle-height);
+            background-color: ag-param(header-column-resize-handle-color);
         }
     }
 
     .ag-header-select-all {
-        @include ag-theme-rtl(( margin-right: $ag-cell-horizontal-padding ));
+        @include ag-theme-rtl(( margin-right: ag-param(cell-horizontal-padding) ));
     }
 
     .ag-dnd-ghost {
@@ -113,30 +113,30 @@
         user-select: none;
         z-index: 10;
         @include ag-border(secondary);
-        color: $ag-secondary-foreground-color;
-        height: $ag-header-height !important;
-        line-height: $ag-header-height;
+        color: ag-param(secondary-foreground-color);
+        height: ag-param(header-height) !important;
+        line-height: ag-param(header-height);
         margin: 0;
-        padding: 0 $ag-grid-size * 2;
-        transform: translateY($ag-grid-size * 2);
+        padding: 0 ag-param(grid-size) * 2;
+        transform: translateY(ag-param(grid-size) * 2);
     }
 
     .ag-dnd-ghost-icon {
-        margin-right: $ag-grid-size;
-        color: $ag-foreground-color;
+        margin-right: ag-param(grid-size);
+        color: ag-param(foreground-color);
     }
     
     .ag-floating-filter-button {
-        @include ag-theme-rtl(( margin-left: $ag-grid-size * 3 ));
+        @include ag-theme-rtl(( margin-left: ag-param(grid-size) * 3 ));
     }
 
     .ag-floating-filter-button-button {
         appearance: none;
         background: transparent;
         border: none;
-        height: $ag-icon-size;
+        height: ag-param(icon-size);
         padding: 0;
-        width: $ag-icon-size;
+        width: ag-param(icon-size);
     }
 
     .ag-filter-loading {

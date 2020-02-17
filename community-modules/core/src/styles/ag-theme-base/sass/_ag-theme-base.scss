@@ -11,15 +11,19 @@
 @import "./parts/footer";
 @import "./parts/column-drop";
 @import "./parts/charts";
+@import "../params/ag-theme-base-default-params";
 
-@mixin ag-grid-theme() {
+@mixin ag-grid-theme($params: null) {
+
+    @include ag-register-params($params, $ag-theme-base-default-params);
+
     -webkit-font-smoothing: antialiased;
-    color: $ag-foreground-color;
-    font-family: $ag-font-family;
-    font-size: $ag-font-size;
+    color: ag-param(foreground-color);
+    font-family: ag-param(font-family);
+    font-size: ag-param(font-size);
     line-height: normal;
     .ag-root-wrapper {
-        background-color: $ag-background-color;
+        background-color: ag-param(background-color);
     }
     @include ag-icons-webfont();
 

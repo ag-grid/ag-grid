@@ -1,9 +1,25 @@
 @import "./ag-grid-mixins";
 
+$ag-params: null;
+
+@mixin ag-register-params($params, $defaults) {
+    $ag-params: $params !global;
+}
+
+@function ag-param($name) {
+    @if $ag-params == null {
+        @error "ag-params called before ag-register-params-map";
+    }
+    @if str-index($name, $substring: "color") {
+        @return #000;
+    }
+    @return 0;
+}
+
 @mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
     @if ag-should-draw-border($border-type) {
         @if $color == null {
-            $color: if($border-type == secondary, $ag-secondary-border-color, $ag-border-color)
+            $color: if($border-type == secondary, ag-param(secondary-border-color), ag-param(border-color))
         }
 
         @if $sides {
@@ -21,20 +37,20 @@
 }
 
 @mixin ag-vertical-widget-container {
-    padding: $ag-widget-container-vertical-padding $ag-widget-container-horizontal-padding;
-    padding-bottom: $ag-widget-container-vertical-padding - $ag-widget-vertical-spacing;
+    padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);
 
     & > * {
-        margin-bottom: $ag-widget-vertical-spacing;
+        margin-bottom: ag-param(widget-vertical-spacing);
     }
 }
 
 @function ag-should-draw-border($type) {
     $valid-types: (
-        critical: $ag-borders-critical,
-        primary: $ag-borders,
-        side-button: $ag-borders-side-button,
-        secondary: $ag-borders-secondary
+        critical: ag-param(borders-critical),
+        primary: ag-param(borders),
+        side-button: ag-param(borders-side-button),
+        secondary: ag-param(borders-secondary)
     );
     $draw-border: false;
     @if not map-has-key($valid-types, $type) {
@@ -46,10 +62,10 @@
 @mixin ag-card() {
     @include ag-border(primary);
     
-    background: $ag-background-color;
-    border-radius: $ag-card-radius;
-    box-shadow: $ag-card-shadow;
-    padding: $ag-grid-size;
+    background: ag-param(background-color);
+    border-radius: ag-param(card-radius);
+    box-shadow: ag-param(card-shadow);
+    padding: ag-param(grid-size);
 }
 
 
@@ -63,17 +79,17 @@
 
 @mixin ag-icons-font-face() {
     @font-face {
-        font-family: '#{$ag-icon-font-family}';
-        src: $ag-icons-data;
+        font-family: '#{ag-param(icon-font-family)}';
+        src: ag-param(icons-data);
         font-weight: normal;
         font-style: normal;
     }
 }
 
 @mixin ag-icon() {
-    font-family: '#{$ag-icon-font-family}';
-    font-size: $ag-icon-size;
-    line-height: $ag-icon-size;
+    font-family: '#{ag-param(icon-font-family)}';
+    font-size: ag-param(icon-size);
+    line-height: ag-param(icon-size);
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
@@ -89,60 +105,60 @@
       @include ag-icon();
   }
 
-  @include ag-icon-element('aggregation', $ag-icon-aggregation);
-  @include ag-icon-element('arrows', $ag-icon-arrows);
-  @include ag-icon-element('asc', $ag-icon-asc);
-  @include ag-icon-element('cancel', $ag-icon-cancel);
-  @include ag-icon-element('chart', $ag-icon-chart);
-  @include ag-icon-element('color-picker', $ag-icon-color-picker);
-  @include ag-icon-element('columns', $ag-icon-columns);
-  @include ag-icon-element('contracted', $ag-icon-contracted);
-  @include ag-icon-element('copy', $ag-icon-copy);
-  @include ag-icon-element('cross', $ag-icon-cross);
-  @include ag-icon-element('desc', $ag-icon-desc);
-  @include ag-icon-element('expanded', $ag-icon-expanded);
-  @include ag-icon-element('eye-slash', $ag-icon-eye-slash);
-  @include ag-icon-element('eye', $ag-icon-eye);
-  @include ag-icon-element('filter', $ag-icon-filter);
-  @include ag-icon-element('first', $ag-icon-first);
-  @include ag-icon-element('grip', $ag-icon-grip);
-  @include ag-icon-element('group', $ag-icon-group);
-  @include ag-icon-element('last', $ag-icon-last);
-  @include ag-icon-element('left', $ag-icon-left);
-  @include ag-icon-element('linked', $ag-icon-linked);
-  @include ag-icon-element('loading', $ag-icon-loading);
-  @include ag-icon-element('maximize', $ag-icon-maximize);
-  @include ag-icon-element('menu', $ag-icon-menu);
-  @include ag-icon-element('minimize', $ag-icon-minimize);
-  @include ag-icon-element('next', $ag-icon-next);
-  @include ag-icon-element('none', $ag-icon-none);
-  @include ag-icon-element('not-allowed', $ag-icon-not-allowed);
-  @include ag-icon-element('paste', $ag-icon-paste);
-  @include ag-icon-element('pin', $ag-icon-pin);
-  @include ag-icon-element('pivot', $ag-icon-pivot);
-  @include ag-icon-element('previous', $ag-icon-previous);
-  @include ag-icon-element('right', $ag-icon-right);
-  @include ag-icon-element('save', $ag-icon-save);
-  @include ag-icon-element('small-down', $ag-icon-small-down);
-  @include ag-icon-element('small-left', $ag-icon-small-left);
-  @include ag-icon-element('small-right', $ag-icon-small-right);
-  @include ag-icon-element('small-up', $ag-icon-small-up);
-  @include ag-icon-element('tick', $ag-icon-tick);
-  @include ag-icon-element('tree-closed', $ag-icon-tree-closed);
-  @include ag-icon-element('tree-indeterminate', $ag-icon-tree-indeterminate);
-  @include ag-icon-element('tree-open', $ag-icon-tree-open);
-  @include ag-icon-element('unlinked', $ag-icon-unlinked);
+  @include ag-icon-element('aggregation', ag-param(icon-aggregation));
+  @include ag-icon-element('arrows', ag-param(icon-arrows));
+  @include ag-icon-element('asc', ag-param(icon-asc));
+  @include ag-icon-element('cancel', ag-param(icon-cancel));
+  @include ag-icon-element('chart', ag-param(icon-chart));
+  @include ag-icon-element('color-picker', ag-param(icon-color-picker));
+  @include ag-icon-element('columns', ag-param(icon-columns));
+  @include ag-icon-element('contracted', ag-param(icon-contracted));
+  @include ag-icon-element('copy', ag-param(icon-copy));
+  @include ag-icon-element('cross', ag-param(icon-cross));
+  @include ag-icon-element('desc', ag-param(icon-desc));
+  @include ag-icon-element('expanded', ag-param(icon-expanded));
+  @include ag-icon-element('eye-slash', ag-param(icon-eye-slash));
+  @include ag-icon-element('eye', ag-param(icon-eye));
+  @include ag-icon-element('filter', ag-param(icon-filter));
+  @include ag-icon-element('first', ag-param(icon-first));
+  @include ag-icon-element('grip', ag-param(icon-grip));
+  @include ag-icon-element('group', ag-param(icon-group));
+  @include ag-icon-element('last', ag-param(icon-last));
+  @include ag-icon-element('left', ag-param(icon-left));
+  @include ag-icon-element('linked', ag-param(icon-linked));
+  @include ag-icon-element('loading', ag-param(icon-loading));
+  @include ag-icon-element('maximize', ag-param(icon-maximize));
+  @include ag-icon-element('menu', ag-param(icon-menu));
+  @include ag-icon-element('minimize', ag-param(icon-minimize));
+  @include ag-icon-element('next', ag-param(icon-next));
+  @include ag-icon-element('none', ag-param(icon-none));
+  @include ag-icon-element('not-allowed', ag-param(icon-not-allowed));
+  @include ag-icon-element('paste', ag-param(icon-paste));
+  @include ag-icon-element('pin', ag-param(icon-pin));
+  @include ag-icon-element('pivot', ag-param(icon-pivot));
+  @include ag-icon-element('previous', ag-param(icon-previous));
+  @include ag-icon-element('right', ag-param(icon-right));
+  @include ag-icon-element('save', ag-param(icon-save));
+  @include ag-icon-element('small-down', ag-param(icon-small-down));
+  @include ag-icon-element('small-left', ag-param(icon-small-left));
+  @include ag-icon-element('small-right', ag-param(icon-small-right));
+  @include ag-icon-element('small-up', ag-param(icon-small-up));
+  @include ag-icon-element('tick', ag-param(icon-tick));
+  @include ag-icon-element('tree-closed', ag-param(icon-tree-closed));
+  @include ag-icon-element('tree-indeterminate', ag-param(icon-tree-indeterminate));
+  @include ag-icon-element('tree-open', ag-param(icon-tree-open));
+  @include ag-icon-element('unlinked', ag-param(icon-unlinked));
 
   .ag-icon-row-drag:before {
-      content: $ag-icon-grip;
+      content: ag-param(icon-grip);
   }
 
   .ag-right-arrow:before {
-      content: $ag-icon-left;
+      content: ag-param(icon-left);
   }
 
   .ag-right-arrow:before {
-      content: $ag-icon-right;
+      content: ag-param(icon-right);
   }
 
 }

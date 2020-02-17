@@ -6,18 +6,18 @@
     }
 
     .ag-root-wrapper {
-        @include ag-border(primary, $radius: $ag-border-radius);
+        @include ag-border(primary, $radius: ag-param(border-radius));
     }
     
     // support 20 levels here because row group indentation is used for tree data which can be quite deep
     @for $i from 1 to 20 {
         .ag-row-group-indent-#{$i} {
-            @include ag-theme-rtl(( padding-left: $i * $ag-row-group-indent-size ));
+            @include ag-theme-rtl(( padding-left: $i * ag-param(row-group-indent-size) ));
         }
     }
 
     .ag-row-group-leaf-indent {
-        @include ag-theme-rtl(( margin-left: $ag-row-group-indent-size ));
+        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
     }
 
     .ag-cell {
@@ -29,11 +29,11 @@
     }
 
     .ag-value-change-delta-up {
-        color: $ag-value-change-delta-up-color;
+        color: ag-param(value-change-delta-up-color);
     }
 
     .ag-value-change-delta-down {
-        color: $ag-value-change-delta-down-color;
+        color: ag-param(value-change-delta-down-color);
     }
 
     .ag-value-change-value {
@@ -45,12 +45,12 @@
     }
 
     .ag-value-change-value-highlight {
-        background-color: $ag-value-change-value-highlight-background-color;
+        background-color: ag-param(value-change-value-highlight-background-color);
         transition: background-color 0.1s;
     }
 
     .ag-cell-data-changed {
-        background-color: $ag-value-change-value-highlight-background-color !important;
+        background-color: ag-param(value-change-value-highlight-background-color) !important;
     }
 
     .ag-cell-data-changed-animation {
@@ -59,15 +59,15 @@
     }
 
     .ag-row {
-        height: $ag-row-height;
-        color: $ag-data-color;
+        height: ag-param(row-height);
+        color: ag-param(data-color);
 
-        @if $ag-row-border-color {
+        @if ag-param(row-border-color) {
             &:not(.ag-row-first) {
-                @include ag-border(critical, top, $color: $ag-row-border-color);
+                @include ag-border(critical, top, $color: ag-param(row-border-color));
             }
             &.ag-row-last {
-                @include ag-border(critical, bottom, $color: $ag-row-border-color);
+                @include ag-border(critical, bottom, $color: ag-param(row-border-color));
             }
         }
     }
@@ -77,7 +77,7 @@
         position: absolute;
         width: 100%;
         height: 1px;
-        background-color: $ag-range-selection-border-color;
+        background-color: ag-param(range-selection-border-color);
         left: 1px;
     }
 
@@ -93,9 +93,9 @@
         bottom: 0px;
     }
 
-    @if $ag-odd-row-background-color {
+    @if ag-param(odd-row-background-color) {
         .ag-row-odd {
-            background-color: $ag-odd-row-background-color;
+            background-color: ag-param(odd-row-background-color);
         }
     }
 
@@ -108,7 +108,7 @@
     }
 
     .ag-row-hover {
-        background-color: $ag-row-hover-color;
+        background-color: ag-param(row-hover-color);
     }
 
     .ag-numeric-cell {
@@ -124,16 +124,16 @@
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
-        line-height: $ag-row-height - 2px;
-        padding-left: $ag-cell-horizontal-padding - 1px;
-        padding-right: $ag-cell-horizontal-padding - 1px;
+        line-height: ag-param(row-height) - 2px;
+        padding-left: ag-param(cell-horizontal-padding) - 1px;
+        padding-right: ag-param(cell-horizontal-padding) - 1px;
     }
 
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
     // in which case we need to apply the padding to the cell renderer's wrapper.
     .ag-row > .ag-cell-wrapper {
-        padding-left: $ag-cell-horizontal-padding - 1px;
-        padding-right: $ag-cell-horizontal-padding - 1px;
+        padding-left: ag-param(cell-horizontal-padding) - 1px;
+        padding-right: ag-param(cell-horizontal-padding) - 1px;
     }
 
     .ag-row-dragging {
@@ -147,28 +147,28 @@
     .ag-cell-inline-editing {
         @include ag-card();
         padding: 0;
-        height: $ag-row-height;
-        background-color: $ag-control-panel-background-color;
+        height: ag-param(row-height);
+        background-color: ag-param(control-panel-background-color);
     }
 
     .ag-popup-editor {
         @include ag-card();
-        background-color: $ag-control-panel-background-color;
+        background-color: ag-param(control-panel-background-color);
         padding: 0;
     }
 
     .ag-large-text-input {
         height: auto;
-        padding: $ag-cell-horizontal-padding;
+        padding: ag-param(cell-horizontal-padding);
     }
 
     .ag-details-row {
-        padding: $ag-grid-size * 5;
-        background-color: $ag-background-color;
+        padding: ag-param(grid-size) * 5;
+        background-color: ag-param(background-color);
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: rgba($ag-background-color, 0.66);
+        background-color: rgba(ag-param(background-color), 0.66);
     }
 
     .ag-overlay-loading-center {
@@ -176,14 +176,14 @@
     }
 
     .ag-loading {
-        padding-left: $ag-cell-horizontal-padding;
+        padding-left: ag-param(cell-horizontal-padding);
         display: flex;
         height: 100%;
         align-items: center;
     }
 
     .ag-loading-icon {
-        padding-right: $ag-cell-widget-spacing;
+        padding-right: ag-param(cell-widget-spacing);
     }
 
     .ag-icon-loading {
