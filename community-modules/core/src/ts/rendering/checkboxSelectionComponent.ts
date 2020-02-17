@@ -1,32 +1,27 @@
-import { Component } from '../widgets/component';
-import { RowNode } from '../entities/rowNode';
+import { AgCheckbox } from '../widgets/agCheckbox';
 import { Autowired } from '../context/context';
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Column } from '../entities/column';
+import { Component } from '../widgets/component';
 import { Events } from '../events';
 import { EventService } from '../eventService';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { RowNode } from '../entities/rowNode';
 import { _ } from '../utils';
 
 export class CheckboxSelectionComponent extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
 
-    private checkbox: HTMLInputElement;
+    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;
     private column: Column;
     private isRowSelectableFunc: IsRowSelectable;
 
     constructor() {
-        super(`<span class="ag-selection-checkbox" role="presentation" />`);
-    }
-
-    private createAndAddIcons(): void {
-        const element = this.getGui();
-        this.checkbox = document.createElement('input');
-        this.checkbox.type = 'checkbox';
-        element.appendChild(this.checkbox);
+        super(`<div class="ag-selection-checkbox"><ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox></div>`);
     }
 
     private onDataChanged(): void {
@@ -42,8 +37,7 @@ export class CheckboxSelectionComponent extends Component {
     private onSelectionChanged(): void {
         const state = this.rowNode.isSelected();
 
-        this.checkbox.checked = state === true;
-        this.checkbox.indeterminate = typeof state !== 'boolean';
+        this.eCheckbox.setValue(state);
     }
 
     private onCheckedClicked(): number {
@@ -58,26 +52,9 @@ export class CheckboxSelectionComponent extends Component {
         return updatedCount;
     }
 
-    private onIndeterminateClicked(event: MouseEvent): void {
-        const result = this.onUncheckedClicked(event);
-        if (result === 0) {
-            this.onCheckedClicked();
-        }
-    }
-
-    private onCheckboxClicked(event: MouseEvent): void {
-        if (this.checkbox.checked) {
-            this.onUncheckedClicked(event);
-        } else {
-            this.onCheckedClicked();
-        }
-    }
-
     public init(params: any): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
-
-        this.createAndAddIcons();
 
         this.onSelectionChanged();
 
@@ -87,7 +64,14 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => _.stopPropagationForAgGrid(event));
 
-        this.addDestroyableEventListener(this.checkbox, 'click', this.onCheckboxClicked.bind(this));
+        this.addDestroyableEventListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (params) => {
+            if (params.selected) {
+                this.onUncheckedClicked(params.event || {});
+            } else {
+                this.onCheckedClicked();
+            }
+        });
+
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));

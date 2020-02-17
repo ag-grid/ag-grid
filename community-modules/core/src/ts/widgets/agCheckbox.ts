@@ -62,6 +62,8 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setValue(value: boolean | undefined, silent?: boolean): this {
+        if (value === this.getValue()) { return; }
+
         this.setSelected(value, silent);
         return this;
     }
@@ -84,23 +86,12 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         }
     }
 
-    private dispatchChange(selected: boolean | undefined) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected });
-    }
-
-    private onClick(event: MouseEvent): void {
-        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
-        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
-        // chrome) there is event.path for this purpose, but missing in Edge.
-        _.addAgGridEventPath(event);
-
-        if (!this.readOnly) {
-            this.toggle();
-        }
+    private dispatchChange(selected: boolean | undefined, event?: MouseEvent) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, event });
     }
 
     private onCheckboxClick(e: MouseEvent) {
         this.selected = (e.target as HTMLInputElement).checked;
-        this.dispatchChange(this.selected);
+        this.dispatchChange(this.selected, e);
     }
 }
