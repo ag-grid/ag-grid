@@ -851,8 +851,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-$ag-handleSize: 5px;
-
 .ag-dialog, .ag-panel {
     display: flex;
     flex-direction: column;
@@ -897,57 +895,57 @@ $ag-handleSize: 5px;
     &.ag-resizer-topLeft {
         top: 0;
         left: 0;
-        height: $ag-handleSize;
-        width: $ag-handleSize;
+        height: 5px;
+        width: 5px;
         cursor: nwse-resize;
     }
     &.ag-resizer-top {
         top: 0;
-        left: $ag-handleSize;
-        right: $ag-handleSize;
-        height: $ag-handleSize;
+        left: 5px;
+        right: 5px;
+        height: 5px;
         cursor: ns-resize;
     }
     &.ag-resizer-topRight {
         top: 0;
         right: 0;
-        height: $ag-handleSize;
-        width: $ag-handleSize;
+        height: 5px;
+        width: 5px;
         cursor: nesw-resize;
     }
     &.ag-resizer-right {
-        top: $ag-handleSize;
+        top: 5px;
         right: 0;
-        bottom: $ag-handleSize;
-        width: $ag-handleSize;
+        bottom: 5px;
+        width: 5px;
         cursor: ew-resize;
     }
     &.ag-resizer-bottomRight {
         bottom: 0;
         right: 0;
-        height: $ag-handleSize;
-        width: $ag-handleSize;
+        height: 5px;
+        width: 5px;
         cursor: nwse-resize;
     }
     &.ag-resizer-bottom {
         bottom: 0;
-        left: $ag-handleSize;
-        right: $ag-handleSize;
-        height: $ag-handleSize;
+        left: 5px;
+        right: 5px;
+        height: 5px;
         cursor: ns-resize;
     }
     &.ag-resizer-bottomLeft {
         bottom: 0;
         left: 0;
-        height: $ag-handleSize;
-        width: $ag-handleSize;
+        height: 5px;
+        width: 5px;
         cursor: nesw-resize;
     }
     &.ag-resizer-left {
         left: 0;
-        top: $ag-handleSize;
-        bottom: $ag-handleSize;
-        width: $ag-handleSize;
+        top: 5px;
+        bottom: 5px;
+        width: 5px;
         cursor: ew-resize;
     }
 }

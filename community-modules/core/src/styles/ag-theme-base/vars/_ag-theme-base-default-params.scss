@@ -1,7 +1,7 @@
 @import "./ag-theme-base-import-legacy-vars";
 @import "./ag-theme-base-font-vars";
 
-$ag-base-params: (
+$ag-theme-base-default-params: (
     // Colour of text and icons in primary UI elements like menus
     foreground-color: #000,
 
@@ -33,7 +33,7 @@ $ag-base-params: (
     control-panel-background-color: null,
 
     // Background color of selected rows in the grid and in dropdown menus
-    selected-row-background-color: ag-derived(background-color, $mix-color: foreground-color, $mix-amount: 75%),
+    selected-row-background-color: ag-derived(background-color, $mix-color: foreground-color 25%),
 
     // Background colour applied to every other row or null to use background-color for all rows
     odd-row-background-color: null,
@@ -98,7 +98,7 @@ $ag-base-params: (
     border-radius: 0px,
 
     // Colour for border around major UI components like the grid itself, headers, footers and tool panels
-    border-color: ag-derived(background-color, $mix-color: foreground-color, $mix-amount: 25%),
+    border-color: ag-derived(background-color, $mix-color: foreground-color 25%),
 
     // Colour for borders used to separate elements within a major UI component
     secondary-border-color: ag-derived(border-color)
@@ -209,6 +209,7 @@ $ag-base-params: (
     font-size: 14px,
     icon-font-family: $ag-theme-base-icon-font-family,
     icons-data: $ag-theme-base-icons-data,
+    icons-font-codes: $ag-theme-base-icons-font-codes,
 
     // cards are elements that float above the UI
     card-radius: ag-derived(border-radius)
