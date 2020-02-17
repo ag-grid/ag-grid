@@ -29,11 +29,21 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Bubble chart is simply a scatter plot where each point has an associated variable that determines
-    the radius of a bubble. Basically, instead of having pairs of variables one has triples.
+    the size of a bubble. Basically, instead of having pairs of variables one has triples.
 </p>
 
 <p>
-    <img alt="" src="bubble-chart.png" style="margin-bottom: 0px; width: 600px; max-width: 100%">
+    To turn a scatter plot into a bubble chart one must provide the <code>sizeKey</code>
+    that will be used to fetch the value that will determine the size of each bubble.
+    For the example below we are using the following key configs:
 </p>
+
+<snippet language="ts">
+xKey: 'height',
+yKey: 'weight',
+sizeKey: 'age'
+</snippet>
+
+<?= chart_example('Bubble Chart', 'bubble-chart', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
