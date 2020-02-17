@@ -25,4 +25,16 @@ export class AgInputTextArea extends AgAbstractInputField<HTMLTextAreaElement, s
 
         return ret;
     }
+
+    public setCols(cols: number): this {
+        this.eInput.cols = cols;
+
+        return this;
+    }
+
+    public setRows(rows: number): this {
+        this.eInput.rows = rows;
+
+        return this;
+    }
 }

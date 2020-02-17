@@ -78,4 +78,8 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
         _.setElementWidth(this.eWrapper, width);
         return this;
     }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eWrapper;
+    }
 }

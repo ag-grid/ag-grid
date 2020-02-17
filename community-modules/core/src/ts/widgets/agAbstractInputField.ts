@@ -78,4 +78,15 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
         return this;
     }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eInput;
+    }
+
+    public setMaxLength(length: number): this {
+        const eInput = this.eInput as HTMLInputElement;
+        eInput.maxLength = length;
+
+        return this;
+    }
 }
