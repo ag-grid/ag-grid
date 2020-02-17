@@ -23,9 +23,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Scatter Plot</h2>
 
-<p>
-    <img alt="" src="scatter-chart.jpg" style="margin-bottom: 0px; width: 600px; max-width: 100%">
-</p>
+<?= chart_example('Scatter Chart', 'scatter-chart', 'generated') ?>
 
 <h2>Bubble Chart</h2>
 

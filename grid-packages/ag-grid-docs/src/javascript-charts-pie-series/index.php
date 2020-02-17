@@ -102,13 +102,8 @@ callout: {
 
 <p>
     Please refer to the API reference below to learn more about <code>label</code> and <code>callout</code>
-    configuration.
+    <a href="#label-callout-api-reference">configuration</a>.
 </p>
-
-<h2>API Reference</h2>
-
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.label") ?>
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.callout") ?>
 
 <h2>Variable Slice Radius</h2>
 
@@ -202,5 +197,10 @@ series: [{
 </p>
 
 <?= chart_example('Donut Chart', 'multi-donut', 'generated') ?>
+
+<h2>Label &amp; Callout API Reference</h2>
+
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.label") ?>
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig.callout") ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
