@@ -25,8 +25,6 @@ export class Component extends BeanStub {
     private visible = true;
 
     protected parentComponent: Component | undefined;
-    protected managedTab: boolean = false;
-    private tabListener: () => null;
 
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
@@ -117,10 +115,6 @@ export class Component extends BeanStub {
         this.setTemplateFromElement(eGui, paramsMap);
     }
 
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        e.preventDefault();
-    }
-
     public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
@@ -142,23 +136,6 @@ export class Component extends BeanStub {
         if (uiExists) {
             this.createChildComponentsFromTags(this.getGui());
         }
-    }
-
-    @PostConstruct
-    private attachListenersToGui(): void {
-        const eGui = this.getGui();
-
-        if (!eGui || !this.managedTab) { return; }
-
-        if (this.tabListener) {
-            this.tabListener = this.tabListener();
-        }
-
-        this.tabListener = this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_TAB) {
-                this.onTabKeyDown(e);
-            }
-        });
     }
 
     protected wireQuerySelectors(): void {

@@ -1,11 +1,11 @@
 import { Promise, _ } from '../utils';
-import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { PostConstruct, Autowired } from '../context/context';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
+import { ManagedTabComponent } from '../widgets/managedTabComponent';
 
-export class TabbedLayout extends Component {
+export class TabbedLayout extends ManagedTabComponent {
 
     @Autowired('focusController') private focusController: FocusController;
 
@@ -16,7 +16,6 @@ export class TabbedLayout extends Component {
     private afterAttachedParams: any;
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
-    protected managedTab = true;
 
     constructor(params: TabbedLayoutParams) {
         super(TabbedLayout.getTemplate(params.cssClass));

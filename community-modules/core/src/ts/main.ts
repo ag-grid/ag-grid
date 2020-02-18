@@ -211,6 +211,7 @@ export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupCompo
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
+export { ManagedTabComponent } from "./widgets/managedTabComponent";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";

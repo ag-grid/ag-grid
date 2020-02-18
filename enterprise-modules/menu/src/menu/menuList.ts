@@ -1,8 +1,8 @@
 import {
     Autowired,
-    Component,
     Constants,
     GridOptionsWrapper,
+    ManagedTabComponent,
     MenuItemDef,
     PopupService,
     PostConstruct,
@@ -12,7 +12,7 @@ import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
 
-export class MenuList extends Component {
+export class MenuList extends ManagedTabComponent {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -39,8 +39,6 @@ export class MenuList extends Component {
     private removeChildFuncs: Function[] = [];
     private subMenuParentComp: MenuItemComponent | null;
     private subMenuComp: MenuList | null;
-
-    protected managedTab = true;
 
     constructor() {
         super(MenuList.TEMPLATE);
