@@ -13,9 +13,12 @@
 @import "./parts/charts";
 @import "../params/ag-theme-base-default-params";
 
-@mixin ag-grid-theme($params: null) {
+@mixin ag-grid-theme($params: $ag-theme-base-default-params) {
 
-    @include ag-register-params($params, $ag-theme-base-default-params);
+    @include ag-register-params($params);
+
+    @include ag-icons-font-face();
+    @include ag-icons-webfont();
 
     -webkit-font-smoothing: antialiased;
     color: ag-param(foreground-color);
@@ -25,7 +28,6 @@
     .ag-root-wrapper {
         background-color: ag-param(background-color);
     }
-    @include ag-icons-webfont();
 
     @include ag-theme-base-part-reset();
     @include ag-theme-base-part-widgets();

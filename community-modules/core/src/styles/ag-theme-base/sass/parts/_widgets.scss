@@ -438,27 +438,27 @@
 @mixin ag-native-inputs($type-map: ()) {
     @if not map-has-key($type-map, checkbox) or map-get($type-map, checkbox) {
         input[type='checkbox']:not(.ag-toggle-button-input) {
-            @extend %ag-checkbox;
+            @include ag-checkbox;
         }
     }
     @if not map-has-key($type-map, toggle-button) or map-get($type-map, toggle-button) {
         input[type='checkbox'].ag-toggle-button-input {
-            @extend %ag-toggle-button;
+            @include ag-toggle-button;
         }
     }
     @if not map-has-key($type-map, radio) or map-get($type-map, radio) {
         input[type='radio'] {
-            @extend %ag-radio;
+            @include ag-radio;
         }
     }
     @if not map-has-key($type-map, range) or map-get($type-map, range) {
         input[type='range'] {
-            @extend %ag-range;
+            @include ag-range;
         }
     }
 }
 
-%ag-checkbox {
+@mixin ag-check-button-base {
     @include ag-icon();
 
     -webkit-appearance: none;
@@ -474,6 +474,14 @@
         outline: none;
         box-shadow: ag-param(input-focus-box-shadow);
     }
+    
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+@mixin ag-checkbox {
+    @include ag-check-button-base();
 
     &::after {
         content: ag-param(icon-checkbox-unchecked);
@@ -489,14 +497,10 @@
         content: ag-param(icon-checkbox-indeterminate);
         color: ag-param(checkbox-indeterminate-color);
     }
-    
-    &:disabled {
-        opacity: 0.5;
-    }
 }
 
-%ag-radio {
-    @extend %ag-checkbox;
+@mixin ag-radio {
+    @include ag-check-button-base();
     
     border-radius: ag-param(icon-size);
 
@@ -511,7 +515,7 @@
     }
 }
 
-%ag-toggle-button {
+@mixin ag-toggle-button {
     box-sizing: border-box;
     -webkit-appearance: none;
     width: ag-param(toggle-button-width);
@@ -622,7 +626,7 @@
     }
 }
 
-%ag-range {
+@mixin ag-range {
     -webkit-appearance: none;
     width: 100%;
     height: ag-param(icon-size);

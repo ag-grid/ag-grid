@@ -33,7 +33,7 @@ $ag-theme-balham-default-params: (
     range-selection-highlight-color: ag-derived(balham-active-color),
 
     selected-row-background-color: ag-derived(balham-active-color, $opacity: 0.5),
-    chip-background-color: ag-derived(control-panel-background-color, $mix-color: foreground-color 20%),
+    chip-background-color: ag-derived(control-panel-background-color, $mix: foreground-color 20%),
     header-cell-moving-background-color: ag-derived(background-color),
 
     header-column-separator: true,

@@ -1,20 +1,6 @@
 @import "./ag-grid-mixins";
+@import "./ag-theme-params";
 
-$ag-params: null;
-
-@mixin ag-register-params($params, $defaults) {
-    $ag-params: $params !global;
-}
-
-@function ag-param($name) {
-    @if $ag-params == null {
-        @error "ag-params called before ag-register-params-map";
-    }
-    @if str-index($name, $substring: "color") {
-        @return #000;
-    }
-    @return 0;
-}
 
 @mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
     @if ag-should-draw-border($border-type) {
@@ -78,11 +64,13 @@ $ag-params: null;
 }
 
 @mixin ag-icons-font-face() {
-    @font-face {
-        font-family: '#{ag-param(icon-font-family)}';
-        src: ag-param(icons-data);
-        font-weight: normal;
-        font-style: normal;
+    @at-root {
+        @font-face {
+            font-family: '#{ag-param(icon-font-family)}';
+            src: ag-param(icons-data);
+            font-weight: normal;
+            font-style: normal;
+        }
     }
 }
 

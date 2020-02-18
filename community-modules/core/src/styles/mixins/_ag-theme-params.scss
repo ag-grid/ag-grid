@@ -1,0 +1,147 @@
+/*
+    Utilities to parse params supplied as a map. Values can be defined in terms of
+    other values, with modifications. For example:
+
+    @include ag-register-params((
+        a: ag-derived(b, $times: c, $plus: 2),
+        b: 4,
+        c: 10
+    ));
+    @debug ag-param(a); // outputs 42
+*/
+
+
+// Define a derived parameter. Derived values are lazily evaluated, so this function is really just
+// sugar for defining a data structure to record the derived value's parameters.
+@function ag-derived($reference-name,
+                     $times: null, $divide: null, $plus: null, $minus: null, $opacity: null,
+                     $lighten: null, $darken: null, $mix: null) {
+    @return (
+        "--is-ag-derived": true,
+        "reference-name": $reference-name,
+        "times": $times,
+        "divide": $divide,
+        "plus": $plus,
+        "minus": $minus,
+        "opacity": $opacity,
+        "lighten": $lighten,
+        "darken": $darken,
+        "mix": $mix,
+    );
+}
+
+@function -is-ag-derived($value) {
+    @return type-of($value) == map and map-get($value, "--is-ag-derived") == true;
+}
+
+$-ag-params: null;
+
+@mixin ag-register-params($params) {
+    $-ag-params: $params !global;
+}
+
+// Use a parameter.
+// In SCSS, `ag-param(name)` replaces `$ag-name` as the main way of using a theme parameter.
+@function ag-param($name) {
+    @if $-ag-params == null {
+        @error "ag-params called before ag-register-params";
+    }
+    @if not map-has-key($-ag-params, $name) {
+        @error "ag-param(#{$name}): no such parameter";
+    }
+    @return -ag-resolve-param-name($-ag-params, $name);
+    @if str-index($name, $substring: "color") {
+        @return #000;
+    }
+    @return 0;
+}
+
+@function -ag-resolve-param-name($params, $name) {
+    $value: map-get($params, $name);
+    @return -ag-resolve-param-value($params, $value);
+}
+
+@function -ag-resolve-param-value($params, $input-value) {
+    @if not -is-ag-derived($input-value) {
+        @return $input-value;
+    }
+    $derived: $input-value;
+    $reference-name: map-get($derived, "reference-name");
+    @if not map-has-key($params, $reference-name) {
+        @error "ag-derived: no such param \"#{$reference-name}\"";
+    }
+    $resolved: map-get($params, $reference-name);
+    $resolved: -ag-resolve-param-value($params, $resolved);
+
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "times");
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "divide");
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "plus");
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "minus");
+    $resolved: -ag-apply-derived-operator($params, $resolved, $derived, "opacity");
+
+    @return -ag-resolve-param-value($params, $resolved);
+}
+
+@function -ag-apply-derived-operator($params, $lhs, $derived, $operator) {
+    $rhs: map-get($derived, $operator);
+    @if $rhs == null {
+        @return $lhs;
+    }
+    $operator-function: "-ag-operator-function-#{$operator}";
+    @if not function-exists($operator-function) {
+        @error "No such function #{$operator-function}";
+    }
+    @if type-of($rhs) == string {
+        $rhs: -ag-resolve-param-name($params, $rhs);
+    }
+    @return call(get-function($operator-function), $lhs, $rhs);
+}
+
+@function -ag-require-type($value, $expected, $context) {
+    @if type-of($value) != $expected {
+        @error "Expected #{$context} to be a #{$expected} but got a #{type-of($value)} instead (#{inspect($value)})";
+    }
+    @return $value;
+}
+
+@function -ag-operator-function-times($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $times");
+    $rhs: -ag-require-type($rhs, "number", "argument to $times");
+    @return $lhs * $rhs;
+}
+
+@function -ag-operator-function-divide($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $divide");
+    $rhs: -ag-require-type($rhs, "number", "argument to $divide");
+    @return $lhs / $rhs;
+}
+
+@function -ag-operator-function-plus($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $plus");
+    $rhs: -ag-require-type($rhs, "number", "argument to $plus");
+    @return $lhs + $rhs;
+}
+
+@function -ag-operator-function-minus($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "number", "value before $minus");
+    $rhs: -ag-require-type($rhs, "number", "argument to $minus");
+    @return $lhs - $rhs;
+}
+
+@function -ag-operator-function-opacity($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $opacity");
+    $rhs: -ag-require-type($rhs, "number", "argument to $opacity");
+    @if $rhs < 0 or $rhs > 1 {
+        @error "Expected argument to $opacity to be between 0 and 1, got #{inspect($rhs)} instead.";
+    }
+    @return rgba($lhs, $rhs);
+}
+
+@function -ag-operator-function-mix($lhs, $rhs) {
+    $lhs: -ag-require-type($lhs, "color", "value before $mix");
+    @if list-length($rhs) != 2 or type-of(nth($rhs, 1)) != color or type-of(nth($rhs, 2)) != number {
+        @error "Expected argument to $mix to be a 2-item array [color, percentage] but got #{inspect($rhs)}";
+    }
+    $rhs: -ag-require-type($rhs, "number", "argument to $mix");
+    @return mix(nth($rhs, 1), $lhs, nth($rhs, 2));
+}

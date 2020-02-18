@@ -1,0 +1,15 @@
+@import "./mixins/ag-theme-mixins";
+
+$ag-b: 4;
+$ag-plus: 3;
+$ag-a: $ag-b * 10 + $ag-plus;
+
+@include ag-register-params((
+    a: ag-derived(b, $times: d, $plus: c),
+    b: 4,
+    c: 3,
+    d: "5"
+));
+@debug ag-param(a); // outputs 50 $ag-a
+
+@debug $-ag-params;

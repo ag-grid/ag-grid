@@ -1,7 +1,5 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 
-@include ag-icons-font-face();
-
 @mixin ag-theme-balham() {
 
     @include ag-grid-theme();

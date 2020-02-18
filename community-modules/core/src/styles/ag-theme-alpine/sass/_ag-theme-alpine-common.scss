@@ -1,9 +1,8 @@
-@import '../../ag-theme-base/sass/ag-theme-base';
+@import "../params/ag-theme-alpine-default-params";
+@import "../../ag-theme-base/sass/ag-theme-base";
 
-@include ag-icons-font-face();
-
-@mixin ag-theme-alpine() {
-    @include ag-grid-theme();
+@mixin ag-theme-alpine($params: $ag-theme-alpine-default-params) {
+    @include ag-grid-theme($params);
 
     @include ag-native-inputs();
 
@@ -114,16 +113,15 @@
         background: ag-param(background-color);
         font-weight: 600;
         padding: ag-param(grid-size) ag-param(grid-size) * 2;
-        // transition: all 0.1s;
     
         &:hover {
             border-color: ag-param(alpine-active-color);
-            background-color: transparentize(ag-param(alpine-active-color), 0.9);
+            background-color: rgba(ag-param(alpine-active-color), 0.1);
         }
     
         &:active {
             border-color: ag-param(alpine-active-color);
-            background-color: transparentize(ag-param(alpine-active-color), 0.1);
+            background-color: ag-param(alpine-active-color);
             color: ag-param(background-color);
         }
     }
