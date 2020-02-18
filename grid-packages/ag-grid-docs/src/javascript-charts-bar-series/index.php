@@ -1,15 +1,16 @@
 <?php
-$pageTitle = "Charts - Line Series";
+$pageTitle = "Charts - Bar and Column Series";
 $pageDescription = "ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.";
 $pageKeyboards = "Javascript Grid Charting";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Standalone Charts - Line Series</h1>
+<h1 class="heading-enterprise">Standalone Charts - Bar and Column Series</h1>
 
 <p class="lead">
-    This section covers the most common series type &mdash; Line series.
+    This section covers both Bar and Column series. That's because bars are just
+    transposed columns and share the exact same configs.
 </p>
 
 <p>
@@ -18,7 +19,31 @@ include '../documentation-main/documentation_header.php';
     rendering continuous data with irregular intervals or incomplete data that has some values missing.
 </p>
 
-<h2>Single Series</h2>
+<h2>Column Series</h2>
+
+<h3>Regular</h3>
+
+<?= chart_example('Regular Column Series', 'regular-column'); ?>
+
+<h3>Grouped</h3>
+
+<?= chart_example('Grouped Column Series', 'grouped-column'); ?>
+
+<h3>Stacked</h3>
+
+<?= chart_example('Stacked Column Series', 'stacked-column'); ?>
+
+<h3>Normalized</h3>
+
+<?= chart_example('Normalized Column Series', 'normalized-column'); ?>
+
+<h3>Column Labels</h3>
+
+<?= chart_example('Column Series with Labels', 'labeled-column'); ?>
+
+<h2>Bar Series</h2>
+
+<?= chart_example('Stacked Bar Series', 'stacked-bar'); ?>
 
 <p>
     Since <code>'line'</code> series type is so common, the chart factory
@@ -38,8 +63,6 @@ series: [{
     yKey: 'spending'
 }]
 </snippet>
-
-<?= chart_example('Single Line Series', 'basic-line'); ?>
 
 <p>
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
