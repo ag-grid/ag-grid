@@ -16,27 +16,36 @@ function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var groupByQuery = buildGroupBySql(request);
-        console.log('[FakeServer] - about to execute row group query:', groupByQuery);
-        var groupByResults = alasql(groupByQuery, [allData]);
+        var groupByResult = executeRowGroupQuery(request);
 
         var rowGroupCols = request.rowGroupCols;
         var groupKeys = request.groupKeys;
-
-        if (!isDoingGrouping(rowGroupCols, groupKeys)) return groupByResults;
+        if (!isDoingGrouping(rowGroupCols, groupKeys)) {
+            return groupByResult;
+        }
 
         var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
         var groupColId = groupsToUse[0].id;
 
-        var SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupColId]);
-        console.log('[FakeServer] - about to execute group child count query:', SQL);
+        var childCountResult = executeGroupChildCountsQuery(request, groupColId);
 
         // add 'childCount' to group results
-        var childCountResults = alasql(SQL, [allData])[0];
-        return groupByResults.map(function(groupByRes) {
-            groupByRes['childCount'] = childCountResults[groupByRes[groupColId]];
+        return groupByResult.map(function(groupByRes) {
+            groupByRes['childCount'] = childCountResult[groupByRes[groupColId]];
             return groupByRes;
         });
+    }
+
+    function executeRowGroupQuery(request) {
+        var groupByQuery = buildGroupBySql(request);
+        console.log('[FakeServer] - about to execute row group query:', groupByQuery);
+        return alasql(groupByQuery, [allData]);
+    }
+
+    function executeGroupChildCountsQuery(request, groupId) {
+        var SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupId]);
+        console.log('[FakeServer] - about to execute group child count query:', SQL);
+        return alasql(SQL, [allData])[0];
     }
 
     function buildGroupBySql(request) {
