@@ -1,4 +1,10 @@
-<div style="height: 100%; display: flex; flex-direction: column;">
-    <div id="toolpanel" style="display: flex; flex-direction: row;"></div>
-    <div id="myChart" style="flex: 1;"></div>
+<div class="wrapper">
+    <div id="toolPanel">
+        <div class="slider">
+            <label for="sliderInput"><strong>Width:</strong></label>
+            <span id="sliderValue">750</span>
+            <input type="range" id="sliderInput" min="350" max="750" oninput="updateWidth(event)" />
+        </div>
+    </div>
+    <div id="myChart"></div>
 </div>

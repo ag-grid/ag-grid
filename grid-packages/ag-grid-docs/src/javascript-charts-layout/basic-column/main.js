@@ -22,7 +22,7 @@ var data = [
     },
 ];
 
-var chart = agCharts.AgChart.create({
+var options = {
     data: data,
     container: document.body,
     title: {
@@ -45,4 +45,6 @@ var chart = agCharts.AgChart.create({
     legend: {
         spacing: 40
     }
-});
+};
+
+var chart = agCharts.AgChart.create(options);

@@ -38,7 +38,7 @@ export function convertTemplate(template: string) {
 
     template = template
         .replace(/\(this\, \)/g, '(this)')
-        .replace(/<input type="(radio|checkbox|text)" (.+?[^=])>/g, '<input type="$1" $2 />')
+        .replace(/<input type="(radio|checkbox|text|range)" (.+?[^=])>/g, '<input type="$1" $2 />')
         .replace(/<input placeholder(.+?[^=])>/g, '<input placeholder$1 />')
         .replace(/ class=/g, " className=");
 

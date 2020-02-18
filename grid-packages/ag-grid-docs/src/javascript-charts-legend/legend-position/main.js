@@ -13,8 +13,14 @@ var options = {
         angleKey: 'value',
         labelKey: 'label',
         strokeWidth: 3
-    }]
+    }],
+    legend: {
+        position: 'right'
+    }
 };
+
 var chart = agCharts.AgChart.create(options);
 
-createChartLegendPositionSlider('toolpanel', chart);
+function updateLegendPosition(value) {
+    chart.legend.position = value;
+}

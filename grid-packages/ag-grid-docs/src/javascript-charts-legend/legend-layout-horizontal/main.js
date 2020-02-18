@@ -27,8 +27,15 @@ var options = {
     }],
     legend: {
         position: 'bottom'
-    }
+    },
 };
+
 var chart = agCharts.AgChart.create(options);
 
-createChartWidthSlider('toolpanel', chart);
+function updateWidth(event) {
+    var value = event.target.value;
+
+    chart.width = event.target.value;
+
+    document.getElementById('sliderValue').innerHTML = value;
+}

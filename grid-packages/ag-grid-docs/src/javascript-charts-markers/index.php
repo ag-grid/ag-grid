@@ -30,7 +30,7 @@ marker: {
     For example:
 </p>
 
-<?= chart_example('Marker Shape, Size and Color', 'marker-shape'); ?>
+<?= chart_example('Marker Shape, Size and Color', 'marker-shape', 'generated'); ?>
 
 <h2>API Reference</h2>
 
@@ -96,6 +96,6 @@ marker: {
     And the final result is:
 </p>
 
-<?= chart_example('Custom Marker', 'custom-marker'); ?>
+<?= chart_example('Custom Marker', 'custom-marker', 'generated'); ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

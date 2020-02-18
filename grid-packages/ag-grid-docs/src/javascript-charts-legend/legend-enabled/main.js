@@ -21,6 +21,6 @@ var options = {
 
 var chart = agCharts.AgChart.create(options);
 
-function toggle() {
-    chart.legend.enabled = !chart.legend.enabled;
+function setLegendEnabled(enabled) {
+    chart.legend.enabled = enabled;
 }

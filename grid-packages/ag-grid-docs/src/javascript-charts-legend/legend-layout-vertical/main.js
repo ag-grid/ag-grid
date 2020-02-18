@@ -24,8 +24,15 @@ var options = {
         angleKey: 'value',
         labelKey: 'label',
         strokeWidth: 3
-    }]
+    }],
 };
+
 var chart = agCharts.AgChart.create(options);
 
-createChartHeightSlider('toolpanel', chart);
+function updateHeight(event) {
+    var value = event.target.value;
+
+    chart.height = event.target.value;
+
+    document.getElementById('sliderValue').innerHTML = value;
+}

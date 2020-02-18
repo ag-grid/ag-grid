@@ -1,6 +1,7 @@
-<div style="height: 100%; display: flex; flex-direction: column;">
-    <div id="toolpanel">
-        <button id="toggle" onclick="toggle()">Toggle Legend</button>
+<div class="wrapper">
+    <div id="toolPanel">
+        <button onclick="setLegendEnabled(true)">Show Legend</button>
+        <button onclick="setLegendEnabled(false)">Hide Legend</button>
     </div>
-    <div id="myChart" style="flex: 1;"></div>
+    <div id="myChart"></div>
 </div>
