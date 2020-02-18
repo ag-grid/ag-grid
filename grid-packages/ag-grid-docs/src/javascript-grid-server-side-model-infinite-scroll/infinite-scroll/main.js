@@ -58,23 +58,21 @@ document.addEventListener('DOMContentLoaded', function() {
 function ServerSideDatasource(server) {
   return {
     getRows: function(params) {
-      var request = params.request;
+      console.log('[Datasource] - rows requested by grid: ', params.request);
 
-      console.log('[Datasource] - rows requested: ' + request.startRow + ' to ' + request.endRow);
-
+      // get data for request from our fake server
       var response = server.getData(params.request);
 
-      // adding delay to simulate real sever call
-      setTimeout(function() {
+      // simulating real server call with a 500ms delay
+      setTimeout(function () {
         if (response.success) {
-          // call the success callback
+          // supply rows for requested block to grid
           params.successCallback(response.rows, response.lastRow);
         } else {
-          // inform the grid request failed
           params.failCallback();
         }
       }, 500);
-    },
+    }
   };
 }
 

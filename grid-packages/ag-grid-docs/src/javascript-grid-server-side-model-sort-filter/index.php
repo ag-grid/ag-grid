@@ -12,19 +12,17 @@ include '../documentation-main/documentation_header.php';
     This section covers Server-side Sorting using the Server-side Row Model.
 </p>
 
-
-
 <h2>Sorting</h2>
 
 <?= grid_example('Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Simple Set Filter</h2>
+<h2>Simple Column Filters</h2>
 
-<?= grid_example('Simple Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Provided Filters</h2>
+<h2>Set Filter</h2>
 
-<?= grid_example('Provided Filters', 'provided-filters', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Set Filter with Complex Object</h2>
 

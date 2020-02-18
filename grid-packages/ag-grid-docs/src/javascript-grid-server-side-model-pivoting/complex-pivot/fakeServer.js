@@ -52,10 +52,9 @@ function FakeServer(allData) {
         return extractRowsForBlock(request, result);
     }
 
-    function whereSql(args) {
-        var rowGroups = args.rowGroupCols;
-
-        var groupKeys = args.groupKeys;
+    function whereSql(request) {
+        var rowGroups = request.rowGroupCols;
+        var groupKeys = request.groupKeys;
         var whereClause = '';
         if (groupKeys) {
             for (var i = 0; i < groupKeys.length; i++) {

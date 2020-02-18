@@ -34,9 +34,7 @@ function FakeServer(allData) {
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
-        if (sortModel.length === 0) {
-            return '';
-        }
+        if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
             return s.colId + ' ' + s.sort;
@@ -46,10 +44,8 @@ function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        var startRow = request.startRow;
-        var endRow = request.endRow;
-        var blockSize = endRow - startRow;
-        return 'LIMIT ' + (blockSize + 1) + ' OFFSET ' + startRow;
+        var blockSize = request.endRow - request.startRow;
+        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
     function getLastRowIndex(request, results) {

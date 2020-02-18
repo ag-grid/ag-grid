@@ -6,18 +6,17 @@ function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var result = executeQuery(request);
-
+            var results = executeQuery(request);
             return {
                 success: true,
-                rows: result,
-                lastRow: result.length,
+                rows: results,
+                lastRow: getLastRowIndex(request, results)
             };
         },
         getCountries: function() {
             var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country asc';
-            var res = alasql(SQL, [allData]);
-            return res.map(function(r) { return r.country });
+            var result = alasql(SQL, [allData]);
+            return result.map(Object.values);
         }
     };
 
@@ -64,9 +63,7 @@ function FakeServer(allData) {
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
-        if (sortModel.length === 0) {
-            return '';
-        }
+        if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
             return s.colId + ' ' + s.sort;
@@ -76,9 +73,13 @@ function FakeServer(allData) {
     }
 
     function limitSql(request) {
-        var startRow = request.startRow;
-        var endRow = request.endRow;
-        var blockSize = endRow - startRow;
-        return 'LIMIT ' + (blockSize + 1) + ' OFFSET ' + startRow;
+        var blockSize = request.endRow - request.startRow;
+        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+    }
+
+    function getLastRowIndex(request, results) {
+        if (!results || results.length === 0) return -1;
+        var currentLastRow = request.startRow + results.length;
+        return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }

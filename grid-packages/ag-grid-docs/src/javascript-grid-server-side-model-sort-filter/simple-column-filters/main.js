@@ -1,22 +1,37 @@
 var columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "sport", rowGroup: true, hide: true },
-    { field: "gold", aggFunc: 'sum' },
-    { field: "silver", aggFunc: 'sum' },
-    { field: "bronze", aggFunc: 'sum' }
+    { field: 'athlete', type: 'text' },
+    { field: 'year',
+      filter: 'agNumberColumnFilter',
+      filterParams: {
+        resetButton: true,
+        debounceMs: 1000,
+        suppressAndOrCondition: true,
+      }
+    },
+    { field: 'gold', type: 'number' },
+    { field: 'silver', type: 'number' },
+    { field: 'bronze', type: 'number' }
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
+        sortable: true,
         resizable: true,
-        sortable: true
+        menuTabs: ['filterMenuTab']
     },
-    autoGroupColumnDef: {
-        flex: 1,
-        minWidth: 280,
+    columnTypes: {
+        'text': {filter: 'agTextColumnFilter'},
+        'number': {filter: 'agNumberColumnFilter'},
+        'numberWithFilterReset': {
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                resetButton: true,
+                debounceMs: 1500
+            }
+        }
     },
     // use the server-side row model
     rowModelType: 'serverSide',
@@ -28,8 +43,7 @@ var gridOptions = {
     maxBlocksInCache: 10,
 
     animateRows: true,
-    suppressAggFuncInHeader: true,
-    // debug: true,
+    // debug: true
 };
 
 function ServerSideDatasource(server) {
@@ -37,18 +51,18 @@ function ServerSideDatasource(server) {
         getRows: function(params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
+            // get data for request from our fake server
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
+            // simulating real server call with a 500ms delay
             setTimeout(function () {
                 if (response.success) {
-                    // call the success callback
+                    // supply rows for requested block to grid
                     params.successCallback(response.rows, response.lastRow);
                 } else {
-                    // inform the grid request failed
                     params.failCallback();
                 }
-            }, 200);
+            }, 500);
         }
     };
 }
@@ -69,4 +83,3 @@ document.addEventListener('DOMContentLoaded', function () {
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
-

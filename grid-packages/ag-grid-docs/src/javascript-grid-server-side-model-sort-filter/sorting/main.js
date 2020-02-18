@@ -31,6 +31,27 @@ var gridOptions = {
     // debug: true
 };
 
+function ServerSideDatasource(server) {
+    return {
+        getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
+
+            // get data for request from our fake server
+            var response = server.getData(params.request);
+
+            // simulating real server call with a 500ms delay
+            setTimeout(function () {
+                if (response.success) {
+                    // supply rows for requested block to grid
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    params.failCallback();
+                }
+            }, 500);
+        }
+    };
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
@@ -47,24 +68,3 @@ document.addEventListener('DOMContentLoaded', function () {
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
-
-function ServerSideDatasource(server) {
-    return {
-        getRows: function(params) {
-            console.log('[Datasource] - rows requested: ', params.request);
-
-            // get data for request from our fake server
-            var response = server.getData(params.request);
-
-            // simulating real server call with a 500ms delay
-            setTimeout(function () {
-                if (response.success) {
-                    // supply data to grid
-                    params.successCallback(response.rows, response.lastRow);
-                } else {
-                    params.failCallback();
-                }
-            }, 500);
-        }
-    };
-}

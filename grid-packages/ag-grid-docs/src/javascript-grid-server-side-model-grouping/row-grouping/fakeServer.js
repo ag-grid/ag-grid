@@ -1,41 +1,40 @@
+// This fake server uses http://alasql.org/ to mimic how a real server
+// might generate sql queries from the Server-side Row Model request.
+// To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
+    alasql.options.cache = false;
 
     return {
         getData: function (request) {
-            var success = true;
-            var rowsForBlock = [];
-            var lastRowIndex = -1;
-
-            try {
-                var SQL = buildSql(request);
-                console.log('executing sql:', SQL);
-
-                rowsForBlock = alasql(SQL, [allData]);
-                lastRowIndex = getLastRowIndex(request, rowsForBlock);
-            } catch (err) {
-                console.error(err);
-                success = false;
-            }
-
+            var results = executeQuery(request);
             return {
-                success: success,
-                rows: rowsForBlock,
-                lastRow: lastRowIndex
+                success: true,
+                rows: results,
+                lastRow: getLastRowIndex(request, results)
             };
         }
     };
 
-    function buildSql(request) {
-        var selectSql = createSelectSql(request);
-        var fromSql = ' FROM ?';
-        var whereSql = createWhereSql(request);
-        var groupBySql = createGroupBySql(request);
-        var limitSql = createLimitSql(request);
+    function executeQuery(request) {
+        var SQL = buildSql(request);
 
-        return selectSql + fromSql + whereSql + groupBySql + limitSql;
+        console.log('[FakeServer] - about to execute query:', SQL);
+
+        return alasql(SQL, [allData]);
     }
 
-    function createSelectSql(request) {
+    function buildSql(request) {
+        var select= selectSql(request);
+        var from = ' FROM ?';
+        var where = whereSql(request);
+        var groupBy = createGroupBySql(request);
+        var orderBy = orderBySql(request);
+        var limit = limitSql(request);
+
+        return select + from + where + groupBy + orderBy + limit;
+    }
+
+    function selectSql(request) {
         var rowGroupCols = request.rowGroupCols;
         var valueCols = request.valueCols;
         var groupKeys = request.groupKeys;
@@ -55,19 +54,18 @@ function FakeServer(allData) {
         return ' select *';
     }
 
-    function createWhereSql(request) {
-        var whereParts = [];
-
-        var rowGroupCols = request.rowGroupCols;
+    function whereSql(request) {
+        var rowGroups = request.rowGroupCols;
         var groupKeys = request.groupKeys;
-        if (groupKeys.length > 0) {
-            groupKeys.forEach(function (key, index) {
-                var colName = rowGroupCols[index].field;
-                whereParts.push(colName + ' = \"' + key + '\"')
-            });
-        }
 
-        return (whereParts.length > 0) ? ' where ' + whereParts.join(' and ') : '';
+        var whereClause = '';
+        if (groupKeys) {
+            for (var i = 0; i < groupKeys.length; i++) {
+                whereClause += (i === 0) ? ' WHERE ' : ' AND ';
+                whereClause += rowGroups[i].id + ' = "' + groupKeys[i] + '"';
+            }
+        }
+        return whereClause;
     }
 
     function createGroupBySql(request) {
@@ -87,21 +85,30 @@ function FakeServer(allData) {
         return '';
     }
 
-    function createLimitSql(request) {
+    function orderBySql(request) {
+        var sortModel = request.sortModel;
+        if (sortModel.length === 0) return '';
+
+        var sorts = sortModel.map(function(s) {
+            return s.colId + ' ' + s.sort;
+        });
+
+        return ' ORDER BY ' + sorts.join(', ') + ' ';
+    }
+
+    function limitSql(request) {
         var blockSize = request.endRow - request.startRow;
-        return ' limit ' + (blockSize + 1) + ' offset ' + request.startRow;
+        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+    }
+
+    function isDoingGrouping(rowGroupCols, groupKeys) {
+        // we are not doing grouping if at the lowest level
+        return rowGroupCols.length > groupKeys.length;
     }
 
     function getLastRowIndex(request, results) {
         if (!results || results.length === 0) return null;
         var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
-    }
-
-    function isDoingGrouping(rowGroupCols, groupKeys) {
-        // we are not doing grouping if at the lowest level. we are at the lowest level
-        // if we are grouping by more columns than we have keys for (that means the user
-        // has not expanded a lowest level group, OR we are not grouping at all).
-        return rowGroupCols.length > groupKeys.length;
     }
 }

@@ -1,5 +1,4 @@
 var columnDefs = [
-    { field: 'athlete',  menuTabs: false },
     {
       field: 'country',
       valueFormatter: countryValueFormatter,
@@ -10,7 +9,8 @@ var columnDefs = [
         valueFormatter: countryFilterValueFormatter
       },
       menuTabs: ['filterMenuTab']
-    }
+    },
+    { field: 'athlete', menuTabs: false }
 ];
 
 var gridOptions = {
