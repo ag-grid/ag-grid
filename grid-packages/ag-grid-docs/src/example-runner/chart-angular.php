@@ -31,6 +31,8 @@ $example = getExampleInfo('chart', 'angular');
       }
     </style>
 
+    <?= getStyleTags($example['styles']); ?>
+
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js@2.6.5/client/shim.min.js"></script>
     <script src="https://unpkg.com/zone.js@0.8.17/dist/zone.js"></script>

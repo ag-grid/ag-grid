@@ -30,6 +30,7 @@ $example = getExampleInfo('chart', 'vue');
             overflow: auto;
         }
     </style>
+    <?= getStyleTags($example['styles']); ?>
 </head>
 <body>
     <div id="app" style="height: 100%">

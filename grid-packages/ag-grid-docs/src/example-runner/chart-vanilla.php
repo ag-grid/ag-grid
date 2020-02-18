@@ -29,6 +29,7 @@ $example = getExampleInfo('chart', 'vanilla');
         }
     </style>
     <?= getGlobalAgChartsScriptTag() ?>
+    <?= getStyleTags($example['styles']); ?>
 </head>
 <body>
     <?php include path_combine($example['sourcePath'], 'index.html'); ?>

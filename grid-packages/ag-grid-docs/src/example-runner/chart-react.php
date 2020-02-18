@@ -29,6 +29,7 @@ $example = getExampleInfo('chart', 'react');
         }
     </style>
 <?php renderExampleExtras($_GET); ?>
+    <?= getStyleTags($example['styles']); ?>
 </head>
 <body>
     <div id="root" style="height: 100%">Loading&hellip;</div>
