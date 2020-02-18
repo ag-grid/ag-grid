@@ -10,7 +10,7 @@ Frameworks Supported
 ====================
 Framework specific Getting Started guides:
 
-[Angular 1](https://www.ag-grid.com/angular-grid/) | [Angular 2](https://www.ag-grid.com/angular-grid/) | [Javascript](https://www.ag-grid.com/javascript-grid/) | [Polymer](https://www.ag-grid.com/best-polymer-data-grid/) | [React](https://www.ag-grid.com/react-grid/) | [TypeScript](https://www.ag-grid.com/ag-grid-typescript-webpack-2/) | [VueJS](https://www.ag-grid.com/vuejs-grid/) | [Web Components](https://www.ag-grid.com/best-web-component-data-grid/) | [Aurelia](https://www.ag-grid.com/best-aurelia-data-grid/) 
+[Angular 1](https://www.ag-grid.com/angular-grid/) | [Angular 2](https://www.ag-grid.com/angular-grid/) | [Javascript](https://www.ag-grid.com/javascript-grid/) | [Polymer](https://www.ag-grid.com/best-polymer-data-grid/) | [React](https://www.ag-grid.com/react-grid/) | [TypeScript](https://www.ag-grid.com/ag-grid-building-typescript/) | [VueJS](https://www.ag-grid.com/vuejs-grid/) | [Web Components](https://www.ag-grid.com/best-web-component-data-grid/) | [Aurelia](https://www.ag-grid.com/best-aurelia-data-grid/) 
 
 This is not free software, this software is covered by copyright and to use you need a commercial license.
 
