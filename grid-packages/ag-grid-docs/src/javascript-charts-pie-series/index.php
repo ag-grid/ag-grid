@@ -101,8 +101,8 @@ callout: {
 </snippet>
 
 <p>
-    Please refer to the API reference below to learn more about <code>label</code> and <code>callout</code>
-    <a href="#label-callout-api-reference">configuration</a>.
+    Please refer to the <a href="#label-callout-api-reference">API reference</a> below
+    to learn more about <code>label</code> and <code>callout</code>.
 </p>
 
 <h2>Variable Slice Radius</h2>

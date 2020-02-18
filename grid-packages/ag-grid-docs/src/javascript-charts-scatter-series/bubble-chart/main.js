@@ -36,7 +36,6 @@ agCharts.AgChart.create({
         fill: 'rgba(123,145,222,0.71)',
         stroke: '#56659b',
         marker: {
-            shape: 'circle',
             minSize: 8,
             size: 30
         }

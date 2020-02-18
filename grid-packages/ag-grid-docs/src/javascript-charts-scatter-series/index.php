@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Scatter series configuration is pretty much the same as Line series configuration (please refer to the
+    Scatter series configuration is largely the same as Line series configuration (please refer to the
     <a href="../javascript-charts-line-series/">Line series documentation</a> to learn more),
     so here we'll just give some examples and talk about relevant differences between the two.
 </p>
@@ -43,6 +43,37 @@ xKey: 'height',
 yKey: 'weight',
 sizeKey: 'age'
 </snippet>
+
+<p>
+    Another config we should provide is the <code>size</code> of the marker.
+    When the <code>sizeKey</code> is specified, the value of <code>marker.size</code>
+    config takes on a different meaning &mdash; instead of determining the actual
+    marker size, the <code>size</code> config now determines the maximum marker
+    size. The marker also has the <code>minSize</code> config, which only applies
+    when the <code>sizeKey</code> is set.
+</p>
+
+<snippet language="ts">
+marker: {
+    minSize: 8, // defaults to 8
+    size: 30    // defaults to 8
+}
+</snippet>
+
+<p>
+    So for example, if the <code>sizeKey</code> data ranges from <code>-100</code>
+    to <code>200</code>, the above config means that <code>-100</code> will correspond
+    to marker of size <code>8</code>, <code>200</code> to a marker of size <code>30</code>,
+    and any value between <code>-100</code> and <code>200</code> will be interpolated to
+    a value between <code>8</code> and <code>30</code>.
+</p>
+
+<p>
+    Finally, the bubble chart is called that way because the circle is the most common marker
+    type used for this kind of scatter plot, but any other marker shape can used as well.
+    The example below uses both <code>'circle'</code> and <code>'square'</code> markers
+    of different sizes to represent the age of females and males respectively.
+</p>
 
 <?= chart_example('Bubble Chart', 'bubble-chart', 'generated') ?>
 
