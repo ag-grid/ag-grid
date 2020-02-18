@@ -182,6 +182,9 @@ gridOptions.getChildCount = function(data) {
     </li>
 </ul>
 
+<?= grid_example('Group Child Counts', 'group-child-counts', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+
+
 <?= grid_example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
 
 <h2>Preserving Group State</h2>

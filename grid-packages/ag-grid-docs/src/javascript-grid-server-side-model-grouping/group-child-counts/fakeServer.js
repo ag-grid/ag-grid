@@ -16,14 +16,30 @@ function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var SQL = buildSql(request);
+        var groupByQuery = buildGroupBySql(request);
+        console.log('[FakeServer] - about to execute row group query:', groupByQuery);
+        var groupByResults = alasql(groupByQuery, [allData]);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        var rowGroupCols = request.rowGroupCols;
+        var groupKeys = request.groupKeys;
 
-        return alasql(SQL, [allData]);
+        if (!isDoingGrouping(rowGroupCols, groupKeys)) return groupByResults;
+
+        var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
+        var groupColId = groupsToUse[0].id;
+
+        var SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupColId]);
+        console.log('[FakeServer] - about to execute group child count query:', SQL);
+
+        // add 'childCount' to group results
+        var childCountResults = alasql(SQL, [allData])[0];
+        return groupByResults.map(function(groupByRes) {
+            groupByRes['childCount'] = childCountResults[groupByRes[groupColId]];
+            return groupByRes;
+        });
     }
 
-    function buildSql(request) {
+    function buildGroupBySql(request) {
         var select= selectSql(request);
         var from = ' FROM ?';
         var where = whereSql(request);
@@ -110,4 +126,15 @@ function FakeServer(allData) {
         var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
+}
+
+
+// IE Workaround - as templates literals are not supported
+function interpolate(str, o) {
+    return str.replace(/{([^{}]*)}/g,
+        function (a, b) {
+            var r = o[b];
+            return typeof r === 'string' || typeof r === 'number' ? r : a;
+        }
+    );
 }
