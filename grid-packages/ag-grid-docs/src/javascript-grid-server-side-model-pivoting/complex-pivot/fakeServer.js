@@ -55,11 +55,13 @@ function FakeServer(allData) {
     function whereSql(request) {
         var rowGroups = request.rowGroupCols;
         var groupKeys = request.groupKeys;
+
         var whereClause = '';
         if (groupKeys) {
             for (var i = 0; i < groupKeys.length; i++) {
                 whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                whereClause += rowGroups[i].id + ' = "' + groupKeys[i] + '"';
+                var value = typeof groupKeys[i] === 'string' ? ' = "' + groupKeys[i] + '"' : ' = ' + groupKeys[i];
+                whereClause += rowGroups[i].id + value;
             }
         }
         return whereClause;

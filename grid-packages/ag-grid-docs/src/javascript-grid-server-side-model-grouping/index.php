@@ -185,8 +185,7 @@ gridOptions.getChildCount = function(data) {
     </li>
 </ul>
 
-
-<?= grid_example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Purging Caches', 'purging-caches', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Preserving Group State</h2>
 
@@ -238,8 +237,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
-
+<?= grid_example('Preserve Group State', 'preserve-group-state-new', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Complex Columns</h2>
 
