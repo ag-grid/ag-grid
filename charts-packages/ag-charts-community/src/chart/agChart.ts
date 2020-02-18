@@ -223,9 +223,9 @@ const axisMappings = {
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
+                fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'black'
+                color: 'rgba(70, 70, 70, 1)'
             }
         }
     },
