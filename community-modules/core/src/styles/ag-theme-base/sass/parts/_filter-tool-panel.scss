@@ -1,28 +1,28 @@
 @mixin ag-theme-base-part-filter-tool-panel {
     .ag-filter-toolpanel-header {
-        height: $ag-grid-size * 6;
+        height: ag-param(grid-size) * 6;
     }
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search {
-        @include ag-theme-rtl(( padding-left: $ag-grid-size ));
+        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
     }
     .ag-filter-toolpanel-group-level-0-header {
-        height: $ag-grid-size * 8;
+        height: ag-param(grid-size) * 8;
     }
 
     .ag-filter-toolpanel-group-item {
-        margin-top: $ag-grid-size / 2;
-        margin-bottom: $ag-grid-size / 2;
+        margin-top: ag-param(grid-size) / 2;
+        margin-bottom: ag-param(grid-size) / 2;
     }
 
     .ag-filter-toolpanel-search {
-        height: $ag-header-height;
+        height: ag-param(header-height);
     }
 
     .ag-filter-toolpanel-search-input {
         flex-grow: 1;
-        height: $ag-grid-size * 4;
-        @include ag-theme-rtl(( margin-right: $ag-grid-size ));
+        height: ag-param(grid-size) * 4;
+        @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
     }
 
     .ag-filter-toolpanel-group-level-0 {
@@ -31,27 +31,27 @@
 
     .ag-filter-toolpanel-expand,
     .ag-filter-toolpanel-group-title-bar-icon {
-        @include ag-theme-rtl(( margin-right: $ag-grid-size ));
+        @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
     }
 
     @for $i from 1 through 10 {
         .ag-filter-toolpanel-group-level-#{$i}-header {
             @include ag-theme-rtl((
-                padding-left: $ag-filter-tool-panel-group-indent * $i + $ag-grid-size
+                padding-left: ag-param(filter-tool-panel-group-indent) * $i + ag-param(grid-size)
             ));
         }
     }
 
     .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
-        padding-left: $ag-grid-size;
+        padding-left: ag-param(grid-size);
     }
 
     .ag-filter-toolpanel-instance-filter {
         @include ag-border(primary, (top, bottom));
-        padding-top: $ag-grid-size;
+        padding-top: ag-param(grid-size);
     }
 
     .ag-filter-toolpanel-instance-header-icon {
-        @include ag-theme-rtl((margin-left: $ag-grid-size));
+        @include ag-theme-rtl((margin-left: ag-param(grid-size)));
     }
 }

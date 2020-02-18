@@ -1,6 +1,6 @@
-@import '../vars/ag-theme-alpine-dark-vars';
 @import '../../ag-theme-alpine/sass/ag-theme-alpine-common';
+@import "../params/ag-theme-alpine-dark-default-params";
 
 .ag-theme-alpine-dark {
-    @include ag-theme-alpine();
+    @include ag-theme-alpine($ag-theme-alpine-dark-default-params);
 }

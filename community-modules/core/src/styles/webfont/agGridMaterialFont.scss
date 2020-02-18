@@ -1,5 +1,7 @@
-@import '../ag-theme-material/vars/ag-theme-material-vars';
 @import '../mixins/ag-theme-mixins';
+@import '../ag-theme-material/params/ag-theme-material-default-params';
+
+@include ag-register-params($ag-theme-material-default-params);
 
 @include ag-icons-font-face();
 @include ag-icons-webfont();

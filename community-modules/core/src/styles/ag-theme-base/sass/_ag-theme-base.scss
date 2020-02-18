@@ -1,4 +1,3 @@
-@import "../vars/ag-theme-base-vars";
 @import '../../mixins/ag-theme-mixins';
 @import "./parts/reset";
 @import "./parts/grid-layout";
@@ -12,17 +11,23 @@
 @import "./parts/footer";
 @import "./parts/column-drop";
 @import "./parts/charts";
+@import "../params/ag-theme-base-default-params";
 
-@mixin ag-grid-theme() {
+@mixin ag-grid-theme($params: $ag-theme-base-default-params) {
+
+    @include ag-register-params($params);
+
+    @include ag-icons-font-face();
+    @include ag-icons-webfont();
+
     -webkit-font-smoothing: antialiased;
-    color: $ag-foreground-color;
-    font-family: $ag-font-family;
-    font-size: $ag-font-size;
+    color: ag-param(foreground-color);
+    font-family: ag-param(font-family);
+    font-size: ag-param(font-size);
     line-height: normal;
     .ag-root-wrapper {
-        background-color: $ag-background-color;
+        background-color: ag-param(background-color);
     }
-    @include ag-icons-webfont();
 
     @include ag-theme-base-part-reset();
     @include ag-theme-base-part-widgets();

@@ -2,7 +2,7 @@
 @mixin ag-theme-base-part-columns-tool-panel {
     
     .ag-pivot-mode-panel {
-        height: $ag-header-height;
+        height: ag-param(header-height);
         display: flex;
     }
 
@@ -10,13 +10,13 @@
         display: flex;
         align-items: center;
 
-        @include ag-theme-rtl(( margin-left: $ag-widget-container-horizontal-padding ));
+        @include ag-theme-rtl(( margin-left: ag-param(widget-container-horizontal-padding) ));
     }
     
     .ag-column-select-header {
-        height: $ag-header-height;
+        height: ag-param(header-height);
         align-items: center;
-        padding: 0 $ag-widget-container-horizontal-padding;
+        padding: 0 ag-param(widget-container-horizontal-padding);
 
         @include ag-border(secondary, bottom);
     }
@@ -27,6 +27,6 @@
 
     .ag-column-group-icons,
     .ag-column-select-header-icon {
-        color: $ag-secondary-foreground-color;
+        color: ag-param(secondary-foreground-color);
     }
 }

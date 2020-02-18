@@ -1,6 +1,7 @@
-@import "./ag-theme-base-import-legacy-vars";
+@import "../../mixins/ag-theme-params";
+@import "./ag-theme-base-font-vars";
 
-$ag-base-vars: (
+$ag-theme-base-default-params: (
     // Colour of text and icons in primary UI elements like menus
     foreground-color: #000,
 
@@ -32,7 +33,7 @@ $ag-base-vars: (
     control-panel-background-color: null,
 
     // Background color of selected rows in the grid and in dropdown menus
-    selected-row-background-color: ag-derived(background-color, $mix-color: foreground-color, $mix-amount: 75%),
+    selected-row-background-color: ag-derived(background-color, $mix: foreground-color 25%),
 
     // Background colour applied to every other row or null to use background-color for all rows
     odd-row-background-color: null,
@@ -41,32 +42,32 @@ $ag-base-vars: (
     row-hover-color: null,
 
     // Color to draw around selected cell ranges
-    range-selection-border-color: ag-derived(foreground-color)
+    range-selection-border-color: ag-derived(foreground-color),
 
     // Background colour of selected cell ranges. Should be transparent in order to
     // look good when multiple ranges overlap.
     range-selection-background-color: ag-derived(range-selection-border-color, $opacity: 0.2),
 
     // Background colour to apply to a cell range when it is copied from or pasted into
-    range-selection-highlight-color: ag-derived(range-selection-border-color)
+    range-selection-highlight-color: ag-derived(range-selection-border-color),
 
     // Colour and thickness of the border drawn under selected tabs, including menus
     // and tool panels
-    selected-tab-underline-color: ag-derived(range-selection-border-color)
+    selected-tab-underline-color: ag-derived(range-selection-border-color),
     selected-tab-underline-width: 0,
     selected-tab-underline-transition-speed: null,
 
     // Background colour for cells that provide categories to the current range chart
-    range-selection-chart-category-background-color: ag-derived(range-selection-background-color, $opacity: 0.4),
+    range-selection-chart-category-background-color: rgba(#00FF84, 0.1),
 
     // Background colour for cells that provide data to the current range chart
-    range-selection-chart-background-color: ag-derived(range-selection-background-color)
+    range-selection-chart-background-color: rgba(#0058FF, 0.1),
 
     // Rollover colour for header cells
     header-cell-hover-background-color: null,
 
     // Colour applied to header cells when the column is being dragged to a new position
-    header-cell-moving-background-color: ag-derived(header-cell-hover-background-color)
+    header-cell-moving-background-color: ag-derived(header-cell-hover-background-color),
 
     // Colour to apply when a cell value changes and enableCellChangeFlash is enabled
     value-change-value-highlight-background-color: rgba(#16A085, 0.5),
@@ -86,24 +87,24 @@ $ag-base-vars: (
     borders: true,
 
     // Draw the few borders that are critical to UX, e.g. between headers and rows.
-    borders-critical: borders,
+    borders-critical: ag-derived(borders),
 
     // Draw decorative borders separating UI elements within components
-    borders-secondary: borders,
+    borders-secondary: ag-derived(borders),
 
     // Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
-    borders-side-button: borders,
+    borders-side-button: ag-derived(borders),
 
     border-radius: 0px,
 
     // Colour for border around major UI components like the grid itself, headers, footers and tool panels
-    border-color: ag-derived(background-color, $mix-color: foreground-color, $mix-amount: 25%),
+    border-color: ag-derived(background-color, $mix: foreground-color 25%),
 
     // Colour for borders used to separate elements within a major UI component
-    secondary-border-color: ag-derived(border-color)
+    secondary-border-color: ag-derived(border-color),
 
     // Colour of the border between grid rows, or null to display no border
-    row-border-color: ag-derived(secondary-border-color)
+    row-border-color: ag-derived(secondary-border-color),
 
     // Default border for cells. This can be used to specify the border-style and border-color properties
     // e.g. `dashed red` but the border-width is fixed at 1px.
@@ -132,37 +133,73 @@ $ag-base-vars: (
     input-border-color: null,
 
     checkbox-background-color: null,
-    checkbox-border-radius: ag-derived(border-radius)
-    checkbox-checked-color: ag-derived(foreground-color)
-    checkbox-unchecked-color: ag-derived(foreground-color)
-    checkbox-indeterminate-color: ag-derived(checkbox-unchecked-color)
+    checkbox-border-radius: ag-derived(border-radius),
+    checkbox-checked-color: ag-derived(foreground-color),
+    checkbox-unchecked-color: ag-derived(foreground-color),
+    checkbox-indeterminate-color: ag-derived(checkbox-unchecked-color),
 
-    toggle-button-off-color: ag-derived(checkbox-unchecked-color)
-    toggle-button-on-color: ag-derived(checkbox-checked-color)
-    toggle-button-switch-color: ag-derived(background-color)
+    toggle-button-off-color: ag-derived(checkbox-unchecked-color),
+    toggle-button-on-color: ag-derived(checkbox-checked-color),
+    toggle-button-switch-color: ag-derived(background-color),
     toggle-button-switch-border-width: 1px,
-    toggle-button-height: ag-derived(icon-size)
+    toggle-button-height: ag-derived(icon-size),
     toggle-button-width: ag-derived(toggle-button-height, $times: 2),
 
     input-focus-box-shadow: null,
     input-focus-border-color: null,
 
-    // chart settings
-    minichart-selected-chart-color: ag-derived(checkbox-checked-color) // color of border around selected minichart
-    minichart-selected-page-color: ag-derived(checkbox-checked-color) // color of dot representing selected chart page
+    // CHART SETTINGS
 
-    // The main control for affecting how tightly data and UI elements are packed together.
-    // All block sizes, margins and padding in the grid are defined as a multiple of grid-size,
-    // so increasing it will add empty space around text and icons without changing the text size.
+    // Color of border around selected minichart
+    minichart-selected-chart-color: ag-derived(checkbox-checked-color),
+    // Color of dot representing selected chart page
+    minichart-selected-page-color: ag-derived(checkbox-checked-color),
+
+
+    //
+    // SIZING / PADDING / SPACING
+    //
+
+    // grid-size is the main control for affecting how tightly data and UI elements are packed together.
+    // All padding and spacing in the grid is defined as a multiple of grid-size,
+    // so increasing it will make most components larger by increasing their internal white
+    // space while leaving the size of text and icons unchanged.
     grid-size: 4px,
+
+    // The size of square icons and icon-buttons
     icon-size: 12px,
-    row-height: ag-derived(grid-size, $times: 6, $plus: 1),
-    header-height: ag-derived(row-height)
+
+    // These 4 variables set the padding around and spacing between widgets in "widget containers"
+    // which are parts of the UI that contain many related widgets, like the set filter menu,
+    // charts settings tabs etc.
+    widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
+    widget-container-vertical-padding: ag-derived(grid-size, $times: 1.5),
+    widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
+    widget-vertical-spacing: ag-derived(grid-size),
+
+    // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but
+    // inferred from $ag-row-height / $ag-header-height
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
-    cell-widget-spacing: ag-derived(cell-horizontal-padding)
-    virtual-item-height: ag-derived(grid-size, $times: 5),
+
+    // Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)
+    cell-widget-spacing: ag-derived(cell-horizontal-padding),
+
+    // Height of grid rows
+    row-height: ag-derived(grid-size, $times: 6, $plus: 1),
+
+    // Height of header rows
+    header-height: ag-derived(row-height),
+
+    // Height of items in lists (example of lists are dropdown select inputs and column menu set filters)
+    list-item-height: ag-derived(grid-size, $times: 5),
+
+    // How much to indent child columns in the column tool panel relative to their parent
     column-select-indent-size: ag-derived(grid-size, $plus: icon-size),
+
+    // How much to indent child rows in the grid relative to their parent row
     row-group-indent-size: ag-derived(cell-widget-spacing, $plus: icon-size),
+
+    // How much to indent child columns in the filters tool panel relative to their parent
     filter-tool-panel-group-indent: 16px,
     filter-tool-panel-top-level-row-height: ag-derived(grid-size, $times: 8),
     filter-tool-panel-sub-level-row-height: ag-derived(grid-size, $times: 6),
@@ -171,12 +208,14 @@ $ag-base-vars: (
     full-width-tabs: false,
 
     // Fonts
-    font-family: 'Helvetica Neue', sans-serif,
+    font-family: "Helvetica Neue" sans-serif,
     font-size: 14px,
-
+    icon-font-family: $ag-theme-base-icon-font-family,
+    icons-data: $ag-theme-base-icons-data,
+    icons-font-codes: $ag-theme-base-icons-font-codes,
 
     // cards are elements that float above the UI
-    card-radius: ag-derived(border-radius)
+    card-radius: ag-derived(border-radius),
 
     // the default card shadow applies to simple cards like column drag indicators and text editors
     card-shadow: none,
@@ -185,5 +224,3 @@ $ag-base-vars: (
     popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3),
 );
 
-// Icons
-@import "./font-vars";

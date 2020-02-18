@@ -1,6 +1,7 @@
-$ag-icon-font-family: "{{fontName}}" !default;
-$ag-icons-data: {{{src}}} !default;
-
+$ag-theme-{{theme}}-icon-font-family: "{{fontName}}";
+$ag-theme-{{theme}}-icons-data: {{{src}}};
+$ag-theme-{{theme}}-icons-font-codes: (
 {{#each codepoints}}
-${{../classPrefix}}{{@key}}: "\\{{this}}" !default;
+    {{@key}}: "\\{{this}}",
 {{/each}}
+);

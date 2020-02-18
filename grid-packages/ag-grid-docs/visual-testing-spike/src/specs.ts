@@ -86,7 +86,7 @@ export const specs: SpecDefinition[] = [
                 prepare: async page => {
                     await page.click('.ag-tab:nth-child(2)');
                     await untickCheckBoxWithin(page, '.ag-virtual-list-item:nth-child(2)');
-                    await page.click('.ag-filter-filter');
+                    await page.click('.ag-filter-header-container input');
                 }
             },
             {
