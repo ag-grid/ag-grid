@@ -8,11 +8,12 @@ import { PostConstruct } from "../../../context/context";
 import { SimpleFloatingFilter } from "./simpleFloatingFilter";
 import { ISimpleFilterModel, SimpleFilter } from "../../provided/simpleFilter";
 import { FilterChangedEvent } from "../../../events";
+import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
     @RefSelector('eFloatingFilterText')
-    private eFloatingFilterText: HTMLInputElement;
+    private eFloatingFilterText: AgInputTextField;
 
     protected params: IFloatingFilterParams;
 
@@ -21,8 +22,8 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @PostConstruct
     private postConstruct(): void {
         this.setTemplate(
-            `<div class="ag-input-wrapper" role="presentation">
-                <input ref="eFloatingFilterText" class="ag-floating-filter-input">
+            `<div class="ag-floating-filter-input" role="presentation">
+                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
             </div>`);
     }
 
@@ -38,7 +39,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         this.setLastTypeFromModel(model);
         const modelString = this.getTextFromModel(model);
-        this.eFloatingFilterText.value = modelString;
+        this.eFloatingFilterText.setValue(modelString);
         const editable = this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(editable);
     }
@@ -52,18 +53,20 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'input', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keypress', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keydown', toDebounce);
+        const filterGui = this.eFloatingFilterText.getGui();
+
+        this.addDestroyableEventListener(filterGui, 'input', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
 
         const columnDef = (params.column.getDefinition() as any);
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eFloatingFilterText.disabled = true;
+            this.eFloatingFilterText.setDisabled(true);
         }
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const value = this.eFloatingFilterText.value;
+        const value = this.eFloatingFilterText.getValue();
 
         const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) { return; }
@@ -77,6 +80,6 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected setEditable(editable: boolean): void {
-        this.eFloatingFilterText.disabled = !editable;
+        this.eFloatingFilterText.setDisabled(!editable);
     }
 }

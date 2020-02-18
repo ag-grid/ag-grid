@@ -11,6 +11,29 @@ const fs = require('fs');
 const path = require('path');
 const prettier = require('prettier');
 
+function emptyDirectory(directory) {
+    if (!directory || directory.trim().indexOf('/') === 0) { return; }
+
+    try {
+        const files = fs.readdirSync(directory);
+
+        files.forEach(file => {
+            const filePath = path.join(directory, file);
+
+            if (fs.statSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+            }
+            else {
+                emptyDirectory(filePath);
+            }
+        });
+    }
+    catch (e) {
+        console.error(`Failed to empty ${directory}`);
+        return;
+    }
+};
+
 function copyFilesSync(files, dest, tokenToRemove) {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
@@ -181,6 +204,10 @@ function createExampleGenerator(prefix) {
 
         const writeExampleFiles = (framework, frameworkScripts, files, subdirectory) => {
             const basePath = path.join(_gen, framework);
+
+            fs.mkdirSync(basePath, { recursive: true });
+            emptyDirectory(basePath);
+
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
             fs.mkdirSync(scriptsPath, { recursive: true });

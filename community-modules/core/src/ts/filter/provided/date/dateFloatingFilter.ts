@@ -10,12 +10,13 @@ import { SimpleFilter, ISimpleFilterModel } from "../simpleFilter";
 import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
 import { FilterChangedEvent } from "../../../events";
 import { ProvidedFilter } from "../providedFilter";
+import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    @RefSelector('eReadOnlyText') private eReadOnlyText: HTMLInputElement;
+    @RefSelector('eReadOnlyText') private eReadOnlyText: AgInputTextField;
     @RefSelector('eDateWrapper') private eDateWrapper: HTMLInputElement;
 
     private dateComp: DateCompWrapper;
@@ -24,8 +25,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     constructor() {
         super(
-            `<div class="ag-input-wrapper" role="presentation">
-                <input ref="eReadOnlyText" disabled="true" class="ag-floating-filter-input">
+            `<div class="ag-floating-filter-input" role="presentation">
+                <ag-input-text-field ref="eReadOnlyText"></ag-input-text-field>
                 <div ref="eDateWrapper" style="display: flex; flex: 1 1 auto; overflow: hidden;"></div>
             </div>`);
     }
@@ -40,25 +41,26 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         if (isRange) {
             return `${condition.dateFrom}-${condition.dateTo}`;
-        } else {
-            // cater for when the type doesn't need a value
-            if (condition.dateFrom != null) {
-                return `${condition.dateFrom}`;
-            } else {
-                return `${condition.type}`;
-            }
         }
+
+        // cater for when the type doesn't need a value
+        if (condition.dateFrom != null) {
+            return `${condition.dateFrom}`;
+        }
+
+        return `${condition.type}`;
     }
 
     public init(params: IFloatingFilterParams) {
         super.init(params);
         this.params = params;
         this.createDateComponent();
+        this.eReadOnlyText.setDisabled(true);
     }
 
     protected setEditable(editable: boolean): void {
         _.setDisplayed(this.eDateWrapper, editable);
-        _.setDisplayed(this.eReadOnlyText, !editable);
+        _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
     }
 
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
@@ -80,15 +82,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             } else {
                 this.dateComp.setDate(null);
             }
-            this.eReadOnlyText.value = '';
+            this.eReadOnlyText.setValue('');
         } else {
-            this.eReadOnlyText.value = this.getTextFromModel(model);
+            this.eReadOnlyText.setValue(this.getTextFromModel(model));
             this.dateComp.setDate(null);
         }
     }
 
     private onDateChanged(): void {
-
         const filterValueDate: Date = this.dateComp.getDate();
         const filterValueText: string = _.serializeDateToYyyyMmDd(filterValueDate, "-");
 
@@ -101,7 +102,6 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private createDateComponent(): void {
-
         const debounceMs: number = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         const toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
         const dateComponentParams: IDateParams = {

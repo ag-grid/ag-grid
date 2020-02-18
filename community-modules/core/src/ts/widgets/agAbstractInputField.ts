@@ -101,4 +101,14 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
         return this;
     }
+
+    public setDisabled(disabled: boolean): this {
+        if (disabled) {
+            this.eInput.setAttribute('disabled', 'true');
+        } else {
+            this.eInput.removeAttribute('disabled');
+        }
+
+        return super.setDisabled(disabled);
+    }
 }

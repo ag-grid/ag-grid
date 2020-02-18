@@ -1,6 +1,7 @@
 import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
+import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
@@ -8,22 +9,22 @@ import { RefSelector } from "../../../widgets/componentAnnotations";
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
 
     @RefSelector('eFloatingFilterText')
-    private eFloatingFilterText: HTMLInputElement;
+    private eFloatingFilterText: AgInputTextField;
 
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(`<div class="ag-input-wrapper" role="presentation"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-floating-filter-input" role="presentation"><ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field></div>`);
     }
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        this.eFloatingFilterText.disabled = true;
+        this.eFloatingFilterText.setDisabled(true);
     }
 
     public onParentModelChanged(parentModel: any): void {
         if (!parentModel) {
-            this.eFloatingFilterText.value = '';
+            this.eFloatingFilterText.setValue('');
             return;
         }
 
@@ -32,7 +33,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             // in floatingFilterWrapper
             if (filterInstance.getModelAsString) {
                 const modelAsString = filterInstance.getModelAsString(parentModel);
-                this.eFloatingFilterText.value = modelAsString;
+                this.eFloatingFilterText.setValue(modelAsString);
             }
         });
     }
