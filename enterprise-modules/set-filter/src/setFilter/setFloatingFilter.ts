@@ -1,10 +1,10 @@
-import { Autowired, Component, IFloatingFilter, RefSelector, ValueFormatterService, Column, IFloatingFilterParams } from "@ag-grid-community/core";
+import { Autowired, Component, IFloatingFilter, RefSelector, ValueFormatterService, Column, IFloatingFilterParams, AgInputTextField } from "@ag-grid-community/core";
 import { SetFilterModel } from "./setFilterModel";
 
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
 
     @RefSelector('eFloatingFilterText')
-    private eFloatingFilterText: HTMLInputElement;
+    private eFloatingFilterText: AgInputTextField;
 
     @Autowired('valueFormatterService')
     private valueFormatterService: ValueFormatterService;
@@ -12,17 +12,17 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     private column: Column;
 
     constructor() {
-        super(`<div class="ag-input-wrapper" role="presentation"><input ref="eFloatingFilterText" class="ag-floating-filter-input"></div>`);
+        super(`<div class="ag-floating-filter-input" role="presentation"><ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field></div>`);
     }
 
     public init(params: IFloatingFilterParams): void {
-        this.eFloatingFilterText.disabled = true;
+        this.eFloatingFilterText.setDisabled(true);
         this.column = params.column;
     }
 
     public onParentModelChanged(parentModel: SetFilterModel): void {
         if (!parentModel) {
-            this.eFloatingFilterText.value = '';
+            this.eFloatingFilterText.setValue('');
             return;
         }
 
@@ -30,7 +30,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         const values: string[] | null = (parentModel instanceof Array) ? parentModel : parentModel.values;
 
         if (!values || values.length === 0) {
-            this.eFloatingFilterText.value = '';
+            this.eFloatingFilterText.setValue('');
             return;
         }
 
@@ -44,7 +44,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
         const valuesString = `(${values.length}) ${arrayToDisplay.join(",")}`;
 
-        this.eFloatingFilterText.value = valuesString;
+        this.eFloatingFilterText.setValue(valuesString);
     }
 
 }
