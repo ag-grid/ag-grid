@@ -1002,6 +1002,18 @@
                   {
                     "title": "Vanilla JavaScript",
                     "url": "javascript-charts/"
+                  },
+                  {
+                    "title": "Angular",
+                    "url": "angular-charts/"
+                  },
+                  {
+                    "title": "React",
+                    "url": "react-charts/"
+                  },
+                  {
+                    "title": "Vue",
+                    "url": "vue-charts/"
                   }
                 ]
               },

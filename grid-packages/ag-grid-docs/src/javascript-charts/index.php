@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Get Started with ag-Charts Standalone in Your Project</h1>
+<h1>JavaScript Charts | Get Started with ag-Charts</h1>
 
 <p class="lead" id="javascript-charts">
     ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional
@@ -88,7 +88,7 @@ const chart = AgChart.create({
     <img alt="Line Chart" src="line-chart.png" style="margin-bottom: 0; width: 100%">
 </p>
 
-<h2>Customsing the Legend</h2>
+<h2>Customising the Legend</h2>
 <p>
     If we don't want the legend to show the value of the <code>yKey</code> itself we can give it a name - for example <code>'Coffee Spending'</code>.</p>
 
@@ -103,9 +103,9 @@ const chart = AgChart.create({
         yKey: 'spending',
 +       yName: 'Coffee Spending'
     }],
-    legend: {
-        position: 'bottom'
-    }
++   legend: {
++       position: 'bottom'
++   }
 });
 </snippet>
 

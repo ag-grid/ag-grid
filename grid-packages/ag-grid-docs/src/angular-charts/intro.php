@@ -13,38 +13,29 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import { Component } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {AgChartsAngularModule} from 'ag-charts-angular';
+import {AppComponent} from './app.component';
 
-@Component({
-  selector: 'my-app',
-  templateUrl: './app.component.html',
-  styleUrls: [ './app.component.scss' ]
+@NgModule({
+    imports: [
+        BrowserModule,
+        AgChartsAngularModule
+    ],
+    declarations: [AppComponent],
+    bootstrap: [AppComponent],
 })
-export class AppComponent  {
-
-    columnDefs = [
-        {field: 'make' },
-        {field: 'model' },
-        {field: 'price'}
-    ];
-
-    rowData = [
-        { make: 'Toyota', model: 'Celica', price: 35000 },
-        { make: 'Ford', model: 'Mondeo', price: 32000 },
-        { make: 'Porsche', model: 'Boxter', price: 72000 }
-    ];
-
+export class AppModule {
 }
 </snippet>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <snippet>
-&lt;ag-grid-angular
-    style="width: 500px; height: 150px;"
-    class="ag-theme-balham"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs">
-&lt;/ag-grid-angular>
+&lt;ag-charts-angular
+        style="height: 100%"
+        [options]="options"&gt;
+&lt;/ag-charts-angular&gt;
 </snippet>
                 </div>
             </div>
