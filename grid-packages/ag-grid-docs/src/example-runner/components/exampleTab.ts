@@ -1,8 +1,8 @@
-import * as angular from "angular";
+import * as angular from 'angular';
 
-const docs: angular.IModule = angular.module("documentation");
+const docs: angular.IModule = angular.module('documentation');
 
-docs.component("exampleTab", {
+docs.component('exampleTab', {
     template: `
     <li role="presentation" ng-class="{ active: $ctrl.currentValue == $ctrl.value }">
         <a role="tab" id="{{$ctrl.id}}" ref="{{$ctrl.id}}" data-boilerplate="{{$ctrl.boilerplate}}" data-context="" ng-click="$ctrl.doClick($event)" href="#" title="{{$ctrl.tooltip}}">
@@ -20,9 +20,9 @@ docs.component("exampleTab", {
         onClick: "&",
         boilerplate: "<"
     },
-    controller: function () {
-        this.doClick = function (event: any) {
-            this.onClick({$event: event});
+    controller: function() {
+        this.doClick = function(event: any) {
+            this.onClick({ $event: event });
             event.preventDefault();
         };
     }

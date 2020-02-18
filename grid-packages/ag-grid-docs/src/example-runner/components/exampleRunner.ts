@@ -378,7 +378,7 @@ docs.component("exampleRunner", {
                         value="file"
                         current-value="$ctrl.selectedFile"
                         title="file"
-                        icon="'fa-file-code-o'"
+                        icon="'fa-file'"
                         on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                     </example-tab>
 
@@ -391,7 +391,7 @@ docs.component("exampleRunner", {
                         value="file"
                         current-value="$ctrl.selectedFile"
                         title="file"
-                        icon="'fa-file-code-o'"
+                        icon="'fa-file'"
                         on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                     </example-tab>
                 </ul>
