@@ -4,18 +4,21 @@
         return json_decode(file_get_contents($path));
     }
 
-    function createPropertyTable($title, $properties, $prefix = null) {
+    function createPropertyTable($title, $properties, $prefix = null, $skipHeader = false) {
         $toProcess = [];
-        $displayName = $properties->meta->displayName ?? $title;
         $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
-        $headerTag = isset($prefix) ? "h3" : "h2";
 
-        echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
+        if (!$skipHeader) {
+            $displayName = $properties->meta->displayName ?? $title;
+            $headerTag = isset($prefix) ? "h3" : "h2";
 
-        $description = $properties->meta->description;
+            echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
 
-        if (isset($description)) {
-            echo "<p>$description</p>";
+            $description = $properties->meta->description;
+
+            if (isset($description)) {
+                echo "<p>$description</p>";
+            }
         }
 
         echo '<table class="table content reference">';
@@ -120,7 +123,7 @@
                 $properties = $properties->$key;
             }
 
-            createPropertyTable($key, $properties, $expression);
+            createPropertyTable($key, $properties, $expression, true);
         } else {
             foreach ($properties as $key => $val) {
                 createPropertyTable($key, $val);
