@@ -48,7 +48,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(): void;
+    protected abstract resetUiToDefaults(siltent?: boolean): void;
 
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
@@ -87,7 +87,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public init(params: IFilterParams): void {
         this.setParams(params);
-        this.resetUiToDefaults();
+        this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
     }

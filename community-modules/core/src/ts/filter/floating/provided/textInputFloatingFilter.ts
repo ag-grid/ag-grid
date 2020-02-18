@@ -12,18 +12,17 @@ import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
-    @RefSelector('eFloatingFilterText')
-    private eFloatingFilterText: AgInputTextField;
+    @RefSelector('eFloatingFilterInput') private eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
 
     private applyActive: boolean;
 
     @PostConstruct
-    private postConstruct(): void {
+    protected postConstruct(): void {
         this.setTemplate(
             `<div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+                <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>
             </div>`);
     }
 
@@ -39,7 +38,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         this.setLastTypeFromModel(model);
         const modelString = this.getTextFromModel(model);
-        this.eFloatingFilterText.setValue(modelString);
+        this.eFloatingFilterInput.setValue(modelString);
         const editable = this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(editable);
     }
@@ -53,7 +52,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
-        const filterGui = this.eFloatingFilterText.getGui();
+        const filterGui = this.eFloatingFilterInput.getGui();
 
         this.addDestroyableEventListener(filterGui, 'input', toDebounce);
         this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
@@ -61,12 +60,12 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         const columnDef = (params.column.getDefinition() as any);
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eFloatingFilterText.setDisabled(true);
+            this.eFloatingFilterInput.setDisabled(true);
         }
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const value = this.eFloatingFilterText.getValue();
+        const value = this.eFloatingFilterInput.getValue();
 
         const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) { return; }
@@ -80,6 +79,6 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected setEditable(editable: boolean): void {
-        this.eFloatingFilterText.setDisabled(!editable);
+        this.eFloatingFilterInput.setDisabled(!editable);
     }
 }

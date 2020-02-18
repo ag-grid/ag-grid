@@ -96,8 +96,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         compTo.setDate(dateTo);
     }
 
-    protected resetUiToDefaults(): void {
-        super.resetUiToDefaults();
+    protected resetUiToDefaults(silent?: boolean): void {
+        super.resetUiToDefaults(silent);
 
         this.dateCompTo1.setDate(null);
         this.dateCompTo2.setDate(null);
