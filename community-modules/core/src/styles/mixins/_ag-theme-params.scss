@@ -47,12 +47,14 @@
     @return $derived;
 }
 
+// Return true if a value is a record returned by ag-derived()
 @function -is-ag-derived($value) {
     @return type-of($value) == map and map-get($value, "--is-ag-derived") == true;
 }
 
 $-ag-params: null;
 
+// Register a params map globally so that it can be used by ag-param($name)
 @mixin ag-register-params($params) {
     @if type-of($params) != map {
         @error "ag-register-params expects a map, got #{type-of($params)} instead (#{inspect($params)})";
@@ -60,8 +62,7 @@ $-ag-params: null;
     $-ag-params: $params !global;
 }
 
-// Use a parameter.
-// In SCSS, `ag-param(name)` replaces `$ag-name` as the main way of using a theme parameter.
+// Use a parameter in SCSS, e.g. `color: ag-param(foreground-color)`
 @function ag-param($name) {
     $resolved: ag-param-unchecked($name);
     @if type-of($resolved) == map {
@@ -85,6 +86,10 @@ $-ag-params: null;
     }
     @return -ag-resolve-param-name($-ag-params, $name);
 }
+
+//
+// PRIVATE IMPLEMENTATION FUNCTIONS
+//
 
 @function -ag-resolve-param-name($params, $name) {
     $value: map-get($params, $name);
