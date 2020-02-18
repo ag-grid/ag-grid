@@ -484,17 +484,17 @@
     @include ag-check-button-base();
 
     &::after {
-        content: ag-param(icon-checkbox-unchecked);
+        content: ag-icon-char(checkbox-unchecked);
         color: ag-param(checkbox-unchecked-color);
     }
 
     &:checked::after {
-        content: ag-param(icon-checkbox-checked);
+        content: ag-icon-char(checkbox-checked);
         color: ag-param(checkbox-checked-color);
     }
 
     &:indeterminate::after {
-        content: ag-param(icon-checkbox-indeterminate);
+        content: ag-icon-char(checkbox-indeterminate);
         color: ag-param(checkbox-indeterminate-color);
     }
 }
@@ -505,12 +505,12 @@
     border-radius: ag-param(icon-size);
 
     &::after {
-        content: ag-param(icon-radio-button-off);
+        content: ag-icon-char(radio-button-off);
         color: ag-param(checkbox-unchecked-color);
     }
 
     &:checked::after {
-        content: ag-param(icon-radio-button-on);
+        content: ag-icon-char(radio-button-on);
         color: ag-param(checkbox-checked-color);
     }
 }
@@ -647,7 +647,7 @@
 
     &::-webkit-slider-thumb {
         @include ag-internal-range-thumb;
-        transform: translateY(-ag-param(icon-size) / 2 + 1.5px);
+        transform: translateY(ag-param(icon-size) * -0.5 + 1.5px);
     }
 
     &::-ms-thumb {

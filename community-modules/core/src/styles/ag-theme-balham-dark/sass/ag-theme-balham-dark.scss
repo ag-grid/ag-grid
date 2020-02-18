@@ -1,5 +1,6 @@
 @import "../../ag-theme-balham/sass/ag-theme-balham-common";
+@import "../params/ag-theme-balham-dark-default-params";
 
 .ag-theme-balham-dark {
-    @include ag-theme-balham();
+    @include ag-theme-balham($ag-theme-balham-dark-default-params);
 }

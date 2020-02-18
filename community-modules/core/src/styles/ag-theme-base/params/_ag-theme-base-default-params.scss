@@ -87,13 +87,13 @@ $ag-theme-base-default-params: (
     borders: true,
 
     // Draw the few borders that are critical to UX, e.g. between headers and rows.
-    borders-critical: borders,
+    borders-critical: ag-derived(borders),
 
     // Draw decorative borders separating UI elements within components
-    borders-secondary: borders,
+    borders-secondary: ag-derived(borders),
 
     // Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
-    borders-side-button: borders,
+    borders-side-button: ag-derived(borders),
 
     border-radius: 0px,
 

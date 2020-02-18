@@ -1,5 +1,6 @@
+@import "../../ag-theme-balham/params/ag-theme-balham-default-params";
 
-$ag-theme-balham-default-params: (
+$ag-theme-balham-dark-default-params: (
     // override colours from balham theme
     foreground-color: #F5F5F5,
     secondary-foreground-color: ag-derived(foreground-color),
@@ -23,3 +24,5 @@ $ag-theme-balham-default-params: (
     input-disabled-background-color: rgba(#302e2e, 0.3),
     balham-tooltip-background-color: #1c1f20,
 );
+
+$ag-theme-balham-dark-default-params: map-merge($ag-theme-balham-default-params, $ag-theme-balham-dark-default-params);

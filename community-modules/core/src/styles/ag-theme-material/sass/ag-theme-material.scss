@@ -1,8 +1,9 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
+@import "../params/ag-theme-material-default-params";
 
 .ag-theme-material {
 
-    @include ag-grid-theme();
+    @include ag-grid-theme($ag-theme-material-default-params);
 
     @include ag-native-inputs();
 

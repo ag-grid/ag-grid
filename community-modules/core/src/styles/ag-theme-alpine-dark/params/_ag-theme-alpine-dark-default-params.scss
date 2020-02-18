@@ -1,3 +1,5 @@
+@import "../../ag-theme-alpine/params/ag-theme-alpine-default-params";
+
 $ag-theme-alpine-dark-default-params: (
     alpine-active-color: #2196f3,
     background-color: #181d1f,
@@ -9,3 +11,5 @@ $ag-theme-alpine-dark-default-params: (
     control-panel-background-color: #222628,
     subheader-background-color: #000,
 );
+
+$ag-theme-alpine-dark-default-params: map-merge($ag-theme-alpine-default-params, $ag-theme-alpine-dark-default-params);
