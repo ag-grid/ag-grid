@@ -149,18 +149,49 @@ class ExampleRunnerController {
     setType(type: string) {
         const typeConfig = this.config.types[type];
 
+        const getFileParts = filename => {
+            const lastDot = filename.lastIndexOf('.');
+
+            return [filename.slice(0, lastDot), filename.slice(lastDot + 1)];
+        };
+
+        const sortFiles = (a: string, b: string) => {
+            const [aFilename, aExtension] = getFileParts(a);
+            const [bFilename, bExtension] = getFileParts(b);
+
+            if (aExtension === bExtension) {
+                if (aFilename === bFilename) {
+                    return 0;
+                }
+
+                return aFilename < bFilename ? -1 : 1;
+            }
+
+            return aExtension < bExtension ? -1 : 1;
+        };
+
         this.boilerplateFiles = typeConfig.boilerplateFiles || [];
+        this.boilerplateFiles.sort(sortFiles);
+
         this.boilerplatePath = typeConfig.boilerplatePath;
 
         const files = typeConfig.files ?
-            typeConfig.files.filter((file: string) => {
-                return file.indexOf('node_modules') === -1;
-            }) :
+            typeConfig.files.filter((file: string) => file.indexOf('node_modules') === -1) :
             typeConfig.files;
 
-        this.files = files[0] === "index.html" ? files : ["index.html"].concat(files);
+        this.files = files.indexOf('index.html') >= 0 ? files : files.concat('index.html');
+        this.files.sort(sortFiles);
 
-        this.selectedFile = this.files[1];
+        const defaultFile = {
+            angular: 'app/app.component.ts',
+            react: 'index.jsx',
+        };
+
+        this.selectedFile = defaultFile[type] || 'main.js';
+
+        if (this.files.indexOf(this.selectedFile) < 0) {
+            this.selectedFile = this.files[0];
+        }
 
         this.resultUrl = typeConfig.resultUrl;
 
@@ -183,14 +214,8 @@ class ExampleRunnerController {
         this.allFiles = this.files.concat(this.boilerplateFiles);
 
         this.$q
-            .all(
-                this.allFiles.map((file: string) => {
-                    return this.loadSource(file);
-                })
-            )
-            .then((sources: any) => {
-                this.sources = sources;
-            });
+            .all(this.allFiles.map((file: string) => this.loadSource(file)))
+            .then((sources: any) => { this.sources = sources; });
     }
 
     refreshSource() {
@@ -209,8 +234,7 @@ class ExampleRunnerController {
     }
 
     loadSource(file: string): angular.IPromise<string> {
-        let source = this.getSource(file);
-        let sourceUrl;
+        const source = this.getSource(file);
 
         if (typeof source === "string") {
             return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
@@ -227,20 +251,14 @@ class ExampleRunnerController {
 
     getSource(file: string): string | { sources: string[]; process: (string: string) => string; } {
         if (this.boilerplateFiles.indexOf(file) > -1) {
-            return [this.boilerplatePath, file].join("/");
+            return [this.boilerplatePath, file].join('/');
         }
 
-        if (file == this.files[0]) {
+        if (file === 'index.html') {
             return this.resultUrl + "&plunkerView=true";
         } else {
             return this.appFilePath(file);
         }
-    }
-
-    sourcesForGeneration(): string[] {
-        const vanillaTypes = this.config.types.vanilla.files;
-
-        return [this.appFilePath(vanillaTypes.filter((file: string) => file.endsWith(".js"))[0]), this.appFilePath(vanillaTypes.filter((file: string) => file.endsWith(".html"))[0])];
     }
 
     appFilePath(file: string) {
@@ -334,7 +352,6 @@ docs.component("exampleRunner", {
                 icon="'fa-code'"
                 on-click="$ctrl.selectedTab = 'code'">
             </example-tab>
-
 
             <li role="presentation">
                 <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">
