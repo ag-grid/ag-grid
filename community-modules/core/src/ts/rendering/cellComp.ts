@@ -106,6 +106,8 @@ export class CellComp extends Component {
     private cellEditorVersion = 0;
     private cellRendererVersion = 0;
 
+    protected managedTab = true;
+
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp,
         autoHeightCell: boolean, printLayout: boolean) {
         super();
@@ -1358,9 +1360,6 @@ export class CellComp extends Component {
             case Constants.KEY_ESCAPE:
                 this.onEscapeKeyDown();
                 break;
-            case Constants.KEY_TAB:
-                this.onTabKeyDown(event);
-                break;
             case Constants.KEY_BACKSPACE:
             case Constants.KEY_DELETE:
                 this.onBackspaceOrDeleteKeyPressed(key);
@@ -1403,7 +1402,8 @@ export class CellComp extends Component {
         }
     }
 
-    private onTabKeyDown(event: KeyboardEvent): void {
+    protected onTabKeyDown(event: KeyboardEvent): void {
+        super.onTabKeyDown(event);
         this.beans.rowRenderer.onTabKeyDown(this, event);
     }
 

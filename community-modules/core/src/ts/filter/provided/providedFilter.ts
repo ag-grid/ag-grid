@@ -32,26 +32,14 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private applyActive: boolean;
 
-    @RefSelector('eButtonsPanel')
-    private eButtonsPanel: HTMLElement;
+    @RefSelector('eButtonsPanel') private eButtonsPanel: HTMLElement;
+    @RefSelector('eFilterBodyWrapper') protected eFilterBodyWrapper: HTMLElement;
+    @RefSelector('eClearButton') private eClearButton: HTMLElement;
+    @RefSelector('eResetButton') private eResetButton: HTMLElement;
+    @RefSelector('eApplyButton') private eApplyButton: HTMLElement;
 
-    @RefSelector('eFilterBodyWrapper')
-    protected eFilterBodyWrapper: HTMLElement;
-
-    @RefSelector('eClearButton')
-    private eClearButton: HTMLElement;
-
-    @RefSelector('eResetButton')
-    private eResetButton: HTMLElement;
-
-    @RefSelector('eApplyButton')
-    private eApplyButton: HTMLElement;
-
-    @Autowired('gridOptionsWrapper')
-    protected gridOptionsWrapper: GridOptionsWrapper;
-
-    @Autowired('rowModel')
-    protected rowModel: IRowModel;
+    @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('rowModel') protected rowModel: IRowModel;
 
     // part of IFilter interface, hence public
     public abstract doesFilterPass(params: IDoesFilterPassParams): boolean;

@@ -62,6 +62,8 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 case Constants.KEY_ENTER:
                 case Constants.KEY_SPACE:
                     clickHandler();
+                case Constants.KEY_ESCAPE:
+                    e.preventDefault();
                     break;
             }
         });

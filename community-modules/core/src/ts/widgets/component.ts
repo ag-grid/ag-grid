@@ -1,7 +1,8 @@
-import { Context, PreConstruct } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
+import { BeanStub } from "../context/beanStub";
+import { Context, PreConstruct, PostConstruct } from "../context/context";
+import { Constants } from "../constants";
+import { IComponent } from "../interfaces/iComponent";
 import { _, NumberSequence } from "../utils";
 
 const compIdSequence = new NumberSequence();
@@ -13,11 +14,8 @@ export interface VisibleChangedEvent extends AgEvent {
 export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
-
     private eGui: HTMLElement;
-
     private childComponents: IComponent<any>[] = [];
-
     private annotatedEventListeners: any[] = [];
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -27,6 +25,8 @@ export class Component extends BeanStub {
     private visible = true;
 
     protected parentComponent: Component | undefined;
+    protected managedTab: boolean = false;
+    private tabListener: () => null;
 
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
@@ -46,7 +46,6 @@ export class Component extends BeanStub {
 
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
     private createChildComponentsFromTags(parentNode: Element, paramsMap?: any): void {
-
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
@@ -94,10 +93,9 @@ export class Component extends BeanStub {
     }
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
-
+        const thisNoType = this as any;
         let thisProto: any = Object.getPrototypeOf(this);
 
-        const thisNoType = this as any;
         while (thisProto != null) {
             const metaData = thisProto.__agComponentMetaData;
             const currentProtoName = (thisProto.constructor).name;
@@ -117,6 +115,10 @@ export class Component extends BeanStub {
     public setTemplate(template: string, paramsMap?: any): void {
         const eGui = _.loadTemplate(template as string);
         this.setTemplateFromElement(eGui, paramsMap);
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        e.preventDefault();
     }
 
     public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
@@ -140,6 +142,23 @@ export class Component extends BeanStub {
         if (uiExists) {
             this.createChildComponentsFromTags(this.getGui());
         }
+    }
+
+    @PostConstruct
+    private attachListenersToGui(): void {
+        const eGui = this.getGui();
+
+        if (!eGui || !this.managedTab) { return; }
+
+        if (this.tabListener) {
+            this.tabListener = this.tabListener();
+        }
+
+        this.tabListener = this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_TAB) {
+                this.onTabKeyDown(e);
+            }
+        });
     }
 
     protected wireQuerySelectors(): void {

@@ -16,6 +16,7 @@ export class TabbedLayout extends Component {
     private afterAttachedParams: any;
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
+    protected managedTab = true;
 
     constructor(params: TabbedLayoutParams) {
         super(TabbedLayout.getTemplate(params.cssClass));
@@ -32,25 +33,28 @@ export class TabbedLayout extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode === Constants.KEY_TAB) {
-            e.preventDefault();
-            this.handleTabKey(e);
-        }
+        switch (e.keyCode) {
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_LEFT:
+                if (!this.eHeader.contains(document.activeElement)) { return; }
+                const currentPosition = this.items.indexOf(this.activeItem);
+                const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
-        if (e.keyCode === Constants.KEY_RIGHT || e.keyCode === Constants.KEY_LEFT) {
-            if (!this.eHeader.contains(document.activeElement)) { return; }
-            const currentPosition = this.items.indexOf(this.activeItem);
-            const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                if (currentPosition === nextPosition) { return; }
+                const nextItem = this.items[nextPosition];
 
-            if (currentPosition === nextPosition) { return; }
-            const nextItem = this.items[nextPosition];
-
-            this.showItemWrapper(nextItem);
-            nextItem.eHeaderButton.focus();
+                this.showItemWrapper(nextItem);
+                nextItem.eHeaderButton.focus();
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+                e.preventDefault();
+                break;
         }
     }
 
-    private handleTabKey(e: KeyboardEvent) {
+    protected onTabKeyDown(e: KeyboardEvent) {
+        super.onTabKeyDown(e);
+
         const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
         const activeElement = document.activeElement as HTMLElement;
 
@@ -61,15 +65,15 @@ export class TabbedLayout extends Component {
         } else {
             const focusedPosition = focusableItems.indexOf(activeElement);
             const nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+
             if (nextPosition < 0 || nextPosition >= focusableItems.length) {
                 this.activeItem.eHeaderButton.focus();
                 return;
             }
 
             const nextItem = focusableItems[nextPosition];
-            if (nextItem) {
-                nextItem.focus();
-            }
+
+            if (nextItem) { nextItem.focus(); }
         }
     }
 

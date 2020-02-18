@@ -40,6 +40,8 @@ export class MenuList extends Component {
     private subMenuParentComp: MenuItemComponent | null;
     private subMenuComp: MenuList | null;
 
+    protected managedTab = true;
+
     constructor() {
         super(MenuList.TEMPLATE);
     }
@@ -201,11 +203,6 @@ export class MenuList extends Component {
                 e.preventDefault();
                 this.handleNavKey(e.keyCode);
                 break;
-            case Constants.KEY_TAB:
-                if (e.shiftKey) {
-                    this.closeIfIsChild(e);
-                }
-                break;
             case Constants.KEY_ESCAPE:
                 const topMenu = this.findTopMenu();
 
@@ -256,8 +253,17 @@ export class MenuList extends Component {
         }
     }
 
+    protected onTabKeyDown(e: KeyboardEvent) {
+        super.onTabKeyDown(e);
+
+        if (e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+    }
+
     private closeIfIsChild(e?: KeyboardEvent): void {
         const parentItem = this.getParentComponent();
+
         if (parentItem && parentItem instanceof MenuItemComponent) {
             if (e) { e.preventDefault(); }
             const parentMenuList = parentItem.getParentComponent() as MenuList;
