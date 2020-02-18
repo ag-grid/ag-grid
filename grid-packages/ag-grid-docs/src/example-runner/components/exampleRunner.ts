@@ -384,7 +384,7 @@ docs.component("exampleRunner", {
             </div>
 
             <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
-                <ul role="tablist" class="secondary">
+                <ul role="tablist" class="secondary" ng-style="$ctrl.iframeStyle">
 
                     <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
                          App
@@ -413,7 +413,7 @@ docs.component("exampleRunner", {
                     </example-tab>
                 </ul>
 
-                <pre><code ng-bind-html="$ctrl.source"></code></pre>
+                <pre ng-style="$ctrl.iframeStyle"><code ng-bind-html="$ctrl.source"></code></pre>
             </div>
         </div>
 
