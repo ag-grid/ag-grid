@@ -129,6 +129,9 @@ gridOptions.getChildCount = function(data) {
 </snippet>
 
 
+<?= grid_example('Child Counts', 'child-counts', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+
+
 <h2>Purging Groups</h2>
 
 <p>
@@ -181,8 +184,6 @@ gridOptions.getChildCount = function(data) {
         on the data?), the example sets a random number.
     </li>
 </ul>
-
-<?= grid_example('Group Child Counts', 'group-child-counts', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 
 <?= grid_example('Purging Caches', 'purge', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
