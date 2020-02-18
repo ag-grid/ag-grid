@@ -42,9 +42,26 @@ agCharts.AgChart.create({
     }],
     axes: [{
         type: 'number',
-        position: 'bottom'
+        position: 'bottom',
+        title: {
+            text: 'Height'
+        },
+        label: {
+            rotation: 45,
+            formatter: function (params) {
+                return params.value + ' cm';
+            }
+        }
     }, {
         type: 'number',
-        position: 'left'
+        position: 'left',
+        title: {
+            text: 'Weight'
+        },
+        label: {
+            formatter: function (params) {
+                return params.value + ' kg';
+            }
+        }
     }]
 });

@@ -9,19 +9,29 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Standalone Charts - Scatter Series</h1>
 
 <p class="lead">
-    Think of Scatter series as Line series without a line. Scatter series plot pairs of numeric variables
-    as points, where one variable in a pair acts as a point coordinate along the chart's X-axis and the other
-    serves as the Y-axis coordinate. Scatter plots are great for identifying the relationship between plotted
-    values, as well as gaps in the data and outliers.
+    Think of Scatter series as Line series without a line. Scatter charts use two axes to plot
+    <code>(x,y)</code> pairs of numeric variables as points at the intersection of <code>x</code>
+    and <code>y</code>.
+</p>
+
+<note>
+    Scatter series configuration is largely the same as Line series configuration (please refer to the
+    <a href="../javascript-charts-line-series/">Line series documentation</a> to learn more),
+    so here we'll just give some examples and cover the differences only.
+</note>
+
+<h2>Scatter Plot</h2>
+
+<p>
+    Scatter plots are great for identifying the relationship between plotted values, as well as
+    outliers and gaps in the data.
 </p>
 
 <p>
-    Scatter series configuration is largely the same as Line series configuration (please refer to the
-    <a href="../javascript-charts-line-series/">Line series documentation</a> to learn more),
-    so here we'll just give some examples and talk about relevant differences between the two.
+    Here's an simple scatter chart that plots mean sea level measured over a few years' time.
+    The measurments may have a certain degree of variability and error to them, but the overall
+    trend is clear &mdash; the sea level is rising.
 </p>
-
-<h2>Scatter Plot</h2>
 
 <?= chart_example('Scatter Chart', 'scatter-chart', 'generated') ?>
 
@@ -70,10 +80,38 @@ marker: {
 
 <p>
     Finally, the bubble chart is called that way because the circle is the most common marker
-    type used for this kind of scatter plot, but any other marker shape can used as well.
-    The example below uses both <code>'circle'</code> and <code>'square'</code> markers
-    of different sizes to represent the age of females and males respectively.
+    type used for this kind of scatter plot, but any other marker shape can be used as well.
 </p>
+
+<p>
+    The example below uses both the <code>'circle'</code> and the <code>'square'</code> markers
+    of different sizes to represent the age of females and males respectively. Also note the
+    following:
+</p>
+
+<ul class="content">
+    <li>
+        The <code>axes</code> configuration is explicit because the chart defaults to <code>'category'</code>
+        axis on the bottom but we want both axes to be of type <code>'number'</code>.
+    </li>
+    <li>
+        Both axes have their <code>title</code> config set so that it's easier to tell
+        which dimension is weight and which is height.
+    </li>
+    <li>
+        Both axes also use label formatters to add the <code>mm</code> and <code>kg</code> units
+        to the values.
+    </li>
+    <li>
+        The labels on the bottom axis are angled to prevent labels from overlapping, especially
+        when viewed on mobile devices.
+    </li>
+    <li>
+        We provide the names of all keys to get nice looking tooltips and the <code>title</code>
+        of the series to have it reflected in the legend. The series title is shown in the
+        tooltips as well.
+    </li>
+</ul>
 
 <?= chart_example('Bubble Chart', 'bubble-chart', 'generated') ?>
 
