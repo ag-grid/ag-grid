@@ -40,7 +40,7 @@ export class AppModule {
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cxth9c" target="_blank">
                     Open in <img src="../images/stackBlitzIcon.svg" alt="Open in StackBlitz"/> StackBlitz
                 </a>
             </div>

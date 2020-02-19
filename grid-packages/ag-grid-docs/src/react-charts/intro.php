@@ -47,7 +47,7 @@ class ChartExample extends Component {
 
         this.state = {
             options: {
-                data: data,
+                data: this.data,
                 title: {text: 'Beverage Expenses'},
                 subtitle: {text: 'per quarter'},
                 padding: {
@@ -69,11 +69,11 @@ class ChartExample extends Component {
     }
 
     render() {
-        return <AgChartsReact options={this.state.options}/>;
+        return &lt;AgChartsReact options={this.state.options}/>;
     }
 }
 
-render(<ChartExample/>, document.querySelector('#root'));
+render(&lt;ChartExample/>, document.querySelector('#root'));
 </snippet>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
@@ -83,7 +83,7 @@ render(<ChartExample/>, document.querySelector('#root'));
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-react-hello-world" target="_blank">
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-charts-react-hello-world-daq5bw" target="_blank">
                     Open in <img src="../images/stackBlitzIcon.svg" alt="Open in StackBlitz"/> StackBlitz
                 </a>
             </div>

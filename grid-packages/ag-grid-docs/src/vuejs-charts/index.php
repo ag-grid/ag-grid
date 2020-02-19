@@ -6,7 +6,7 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 <script src="../_assets/js/copy-code.js"></script>
-<style><?php include '../_assets//pages/get-started.css'; ?></style>
+<style><?php include '../_assets/pages/get-started.css'; ?></style>
 
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 

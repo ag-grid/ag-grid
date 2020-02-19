@@ -86,7 +86,7 @@ new Vue({
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-grid-vue-hello-world" target="_blank">
+                <a class="btn btn-dark" href="https://stackblitz.com/edit/ag-charts-vue-hello-world-uqr6hk" target="_blank">
                     Open in <img src="../images/stackBlitzIcon.svg" alt="Open in StackBlitz"/> StackBlitz
                 </a>
             </div>
