@@ -1040,6 +1040,10 @@
                   {
                     "title": "Line With Gaps",
                     "url": "javascript-charts-gallery/line-with-gaps.php"
+                  },
+                  {
+                    "title": "Simple Area",
+                    "url": "javascript-charts-gallery/simple-area.php"
                   }
                 ]
               },
