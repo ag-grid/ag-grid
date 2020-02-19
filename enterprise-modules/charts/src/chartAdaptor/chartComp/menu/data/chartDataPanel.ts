@@ -189,6 +189,7 @@ export class ChartDataPanel extends Component {
             type: DragSourceType.ChartPanel,
             eElement: eDragHandle,
             dragItemName: col.displayName,
+            defaultIconName: DragAndDropService.ICON_MOVE,
             getDragItem: () => ({ columns: [col.column] }),
             onDragStopped: () => { this.insertIndex = undefined; }
         };
