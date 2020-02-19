@@ -16,5 +16,8 @@
     },
     "Simple Area": {
         "description": "This area chart represents data using areas."
+    },
+    "Stacked Area": {
+        "description": "This demonstrates an area chart with stacked areas."
     }
 }

@@ -1044,6 +1044,10 @@
                   {
                     "title": "Simple Area",
                     "url": "javascript-charts-gallery/simple-area.php"
+                  },
+                  {
+                    "title": "Stacked Area",
+                    "url": "javascript-charts-gallery/stacked-area.php"
                   }
                 ]
               },
