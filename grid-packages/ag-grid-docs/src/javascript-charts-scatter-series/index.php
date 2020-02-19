@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Standalone Charts - Scatter Series</h1>
+<h1 class="heading-enterprise">Scatter Series</h1>
 
 <p class="lead">
     Think of Scatter series as Line series without a line. Scatter charts use two axes to plot

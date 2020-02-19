@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Standalone Charts - Pie Series</h1>
+<h1 class="heading-enterprise">Pie Series</h1>
 
 <p class="lead">
     This section shows how to create pie charts.

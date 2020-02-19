@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Standalone Charts - Layout</h1>
+<h1 class="heading-enterprise">Layout</h1>
 
 <p class="lead">
     This section explains what components a chart is composed of and how they are laid out inside a chart.

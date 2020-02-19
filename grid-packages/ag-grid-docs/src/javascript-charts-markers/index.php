@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Standalone Charts - Markers</h1>
+<h1 class="heading-enterprise">Markers</h1>
 
 <p class="lead">
     This section covers markers used by Line, Area and Scatter series.
