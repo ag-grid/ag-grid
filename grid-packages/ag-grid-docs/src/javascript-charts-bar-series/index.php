@@ -188,6 +188,11 @@ label: {
     a label.
 </note>
 
+<p>
+    To learn more about label configuration please refer to the
+    <a href="#barSeriesConfig.barSeriesConfig.label">API reference</a> below.
+</p>
+
 <h2>Bar Series</h2>
 
 <p>
@@ -221,9 +226,9 @@ axes: [{
 
 <?= chart_example('Stacked Bar Series', 'stacked-bar'); ?>
 
-<h2>Bar/Column Labels API Reference</h2>
+<h2>Bar/Column Series API Reference</h2>
 
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "barSeriesConfig.label") ?>
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "barSeriesConfig") ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
