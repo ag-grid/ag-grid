@@ -51,3 +51,10 @@ export function trackIfInViewPort(element, callback) {
     comparePosition();
     contentEl.addEventListener('scroll', comparePosition);
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const link = document.querySelector('a[href="' + location.hash + '"]');
+    if (link && link.scrollIntoView) {
+        link.scrollIntoView();
+    }
+});
