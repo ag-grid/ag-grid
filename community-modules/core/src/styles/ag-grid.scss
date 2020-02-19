@@ -41,7 +41,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     position: absolute;
 }
 
-.ag-input-wrapper {
+.ag-input-wrapper, .ag-picker-field-wrapper {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
@@ -628,7 +628,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
-    .ag-cell-edit-input, .ag-input-wrapper {
+    .ag-cell-edit-wrapper, 
+    .ag-cell-editor,
+    .ag-cell-editor .ag-wrapper,
+    .ag-cell-editor input {
         height: 100%;
         width: 100%;
         line-height: normal;
@@ -1305,7 +1308,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     top: -1px;
 }
 
-.ag-input-field {
+.ag-input-field, .ag-select {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1321,8 +1324,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     align-items: center;
 }
-
-
 
 .ag-angle-select {
     display: flex;
@@ -1343,7 +1344,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 
 
-.ag-picker-field-wrapper, .ag-slider-wrapper {
+.ag-slider-wrapper {
     display: flex;
 }
 
@@ -1371,7 +1372,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-picker-field-wrapper {
-    align-items: stretch;
     overflow: hidden;
 }
 

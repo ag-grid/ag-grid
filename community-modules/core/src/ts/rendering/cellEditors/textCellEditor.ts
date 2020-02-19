@@ -15,7 +15,7 @@ export interface ITextCellEditorParams extends ICellEditorParams {
 
 export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
-    private static TEMPLATE = '<div class="ag-cell-edit"><ag-input-text-field class="ag-cell-edit-input" ref="eInput"></ag-input-text-field></div>';
+    private static TEMPLATE = '<div class="ag-cell-edit-wrapper"><ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field></div>';
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;

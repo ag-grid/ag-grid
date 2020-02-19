@@ -21,7 +21,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
     @RefSelector('eSelect') private eSelect: AgSelect;
 
     constructor() {
-        super('<div class="ag-cell-edit"><ag-select class="ag-cell-edit-input" ref="eSelect"></ag-select></div>');
+        super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
     }
 
     public init(params: ISelectCellEditorParams) {
