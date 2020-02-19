@@ -35,8 +35,10 @@ if (USE_LOCAL) {
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark-mixin.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark-mixin.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-material-mixin.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material-mixin.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
 /* END OF GRID CSS DEV - DO NOT DELETE */
         /* START OF GRID MODULES DEV - DO NOT DELETE */
@@ -135,8 +137,10 @@ if (USE_LOCAL) {
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark-mixin.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark-mixin.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/all-modules/dist/styles/ag-theme-material-mixin.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material-mixin.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
 /* END OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/react" => "npm:@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
