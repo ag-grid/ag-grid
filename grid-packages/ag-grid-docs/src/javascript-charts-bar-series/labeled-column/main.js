@@ -3,6 +3,9 @@ agCharts.AgChart.create({
     title: {
         text: "Apple's revenue by product category"
     },
+    subtitle: {
+        text: 'in billion U.S. dollars'
+    },
     data: revenueData,
     series: [{
         type: 'column',
@@ -10,7 +13,12 @@ agCharts.AgChart.create({
         yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
         yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
         label: {
-
+            formatter: function (params) {
+                if (params.value !== undefined) {
+                    return params.value.toFixed(0);
+                }
+                return '';
+            }
         }
     }]
 });

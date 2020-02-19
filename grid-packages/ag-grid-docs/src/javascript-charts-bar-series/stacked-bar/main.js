@@ -3,6 +3,9 @@ agCharts.AgChart.create({
     title: {
         text: "Apple's revenue by product category"
     },
+    subtitle: {
+        text: 'in billion U.S. dollars'
+    },
     data: revenueData,
     series: [{
         type: 'bar',
