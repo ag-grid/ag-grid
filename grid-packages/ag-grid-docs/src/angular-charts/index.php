@@ -7,12 +7,12 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <script src="../_assets/js/copy-code.js"></script>
-<style><?php include '../_assets//pages/get-started.css'; ?></style>
+<style><?php include '../_assets/pages/get-started.css'; ?></style>
 
 <h1>Angular Charts | Get Started with ag-Charts and Angular</h1>
 
 <p class="lead" id="angular-charts">
-    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional
+    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well as standalone fully functional
     charting capabilities.
 </p>
 
@@ -27,10 +27,10 @@ include './intro.php';
     project and configure some of the essential features of it.
 </p>
 
-<h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
+<h2 id="add-ag-charts-to-your-project">Add ag-Charts to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Angular app with the <a href="https://cli.angular.io/">Angular CLI</a>.</p>
-<p>Don't worry if your project has a different configuration - ag-Grid and its Angular wrapper are distributed as NPM
+<p>Don't worry if your project has a different configuration - ag-Charts and its Angular wrapper are distributed as NPM
     packages which should work with any common Angular project module bundler setup.</p>
 
 <p>
@@ -49,7 +49,7 @@ ng serve
 
 <p>If everything goes well, <code>ng serve</code> has started the web server. You can open your app at  <a href="http://localhost:4200" onclick="window.open(event.target.href); return false;">localhost:4200</a>.</p>
 
-<p>As a next step, let's add the ag-Grid npm packages. run the following command in <code>my-app</code> (you may need a new instance of the terminal):</p>
+<p>As a next step, let's add the ag-Charts npm packages. run the following command in <code>my-app</code> (you may need a new instance of the terminal):</p>
 
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-angular">Copy Code</button>

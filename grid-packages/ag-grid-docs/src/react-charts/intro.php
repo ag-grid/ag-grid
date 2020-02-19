@@ -13,39 +13,67 @@
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
-import { AgGridReact } from 'ag-grid-react';
+import React, {Component} from 'react';
+import {render} from 'react-dom';
+import {AgChartsReact} from 'ag-charts-react';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+class ChartExample extends Component {
+    data = [
+        {
+            beverage: 'Coffee',
+            Q1: 450,
+            Q2: 560,
+            Q3: 600,
+            Q4: 700,
+        },
+        {
+            beverage: 'Tea',
+            Q1: 270,
+            Q2: 380,
+            Q3: 450,
+            Q4: 520,
+        },
+        {
+            beverage: 'Milk',
+            Q1: 180,
+            Q2: 170,
+            Q3: 190,
+            Q4: 200,
+        },
+    ];
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      columnDefs: [
-        { headerName: "Make", field: "make" },
-        { headerName: "Model", field: "model" },
-        { headerName: "Price", field: "price" }],
-      rowData: [
-        { make: "Toyota", model: "Celica", price: 35000 },
-        { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxter", price: 72000 }]
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            options: {
+                data: data,
+                title: {text: 'Beverage Expenses'},
+                subtitle: {text: 'per quarter'},
+                padding: {
+                    top: 40,
+                    right: 40,
+                    bottom: 40,
+                    left: 40,
+                },
+                series: [
+                    {
+                        type: 'column',
+                        xKey: 'beverage',
+                        yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                ],
+                legend: {spacing: 40},
+            },
+        };
     }
-  }
 
-  render() {
-    return (
-      &lt;div className="ag-theme-balham" style={ {height: '200px', width: '600px'} }&gt;
-        &lt;AgGridReact
-            columnDefs={this.state.columnDefs}
-            rowData={this.state.rowData}&gt;
-        &lt;/AgGridReact&gt;
-      &lt;/div&gt;
-    );
-  }
+    render() {
+        return <AgChartsReact options={this.state.options}/>;
+    }
 }
 
-render(&lt;App /&gt;, document.getElementById('root'));
+render(<ChartExample/>, document.querySelector('#root'));
 </snippet>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">

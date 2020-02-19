@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "React 16";
-$pageDescription = "React 16 as some difference. To use ag-Grid with React 16 there are some things you need to konw";
+$pageDescription = "React 16 as some difference. To use ag-Grid with React 16 there are some things you need to know";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
