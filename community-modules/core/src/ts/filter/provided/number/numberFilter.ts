@@ -104,7 +104,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     }
 
     public afterGuiAttached() {
-        this.eValueFrom1.getGui().focus();
+        this.eValueFrom1.getInputElement().focus();
     }
 
     protected getDefaultFilterOptions(): string[] {
