@@ -62,5 +62,5 @@ var revenueData = [
         ipad: 14,
         wearables: 20,
         services: 40
-    },
+    }
 ];
