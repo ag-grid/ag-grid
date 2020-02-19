@@ -2,37 +2,42 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Average Station Entries: Victoria Line (2010)',
+        text: 'Total Visitors to Museums and Galleries',
         fontSize: 18,
     },
     subtitle: {
-        text: 'Source: Transport for London',
+        text: 'Source: Department for Digital, Culture, Media & Sport',
     },
     series: [{
         type: 'column',
-        xKey: 'station',
-        yKeys: ['early', 'morningPeak', 'interPeak', 'afternoonPeak', 'evening'],
-        yNames: ['Early', 'Morning peak', 'Between peak', 'Afternoon peak', 'Evening'],
+        xKey: 'year',
+        yKeys: ['visitors'],
+        shadow: {
+            enabled: true,
+            xOffset: 3,
+        }
     }],
     axes: [
         {
             type: 'category',
             position: 'bottom',
-            label: {
-                rotation: 30,
-            },
+            title: {
+                text: 'Year',
+            }
         },
         {
             type: 'number',
             position: 'left',
+            title: {
+                text: 'Total visitors',
+            },
             label: {
-                formatter: function(params) { return params.value / 1000 + 'k'; },
+                formatter: function(params) { return params.value / 1000000 + 'm'; },
             },
         }],
     legend: {
-        spacing: 40,
-        position: 'bottom',
-    }
+        enabled: false,
+    },
 };
 
 var chart = agCharts.AgChart.create(options);

@@ -1026,6 +1026,10 @@
                     "url": "javascript-charts-gallery/simple-column.php"
                   },
                   {
+                    "title": "Stacked Column",
+                    "url": "javascript-charts-gallery/stacked-column.php"
+                  },
+                  {
                     "title": "Simple Bar",
                     "url": "javascript-charts-gallery/simple-bar.php"
                   },

@@ -2,6 +2,9 @@
     "Simple Column": {
         "description": "The column chart represents data as a series of vertical columns."
     },
+    "Stacked Column": {
+        "description": "The column chart represents data as a series of stacked vertical columns."
+    },
     "Simple Bar": {
         "description": "The bar chart represents data as a series of horizontal bars."
     },
