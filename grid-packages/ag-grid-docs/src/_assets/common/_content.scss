@@ -1,3 +1,10 @@
+.page-content {
+    position: fixed;
+    overflow: scroll;
+    height: 100%;
+    width: 100%;
+}
+
 .content-list {
     padding-inline-start: 1rem;
     padding-block-start: 0;

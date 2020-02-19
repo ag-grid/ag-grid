@@ -1,6 +1,7 @@
 import * as jQuery from 'jquery';
 
 const win = jQuery(window);
+const contentEl = document.getElementsByClassName('page-content')[0];
 
 function getCurrentViewPort() {
     const viewport = {
@@ -28,14 +29,14 @@ export function whenInViewPort(element, callback) {
         const viewPort = getCurrentViewPort();
         const box = getRect(element);
         if (viewPort.bottom >= box.top) {
-            window.removeEventListener('scroll', comparePosition);
+            contentEl.removeEventListener('scroll', comparePosition);
             callback();
             // window.setTimeout(callback, 2000);
         }
     }
 
     comparePosition();
-    window.addEventListener('scroll', comparePosition);
+    contentEl.addEventListener('scroll', comparePosition);
 }
 
 export function trackIfInViewPort(element, callback) {
@@ -48,5 +49,5 @@ export function trackIfInViewPort(element, callback) {
     }
 
     comparePosition();
-    window.addEventListener('scroll', comparePosition);
+    contentEl.addEventListener('scroll', comparePosition);
 }
