@@ -1,7 +1,4 @@
-function push<T>(arr: T[], s: T) {
-    arr.unshift(s);
-    return arr;
-}
+import { toTitleCase, getImport } from './angular-utils';
 
 export function appModuleAngular(componentFileNames: string[]) {
     const components = [];
@@ -18,16 +15,11 @@ export function appModuleAngular(componentFileNames: string[]) {
     ];
 
     if (componentFileNames) {
-        const toTitleCase = value => {
-            let camelCased = value.replace(/-([a-z])/g, g => g[1].toUpperCase());
-            return camelCased[0].toUpperCase() + camelCased.slice(1);
-        };
-
         componentFileNames.forEach(filename => {
-            let componentName = filename.split('.')[0];
-            let componentNameTitleCase = toTitleCase(componentName);
-            components.push(componentNameTitleCase);
-            imports.push(`import { ${componentNameTitleCase} } from './${componentName}.component';`);
+            const componentName = toTitleCase(filename.split('.')[0]);
+
+            components.push(componentName);
+            imports.push(getImport(filename));
         });
     }
 
@@ -42,7 +34,7 @@ export function appModuleAngular(componentFileNames: string[]) {
             AgGridModule.withComponents([${components.join(',')}])
           ],
           declarations: [
-            ${push(components, 'AppComponent').join(',')}
+            ${['AppComponent'].concat(components).join(',')}
           ],
           bootstrap: [ AppComponent ]
         })

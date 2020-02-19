@@ -14,8 +14,8 @@ export function convertTemplate(template: string) {
     return template.replace(/\(event\)/g, '($event)');
 }
 
-const toTitleCase = value => {
-    let camelCased = value.replace(/-([a-z])/g, g => g[1].toUpperCase());
+export function toTitleCase(value) {
+    const camelCased = value.replace(/-([a-z])/g, g => g[1].toUpperCase());
     return camelCased[0].toUpperCase() + camelCased.slice(1);
 };
 
