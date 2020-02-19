@@ -1,9 +1,10 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
-@import "../params/ag-theme-balham-default-params";
+@import "./ag-theme-balham-default-params";
 
-@mixin ag-theme-balham($params: $ag-theme-balham-default-params) {
-
-    @include ag-grid-theme($params);
+@mixin ag-theme-balham($params, $validate: true) {
+    
+    $params: ag-process-theme-variables($params, $ag-theme-balham-default-params, $validate);
+    @include ag-theme-base($params, $validate: false);
 
     @include ag-native-inputs();
 

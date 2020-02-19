@@ -1,8 +1,10 @@
-@import "../params/ag-theme-alpine-default-params";
 @import "../../ag-theme-base/sass/ag-theme-base";
+@import "./ag-theme-alpine-default-params";
 
-@mixin ag-theme-alpine($params: $ag-theme-alpine-default-params) {
-    @include ag-grid-theme($params);
+@mixin ag-theme-alpine($params, $validate: true) {
+    
+    $params: ag-process-theme-variables($params, $ag-theme-alpine-default-params, $validate);
+    @include ag-theme-base($params, $validate: false);
 
     @include ag-native-inputs();
 
@@ -141,7 +143,6 @@
 
     .ag-column-drop-vertical-title-bar {
         background-color: ag-param(background-color);
-        // TODO widget-group-padding
         padding: ag-param(grid-size) * 2;
         @include ag-border(secondary, bottom);
     }

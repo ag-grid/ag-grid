@@ -1,5 +1,5 @@
-@import '../mixins/ag-theme-mixins';
-@import '../ag-theme-balham/params/ag-theme-balham-default-params';
+@import "../mixins/ag-theme-mixins";
+@import "../ag-theme-balham/sass/ag-theme-balham-default-params";
 
 @include ag-register-params($ag-theme-balham-default-params);
 

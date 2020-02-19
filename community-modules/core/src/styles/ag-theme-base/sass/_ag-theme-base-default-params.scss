@@ -208,7 +208,7 @@ $ag-theme-base-default-params: (
     full-width-tabs: false,
 
     // Fonts
-    font-family: "Helvetica Neue" sans-serif,
+    font-family: ("Helvetica Neue", sans-serif),
     font-size: 14px,
     icon-font-family: $ag-theme-base-icon-font-family,
     icons-data: $ag-theme-base-icons-data,

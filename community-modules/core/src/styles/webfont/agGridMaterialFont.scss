@@ -1,5 +1,5 @@
-@import '../mixins/ag-theme-mixins';
-@import '../ag-theme-material/params/ag-theme-material-default-params';
+@import "../mixins/ag-theme-mixins";
+@import "../ag-theme-material/sass/ag-theme-material-default-params";
 
 @include ag-register-params($ag-theme-material-default-params);
 

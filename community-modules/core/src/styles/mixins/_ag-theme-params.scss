@@ -10,14 +10,13 @@
     @debug ag-param(a); // outputs 42
 */
 
-
 // Define a derived parameter. Derived values are lazily evaluated. This function is
 // sugar for defining a data structure to record the derived value's parameters.
 @function ag-derived($reference-name,
                      $times: null, $divide: null, $plus: null, $minus: null, $opacity: null,
                      $lighten: null, $darken: null, $mix: null) {
     $derived: (
-        "--is-ag-derived": true,
+        "--ag-is-derived-value": true,
         "reference-name": $reference-name
     );
     @if $times != null {
@@ -47,30 +46,27 @@
     @return $derived;
 }
 
-// Return true if a value is a record returned by ag-derived()
-@function -is-ag-derived($value) {
-    @return type-of($value) == map and map-get($value, "--is-ag-derived") == true;
-}
-
+// global map of params used by ag-param()
 $-ag-params: null;
 
 // Register a params map globally so that it can be used by ag-param($name)
 @mixin ag-register-params($params) {
-    @if type-of($params) != map {
-        @error "ag-register-params expects a map, got #{type-of($params)} instead (#{inspect($params)})";
-    }
+    $params: -ag-require-type($params, "map", "$params argument");
     $-ag-params: $params !global;
 }
 
 // Use a parameter in SCSS, e.g. `color: ag-param(foreground-color)`
 @function ag-param($name) {
     $resolved: ag-param-unchecked($name);
+    @if str-index(inspect($resolved), "ag-derived(") != null {
+        @error "#{$name} param contains a ag-derived() as a CSS function call expression. This means that you have tried to use ag-derived() before the function is defined - you need to include the file that defines it.";
+    }
     @if type-of($resolved) == map {
         @error "ag-param(#{$name}) resolved to a map, which is not valid CSS: #{inspect($resolved)}";
     }
     @each $part in $resolved {
         @if type-of($part) == map {
-            @error "ag-param(#{$name}) resolved to a list containing a map, which is not valid CSS: #{inspect($resolved)}";
+            @error "ag-param(#{$name}) resolved to a list containing a map, which is not valid CSS: #{str-slice(inspect($resolved), 0, 1000)}";
         }
     }
     @return $resolved;
@@ -87,9 +83,38 @@ $-ag-params: null;
     @return -ag-resolve-param-name($-ag-params, $name);
 }
 
+// Merge params supplied to a theme with the defaults, optionally validate, and register the resulting
+// map globally for use with ag-param()
+//
+// $params: params supplied by the derived theme
+// $defaults: values for params not in $params
+// $validate: if true, issue a warning for any params that have no default
+@function ag-process-theme-variables($params, $defaults, $validate) {
+    @if $validate {
+        @each $key in map-keys($params) {
+            @if not map-has-key($defaults, $key) {
+                @warn "Unrecognised param \"#{$key}\" supplied to #{$theme-name}";
+            }
+        }
+    }
+    $params: map-merge($defaults, $params);
+    $-ag-params: $params !global;
+    @return $params;
+}
+
+@function ag-import-legacy-global-variables($defaults) {
+    // TODO implement global variable import
+    @return $defaults;
+}
+
 //
 // PRIVATE IMPLEMENTATION FUNCTIONS
 //
+
+// Return true if a value is a record returned by ag-derived()
+@function -is-ag-derived($value) {
+    @return type-of($value) == map and map-get($value, "--ag-is-derived-value") == true;
+}
 
 @function -ag-resolve-param-name($params, $name) {
     $value: map-get($params, $name);

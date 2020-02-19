@@ -262,7 +262,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
         // Set the colors to blue and amber
         $ag-active: #E91E63; // pink-500 from https://www.materialui.co/colors
         // Import the ag-Grid balham theme
-        @import '~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham';</snippet>
+        @import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham";</snippet>
 
     <p>
         The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle.
@@ -306,7 +306,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
         $ag-accent-color: #FFD740; // amber-A200
 
         // Import the ag-Grid material theme
-        @import '~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material';</snippet>
+        @import "~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material";</snippet>
 
     <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 

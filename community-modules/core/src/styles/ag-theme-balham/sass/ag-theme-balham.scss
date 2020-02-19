@@ -1,5 +1,9 @@
-@import "./ag-theme-balham-common";
+@import "./ag-theme-balham-mixin";
+
+// LEGACY THEME FILE
+// This mixin is for backwards compatibility with older apps that use global variables
+// New apps should pass params to the ag-theme-balham($params) mixin
 
 .ag-theme-balham {
-    @include ag-theme-balham();
+    @include ag-theme-balham(ag-import-legacy-global-variables($ag-theme-balham-default-params));
 }

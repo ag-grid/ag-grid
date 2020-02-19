@@ -1,4 +1,9 @@
-In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. Most custom themes will need updating to use the new system. We want to explain why we're doing this, and tell you how to upgradew your themes.
+In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. We have implemented a backwards compatibility mode so that the majority of custom themes should continue working without changes. Some apps may need to upgrade to use the new method for creating custom themes, either because:
+
+1. The backwards compatibility mode is causing issues for your app
+2. You want to use new theme features added in v23 or a later release
+
+This guide explains what has changed, why we changed it, and how to update your apps.
 
 ## Why we're updating our themes
 

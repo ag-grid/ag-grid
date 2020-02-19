@@ -1,6 +1,9 @@
-@import '../../ag-theme-alpine/sass/ag-theme-alpine-common';
-@import "../params/ag-theme-alpine-dark-default-params";
+@import "./ag-theme-alpine-dark-mixin";
+
+// LEGACY THEME FILE
+// This mixin is for backwards compatibility with older apps that use global variables
+// New apps should pass params to the ag-theme-alpine-dark($params) mixin
 
 .ag-theme-alpine-dark {
-    @include ag-theme-alpine($ag-theme-alpine-dark-default-params);
+    @include ag-theme-alpine-dark(ag-import-legacy-global-variables($ag-theme-alpine-dark-default-params));
 }
