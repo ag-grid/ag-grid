@@ -741,6 +741,64 @@
         "max": 20,
         "unit": "px"
       }
+    },
+    "label": {
+      "meta": {
+        "description": "Configuration for the labels shown on bars."
+      },
+      "enabled": {
+        "default": true,
+        "description": "Whether or not the labels should be shown."
+      },
+      "color": {
+        "default": "rgba(70, 70, 70, 1)",
+        "description": "The colour to use for the labels."
+      },
+      "fontStyle": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "description": "The font style to use for the labels."
+      },
+      "fontWeight": {
+        "default": "normal",
+        "options": [
+          "normal",
+          "bold",
+          "bolder",
+          "lighter",
+          "100",
+          "200",
+          "300",
+          "400",
+          "500",
+          "600",
+          "700",
+          "800",
+          "900"
+        ],
+        "description": "The font weight to use for the labels.",
+        "breakIndex": 4
+      },
+      "fontSize": {
+        "default": 12,
+        "description": "The font size in pixels to use for the labels.",
+        "min": 1,
+        "max": 30,
+        "unit": "px"
+      },
+      "fontFamily": {
+        "default": "Verdana, sans-serif",
+        "suggestions": [
+          "Verdana, sans-serif",
+          "Arial, sans-serif",
+          "Times New Roman, serif"
+        ],
+        "description": "The font family to use for the labels."
+      }
     }
   },
   "lineSeriesConfig": {

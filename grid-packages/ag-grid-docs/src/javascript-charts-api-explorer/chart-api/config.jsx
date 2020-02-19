@@ -680,6 +680,22 @@ export const barSeriesConfig = Object.freeze({
     ...getColourConfig('bars', true),
     ...getHighlightConfig('bars'),
     ...shadowConfig,
+    label: {
+        meta: {
+            description: 'Configuration for the labels shown on bars.',
+        },
+        enabled: {
+            default: true,
+            description: `Whether or not the labels should be shown.`,
+            editor: BooleanEditor,
+        },
+        color: {
+            default: 'rgba(70, 70, 70, 1)',
+            description: `The colour to use for the labels.`,
+            editor: ColourEditor,
+        },
+        ...getFontOptions('labels'),
+    }
 });
 
 export const lineSeriesConfig = Object.freeze({

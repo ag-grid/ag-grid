@@ -44,11 +44,11 @@
                     echo " See <a href='$example->url'>$example->name</a>.";
                 }
 
-                if ($definition->default) {
+                if (isset($definition->default)) {
                     echo "<br />Default: <code>" . formatJson($definition->default) . "</code>";
                 }
 
-                if ($definition->options) {
+                if (isset($definition->options)) {
                     echo "<br />Options: <code>" . implode(' | ', array_map(formatJson, $definition->options)) . "</code>";
                 }
 
