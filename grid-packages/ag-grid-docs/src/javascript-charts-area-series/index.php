@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Area Series</h1>
+<h1>Area Series</h1>
 
 <p class="lead">
     This section covers the most common series type &mdash; Line series.

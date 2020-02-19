@@ -6,6 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Tooltips</h1>
+<h1>Tooltips</h1>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

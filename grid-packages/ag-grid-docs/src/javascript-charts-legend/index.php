@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Legend</h1>
+<h1>Legend</h1>
 
 <p class="lead">
     A legend makes it easier to tell at a glance which series or series items correspond to what pecies of data.

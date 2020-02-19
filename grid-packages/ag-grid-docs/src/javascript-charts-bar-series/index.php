@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Bar and Column Series</h1>
+<h1>Bar and Column Series</h1>
 
 <p class="lead">
     Because Bar series are just transposed Column series and share the exact same configs,
