@@ -63,7 +63,7 @@ this is optional):</p>
 
 <img class="img-fluid" src="./cli-step4.png" alt="Config files" />
 
-<p>We're not ready to start our application:</p>
+<p>We're now ready to start our application:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="sh">
@@ -83,7 +83,7 @@ npm install --save ag-grid-community ag-grid-vue vue-property-decorator
 </section>
 
 <p>After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step,
-    let's add the ag-Grid the ag-Grid styles - import them in the style section of <code>src/App.vue</code>:</p>
+    let's add the ag-Grid styles - import them in the style section of <code>src/App.vue</code>:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet>
