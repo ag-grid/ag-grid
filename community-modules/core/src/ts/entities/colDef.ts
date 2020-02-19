@@ -287,7 +287,7 @@ export interface ColDef extends AbstractColDef {
 
     rowSpan?: (params: RowSpanParams) => number;
 
-    /** Set to true if this col should not be allowed take new values from teh clipboard . */
+    /** Set to true if this col should not be allowed take new values from the clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
 
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */

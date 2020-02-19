@@ -13,7 +13,7 @@ function weekday(n: number): CountableTimeInterval {
     function offset(date: Date, weeks: number) {
         date.setUTCDate(date.getUTCDate() + weeks * 7);
     }
-    // Count the number of weeks between teh start and end dates.
+    // Count the number of weeks between the start and end dates.
     function count(start: Date, end: Date): number {
         return (end.getTime() - start.getTime()) / durationWeek;
     }

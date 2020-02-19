@@ -98,7 +98,7 @@ interface ColSpanParams {
     <ul class="content">
         <li>
             The data is formatted in a certain way, it is not intended for the user to sort this
-            data or reorder teh columns.
+            data or reorder the columns.
         </li>
         <li>
             The dataset has meta-data inside it, the <code>data.section</code> attribute. This

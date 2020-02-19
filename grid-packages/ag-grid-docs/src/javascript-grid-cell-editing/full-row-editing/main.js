@@ -77,7 +77,7 @@ function getNumericCellEditor() {
     // gets called once before the renderer is used
     NumericCellEditor.prototype.init = function(params) {
         // we only want to highlight this cell if it started the edit, it is possible
-        // another cell in this row started teh edit
+        // another cell in this row started the edit
         this.focusAfterAttached = params.cellStartedEdit;
 
         // create the cell

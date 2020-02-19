@@ -201,7 +201,7 @@ function createFakeServer(data) {
 
     FakeServer.prototype.getData = function (request, callback) {
 
-        // the row group cols, ie teh cols that the user has dragged into the
+        // the row group cols, ie the cols that the user has dragged into the
         // 'group by' zone, eg 'Country' and 'Year'
         var rowGroupCols = request.rowGroupCols;
         // the keys we are looking at. will be empty if looking at top level (either

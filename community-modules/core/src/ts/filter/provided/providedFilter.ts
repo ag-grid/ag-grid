@@ -101,7 +101,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         } else if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
             this.newRowsActionKeep = false;
         } else {
-            // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'
+            // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
             const rowModelType = this.rowModel.getType();
             const modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;

@@ -1676,7 +1676,7 @@ include('../includes/mediaHeader.php');
     <h4>Performance Enhancements</h4>
     <p>
         In our tests the demo page used to take 1600ms to expand a row after grouping, it's now down to 600ms. We
-        haven't tested teh other browsers, but you can expect these changes to at least have some positive improvements
+        haven't tested the other browsers, but you can expect these changes to at least have some positive improvements
         on them also. The changes we made were:
     </p>
     <ul>
