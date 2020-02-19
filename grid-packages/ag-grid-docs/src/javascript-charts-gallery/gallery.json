@@ -13,5 +13,11 @@
     },
     "Line With Gaps": {
         "description": "This example shows how the line series handles gaps in the data."
+    },
+    "Simple Area": {
+        "description": "This area chart represents data using areas."
+    },
+    "Stacked Area": {
+        "description": "This demonstrates an area chart with stacked areas."
     }
 }

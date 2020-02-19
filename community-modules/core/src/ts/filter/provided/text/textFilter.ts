@@ -189,7 +189,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     public afterGuiAttached() {
-        this.eValue1.getGui().focus();
+        this.eValue1.getInputElement().focus();
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {

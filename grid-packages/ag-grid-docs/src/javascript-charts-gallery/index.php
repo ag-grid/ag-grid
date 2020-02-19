@@ -46,6 +46,18 @@ define('skipInPageNav', true);
         <div class="chart-gallery-item__name">Line With Gaps</div>
     </a>
 </div>
+<div class="chart-gallery-item">
+    <a href="./simple-area.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-area.png" /><br />
+        <div class="chart-gallery-item__name">Simple Area</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
+    <a href="./stacked-area.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/stacked-area.png" /><br />
+        <div class="chart-gallery-item__name">Stacked Area</div>
+    </a>
+</div>
 </div>
 
 <h2>Next Up</h2>

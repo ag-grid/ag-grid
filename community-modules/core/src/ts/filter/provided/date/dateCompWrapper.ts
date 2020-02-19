@@ -15,9 +15,7 @@ export class DateCompWrapper {
     private alive = true;
 
     constructor(userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
-
         userComponentFactory.newDateComponent(dateComponentParams).then (dateComp => {
-
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 if (dateComp.destroy) {
@@ -48,11 +46,7 @@ export class DateCompWrapper {
     }
 
     public getDate(): Date {
-        if (this.dateComp) {
-            return this.dateComp.getDate();
-        } else {
-            return this.tempValue;
-        }
+        return this.dateComp ? this.dateComp.getDate() : this.tempValue;
     }
 
     public setDate(value: Date): void {
