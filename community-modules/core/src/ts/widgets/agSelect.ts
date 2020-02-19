@@ -54,11 +54,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
             }
         });
         const focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', (e: FocusEvent) => {
-            if (
-                !listGui.contains(e.relatedTarget as HTMLElement) &&
-                !this.getGui().contains(e.relatedTarget as HTMLElement) &&
-                this.hideList
-            ) {
+            if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
                 this.hideList();
             }
         });

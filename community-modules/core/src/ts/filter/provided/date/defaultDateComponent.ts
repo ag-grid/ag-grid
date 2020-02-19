@@ -2,10 +2,11 @@ import { Component } from "../../../widgets/component";
 import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
 import { _ } from "../../../utils";
 import { AgInputTextField } from "../../../widgets/agInputTextField";
+import { RefSelector } from "../../../widgets/componentAnnotations";
 
 export class DefaultDateComponent extends Component implements IDateComp {
 
-    private eDateInput: AgInputTextField;
+    @RefSelector('eDateInput') private eDateInput: AgInputTextField;
     private listener: () => void;
 
     constructor() {
