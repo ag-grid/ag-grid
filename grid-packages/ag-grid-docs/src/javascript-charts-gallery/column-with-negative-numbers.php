@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Stacked Column';
+$pageTitle = 'Charts Standalone Gallery: Column With Negative Numbers';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeyboards = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,17 +8,17 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Stacked Column</h1>
+<h1 class="heading">Charts Standalone Gallery: Column With Negative Numbers</h1>
 
 <p class="lead">
-    The column chart represents data as a series of stacked vertical columns.
+    A column chart showing use of negative numbers.
 </p>
 
-<?= chart_example('Stacked Column', 'stacked-column', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Column With Negative Numbers', 'column-with-negative-numbers', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./grouped-column.php">❮&nbsp;&nbsp;Grouped Column</a>
-    <a class="chart-navigation__right" href="./percentage-column.php">Percentage Column&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__left" href="./percentage-column.php">❮&nbsp;&nbsp;Percentage Column</a>
+    <a class="chart-navigation__right" href="./simple-bar.php">Simple Bar&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

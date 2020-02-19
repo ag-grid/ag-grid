@@ -23,9 +23,27 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
+    <a href="./grouped-column.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/grouped-column.png" /><br />
+        <div class="chart-gallery-item__name">Grouped Column</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
     <a href="./stacked-column.php" class="chart-gallery-item__link">
         <img class="chart-gallery-item__thumbnail" src="./thumbnails/stacked-column.png" /><br />
         <div class="chart-gallery-item__name">Stacked Column</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
+    <a href="./percentage-column.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/percentage-column.png" /><br />
+        <div class="chart-gallery-item__name">Percentage Column</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
+    <a href="./column-with-negative-numbers.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-with-negative-numbers.png" /><br />
+        <div class="chart-gallery-item__name">Column With Negative Numbers</div>
     </a>
 </div>
 <div class="chart-gallery-item">

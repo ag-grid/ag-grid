@@ -12,6 +12,8 @@ var options = {
         type: 'column',
         xKey: 'year',
         yKeys: ['visitors'],
+        fills: ['#0084e7'],
+        strokes: ['#00407f'],
         shadow: {
             enabled: true,
             xOffset: 3,

@@ -2,8 +2,17 @@
     "Simple Column": {
         "description": "The column chart represents data as a series of vertical columns."
     },
+    "Grouped Column": {
+        "description": "The column chart represents data as a series of vertical columns grouped together."
+    },
     "Stacked Column": {
         "description": "The column chart represents data as a series of stacked vertical columns."
+    },
+    "Percentage Column": {
+        "description": "A column chart showing the normalisation of data into percentages."
+    },
+    "Column With Negative Numbers": {
+        "description": "A column chart showing use of negative numbers."
     },
     "Simple Bar": {
         "description": "The bar chart represents data as a series of horizontal bars."

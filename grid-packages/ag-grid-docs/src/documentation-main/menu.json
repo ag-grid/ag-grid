@@ -1026,8 +1026,20 @@
                     "url": "javascript-charts-gallery/simple-column.php"
                   },
                   {
+                    "title": "Grouped Column",
+                    "url": "javascript-charts-gallery/grouped-column.php"
+                  },
+                  {
                     "title": "Stacked Column",
                     "url": "javascript-charts-gallery/stacked-column.php"
+                  },
+                  {
+                    "title": "Percentage Column",
+                    "url": "javascript-charts-gallery/percentage-column.php"
+                  },
+                  {
+                    "title": "Column With Negative Numbers",
+                    "url": "javascript-charts-gallery/column-with-negative-numbers.php"
                   },
                   {
                     "title": "Simple Bar",

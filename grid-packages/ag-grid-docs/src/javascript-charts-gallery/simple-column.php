@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Simple Column', 'simple-column', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__right" href="./stacked-column.php">Stacked Column&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./grouped-column.php">Grouped Column&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

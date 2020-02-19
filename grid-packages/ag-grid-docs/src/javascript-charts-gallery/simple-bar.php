@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Simple Bar', 'simple-bar', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./stacked-column.php">❮&nbsp;&nbsp;Stacked Column</a>
+    <a class="chart-navigation__left" href="./column-with-negative-numbers.php">❮&nbsp;&nbsp;Column With Negative Numbers</a>
     <a class="chart-navigation__right" href="./simple-line.php">Simple Line&nbsp;&nbsp;❯</a>
 </div>
 
