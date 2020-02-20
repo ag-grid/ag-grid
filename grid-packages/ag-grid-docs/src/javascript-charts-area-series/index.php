@@ -10,49 +10,74 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     Area series are like filled Line series, with more emphasis on the magnitude of the change.
-    Area series additionally support stacking, to emphasize the total value and the way
+    Area series additionally support stacking to emphasize the total value and the way
     individual values relate to the whole.
 </p>
 
 <h3>Single Area Series</h3>
 
 <p>
-    To create a column chart, we need to use series type <code>'column'</code>.
+    To create a simple area chart we need to use series type <code>'area'</code>.
     We also have to provide the <code>xKey</code> and at least one <code>yKey</code>.
 </p>
 
 <note>
-    Since <code>'column'</code> and <code>'bar'</code> series can be stacked or grouped,
-    they can have multiple <code>yKeys</code> &mdash; one key per each stack/group component.
+    Since <code>'area'</code> series can be stacked on top of each other,
+    they can have multiple <code>yKeys</code> &mdash; one key per each stack level.
 </note>
 
 <p>
-    A minimal <code>'column'</code> series config therefore would look like this:
+    A minimal <code>'area'</code> series config therefore would look like this:
 </p>
 
 <snippet language="ts">
 series: [{
-    type: 'column',
-    xKey: 'quarter',
-    yKeys: ['iphone']
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['ie']
 }]
 </snippet>
 
 <p>
-    In the snippet above we are using the <code>'iphone'</code> as the only <code>yKey</code>,
-    to show revenue per quarter for this product alone. Just using this simple series config
-    produces the following chart:
+    In the snippet above we are using the <code>'ie'</code> as the only <code>yKey</code>,
+    to show market share of this internet browser alone.
+    Just using this simple series config produces the following chart:
 </p>
 
 <?= chart_example('Single Area Series', 'single-area', 'generated'); ?>
 
-<?= chart_example('Single Area Series with Markers', 'single-area-markers', 'generated'); ?>
+<note>
+Even though area series support markers they are turned off by default
+for this series type, as this stylization is the most common.
+</note>
+
+<p>
+To enable area markers all we need to do is add this to the series config:
+</p>
+
+<snippet language="ts">
+marker: {
+    enabled: true
+}
+</snippet>
+
+<p>
+When markers are enabled, the tooltips will be shown on hover. In this case
+the values shown are percentage values, however there is no <code>%</code>
+suffix because the series don't know about the nature of the data (as it
+is designed to work with all kinds of data). So for the purposes of this
+example we additionally provide a <code>tooltipRenderer</code> to add the
+<code>%</code> suffix. After this change, the tooltips will change from this
+(left) to this (right):
+</p>
 
 <p style="text-align: center;">
     <img alt="Default Area Tooltip" src="default-area-tooltip.png" style="margin-bottom: 0px; height: 138px;">
     <span style="width: 50px; display: inline-block;">--></span>
     <img alt="Custom Area Tooltip" src="custom-area-tooltip.png" style="margin-bottom: 0px; height: 146px;">
 </p>
+
+<?= chart_example('Single Area Series with Markers', 'single-area-markers', 'generated'); ?>
 
 <p>
     Note that in the code of the example above we also:
