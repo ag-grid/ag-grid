@@ -21,7 +21,7 @@ export function toAssignment(property: any): string {
 
 export function getImport(filename: string) {
     const componentName = filename.split('.')[0];
-    return `import ${toTitleCase(componentName)} from './${componentName}.js';`;
+    return `import ${toTitleCase(componentName)} from './${filename}';`;
 }
 
 export function convertTemplate(template: string) {

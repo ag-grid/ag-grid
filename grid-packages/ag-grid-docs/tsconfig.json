@@ -9,12 +9,15 @@
         "lib": [ "es5", "es6", "dom" ],
         "noImplicitAny": false
     },
-    "include": [ 
+    "include": [
         "./_dev/@ag-grid-community/src/**/*.ts",
         "./_dev/@ag-grid-enterprise/src/**/*.ts",
         "./_dev/ag-grid-enterprise/src/**/*.ts",
         "./_dev/@ag-grid-community/angular/src/**/*.ts",
-        "./_dev/@ag-grid-community/react/src/**/*.ts"
+        "./_dev/@ag-grid-community/react/src/**/*.ts",
+        "./src/example-runner/**/*.ts"
     ],
-    "exclude": [ "node_modules" ]
+    "exclude": [
+        "node_modules"
+    ]
 }
