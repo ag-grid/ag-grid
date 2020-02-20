@@ -6,7 +6,7 @@
     $params: ag-process-theme-variables($params, $ag-theme-material-default-params);
     @include ag-theme-base($params, $theme-name);
 
-    .#{theme-name} {
+    .#{$theme-name} {
         @include ag-native-inputs();
 
         .ag-filter-toolpanel-header,
