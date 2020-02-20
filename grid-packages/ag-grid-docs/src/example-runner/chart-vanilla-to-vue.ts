@@ -94,8 +94,7 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): strin
     const [externalEventHandlers, instanceMethods, globalMethods] = getAllMethods(bindings);
     const template = getTemplate(bindings, propertyAttributes);
 
-    return `
-${imports.join('\n')}
+    return `${imports.join('\n')}
 
 const ChartExample = {
     template: \`

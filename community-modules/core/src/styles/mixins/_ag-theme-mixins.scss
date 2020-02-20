@@ -174,7 +174,7 @@
     background-color: rgba($color, 1 - $output-solidity);
 }
 
-$-ag-included-themes: ();
+$-ag-included-themes: () !default;
 
 @mixin ag-include-theme-once-only($name) {
     @if index($-ag-included-themes, $name) != null {

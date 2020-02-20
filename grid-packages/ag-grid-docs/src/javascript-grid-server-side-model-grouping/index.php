@@ -237,7 +237,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= grid_example('Preserve Group State', 'preserve-group-state-new', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Complex Columns</h2>
 

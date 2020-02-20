@@ -72,8 +72,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
     const externalEventHandlers = bindings.externalEventHandlers.map(
         handler => wrapChartUpdateCode(removeFunctionKeyword(handler.body)));
 
-    return `
-${imports.join('\n')}
+    return `${imports.join('\n')}
 
 @Component({
     selector: 'my-app',

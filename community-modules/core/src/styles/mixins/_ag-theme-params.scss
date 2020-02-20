@@ -118,6 +118,7 @@ $-ag-legacy-variable-importers: () !default;
     @return $params;
 }
 
+// TODO remove this and instead use ag-balham-imnport-legacy-vars which calls ag-theme-base-import-legacy-vars
 @mixin ag-register-legacy-variable-importer($importer) {
     @if index($-ag-legacy-variable-importers, $importer) == null {
         $-ag-legacy-variable-importers: append($-ag-legacy-variable-importers, $importer) !global;

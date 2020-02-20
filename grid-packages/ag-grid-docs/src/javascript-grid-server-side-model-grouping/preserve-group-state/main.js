@@ -67,8 +67,8 @@ function ServerSideDatasource(server) {
             setTimeout(function () {
                 if (response.success) {
 
-                    // add ids to data from server so we can set rows expanded
-                    var rowsWithIds = addIds(params.request, response.rows);
+                    // add group ids to data from server so we can set rows expanded
+                    var rowsWithIds = addGroupIdsToRows(params.request, response.rows);
 
                     // call the success callback
                     params.successCallback(rowsWithIds, response.lastRow);
@@ -88,25 +88,22 @@ function ServerSideDatasource(server) {
     };
 }
 
-function addIds(request, rows) {
+function addGroupIdsToRows(request, rows) {
     var rowGroupIds = request.rowGroupCols.map(function(group) { return group.id });
     var groupKeys = request.groupKeys;
 
     if (groupKeys.length === rowGroupIds.length) return rows;
 
     var groupIds = rowGroupIds.slice(0, groupKeys.length + 1);
-    rows.forEach(function(row) {
-        row.id = createGroupId(groupIds, groupKeys);
-    });
-
-    return rows;
+    return rows.map(function(row) { return addGroupIdToRow(row, groupIds, groupKeys) });
 }
 
-function createGroupId(groupIds, groupKeys) {
+function addGroupIdToRow(row, groupIds, groupKeys) {
     // id's are created using a simple heuristic based on group keys: i.e. group node ids will
     // be in the following format: 'Russia', 'Russia-2002'
     var groupPart = groupIds.map(function(id) { return row[id] }).join('-');
-    return groupKeys.length > 0 ? groupKeys.join('-') + groupPart : groupPart;
+    row.id = groupKeys.length > 0 ? groupKeys.join('-') + groupPart : groupPart;
+    return row;
 }
 
 // setup the grid after the page has finished loading
