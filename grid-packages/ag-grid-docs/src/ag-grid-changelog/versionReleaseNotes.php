@@ -39,10 +39,10 @@
 
     <ul>
         <li>
-            Charts is now out of Beta! 
-            (see <a href="/javascript-grid-charts-overview/">Charts</a>).
+            Charts is now out of Beta!
+            (see <a href="/javascript-grid-charts-integrated-overview/">Charts</a>).
         </li>
-        
+
         <li>
             AG-1329 - Modularise Grid Features to reduce grid bundle size
             (see <a href="/javascript-grid-modules/">Modularisation</a>).
@@ -188,8 +188,8 @@
     <ul>
 
         <li>
-            AG-3008 / AG-3009 - Integrated Charts - a major new component has been added to ag-Grid which provides integrated charting from within the grid (see <a href="/javascript-grid-charts-overview/#user-created-charts">User Created Charts</a> and
-            <a href="/javascript-grid-charts-overview/#application-created-charts">Application Created Charts</a>).
+            AG-3008 / AG-3009 - Integrated Charts - a major new component has been added to ag-Grid which provides integrated charting from within the grid (see <a href="/javascript-grid-charts-integrated-overview/#user-created-charts">User Created Charts</a> and
+            <a href="/javascript-grid-charts-integrated-overview/#application-created-charts">Application Created Charts</a>).
         </li>
 
         <li>

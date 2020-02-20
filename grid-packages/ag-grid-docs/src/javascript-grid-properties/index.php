@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>skipHeaderOnAutoSize</th>
-            <td>Set this to true to skip the headerName when autoSize is called by default. For more info see the 
+            <td>Set this to true to skip the headerName when autoSize is called by default. For more info see the
                 <a href="../javascript-grid-resizing/#resizing-example">Resing Example</a>.
             </td>
         </tr>
@@ -400,10 +400,10 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>suppressMaxRenderedRowRestriction</th>
-            <td>By default the grid has limit of rendering a maximum of 500 rows at once (remember the grid only 
-            renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling 
+            <td>By default the grid has limit of rendering a maximum of 500 rows at once (remember the grid only
+            renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling
             this will never be an issue).<br>
-            <strong>This is only relevant if you are manually setting rowBuffer to a high value (rendering more rows 
+            <strong>This is only relevant if you are manually setting rowBuffer to a high value (rendering more rows
             than can be seen) or if your grid height is able to display more than 500 rows at once</strong></td>
         </tr>
         <tr>
@@ -608,7 +608,7 @@ include '../documentation-main/documentation_header.php';
     <table class="table content reference">
         <tr>
             <th>enableCharts</th>
-            <td>Set to true to  <a href="../javascript-grid-charts-overview/#enabling-charts">Enable Charts</a>.</td>
+            <td>Set to true to  <a href="../javascript-grid-charts-integrated-overview/#enabling-charts">Enable Charts</a>.</td>
         </tr>
     </table>
     <h2>Miscellaneous</h2>
@@ -629,12 +629,12 @@ include '../documentation-main/documentation_header.php';
             <td>If true, then middle clicks will result in 'click' events for cell and row. Otherwise the browser
                 will use middle click to scroll the grid.<br>
                 <strong>Note:</strong> Not all browsers fire <code>click</code> events with the middle button. Most will
-                fire only <code>mousedown</code> and <code>mouseup</code> events, which can be used to focus a cell, but 
+                fire only <code>mousedown</code> and <code>mouseup</code> events, which can be used to focus a cell, but
                 will not work to call the <code>onCellClicked</code> function.</td>
         </tr>
         <tr>
             <th>suppressPreventDefaultOnMouseWheel</th>
-            <td>If true, mouse wheel events will be passed to the browser - useful if your grid has no vertical scrolls 
+            <td>If true, mouse wheel events will be passed to the browser - useful if your grid has no vertical scrolls
                 and you want the mouse to scroll the browser page.</td>
         </tr>
         <tr>
@@ -758,7 +758,7 @@ include '../documentation-main/documentation_header.php';
             <th>preventDefaultOnContextMenu</th>
             <td>
                 When using <code>suppressContextMenu</code>, you can use the <code>onCellContextMenu</code> function
-                to provide your own code to handle cell <code>contextmenu</code> events. This flag is useful to prevent 
+                to provide your own code to handle cell <code>contextmenu</code> events. This flag is useful to prevent
                 the browser from showing it's default context menu.
             </td>
         </tr>

@@ -9,7 +9,7 @@
     </div>
     <div class="row mt-3">
         <div class="col-12 text-right">
-            <a class="btn btn-link" href="../javascript-grid-charts-overview/">Read more about integrated charting</a>
+            <a class="btn btn-link" href="../javascript-grid-charts-integrated-overview/">Read more about integrated charting</a>
         </div>
     </div>
 </div>

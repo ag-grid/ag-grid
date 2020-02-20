@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         In v21 of ag-Grid we introduced charting using the grid's own
-        <a href="../javascript-grid-charts-overview/">internal charting library</a>. This page pre-dates the grid's
+        <a href="../javascript-grid-charts-integrated-overview/">internal charting library</a>. This page pre-dates the grid's
         internal charting library. It is our plan in the future to allow using the charting library
         to achieve the below, but for now we will leave the examples using D3 and Sparklines.
     </note>
