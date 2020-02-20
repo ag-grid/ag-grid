@@ -120,9 +120,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onNavigationKeyPressed(event: any, key: number): void {
-        // if we don't stop propagation, then the grids navigation kicks in
-        event.stopPropagation();
-
+        // if we don't preventDefault the page body and/or grid scroll will move.
+        event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
         const newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
 
