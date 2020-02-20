@@ -17,6 +17,15 @@
     "Simple Bar": {
         "description": "The bar chart represents data as a series of horizontal bars."
     },
+    "Grouped Bar": {
+        "description": "The bar chart represents data as a series of horizontal bars grouped together."
+    },
+    "Stacked Bar": {
+        "description": "The bar chart represents data as a series of stacked horizontal bars."
+    },
+    "Bar With Negative Numbers": {
+        "description": "A bar chart showing use of negative numbers."
+    },
     "Simple Line": {
         "description": "The line chart represents data using a number of lines."
     },

@@ -2,7 +2,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Gross Weekly Earnings by Occupation (Q4 2019)',
+        text: 'Annual Growth in Pay (2018-2019)',
         fontSize: 18,
     },
     subtitle: {
@@ -11,7 +11,11 @@ var options = {
     series: [{
         type: 'bar',
         xKey: 'type',
-        yKeys: ['earnings'],
+        yKeys: ['total', 'regular'],
+        yNames: ['Annual growth in total pay', 'Annual growth in regular pay'],
+        grouped: true,
+        fills: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
+        strokes: ['rgba(0, 117, 163, 0.9)', 'rgba(226, 188, 34, 0.9)'],
     }],
     axes: [
         {
@@ -22,12 +26,12 @@ var options = {
             type: 'number',
             position: 'bottom',
             title: {
-                text: '£/week'
+                text: '%'
             }
         }
     ],
     legend: {
-        enabled: false,
+        position: 'bottom',
     },
 };
 

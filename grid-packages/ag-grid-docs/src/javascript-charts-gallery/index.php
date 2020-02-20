@@ -53,6 +53,24 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
+    <a href="./grouped-bar.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/grouped-bar.png" /><br />
+        <div class="chart-gallery-item__name">Grouped Bar</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
+    <a href="./stacked-bar.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/stacked-bar.png" /><br />
+        <div class="chart-gallery-item__name">Stacked Bar</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
+    <a href="./bar-with-negative-numbers.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-numbers.png" /><br />
+        <div class="chart-gallery-item__name">Bar With Negative Numbers</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
     <a href="./simple-line.php" class="chart-gallery-item__link">
         <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-line.png" /><br />
         <div class="chart-gallery-item__name">Simple Line</div>

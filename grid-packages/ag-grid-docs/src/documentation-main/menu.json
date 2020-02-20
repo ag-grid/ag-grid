@@ -1029,6 +1029,18 @@
                 "url": "javascript-charts-gallery/simple-bar.php"
               },
               {
+                "title": "Grouped Bar",
+                "url": "javascript-charts-gallery/grouped-bar.php"
+              },
+              {
+                "title": "Stacked Bar",
+                "url": "javascript-charts-gallery/stacked-bar.php"
+              },
+              {
+                "title": "Bar With Negative Numbers",
+                "url": "javascript-charts-gallery/bar-with-negative-numbers.php"
+              },
+              {
                 "title": "Simple Line",
                 "url": "javascript-charts-gallery/simple-line.php"
               },
