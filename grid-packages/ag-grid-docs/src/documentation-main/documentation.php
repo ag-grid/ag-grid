@@ -7,6 +7,28 @@ define('skipInPageNav', true);
 include 'documentation_header.php';
 ?>
 
+<div class="group" style="overflow: hidden;">
+    <h1>Getting Started</h1>
+    <div class="group-items flex-lg-column flex-xl-row">
+        <div class="d-flex flex-fill flex-nowrap">
+            <div class="docs-homepage-section-preview get-started-framework card-javascript flex-fill" style="height: 4rem; min-width: unset">
+                <a href="../../javascript-grid/" style="background-size: 3rem 3rem;" title="JavaScript">JavaScript</a>
+            </div>
+            <div class="docs-homepage-section-preview get-started-framework card-angular flex-fill" style="height: 4rem; min-width: unset">
+                <a href="../../angular-grid/" style="background-size: 3rem 3rem;" title="Angular">Angular</a>
+            </div>
+        </div>
+        <div class="d-flex flex-fill flex-nowrap">
+            <div class="docs-homepage-section-preview get-started-framework card-react flex-fill" style="height: 4rem; min-width: unset">
+                <a href="../../react-grid/" style="background-size: 3rem 3rem;" title="React">React</a>
+            </div>
+            <div class="docs-homepage-section-preview get-started-framework card-vue-inverted flex-fill" style="height: 4rem; min-width: unset">
+                <a href="../vuejs-grid/" style="background-size: 3rem 3rem;" title="Vue">Vue.js</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php
 
 renderDocs();
@@ -31,9 +53,6 @@ function renderTitle($group) {
     $groupConfigs = $group['items'];
 
     foreach($groupConfigs as $groupConfig) {
-        
-
-
         $title = $groupConfig['title'];
         $icon = $groupConfig['icon'];
 

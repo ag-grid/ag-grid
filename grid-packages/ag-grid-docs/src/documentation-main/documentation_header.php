@@ -56,6 +56,7 @@ function enterprise_feature($name)
 
         function addContainerListeners(ct) {
             var card = ct.querySelector('.card');
+            if (!card) { return; }
             ct.addEventListener('click', function(e) { toggleOpen(e, ct) });
             card.addEventListener('mouseleave', function(e) { toggleOpen(e, ct, false)});
         }
