@@ -1,3 +1,5 @@
+@import "./ag-theme-base-default-params";
+@import "./ag-theme-base-legacy-vars";
 @import "../../mixins/ag-theme-mixins";
 @import "./parts/reset";
 @import "./parts/grid-layout";
@@ -11,11 +13,18 @@
 @import "./parts/footer";
 @import "./parts/column-drop";
 @import "./parts/charts";
-@import "./ag-theme-base-default-params";
 
-@mixin ag-theme-base($params, $validate: true) {
+@mixin ag-theme-base($params, $theme-name) {
+    @include ag-include-theme-once-only($theme-name);
+    .#{$theme-name} {
+        @include ag-theme-base-bare($params);
+    }
+}
 
-    $params: ag-process-theme-variables($params, $ag-theme-base-default-params, $validate);
+// emit base theme CSS directly into the current scope without nesting it in a .ag-theme-whatever selector
+@mixin ag-theme-base-bare($params) {
+
+    $params: ag-process-theme-variables($params, $ag-theme-base-default-params);
 
     @include ag-icons-font-face();
     @include ag-icons-webfont();

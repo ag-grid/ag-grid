@@ -174,3 +174,11 @@
     background-color: rgba($color, 1 - $output-solidity);
 }
 
+$-ag-included-themes: ();
+
+@mixin ag-include-theme-once-only($name) {
+    @if index($-ag-included-themes, $name) != null {
+        @error "The theme mixin #{$name} has been included twice. This can happen when you @import the legacy file #{$name}.scss and then also @include the #{$name}() mixin. To use the #{$name}() mixin, @import #{$name}-mixin.scss.";
+    }
+    $-ag-included-themes: append($-ag-included-themes, $name) !global;
+}

@@ -1,6 +1,18 @@
 // We prefixed all global vars with "ag-" to avoid clashes with other libraries
 // Import old-style var names to avoid breaking 3rd party themes that use them
 
+@function ag-theme-base-import-legacy-vars() {
+    $params: ();
+    $defaults: $ag-theme-base-default-params;
+
+    $params: ag-merge-legacy-var($params, "header-foreground-color", if(variable-exists("ag-header-foreground-color"), $ag-header-foreground-color, $ag-not-defined), $defaults);
+    // $params: ag-merge-legacy-var($params, "accent-color", if(variable-exists("ag-accent-color"), $ag-accent-color, $ag-not-defined), $defaults);
+
+    @return $params;
+};
+
+@include ag-register-legacy-variable-importer(get-function("ag-theme-base-import-legacy-vars"));
+
 @if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 
   @if (variable-exists("accent-color") and not variable-exists("ag-accent-color")) {

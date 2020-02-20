@@ -47,7 +47,7 @@
 }
 
 // global map of params used by ag-param()
-$-ag-params: null;
+$-ag-params: null !default;
 
 // Register a params map globally so that it can be used by ag-param($name)
 @mixin ag-register-params($params) {
@@ -83,28 +83,58 @@ $-ag-params: null;
     @return -ag-resolve-param-name($-ag-params, $name);
 }
 
-// Merge params supplied to a theme with the defaults, optionally validate, and register the resulting
-// map globally for use with ag-param()
+// Merge params supplied to a theme with the defaults, optionally validate, and register
+// the resulting map globally for use with ag-param()
 //
 // $params: params supplied by the derived theme
 // $defaults: values for params not in $params
-// $validate: if true, issue a warning for any params that have no default
-@function ag-process-theme-variables($params, $defaults, $validate) {
-    @if $validate {
+@function ag-process-theme-variables($params, $defaults) {
+    // Derived themes can add params, and those new params would trigger validation errors when
+    // passed to the base theme, so don't re-validate params that have already been validated
+    @if not map-has-key($params, "--ag-already-validated") {
         @each $key in map-keys($params) {
             @if not map-has-key($defaults, $key) {
-                @warn "Unrecognised param \"#{$key}\" supplied to #{$theme-name}";
+                @warn "Unrecognised param \"#{$key}\"";
             }
         }
     }
     $params: map-merge($defaults, $params);
+    $params: map-merge($params, ("--ag-already-validated": true));
     $-ag-params: $params !global;
     @return $params;
 }
 
-@function ag-import-legacy-global-variables($defaults) {
-    // TODO implement global variable import
-    @return $defaults;
+$-ag-legacy-variable-importers: () !default;
+
+@function ag-import-legacy-global-variables($theme-defaults) {
+    $params: ();
+    @each $importer in $-ag-legacy-variable-importers {
+        @each $key, $value in call($importer) {
+            @if map-has-key($theme-defaults, $key) {
+                $params: map-merge($params, ($key: $value));
+            }
+        }
+    }
+    @return $params;
+}
+
+@mixin ag-register-legacy-variable-importer($importer) {
+    @if index($-ag-legacy-variable-importers, $importer) == null {
+        $-ag-legacy-variable-importers: append($-ag-legacy-variable-importers, $importer) !global;
+    }
+}
+
+$ag-not-defined: "--ag-not-defined" !default;
+
+// used in legacy var importers, see e.g. ag-theme-base-legacy-vars.scss for example
+@function ag-merge-legacy-var($params, $param-name, $value-or-not-defined, $defaults) {
+    @if not map-has-key($defaults, $param-name) {
+        @error "Invalid param to merge: #{$param-name}";
+    }
+    @if $value-or-not-defined == $ag-not-defined {
+        @return $params;
+    }
+    @return map-merge($params, ($param-name: $value-or-not-defined));
 }
 
 //

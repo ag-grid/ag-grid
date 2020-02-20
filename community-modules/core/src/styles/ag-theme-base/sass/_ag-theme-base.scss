@@ -2,8 +2,9 @@
 
 // LEGACY THEME FILE
 // This mixin is for backwards compatibility with older apps that use global variables
-// New apps should pass params to the ag-theme-base($params) mixin
+// New apps should @import ag-theme-base-mixin.scss and @include ag-theme-base($params),
+// instead of using this file.
 
 @mixin ag-grid-theme {
-    @include ag-theme-base(ag-import-legacy-global-variables($ag-theme-base-default-params));
+    @include ag-theme-base-bare(ag-import-legacy-global-variables($ag-theme-base-default-params));
 }

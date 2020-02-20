@@ -1,7 +1,7 @@
 @import "../../ag-theme-balham/sass/ag-theme-balham-mixin";
 @import "./ag-theme-balham-dark-default-params";
 
-@mixin ag-theme-balham-dark($params, $validate: true) {
-    $params: ag-process-theme-variables($params, $ag-theme-balham-dark-default-params, $validate);
-    @include ag-theme-balham($params, $validate: false);
+@mixin ag-theme-balham-dark($params, $theme-name: "ag-theme-balham-dark") {
+    $params: ag-process-theme-variables($params, $ag-theme-balham-dark-default-params);
+    @include ag-theme-balham($params, $theme-name);
 }

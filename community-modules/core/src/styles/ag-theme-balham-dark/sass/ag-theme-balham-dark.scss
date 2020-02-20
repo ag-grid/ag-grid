@@ -1,9 +1,8 @@
 @import "./ag-theme-balham-dark-mixin.scss";
 
 // LEGACY THEME FILE
-// This mixin is for backwards compatibility with older apps that use global variables
-// New apps should pass params to the ag-theme-balham-dark($params) mixin
+// This mixin is for backwards compatibility with older apps that use global variables.
+// Including this file emits CSS for the Balham Dark theme. New apps should @import ag-theme-balham-dark-mixin.scss
+// and @include ag-theme-balham-dark($params), instead of using this file.
 
-.ag-theme-balham-dark {
-    @include ag-theme-balham-dark(ag-import-legacy-global-variables($ag-theme-balham-dark-default-params));
-}
+@include ag-theme-balham-dark(ag-import-legacy-global-variables($ag-theme-balham-dark-default-params));
