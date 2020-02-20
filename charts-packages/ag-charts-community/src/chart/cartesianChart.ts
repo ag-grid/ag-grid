@@ -5,6 +5,7 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
+// import { ClipRect } from "../scene/clipRect";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -149,6 +150,13 @@ export class CartesianChart extends Chart {
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
+
+        // When seriesRoot is a ClipRect:
+        // const { seriesRoot } = this;
+        // seriesRoot.x = shrinkRect.x;
+        // seriesRoot.y = shrinkRect.y;
+        // seriesRoot.width = shrinkRect.width;
+        // seriesRoot.height = shrinkRect.height;
 
         this.axes.forEach(axis => axis.update());
     }
