@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
 <div><div class="get-started-framework card-react">
     <a href="../react-charts/">React</a>
     <div>
-        <p><a href="../react-charts/">Get Started</a></p>e
+        <p><a href="../react-charts/">Get Started</a></p>
     </div>
 </div></div>
 
