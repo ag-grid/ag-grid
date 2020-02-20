@@ -43,13 +43,15 @@ const FunctionDefinition = ({ definition }) => {
 const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {
     const derivedType = type || getType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
+    const configureLinksForParent = value =>
+        value.replace(/<a (.*?)href="([^"]+)"(.*?)>/g, '<a $1href="#" onclick="window.parent.location=\'../$2\'"$3>');
 
     return <div className={`option ${isVisible ? '' : 'option--hidden'} ${isAlternate ? 'option--alternate' : ''}`}>
         <span className="option__name">{name}</span>
         {derivedType && <span className="option__type">{isFunction ? 'Function' : derivedType}</span>}
         {isRequired ? <div className="option__required">Required</div> : <div className="option__default">Default: {defaultValue != null ? <code className="option__code">{formatJson(defaultValue)}</code> : 'N/A'}</div>}<br />
         {isFunction && <FunctionDefinition definition={derivedType} />}
-        <span className="option__description" dangerouslySetInnerHTML={{ __html: description }}></span><br />
+        <span className="option__description" dangerouslySetInnerHTML={{ __html: configureLinksForParent(description) }}></span><br />
         {Editor && <Editor value={defaultValue} {...editorProps} />}
         {!Editor && editorProps.options && <span>Options: <code>{editorProps.options.map(formatJson).join(' | ')}</code></span>}
     </div>;
