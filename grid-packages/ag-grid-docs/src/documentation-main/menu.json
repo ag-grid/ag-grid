@@ -10,11 +10,13 @@
           {
             "title": "Community & Enterprise",
             "url": "javascript-grid-set-license/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Packages & Modules",
             "url": "javascript-grid-packages/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Modules",
@@ -28,7 +30,8 @@
           },
           {
             "title": "Supported Browsers",
-            "url": "javascript-grid-supported-browsers/"
+            "url": "javascript-grid-supported-browsers/",
+            "showInCollapsed": true
           },
           {
             "title": "Getting Started",
@@ -37,7 +40,6 @@
               {
                 "title": "Vanilla JavaScript",
                 "url": "javascript-grid/",
-                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Install with NPM",
@@ -52,7 +54,6 @@
               {
                 "title": "Angular",
                 "url": "angular-grid/",
-                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Components",
@@ -91,7 +92,6 @@
               {
                 "title": "React",
                 "url": "react-grid/",
-                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Column Configuration",
@@ -130,7 +130,6 @@
               {
                 "title": "Vue",
                 "url": "vuejs-grid/",
-                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Components",
@@ -185,6 +184,7 @@
           {
             "title": "Grid Interface",
             "url": "javascript-grid-reference-overview/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Grid Properties",
@@ -217,6 +217,7 @@
           {
             "title": "Column Interface",
             "url": "javascript-grid-column-definitions/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Column Properties",
@@ -245,32 +246,38 @@
           {
             "title": "Column Headers",
             "box-title": "Headers",
-            "url": "javascript-grid-column-header/"
+            "url": "javascript-grid-column-header/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Groups",
             "box-title": "Groups",
-            "url": "javascript-grid-grouping-headers/"
+            "url": "javascript-grid-grouping-headers/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Sizing",
             "box-title": "Sizing",
-            "url": "javascript-grid-resizing/"
+            "url": "javascript-grid-resizing/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Moving",
             "box-title": "Moving",
-            "url": "javascript-grid-column-moving/"
+            "url": "javascript-grid-column-moving/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Pinning",
             "box-title": "Pinning",
-            "url": "javascript-grid-pinning/"
+            "url": "javascript-grid-pinning/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Spanning",
             "box-title": "Spanning",
-            "url": "javascript-grid-column-spanning/"
+            "url": "javascript-grid-column-spanning/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -281,37 +288,44 @@
           {
             "title": "Row Sorting",
             "box-title": "Sorting",
-            "url": "javascript-grid-sorting/"
+            "url": "javascript-grid-sorting/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Dragging",
             "box-title": "Dragging",
-            "url": "javascript-grid-row-dragging/"
+            "url": "javascript-grid-row-dragging/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Spanning",
             "box-title": "Spanning",
-            "url": "javascript-grid-row-spanning/"
+            "url": "javascript-grid-row-spanning/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Pinning",
             "box-title": "Pinning",
-            "url": "javascript-grid-row-pinning/"
+            "url": "javascript-grid-row-pinning/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Height",
             "box-title": "Height",
-            "url": "javascript-grid-row-height/"
+            "url": "javascript-grid-row-height/",
+            "showInCollapsed": true
           },
           {
             "title": "Full Width Rows",
             "box-title": "Full Width",
-            "url": "javascript-grid-full-width-rows/"
+            "url": "javascript-grid-full-width-rows/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Animation",
             "box-title": "Animation",
-            "url": "javascript-grid-animation/"
+            "url": "javascript-grid-animation/",
+            "showInCollapsed": true
           }
         ]
       }
@@ -327,17 +341,20 @@
           {
             "title": "Styling Rows",
             "box-title": "Rows",
-            "url": "javascript-grid-row-styles/"
+            "url": "javascript-grid-row-styles/",
+            "showInCollapsed": true
           },
           {
             "title": "Styling Cells",
             "box-title": "Cells",
-            "url": "javascript-grid-cell-styles/"
+            "url": "javascript-grid-cell-styles/",
+            "showInCollapsed": true
           },
           {
             "title": "Themes",
             "url": "javascript-grid-styling/",
             "matrixExcludeChildren": true,
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Provided Themes",
@@ -347,16 +364,19 @@
           },
           {
             "title": "Grid Size",
-            "url": "javascript-grid-width-and-height/"
+            "url": "javascript-grid-width-and-height/",
+            "showInCollapsed": true
           },
           {
             "title": "Custom Icons",
             "box-title": "Icons",
-            "url": "javascript-grid-icons/"
+            "url": "javascript-grid-icons/",
+            "showInCollapsed": true
           },
           {
             "title": "Printing",
-            "url": "javascript-grid-for-print/"
+            "url": "javascript-grid-for-print/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -366,11 +386,13 @@
         "items": [
           {
             "title": "Client Side Data",
-            "url": "javascript-grid-client-side-model/"
+            "url": "javascript-grid-client-side-model/",
+            "showInCollapsed": true
           },
           {
             "title": "Server Side Data",
             "url": "javascript-grid-row-models/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Server Side Row Model",
@@ -477,15 +499,18 @@
           },
           {
             "title": "Accessing Data",
-            "url": "javascript-grid-accessing-data/"
+            "url": "javascript-grid-accessing-data/",
+            "showInCollapsed": true
           },
           {
             "title": "Updating Data",
-            "url": "javascript-grid-data-update/"
+            "url": "javascript-grid-data-update/",
+            "showInCollapsed": true
           },
           {
             "title": "Context",
-            "url": "javascript-grid-context/"
+            "url": "javascript-grid-context/",
+            "showInCollapsed": true
           },
           {
             "title": "See Also",
@@ -505,16 +530,19 @@
         "items": [
           {
             "title": "Overview",
-            "url": "javascript-grid-selection-overview/"
+            "url": "javascript-grid-selection-overview/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Selection",
-            "url": "javascript-grid-selection/"
+            "url": "javascript-grid-selection/",
+            "showInCollapsed": true
           },
           {
             "title": "Range Selection",
             "url": "javascript-grid-range-selection/",
             "enterprise": true,
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Range Handle",
@@ -536,11 +564,13 @@
         "items": [
           {
             "title": "Overview",
-            "url": "javascript-grid-filtering-overview/"
+            "url": "javascript-grid-filtering-overview/",
+            "showInCollapsed": true
           },
           {
             "title": "Column Filters",
             "url": "javascript-grid-filtering/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Provided Column Filters",
@@ -591,11 +621,13 @@
           },
           {
             "title": "External Filter",
-            "url": "javascript-grid-filter-external/"
+            "url": "javascript-grid-filter-external/",
+            "showInCollapsed": true
           },
           {
             "title": "Quick Filter",
-            "url": "javascript-grid-filter-quick/"
+            "url": "javascript-grid-filter-quick/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -606,6 +638,7 @@
           {
             "title": "Cell Content",
             "url": "javascript-grid-rendering-flow/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Value Getters",
@@ -631,11 +664,13 @@
           },
           {
             "title": "Cell Rendering",
-            "url": "javascript-grid-cell-rendering/"
+            "url": "javascript-grid-cell-rendering/",
+            "showInCollapsed": true
           },
           {
             "title": "Provided Renderers",
             "url": "javascript-grid-provided-renderers/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Group Cell Renderer",
@@ -649,11 +684,13 @@
           },
           {
             "title": "View Refresh",
-            "url": "javascript-grid-refresh/"
+            "url": "javascript-grid-refresh/",
+            "showInCollapsed": true
           },
           {
             "title": "Change Detection",
-            "url": "javascript-grid-change-detection/"
+            "url": "javascript-grid-change-detection/",
+            "showInCollapsed": true
           },
           {
             "title": "See Also",
@@ -673,11 +710,13 @@
         "items": [
           {
             "title": "Cell Editing",
-            "url": "javascript-grid-cell-editing/"
+            "url": "javascript-grid-cell-editing/",
+            "showInCollapsed": true
           },
           {
             "title": "Saving Content",
             "url": "javascript-grid-editing-flow/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Value Parsers",
@@ -693,11 +732,13 @@
           },
           {
             "title": "Provided Editors",
-            "url": "javascript-grid-provided-cell-editors/"
+            "url": "javascript-grid-provided-cell-editors/",
+            "showInCollapsed": true
           },
           {
             "title": "Undo / Redo Edits",
-            "url": "javascript-grid-undo-redo-edits/"
+            "url": "javascript-grid-undo-redo-edits/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -708,27 +749,32 @@
           {
             "title": "Row Grouping",
             "url": "javascript-grid-grouping/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Master Detail",
             "url": "javascript-grid-master-detail/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Tree Data",
             "url": "javascript-grid-tree-data/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Aggregation",
             "url": "javascript-grid-aggregation/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Pivoting",
             "url": "javascript-grid-pivoting/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           }
         ]
       },
@@ -739,6 +785,7 @@
           {
             "title": "Export",
             "url": "javascript-grid-export/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "CSV Export",
@@ -754,11 +801,13 @@
           {
             "title": "Clipboard",
             "url": "javascript-grid-clipboard/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Drag & Drop",
-            "url": "javascript-grid-drag-and-drop/"
+            "url": "javascript-grid-drag-and-drop/",
+            "showInCollapsed": true
           },
           {
             "title": "See Also",
@@ -786,6 +835,7 @@
             "title": "Tool Panels",
             "url": "javascript-grid-tool-panel/",
             "enterprise": true,
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Side Bar",
@@ -810,21 +860,25 @@
           {
             "title": "Column Menu",
             "url": "javascript-grid-column-menu/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Context Menu",
             "url": "javascript-grid-context-menu/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Status Bar",
             "url": "javascript-grid-status-bar/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Overlays",
-            "url": "javascript-grid-overlays/"
+            "url": "javascript-grid-overlays/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -834,11 +888,13 @@
         "items": [
           {
             "title": "Registering Components",
-            "url": "javascript-grid-components/"
+            "url": "javascript-grid-components/",
+            "showInCollapsed": true
           },
           {
             "title": "Component Types",
             "url": "javascript-grid-component-types/",
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "Cell Renderer",
@@ -909,136 +965,220 @@
         ]
       },
       {
-        "title": "Standalone Charts",
+        "title": "Charts",
         "icon": "icon-charts",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-charts-overview/"
-          },
-          {
-            "title": "Getting Started",
-            "url": "javascript-charts-getting-started/",
+            "title": "Integrated",
+            "url": "javascript-grid-charts-integrated-overview/",
+            "enterprise": true,
+            "showInCollapsed": true,
             "items": [
               {
-                "title": "Vanilla JavaScript",
-                "url": "javascript-charts/"
+                "title": "Range Chart",
+                "url": "javascript-grid-charts-integrated-range-chart/",
+                "enterprise": true
               },
               {
-                "title": "Angular",
-                "url": "angular-charts/"
+                "title": "Pivot Chart",
+                "url": "javascript-grid-charts-integrated-pivot-chart/",
+                "enterprise": true
               },
               {
-                "title": "React",
-                "url": "react-charts/"
+                "title": "Chart Toolbar",
+                "url": "javascript-grid-charts-integrated-chart-toolbar/",
+                "enterprise": true
               },
               {
-                "title": "Vue",
-                "url": "vuejs-charts/"
+                "title": "Chart API",
+                "url": "javascript-grid-charts-integrated-chart-range-api/",
+                "enterprise": true
+              },
+              {
+                "title": "Chart Events",
+                "url": "javascript-grid-charts-integrated-chart-events/",
+                "enterprise": true
+              },
+              {
+                "title": "Chart Container",
+                "url": "javascript-grid-charts-integrated-container/",
+                "enterprise": true
+              },
+              {
+                "title": "Customisation",
+                "url": "javascript-grid-charts-integrated-customisation/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "General",
+                    "url": "javascript-grid-charts-integrated-customisation-general/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Cartesian",
+                    "url": "javascript-grid-charts-integrated-customisation-cartesian/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Line",
+                    "url": "javascript-grid-charts-integrated-customisation-line/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-grid-charts-integrated-customisation-bar/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-grid-charts-integrated-customisation-area/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-grid-charts-integrated-customisation-scatter/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-grid-charts-integrated-customisation-pie/",
+                    "enterprise": true
+                  }
+                ]
               }
             ]
           },
           {
-            "title": "Gallery",
-            "url": "javascript-charts-gallery/",
+            "title": "Standalone",
+            "url": "javascript-charts-overview/",
+            "showInCollapsed": true,
             "items": [
               {
-                "title": "Simple Column",
-                "url": "javascript-charts-gallery/simple-column.php"
+                "title": "Getting Started",
+                "url": "javascript-charts-getting-started/",
+                "items": [
+                  {
+                    "title": "Vanilla JavaScript",
+                    "url": "javascript-charts/"
+                  },
+                  {
+                    "title": "Angular",
+                    "url": "angular-charts/"
+                  },
+                  {
+                    "title": "React",
+                    "url": "react-charts/"
+                  },
+                  {
+                    "title": "Vue",
+                    "url": "vuejs-charts/"
+                  }
+                ]
               },
               {
-                "title": "Grouped Column",
-                "url": "javascript-charts-gallery/grouped-column.php"
+                "title": "Gallery",
+                "url": "javascript-charts-gallery/",
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Simple Column",
+                    "url": "javascript-charts-gallery/simple-column.php"
+                  },
+                  {
+                    "title": "Grouped Column",
+                    "url": "javascript-charts-gallery/grouped-column.php"
+                  },
+                  {
+                    "title": "Stacked Column",
+                    "url": "javascript-charts-gallery/stacked-column.php"
+                  },
+                  {
+                    "title": "Percentage Column",
+                    "url": "javascript-charts-gallery/percentage-column.php"
+                  },
+                  {
+                    "title": "Column With Negative Numbers",
+                    "url": "javascript-charts-gallery/column-with-negative-numbers.php"
+                  },
+                  {
+                    "title": "Simple Bar",
+                    "url": "javascript-charts-gallery/simple-bar.php"
+                  },
+                  {
+                    "title": "Simple Line",
+                    "url": "javascript-charts-gallery/simple-line.php"
+                  },
+                  {
+                    "title": "Line With Gaps",
+                    "url": "javascript-charts-gallery/line-with-gaps.php"
+                  },
+                  {
+                    "title": "Simple Area",
+                    "url": "javascript-charts-gallery/simple-area.php"
+                  },
+                  {
+                    "title": "Stacked Area",
+                    "url": "javascript-charts-gallery/stacked-area.php"
+                  }
+                ]
               },
               {
-                "title": "Stacked Column",
-                "url": "javascript-charts-gallery/stacked-column.php"
+                "title": "Series",
+                "url": "javascript-charts-series/",
+                "items": [
+                  {
+                    "title": "Line",
+                    "url": "javascript-charts-line-series/"
+                  },
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-charts-bar-series/"
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-charts-area-series/"
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-charts-scatter-series/"
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-charts-pie-series/"
+                  }
+                ]
               },
               {
-                "title": "Percentage Column",
-                "url": "javascript-charts-gallery/percentage-column.php"
+                "title": "Features",
+                "url": "javascript-charts-features/",
+                "items": [
+                  {
+                    "title": "Layout",
+                    "url": "javascript-charts-layout/"
+                  },
+                  {
+                    "title": "Legend",
+                    "url": "javascript-charts-legend/"
+                  },
+                  {
+                    "title": "Markers",
+                    "url": "javascript-charts-markers/"
+                  },
+                  {
+                    "title": "Tooltips",
+                    "url": "javascript-charts-tooltips/"
+                  }
+                ]
               },
               {
-                "title": "Column With Negative Numbers",
-                "url": "javascript-charts-gallery/column-with-negative-numbers.php"
-              },
-              {
-                "title": "Simple Bar",
-                "url": "javascript-charts-gallery/simple-bar.php"
-              },
-              {
-                "title": "Simple Line",
-                "url": "javascript-charts-gallery/simple-line.php"
-              },
-              {
-                "title": "Line With Gaps",
-                "url": "javascript-charts-gallery/line-with-gaps.php"
-              },
-              {
-                "title": "Simple Area",
-                "url": "javascript-charts-gallery/simple-area.php"
-              },
-              {
-                "title": "Stacked Area",
-                "url": "javascript-charts-gallery/stacked-area.php"
-              }
-            ]
-          },
-          {
-            "title": "Series",
-            "url": "javascript-charts-series/",
-            "items": [
-              {
-                "title": "Line",
-                "url": "javascript-charts-line-series/"
-              },
-              {
-                "title": "Bar/Column",
-                "url": "javascript-charts-bar-series/"
-              },
-              {
-                "title": "Area",
-                "url": "javascript-charts-area-series/"
-              },
-              {
-                "title": "Scatter/Bubble",
-                "url": "javascript-charts-scatter-series/"
-              },
-              {
-                "title": "Pie/Doughnut",
-                "url": "javascript-charts-pie-series/"
-              }
-            ]
-          },
-          {
-            "title": "Features",
-            "url": "javascript-charts-features/",
-            "items": [
-              {
-                "title": "Layout",
-                "url": "javascript-charts-layout/"
-              },
-              {
-                "title": "Legend",
-                "url": "javascript-charts-legend/"
-              },
-              {
-                "title": "Markers",
-                "url": "javascript-charts-markers/"
-              },
-              {
-                "title": "Tooltips",
-                "url": "javascript-charts-tooltips/"
-              }
-            ]
-          },
-          {
-            "title": "API",
-            "url": "javascript-charts-api/",
-            "items": [
-              {
-                "title": "API Explorer",
-                "url": "javascript-charts-api-explorer/"
+                "title": "API",
+                "url": "javascript-charts-api/",
+                "items": [
+                  {
+                    "title": "API Explorer",
+                    "url": "javascript-charts-api-explorer/"
+                  }
+                ]
               }
             ]
           },
@@ -1048,89 +1188,6 @@
               {
                 "title": "Third Party Charting",
                 "url": "javascript-grid-graphing/"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Integrated Charts",
-        "icon": "icon-charts",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-grid-charts-integrated-overview/",
-            "enterprise": true
-          },
-          {
-            "title": "Range Chart",
-            "url": "javascript-grid-charts-integrated-range-chart/",
-            "enterprise": true
-          },
-          {
-            "title": "Pivot Chart",
-            "url": "javascript-grid-charts-integrated-pivot-chart/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Toolbar",
-            "url": "javascript-grid-charts-integrated-chart-toolbar/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart API",
-            "url": "javascript-grid-charts-integrated-chart-range-api/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Events",
-            "url": "javascript-grid-charts-integrated-chart-events/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Container",
-            "url": "javascript-grid-charts-integrated-container/",
-            "enterprise": true
-          },
-          {
-            "title": "Customisation",
-            "url": "javascript-grid-charts-integrated-customisation/",
-            "enterprise": true,
-            "items": [
-              {
-                "title": "General",
-                "url": "javascript-grid-charts-integrated-customisation-general/",
-                "enterprise": true
-              },
-              {
-                "title": "Cartesian",
-                "url": "javascript-grid-charts-integrated-customisation-cartesian/",
-                "enterprise": true
-              },
-              {
-                "title": "Line",
-                "url": "javascript-grid-charts-integrated-customisation-line/",
-                "enterprise": true
-              },
-              {
-                "title": "Bar/Column",
-                "url": "javascript-grid-charts-integrated-customisation-bar/",
-                "enterprise": true
-              },
-              {
-                "title": "Area",
-                "url": "javascript-grid-charts-integrated-customisation-area/",
-                "enterprise": true
-              },
-              {
-                "title": "Scatter/Bubble",
-                "url": "javascript-grid-charts-integrated-customisation-scatter/",
-                "enterprise": true
-              },
-              {
-                "title": "Pie/Doughnut",
-                "url": "javascript-grid-charts-integrated-customisation-pie/",
-                "enterprise": true
               }
             ]
           }
@@ -1147,19 +1204,23 @@
         "items": [
           {
             "title": "DOM Virtualisation",
-            "url": "javascript-grid-dom-virtualisation/"
+            "url": "javascript-grid-dom-virtualisation/",
+            "showInCollapsed": true
           },
           {
             "title": "Row Pagination",
-            "url": "javascript-grid-pagination/"
+            "url": "javascript-grid-pagination/",
+            "showInCollapsed": true
           },
           {
             "title": "Aligned Grids",
-            "url": "javascript-grid-aligned-grids/"
+            "url": "javascript-grid-aligned-grids/",
+            "showInCollapsed": true
           },
           {
             "title": "Scrolling Performance",
-            "url": "javascript-grid-performance/"
+            "url": "javascript-grid-performance/",
+            "showInCollapsed": true
           },
           {
             "title": "See Also",
@@ -1179,23 +1240,28 @@
         "items": [
           {
             "title": "Keyboard Navigation",
-            "url": "javascript-grid-keyboard-navigation/"
+            "url": "javascript-grid-keyboard-navigation/",
+            "showInCollapsed": true
           },
           {
             "title": "Touch",
-            "url": "javascript-grid-touch/"
+            "url": "javascript-grid-touch/",
+            "showInCollapsed": true
           },
           {
             "title": "Accessibility (ARIA)",
-            "url": "javascript-grid-accessibility/"
+            "url": "javascript-grid-accessibility/",
+            "showInCollapsed": true
           },
           {
             "title": "RTL Text Direction",
-            "url": "javascript-grid-rtl/"
+            "url": "javascript-grid-rtl/",
+            "showInCollapsed": true
           },
           {
             "title": "Internationalisation",
-            "url": "javascript-grid-internationalisation/"
+            "url": "javascript-grid-internationalisation/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -1207,27 +1273,33 @@
         "items": [
           {
             "title": "Testing Overview",
-            "url": "javascript-grid-testing/"
+            "url": "javascript-grid-testing/",
+            "showInCollapsed": true
           },
           {
             "title": "Testing Angular",
-            "url": "javascript-grid-testing-angular/"
+            "url": "javascript-grid-testing-angular/",
+            "showInCollapsed": true
           },
           {
             "title": "Testing React",
-            "url": "javascript-grid-testing-react/"
+            "url": "javascript-grid-testing-react/",
+            "showInCollapsed": true
           },
           {
             "title": "Testing Vue",
-            "url": "javascript-grid-testing-vue/"
+            "url": "javascript-grid-testing-vue/",
+            "showInCollapsed": true
           },
           {
             "title": "Jasmine & Protractor",
-            "url": "javascript-grid-e2e-test-with-jasmine/"
+            "url": "javascript-grid-e2e-test-with-jasmine/",
+            "showInCollapsed": true
           },
           {
             "title": "Security",
-            "url": "javascript-grid-security/"
+            "url": "javascript-grid-security/",
+            "showInCollapsed": true
           }
         ]
       }
