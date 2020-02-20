@@ -72,8 +72,7 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
         handler => wrapChartUpdateCode(convertFunctionToProperty(handler.body)));
     const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
 
-    return `
-'use strict'
+    return `'use strict'
 
 ${imports.join('\n')}
 

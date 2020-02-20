@@ -55,7 +55,7 @@ export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceM
 
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
 
-function flatMap(array, callback) {
+function flatMap<T>(array: T[], callback: (value: T) => T): T[] {
     return Array.prototype.concat.apply([], array.map(callback));
 };
 

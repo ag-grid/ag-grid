@@ -1,7 +1,7 @@
 import { recognizedDomEvents } from './parser-utils';
 
 export const convertFunctionToProperty = (code: string) =>
-    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) => ');
+    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
 const toCamelCase = (value: string) => value.replace(/(?:-)(\w)/g, (_, c: string) => c ? c.toUpperCase() : '');
@@ -30,17 +30,13 @@ export function convertTemplate(template: string) {
         const jsEvent = caseSensitiveEvents[event] || `on${toTitleCase(event)}`;
         const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`, 'g');
 
-        template = template
-            .replace(matcher, `${jsEvent}={() => this.$1($2)}`)
-            .replace(/, event\)/g, ")")
-            .replace(/, event,/g, ", ");
+        template = template.replace(matcher, `${jsEvent}={() => this.$1($2)}`);
     });
 
     template = template
-        .replace(/\(this\, \)/g, '(this)')
-        .replace(/<input type="(radio|checkbox|text|range)" (.+?[^=])>/g, '<input type="$1" $2 />')
-        .replace(/<input placeholder(.+?[^=])>/g, '<input placeholder$1 />')
-        .replace(/ class=/g, " className=");
+        .replace(/,\s+event([\)\,])/g, '$1')
+        .replace(/<input (.+?[^=])>/g, '<input $1 />')
+        .replace(/ class=/g, ' className=');
 
     return convertStyles(template);
 }

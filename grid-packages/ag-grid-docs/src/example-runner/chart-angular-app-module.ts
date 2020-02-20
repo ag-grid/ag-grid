@@ -19,8 +19,7 @@ export function appModuleAngular(componentFileNames: string[]) {
         });
     }
 
-    return `
-        ${imports.join('\n')}
+    return `${imports.join('\n')}
 
         @NgModule({
           imports: [
@@ -28,7 +27,7 @@ export function appModuleAngular(componentFileNames: string[]) {
             AgChartsAngularModule
           ],
           declarations: [
-            ${['AppComponent'].concat(components).join(',')}
+            ${['AppComponent'].concat(components).join(', ')}
           ],
           bootstrap: [ AppComponent ]
         })
