@@ -3,10 +3,13 @@
     "group": "Basics",
     "items": [
       {
-        "title": "Introduction",
-        "icon": "icon-information",
+        "title": "Getting Started",
         "matrixExclude": true,
         "items": [
+          {
+            "title": "Overview",
+            "url": "javascript-grid-getting-started/"
+          },
           {
             "title": "Community & Enterprise",
             "url": "javascript-grid-set-license/",
@@ -14,165 +17,124 @@
             "showInCollapsed": true
           },
           {
-            "title": "Packages & Modules",
-            "url": "javascript-grid-packages/",
-            "showInCollapsed": true,
+            "title": "Vanilla JavaScript",
+            "url": "javascript-grid/",
             "items": [
               {
-                "title": "Modules",
-                "url": "javascript-grid-modules/"
+                "title": "Install with NPM",
+                "url": "javascript-grid-npm/"
               },
               {
-                "title": "Building",
-                "url": "javascript-grid-modules-building/"
+                "title": "Download Bundles",
+                "url": "javascript-grid-download/"
               }
             ]
           },
           {
-            "title": "Supported Browsers",
-            "url": "javascript-grid-supported-browsers/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Getting Started",
-            "url": "javascript-grid-getting-started/",
+            "title": "Angular",
+            "url": "angular-grid/",
             "items": [
               {
-                "title": "Vanilla JavaScript",
-                "url": "javascript-grid/",
-                "items": [
-                  {
-                    "title": "Install with NPM",
-                    "url": "javascript-grid-npm/"
-                  },
-                  {
-                    "title": "Download Bundles",
-                    "url": "javascript-grid-download/"
-                  }
-                ]
+                "title": "Components",
+                "url": "angular-more-details/"
               },
               {
-                "title": "Angular",
-                "url": "angular-grid/",
-                "items": [
-                  {
-                    "title": "Components",
-                    "url": "angular-more-details/"
-                  },
-                  {
-                    "title": "Markup",
-                    "url": "angular-markup/"
-                  },
-                  {
-                    "title": "SystemJS",
-                    "url": "ag-grid-angular-systemjs/"
-                  },
-                  {
-                    "title": "Webpack 3",
-                    "url": "ag-grid-angular-webpack-3/"
-                  },
-                  {
-                    "title": "Webpack 2",
-                    "url": "ag-grid-angular-webpack-2/"
-                  },
-                  {
-                    "title": "Webpack 1",
-                    "url": "ag-grid-angular-webpack/"
-                  },
-                  {
-                    "title": "Material Components",
-                    "url": "example-angular-material-design/"
-                  },
-                  {
-                    "title": "Use with RxJS",
-                    "url": "example-angular-rxjs/"
-                  }
-                ]
+                "title": "Markup",
+                "url": "angular-markup/"
               },
               {
-                "title": "React",
-                "url": "react-grid/",
-                "items": [
-                  {
-                    "title": "Column Configuration",
-                    "url": "react-column-configuration/"
-                  },
-                  {
-                    "title": "Components",
-                    "url": "react-components/"
-                  },
-                  {
-                    "title": "Context API & Redux",
-                    "url": "react-apis/"
-                  },
-                  {
-                    "title": "ag-Grid APIs",
-                    "url": "react-grid-apis/"
-                  },
-                  {
-                    "title": "Hooks & Functional Components",
-                    "url": "react-hooks/"
-                  },
-                  {
-                    "title": "Redux Integration Part 1",
-                    "url": "react-redux-integration-pt1/"
-                  },
-                  {
-                    "title": "Redux Integration Part 2",
-                    "url": "react-redux-integration-pt2/"
-                  },
-                  {
-                    "title": "React 15.x",
-                    "url": "react-15/"
-                  }
-                ]
+                "title": "SystemJS",
+                "url": "ag-grid-angular-systemjs/"
               },
               {
-                "title": "Vue",
-                "url": "vuejs-grid/",
-                "items": [
-                  {
-                    "title": "Components",
-                    "url": "vue-components/"
-                  },
-                  {
-                    "title": "Markup",
-                    "url": "vue-markup/"
-                  },
-                  {
-                    "title": "Vue & Unidirectional Data Flow",
-                    "url": "vuex-data-flow/"
-                  },
-                  {
-                    "title": "Misc",
-                    "url": "vuejs-misc/"
-                  }
-                ]
+                "title": "Webpack 3",
+                "url": "ag-grid-angular-webpack-3/"
               },
               {
-                "title": "AngularJS",
-                "url": "best-angularjs-grid/"
+                "title": "Webpack 2",
+                "url": "ag-grid-angular-webpack-2/"
               },
               {
-                "title": "Polymer",
-                "url": "polymer-getting-started/"
+                "title": "Webpack 1",
+                "url": "ag-grid-angular-webpack/"
+              },
+              {
+                "title": "Material Components",
+                "url": "example-angular-material-design/"
+              },
+              {
+                "title": "Use with RxJS",
+                "url": "example-angular-rxjs/"
               }
             ]
           },
           {
-            "title": "Building",
-            "url": "ag-grid-building/",
-            "showInCollapsed": true,
+            "title": "React",
+            "url": "react-grid/",
             "items": [
               {
-                "title": "Rollup",
-                "url": "ag-grid-building-rollup/"
+                "title": "Column Configuration",
+                "url": "react-column-configuration/"
               },
               {
-                "title": "TypeScript & Webpack",
-                "url": "ag-grid-building-typescript/"
+                "title": "Components",
+                "url": "react-components/"
+              },
+              {
+                "title": "Context API & Redux",
+                "url": "react-apis/"
+              },
+              {
+                "title": "ag-Grid APIs",
+                "url": "react-grid-apis/"
+              },
+              {
+                "title": "Hooks & Functional Components",
+                "url": "react-hooks/"
+              },
+              {
+                "title": "Redux Integration Part 1",
+                "url": "react-redux-integration-pt1/"
+              },
+              {
+                "title": "Redux Integration Part 2",
+                "url": "react-redux-integration-pt2/"
+              },
+              {
+                "title": "React 15.x",
+                "url": "react-15/"
               }
             ]
+          },
+          {
+            "title": "Vue",
+            "url": "vuejs-grid/",
+            "items": [
+              {
+                "title": "Components",
+                "url": "vue-components/"
+              },
+              {
+                "title": "Markup",
+                "url": "vue-markup/"
+              },
+              {
+                "title": "Vue & Unidirectional Data Flow",
+                "url": "vuex-data-flow/"
+              },
+              {
+                "title": "Misc",
+                "url": "vuejs-misc/"
+              }
+            ]
+          },
+          {
+            "title": "AngularJS",
+            "url": "best-angularjs-grid/"
+          },
+          {
+            "title": "Polymer",
+            "url": "polymer-getting-started/"
           }
         ]
       },
@@ -326,6 +288,48 @@
             "box-title": "Animation",
             "url": "javascript-grid-animation/",
             "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Build & Tooling",
+        "icon": "icon-information",
+        "matrixExclude": true,
+        "items": [
+          {
+            "title": "Packages & Modules",
+            "url": "javascript-grid-packages/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Modules",
+                "url": "javascript-grid-modules/"
+              },
+              {
+                "title": "Building",
+                "url": "javascript-grid-modules-building/"
+              }
+            ]
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "javascript-grid-supported-browsers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Building",
+            "url": "ag-grid-building/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Rollup",
+                "url": "ag-grid-building-rollup/"
+              },
+              {
+                "title": "TypeScript & Webpack",
+                "url": "ag-grid-building-typescript/"
+              }
+            ]
           }
         ]
       }

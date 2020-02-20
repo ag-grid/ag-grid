@@ -56,6 +56,8 @@ function renderTitle($group) {
         $title = $groupConfig['title'];
         $icon = $groupConfig['icon'];
 
+        if (!$icon) { continue; }
+
         echo "<div class='docs-homepage-section-preview'>";
         echo "<div class='card'>";
         echo "<div class='newIcon $icon'></div>";
