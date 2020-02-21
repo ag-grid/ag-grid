@@ -25,7 +25,14 @@ generateThumbnails(galleryConfig);
 console.log('Finished!');
 
 function writeFile(path, contents) {
-    fs.writeFileSync(path, contents, 'utf8', function(err) {
+    const encoding = 'utf8';
+    const existingContents = fs.readFileSync(path, { encoding });
+
+    if (existingContents === contents) {
+        return;
+    }
+
+    fs.writeFileSync(path, contents, encoding, function(err) {
         if (err) {
             console.log(`An error occurred when writing to ${path} :(`);
             return console.log(err);
