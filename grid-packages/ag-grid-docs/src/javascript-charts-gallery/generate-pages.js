@@ -9,7 +9,13 @@ const { execSync } = require('child_process');
 
 console.log('Generating gallery using gallery.json');
 
-const galleryConfig = getJson('gallery.json');
+const options = {
+    galleryJsonFile: 'gallery.json',
+    rootDirectory: 'javascript-charts-gallery',
+    thumbnailDirectory: 'thumbnails',
+};
+
+const galleryConfig = getJson(options.galleryJsonFile);
 
 generateGalleryPages(galleryConfig);
 generateIndexPage(galleryConfig);
@@ -111,7 +117,7 @@ function getGalleryItem(name) {
 
     return `<div class="chart-gallery-item">
     <a href="./${getPageName(name)}" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/${kebabCase}.png" /><br />
+        <img class="chart-gallery-item__thumbnail" src="./${options.thumbnailDirectory}/${kebabCase}.png" /><br />
         <div class="chart-gallery-item__name">${name}</div>
     </a>
 </div>`;
@@ -120,43 +126,67 @@ function getGalleryItem(name) {
 function updateMenu(galleryConfig) {
     console.log('Updating menu...');
 
+    const rootPath = options.rootDirectory + '/';
     const menuPath = '../documentation-main/menu.json';
     const menu = getJson(menuPath);
-    const galleryObject = findItemWithUrl(menu, "javascript-charts-gallery/");
+    const galleryObject = findItemWithUrl(menu, rootPath);
 
     galleryObject.items = Object.keys(galleryConfig).map(name => ({
-        "title": name,
-        "url": `javascript-charts-gallery/${getPageName(name)}`,
+        title: name,
+        url: rootPath + getPageName(name),
     }));
 
     writeFile(menuPath, JSON.stringify(menu, null, 2));
 }
 
+function getChangedDirectories() {
+    const diffOutput = execSync(`git diff --dirstat=files,0 HEAD~1`).toString().split('\n');
+
+    return diffOutput
+        .filter(entry => entry.indexOf(`/${options.rootDirectory}/`) > 0)
+        .map(entry => entry.replace(new RegExp(`^.*?${options.rootDirectory}`), '').replace(/^\/|\/$/g, ''))
+        .filter(entry => entry.length > 0 && entry !== options.thumbnailDirectory);
+}
+
+function hasArgument(name) {
+    return process.argv.some(arg => arg === `--${name}`);
+}
+
 function generateThumbnails(galleryConfig) {
-    if (process.argv.some(arg => arg === '--skip-thumbnails')) {
+    if (hasArgument('skip-thumbnails')) {
         console.log("Skipping thumbnails.");
         return;
     }
 
-    console.log('Generating thumbnails...');
+    const shouldGenerateAllScreenshots = hasArgument('force-thumbnails');
 
-    const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
-    const thumbnailDirectory = 'thumbnails';
+    console.log(`Generating ${shouldGenerateAllScreenshots ? 'all' : 'changed'} thumbnails...`);
+
+    const startTime = Date.now();
+    const { thumbnailDirectory } = options;
 
     if (!fs.existsSync(thumbnailDirectory)) {
         fs.mkdirSync(thumbnailDirectory);
     }
 
-    Object.keys(galleryConfig).forEach(name => {
-        const kebabCase = toKebabCase(name);
+    const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
+    const changedDirectories = getChangedDirectories();
 
-        try {
-            execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,600 "http://localhost:8080/example-runner/chart-vanilla.php?section=javascript-charts-gallery&example=${kebabCase}&generated=1"`);
-            fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${kebabCase}.png`));
-        } catch (e) {
-            console.error(`Failed to generate screenshot for ${name}`, e);
-        }
-    });
+    Object.keys(galleryConfig)
+        .map(toKebabCase)
+        .filter(name => shouldGenerateAllScreenshots || changedDirectories.indexOf(name) >= 0)
+        .forEach(name => {
+            try {
+                const url = `http://localhost:8080/example-runner/chart-vanilla.php?section=${options.rootDirectory}&example=${name}&generated=1`;
+                execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,600 "${url}"`, { stdio: 'pipe' });
+                fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${name}.png`));
+                console.log(`Generated thumbnail for ${name}`);
+            } catch (e) {
+                console.error(`Failed to generate thumbnail for ${name}`, e);
+            }
+        });
+
+    console.log(`Finished generating thumbnails in ${(Date.now() - startTime) / 1000}s`);
 }
 
 function getPageName(name) {
