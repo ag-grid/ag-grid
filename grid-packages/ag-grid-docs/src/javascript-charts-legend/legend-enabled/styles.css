@@ -8,6 +8,11 @@
     text-align: center;
 }
 
+.spacer {
+    display: inline-block;
+    min-width: 20px;
+}
+
 #myChart {
     flex: 1;
 }
