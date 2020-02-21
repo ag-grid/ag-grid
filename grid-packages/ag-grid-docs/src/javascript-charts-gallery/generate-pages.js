@@ -88,6 +88,7 @@ function generateIndexPage(galleryConfig) {
     console.log('Generating index page...');
 
     const title = "Charts Standalone: Gallery";
+    const exampleNames = Object.keys(galleryConfig);
     const contents = `${getHeader(title)}
 
 <h1 class="heading">${title}</h1>
@@ -98,7 +99,8 @@ function generateIndexPage(galleryConfig) {
 </p>
 
 <div class="chart-gallery">
-${Object.keys(galleryConfig).map(getGalleryItem).join('\n')}
+${exampleNames.map(getGalleryItem).join('\n')}
+${[...new Array((3 - exampleNames.length % 3) % 3)].map(getEmptyGalleryItem).join('\n')}
 </div>
 
 <h2>Next Up</h2>
@@ -121,6 +123,10 @@ function getGalleryItem(name) {
         <div class="chart-gallery-item__name">${name}</div>
     </a>
 </div>`;
+}
+
+function getEmptyGalleryItem() {
+    return '<div class="chart-gallery-item chart-gallery-item--empty"></div>';
 }
 
 function updateMenu(galleryConfig) {

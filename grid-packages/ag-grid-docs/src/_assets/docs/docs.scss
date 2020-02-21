@@ -566,6 +566,10 @@ body {
                 background-color: $offwhite;
                 height: 100%;
             }
+
+            &--empty {
+                visibility: hidden;
+            }
         }
     }
 
