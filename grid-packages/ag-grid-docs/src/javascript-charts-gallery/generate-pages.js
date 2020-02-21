@@ -26,13 +26,12 @@ console.log('Finished!');
 
 function writeFile(path, contents) {
     const encoding = 'utf8';
-    const existingContents = fs.readFileSync(path, { encoding });
 
-    if (existingContents === contents) {
+    if (fs.existsSync(path) && fs.readFileSync(path, { encoding }) === contents) {
         return;
     }
 
-    fs.writeFileSync(path, contents, encoding, function(err) {
+    fs.writeFileSync(path, contents, encoding, err => {
         if (err) {
             console.log(`An error occurred when writing to ${path} :(`);
             return console.log(err);
@@ -153,7 +152,7 @@ function updateMenu(galleryConfig) {
 }
 
 function getChangedDirectories() {
-    const diffOutput = execSync(`git diff --dirstat=files,0 HEAD~1`).toString().split('\n');
+    const diffOutput = execSync(`git diff --dirstat=files,0 HEAD`).toString().split('\n');
 
     return diffOutput
         .filter(entry => entry.indexOf(`/${options.rootDirectory}/`) > 0)

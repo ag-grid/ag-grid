@@ -29,6 +29,9 @@
     "Bar With Negative Numbers": {
         "description": "A bar chart showing use of negative numbers."
     },
+    "Simple Pie": {
+        "description": "The pie chart represents proportional data as a pie."
+    },
     "Simple Line": {
         "description": "The line chart represents data using a number of lines."
     },

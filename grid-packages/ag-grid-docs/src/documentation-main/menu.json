@@ -1045,6 +1045,10 @@
                 "url": "javascript-charts-gallery/bar-with-negative-numbers.php"
               },
               {
+                "title": "Simple Pie",
+                "url": "javascript-charts-gallery/simple-pie.php"
+              },
+              {
                 "title": "Simple Line",
                 "url": "javascript-charts-gallery/simple-line.php"
               },

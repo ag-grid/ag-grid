@@ -77,6 +77,12 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
+    <a href="./simple-pie.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-pie.png" /><br />
+        <div class="chart-gallery-item__name">Simple Pie</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
     <a href="./simple-line.php" class="chart-gallery-item__link">
         <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-line.png" /><br />
         <div class="chart-gallery-item__name">Simple Line</div>
@@ -100,7 +106,7 @@ define('skipInPageNav', true);
         <div class="chart-gallery-item__name">Stacked Area</div>
     </a>
 </div>
-<div class="chart-gallery-item chart-gallery-item--empty"></div>
+
 </div>
 
 <h2>Next Up</h2>
