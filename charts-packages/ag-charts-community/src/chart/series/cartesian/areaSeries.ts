@@ -271,7 +271,6 @@ export class AreaSeries extends CartesianSeries {
     private generateSelectionData(): { areaSelectionData: AreaSelectionDatum[], markerSelectionData: MarkerSelectionDatum[] } {
         const {
             yKeys,
-            yNames,
             data,
             xData,
             yData,

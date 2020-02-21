@@ -15,13 +15,13 @@ var options = {
         marker: {
             enabled: true
         },
-        // tooltipRenderer: function (params) {
-        //     var datum = params.datum;
-        //     var xKey = params.xKey;
-        //     var yKey = params.yKey;
-        //     var text = params.yName + ' - ' + datum[yKey] + '% - Jan ' + datum[xKey];
-        //     return '<div style="padding: 10px;">' + text + '</div>';
-        // }
+        tooltipRenderer: function (params) {
+            var datum = params.datum;
+            var xKey = params.xKey;
+            var yKey = params.yKey;
+            var text = params.yName + ' - ' + datum[yKey] + '% - Jan ' + datum[xKey];
+            return '<div style="padding: 10px;">' + text + '</div>';
+        }
     }],
     legend: {
         enabled: false

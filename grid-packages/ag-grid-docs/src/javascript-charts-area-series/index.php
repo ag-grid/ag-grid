@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     individual values relate to the whole.
 </p>
 
-<h3>Single Area Series</h3>
+<h2>Single Area Series</h2>
 
 <p>
     To create a simple area chart we need to use series type <code>'area'</code>.
@@ -44,6 +44,8 @@ series: [{
     Just using this simple series config produces the following chart:
 </p>
 
+<h3>Example: Basic Area Chart</h3>
+
 <?= chart_example('Single Area Series', 'single-area', 'generated'); ?>
 
 <note>
@@ -67,52 +69,78 @@ the values shown are percentage values, however there is no <code>%</code>
 suffix because the series don't know about the nature of the data (as it
 is designed to work with all kinds of data). So for the purposes of this
 example we additionally provide a <code>tooltipRenderer</code> to add the
-<code>%</code> suffix. After this change, the tooltips will change from this
-(left) to this (right):
+<code>%</code> suffix. After this change, the tooltips will change like so:
 </p>
 
 <p style="text-align: center;">
+    <span>Before&nbsp;</span>
     <img alt="Default Area Tooltip" src="default-area-tooltip.png" style="margin-bottom: 0px; height: 138px;">
     <span style="width: 50px; display: inline-block;">--></span>
+    <span>After&nbsp;</span>
     <img alt="Custom Area Tooltip" src="custom-area-tooltip.png" style="margin-bottom: 0px; height: 146px;">
 </p>
 
+<p>
+    The final result can be seen in the example below.
+</p>
+
+<h3>Example: Area Chart with Markers and Custom Tooltips</h3>
+
 <?= chart_example('Single Area Series with Markers', 'single-area-markers', 'generated'); ?>
 
+<h2>Multiple Area Series</h2>
+
 <p>
-    Note that in the code of the example above we also:
+    It is possible to use more than one <code>'area'</code> series in a single chart.
+    For example, if we want one series to show the magnitude of change in market share
+    of Internet Explorer and the other series the change in market share of Chrome,
+    we could use the following <code>series</code> config:
+</p>
+
+<snippet language="ts">
+series: [{
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['ie']
+}, {
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['chrome']
+}]
+</snippet>
+
+<note>
+    Since multiple area series can overlap, it is a good idea to make the fill translucent.
+    For example: <code>fillOpacity: 0.7</code>.
+</note>
+
+<h3>Example: Overlapping Area Series</h3>
+
+<p>
+    Note that in the example below we also:
     <ul class="content">
         <li>
-            Use the <code>yNames: ['iPhone']</code> series config which acts as a display name
-            for the actual <code>yKey</code> used. That's what the user will see in column tooltips
-            and the legend.
+            Configure chart's <code>title</code> and <code>subtitle</code>.
         </li>
         <li>
-            Configure the <code>title</code> and <code>subtitle</code> of the chart to communicate
-            what kind of data is being presented.
+            Position the legend to the <code>'top'</code> and use the <code>yNames</code>
+            configs of the series to control the text the legend displays.
+        </li>
+        <li>
+            Enable series' <code>marker</code>s.
+        </li>
+        <li>
+            Define custom <code>fills</code> and <code>strokes</code>.
+        </li>
+        <li>
+            Make the fill translucent via <code>fillOpacity</code> config.
         </li>
     </ul>
 </p>
 
-<h3>Multiple Area Series</h3>
-
-<p>
-    If we want to show quarterly revenue for each product category as grouped columns,
-    we can simply take the <a href="#stacked-columns">stacked column</a> config from the example above
-    and set the <code>grouped</code> property of the series to <code>true</code>:
-</p>
-
-<snippet language="ts">
-grouped: true
-</snippet>
-
-<p>
-    That will produce the following chart:
-</p>
-
 <?= chart_example('Mutiple Area Series', 'multi-area', 'generated'); ?>
 
-<h3>Stacked Area Series</h3>
+<h2>Stacked Area Series</h2>
 
 <p>
     If the goal is to show the quarterly revenue for each product category, multiple <code>yKeys</code>
@@ -128,6 +156,8 @@ yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
     And that simple change transformed our chart into this:
 </p>
 
+<h3>Example: Stacked Area Series</h3>
+
 <?= chart_example('Stacked Area Series', 'stacked-area', 'generated'); ?>
 
 <p>
@@ -139,7 +169,7 @@ yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
 yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
 </snippet>
 
-<h3>Normalized Area Series</h3>
+<h2>Normalized Area Series</h2>
 
 <p>
     Going back to our <a href="#stacked-columns">stacked column</a> example,
