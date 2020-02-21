@@ -75,8 +75,8 @@ function FakeServer(allData) {
             // take a slice of the total rows
             var rowsThisPage = allData.slice(request.startRow, request.endRow);
 
-            // work out the last row index (if unknown we could supply -1)
-            var lastRow = allData.length - 1;
+            // if row count is known, it's possible to skip over blocks
+            var lastRow = allData.length;
 
             return {
                 success: true,
