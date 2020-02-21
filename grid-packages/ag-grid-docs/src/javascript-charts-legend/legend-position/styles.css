@@ -6,6 +6,17 @@
 
 #toolPanel {
     text-align: center;
+    font-size: 12px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.spacer {
+    display: inline-block;
+    min-width: 20px;
+}
+
+button {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 #myChart {
