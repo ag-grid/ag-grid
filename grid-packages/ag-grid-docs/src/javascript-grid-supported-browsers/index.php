@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Supported Browsers";
 $pageDescription = "It would be great to support all versions of all browsers in the world, but we have to be realistic and practical. The browsers we officially support are details on this page.";
-$pageKeyboards = "ag-Grid Supported Browsers";
+$pageKeywords = "ag-Grid Supported Browsers";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Why we went Commercial from Open Source";
 $pageDescription = "We finally made the transition from Open Source project to a fully fledged commercial product. This blog post goes through our decision making process and the story from the bedroom to the board room.";
-$pageKeyboards = "ag-Grid javascript ag-grid-enterprise Commercial Open Source";
+$pageKeywords = "ag-Grid javascript ag-grid-enterprise Commercial Open Source";
 
 include('../includes/mediaHeader.php');
 ?>

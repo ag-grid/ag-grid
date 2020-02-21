@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Frameworks Info";
 $pageDescription = "More information on all the framework related items concerning ag-Grid.";
-$pageKeyboards = "ag-Grid Filtering";
+$pageKeywords = "ag-Grid Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

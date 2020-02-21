@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Date Filter: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Date Filter";
+$pageKeywords = "ag-Grid Date Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

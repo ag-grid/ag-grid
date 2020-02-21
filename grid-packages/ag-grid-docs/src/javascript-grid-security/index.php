@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Security: Content Security Policy and OWASP Benchmark";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Security compliance with OWASP Benchmark and CSP rules.";
-$pageKeyboards = "ag-Grid Security";
+$pageKeywords = "ag-Grid Security";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

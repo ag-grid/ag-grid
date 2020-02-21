@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Header Components";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It supports the use of components, here we discuss how to implment Header Components.";
-$pageKeyboards = "ag-Grid Header Rendering";
+$pageKeywords = "ag-Grid Header Rendering";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

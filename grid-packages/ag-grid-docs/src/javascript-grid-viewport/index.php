@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Row Models: ViewPort Row Model";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Viewport is a rowModel that allows showing a 'window' of data in your client.";
-$pageKeyboards = "ag-Grid ViewPort";
+$pageKeywords = "ag-Grid ViewPort";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

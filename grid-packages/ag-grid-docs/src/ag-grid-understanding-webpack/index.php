@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Webpack Tutorial - Understanding How it Works";
 $pageDescription = "This blog post runs through a webpack tutorial on building a simple application. You will find out how webpack works. It's the guide we wish we had found before learning webpack.";
-$pageKeyboards = "Webpack Tutorial";
+$pageKeywords = "Webpack Tutorial";
 
 include('../includes/mediaHeader.php');
 ?>

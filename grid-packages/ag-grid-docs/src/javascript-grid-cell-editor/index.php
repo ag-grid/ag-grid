@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Cell Editors";
 $pageDescription = "It supports the use of components, one of which is Cell Editors. Users can update data with Cell Editing. Use one of the provided cell editors or create your own to suit your business needs.";
-$pageKeyboards = "ag-Grid Cell Editor Component";
+$pageKeywords = "ag-Grid Cell Editor Component";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

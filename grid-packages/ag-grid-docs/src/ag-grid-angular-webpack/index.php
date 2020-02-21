@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Reference: Using Angular with webpack";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Learn how to build ag-Grid using Angular and Webpack with this guide.";
-$pageKeyboards = "Angular Webpack";
+$pageKeywords = "Angular Webpack";
 $pageGroup = "basics";
 $angularParent = "checked";
 

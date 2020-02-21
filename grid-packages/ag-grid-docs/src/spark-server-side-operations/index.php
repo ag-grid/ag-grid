@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Server-side operations with Apache Spark and ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Apache Spark and ag-Grid";
-$pageKeyboards = "Server-side operations with the Apache Spark";
+$pageKeywords = "Server-side operations with the Apache Spark";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

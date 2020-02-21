@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid: Core Features - Column Moving";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. Here we explains how to move columns in ag-Grid, including moving via the API and fixing columns.";
-$pageKeyboards = "Javascript Grid Column Moving";
+$pageKeywords = "Javascript Grid Column Moving";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Vue Charts";
 $pageDescription = "ag-Charts is a feature-rich Vue charts available in Free or Enterprise versions. This page details how to get started using ag-Charts inside an Vue application.";
-$pageKeyboards = "Vue Charts";
+$pageKeywords = "Vue Charts";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

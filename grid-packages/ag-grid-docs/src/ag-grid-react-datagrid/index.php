@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building A React and Redux Datagrid Application";
 $pageDescription = "A step-by-step guide for building an application using React and Redux. Includes sample code and simple instructions to complete an application featuring ag-Grid's datagrid.";
-$pageKeyboards = "react datagrid redux";
+$pageKeywords = "react datagrid redux";
 
 include('../includes/mediaHeader.php');
 ?>

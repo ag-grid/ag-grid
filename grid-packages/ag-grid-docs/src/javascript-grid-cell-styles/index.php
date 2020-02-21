@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Cell Styles: Styling & Appearance Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Cell Styling. Use CSS rules to define Cell Style based on data content, e.g. put a red background onto cells that have negative values, and green on values greater than 100. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Cell Styles";
+$pageKeywords = "ag-Grid Cell Styles";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -2,7 +2,7 @@
 
 $pageTitle = "JavaScript GPU Animation with Transform and Translate";
 $pageDescription = "This post from the ag-Grid Blog discusses techniques for GPU animation in JavaScript applications. It compares examples using translate and absolute positioning for fast animations.";
-$pageKeyboards = "javascript animation transform translate gpu";
+$pageKeywords = "javascript animation transform translate gpu";
 $socialUrl = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/";
 $socialImage = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/TranslateVsAbsolute.png";
 

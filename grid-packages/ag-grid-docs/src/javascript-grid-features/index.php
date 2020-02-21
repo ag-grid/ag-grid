@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid: Overview of the 63 Features";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Version 16 has just been released adding to our extensive feature set. This page presents an overview of all features, you can click in for more detail and also determine whether available in the Free or Enterprise version.";
-$pageKeyboards = "ag-Grid Features";
+$pageKeywords = "ag-Grid Features";
 $pageGroup = "feature";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';

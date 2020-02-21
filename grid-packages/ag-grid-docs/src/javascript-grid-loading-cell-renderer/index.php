@@ -1,7 +1,7 @@
 <?php
 $pageTitle ="ag-Grid: Components - Loading Cell Renderer";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This covers how you can use custom loading cell renderers.";
-$pageKeyboards = "JavaScript Grid Custom Loading CellRenderer";
+$pageKeywords = "JavaScript Grid Custom Loading CellRenderer";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

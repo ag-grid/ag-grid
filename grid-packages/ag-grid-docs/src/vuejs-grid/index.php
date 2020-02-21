@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Vue Grid";
 $pageDescription = "ag-Grid is a feature-rich Vue grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Vue application.";
-$pageKeyboards = "Vue Grid";
+$pageKeywords = "Vue Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Data";
 $pageDescription = "How to manager your data inside of ag-Grid";
-$pageKeyboards = "JavaScript Grid";
+$pageKeywords = "JavaScript Grid";
 $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
 ?>

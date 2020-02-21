@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Cell Renderers";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Use Cell Rendering to have cells rendering values other than simple strings. For example, put country flags beside country names, or push buttons for actions.";
-$pageKeyboards = "ag-Grid Cell Renderers";
+$pageKeywords = "ag-Grid Cell Renderers";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

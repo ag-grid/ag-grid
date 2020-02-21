@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Using TypeScript and Webpack 2";
 $pageDescription = "This Getting Started guide demonstrates building ag-Grid with TypeScript and webpack 2. Featuring step by step guide and code examples.";
-$pageKeyboards = "TypeScript Grid Webpack 2";
+$pageKeywords = "TypeScript Grid Webpack 2";
 $pageGroup = "basics";
 
 include '../documentation-main/documentation_header.php';

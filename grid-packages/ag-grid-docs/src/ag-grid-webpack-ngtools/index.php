@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Webpack Tutorial: Using ngTools and webpack";
 $pageDescription = "This blog post covers a tutorial on using webpack and ngTools. It describes the lessons learnt at ag-Grid while using both. You'll be guided through step by step.";
-$pageKeyboards = "webpack tutorial ngtools";
+$pageKeywords = "webpack tutorial ngtools";
 
 include('../includes/mediaHeader.php');
 ?>

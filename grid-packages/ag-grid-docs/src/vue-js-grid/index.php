@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Using VueJS Components in ag-Grid";
 $pageDescription = "VueJS is a fantastic framework that has experienced amazing growth since it was first released in early 2014. We here at ag-Grid are proud to be able to announce support for VueJS, offering native support of VueJS components within the grid itself. This blog post covers using VueJS Components in ag-Grid";
-$pageKeyboards = "VueJS Vue Component ag-Grid";
+$pageKeywords = "VueJS Vue Component ag-Grid";
 
 include('../includes/mediaHeader.php');
 ?>

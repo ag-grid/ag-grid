@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Angular Charts";
 $pageDescription = "ag-Charts is a feature-rich Angular Charting Library. This page details how to get started using ag-Charts inside an Angular application.";
-$pageKeyboards = "Angular Charts";
+$pageKeywords = "Angular Charts";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

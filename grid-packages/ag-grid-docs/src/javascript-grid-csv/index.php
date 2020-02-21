@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "CSV Export: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is CSV Export which is used to take data out of the grid and into another application for further processing such as Excel. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Data Export Javascript CSV";
+$pageKeywords = "ag-Grid Data Export Javascript CSV";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 include_once '../php-utils/printPropertiesTable.php';

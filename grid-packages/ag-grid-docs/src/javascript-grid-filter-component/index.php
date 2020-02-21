@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Filter Component";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes how to implement custom filters for ag-Grid";
-$pageKeyboards = "JavaScript Grid Filtering";
+$pageKeywords = "JavaScript Grid Filtering";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

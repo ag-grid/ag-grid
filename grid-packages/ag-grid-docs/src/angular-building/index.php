@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Building with Angular";
 $pageDescription = "This page contains links on how to build with Angular and a choice of Angular CLI, SystemJS, webpack 3, webpack 2 and the original webpack.";
-$pageKeyboards = "Building Angular 2";
+$pageKeywords = "Building Angular 2";
 $pageGroup = "basics";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';

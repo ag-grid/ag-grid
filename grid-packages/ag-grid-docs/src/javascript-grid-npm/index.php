@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: JavaScript Datagrid - Install with NPM";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers downloading the JavaScript packages for ag-Grid and ag-Grid Enterprise.";
-$pageKeyboards = "JavaScript Grid";
+$pageKeywords = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

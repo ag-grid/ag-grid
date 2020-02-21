@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Show Change Cell Renderers";
 $pageDescription = "The show change cell renderers either show delta changes between previous and last, or show the old value fading out.";
-$pageKeyboards = "javascript grid changes";
+$pageKeywords = "javascript grid changes";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

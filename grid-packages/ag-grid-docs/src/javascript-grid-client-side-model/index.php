@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Row Models: Client-side Row Model";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the simplest one is the Client-side model. We recommend using this as a default.";
-$pageKeyboards = "ag-Grid data row model";
+$pageKeywords = "ag-Grid data row model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

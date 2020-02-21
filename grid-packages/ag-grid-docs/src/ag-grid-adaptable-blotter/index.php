@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: ag-Grid Partnering with Adaptable Blotter";
 $pageDescription = "Explaining the performance hacks and techniques used in ag-Grid to make it render really fast.";
-$pageKeyboards = "javascript performance";
+$pageKeywords = "javascript performance";
 $socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
 $socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";
 

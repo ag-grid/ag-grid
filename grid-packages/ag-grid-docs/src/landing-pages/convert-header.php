@@ -28,7 +28,7 @@ define('DOC_SECTION', $article_id);
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
+meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 ?>
 <link rel="stylesheet" href="../dist/docs.css">
 </head>

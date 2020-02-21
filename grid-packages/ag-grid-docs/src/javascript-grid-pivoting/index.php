@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Pivot Tables: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Pivoting: Make columns out of values by Pivoting on the data, similar to Pivot Tables in Excel. Pivoting allows you to take a columns values and turn them into columns. Enterprise feature of ag-Grid supporting Angular, React, Javascript and many more.";
-$pageKeyboards = "ag-Grid JavaScritp Grid Pivot";
+$pageKeywords = "ag-Grid JavaScritp Grid Pivot";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

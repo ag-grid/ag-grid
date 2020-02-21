@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid - Value Parsers";
 $pageDescription = "Value parsers are the inverse of value formatters. They change formatted text into values.";
-$pageKeyboards = "ag-Grid Value Parsers";
+$pageKeywords = "ag-Grid Value Parsers";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

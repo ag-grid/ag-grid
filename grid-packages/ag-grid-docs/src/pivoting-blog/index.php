@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: How to Add JavaScript Pivot Tables to your App";
 $pageDescription = "Make the most of your data by using pivot tables to create summaries and reports.";
-$pageKeyboards = "The power of pivot tables";
+$pageKeywords = "The power of pivot tables";
 $socialUrl = "https://www.ag-grid.com/pivoting-blog/";
 $socialImage = "https://www.ag-grid.com/pivoting-blog/img-pivot.png";
 

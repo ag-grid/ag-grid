@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Features: Context Object";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. It provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
-$pageKeyboards = "ag-Grid Context";
+$pageKeywords = "ag-Grid Context";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

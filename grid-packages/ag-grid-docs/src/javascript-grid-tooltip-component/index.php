@@ -1,7 +1,7 @@
 <?php
 $pageTitle ="ag-Grid: Components - Tooltip Component";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This covers how you can use custom tooltips to the grid columns.";
-$pageKeyboards = "JavaScript Grid Custom Tooltip";
+$pageKeywords = "JavaScript Grid Custom Tooltip";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

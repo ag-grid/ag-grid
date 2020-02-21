@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Examples; Grid Expressions and Context Example";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows an Expressions and Context example. Learn how to build a grid using Expressions and Context from ag-Grid.";
-$pageKeyboards = "ag-Grid expressions Context";
+$pageKeywords = "ag-Grid expressions Context";
 $pageGroup = "examples";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';

@@ -3,7 +3,7 @@ $pageTitle = "Polymer Datagrid | Packed with features and performance";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Polymer to 
 deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month 
 trial of Enterprise Version.";
-$pageKeyboards = "Polymer Grid";
+$pageKeywords = "Polymer Grid";
 $pageGroup = "basics";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';

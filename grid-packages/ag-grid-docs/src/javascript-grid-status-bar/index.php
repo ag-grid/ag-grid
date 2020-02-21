@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Status Bar: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Status Bar. The Status Bar appears on the bottom of the grid and shows aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what happens in Excel. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid JavaScript Grid Status Bar";
+$pageKeywords = "ag-Grid JavaScript Grid Status Bar";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

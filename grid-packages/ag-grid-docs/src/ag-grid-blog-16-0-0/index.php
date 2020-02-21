@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Version 16 'Phoenix' Release";
 $pageDescription = "ag-Grid v16.0.0 Phoenix is now released!";
-$pageKeyboards = "ag-grid v16.0.0 Phoenix";
+$pageKeywords = "ag-grid v16.0.0 Phoenix";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-16-0-0/";
 $socialImage = "https://www.ag-grid.com/ag-grid-blog-16-0-0/img.svg";
 

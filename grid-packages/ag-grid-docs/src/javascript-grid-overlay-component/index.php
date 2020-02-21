@@ -1,7 +1,7 @@
 <?php
 $pageTitle ="ag-Grid: Styling & Appearance - Overlay Component";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This covers how you can use the standard Overlays or use your own.";
-$pageKeyboards = "JavaScript Grid Overlay Component";
+$pageKeywords = "JavaScript Grid Overlay Component";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

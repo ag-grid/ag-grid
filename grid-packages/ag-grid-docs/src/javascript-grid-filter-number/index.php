@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Number Filter: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Number Filter. Number Filter allows filtering numbers with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Free and Commercial version available.";
-$pageKeyboards = "ag-Grid Number Filter";
+$pageKeywords = "ag-Grid Number Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

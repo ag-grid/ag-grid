@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Filter API";
 $pageDescription = "Using the filter API you can interact with filters, in particular getting and setting their values.";
-$pageKeyboards = "ag-Grid Filter API";
+$pageKeywords = "ag-Grid Filter API";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

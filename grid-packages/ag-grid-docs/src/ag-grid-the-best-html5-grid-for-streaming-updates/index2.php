@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: The Best HTML5 Grid for Streaming Updates";
 $pageDescription = "Demonstrates ag-Grid processing large amounts of streaming data updates.";
-$pageKeyboards = "javascript datagrid streaming updates";
+$pageKeywords = "javascript datagrid streaming updates";
 $socialUrl = "https://www.ag-grid.com/ag-grid-the-best-html5-grid-for-streaming-updates/";
 $socialImage = "https://www.ag-grid.com/ag-grid-the-best-html5-grid-for-streaming-updates/TheFastestGrid.png";
 

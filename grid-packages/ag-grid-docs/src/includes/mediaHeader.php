@@ -27,7 +27,7 @@ gtm_data_layer('blogs');
 <html lang="en">
 <head>
 <?php
-meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
+meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 ?>
 
 <link rel="stylesheet" href="../dist/homepage.css">

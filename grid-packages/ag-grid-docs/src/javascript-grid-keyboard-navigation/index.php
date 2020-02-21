@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Keyboard Interaction: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Keyboard Interaction. With Keyboard Navigation users can use cursor keys and tab keys to navigate between cells. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Keyboard Interaction";
+$pageKeywords = "ag-Grid Keyboard Interaction";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Status Bar Component";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page describes how to implement custom status bar components for ag-Grid";
-$pageKeyboards = "JavaScript Grid Status Bar Components";
+$pageKeywords = "JavaScript Grid Status Bar Components";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

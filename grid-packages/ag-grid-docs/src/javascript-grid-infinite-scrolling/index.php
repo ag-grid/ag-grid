@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Row Models: Infinite Scrolling";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Infinite Row Model allows the grid to lazy load rows from the server dependent on scroll position.";
-$pageKeyboards = "ag-Grid Infinite Scrolling";
+$pageKeywords = "ag-Grid Infinite Scrolling";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

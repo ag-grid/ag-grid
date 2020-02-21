@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: ag-Grid Modules";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page provides an overview of ag-Grid modules";
-$pageKeyboards = "ag-Grid JavaScript Data Grid Modules";
+$pageKeywords = "ag-Grid JavaScript Data Grid Modules";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Fill Handle: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Range Selection Fill Handle. Drag the mouse over cells to create a Range Selection, the last cell will contain a handle ta can be dragged to run tasks on the new range. Version 21 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "range selection fill handle javascript grid ag-grid";
+$pageKeywords = "range selection fill handle javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

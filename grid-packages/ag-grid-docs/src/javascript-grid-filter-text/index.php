@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Text Filter: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Text Filter";
+$pageKeywords = "ag-Grid Text Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

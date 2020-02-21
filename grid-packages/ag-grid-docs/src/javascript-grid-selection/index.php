@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Row Selection: Core Feature of our Datagrid";
 $pageDescription = "Row Selection:  Select rows, Choose between click selection or checkbox selection, Selecting groups will select children. Core feature of ag-Grid supporting Angular, React, Javascript and many more. ";
-$pageKeyboards = "ag-Grid Selection";
+$pageKeywords = "ag-Grid Selection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

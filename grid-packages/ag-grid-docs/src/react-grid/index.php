@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "React Grid";
 $pageDescription = "ag-Grid is a feature-rich React grid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
-$pageKeyboards = "React Datagrid";
+$pageKeywords = "React Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

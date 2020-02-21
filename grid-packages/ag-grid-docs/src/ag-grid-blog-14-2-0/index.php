@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Version 14.2.0 Release";
 $pageDescription = "ag-Grid v14.2.0 is now released! New version comes with improved set of themes, master-detail view and bug fixes.";
-$pageKeyboards = "ag-grid new features v14.2.0";
+$pageKeywords = "ag-grid new features v14.2.0";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-14-2-0/";
 $socialImage = "https://www.ag-grid.com/ag-grid-blog-14-2-0/cover.jpg";
 

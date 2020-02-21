@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Internationalisation: Styling & Appearance with our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Internationalisation. Support multiple languages with Internationalisation. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Internationalisation";
+$pageKeywords = "ag-Grid Internationalisation Internationalization i18n";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

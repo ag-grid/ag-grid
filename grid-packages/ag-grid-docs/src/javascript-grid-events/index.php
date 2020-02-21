@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Grid Events";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. As you interact with the grid, it fires events. This reference guide covers each of these events.";
-$pageKeyboards = "javascript data grid ag-Grid events";
+$pageKeywords = "javascript data grid ag-Grid events";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>

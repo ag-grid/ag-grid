@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "React Components";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page customising and controlling components in ag-Grid.";
-$pageKeyboards = "React Grid Components";
+$pageKeywords = "React Grid Components";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

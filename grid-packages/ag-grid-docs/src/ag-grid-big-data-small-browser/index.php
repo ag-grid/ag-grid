@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Delivering Big Data in the Small Browser";
 $pageDescription = "How can you solve the problem of Big Data in the Small Browser. In this post, Niall takes you through the Enterprise Row Model. This is our solution to the age old problem using our JavaScript datagrid.";
-$pageKeyboards = "big data javascript browser";
+$pageKeywords = "big data javascript browser";
 
 include('../includes/mediaHeader.php');
 ?>

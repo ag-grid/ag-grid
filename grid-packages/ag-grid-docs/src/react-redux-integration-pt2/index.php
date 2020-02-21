@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "React Redux Integration: Part 2 of a detailed guide from ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a detailed guide on how to use with React and Redux. This section takes a deeper look at integrating ag-Grid with a Redux store by implementing a feature rich File Browser that uses Tree Data.";
-$pageKeyboards = "React Redux Grid";
+$pageKeywords = "React Redux Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

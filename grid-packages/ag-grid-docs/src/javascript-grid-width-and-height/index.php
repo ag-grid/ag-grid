@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Grid Size: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Grid Size. Rows in the grid will Animate into place after the user sorts or filters. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Resizing";
+$pageKeywords = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

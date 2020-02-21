@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid JavaScript Data Grid Excel Set Filtering";
+$pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

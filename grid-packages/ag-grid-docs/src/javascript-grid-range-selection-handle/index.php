@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Range Handle: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. The last cell will contain a handle ta can be dragged to change the selection range.. Version 21 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "range selection handle javascript grid ag-grid";
+$pageKeywords = "range selection handle javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

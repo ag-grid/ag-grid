@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Accessibility: A Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. The grid has ARIA roles inside the cells for Accessibility to enable navigation with screen readers.";
-$pageKeyboards = "ag-Grid Accessibility";
+$pageKeywords = "ag-Grid Accessibility";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Floating Filters";
 $pageDescription = "Floating filters are filters pinned to the top of the grid for easy access.";
-$pageKeyboards = "ag-Grid Floating Filters";
+$pageKeywords = "ag-Grid Floating Filters";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

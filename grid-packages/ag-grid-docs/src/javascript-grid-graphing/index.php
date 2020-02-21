@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Examples: Datagrid and D3 Graphs Integration";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We don't offer charting out of the box but have built and example of integrating with the popular d3 charting library.";
-$pageKeyboards = "ag-grid d3 d3.js sparkline examples";
+$pageKeywords = "ag-grid d3 d3.js sparkline examples";
 $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>

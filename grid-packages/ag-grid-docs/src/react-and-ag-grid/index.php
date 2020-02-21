@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building a React Datagrid using ag-Grid";
 $pageDescription = "We're delighted to announce that you can now use React seamlessly with ag-Grid so you can add feature rich datagrid to your React application. This post takes you through it step by step..";
-$pageKeyboards = "react ag-grid javascript grid";
+$pageKeywords = "react ag-grid javascript grid";
 
 include('../includes/mediaHeader.php');
 ?>

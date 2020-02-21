@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Undo / Redo Edits";
 $pageDescription = "Allows the user to undo and redo edits made to cells.";
-$pageKeyboards = "ag-Grid Undo / Redo";
+$pageKeywords = "ag-Grid Undo / Redo";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

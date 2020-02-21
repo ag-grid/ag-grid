@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Excel Export: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "JavaScript Grid Excel";
+$pageKeywords = "JavaScript Grid Excel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

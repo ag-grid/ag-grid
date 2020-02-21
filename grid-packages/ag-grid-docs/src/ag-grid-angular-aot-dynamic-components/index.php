@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Understanding AOT and Dynamic Components";
 $pageDescription = "Sean Landsman takes you through AOT and Dynamic Components in Angular 2. Drawing on his experience from using them at ag-Grid. The blog post contains simple step by step guide.";
-$pageKeyboards = "ag-Grid javascript datagrid angular 2 aot dynamic compontents";
+$pageKeywords = "ag-Grid javascript datagrid angular 2 aot dynamic compontents";
 
 include('../includes/mediaHeader.php');
 ?>

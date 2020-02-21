@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Column Filter: Core Feature of our Datagrid";
 $pageDescription = "Filtering: appears in the column menu. The grid comes with filters out of the box: text, number, date and set filters. You can also create your own custom filter. Core feature of ag-Grid supporting Angular, React, Javascript and many more.";
-$pageKeyboards = "ag-Grid Filtering";
+$pageKeywords = "ag-Grid Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

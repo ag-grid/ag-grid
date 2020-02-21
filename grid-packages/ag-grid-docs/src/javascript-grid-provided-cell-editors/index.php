@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Provided Cell Renderers";
 $pageDescription = "The grid provides cell renderers out of the box. Here we explain what they are.";
-$pageKeyboards = "JavaScript grid provided cell renderers";
+$pageKeywords = "JavaScript grid provided cell renderers";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

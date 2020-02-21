@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Using Angular with webpack 3";
 $pageDescription = "g-Grid is a feature-rich data grid supporting major JavaScript Frameworks. In this article, we describe how to build ag-Grid using Angular and webpack 3.";
-$pageKeyboards = "Angular Webpack 3";
+$pageKeywords = "Angular Webpack 3";
 $pageGroup = "basics";
 $angularParent = "checked";
 

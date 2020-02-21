@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid APIs";
 $pageDescription = "This page covers using React Hooks with ag-Grid";
-$pageKeyboards = "React Grid Hook";
+$pageKeywords = "React Grid Hook";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

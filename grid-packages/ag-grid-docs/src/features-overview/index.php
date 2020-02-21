@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid | Features Overview";
 $pageDescription = "ag-Grid is a framework agnostic feature-rich datagrid. This overview details all stand out features in ag-Grid from Grouping, Pivoting, Pagination, Tree Data and many more.";
-$pageKeyboards = "Javascript Grid";
+$pageKeywords = "Javascript Grid";
 $pageGroup = "basics";
 
 include_once '../example-runner/example-runners.php';
@@ -14,7 +14,7 @@ $version = "latest";
 <html lang="en">
 <head lang="en">
 <?php
-meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
+meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 ?>
     <link rel="stylesheet" href="../dist/docs.css">
     <style type="text/css" media="screen">

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Touch support: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Touch Support. User can navigate the features of the grid on a touch device with the built-in Touch Support. You don't need to do anything, it works out of the box. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "JavaScript DataGrid Touch";
+$pageKeywords = "JavaScript DataGrid Touch";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

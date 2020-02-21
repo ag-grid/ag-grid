@@ -28,7 +28,7 @@ function enterprise_feature($name)
 <html lang="en">
 <head>
     <?php
-    meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
+    meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
     ?>
     <link rel="stylesheet" href="../dist/docs.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">

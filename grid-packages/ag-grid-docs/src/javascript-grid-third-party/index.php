@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Examples: Third Party Libraries";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers examples using common Third Party librabries.";
-$pageKeyboards = "ag-Grid Third Party Examples";
+$pageKeywords = "ag-Grid Third Party Examples";
 $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Drag and Drop: How to drag and drop data to/from the grid";
 $pageDescription = "Drag and drop is a mechanism for dragging and dropping rows to / from the data grid";
-$pageKeyboards = "Javascript Grid Drag Drop";
+$pageKeywords = "Javascript Grid Drag Drop";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

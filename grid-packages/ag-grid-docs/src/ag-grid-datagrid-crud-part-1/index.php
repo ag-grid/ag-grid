@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building a CRUD Application with ag-Grid Part 1";
 $pageDescription = "Welcome to the first part of the ultimate series on how to build CRUD applications with ag-Grid. It takes you through how to build an application from start to finish.";
-$pageKeyboards = "ag-grid datagrid crud enterprise";
+$pageKeywords = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/";
 $socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?" . uniqid();

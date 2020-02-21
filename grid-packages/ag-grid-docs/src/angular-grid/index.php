@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Angular Grid";
 $pageDescription = "ag-Grid is a feature-rich Angular Grid available in Free or Enterprise versions. This page details how to get started using ag-Grid inside an Angular application.";
-$pageKeyboards = "Angular 2 Grid";
+$pageKeywords = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

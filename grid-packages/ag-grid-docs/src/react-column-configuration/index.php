@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "React Columns";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers configuring columns in ag-Grid.";
-$pageKeyboards = "React Grid Column Configuration";
+$pageKeywords = "React Grid Column Configuration";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

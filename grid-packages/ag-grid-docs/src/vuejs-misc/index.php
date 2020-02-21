@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "VueJS Datagrid";
 $pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 19 is out now.";
-$pageKeyboards = "VueJS Grid, Vue Grid, Vue Table";
+$pageKeywords = "VueJS Grid, Vue Grid, Vue Table";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

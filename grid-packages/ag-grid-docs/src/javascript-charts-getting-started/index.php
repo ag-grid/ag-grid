@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Charts Getting Started: Choose Your Framework";
 $pageDescription = "ag-Charts is a feature-rich charts library. We support all the major JavaScript frameworks, this page is the jumping off point for all the individual guides.";
-$pageKeyboards = "JavaScript Charts";
+$pageKeywords = "JavaScript Charts";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

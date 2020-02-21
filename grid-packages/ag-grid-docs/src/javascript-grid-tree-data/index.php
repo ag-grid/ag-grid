@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Tree Data: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Tree Data. Use Tree Data to display data that has parent / child relationships where the parent / child relationships are provided as part of the data. For example, a folder can contain zero or more files and other folders. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Tree Data";
+$pageKeywords = "ag-Grid Tree Data";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

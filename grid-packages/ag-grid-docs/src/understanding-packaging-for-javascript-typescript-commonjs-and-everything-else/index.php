@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building Components for Javascript, React, Angular";
 $pageDescription = "An in-depth guide to building a JavaScript component. This covers everything we did to build ag-Grid, a commercially successful datgrid component.";
-$pageKeyboards = "javascript build components gulp typescript react angularjs";
+$pageKeywords = "javascript build components gulp typescript react angularjs";
 
 include('../includes/mediaHeader.php');
 ?>

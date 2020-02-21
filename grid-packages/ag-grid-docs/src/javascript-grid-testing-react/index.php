@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Testing Techniques";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference pages covers methods for End to End - e2e - testing within our datagrid.";
-$pageKeyboards = "ag-Grid react unit testing";
+$pageKeywords = "ag-Grid react unit testing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

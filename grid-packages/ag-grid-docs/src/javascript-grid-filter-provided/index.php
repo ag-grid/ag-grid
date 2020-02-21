@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Provided Filters";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Out of the box many filters are provided. This page introduced the provided filters.";
-$pageKeyboards = "ag-Grid Provided Filter";
+$pageKeywords = "ag-Grid Provided Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: Floating Filter Component";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It supports the use of components, here we discuss how to implement customer floating filters for the datagrid.";
-$pageKeyboards = "JavaScript Grid Floating Filtering";
+$pageKeywords = "JavaScript Grid Floating Filtering";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Grouping by Row: Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Grid Grouping";
+$pageKeywords = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: 2016 - Focus on all Frameworks";
 $pageDescription = "2015 was a busy year for ag-Grid. We run through our plans for 2016, we'll be focussing on adding support for more frameworks. We believe in being agnostic to frameworks and will be delivering this philosophy in 2016.";
-$pageKeyboards = "javscript ag-grid grid agnostic component";
+$pageKeywords = "javscript ag-grid grid agnostic component";
 
 include('../includes/mediaHeader.php');
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Components: An Overview";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It supports the use of components, this pge contains an overview of how to register these components and how to work with your chosen framework components.";
-$pageKeyboards = "ag-Grid Components";
+$pageKeywords = "ag-Grid Components";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>

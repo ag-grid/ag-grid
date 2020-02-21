@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Cell Expressions: A Core Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Expressions which allows you to use simple strings instead of functions for value getters, setters, formatters and parsers.";
-$pageKeyboards = "ag-Grid Cell Expressions";
+$pageKeywords = "ag-Grid Cell Expressions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

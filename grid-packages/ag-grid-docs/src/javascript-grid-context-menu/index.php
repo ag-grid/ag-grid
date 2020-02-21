@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Context Menu: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Context Menu. The Context Menu appears when you right click on a cell. Use the default options or provide your own. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Javascript Grid Context Menu";
+$pageKeywords = "ag-Grid Javascript Grid Context Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

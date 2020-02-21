@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: More Details - Angular Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
-$pageKeyboards = "Angular 2 Grid";
+$pageKeywords = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Polymer Datagrid - More Details";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers setting up the ag-Grid Polymer Component, ag-Grid Polymer dependency and getting through some of the fundamental setup.";
-$pageKeyboards = "Polymer Grid";
+$pageKeywords = "Polymer Grid";
 $pageGroup = "basics";
 include '../getting-started/header.php';
 ?>

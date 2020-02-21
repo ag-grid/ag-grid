@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building a CRUD Application with ag-Grid Part 2";
 $pageDescription = "In Part 2 of this Series, we go into more detail into the Middle Tier, exposing our data via a REST service.";
-$pageKeyboards = "ag-grid datagrid crud enterprise";
+$pageKeywords = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/";
 $socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?" . uniqid();

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Blog: Plunker is now backed by ag-Grid";
 $pageDescription = "ag-Grid is an open source JavaScript datagrid with an optional enterprise paid component. webpack is an open-source collaborative effort with no revenue stream. ag-Grid is going to help webpack by generously giving money!";
-$pageKeyboards = "ag-Grid JavaScript ";
+$pageKeywords = "ag-Grid JavaScript ";
 
 include('../includes/mediaHeader.php');
 ?>

@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Examples: OpenFin Integration";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. OpenFin provides runtime technology solutions for financial desktops. in this example, we document and illustrate how you can use ag-Grid within the OpenFin platform.";
-$pageKeyboards = "ag-grid openfin examples";
+$pageKeywords = "ag-grid openfin examples";
 $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>

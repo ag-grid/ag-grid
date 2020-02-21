@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Group Cell Renderer";
 $pageDescription = "Group cell renderer is for rendering group data in a column.";
-$pageKeyboards = "JavaScript grid grouping";
+$pageKeywords = "JavaScript grid grouping";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>

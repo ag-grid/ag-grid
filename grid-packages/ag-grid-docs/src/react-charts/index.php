@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "React Charts";
 $pageDescription = "ag-Charts is a feature-rich React Charting Library. This page details how to get started using ag-Charts inside an React application.";
-$pageKeyboards = "Angular Datacharts";
+$pageKeywords = "Angular Datacharts";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>

@@ -2,7 +2,7 @@
 
 $pageTitle = "ag-Grid Blog: Building a CRUD Application with ag-Grid Part 3";
 $pageDescription = "In Part 3 of this series, we create the scaffolding for our Angular application and get our data displayed in our first, simple, datagrid.";
-$pageKeyboards = "ag-grid datagrid crud enterprise";
+$pageKeywords = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/";
 $socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();

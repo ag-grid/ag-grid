@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Examples: Import Excel Spreadsheet";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows how to import an Excel Speadsheet into ag-Grid using a third-party library.";
-$pageKeyboards = "ag-Grid import excel";
+$pageKeywords = "ag-Grid import excel";
 $pageGroup = "examples";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';

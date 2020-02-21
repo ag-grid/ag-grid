@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Registering Components";
 $pageDescription = "The grid can be customised with your own components that should be registered with the grid.";
-$pageKeyboards = "Registering components";
+$pageKeywords = "Registering components";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

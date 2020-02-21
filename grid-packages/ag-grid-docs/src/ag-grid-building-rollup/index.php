@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Using Rollup with ag-Grid";
 $pageDescription = "This Getting Started guide demonstrates building ag-Grid with Rollup. Featuring step by step guide and code examples.";
-$pageKeyboards = "TypeScript Grid Rollup";
+$pageKeywords = "TypeScript Grid Rollup";
 $pageGroup = "basics";
 
 include '../documentation-main/documentation_header.php';

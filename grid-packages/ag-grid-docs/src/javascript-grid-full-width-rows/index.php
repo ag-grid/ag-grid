@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Full Width Rows: Styling & Appearance Feature of our Datagrid";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Full Width Rows. Full Width Rows allow you to have one cell that spans the entire width of the tables. This allows a card layout to work alongside the normal cells. Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "JavaScript Grid Full Width";
+$pageKeywords = "JavaScript Grid Full Width";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>

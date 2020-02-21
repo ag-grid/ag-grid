@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Column Properties";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. The columns of the datagrid are controlled by properties, this page outlines each of the Column Properties available.";
-$pageKeyboards = "ag-Grid Column Properties";
+$pageKeywords = "ag-Grid Column Properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>

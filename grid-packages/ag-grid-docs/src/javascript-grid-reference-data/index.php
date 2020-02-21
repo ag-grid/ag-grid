@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "ag-Grid Reference: Reference Data";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Reference Data. Use Reference Data for easier editing of data that uses reference data for display. For example, country codes e.g. {IE, UK, USA} with display values e.g. {Ireland, Great Britain, United States of America}). Version 20 is available for download now, take it for a free two month trial.";
-$pageKeyboards = "ag-Grid Value Handlers";
+$pageKeywords = "ag-Grid Value Handlers";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
