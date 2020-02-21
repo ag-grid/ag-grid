@@ -302,7 +302,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         group.translationY = this.translation.y;
         group.rotation = rotation;
 
-        const bandwidth = (scale.bandwidth || 0) / 2;
+        const halfBandwidth = (scale.bandwidth || 0) / 2;
 
         // The side of the axis line to position the labels on.
         // -1 = left (default)
@@ -346,7 +346,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + bandwidth));
+            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + halfBandwidth));
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
@@ -367,7 +367,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
                 gridLines = groupSelection.selectByTag<Arc>(Tags.GridLine)
                     .each((arc, datum) => {
-                        const radius = Math.round(scale.convert(datum) + bandwidth);
+                        const radius = Math.round(scale.convert(datum) + halfBandwidth);
 
                         arc.centerX = 0;
                         arc.centerY = scale.range[0] - radius;
