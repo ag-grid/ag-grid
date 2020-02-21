@@ -531,15 +531,20 @@ body {
         width: 100%;
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
 
         .chart-gallery-item {
-            max-width: calc(33% - 10px);
+            width: calc(50% - 6px);
             border: 1px solid $border-color;
             border-radius: 10px;
             overflow: hidden;
             text-align: center;
-            margin: 0 10px 10px 0;
             transition: transform 0.5s, box-shadow 0.5s;
+            margin-bottom: 12px;
+
+            @include media-breakpoint-up(lg) {
+                width: calc(33% - 6px);
+            }
 
             &:hover {
                 transform: translateY(-5px);
@@ -549,6 +554,7 @@ body {
             &__link {
                 display: block;
                 text-decoration: none;
+                height: 100%;
             }
 
             &__thumbnail {
@@ -558,10 +564,9 @@ body {
             &__name {
                 padding: 10px;
                 background-color: $offwhite;
+                height: 100%;
             }
         }
-
-
     }
 
     .chart-navigation {
