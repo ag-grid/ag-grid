@@ -6,6 +6,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
+import { _ } from "../utils";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator {
@@ -100,6 +101,13 @@ export class AutoWidthCalculator {
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
         const eCloneParent = document.createElement('div');
+
+        if (_.containsClass(eCellClone, 'ag-header-cell')) {
+            _.addCssClass(eCloneParent, 'ag-header');
+            _.addCssClass(eCloneParent, 'ag-header-row');
+            eCloneParent.style.position = 'static';
+        }
+
         // table-row, so that each cell is on a row. i also tried display='block', but this
         // didn't work in IE
         eCloneParent.style.display = 'table-row';

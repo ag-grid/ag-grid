@@ -92,6 +92,7 @@ export class Environment {
                 }
 
                 const div = document.createElement('div');
+                div.style.position = 'static';
                 _.addCssClass(div, currentClass);
                 el.appendChild(div);
 
