@@ -23,6 +23,9 @@
     "Stacked Bar": {
         "description": "The bar chart represents data as a series of stacked horizontal bars."
     },
+    "Percentage Bar": {
+        "description": "A bar chart showing the normalisation of data into percentages."
+    },
     "Bar With Negative Numbers": {
         "description": "A bar chart showing use of negative numbers."
     },

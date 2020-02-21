@@ -1037,6 +1037,10 @@
                 "url": "javascript-charts-gallery/stacked-bar.php"
               },
               {
+                "title": "Percentage Bar",
+                "url": "javascript-charts-gallery/percentage-bar.php"
+              },
+              {
                 "title": "Bar With Negative Numbers",
                 "url": "javascript-charts-gallery/bar-with-negative-numbers.php"
               },

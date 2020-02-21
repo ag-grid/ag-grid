@@ -65,6 +65,12 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
+    <a href="./percentage-bar.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/percentage-bar.png" /><br />
+        <div class="chart-gallery-item__name">Percentage Bar</div>
+    </a>
+</div>
+<div class="chart-gallery-item">
     <a href="./bar-with-negative-numbers.php" class="chart-gallery-item__link">
         <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-numbers.png" /><br />
         <div class="chart-gallery-item__name">Bar With Negative Numbers</div>
@@ -94,6 +100,7 @@ define('skipInPageNav', true);
         <div class="chart-gallery-item__name">Stacked Area</div>
     </a>
 </div>
+<div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 
 <h2>Next Up</h2>

@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Bar With Negative Numbers', 'bar-with-negative-numbers', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./stacked-bar.php">❮&nbsp;&nbsp;Stacked Bar</a>
+    <a class="chart-navigation__left" href="./percentage-bar.php">❮&nbsp;&nbsp;Percentage Bar</a>
     <a class="chart-navigation__right" href="./simple-line.php">Simple Line&nbsp;&nbsp;❯</a>
 </div>
 

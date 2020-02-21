@@ -14,6 +14,9 @@ var options = {
         yKeys: ['change'],
         fills: ['rgba(0, 117, 163, 0.9)'],
         strokes: ['rgba(0, 117, 163, 0.9)'],
+        highlightStyle: {
+            fill: '#0ab9ff',
+        },
         label: {
             fontWeight: 'bold',
             color: 'white',
