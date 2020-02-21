@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     title: {
         text: 'Mean Sea Level (mm)'
     },
@@ -17,4 +17,6 @@ agCharts.AgChart.create({
         type: 'number',
         position: 'left'
     }]
-});
+};
+
+agCharts.AgChart.create(options);

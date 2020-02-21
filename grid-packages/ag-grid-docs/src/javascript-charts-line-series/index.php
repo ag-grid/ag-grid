@@ -39,7 +39,7 @@ series: [{
 }]
 </snippet>
 
-<?= chart_example('Single Line Series', 'basic-line'); ?>
+<?= chart_example('Single Line Series', 'basic-line', 'generated'); ?>
 
 <p>
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
@@ -89,7 +89,7 @@ series: [{
     And we get a result like this:
 </p>
 
-<?= chart_example('Multiple Line Series', 'multi-line'); ?>
+<?= chart_example('Multiple Line Series', 'multi-line', 'generated'); ?>
 
 <h2>Legend and Tooltip information</h2>
 
@@ -112,7 +112,7 @@ series: [{
 }]
 </snippet>
 
-<?= chart_example('Legend and Tooltip information', 'legend-info'); ?>
+<?= chart_example('Legend and Tooltip information', 'legend-info', 'generated'); ?>
 
 <p>
     The provided <code>yName</code> will also show up in tooltip titles:
@@ -144,7 +144,7 @@ marker: {
     we'll get a result like this:
 </p>
 
-<?= chart_example('Line and Marker Colors', 'line-marker-colors'); ?>
+<?= chart_example('Line and Marker Colors', 'line-marker-colors', 'generated'); ?>
 
 <h2>Missing Data</h2>
 
@@ -154,7 +154,7 @@ marker: {
     and ag-Charts support correct rendering of incomplete data:
 </p>
 
-<?= chart_example('Line Series with Incomplete Data', 'gap-line'); ?>
+<?= chart_example('Line Series with Incomplete Data', 'gap-line', 'generated'); ?>
 
 <p>
     If the <code>yKey</code> value of a data point is positive or negative <code>Infinity</code>,
@@ -165,7 +165,7 @@ marker: {
 
 <h2>Continuous Data</h2>
 
-<?= chart_example('Continuous Data - Spiral Curve', 'two-number-axes'); ?>
+<?= chart_example('Continuous Data - Spiral Curve', 'two-number-axes', 'generated'); ?>
 
 <h2>Time-Series Data</h2>
 
@@ -175,7 +175,7 @@ marker: {
     with different number of readings taken at different intervals and irregular intervals at that:
 </p>
 
-<?= chart_example('Time Data - Temperature Sensors', 'time-line'); ?>
+<?= chart_example('Time Data - Temperature Sensors', 'time-line', 'generated'); ?>
 
 <p>
     Because we want to use a non-standard axis configuration (<code>'time'</code> axis on the bottom rather
@@ -246,7 +246,7 @@ series: [{
     from the start of the queue and add a new element to the end of the queue.
 </p>
 
-<?= chart_example('Real-Time Chart - Core Voltage', 'real-time'); ?>
+<?= chart_example('Real-Time Chart - Core Voltage', 'real-time', 'generated'); ?>
 
 <p>
     This example uses the <code>'time'</code> axis which is configured to show a tick

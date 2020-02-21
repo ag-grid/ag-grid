@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     title: {
         text: "Apple's revenue by product category"
@@ -21,4 +21,6 @@ agCharts.AgChart.create({
             }
         }
     }]
-});
+};
+
+agCharts.AgChart.create(options);

@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     data: generateSpiralData(),
     width: 450,
@@ -17,7 +17,9 @@ agCharts.AgChart.create({
     legend: {
         enabled: false
     }
-});
+};
+
+agCharts.AgChart.create(options);
 
 function generateSpiralData() {
     // r = a + bθ

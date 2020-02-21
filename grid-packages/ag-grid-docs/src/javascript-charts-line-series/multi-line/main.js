@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     title: {
         text: 'Fuel Spending (2019)'
@@ -34,4 +34,6 @@ agCharts.AgChart.create({
             stroke: 'black'
         }
     }]
-});
+};
+
+agCharts.AgChart.create(options);

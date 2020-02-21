@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     title: {
         text: 'Height vs Weight'
@@ -64,4 +64,6 @@ agCharts.AgChart.create({
             }
         }
     }]
-});
+};
+
+agCharts.AgChart.create(options);

@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     series: [{
         data: [{
@@ -83,4 +83,6 @@ agCharts.AgChart.create({
     legend: {
         position: 'bottom'
     }
-});
+};
+
+agCharts.AgChart.create(options);

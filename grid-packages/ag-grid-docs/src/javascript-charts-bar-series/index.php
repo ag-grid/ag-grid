@@ -51,7 +51,7 @@ series: [{
     produces the following chart:
 </p>
 
-<?= chart_example('Regular Column Series', 'regular-column'); ?>
+<?= chart_example('Regular Column Series', 'regular-column', 'generated'); ?>
 
 <p>
     Note that in the code of the example above we also:
@@ -84,7 +84,7 @@ yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
     And that simple change transformed our chart into this:
 </p>
 
-<?= chart_example('Stacked Column Series', 'stacked-column'); ?>
+<?= chart_example('Stacked Column Series', 'stacked-column', 'generated'); ?>
 
 <p>
     Note that in the example code we also didn't forget to update <code>yNames</code> along with
@@ -111,7 +111,7 @@ grouped: true
     That will produce the following chart:
 </p>
 
-<?= chart_example('Grouped Column Series', 'grouped-column'); ?>
+<?= chart_example('Grouped Column Series', 'grouped-column', 'generated'); ?>
 
 <h3>Normalized Columns</h3>
 
@@ -129,7 +129,7 @@ normalizedTo: 100
     It's possible to use any non-zero value to normalize to.
 </note>
 
-<?= chart_example('Normalized Column Series', 'normalized-column'); ?>
+<?= chart_example('Normalized Column Series', 'normalized-column', 'generated'); ?>
 
 <p>
     Notice how the example above additionally uses a label formatter to add <code>%</code>
@@ -180,7 +180,7 @@ label: {
     don't stick out of their columns:
 </p>
 
-<?= chart_example('Column Series with Labels', 'labeled-column'); ?>
+<?= chart_example('Column Series with Labels', 'labeled-column', 'generated'); ?>
 
 <note>
     It's best to avoid using labels with grouped columns (or bars),
@@ -224,7 +224,7 @@ axes: [{
     to stacked bars:
 </p>
 
-<?= chart_example('Stacked Bar Series', 'stacked-bar'); ?>
+<?= chart_example('Stacked Bar Series', 'stacked-bar', 'generated'); ?>
 
 <h2>Bar/Column Series API Reference</h2>
 

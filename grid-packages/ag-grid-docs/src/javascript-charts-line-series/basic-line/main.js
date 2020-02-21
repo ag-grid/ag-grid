@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     title: {
         text: 'Average expenditure on coffee'
@@ -23,4 +23,6 @@ agCharts.AgChart.create({
         xKey: 'year',
         yKey: 'spending'
     }]
-});
+};
+
+agCharts.AgChart.create(options);

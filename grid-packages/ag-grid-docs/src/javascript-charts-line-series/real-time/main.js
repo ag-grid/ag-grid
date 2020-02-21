@@ -7,7 +7,7 @@ for (var i = 0; i < 20; i++) {
     });
 }
 
-var chart = agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     data: data,
     series: [{
@@ -39,7 +39,9 @@ var chart = agCharts.AgChart.create({
     legend: {
         enabled: false
     }
-});
+};
+
+var chart = agCharts.AgChart.create(options);
 
 setInterval(function() {
     data.shift();

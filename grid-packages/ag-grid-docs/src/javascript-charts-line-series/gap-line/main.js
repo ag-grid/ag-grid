@@ -1,4 +1,4 @@
-agCharts.AgChart.create({
+var options = {
     container: document.getElementById('myChart'),
     width: 700,
     height: 400,
@@ -55,4 +55,6 @@ agCharts.AgChart.create({
     legend: {
         enabled: false
     }
-});
+};
+
+agCharts.AgChart.create(options);
