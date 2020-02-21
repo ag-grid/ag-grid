@@ -16,6 +16,18 @@ var options = {
         marker: {
             enabled: true
         }
+    }],
+    axes: [{
+        type: 'number',
+        position: 'left',
+        label: {
+            formatter: function (params) {
+                return params.value + '%';
+            }
+        }
+    }, {
+        type: 'category',
+        position: 'bottom'
     }]
 }
 

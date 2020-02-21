@@ -143,37 +143,33 @@ series: [{
 <h2>Stacked Area Series</h2>
 
 <p>
-    If the goal is to show the quarterly revenue for each product category, multiple <code>yKeys</code>
-    can be used. To go from a <a href="#regular-columns">regular column chart</a> above
-    to a stacked one below, all we did is added some more <code>yKeys</code> like so:
+    If we want the areas to be stacked on top of each other, instead of creating a new
+    <code>'area'</code> series per stack level, we simply have to use multiple <code>yKeys</code>.
+    For example, to have a stacked area chart that shows changes in market share for
+    the most popular internet browsers we could use a config like this:
 </p>
 
 <snippet language="ts">
-yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
+series: [{
+    type: 'area',
+    xKey: 'year',
+    yKeys: ['ie', 'firefox', 'safari', 'chrome']
+}]
 </snippet>
 
 <p>
-    And that simple change transformed our chart into this:
+    Please see an example of the stacked area chart below.
 </p>
 
 <h3>Example: Stacked Area Series</h3>
 
 <?= chart_example('Stacked Area Series', 'stacked-area', 'generated'); ?>
 
-<p>
-    Note that in the example code we also didn't forget to update <code>yNames</code> along with
-    <code>yKeys</code>, to make sure we have nice looking tooltip headers and legend entries.
-</p>
-
-<snippet language="ts">
-yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
-</snippet>
-
 <h2>Normalized Area Series</h2>
 
 <p>
-    Going back to our <a href="#stacked-columns">stacked column</a> example,
-    if we wanted to normalize the totals so that each column's segments added up to
+    Going back to our <a href="#example-stacked-area-series">stacked area series</a> example,
+    if we wanted to normalize the totals so that for any given year stack levels always added up to
     a certain value, for example 100%, we could add the following to our series config:
 </p>
 
@@ -184,6 +180,8 @@ normalizedTo: 100
 <note>
     It's possible to use any non-zero value to normalize to.
 </note>
+
+<h3>Example: Normalized Stacked Area Series</h3>
 
 <?= chart_example('Normalized Stacked Area Series', 'normalized-area', 'generated'); ?>
 
