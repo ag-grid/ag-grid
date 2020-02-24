@@ -207,8 +207,15 @@ const replaceAgReferencesWithCdnLinks = () => {
         .pipe(gulp.dest('./dist'));
 };
 
-gulp.task('generate-grid-examples', (done) => {
-    generateGridExamples.bind(
+gulp.task('generate-grid-package-examples', (done) => {
+    generateGridPackageExamples.bind(
+        null,
+        '*',
+        done
+    )();
+});
+gulp.task('generate-grid-module-examples', (done) => {
+    generateGridModuleExamples.bind(
         null,
         '*',
         done
@@ -228,7 +235,7 @@ gulp.task('bundle-site-archive', bundleSite.bind(null, false));
 gulp.task('bundle-site-release', bundleSite.bind(null, true));
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('replace-references-with-cdn', replaceAgReferencesWithCdnLinks);
-gulp.task('generate-examples', parallel('generate-grid-examples', 'generate-chart-examples'));
+gulp.task('generate-examples', parallel('generate-grid-package-examples', 'generate-grid-module-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('generate-examples', 'process-src', 'bundle-site-archive', 'copy-from-dist', 'populate-dev-folder', 'update-dist-systemjs-files'));
 gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-release', 'copy-from-dist', 'update-dist-systemjs-files', 'replace-references-with-cdn'));
 gulp.task('default', series('release'));

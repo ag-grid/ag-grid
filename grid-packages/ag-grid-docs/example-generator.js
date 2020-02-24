@@ -84,7 +84,7 @@ function getFileContents(path) {
     return fs.readFileSync(path, { encoding: 'utf8' });
 }
 
-function forEachExample(done, name, regex, generateExample, scope = '*') {
+function forEachExample(done, name, importType, regex, generateExample, scope = '*') {
     glob(`src/${scope}/*.php`, {}, (_, files) => {
         const startTime = Date.now();
         let count = 0;
@@ -111,7 +111,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*') {
             }
         });
 
-        console.log(`-> ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+        console.log(`-> ${count} ${name} (${importType}) example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
         if (done) {
             done();
         }
@@ -120,8 +120,8 @@ function forEachExample(done, name, regex, generateExample, scope = '*') {
 
 const format = (source, parser) => prettier.format(source, { parser, singleQuote: true, trailingComma: 'es5' });
 
-function createExampleGenerator(prefix) {
-    const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix);
+function createExampleGenerator(prefix, importType) {
+    const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix, importType);
 
     return (examplePath, options) => {
         //    src section                        example        glob
@@ -153,7 +153,8 @@ function createExampleGenerator(prefix) {
         const bindings = parser(mainJs, indexHtml, options);
 
         // this examples _gen directory
-        const _gen = createExamplePath('_gen');
+        // const _gen = createExamplePath(`_gen`);
+        const _gen = createExamplePath(`_gen/${importType}`);
 
         // inline styles in the examples index.html
         // will be added to styles.css in the various generated fw examples
@@ -164,7 +165,7 @@ function createExampleGenerator(prefix) {
         let indexJSX;
 
         try {
-            const source = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'));
+            const source = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'), importType);
 
             indexJSX = format(source, 'babel');
         } catch (e) {
@@ -177,7 +178,7 @@ function createExampleGenerator(prefix) {
         let appComponentTS, appModuleTS;
 
         try {
-            const source = vanillaToAngular(bindings, angularComponentFileNames);
+            const source = vanillaToAngular(bindings, angularComponentFileNames, importType);
 
             appComponentTS = format(source, 'typescript');
             appModuleTS = format(appModuleAngular(angularComponentFileNames), 'typescript');
@@ -193,7 +194,7 @@ function createExampleGenerator(prefix) {
             // vue is still new - only process examples marked as tested and good to go
             // when all examples have been tested this check can be removed
             if (options.processVue || options.processVue === undefined) {
-                const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'));
+                const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
 
                 mainApp = format(source, 'babel');
             }
@@ -257,34 +258,61 @@ function createExampleGenerator(prefix) {
     };
 }
 
-function getGeneratorCode(prefix) {
+function getGeneratorCode(prefix, importType) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
-    const { appModuleAngular } = require(`${prefix}angular-app-module.ts`);
+    const { appModuleAngular } = require(`${prefix}${importType}-angular-app-module.ts`);
 
     return [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular];
 }
 
-function generateExamples(type, scope, done) {
-    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`);
+function generateExamples(type, importType, scope, done) {
+    const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`, importType);
     const regex = new RegExp(`${type}_example\\('.+?'\\s*,\\s*'(.+?)'\\s*,\\s*'(.+?)'(.*?)\\);?\\s*\\?>`, 'g');
 
-    forEachExample(done, type, regex, exampleGenerator, scope);
+    forEachExample(done, type, importType, regex, exampleGenerator, scope);
 }
 
-module.exports.generateGridExamples = (scope, done) => {
-    require('ts-node').register();
-    generateExamples('grid', scope, done);
+module.exports.generateGridPackageExamples = (scope, done) => {
+    try {
+        require('ts-node').register();
+        generateExamples('grid', 'packages', scope, done);
+    } catch (e) {
+        console.error('Failed to generate grid package examples', e);
+        if(done) {
+            done(e);
+        }
+    }
+};
+module.exports.generateGridModuleExamples = (scope, done) => {
+    try {
+        require('ts-node').register();
+        generateExamples('grid', 'modules', scope, done);
+    } catch (e) {
+        console.error('Failed to generate grid module examples', e);
+        if(done) {
+            done(e);
+        }
+    }
 };
 
 module.exports.generateChartExamples = (scope, done) => {
-    require('ts-node').register();
-    generateExamples('chart', scope, done);
+    try {
+        require('ts-node').register();
+        generateExamples('chart', 'packages', scope, done);
+    } catch (e) {
+        console.error('Failed to generate chart examples', e);
+        if(done) {
+            done(e);
+        }
+
+    }
 };
 
 module.exports.generateExamples = (scope) => {
-    module.exports.generateGridExamples(scope);
+    module.exports.generateGridPackageExamples(scope);
+    module.exports.generateGridModuleExamples(scope);
     module.exports.generateChartExamples(scope);
 };

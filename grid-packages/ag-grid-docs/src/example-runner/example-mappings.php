@@ -71,7 +71,12 @@ if (USE_LOCAL) {
         "@ag-grid-community/vue" => "$prefix/@ag-grid-community/vue",
         "ag-charts-react" => "$prefix/ag-charts-react",
         "ag-charts-angular" => "$prefix/ag-charts-angular",
-        "ag-charts-vue" => "$prefix/ag-charts-vue"
+        "ag-charts-vue" => "$prefix/ag-charts-vue",
+        "ag-grid-community" => "$prefix/ag-grid-community",
+        "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
+        "ag-grid-angular" => "$prefix/ag-grid-angular",
+        "ag-grid-react" => "$prefix/ag-grid-react",
+        "ag-grid-vue" => "$prefix/ag-grid-vue"
     );
 
     $gridSystemJsCommunityPaths = array(

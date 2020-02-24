@@ -1,4 +1,4 @@
-import { removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { removeFunctionKeyword, isInstanceMethod, ImportType } from './parser-utils';
 import { toInput, toConst, toOutput, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
@@ -31,7 +31,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }`;
 }
 
-function getImports(bindings: any, componentFileNames: string[]): string[] {
+function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
     const { gridSettings } = bindings;
     const imports = ["import { Component, ViewChild } from '@angular/core';"];
 
@@ -58,6 +58,39 @@ function getImports(bindings: any, componentFileNames: string[]): string[] {
     return imports;
 }
 
+function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
+    const { gridSettings } = bindings;
+    const imports = ["import { Component, ViewChild } from '@angular/core';"];
+
+    if (bindings.data) {
+        imports.push("import { HttpClient } from '@angular/common/http';");
+    }
+
+    if (gridSettings.enterprise) {
+        imports.push("import 'ag-grid-enterprise';");
+    }
+
+    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
+
+    if (componentFileNames) {
+        imports.push(...componentFileNames.map(getImport));
+    }
+
+    return imports;
+}
+
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+    if(importType === "packages") {
+        return getPackageImports(bindings, componentFileNames);
+    } else {
+        return getModuleImports(bindings, componentFileNames);
+    }
+}
+
 function getTemplate(bindings: any, attributes: string[]): string {
     const { gridSettings } = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
@@ -75,9 +108,9 @@ function getTemplate(bindings: any, attributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToAngular(bindings: any, componentFileNames: string[]): string {
+export function vanillaToAngular(bindings: any, componentFileNames: string[], importType: ImportType): string {
     const { data, properties } = bindings;
-    const imports = getImports(bindings, componentFileNames);
+    const imports = getImports(bindings, componentFileNames, importType);
     const diParams = [];
     const additional = [];
 
@@ -85,10 +118,14 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
         diParams.push('private http: HttpClient');
     }
 
-    const propertyAttributes = ['[modules]="modules"'];
+    const propertyAttributes = [];
     const propertyVars = [];
-    const propertyAssignments = [];
+    if(importType === 'modules') {
+        propertyAttributes.push('[modules]="modules"');
+        propertyVars.push(`public modules: Module[] = ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'};`);
+    }
 
+    const propertyAssignments = [];
     properties.filter(property => property.name !== 'onGridReady').forEach(property => {
         if (componentFileNames.length > 0 && property.name === 'components') {
             property.name = 'frameworkComponents';
@@ -139,8 +176,7 @@ ${imports.join('\n')}
 
 export class AppComponent {
     private gridApi;
-    private gridColumnApi;
-    public modules: Module[] = ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'};
+    private gridColumnApi;    
 
     ${propertyVars.join('\n')}
 

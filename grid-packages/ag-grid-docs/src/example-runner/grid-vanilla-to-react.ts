@@ -1,8 +1,8 @@
-import { isInstanceMethod } from './parser-utils';
-import { getImport, convertFunctionToProperty, convertTemplate } from './react-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {isInstanceMethod, ImportType} from './parser-utils';
+import {convertFunctionToProperty, convertTemplate, getImport} from './react-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
-function getImports(bindings: any, componentFilenames: string[]): string[] {
+function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
     const imports = [
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
@@ -28,8 +28,40 @@ function getImports(bindings: any, componentFilenames: string[]): string[] {
     return imports;
 }
 
+function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
+    const imports = [
+        "import React, { Component } from 'react';",
+        "import { render } from 'react-dom';",
+        "import { AgGridReact } from 'ag-grid-react';"
+    ];
+
+    if (bindings.gridSettings.enterprise) {
+        imports.push("import 'ag-grid-enterprise';");
+    }
+
+    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = bindings.gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
+
+    if (componentFilenames) {
+        imports.push(...componentFilenames.map(getImport));
+    }
+
+    return imports;
+}
+
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+    if (importType === 'packages') {
+        return getPackageImports(bindings, componentFileNames);
+    } else {
+        return getModuleImports(bindings, componentFileNames);
+    }
+}
+
 function getTemplate(bindings: any, componentAttributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const agGridTag = `<div
                 id="myGrid"
                 style={{
@@ -46,12 +78,17 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToReact(bindings: any, componentFilenames: string[]): string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
-    const imports = getImports(bindings, componentFilenames);
-    const stateProperties = [`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`];
-    const componentAttributes = ['modules={this.state.modules}'];
+export function vanillaToReact(bindings: any, componentFilenames: string[], importType: ImportType): string {
+    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+    const imports = getImports(bindings, componentFilenames, importType);
     const instanceBindings = [];
+    const stateProperties = [];
+    const componentAttributes = [];
+
+    if (importType === 'modules') {
+        stateProperties.push(`modules: ${gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
+        componentAttributes.push('modules={this.state.modules}');
+    }
 
     properties.filter(property => property.name !== 'onGridReady').forEach(property => {
         if (componentFilenames.length > 0 && property.name === 'components') {

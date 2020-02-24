@@ -1,9 +1,9 @@
-import { getFunctionName, removeFunctionKeyword, isInstanceMethod } from './parser-utils';
-import { toInput, toConst, toOutput, toMember, toAssignment, getImport, convertTemplate } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {getFunctionName, isInstanceMethod, removeFunctionKeyword, ImportType} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
 function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+    const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -15,7 +15,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -37,8 +37,8 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-function getImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
+    const {gridSettings} = bindings;
     const imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue';",
@@ -62,8 +62,39 @@ function getImports(bindings: any, componentFileNames: string[]): string[] {
 
     return imports;
 }
+function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
+    const {gridSettings} = bindings;
+    const imports = [
+        "import Vue from 'vue';",
+        "import { AgGridVue } from 'ag-grid-vue';",
+    ];
 
-function getPropertyBindings(bindings: any, componentFileNames: string[]): [string[], string[], string[]] {
+    if (gridSettings.enterprise) {
+        imports.push("import 'ag-grid-enterprise';");
+    }
+
+    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to balham if it does
+    const theme = gridSettings.theme || 'ag-theme-balham';
+    imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
+
+    if (componentFileNames) {
+        imports.push(...componentFileNames.map(getImport));
+    }
+
+    return imports;
+}
+
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+    if (importType === 'packages') {
+        return getPackageImports(bindings, componentFileNames);
+    } else {
+        return getModuleImports(bindings, componentFileNames);
+    }
+}
+
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -92,8 +123,10 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
             }
         });
 
-    propertyAttributes.push(':modules="modules"');
-    propertyVars.push(`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
+    if (importType === 'modules') {
+        propertyAttributes.push(':modules="modules"');
+        propertyVars.push(`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
+    }
 
     if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
@@ -109,7 +142,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
@@ -148,9 +181,9 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions];
 }
 
-export function vanillaToVue(bindings: any, componentFileNames: string[]): string {
-    const imports = getImports(bindings, componentFileNames);
-    const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames);
+export function vanillaToVue(bindings: any, componentFileNames: string[], importType: ImportType): string {
+    const imports = getImports(bindings, componentFileNames, importType);
+    const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
@@ -186,11 +219,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-            .concat(externalEventHandlers)
-            .concat(onGridReady)
-            .concat(instanceMethods)
-            .map(snippet => `${snippet.trim()},`)
-            .join('\n')}
+        .concat(externalEventHandlers)
+        .concat(onGridReady)
+        .concat(instanceMethods)
+        .map(snippet => `${snippet.trim()},`)
+        .join('\n')}
     }
 }
 

@@ -1,3 +1,5 @@
+export type ImportType = 'packages' | 'modules';
+
 export function removeFunctionKeyword(code: string): string {
     return code.replace(/^function /, '');
 }

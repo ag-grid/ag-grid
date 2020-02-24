@@ -124,8 +124,17 @@ function get_common_properties($type, $dir, $title, $options)
     );
 }
 
+function get_current_import_type($exampleType) {
+    if($exampleType === 'charts') {
+        // standalone charts only supports packages for now
+        return 'packages';
+    }
+    return isset($_COOKIE["agGridRunnerImportType"]) ? $_COOKIE["agGridRunnerImportType"] : 'modules';
+}
+
 function get_file_information_for_types($exampleType, $types, $dir, $multi, $generated, $queryString)
 {
+    $importType = get_current_import_type($exampleType);
     $typeConfig = array();
 
     foreach ($types as $theType) {
@@ -133,7 +142,7 @@ function get_file_information_for_types($exampleType, $types, $dir, $multi, $gen
         if ($multi) {
             $entry['files'] = getDirContents(path_combine($dir, $theType));
         } else if ($generated) {
-            $entry['files'] = getDirContents(path_combine($dir, "_gen", $theType));
+            $entry['files'] = getDirContents(path_combine($dir, "_gen", $importType, $theType));
         } else {
             $entry['files'] = getDirContents($dir);
         }
@@ -224,6 +233,9 @@ function chart_example($title, $dir, $type = 'vanilla', $options = array())
 
     $config = $common_properties['config'];
 
+    $config['showImportsDropdown'] = false;
+    $config['defaultImportType'] = 'packages';
+
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
     // sets example file & boilerplate information per type (angular, vue etc)
@@ -258,6 +270,7 @@ function getGridSettings()
 
 function getExampleInfo($exampleType, $boilerplatePrefix)
 {
+    $importType = get_current_import_type($exampleType);
     $plunkerView = isset($_GET['plunkerView']);
     $multi = isset($_GET['multi']);
     $generated = isset($_GET['generated']);
@@ -268,7 +281,7 @@ function getExampleInfo($exampleType, $boilerplatePrefix)
     if ($multi) {
         $appRoot = path_combine('..', $exampleSection, $exampleDir, $boilerplatePrefix);
     } else if ($generated) {
-        $appRoot = path_combine('..', $exampleSection, $exampleDir, '_gen', $boilerplatePrefix);
+        $appRoot = path_combine('..', $exampleSection, $exampleDir, '_gen', $importType, $boilerplatePrefix);
     } else {
         $appRoot = path_combine('..', $exampleSection, $exampleDir);
     }

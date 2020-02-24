@@ -5,11 +5,11 @@ export function appModuleAngular(componentFileNames: string[]) {
     const imports = [
         "import { NgModule } from '@angular/core';",
         "import { BrowserModule } from '@angular/platform-browser';",
-        "import { FormsModule } from '@angular/forms'; // <-- NgModel lives here",
-        "import { HttpClientModule } from '@angular/common/http';	// HttpClient",
+        "import { FormsModule } from '@angular/forms';",
+        "import { HttpClientModule } from '@angular/common/http';",
         "",
         "// ag-grid",
-        "import { AgGridModule } from '@ag-grid-community/angular';",
+        "import { AgGridModule } from 'ag-grid-angular';",
         "import { AppComponent } from './app.component';",
         "",
     ];

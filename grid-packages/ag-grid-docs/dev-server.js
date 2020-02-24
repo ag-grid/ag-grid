@@ -205,6 +205,33 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         rename: 'ag-charts-vue'
     });
 
+    // old style packages
+    lnk('../../grid-packages/ag-grid-community/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-community'
+    });
+    lnk('../../grid-packages/ag-grid-enterprise/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-enterprise'
+    });
+    lnk('../../grid-packages/ag-grid-angular/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-angular'
+    });
+    lnk('../../grid-packages/ag-grid-react/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-react'
+    });
+    lnk('../../grid-packages/ag-grid-vue/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-vue'
+    });
+
 }
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
@@ -572,6 +599,13 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-charts-react');
             serveFramework(app, 'ag-charts-angular');
             serveFramework(app, 'ag-charts-vue');
+
+            // old style packages
+            serveFramework(app, 'ag-grid-community');
+            serveFramework(app, 'ag-grid-enterprise');
+            serveFramework(app, 'ag-grid-angular');
+            serveFramework(app, 'ag-grid-vue');
+            serveFramework(app, 'ag-grid-react');
 
             // regenerate examples
             watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules);

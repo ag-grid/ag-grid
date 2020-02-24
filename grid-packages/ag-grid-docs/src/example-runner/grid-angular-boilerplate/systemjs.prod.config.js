@@ -124,6 +124,18 @@
                     }
                 }
             },
+            'ag-grid-angular': {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-community': {
+                main: './dist/ag-grid-community.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-grid-enterprise': {
+                main: './dist/ag-grid-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             "@ag-grid-community/angular": {
                 main: "./bundles/ag-grid-community-angular.umd.js",
                 defaultExtension: "js"
