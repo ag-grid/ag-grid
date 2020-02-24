@@ -18,7 +18,8 @@ var options = {
         xKey: 'month',
         yKeys: ['value1'],
         yNames: ['Sweaters Made']
-    }]
+    }],
+    tooltipClass: 'my-tooltip'
 };
 
 var chart = agCharts.AgChart.create(options);
