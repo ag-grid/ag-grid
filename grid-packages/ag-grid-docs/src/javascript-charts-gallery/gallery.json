@@ -41,6 +41,9 @@
     "Line With Gaps": {
         "description": "This example shows how the line series handles gaps in the data."
     },
+    "Simple Scatter": {
+        "description": "This scatter chart shows how independent variables can be plotted against each other."
+    },
     "Simple Area": {
         "description": "This area chart represents data using areas."
     },
