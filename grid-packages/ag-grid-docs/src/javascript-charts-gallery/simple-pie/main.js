@@ -13,9 +13,15 @@ var options = {
         labelKey: 'religion',
         angleKey: 'population',
         label: {
-            enabled: false,
+            minAngle: 0,
+        },
+        callout: {
+            strokeWidth: 2,
         },
     }],
+    legend: {
+        enabled: false,
+    },
 };
 
 var chart = agCharts.AgChart.create(options);

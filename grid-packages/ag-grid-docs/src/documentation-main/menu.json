@@ -1049,6 +1049,10 @@
                 "url": "javascript-charts-gallery/simple-pie.php"
               },
               {
+                "title": "Simple Doughnut",
+                "url": "javascript-charts-gallery/simple-doughnut.php"
+              },
+              {
                 "title": "Simple Line",
                 "url": "javascript-charts-gallery/simple-line.php"
               },

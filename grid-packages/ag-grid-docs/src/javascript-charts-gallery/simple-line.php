@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Simple Line', 'simple-line', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./simple-pie.php">❮&nbsp;&nbsp;Simple Pie</a>
+    <a class="chart-navigation__left" href="./simple-doughnut.php">❮&nbsp;&nbsp;Simple Doughnut</a>
     <a class="chart-navigation__right" href="./line-with-gaps.php">Line With Gaps&nbsp;&nbsp;❯</a>
 </div>
 

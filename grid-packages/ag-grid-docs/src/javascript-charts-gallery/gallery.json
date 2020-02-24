@@ -32,6 +32,9 @@
     "Simple Pie": {
         "description": "The pie chart represents proportional data as a pie."
     },
+    "Simple Doughnut": {
+        "description": "The doughnut chart shows multiple pie series."
+    },
     "Simple Line": {
         "description": "The line chart represents data using a number of lines."
     },
