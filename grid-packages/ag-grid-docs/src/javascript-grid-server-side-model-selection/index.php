@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 
-<?= grid_example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
