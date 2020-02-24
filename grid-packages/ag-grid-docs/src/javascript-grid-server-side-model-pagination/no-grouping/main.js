@@ -20,14 +20,14 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // fetch 100 rows per at a time
-    cacheBlockSize: 100,
+    pagination: true,
 
-    // only keep 10 blocks of rows
-    maxBlocksInCache: 10,
+    // fetch 10 rows per at a time (default is 100)
+    cacheBlockSize: 10,
+
+    paginationPageSize: 10,
 
     animateRows: true,
-    pagination: true
 };
 
 // setup the grid after the page has finished loading
@@ -42,49 +42,62 @@ document.addEventListener('DOMContentLoaded', function() {
           item.id = idSequence++;
         });
 
-        var server = new FakeServer(data);
-        var datasource = new ServerSideDatasource(server);
+        //TODO - left here at it reveals a defect
+        var dataMod = data.slice(0,25);
+        console.log(dataMod.length);
+
+        // setup the fake server with entire dataset
+        var fakeServer = new FakeServer(dataMod);
+
+        // create datasource with a reference to the fake server
+        var datasource = new ServerSideDatasource(fakeServer);
+
+        // register the datasource with the grid
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
 
 function ServerSideDatasource(server) {
-  return {
-    getRows: function(params) {
-      // adding delay to simulate real sever call
-      setTimeout(function () {
+    return {
+        getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
 
-        var response = server.getResponse(params.request);
+            var response = server.getData(params.request);
 
-        if (response.success) {
-          // call the success callback
-          params.successCallback(response.rows, response.lastRow);
-        } else {
-          // inform the grid request failed
-          params.failCallback();
+            // adding delay to simulate real sever call
+            setTimeout(function () {
+                if (response.success) {
+                    // call the success callback
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    // inform the grid request failed
+                    params.failCallback();
+                }
+            }, 200);
         }
-
-      }, 500);
-    }
-  };
+    };
 }
 
 function FakeServer(allData) {
-  return {
-    getResponse: function(request) {
-      console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
+    return {
+        getData: function(request) {
+            // take a slice of the total rows for requested block
+            var rowsForBlock = allData.slice(request.startRow, request.endRow);
 
-      // take a slice of the total rows
-      var rowsThisPage = allData.slice(request.startRow, request.endRow);
+            // if on or after the last block, work out the last row, otherwise return -1
+            var lastRow = getLastRowIndex(request, rowsForBlock);
 
-      // if on or after the last page, work out the last row.
-      var lastRow = allData.length <= request.endRow ? data.length : -1;
+            return {
+                success: true,
+                rows: rowsForBlock,
+                lastRow: lastRow,
+            };
+        },
+    };
+}
 
-      return {
-        success: true,
-        rows: rowsThisPage,
-        lastRow: lastRow
-      };
-    }
-  };
+function getLastRowIndex(request, results) {
+    if (!results || results.length === 0) return -1;
+    var currentLastRow = request.startRow + results.length + 1;
+    return currentLastRow <= request.endRow ? currentLastRow : -1;
 }

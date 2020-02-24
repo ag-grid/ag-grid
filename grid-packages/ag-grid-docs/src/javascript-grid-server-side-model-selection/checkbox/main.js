@@ -18,7 +18,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         field: "athlete",
         flex: 1,
-        minWidth: 180,
+        minWidth: 240,
         // headerCheckboxSelection: true, // not supported for Enterprise Model
         cellRendererParams: {
             checkbox: true,

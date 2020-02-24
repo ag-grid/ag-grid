@@ -27,6 +27,8 @@ var gridOptions = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
+  blockLoadDebounceMillis: 100,
+
   animateRows: true,
 
   // debug: true,
@@ -82,8 +84,8 @@ function FakeServer(allData) {
       // take a slice of the total rows for requested block
       var rowsForBlock = allData.slice(request.startRow, request.endRow);
 
-      // if on or after the last block, work out the last row, otherwise return -1
-      var lastRow = getLastRowIndex(request, rowsForBlock);
+      // if the row count is known you can quickly skip over blocks
+      var lastRow = allData.length;
 
       return {
         success: true,
@@ -94,8 +96,3 @@ function FakeServer(allData) {
   };
 }
 
-function getLastRowIndex(request, results) {
-  if (!results || results.length === 0) return -1;
-  var currentLastRow = request.startRow + results.length + 1;
-  return currentLastRow <= request.endRow ? currentLastRow : -1;
-}

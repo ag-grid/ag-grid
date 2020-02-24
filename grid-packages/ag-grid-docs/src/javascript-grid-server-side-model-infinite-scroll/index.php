@@ -78,6 +78,9 @@ gridOptions.api.setServerSideDatasource(datasource);
 
 <?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
+<?= grid_example('Block Load Debounce', 'block-load-debounce', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+
 <h2>Server-side Cache</h2>
 
 <p>
