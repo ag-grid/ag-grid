@@ -71,7 +71,8 @@ include '../documentation-main/documentation_header.php';
 
         </li>
     </ul>
-<?= grid_example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+
+<?= grid_example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 
 <h2>Providing Node ID's</h2>
