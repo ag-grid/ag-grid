@@ -191,7 +191,7 @@ export class ColumnSeries extends CartesianSeries {
     protected _yNames: string[] = [];
     set yNames(values: string[]) {
         this._yNames = values;
-        this.update();
+        this.scheduleData();
     }
     get yNames(): string[] {
         return this._yNames;
