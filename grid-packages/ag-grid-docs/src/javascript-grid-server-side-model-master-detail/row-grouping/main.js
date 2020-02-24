@@ -7,10 +7,13 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1
+    },
     autoGroupColumnDef: {
         field: 'accountId'
     },
-    columnDefs: columnDefs,
     animateRows: true,
 
     // use the server-side row model
@@ -28,9 +31,8 @@ var gridOptions = {
                 {field: 'switchCode'},
                 {field: 'number'},
             ],
-            onFirstDataRendered: function(params) {
-                // fit the detail grid columns
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1
             }
         },
         getDetailRowData: function (params) {
@@ -40,18 +42,35 @@ var gridOptions = {
     },
     onGridReady: function(params) {
         setTimeout(function() {
-            // fit the master grid columns
-            params.api.sizeColumnsToFit();
-
-            // arbitrarily expand some master row
-            var someRow = params.api.getRowNode("3");
-            if (someRow) someRow.setExpanded(true);
-
-        }, 1500);
+            // expand some master row
+            var someRow = params.api.getRowNode("1");
+            if (someRow) {
+                someRow.setExpanded(true);
+            }
+        }, 1000);
     }
 };
 
-var allData;
+function ServerSideDatasource(server) {
+    return {
+        getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
+
+            var response = server.getData(params.request);
+
+            // adding delay to simulate real sever call
+            setTimeout(function () {
+                if (response.success) {
+                    // call the success callback
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    // inform the grid request failed
+                    params.failCallback();
+                }
+            }, 200);
+        }
+    };
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -59,62 +78,14 @@ document.addEventListener('DOMContentLoaded', function () {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json'}).then(function (data) {
+        // setup the fake server with entire dataset
+        var fakeServer = new FakeServer(data);
 
-        allData = data;
+        // create datasource with a reference to the fake server
+        var datasource = new ServerSideDatasource(fakeServer);
 
-        var dataSource = {
-            getRows: function (getRowParams) {
-
-                // To make the demo look real, wait for 200ms before returning
-                setTimeout(function () {
-                    var response = getMockServerResponse(getRowParams.request);
-
-                    // call the success callback
-                    getRowParams.successCallback(response.rowsThisBlock, response.lastRow);
-                }, 200);
-            }
-        };
-
-        gridOptions.api.setServerSideDatasource(dataSource);
+        // register the datasource with the grid
+        gridOptions.api.setServerSideDatasource(datasource);
     });
 });
 
-// Note this a stripped down mock server implementation which only supports grouping
-function getMockServerResponse(request) {
-    var groupKeys = request.groupKeys;
-    var rowGroupColIds = request.rowGroupCols.map(function(x) { return x.id; });
-    var parentId = groupKeys.length > 0 ? groupKeys.join("") : "";
-
-    var rows = group(allData, rowGroupColIds, groupKeys, parentId);
-
-    var rowsThisBlock = rows.slice(request.startRow, request.endRow);
-    var lastRow = rows.length <= request.endRow ? rows.length : -1;
-
-    return { rowsThisBlock: rowsThisBlock, lastRow: lastRow };
-}
-
-function group(data, rowGroupColIds, groupKeys, parentId) {
-    var groupColId = rowGroupColIds.shift();
-    if (!groupColId) return data;
-
-    var groupedData = _(data).groupBy(function(x) { return x[groupColId]; }).value();
-
-    if (groupKeys.length === 0) {
-        return Object.keys(groupedData).map(function(key) {
-            var res = {};
-
-            // Note: the server provides group id's using a simple heuristic based on group keys:
-            // i.e. group node ids will be in the following format: 'Russia', 'Russia-2002'
-            res['id'] = getGroupId(parentId, key);
-
-            res[groupColId] = key;
-            return res;
-        });
-    }
-
-    return group(groupedData[groupKeys.shift()], rowGroupColIds, groupKeys, parentId);
-}
-
-function getGroupId(parentId, key) {
-    return parentId ? parentId + "-" + key : key;
-}

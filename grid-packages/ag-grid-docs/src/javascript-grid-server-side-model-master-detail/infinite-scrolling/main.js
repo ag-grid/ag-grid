@@ -1,6 +1,6 @@
 var columnDefs = [
     // group cell renderer needed for expand / collapse icons
-    {field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer'},
+    {field: 'accountId', cellRenderer: 'agGroupCellRenderer'},
     {field: 'name'},
     {field: 'country'},
     {field: 'calls'},
@@ -9,6 +9,10 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1
+    },
+
     animateRows: true,
 
     // use the server-side row model
@@ -26,9 +30,8 @@ var gridOptions = {
                 {field: 'switchCode'},
                 {field: 'number'},
             ],
-            onFirstDataRendered: function(params) {
-                // fit the detail grid columns
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1
             }
         },
         getDetailRowData: function (params) {
@@ -38,13 +41,12 @@ var gridOptions = {
     },
     onGridReady: function(params) {
         setTimeout(function() {
-            // fit the master grid columns
-            params.api.sizeColumnsToFit();
-
-            // arbitrarily expand some master row
+            // expand some master row
             var someRow = params.api.getRowNode("1");
-            if (someRow) someRow.setExpanded(true);
-        }, 1500);
+            if (someRow) {
+                someRow.setExpanded(true);
+            }
+        }, 1000);
     }
 };
 

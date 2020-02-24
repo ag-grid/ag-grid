@@ -1,6 +1,7 @@
 var columnDefs = [
     {
-        field: 'group',
+        headerName: 'Group',
+        field: 'name',
         rowGroup: true,
         cellClass: 'cell-wrap-text',
         hide: true
@@ -9,101 +10,91 @@ var columnDefs = [
         field: 'autoA',
         cellClass: 'cell-wrap-text',
         autoHeight: true,
-        width: 300
+        aggFunc: 'last'
     },
     {
         field: 'autoB',
         cellClass: 'cell-wrap-text',
         autoHeight: true,
-        width: 300
-    },
-    {
-        field: 'autoC',
-        cellClass: 'cell-wrap-text',
-        autoHeight: true,
-        width: 300
+        aggFunc: 'last'
     }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        width: 100,
-        resizable: true
-    },
     columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        resizable: true,
+        sortable: true
+    },
+    autoGroupColumnDef: {
+        flex: 1,
+        maxWidth: 200,
+    },
+    // use the server-side row model
     rowModelType: 'serverSide',
+
     animateRows: true,
-    serverSideDatasource: createSimpleDatasource()
+    suppressAggFuncInHeader: true,
+    // debug: true,
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+
+    // generate data for example
+    var data = createRowData();
+
+    // setup the fake server with entire dataset
+    var fakeServer = new FakeServer(data);
+
+    // create datasource with a reference to the fake server
+    var datasource = new ServerSideDatasource(fakeServer);
+
+    // register the datasource with the grid
+    gridOptions.api.setServerSideDatasource(datasource);
+
 });
 
-function createRowData() {
-    var latinSentence = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
-    var latinWords = latinSentence.split(' ');
+function ServerSideDatasource(server) {
+    return {
+        getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
 
-    var rowData = [];
+            var response = server.getData(params.request);
 
-    function generateRandomSentence(row, col) {
-        var wordCount = ( (row+1) * (col+1) * 733 * 19) % latinWords.length;
-        var parts = [];
-        for (var i = 0; i<wordCount; i++) {
-            parts.push(latinWords[i]);
+            // adding delay to simulate real sever call
+            setTimeout(function () {
+                if (response.success) {
+                    // call the success callback
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    // inform the grid request failed
+                    params.failCallback();
+                }
+            }, 200);
         }
-        var sentence = parts.join(' ');
-        return sentence + '.';
-    }
-
-// create 100 rows
-    for (var i = 0; i<10; i++) {
-        var groupItem = {
-            group: 'Group ' + i,
-            children: []
-        };
-        rowData.push(groupItem);
-        for (var j = 0; j<50; j++) {
-            var childItem = {
-                name: 'Row ' + j,
-                autoA: generateRandomSentence(i*j, 1),
-                autoB: generateRandomSentence(i*j, 2),
-                autoC: generateRandomSentence(i*j, 3)
-            };
-            groupItem.children.push(childItem);
-        }
-    }
-
-    return rowData;
+    };
 }
 
-function createSimpleDatasource() {
-    function SimpleDatasource() {
-        this.rowData = createRowData();
+function createRowData() {
+    var latinSentence = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit';
+
+    function generateRandomSentence() {
+        return latinSentence.slice(0, Math.floor(Math.random() * 100)) + '.';
     }
 
-    SimpleDatasource.prototype.getRows = function(params) {
-        var groupKeys = params.request.groupKeys;
-        var topLevel = groupKeys.length === 0;
-
-        var listToReturn;
-        if (topLevel) {
-            listToReturn = this.rowData;
-        } else {
-            var groupKey = groupKeys[0];
-            this.rowData.forEach( function(data) {
-                if (data.group===groupKey) {
-                    listToReturn = data.children;
-                }
+    var rowData = [];
+    for (var i = 0; i<10; i++) {
+        for (var j = 0; j<50  ; j++) {
+            rowData.push({
+                name: 'Group ' + j,
+                autoA: generateRandomSentence(),
+                autoB: generateRandomSentence()
             });
         }
-
-        var sectionToReturn = listToReturn.slice(params.request.startRow, params.request.endRow);
-
-        params.successCallback(sectionToReturn, listToReturn.length);
-    };
-
-    return new SimpleDatasource();
+    }
+    return rowData;
 }

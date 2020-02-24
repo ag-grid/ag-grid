@@ -9,6 +9,9 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1
+    },
     animateRows: true,
 
     // use the server-side row model
@@ -27,9 +30,8 @@ var gridOptions = {
                 {field: 'number'},
             ],
             domLayout: 'autoHeight',
-            onFirstDataRendered: function(params) {
-                // fit the detail grid columns
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1
             }
         },
         getDetailRowData: function (params) {
@@ -48,25 +50,24 @@ var gridOptions = {
     },
     onGridReady: function(params) {
         setTimeout(function() {
-            // fit the master grid columns
-            params.api.sizeColumnsToFit();
-
-            // arbitrarily expand some master row
+            // expand some master row
             var someRow = params.api.getRowNode("1");
-            if (someRow) someRow.setExpanded(true);
-
-        }, 1500);
+            if (someRow) {
+                someRow.setExpanded(true);
+            }
+        }, 1000);
     }
 };
 
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
+
+            var response = server.getData(params.request);
 
             // adding delay to simulate real sever call
             setTimeout(function () {
-                var response = server.getResponse(params.request);
-
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
@@ -74,27 +75,7 @@ function ServerSideDatasource(server) {
                     // inform the grid request failed
                     params.failCallback();
                 }
-            }, 500);
-        }
-    };
-}
-
-function FakeServer(allData) {
-    return {
-        getResponse: function(request) {
-            console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
-
-            // take a slice of the total rows
-            var rowsThisPage = allData.slice(request.startRow, request.endRow);
-
-            // work out the last row index (if unknown we could supply -1)
-            var lastRow = allData.length - 1;
-
-            return {
-                success: true,
-                rows: rowsThisPage,
-                lastRow: lastRow
-            };
+            }, 200);
         }
     };
 }
@@ -105,8 +86,13 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json'}).then(function(data) {
-        var server = new FakeServer(data);
-        var datasource = new ServerSideDatasource(server);
+        // setup the fake server with entire dataset
+        var fakeServer = new FakeServer(data);
+
+        // create datasource with a reference to the fake server
+        var datasource = new ServerSideDatasource(fakeServer);
+
+        // register the datasource with the grid
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
