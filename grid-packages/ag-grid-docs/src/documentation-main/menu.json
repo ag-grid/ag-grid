@@ -1075,6 +1075,10 @@
               {
                 "title": "Stacked Area",
                 "url": "javascript-charts-gallery/stacked-area.php"
+              },
+              {
+                "title": "Percentage Area",
+                "url": "javascript-charts-gallery/percentage-area.php"
               }
             ]
           },

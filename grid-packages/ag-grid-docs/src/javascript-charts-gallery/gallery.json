@@ -52,5 +52,8 @@
     },
     "Stacked Area": {
         "description": "This demonstrates an area chart with stacked areas."
+    },
+    "Percentage Area": {
+        "description": "An area chart showing the normalisation of data into percentages."
     }
 }

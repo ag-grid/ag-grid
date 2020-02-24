@@ -13,6 +13,20 @@ var options = {
         xKey: 'station',
         yKeys: ['early', 'morningPeak', 'interPeak', 'afternoonPeak', 'evening'],
         yNames: ['Early', 'Morning peak', 'Between peak', 'Afternoon peak', 'Evening'],
+        fills: [
+            '#5BC0EB',
+            '#FDE74C',
+            '#9BC53D',
+            '#E55934',
+            '#FA7921',
+        ],
+        strokes: [
+            '#4086a4',
+            '#b1a235',
+            '#6c8a2b',
+            '#a03e24',
+            '#af5517',
+        ]
     }],
     axes: [
         {
