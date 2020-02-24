@@ -50,8 +50,6 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         this.createExpandIcons();
 
         this.addDestroyableEventListener(
@@ -78,8 +76,6 @@ export class PrimaryColsHeaderPanel extends Component {
             Events.EVENT_NEW_COLUMNS_LOADED,
             this.showOrHideOptions.bind(this)
         );
-
-        this.eFilterTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -119,8 +115,10 @@ export class PrimaryColsHeaderPanel extends Component {
         const showFilter = !this.params.suppressColumnFilter;
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
-
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eFilterTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
 
         _.setDisplayed(this.eFilterTextField.getGui(), showFilter);
         _.setDisplayed(this.eSelect.getGui(), showSelect);

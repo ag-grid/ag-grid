@@ -51,16 +51,10 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     protected resetUiToDefaults(silent?: boolean): void {
         super.resetUiToDefaults(silent);
 
-        const translate = this.translate.bind(this);
-        const placeholder = translate('filterOoo');
-
         const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
-        fields.forEach(field => {
-            field
-                .setValue(null, silent)
-                .setInputPlaceHolder(placeholder);
-        });
+        fields.forEach(field => field.setValue(null, silent));
+        this.resetPlaceholder();
     }
 
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
@@ -103,7 +97,17 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         this.eValueTo2.onValueChange(listener);
     }
 
+    private resetPlaceholder(): void {
+        const translate = this.translate.bind(this);
+        const placeholder = translate('filterOoo');
+
+        const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+
+        fields.forEach(field => field.setInputPlaceHolder(placeholder));
+    }
+
     public afterGuiAttached() {
+        this.resetPlaceholder();
         this.eValueFrom1.getInputElement().focus();
     }
 

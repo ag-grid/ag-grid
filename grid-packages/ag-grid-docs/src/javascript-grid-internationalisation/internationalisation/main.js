@@ -60,6 +60,9 @@ var gridOptions = {
         equals: 'daEquals',
         notEqual: 'daNotEqual',
 
+        // for the date filter
+        dateFormatOoo: 'YyyY-Mm-Dd',
+
         // for number filter
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',

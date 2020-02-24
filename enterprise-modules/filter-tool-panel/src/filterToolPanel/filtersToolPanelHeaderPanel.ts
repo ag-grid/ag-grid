@@ -45,9 +45,6 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PostConstruct
     public postConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        this.eSearchTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
         this.eSearchTextField.onValueChange(this.onSearchTextChanged.bind(this));
 
         this.createExpandIcons();
@@ -74,6 +71,9 @@ export class FiltersToolPanelHeaderPanel extends Component {
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eSearchTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);

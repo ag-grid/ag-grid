@@ -172,9 +172,6 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initialiseFilterBodyUi(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eMiniFilter.setInputPlaceHolder(translate('searchOoo', 'Search...'));
-
         this.virtualList = new VirtualList('filter');
         this.getContext().wireBean(this.virtualList);
         const eSetFilterList = this.getRefElement('eSetFilterList');
@@ -236,8 +233,14 @@ export class SetFilter extends ProvidedFilter {
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     public afterGuiAttached(params: any): void {
-        this.virtualList.refresh();
-        this.eMiniFilter.getFocusableElement().focus();
+        const { virtualList, eMiniFilter } = this;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        virtualList.refresh();
+
+        eMiniFilter.setInputPlaceHolder(translate('searchOoo', 'Search...'));
+        eMiniFilter.getFocusableElement().focus();
+
     }
 
     public refreshVirtualList(): void {

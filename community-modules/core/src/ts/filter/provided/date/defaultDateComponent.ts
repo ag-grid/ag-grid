@@ -1,10 +1,14 @@
-import { Component } from "../../../widgets/component";
-import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
-import { _ } from "../../../utils";
+import { Autowired } from "../../../context/context";
 import { AgInputTextField } from "../../../widgets/agInputTextField";
+import { Component } from "../../../widgets/component";
+import { GridOptionsWrapper } from "../../../gridOptionsWrapper";
+import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
 import { RefSelector } from "../../../widgets/componentAnnotations";
+import { _ } from "../../../utils";
 
 export class DefaultDateComponent extends Component implements IDateComp {
+
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eDateInput') private eDateInput: AgInputTextField;
     private listener: () => void;
@@ -14,7 +18,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
-        this.eDateInput.setInputPlaceHolder('yyyy-mm-dd');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eDateInput.setInputPlaceHolder(translate('dateFormatOoo', 'yyyy-mm-dd'));
 
         if (_.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
             if (_.isBrowserIE()) {

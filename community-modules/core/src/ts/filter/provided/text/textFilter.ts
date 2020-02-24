@@ -147,18 +147,21 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected resetUiToDefaults(silent?: boolean): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const placeholder = translate('filterOoo', 'Filter...');
-
         super.resetUiToDefaults(silent);
 
-        this.eValue1
-            .setValue(null, silent)
-            .setInputPlaceHolder(placeholder);
+        const fields = [this.eValue1, this.eValue2];
 
-        this.eValue2
-            .setValue(null, silent)
-            .setInputPlaceHolder(placeholder);
+        fields.forEach(field => field.setValue(null, silent));
+        this.resetPlaceholder();
+    }
+
+    private resetPlaceholder(): void {
+        const translate = this.translate.bind(this);
+        const placeholder = translate('filterOoo', 'Filter...');
+
+        const fields = [this.eValue1, this.eValue2];
+
+        fields.forEach(field => field.setInputPlaceHolder(placeholder));
     }
 
     protected setValueFromFloatingFilter(value: string): void {
@@ -189,6 +192,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     public afterGuiAttached() {
+        this.resetPlaceholder();
         this.eValue1.getInputElement().focus();
     }
 
