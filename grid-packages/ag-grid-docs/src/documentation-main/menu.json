@@ -1065,6 +1065,10 @@
                 "url": "javascript-charts-gallery/simple-scatter.php"
               },
               {
+                "title": "Simple Bubble",
+                "url": "javascript-charts-gallery/simple-bubble.php"
+              },
+              {
                 "title": "Simple Area",
                 "url": "javascript-charts-gallery/simple-area.php"
               },

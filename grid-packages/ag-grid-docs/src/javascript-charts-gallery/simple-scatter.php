@@ -18,7 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./line-with-gaps.php">❮&nbsp;&nbsp;Line With Gaps</a>
-    <a class="chart-navigation__right" href="./simple-area.php">Simple Area&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./simple-bubble.php">Simple Bubble&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

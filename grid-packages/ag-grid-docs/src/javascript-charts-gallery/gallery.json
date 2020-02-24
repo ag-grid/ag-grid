@@ -44,6 +44,9 @@
     "Simple Scatter": {
         "description": "This scatter chart shows how independent variables can be plotted against each other."
     },
+    "Simple Bubble": {
+        "description": "This bubble chart shows how independent variables can be plotted against each other including a third dimension."
+    },
     "Simple Area": {
         "description": "This area chart represents data using areas."
     },
