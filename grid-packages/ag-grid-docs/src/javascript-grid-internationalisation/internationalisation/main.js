@@ -61,7 +61,7 @@ var gridOptions = {
         notEqual: 'daNotEqual',
 
         // for the date filter
-        dateFormatOoo: 'YyyY-Mm-Dd',
+        dateFormatOoo: 'daYyyy-mm-dd',
 
         // for number filter
         lessThan: 'daLessThan',
@@ -172,9 +172,9 @@ var gridOptions = {
         // standard menu
         copy: 'laCopy',
         copyWithHeaders: 'laCopy With Headers',
-        ctrlC: 'ctrl n C',
+        ctrlC: 'laCtrl n C',
         paste: 'laPaste',
-        ctrlV: 'ctrl n V',
+        ctrlV: 'laCtrl n V',
 
         // charts
         pivotChartTitle: 'laPivot Chart',

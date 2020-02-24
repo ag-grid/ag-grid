@@ -40,7 +40,7 @@ localeText = {
         notEqual: 'daNotEqual',
 
         // for the date filter
-        dateFormatOoo: 'YyyY-Mm-Dd',
+        dateFormatOoo: 'daYyyy-mm-dd',
 
         // for number filter
         lessThan: 'daLessThan',
@@ -95,7 +95,7 @@ localeText = {
         resetColumns: 'laReset Those Cols',
         expandAll: 'laOpen-em-up',
         collapseAll: 'laClose-em-up',
-        toolPanel: 'laTool Panelo',
+        toolPanel: 'laTool Panel',
         export: 'laExporto',
         csvExport: 'laCSV Exportp',
         excelExport: 'laExcel Exporto (.xlsx)',
@@ -151,9 +151,9 @@ localeText = {
         // standard menu
         copy: 'laCopy',
         copyWithHeaders: 'laCopy With Headers',
-        ctrlC: 'ctrl n C',
+        ctrlC: 'laCtrl n C',
         paste: 'laPaste',
-        ctrlV: 'ctrl n V'
+        ctrlV: 'laCtrl n V'
 
         // charts
         pivotChartTitle: 'laPivot Chart',
