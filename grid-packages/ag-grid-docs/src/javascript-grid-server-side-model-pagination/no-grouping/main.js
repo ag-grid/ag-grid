@@ -20,6 +20,7 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
+    // enable pagination
     pagination: true,
 
     // fetch 10 rows per at a time (default is 100)
