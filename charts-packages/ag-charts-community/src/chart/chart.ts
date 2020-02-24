@@ -27,6 +27,7 @@ const defaultTooltipCss = `
     color: black;
     background: rgb(244, 244, 244);
     border-radius: 5px;
+    overflow: hidden;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
     opacity: 0;
 }
