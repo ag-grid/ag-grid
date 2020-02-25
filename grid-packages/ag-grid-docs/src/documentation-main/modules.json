@@ -11,6 +11,7 @@
   },
   {
     "title": "Client Side Row Model",
+    "shortname": "clientside",
     "module": "@ag-grid-community/client-side-row-model",
     "exported": "ClientSideRowModelModule"
   },
@@ -128,6 +129,7 @@
   },
   {
     "title": "Set Filter",
+    "shortname": "setfilter",
     "module": "@ag-grid-enterprise/set-filter",
     "enterprise": true,
     "exported": "SetFilterModule"

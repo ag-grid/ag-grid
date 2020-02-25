@@ -1,5 +1,27 @@
 export type ImportType = 'packages' | 'modules';
 
+const moduleMapping = require('../documentation-main/modules.json');
+export function modulesProcessor(modules: string[]) {
+    const moduleImports = [];
+    const suppliedModules = [];
+
+    const requiredModules = [];
+    modules.forEach(module => {
+        moduleMapping.forEach(moduleConfig => {
+            if (moduleConfig.shortname && moduleConfig.shortname == module) {
+                requiredModules.push(moduleConfig);
+            }
+        })
+    });
+
+    requiredModules.forEach(requiredModule => {
+        moduleImports.push(`import { ${requiredModule.exported} } from '${requiredModule.module}';`);
+        suppliedModules.push(requiredModule.exported);
+    });
+
+    return {moduleImports, suppliedModules};
+}
+
 export function removeFunctionKeyword(code: string): string {
     return code.replace(/^function /, '');
 }

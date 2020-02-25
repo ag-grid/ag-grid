@@ -1,4 +1,4 @@
-import {getFunctionName, isInstanceMethod, removeFunctionKeyword, ImportType} from './parser-utils';
+import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
 import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
@@ -39,22 +39,39 @@ function getOnGridReadyCode(bindings: any): string {
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
     const {gridSettings} = bindings;
+    const {modules} = gridSettings;
+
     const imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from '@ag-grid-community/vue';",
     ];
 
-    if (gridSettings.enterprise) {
-        imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
+    if (modules) {
+        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+
+        imports.push(...moduleImports);
+        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
-        imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
+        if (gridSettings.enterprise) {
+            imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
+            bindings.gridSuppliedModules = 'AllModules';
+        } else {
+            imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
+            bindings.gridSuppliedModules = 'AllCommunityModules';
+        }
+
+        imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
     }
-
-    imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
-
-    // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -62,22 +79,38 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
     return imports;
 }
+
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
     const {gridSettings} = bindings;
+    const {modules} = gridSettings;
+
     const imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue';",
     ];
 
-    if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+    if (modules) {
+        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+
+        imports.push(...moduleImports);
+        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
+    } else {
+        if (gridSettings.enterprise) {
+            imports.push("import 'ag-grid-enterprise';");
+        }
+
+        imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
     }
-
-    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
-
-    // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -125,7 +158,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 
     if (importType === 'modules') {
         propertyAttributes.push(':modules="modules"');
-        propertyVars.push(`modules: ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'}`);
+        propertyVars.push(`modules: ${bindings.gridSuppliedModules}`);
     }
 
     if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {

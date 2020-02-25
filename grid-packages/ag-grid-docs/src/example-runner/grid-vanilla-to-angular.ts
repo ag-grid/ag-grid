@@ -1,6 +1,6 @@
-import { removeFunctionKeyword, isInstanceMethod, ImportType } from './parser-utils';
-import { toInput, toConst, toOutput, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './angular-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }): string {
     const additionalLines = [];
@@ -14,7 +14,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         if (callback.indexOf('api.setRowData') !== -1) {
             const setRowDataBlock = callback.replace('params.api.setRowData(data);', 'this.rowData = data');
@@ -31,25 +31,43 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }`;
 }
 
+
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const imports = ["import { Component, ViewChild } from '@angular/core';"];
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
+
+    const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
         imports.push("import { HttpClient } from '@angular/common/http';");
     }
 
-    if (gridSettings.enterprise) {
-        imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
+    if (modules) {
+        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+
+        imports.push(...moduleImports);
+        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
-        imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
+        if (gridSettings.enterprise) {
+            bindings.gridSuppliedModules = 'AllModules';
+            imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
+        } else {
+            bindings.gridSuppliedModules = 'AllCommunityModules';
+            imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
+        }
+
+        imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
+
+        // to account for the (rare) example that has more than one class...just default to balham if it does
+        const theme = gridSettings.theme || 'ag-theme-balham';
+        imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
     }
-
-    imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
-
-    // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = gridSettings.theme || 'ag-theme-balham';
-    imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -59,8 +77,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const imports = ["import { Component, ViewChild } from '@angular/core';"];
+    const {gridSettings} = bindings;
+    const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
         imports.push("import { HttpClient } from '@angular/common/http';");
@@ -84,7 +102,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
 }
 
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
-    if(importType === "packages") {
+    if (importType === "packages") {
         return getPackageImports(bindings, componentFileNames);
     } else {
         return getModuleImports(bindings, componentFileNames);
@@ -92,7 +110,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-angular
@@ -109,7 +127,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[], importType: ImportType): string {
-    const { data, properties } = bindings;
+    const {data, properties} = bindings;
     const imports = getImports(bindings, componentFileNames, importType);
     const diParams = [];
     const additional = [];
@@ -120,9 +138,9 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], im
 
     const propertyAttributes = [];
     const propertyVars = [];
-    if(importType === 'modules') {
+    if (importType === 'modules') {
         propertyAttributes.push('[modules]="modules"');
-        propertyVars.push(`public modules: Module[] = ${bindings.gridSettings.enterprise ? 'AllModules' : 'AllCommunityModules'};`);
+        propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
     }
 
     const propertyAssignments = [];
@@ -185,11 +203,11 @@ export class AppComponent {
     }
 
     ${eventHandlers
-            .concat(externalEventHandlers)
-            .concat(additional)
-            .concat(instanceMethods)
-            .map(snippet => snippet.trim())
-            .join('\n\n')}
+        .concat(externalEventHandlers)
+        .concat(additional)
+        .concat(instanceMethods)
+        .map(snippet => snippet.trim())
+        .join('\n\n')}
 }
 
 ${bindings.utils.join('\n')}

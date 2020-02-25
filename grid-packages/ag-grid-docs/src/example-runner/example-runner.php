@@ -176,6 +176,12 @@ function grid_example($title, $dir, $type = 'vanilla', $options = array())
         }
     }
 
+    if ($options['modules']) {
+        foreach ($options['modules'] as $module) {
+            $query[$module] = '1';
+        }
+    }
+
     if ($options['enterprise']) {
         $query['enterprise'] = true;
     }

@@ -171,7 +171,7 @@ include '../documentation-main/documentation_header.php';
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, 'modules' => array('clientside', 'setfilter'))) ?>
 
     <h2>Asynchronous Values</h2>
 
