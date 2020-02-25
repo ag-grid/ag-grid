@@ -1,6 +1,10 @@
 // We prefixed all global vars with "ag-" to avoid clashes with other libraries
 // Import old-style var names to avoid breaking 3rd party themes that use them
-@import "../../ag-theme-base/vars/ag-theme-base-import-legacy-vars";
+
+@function ag-theme-balham-import-legacy-vars() {
+    // TODO implement
+    @return ag-theme-base-import-legacy-vars();
+}
 
 @if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 

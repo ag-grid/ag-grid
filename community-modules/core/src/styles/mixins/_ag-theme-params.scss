@@ -104,32 +104,11 @@ $-ag-params: null !default;
     @return $params;
 }
 
-$-ag-legacy-variable-importers: () !default;
-
-@function ag-import-legacy-global-variables($theme-defaults) {
-    $params: ();
-    @each $importer in $-ag-legacy-variable-importers {
-        @each $key, $value in call($importer) {
-            @if map-has-key($theme-defaults, $key) {
-                $params: map-merge($params, ($key: $value));
-            }
-        }
-    }
-    @return $params;
-}
-
-// TODO remove this and instead use ag-balham-imnport-legacy-vars which calls ag-theme-base-import-legacy-vars
-@mixin ag-register-legacy-variable-importer($importer) {
-    @if index($-ag-legacy-variable-importers, $importer) == null {
-        $-ag-legacy-variable-importers: append($-ag-legacy-variable-importers, $importer) !global;
-    }
-}
-
 $ag-not-defined: "--ag-not-defined" !default;
 
 // used in legacy var importers, see e.g. ag-theme-base-legacy-vars.scss for example
-@function ag-merge-legacy-var($params, $param-name, $value-or-not-defined, $defaults) {
-    @if not map-has-key($defaults, $param-name) {
+@function ag-merge-legacy-var($params, $param-name, $value-or-not-defined, $allowed) {
+    @if index($allowed, $param-name) == null {
         @error "Invalid param to merge: #{$param-name}";
     }
     @if $value-or-not-defined == $ag-not-defined {

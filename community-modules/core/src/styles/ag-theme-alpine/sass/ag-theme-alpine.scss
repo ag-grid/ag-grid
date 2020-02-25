@@ -5,4 +5,6 @@
 // Including this file emits CSS for the Alpine theme. New apps should @import ag-theme-alpine-mixin.scss
 // and @include ag-theme-alpine($params), instead of using this file.
 
-@include ag-theme-alpine(ag-import-legacy-global-variables($ag-theme-alpine-default-params));
+// TODO re-instate legacy var import
+// @include ag-theme-alpine(ag-theme-base-import-legacy-vars());
+@include ag-theme-alpine($ag-theme-alpine-default-params);

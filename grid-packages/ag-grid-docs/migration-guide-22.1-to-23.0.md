@@ -43,7 +43,7 @@ We have made various changes to Sass variables. When we have renamed variables, 
 $ag-header-icon-size, $ag-row-border-width, $ag-transition-speed, $ag-cell-data-changed-color, $ag-use-icons-for-pager-buttons: These vars were defined but not used and have been removed.
 
 $ag-foreground-opacity > $ag-foreground-color-opacity
-$ag-alt-icon-color > $ag-checkbox-background-colorag-range-selection-border-color
+$ag-alt-icon-color > $ag-checkbox-background-color / ag-range-selection-border-color
    
 $ag-range-selected-color-1 (and -2, -3, -4): removed. Colour when multiple ranges overlap now calculated automatically from the opacity of $ag-range-selection-background-color.
 

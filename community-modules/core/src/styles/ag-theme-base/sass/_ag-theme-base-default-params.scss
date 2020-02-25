@@ -201,8 +201,6 @@ $ag-theme-base-default-params: (
 
     // How much to indent child columns in the filters tool panel relative to their parent
     filter-tool-panel-group-indent: 16px,
-    filter-tool-panel-top-level-row-height: ag-derived(grid-size, $times: 8),
-    filter-tool-panel-sub-level-row-height: ag-derived(grid-size, $times: 6),
 
     // Cause tabs to stretch across the full width of the tab panel header
     full-width-tabs: false,

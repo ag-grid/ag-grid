@@ -1,5 +1,6 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 @import "./ag-theme-balham-default-params";
+@import "./ag-theme-balham-import-legacy-vars";
 
 @mixin ag-theme-balham($params, $theme-name: "ag-theme-balham") {
     

@@ -5,4 +5,6 @@
 // Including this file emits CSS for the Alpine Dark theme. New apps should @import ag-theme-alpine-dark-mixin.scss
 // and @include ag-theme-alpine-dark($params), instead of using this file.
 
-@include ag-theme-alpine-dark(ag-import-legacy-global-variables($ag-theme-alpine-dark-default-params));
+// TODO re-instate legacy var import
+// @include ag-theme-alpine-dark(ag-theme-base-import-legacy-vars());
+@include ag-theme-alpine-dark($ag-theme-alpine-dark-default-params);

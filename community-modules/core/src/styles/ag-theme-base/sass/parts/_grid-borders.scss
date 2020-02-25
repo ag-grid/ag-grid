@@ -7,11 +7,11 @@
     }
 
     .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
-        border-left: 1px solid ag-param(border-color);
+        @include ag-border(critical, left);
     }
-
+    
     .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
-        border-right: 1px solid ag-param(border-color);
+        @include ag-border(critical, right);
     }
     
     .ag-row-selected {
