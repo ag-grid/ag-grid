@@ -31,7 +31,6 @@ var options = {
                 stroke: '#f6d24a',
                 strokeWidth: 2,
             },
-
         },
         {
             type: 'line',

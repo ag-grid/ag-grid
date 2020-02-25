@@ -18,7 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-line.php">❮&nbsp;&nbsp;Simple Line</a>
-    <a class="chart-navigation__right" href="./simple-scatter.php">Simple Scatter&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./line-with-irregular-time-intervals.php">Line With Irregular Time Intervals&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

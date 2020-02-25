@@ -41,6 +41,9 @@
     "Line With Gaps": {
         "description": "This example shows how the line series handles gaps in the data."
     },
+    "Line With Irregular Time Intervals": {
+        "description": "This example demonstrates the plotting of irregular data on a time axis."
+    },
     "Simple Scatter": {
         "description": "This scatter chart shows how independent variables can be plotted against each other."
     },

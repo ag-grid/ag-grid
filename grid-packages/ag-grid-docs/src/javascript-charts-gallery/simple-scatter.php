@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Simple Scatter', 'simple-scatter', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./line-with-gaps.php">❮&nbsp;&nbsp;Line With Gaps</a>
+    <a class="chart-navigation__left" href="./line-with-irregular-time-intervals.php">❮&nbsp;&nbsp;Line With Irregular Time Intervals</a>
     <a class="chart-navigation__right" href="./simple-bubble.php">Simple Bubble&nbsp;&nbsp;❯</a>
 </div>
 

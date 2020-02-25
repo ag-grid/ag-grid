@@ -1061,6 +1061,10 @@
                 "url": "javascript-charts-gallery/line-with-gaps.php"
               },
               {
+                "title": "Line With Irregular Time Intervals",
+                "url": "javascript-charts-gallery/line-with-irregular-time-intervals.php"
+              },
+              {
                 "title": "Simple Scatter",
                 "url": "javascript-charts-gallery/simple-scatter.php"
               },

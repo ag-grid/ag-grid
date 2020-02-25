@@ -2,7 +2,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Worldwide earthquakes in January 2019',
+        text: 'Worldwide earthquakes in January 2020',
         fontSize: 18,
     },
     subtitle: {
