@@ -1,0 +1,261 @@
+/**
+ * In v23 we moved from using global variables to maps of parameters to configure Grid themes.
+ * This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
+ * and so should not be modified.
+ */
+
+/* DO NOT EDIT (see note above) */ @if (variable-exists("accent-color") and not variable-exists("ag-accent-color")) {
+/* DO NOT EDIT (see note above) */     $ag-accent-color: $accent-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("alt-icon-color") and not variable-exists("ag-alt-icon-color")) {
+/* DO NOT EDIT (see note above) */     $ag-alt-icon-color: $alt-icon-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("background-color") and not variable-exists("ag-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-background-color: $background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("border-color") and not variable-exists("ag-border-color")) {
+/* DO NOT EDIT (see note above) */     $ag-border-color: $border-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("card-radius") and not variable-exists("ag-card-radius")) {
+/* DO NOT EDIT (see note above) */     $ag-card-radius: $card-radius !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("card-shadow") and not variable-exists("ag-card-shadow")) {
+/* DO NOT EDIT (see note above) */     $ag-card-shadow: $card-shadow !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("cell-horizontal-border") and not variable-exists("ag-cell-horizontal-border")) {
+/* DO NOT EDIT (see note above) */     $ag-cell-horizontal-border: $cell-horizontal-border !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("cell-horizontal-padding") and not variable-exists("ag-cell-horizontal-padding")) {
+/* DO NOT EDIT (see note above) */     $ag-cell-horizontal-padding: $cell-horizontal-padding !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-background-color") and not variable-exists("ag-dialog-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-background-color: $dialog-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-border-color") and not variable-exists("ag-dialog-border-color")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-border-color: $dialog-border-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-border-size") and not variable-exists("ag-dialog-border-size")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-border-size: $dialog-border-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-border-style") and not variable-exists("ag-dialog-border-style")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-border-style: $dialog-border-style !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-background-color") and not variable-exists("ag-dialog-title-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-background-color: $dialog-title-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-font-family") and not variable-exists("ag-dialog-title-font-family")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-font-family: $dialog-title-font-family !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-font-size") and not variable-exists("ag-dialog-title-font-size")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-font-size: $dialog-title-font-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-font-weight") and not variable-exists("ag-dialog-title-font-weight")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-font-weight: $dialog-title-font-weight !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-foreground-color") and not variable-exists("ag-dialog-title-foreground-color")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-foreground-color: $dialog-title-foreground-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-height") and not variable-exists("ag-dialog-title-height")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-height: $dialog-title-height !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-icon-size") and not variable-exists("ag-dialog-title-icon-size")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-icon-size: $dialog-title-icon-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("dialog-title-padding") and not variable-exists("ag-dialog-title-padding")) {
+/* DO NOT EDIT (see note above) */     $ag-dialog-title-padding: $dialog-title-padding !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("disabled-foreground-color-opacity") and not variable-exists("ag-disabled-foreground-color-opacity")) {
+/* DO NOT EDIT (see note above) */     $ag-disabled-foreground-color-opacity: $disabled-foreground-color-opacity !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("font-family") and not variable-exists("ag-font-family")) {
+/* DO NOT EDIT (see note above) */     $ag-font-family: $font-family !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("font-size") and not variable-exists("ag-font-size")) {
+/* DO NOT EDIT (see note above) */     $ag-font-size: $font-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("font-weight") and not variable-exists("ag-font-weight")) {
+/* DO NOT EDIT (see note above) */     $ag-font-weight: $font-weight !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("foreground-color") and not variable-exists("ag-foreground-color")) {
+/* DO NOT EDIT (see note above) */     $ag-foreground-color: $foreground-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("foreground-opacity") and not variable-exists("ag-foreground-opacity")) {
+/* DO NOT EDIT (see note above) */     $ag-foreground-opacity: $foreground-opacity !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("grid-size") and not variable-exists("ag-grid-size")) {
+/* DO NOT EDIT (see note above) */     $ag-grid-size: $grid-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("group-component-background-color") and not variable-exists("ag-group-component-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-group-component-background-color: $group-component-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("group-component-border-color") and not variable-exists("ag-group-component-border-color")) {
+/* DO NOT EDIT (see note above) */     $ag-group-component-border-color: $group-component-border-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("group-component-title-background-color") and not variable-exists("ag-group-component-title-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-group-component-title-background-color: $group-component-title-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("header-background-color") and not variable-exists("ag-header-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-header-background-color: $header-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("header-cell-moving-background-color") and not variable-exists("ag-header-cell-moving-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-header-cell-moving-background-color: $header-cell-moving-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("header-foreground-color") and not variable-exists("ag-header-foreground-color")) {
+/* DO NOT EDIT (see note above) */     $ag-header-foreground-color: $header-foreground-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("header-height") and not variable-exists("ag-header-height")) {
+/* DO NOT EDIT (see note above) */     $ag-header-height: $header-height !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("header-icon-size") and not variable-exists("ag-header-icon-size")) {
+/* DO NOT EDIT (see note above) */     $ag-header-icon-size: $header-icon-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("icon-color") and not variable-exists("ag-icon-color")) {
+/* DO NOT EDIT (see note above) */     $ag-icon-color: $icon-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("icon-font-family") and not variable-exists("ag-icon-font-family")) {
+/* DO NOT EDIT (see note above) */     $ag-icon-font-family: $icon-font-family !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("icon-size") and not variable-exists("ag-icon-size")) {
+/* DO NOT EDIT (see note above) */     $ag-icon-size: $icon-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("icons-data") and not variable-exists("ag-icons-data")) {
+/* DO NOT EDIT (see note above) */     $ag-icons-data: $icons-data !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("input-border-color") and not variable-exists("ag-input-border-color")) {
+/* DO NOT EDIT (see note above) */     $ag-input-border-color: $input-border-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("input-disabled-background-color") and not variable-exists("ag-input-disabled-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-input-disabled-background-color: $input-disabled-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("range-selection-background-color") and not variable-exists("ag-range-selection-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-range-selection-background-color: $range-selection-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("range-selection-chart-background-color") and not variable-exists("ag-range-selection-chart-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-range-selection-chart-background-color: $range-selection-chart-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("range-selection-chart-category-background-color") and not variable-exists("ag-range-selection-chart-category-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-range-selection-chart-category-background-color: $range-selection-chart-category-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("rich-select-item-height") and not variable-exists("ag-rich-select-item-height")) {
+/* DO NOT EDIT (see note above) */     $ag-rich-select-item-height: $rich-select-item-height !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("row-border-width") and not variable-exists("ag-row-border-width")) {
+/* DO NOT EDIT (see note above) */     $ag-row-border-width: $row-border-width !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("row-group-indent-size") and not variable-exists("ag-row-group-indent-size")) {
+/* DO NOT EDIT (see note above) */     $ag-row-group-indent-size: $row-group-indent-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("row-height") and not variable-exists("ag-row-height")) {
+/* DO NOT EDIT (see note above) */     $ag-row-height: $row-height !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("scroll-spacer-border") and not variable-exists("ag-scroll-spacer-border")) {
+/* DO NOT EDIT (see note above) */     $ag-scroll-spacer-border: $scroll-spacer-border !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("secondary-font-family") and not variable-exists("ag-secondary-font-family")) {
+/* DO NOT EDIT (see note above) */     $ag-secondary-font-family: $secondary-font-family !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("secondary-font-size") and not variable-exists("ag-secondary-font-size")) {
+/* DO NOT EDIT (see note above) */     $ag-secondary-font-size: $secondary-font-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("secondary-font-weight") and not variable-exists("ag-secondary-font-weight")) {
+/* DO NOT EDIT (see note above) */     $ag-secondary-font-weight: $secondary-font-weight !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("secondary-foreground-color-opacity") and not variable-exists("ag-secondary-foreground-color-opacity")) {
+/* DO NOT EDIT (see note above) */     $ag-secondary-foreground-color-opacity: $secondary-foreground-color-opacity !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tool-panel-background-color") and not variable-exists("ag-tool-panel-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-tool-panel-background-color: $tool-panel-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("toolpanel-indent-size") and not variable-exists("ag-toolpanel-indent-size")) {
+/* DO NOT EDIT (see note above) */     $ag-toolpanel-indent-size: $toolpanel-indent-size !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-background-color") and not variable-exists("ag-tooltip-background-color")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-background-color: $tooltip-background-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-border-color") and not variable-exists("ag-tooltip-border-color")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-border-color: $tooltip-border-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-border-radius") and not variable-exists("ag-tooltip-border-radius")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-border-radius: $tooltip-border-radius !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-border-style") and not variable-exists("ag-tooltip-border-style")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-border-style: $tooltip-border-style !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-border-width") and not variable-exists("ag-tooltip-border-width")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-border-width: $tooltip-border-width !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-foreground-color") and not variable-exists("ag-tooltip-foreground-color")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-foreground-color: $tooltip-foreground-color !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("tooltip-padding") and not variable-exists("ag-tooltip-padding")) {
+/* DO NOT EDIT (see note above) */     $ag-tooltip-padding: $tooltip-padding !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("transition-speed") and not variable-exists("ag-transition-speed")) {
+/* DO NOT EDIT (see note above) */     $ag-transition-speed: $transition-speed !global;
+/* DO NOT EDIT (see note above) */ }
+/* DO NOT EDIT (see note above) */ 
+/* DO NOT EDIT (see note above) */ @if (variable-exists("virtual-item-height") and not variable-exists("ag-virtual-item-height")) {
+/* DO NOT EDIT (see note above) */     $ag-virtual-item-height: $virtual-item-height !global;
+/* DO NOT EDIT (see note above) */ }

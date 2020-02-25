@@ -6,5 +6,5 @@
 // instead of using this file.
 
 @mixin ag-grid-theme {
-    @include ag-theme-base-bare(ag-theme-base-import-legacy-vars());
+    @include ag-theme-base-bare(ag-theme-base-create-params-from-legacy-vars());
 }

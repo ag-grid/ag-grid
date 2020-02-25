@@ -1,5 +1,5 @@
 @import "./ag-theme-base-default-params";
-@import "./ag-theme-base-legacy-vars";
+@import "./legacy/ag-theme-base-create-params-from-legacy-vars";
 @import "../../mixins/ag-theme-mixins";
 @import "./parts/reset";
 @import "./parts/grid-layout";
