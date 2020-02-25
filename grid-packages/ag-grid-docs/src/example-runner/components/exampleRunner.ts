@@ -360,7 +360,7 @@ docs.component("exampleRunner", {
         <div ng-class='["example-runner"]'>        
             <div style="display: flex; justify-content: flex-end">
                 <div class="framework-chooser" ng-if="$ctrl.showImportsDropdown">
-                    <span>Import Type:</span>
+                    <span style="margin-right: 1em;display: inline-block">Import Type <a href="../javascript-grid-packages/" title="Modules & Packages" target="_blank"><sup><span class="fa fa-question-circle"></span></sup>: </span>
                     <div ng-class="{ 'btn-group': true, 'open': $ctrl.openImportsDropdown }">        
                         <button type="button"
                                 ng-click="$ctrl.toggleImportDropdown()"
