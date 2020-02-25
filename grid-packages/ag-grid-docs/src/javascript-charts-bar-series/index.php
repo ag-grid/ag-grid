@@ -226,7 +226,7 @@ axes: [{
 
 <?= chart_example('Stacked Bar Series', 'stacked-bar', 'generated'); ?>
 
-<h2>Bar/Column Series API Reference</h2>
+<h2>API Reference</h2>
 
 <?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "barSeriesConfig") ?>
 
