@@ -34,11 +34,11 @@ include '../documentation-main/documentation_header.php';
         no row group, pivot, value, sort or filter set.</li>
         <li>Adding or removing Country or Year will reload the data as they are part of the grouping.</li>
         <li>Adding or removing Gold, Silver or Bronze will reload the data as they are selected as values.</li>
-        <li>If you apply a sort or filter (Country and Years columns are filterable) to a column and then remove the column then the data will reload.</li>
+        <li>If you apply a sort or filter (on Athlete) and then remove the column the data will reload.</li>
     </ul>
 </p>
 
-<?= grid_example('Changing Columns', 'changing-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Changing Columns', 'changing-columns', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 
