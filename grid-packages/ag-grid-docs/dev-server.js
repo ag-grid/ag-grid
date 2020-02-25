@@ -321,6 +321,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     const cssFiles = glob.sync(`../../community-modules/all-modules/dist/styles/*.css`)
         .filter(css => !css.includes(".min."))
         .filter(css => !css.includes("Font"))
+        .filter(css => !css.includes("mixin"))
+        .filter(css => !css.includes("base-rename-legacy-vars"))
         .map(css => css.replace('../../community-modules/all-modules/dist/styles/', ''));
 
     let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
