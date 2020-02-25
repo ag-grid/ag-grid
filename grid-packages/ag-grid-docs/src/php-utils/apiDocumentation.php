@@ -4,7 +4,7 @@
         return json_decode(file_get_contents($path));
     }
 
-    function createPropertyTable($title, $properties, $prefix = null, $skipHeader = false) {
+    function createPropertyTable($title, $properties, $prefix = null, $skipHeader = false, $names = []) {
         $toProcess = [];
         $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
 
@@ -24,7 +24,7 @@
         echo '<table class="table content reference">';
 
         foreach ($properties as $name => $definition) {
-            if ($name == 'meta') {
+            if ($name == 'meta' || (!empty($names) && !in_array($name, $names))) {
                 continue;
             }
 
@@ -111,8 +111,8 @@
         echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
     }
 
-    function createDocumentationFromFile($path, $expression = null) {
-        $properties = getJsonFromFile("../javascript-charts-api-explorer/config.json");
+    function createDocumentationFromFile($path, $expression = null, $names = []) {
+        $properties = getJsonFromFile($path);
 
         if (isset($expression)) {
             $keys = explode(".", $expression);
@@ -123,7 +123,7 @@
                 $properties = $properties->$key;
             }
 
-            createPropertyTable($key, $properties, $expression, true);
+            createPropertyTable($key, $properties, $expression, true, $names);
         } else {
             foreach ($properties as $key => $val) {
                 createPropertyTable($key, $val);
