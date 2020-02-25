@@ -15,10 +15,15 @@ include '../documentation-main/documentation_header.php';
     <? enterprise_feature("Row Grouping"); ?>
 
     <?php
-        printVideoSection("https://www.youtube.com/embed/2NOsirWWl_o", "row-grouping-video", "Row Grouping Video Tutorial");
+        printVideoSection("https://www.youtube.com/embed/gzqjP_kF4NI", "row-grouping-video", "Row Grouping Video Tutorial");
     ?>
 
     <h2 id="specifying-group-columns">Specifying Group Columns</h2>
+
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=5s", "00:05");
+    ?>
 
     <p>
         To group rows by a particular column, mark the column you want to group with <code>rowGroup=true</code>.
@@ -55,6 +60,12 @@ gridOptions.columnDefs = [
     <?= grid_example('Auto Column Group', 'auto-column-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=68s", "01:08");
+    ?>
+
+
     <p>
         The grid also lets you automatically create one column for each individual group.
         This is achieved by setting <code>gridOptions.groupMultiAutoColumn = true</code>.
@@ -72,6 +83,11 @@ gridOptions.columnDefs = [
     <?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=150s", "02:30");
+    ?>
+
 
     <p>
         You can specify your own configuration used by the auto group columns by providing a <code>gridOptions.autoGroupColumnDef</code>.
@@ -134,6 +150,11 @@ gridOptions.columnDefs = [
     </p>
 
     <h2>Adding Values To Leaf Nodes</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=230s", "03:50");
+    ?>
+
 
     <p>
         You may have noticed in the examples so far that the group columns don't produce values on the leaf nodes, the cells
@@ -199,6 +220,12 @@ gridOptions.columnDefs = [
     </p>
 
     <h2>Specifying Row Group Order</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=295s", "04:55");
+    ?>
+
+
     <p>
         By default, if you are using a column to display more than one group, the grid will order the groups based in
         the order in which you provide the columns. The following code snipped will group by country first, then sport
@@ -245,6 +272,11 @@ columnDefs = [
 
     <h2 id="replacingChildren">Hide Open Parents</h2>
 
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=348s", "05:48");
+    ?>
+
+
     <p>
         Depending on your preference, you may wish to hide parent rows when they are open.
         This gives the impression to the user that the children takes the place of the
@@ -281,6 +313,10 @@ columnDefs = [
     <?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=417s", "06:57");
+    ?>
 
     <p>
         By default dragging a column out of the grid will make it hidden and
@@ -329,6 +365,11 @@ columnDefs = [
     <?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
     <h2 id="fullWidthRows">Full Width Group Rows</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=500s", "08:20");
+    ?>
+
 
     <p>
         Instead of having a column for showing the groups, you can dedicate the full row for showing
@@ -456,6 +497,11 @@ gridOptions.groupRowRendererParams: {
 
     <h2 id="default-group-order">Default Group Order</h2>
 
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=614s", "10:14");
+    ?>
+
     <p>
         The grid does not attempt to order the groups. The groups are presented on a 'first come, first served'
         basis. For example if grouping by country, and the first row is for country 'Ireland', then the first
@@ -497,6 +543,11 @@ gridOptions.groupRowRendererParams: {
 
     <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=691s", "11:31");
+    ?>
+
+
     <p>
         If there are rows containing <code>null</code> or <code>undefined</code> values for the column that is being
         grouped then these rows will not be grouped. We refer to this scenario as <strong>Unbalanced Groups</strong> in that
@@ -519,6 +570,11 @@ gridOptions.groupRowRendererParams: {
 
     <h2>Grouping API</h2>
 
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=750s", "12:30");
+    ?>
+
+
     <p>
         To expand or contract a group via the API, you first must get a reference to the rowNode and then call
         <code>rowNode.setExpanded(boolean).</code> This will result in the grid getting updated and displaying the
@@ -538,6 +594,11 @@ gridOptions.api.forEachNode(function(node) {
     </p>
 
     <h2>Grouping Complex Objects with Keys</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=817s", "13:37");
+    ?>
+
 
     <p>
         If your rowData has complex objects that you want to group by, then the default grouping
@@ -578,6 +639,10 @@ colDef = {
 
 
     <h2 id="grouping-footers">Grouping Footers</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=929s", "15:29");
+    ?>
 
     <p>
         If you want to include a footer with each group, set the property <code>groupIncludeFooter</code> to true.
@@ -662,6 +727,11 @@ cellRendererParams: {
 
     <h2 id="removeSingleChildren">Removing Single Children</h2>
 
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1029s", "17:09");
+    ?>
+
+
     <p>
         If your data has groups with only one child, then it can make sense to collapse
         these groups as there is no benefit to the user creating groups with just one child,
@@ -719,6 +789,10 @@ cellRendererParams: {
     </note>
 
     <h2 id="showRowGroup">Creating Your Own Group Display Columns</h2>
+
+    <?php
+        printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=1136s", "18:56");
+    ?>
 
     <p>
         In all the previous examples the grid is in charge of generating the column's that display the groups, these columns

@@ -13,4 +13,13 @@
             </section>
         ";
     }
+
+    function printVideoLink($url, $time){
+            echo "
+             <div class='youtube-bar'>
+                    <img src='../images/yt_icon_rgb.png' class='youtube-icon' alt='Example video'></img>
+                    <a class='youtube-text' href='$url' target='_blank'><span>Watch this section of our docs in our video tutorial [$time]</span></a>
+                </div>
+            ";
+        }
 ?>
