@@ -125,7 +125,7 @@ function get_common_properties($type, $dir, $title, $options)
 }
 
 function get_current_import_type($exampleType) {
-    if($exampleType === 'charts') {
+    if($exampleType === 'chart') {
         // standalone charts only supports packages for now
         return 'packages';
     }
