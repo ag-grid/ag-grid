@@ -274,8 +274,7 @@ row = {
     with dot notation, ie <code>year.name</code>
 </p>
 
-<?= grid_example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
-
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 
