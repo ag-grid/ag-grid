@@ -89,6 +89,7 @@ $-ag-params: null !default;
 // $params: params supplied by the derived theme
 // $defaults: values for params not in $params
 @function ag-process-theme-variables($params, $defaults) {
+    $params: -ag-require-type($params, map, "$params argument to ag-process-theme-variables");
     // Derived themes can add params, and those new params would trigger validation errors when
     // passed to the base theme, so don't re-validate params that have already been validated
     @if not map-has-key($params, "--ag-already-validated") {

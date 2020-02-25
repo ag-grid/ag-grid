@@ -1,10 +1,6 @@
 @import "./ag-theme-alpine-mixin";
 
-// LEGACY THEME FILE
-// This mixin is for backwards compatibility with older apps that use global variables.
-// Including this file emits CSS for the Alpine theme. New apps should @import ag-theme-alpine-mixin.scss
-// and @include ag-theme-alpine($params), instead of using this file.
+// Including this file emits CSS for the Alpine theme. If you want to extend the Alpine theme,
+// @import ag-theme-alpine-mixin.scss and @include ag-theme-alpine($params) instead of using this file.
 
-// TODO re-instate legacy var import
-// @include ag-theme-alpine(ag-theme-base-create-params-from-legacy-vars());
 @include ag-theme-alpine($ag-theme-alpine-default-params);

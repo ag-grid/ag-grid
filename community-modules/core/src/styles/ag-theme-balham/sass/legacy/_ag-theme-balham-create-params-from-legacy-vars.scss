@@ -1,4 +1,5 @@
+@import "../../../ag-theme-base/sass/legacy/ag-theme-base-create-params-from-legacy-vars";
 
 @function ag-theme-balham-create-params-from-legacy-vars() {
-    @return ag-theme-base-create-params-from-legacy-vars();
+    @return ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-default-params);
 }
