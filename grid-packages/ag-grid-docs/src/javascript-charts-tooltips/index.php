@@ -42,21 +42,16 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    For example, in the sample data below the <code>value1</code>
-    key is not descriptive &mdash; as far as we can tell, it can contain the value of anything. The
-    <code>aama_value</code> key is some sort of abbreviation which may make sense to some but
-    is not very presentable because of the ambiguity, its all lowercase nature and underscore
-    in the name:
+    For example, in the sample data below the <code>value1</code> key is not descriptive,
+    while <code>hats_made</code> is not very presentable because it's all lowercase and
+    has an underscore in the name:
 </p>
 
 <snippet language="ts">
 data: [{
     month: 'Jun',
-    value1: 50, // sweaters made in June
-    // 'aama' could mean 'American Apparel Manufacture Association'
-    // or 'American Association of Medical Assistants'
-    // or something else
-    aama_value: 40
+    value1: 50,
+    hats_made: 40
 }, ...]
 </snippet>
 
@@ -72,17 +67,14 @@ data: [{
             The <code>yNames</code> changes are reflected in the legend as well.
         </li>
         <li>
-            Since the series uses two <code>yKeys</code> but only a single value is given
-            in the <code>yNames</code> config, the changes only affect the tooltip and the
-            legend item of the bottom stack.
-        </li>
-        <li>
             The legend will show the <code>yKeys</code> even if the <code>yNames</code>
             is not set. The tooltip however will only feature a title if the <code>yNames</code>
             is set.
         </li>
     </ul>
 </p>
+
+<h3>Example: Default Tooltip</h3>
 
 <?= chart_example('Default Tooltip', 'default-tooltip', 'generated'); ?>
 
@@ -124,6 +116,8 @@ chart.tooltipClass = 'my-tooltip';
     Note that your styles don't override the default tooltip styles but complement them.
 </p>
 
+<h3>Example: Tooltip Styling</h3>
+
 <?= chart_example('Default Tooltip with Custom Styling', 'default-tooltip-styling', 'generated'); ?>
 
 <h2>Using Tooltip Renderer</h2>
@@ -143,7 +137,7 @@ chart.tooltipClass = 'my-tooltip';
 
 <p>
     Let's say we wanted to remove the digits after the decimal point from the values shown in
-    tooltips (by default the tooltips show 2 digits after the decimal point for numeric values).
+    tooltips (by default the tooltips show two digits after the decimal point for numeric values).
     We could use the following <code>tooltipRenderer</code> to accomplish that:
 </p>
 
@@ -161,6 +155,85 @@ series: [{
 }]
 </snippet>
 
+<p>
+    The tooltip renderer function receives the <code>params</code> object as a single parameter.
+    Inside that object you get a reference to the raw <code>datum</code> element (from the <code>chart.data</code>
+    or <code>series.data</code> array) that corresponds to the highlight series item, in this case column segment.
+    You also get a reference to the series' <code>xKey</code> and <code>yKey</code>, so that you could fetch
+    the actual values like so: <code>params.datum[params.yKey]</code>. You can then process the fetched raw
+    values however you like before you stringify them and use as a part of the returned HTML string.
+</p>
+
+<p>
+    Notice that stacked series (like 'column', 'bar' and 'area') that have the <code>yKeys</code> property,
+    still receive a single <code>yKey</code> inside the tooltip renderer's <code>params</code> object.
+    That's because the tooltip renderer is only given the <code>yKey</code> for the currently highlighted
+    series item.
+</p>
+
+<note>
+    Different series types get different tooltip renderer parameters. You can find out which parameters
+    are supported by which series using the <a href="#api-reference">API reference</a> below.
+</note>
+
+<p>The effect of applying the tooltip renderer from the snippet above can be seen in the example below.</p>
+
+<h3>Example: Tooltip Renderer</h3>
+
+<p>
+    Notice that the tooltip renderer in the example below:
+    <ul class="content">
+        <li>
+            Returns two <code>div</code> elements, one for the tooltip's title and the other one for its content.
+        </li>
+        <li>
+            The value of the title comes from <code>params.datum[params.xKey]</code> which is the name of the month.
+        </li>
+        <li>
+            The title element gets its background color from the <code>params</code> object.
+            The provided color matches the color of the series.
+        </li>
+        <li>
+            The 'Sweaters Made' value comes from the <code>params.datum[params.yKey]</code>, which we then stringify
+            as an integer via <code>toFixed(0)</code>.
+        </li>
+        <li>
+            Finally we use the default class names on the returned <code>div</code> elements, so that our tooltip
+            gets the default styling. You could however add your own classes to the class list, or replace the default
+            CSS classes with your own. The structure of the returned DOM is also up to you, we are just following the
+            convention for this example.
+        </li>
+    </ul>
+</p>
+
 <?= chart_example('Column Series with a Tooltip Renderer', 'tooltip-renderer', 'generated'); ?>
+
+<h2>API Reference</h2>
+
+<h3>Bar and Column Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'barSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
+
+<h3>Area Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'areaSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
+
+
+<h3>Line Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'lineSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
+
+<h3>Scatter Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'scatterSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
+
+<h3>Pie Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pieSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
