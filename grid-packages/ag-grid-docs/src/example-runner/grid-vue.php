@@ -32,6 +32,7 @@ $example = getExampleInfo('grid', 'vue');
     </style>
     <?php renderExampleExtras($_GET) ?>
     <?= getStyleTags($example['styles']); ?>
+    <?= getNonGeneratedScriptTags($example['scripts']); ?>
 </head>
 <body>
 <div id="app" style="height: 100%">

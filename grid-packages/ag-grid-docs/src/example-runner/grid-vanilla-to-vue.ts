@@ -189,7 +189,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag) : agGridTag;
 
     return convertTemplate(template);
-};
+}
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers

@@ -7,11 +7,16 @@ export function modulesProcessor(modules: string[]) {
 
     const requiredModules = [];
     modules.forEach(module => {
+        let found = false;
         moduleMapping.forEach(moduleConfig => {
             if (moduleConfig.shortname && moduleConfig.shortname == module) {
                 requiredModules.push(moduleConfig);
+                found = true;
             }
-        })
+        });
+        if(!found) {
+            console.error(`Could not find module ${module} in modules.json`);
+        }
     });
 
     requiredModules.forEach(requiredModule => {
