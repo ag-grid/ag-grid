@@ -604,6 +604,7 @@ export class GridPanel extends Component {
         const cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
 
         if (eventName === "contextmenu") {
+            this.preventDefaultOnContextMenu(mouseEvent);
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
             if (cellComp) {
@@ -613,8 +614,6 @@ export class GridPanel extends Component {
                 rowComp.onMouseEvent(eventName, mouseEvent);
             }
         }
-
-        this.preventDefaultOnContextMenu(mouseEvent);
     }
 
     private mockContextMenuForIPad(): void {
