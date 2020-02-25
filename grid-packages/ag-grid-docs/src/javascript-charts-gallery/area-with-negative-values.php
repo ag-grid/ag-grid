@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Percentage Area';
+$pageTitle = 'Charts Standalone Gallery: Area With Negative Values';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,17 +8,16 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Percentage Area</h1>
+<h1 class="heading">Charts Standalone Gallery: Area With Negative Values</h1>
 
 <p class="lead">
-    An area chart showing the normalisation of data into percentages.
+    An area chart demonstrating the support of negative values.
 </p>
 
-<?= chart_example('Percentage Area', 'percentage-area', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Area With Negative Values', 'area-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./stacked-area.php">❮&nbsp;&nbsp;Stacked Area</a>
-    <a class="chart-navigation__right" href="./area-with-negative-values.php">Area With Negative Values&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__left" href="./percentage-area.php">❮&nbsp;&nbsp;Percentage Area</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

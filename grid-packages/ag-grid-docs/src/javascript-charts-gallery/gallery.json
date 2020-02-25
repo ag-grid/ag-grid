@@ -55,5 +55,8 @@
     },
     "Percentage Area": {
         "description": "An area chart showing the normalisation of data into percentages."
+    },
+    "Area With Negative Values": {
+        "description": "An area chart demonstrating the support of negative values."
     }
 }

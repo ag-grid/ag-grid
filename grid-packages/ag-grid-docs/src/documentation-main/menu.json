@@ -1079,6 +1079,10 @@
               {
                 "title": "Percentage Area",
                 "url": "javascript-charts-gallery/percentage-area.php"
+              },
+              {
+                "title": "Area With Negative Values",
+                "url": "javascript-charts-gallery/area-with-negative-values.php"
               }
             ]
           },
