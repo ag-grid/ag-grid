@@ -89,9 +89,24 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
-        const cellIsEmpty = params.value == null;
+        const nullValue = params.value == null;
+        let skipCell = false;
 
-        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+        // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
+        // we should only display the group cell renderer if the current column is the grouped column
+        // See: https://ag-grid.atlassian.net/browse/AG-3536
+        if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            const node = params.node;
+
+            if (node.footer) {
+                const showRowGroup = params.colDef && params.colDef.showRowGroup;
+                const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
+
+                skipCell = showRowGroup !== rowGroupColumnId;
+            }
+        }
+
+        this.cellIsBlank = embeddedRowMismatch || nullValue || skipCell;
 
         if (this.cellIsBlank) { return; }
 
