@@ -93,7 +93,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let skipCell = false;
 
         // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
-        // we should only display the group cell renderer if the current column is the grouped column
+        // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
         // See: https://ag-grid.atlassian.net/browse/AG-3536
         if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
             const node = params.node;
