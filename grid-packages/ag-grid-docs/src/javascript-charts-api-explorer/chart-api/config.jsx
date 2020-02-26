@@ -382,12 +382,12 @@ const seriesConfig = {
         type: {
             parameters: {
                 datum: 'any',
-                title: 'string',
-                color: 'string',
+                'title?': 'string',
+                'color?': 'string',
                 xKey: 'string',
-                xName: 'string',
+                'xName?': 'string',
                 yKey: 'string',
-                yName: 'string',
+                'yName?': 'string',
             },
             returnType: 'string',
         },
@@ -673,10 +673,6 @@ export const barSeriesConfig = Object.freeze({
         min: 1,
         max: 100,
     },
-    flipXY: {
-        default: false,
-        description: 'Flips the direction of the bars.',
-    },
     ...getColourConfig('bars', true),
     ...getHighlightConfig('bars'),
     ...shadowConfig,
@@ -762,16 +758,16 @@ export const scatterSeriesConfig = Object.freeze({
         type: {
             parameters: {
                 datum: 'any',
-                title: 'string',
-                color: 'string',
+                'title?': 'string',
+                'color?': 'string',
                 xKey: 'string',
-                xName: 'string',
+                'xName?': 'string',
                 yKey: 'string',
-                yName: 'string',
-                sizeKey: 'string',
-                sizeName: 'string',
-                labelKey: 'string',
-                labelName: 'string',
+                'yName?': 'string',
+                'sizeKey?': 'string',
+                'sizeName?': 'string',
+                'labelKey?': 'string',
+                'labelName?': 'string',
             },
             returnType: 'string',
         },
@@ -819,6 +815,23 @@ export const pieSeriesConfig = Object.freeze({
         description: 'A human-readable description of the radius values.',
     },
     ...seriesConfig,
+    tooltipRenderer: {
+        type: {
+            parameters: {
+                datum: 'any',
+                'title?': 'string',
+                'color?': 'string',
+                'angleKey': 'string',
+                'angleName?': 'string',
+                'radiusKey?': 'string',
+                'radiusName?': 'string',
+                'labelKey?': 'string',
+                'labelName?': 'string'
+            },
+            returnType: 'string',
+        },
+        description: 'Function used to create the content for tooltips.'
+    },
     rotation: {
         default: 0,
         description: 'The rotation of the pie series in degrees.',
