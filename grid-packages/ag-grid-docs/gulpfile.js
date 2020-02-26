@@ -42,14 +42,25 @@ const populateDevFolder = () => {
         });
 
     const react = gulp.src(['../../community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../community-modules/react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
-    const angular = gulp.src(['../../community-modules/angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
+    const angular = gulp.src(['../../community-modules/angular/dist/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
     const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
     const chartReact = gulp.src(['../../charts-packages/ag-charts-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
     const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
     const chartVue = gulp.src(['../../charts-packages/ag-charts-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-vue`));
 
-    return merge(...copyTasks, react, angular, vue, chartReact, chartAngular, chartVue);
+    const packageCommunity = gulp.src(['../../grid-packages/ag-grid-community/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-community/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
+    const packageEnterprise = gulp.src(['../../grid-packages/ag-grid-enterprise/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-enterprise/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise`));
+    const packageAngular = gulp.src(['../../grid-packages/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
+    const packageReact = gulp.src(['../../grid-packages/ag-grid-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
+    const packageVue = gulp.src(['../../grid-packages/ag-grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+
+    return merge(
+        ...copyTasks,
+        react, angular, vue,
+        chartReact, chartAngular, chartVue,
+        packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue
+    );
 };
 
 updateFrameworkBoilerplateSystemJsEntry = (done) => {

@@ -144,10 +144,15 @@ if (USE_LOCAL) {
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
 /* END OF GRID CSS PROD - DO NOT DELETE */
-        "@ag-grid-community/react" => "npm:@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
-        "@ag-grid-community/angular" => "npm:@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
-        "@ag-grid-community/vue" => "npm:@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
+        "@ag-grid-community/react" => "https://unpkg.com/@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
+        "@ag-grid-community/angular" => "https://unpkg.com/@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
+        "@ag-grid-community/vue" => "https://unpkg.com/@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
         "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
+        "ag-grid-community" => "https://unpkg.com/ag-grid-community@". AG_GRID_VERSION . "/",
+        "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@". AG_GRID_ENTERPRISE_VERSION . "/",
+        "ag-grid-angular" => "https://unpkg.com/ag-grid-angular@". AG_GRID_ANGULAR_VERSION . "/",
+        "ag-grid-react" => "https://unpkg.com/ag-grid-react@". AG_GRID_REACT_VERSION . "/",
+        "ag-grid-vue" => "https://unpkg.com/ag-grid-vue@". AG_GRID_VUE_VERSION . "/"
     );
 
     $gridSystemJsCommunityPaths = array(

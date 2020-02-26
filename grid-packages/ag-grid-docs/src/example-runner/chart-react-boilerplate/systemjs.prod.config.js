@@ -39,7 +39,7 @@
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types',
-
+                lodash: 'npm:lodash@4.17.15',
                 app: 'app'
             },
             systemJsMap

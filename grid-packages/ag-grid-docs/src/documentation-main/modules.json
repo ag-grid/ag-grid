@@ -17,11 +17,13 @@
   },
   {
     "title": "Infinite Row Model",
+    "shortname": "infinite",
     "module": "@ag-grid-community/infinite-row-model",
     "exported": "InfiniteRowModelModule"
   },
   {
     "title": "CSV Export",
+    "shortname": "csv",
     "module": "@ag-grid-community/csv-export",
     "exported": "CsvExportModule"
   },
@@ -69,60 +71,70 @@
   },
   {
     "title": "Clipboard",
+    "shortname": "clipboard",
     "module": "@ag-grid-enterprise/clipboard",
     "enterprise": true,
     "exported": "ClipboardModule"
   },
   {
     "title": "Column Tool Panel",
+    "shortname": "column",
     "module": "@ag-grid-enterprise/column-tool-panel",
     "enterprise": true,
     "exported": "ColumnsToolPanelModule"
   },
   {
     "title": "Excel Export",
+    "shortname": "excel",
     "module": "@ag-grid-enterprise/excel-export",
     "enterprise": true,
     "exported": "ExcelExportModule"
   },
   {
     "title": "Filter Tool Panel",
+    "shortname": "filter",
     "module": "@ag-grid-enterprise/filter-tool-panel",
     "enterprise": true,
     "exported": "FiltersToolPanelModule"
   },
   {
     "title": "Master Detail",
+    "shortname": "masterdetail",
     "module": "@ag-grid-enterprise/master-detail",
     "enterprise": true,
     "exported": "MasterDetailModule"
   },
   {
     "title": "Context Menu",
+    "shortname": "context",
     "module": "@ag-grid-enterprise/menu",
     "enterprise": true,
     "exported": "MenuModule"
   },
   {
     "title": "Range Selection",
+    "shortname": "range",
     "module": "@ag-grid-enterprise/range-selection",
     "enterprise": true,
     "exported": "RangeSelectionModule"
   },
   {
     "title": "Rich Select",
+    "shortname": "richselect",
     "module": "@ag-grid-enterprise/rich-select",
     "enterprise": true,
     "exported": "RichSelectModule"
   },
   {
     "title": "Row Grouping",
+    "shortname": "rowgrouping",
     "module": "@ag-grid-enterprise/row-grouping",
     "enterprise": true,
     "exported": "RowGroupingModule"
   },
   {
     "title": "Server Side Row Model",
+    "shortname": "serverside",
     "module": "@ag-grid-enterprise/server-side-row-model",
     "enterprise": true,
     "exported": "ServerSideRowModelModule"
@@ -136,18 +148,21 @@
   },
   {
     "title": "Side Bar",
+    "shortname": "sidebar",
     "module": "@ag-grid-enterprise/side-bar",
     "enterprise": true,
     "exported": "SideBarModule"
   },
   {
     "title": "Status Bar",
+    "shortname": "statusbar",
     "module": "@ag-grid-enterprise/status-bar",
     "enterprise": true,
     "exported": "StatusBarModule"
   },
   {
     "title": "Viewport Row Model",
+    "shortname": "viewport",
     "module": "@ag-grid-enterprise/viewport-row-model",
     "enterprise": true,
     "exported": "ViewportRowModelModule"
