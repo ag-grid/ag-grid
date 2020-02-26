@@ -1139,6 +1139,10 @@
               {
                 "title": "Tooltips",
                 "url": "javascript-charts-tooltips/"
+              },
+              {
+                "title": "Axes",
+                "url": "javascript-charts-axis/"
               }
             ]
           },
