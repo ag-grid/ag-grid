@@ -11,8 +11,8 @@
     "Percentage Column": {
         "description": "A column chart showing the normalisation of data into percentages."
     },
-    "Column With Negative Numbers": {
-        "description": "A column chart showing use of negative numbers."
+    "Column With Negative Values": {
+        "description": "A column chart showing use of negative values."
     },
     "Simple Bar": {
         "description": "The bar chart represents data as a series of horizontal bars."
@@ -26,8 +26,8 @@
     "Percentage Bar": {
         "description": "A bar chart showing the normalisation of data into percentages."
     },
-    "Bar With Negative Numbers": {
-        "description": "A bar chart showing use of negative numbers."
+    "Bar With Negative Values": {
+        "description": "A bar chart showing use of negative values."
     },
     "Simple Pie": {
         "description": "The pie chart represents proportional data as a pie."

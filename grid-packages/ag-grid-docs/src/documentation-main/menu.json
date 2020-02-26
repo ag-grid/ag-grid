@@ -1021,8 +1021,8 @@
                 "url": "javascript-charts-gallery/percentage-column.php"
               },
               {
-                "title": "Column With Negative Numbers",
-                "url": "javascript-charts-gallery/column-with-negative-numbers.php"
+                "title": "Column With Negative Values",
+                "url": "javascript-charts-gallery/column-with-negative-values.php"
               },
               {
                 "title": "Simple Bar",
@@ -1041,8 +1041,8 @@
                 "url": "javascript-charts-gallery/percentage-bar.php"
               },
               {
-                "title": "Bar With Negative Numbers",
-                "url": "javascript-charts-gallery/bar-with-negative-numbers.php"
+                "title": "Bar With Negative Values",
+                "url": "javascript-charts-gallery/bar-with-negative-values.php"
               },
               {
                 "title": "Simple Pie",

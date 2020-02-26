@@ -41,9 +41,9 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
-    <a href="./column-with-negative-numbers.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-with-negative-numbers.png" /><br />
-        <div class="chart-gallery-item__name">Column With Negative Numbers</div>
+    <a href="./column-with-negative-values.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-with-negative-values.png" /><br />
+        <div class="chart-gallery-item__name">Column With Negative Values</div>
     </a>
 </div>
 <div class="chart-gallery-item">
@@ -71,9 +71,9 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
-    <a href="./bar-with-negative-numbers.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-numbers.png" /><br />
-        <div class="chart-gallery-item__name">Bar With Negative Numbers</div>
+    <a href="./bar-with-negative-values.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-values.png" /><br />
+        <div class="chart-gallery-item__name">Bar With Negative Values</div>
     </a>
 </div>
 <div class="chart-gallery-item">

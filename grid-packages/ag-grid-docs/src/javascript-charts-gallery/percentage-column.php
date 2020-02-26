@@ -18,7 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./stacked-column.php">❮&nbsp;&nbsp;Stacked Column</a>
-    <a class="chart-navigation__right" href="./column-with-negative-numbers.php">Column With Negative Numbers&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./column-with-negative-values.php">Column With Negative Values&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
