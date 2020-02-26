@@ -16,7 +16,9 @@ if (basename($_SERVER['PHP_SELF']) == 'index.php') {
 define('DOC_SECTION', $article_id);
 
 function is_current($item) {
-    return $item['url'] && explode('#', $item['url'])[0] == DOC_SECTION;
+    return (!is_bool($item['disableActive']) || !$item['disableActive']) &&
+        $item['url'] &&
+        explode('#', $item['url'])[0] === DOC_SECTION;
 }
 
 function should_expand($item) {
@@ -29,6 +31,7 @@ function should_expand($item) {
             return true;
         }
     }
+
     return false;
 }
 
@@ -54,6 +57,7 @@ function render_menu_items($items, $gtm, $level) {
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $current = is_current($item);
+
         if ($level == 1) {
             $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
         } else {
@@ -62,11 +66,13 @@ function render_menu_items($items, $gtm, $level) {
 
         echo "<li$li_class>";
 
-        $enterprise_icon = ($item['enterprise'] ? '<span class="enterprise-icon">e</span>' : '');
-        $new_marker = ($item['new'] ? '<span class="new-marker">new</span>' : '');
+        $enterprise_icon = $item['enterprise'] ? '<span class="enterprise-icon">e</span>' : '';
+        $new_marker = $item['new'] ? '<span class="new-marker">new</span>' : '';
+
         if ($item['url']) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
             $a_classes = array();
+
             if ($current) {
                 array_push($a_classes, 'active');
             }
@@ -80,21 +86,19 @@ function render_menu_items($items, $gtm, $level) {
             if ($current) {
                 $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
             }
-            echo <<<LINK
-                <a href="$url"$a_class>{$item['title']}$new_marker$enterprise_icon</a>
-LINK;
+            echo "<a href=\"$url\"$a_class>{$item['title']}$new_marker$enterprise_icon</a>";
         } else {
             echo "<span>{$item['title']}</span>";
         }
 
         render_menu_items($item['items'], $item_gtm, $level + 1);
+
         echo "</li>";
     }
 
     if ($level > 1) {
         echo "</ul>";
     }
-
 }
 
 render_titles($menu_items, array());
