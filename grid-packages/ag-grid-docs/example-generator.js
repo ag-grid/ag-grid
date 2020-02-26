@@ -29,7 +29,7 @@ function emptyDirectory(directory) {
         });
     }
     catch (e) {
-        console.error(`Failed to empty ${directory}`);
+        console.error(`Failed to empty ${directory}`, e);
         return;
     }
 };

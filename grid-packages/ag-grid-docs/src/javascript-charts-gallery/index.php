@@ -143,9 +143,9 @@ define('skipInPageNav', true);
     </a>
 </div>
 <div class="chart-gallery-item">
-    <a href="./area-with-updating-data.php" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./thumbnails/area-with-updating-data.png" /><br />
-        <div class="chart-gallery-item__name">Area With Updating Data</div>
+    <a href="./area-with-real-time-data.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/area-with-real-time-data.png" /><br />
+        <div class="chart-gallery-item__name">Area With Real-Time Data</div>
     </a>
 </div>
 <div class="chart-gallery-item chart-gallery-item--empty"></div>

@@ -18,7 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./percentage-area.php">❮&nbsp;&nbsp;Percentage Area</a>
-    <a class="chart-navigation__right" href="./area-with-updating-data.php">Area With Updating Data&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./area-with-real-time-data.php">Area With Real-Time Data&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

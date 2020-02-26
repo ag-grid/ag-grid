@@ -164,6 +164,29 @@ function hasArgument(name) {
     return process.argv.some(arg => arg === `--${name}`);
 }
 
+function emptyDirectory(directory) {
+    if (!directory || directory.trim().indexOf('/') === 0) { return; }
+
+    try {
+        const files = fs.readdirSync(directory);
+
+        files.forEach(file => {
+            const filePath = Path.join(directory, file);
+
+            if (fs.statSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+            }
+            else {
+                emptyDirectory(filePath);
+            }
+        });
+    }
+    catch (e) {
+        console.error(`Failed to empty ${directory}`, e);
+        return;
+    }
+}
+
 function generateThumbnails(galleryConfig) {
     if (hasArgument('skip-thumbnails')) {
         console.log("Skipping thumbnails.");
@@ -179,6 +202,8 @@ function generateThumbnails(galleryConfig) {
 
     if (!fs.existsSync(thumbnailDirectory)) {
         fs.mkdirSync(thumbnailDirectory);
+    } else if (shouldGenerateAllScreenshots) {
+        emptyDirectory(thumbnailDirectory);
     }
 
     const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';

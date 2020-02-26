@@ -62,7 +62,7 @@
     "Area With Negative Values": {
         "description": "An area chart demonstrating the support of negative values."
     },
-    "Area With Updating Data": {
-        "description": "This example demonstrates how the chart responds to data being updated."
+    "Area With Real-Time Data": {
+        "description": "This example demonstrates how the chart responds to data being updated in real-time."
     }
 }
