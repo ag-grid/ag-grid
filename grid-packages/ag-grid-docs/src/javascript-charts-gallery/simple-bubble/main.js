@@ -1,8 +1,8 @@
 var options = {
     container: document.querySelector('#myChart'),
-    data: data,
+    data: data.filter(function(d) { return d.magnitude > 4; }),
     title: {
-        text: 'Worldwide earthquakes in January 2020',
+        text: 'Worldwide Earthquakes (first week of February 2020)',
         fontSize: 18,
     },
     subtitle: {
@@ -15,7 +15,7 @@ var options = {
             xName: 'Depth',
             yKey: 'magnitude',
             yName: 'Magnitude',
-            sizeKey: 'minimumDistance',
+            sizeKey: 'minDistance',
             sizeName: 'Minimum Distance',
             marker: {
                 size: 100,
