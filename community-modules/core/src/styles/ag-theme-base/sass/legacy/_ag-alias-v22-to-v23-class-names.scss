@@ -1,0 +1,185 @@
+@mixin ag-alias-v22-to-v23-class-names {
+    .ag-group {
+        @extend .ag-group-component !optional;
+    }
+    
+    .ag-group-title-bar {
+        @extend .ag-group-component-title-bar !optional;
+    }
+    
+    .ag-group-title-bar-icon {
+        @extend .ag-group-component-title-bar-icon !optional;
+    }
+    
+    .ag-group-title {
+        @extend .ag-group-component-title !optional;
+    }
+    
+    .ag-group-container {
+        @extend .ag-group-component-container !optional;
+    }
+    
+    .ag-group-toolbar {
+        @extend .ag-group-component-toolbar !optional;
+    }
+    
+    .ag-row-loading {
+        @extend .ag-row-stub !optional;
+    }
+    
+    .ag-column-drop-empty {
+        @extend .ag-faded !optional;
+    }
+    
+    .ag-group-item-alignment-stretch {
+        @extend .ag-alignment-stretch !optional;
+    }
+    
+    .ag-group-item-alignment-start {
+        @extend .ag-alignment-start !optional;
+    }
+    
+    .ag-group-item-alignment-end {
+        @extend .ag-alignment-end !optional;
+    }
+    
+    .ag-drag-handle {
+        @extend .ag-column-drag !optional;
+    }
+    
+    .ag-chart-settings-card-selector {
+        @extend .ag-nav-card-selector !optional;
+    }
+    
+    .ag-chart-settings-card-item {
+        @extend .ag-nav-card-item !optional;
+    }
+    
+    .ag-panel-title-bar {
+        @extend .ag-title-bar !optional;
+    }
+    
+    .ag-panel-title-bar-title {
+        @extend .ag-title-bar-title !optional;
+    }
+    
+    .ag-panel-title-bar-buttons {
+        @extend .ag-title-bar-buttons !optional;
+    }
+    
+    .ag-panel-title-bar-button {
+        @extend .ag-button !optional;
+    }
+    
+    .ag-paging-button-wrapper {
+        @extend .ag-paging-button !optional;
+    }
+    
+    .ag-cell-auto-height {
+        @extend .ag-cell-with-height !optional;
+    }
+    
+    .ag-status-name-value {
+        @extend .ag-name-value !optional;
+    }
+    
+    .ag-angle-select-parent-circle {
+        @extend .ag-parent-circle !optional;
+    }
+    
+    .ag-angle-select-child-circle {
+        @extend .ag-child-circle !optional;
+    }
+    
+    .ag-picker-field-button {
+        @extend .ag-picker-button !optional;
+    }
+    
+    .ag-spectrum-fill {
+        @extend .ag-fill !optional;
+    }
+    
+    .ag-spectrum-tool {
+        @extend .ag-hue-alpha !optional;
+    }
+    
+    .ag-tabs-header {
+        @extend .ag-tab-header !optional;
+    }
+    
+    .ag-tabs-body {
+        @extend .ag-tab-body !optional;
+    }
+    
+    .ag-chart-menu-tabs {
+        @extend .ag-chart-tabbed-menu !optional;
+    }
+    
+    .ag-column-select {
+        @extend .ag-column-select-panel !optional;
+    }
+    
+    .ag-column-select-header {
+        @extend .ag-primary-cols-header-panel !optional;
+    }
+    
+    .ag-column-select-header-filter {
+        @extend .ag-primary-cols-filter !optional;
+    }
+    
+    .ag-column-select-header-filter-wrapper {
+        @extend .ag-primary-cols-filter-wrapper !optional;
+    }
+    
+    .ag-column-select-list {
+        @extend .ag-primary-cols-list-panel !optional;
+    }
+    
+    .ag-loading {
+        @extend .ag-stub-cell !optional;
+    }
+    
+    .ag-paging-button-wrapper {
+        @extend .ag-paging-button !optional;
+    }
+    
+    .ag-column-select-column {
+        @extend .ag-column-tool-panel-column !optional;
+    }
+    
+    .ag-column-select-column-group {
+        @extend .ag-column-tool-panel-column-group !optional;
+    }
+    
+    .ag-column-select-column-label {
+        @extend .ag-column-tool-panel-column-label !optional;
+    }
+    
+    .ag-column-select-indent-1 {
+        @extend .ag-toolpanel-indent-1 !optional;
+    }
+    
+    .ag-column-select-indent-2 {
+        @extend .ag-toolpanel-indent-2 !optional;
+    }
+    
+    .ag-column-select-indent-3 {
+        @extend .ag-toolpanel-indent-3 !optional;
+    }
+    
+    .ag-column-select-indent-4 {
+        @extend .ag-toolpanel-indent-4 !optional;
+    }
+    
+    .ag-column-select-indent-5 {
+        @extend .ag-toolpanel-indent-5 !optional;
+    }
+    
+    .ag-column-select-add-group-indent {
+        @extend .ag-toolpanel-add-group-indent !optional;
+    }
+    
+    .ag-column-drop-horizontal-half-width {
+        @extend .ag-width-half !optional;
+    }    
+}

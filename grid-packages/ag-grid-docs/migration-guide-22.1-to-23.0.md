@@ -36,157 +36,131 @@ This is a big change, and all custom themes will require updating. But once they
 %card - use $ag-card-* variables or CSS selectors
 
 
-## Sass variable changes
+## Theme configuration  changes
 
-We have made various changes to Sass variables. When we have renamed variables, we still support the old variable names for compatibilty, but the changes are listed here for your information.
+In the move from configuring themes with variables to using a map of key/value parameters, some variables have been directly converted to parameters:
 
-$ag-header-icon-size, $ag-row-border-width, $ag-transition-speed, $ag-cell-data-changed-color, $ag-use-icons-for-pager-buttons: These vars were defined but not used and have been removed.
+```scss
+// old method:
+$ag-header-foreground-color: red;
+@import "path/to/ag-theme-xyz.scss";
 
-$ag-foreground-opacity > $ag-foreground-color-opacity
-$ag-alt-icon-color > $ag-checkbox-background-color / ag-range-selection-border-color
-   
-$ag-range-selected-color-1 (and -2, -3, -4): removed. Colour when multiple ranges overlap now calculated automatically from the opacity of $ag-range-selection-background-color.
+// new method
+@include ag-theme-xyz((
+    header-foreground-color: red
+));
+```
 
-$ag-foreground-color-opacity, $ag-secondary-foreground-color-opacity, $ag-disabled-foreground-color-opacity: removed. If you were using them, instead set a semi-transparent colour to $ag-foreground-color, $ag-secondary-foreground-color, or $ag-disabled-foreground-color
+However some variables have been renamed or removed. Check the documentation for your theme for an up-to-date list of supported parameters. Here is a list of the changes made:
 
-$ag-primary-color removed. Use $ag-range-selection-border-color and $ag-selected-tab-underline-color.
+### Renamed variables
 
-$ag-tooltip-background-color, $ag-tooltip-border-color, $ag-tooltip-border-radius, $ag-tooltip-border-style, $ag-tooltip-border-width, $ag-tooltip-foreground-color, $ag-tooltip-padding: removed. Use a CSS rule like .ag-tooltip { padding: 10px; }
+These variables correspond to parameters with different names:
 
-$ag-accent-color > removed. If extending the base theme, use specific colour variables like $ag-checkbox-check-color or use CSS selectors to change element colors. If extending a provided theme, check the theme's ag-theme-{themename}-vars.scss file for theme-specific variables to achieve the same effect. Fopr example, the material theme provides `$ag-mat-accent-color`.
+ * `$ag-primary-color` and `$ag-accent-color`. If extending a provided theme, use the theme-specific parameters to control key colours. Balham provides `balham-active-color`; Alpine provides `alpine-active-color`; and Material provides `material-primary-color` and `material-accent-color`. Or use specific parameters like `checkbox-checked-color` that control the colours of individual elements.
+ * `$ag-alt-icon-color`. Use `checkbox-background-color` and `range-selection-border-color`.
+ * `$ag-range-selected-color-1` (and `-2`, `-3`, `-4`). Set a semi-transparent colour to `range-selection-background-color` and the correct color when multiple ranges overlap is automatically calculated.
+ * `$ag-virtual-item-height`. Use `$ag-list-item-height` instead.
+ * `$ag-foreground-color-opacity`, `$ag-secondary-foreground-color-opacity`, `$ag-disabled-foreground-color-opacity`. Set a semi-transparent colour to `foreground-color`, `secondary-foreground-color`, or `disabled-foreground-color`.
 
-Variables starting `$ag-dialog-` and `$ag-dialog-title-` have been removed. Instead of using these variables, use a css selector like `.ag-panel { ... }` or `.ag-panel-title { ... }`. The full list of removed variables is: $ag-dialog-background-color, $ag-dialog-border-size, $ag-dialog-border-style, $ag-dialog-border-color, $ag-dialog-title-background-color, $ag-dialog-title-foreground-color, $ag-dialog-title-height, $ag-dialog-title-font-family, $ag-dialog-title-font-size, $ag-dialog-title-font-weight, $ag-dialog-title-padding, $ag-dialog-title-icon-size, 
+### Variables removed with no equivalent parameter
 
-$ag-header-background-image: removed. .ag-header {background: xxx}
+The following variables have been removed. Instead of using a parameter, create a CSS rule to apply your desired effect. For example:
 
-$ag-row-stub-background-color: removed. use .ag-row-loading {background-color: xxx}
+```scss
+// old style
+$ag-group-border-color: green;
 
-$ag-row-floating-background-color: removed. Use .ag-row-pinned {background-color: xxx}
+// new style.
 
-$ag-group-border-color: removed
+.ag-group {
+    border-color: green;
+}
+```
 
-TODO: replaced with new styles, document
-$ag-editor-background-color: null !default;
-$ag-panel-background-color: null !default;
-$ag-group-background-color: null !default;
-$ag-group-border-color: null !default;
-$ag-group-title-background-color: null !default;
-$ag-group-toolbar-background-color: null !default;
+Here is a full list of removed variables. Some have suggested replacements documented. For the other variables, use your browser's developer tools to find the appropriate class names for the element you need to target and adding new CSS rules.
 
-$ag-customise-inputs, $ag-input-bottom-border, $ag-input-bottom-border-disabled, $ag-input-border-width, $ag-input-height, $ag-focused-textbox-border-bottom: removed. Use the new %ag-text-input placeholder selector to style text inputs instead. See ag-theme-material.scss for an example.
+ * `$ag-customise-inputs`, `$ag-input-bottom-border`, `$ag-input-bottom-border-disabled`, `$ag-input-border-width`, `$ag-input-height`, `$ag-focused-textbox-border-bottom`. Use the new %ag-text-input placeholder selector to style text inputs instead.
+ * `$ag-customize-buttons`, `$ag-button-color`, `$ag-button-text-transform`, `$ag-button-background-color`: Use a CSS rule like `.ag-standard-button { ... }` instead.
+ * All `$ag-dialog-*` variables: `$ag-dialog-background-color`, `$ag-dialog-border-color`, `$ag-dialog-border-size`, `$ag-dialog-border-style`, `$ag-dialog-title-background-color`, `$ag-dialog-title-font-family`, `$ag-dialog-title-font-size`, `$ag-dialog-title-font-weight`, `$ag-dialog-title-foreground-color`, `$ag-dialog-title-height`, `$ag-dialog-title-icon-size`, `$ag-dialog-title-padding`
+ * `$ag-editor-background-color`
+ * `$ag-filter-tool-panel-top-level-row-height` and `$ag-filter-tool-panel-sub-level-row-height`. Use 
+`.ag-filter-toolpanel-header` to style all headers, `.ag-filter-toolpanel-instance-header` for leaf level headers, and `.ag-filter-toolpanel-group-level-{X}-header` for a specific level of header, e.g. `.ag-filter-toolpanel-group-level-0-header` for the top level.
+ * `$ag-font-weight`, `$ag-secondary-font-family`, `$ag-secondary-font-size`, `$ag-secondary-font-weight`
+ * `$ag-foreground-opacity`
+ * `$ag-group-background-color`
+ * `$ag-group-border-color`
+ * `$ag-group-border-color`
+ * `$ag-group-title-background-color`
+ * `$ag-group-toolbar-background-color`
+ * `$ag-header-background-image`
+ * `$ag-panel-background-color`
+ * `$ag-rich-select-item-height` (note - this was removed because it caused issues if it was different to `list-item-height`, so use `list-item-height` instead.
+ * `$ag-row-floating-background-color`
+ * `$ag-row-stub-background-color`
+ * `$ag-scroll-spacer-border`
+ * `$ag-tooltip-background-color`, `$ag-tooltip-border-color`, `$ag-tooltip-border-radius`, `$ag-tooltip-border-style`, `$ag-tooltip-border-width`, `$ag-tooltip-foreground-color`, `$ag-tooltip-padding`: removed. Use a CSS rule like `.ag-tooltip { padding: 10px; }`
 
-
-$ag-customize-buttons, $ag-button-color, $ag-button-text-transform, $ag-button-background-color: remvoed. Apply styles to buttons using css class name selectors like `.ag-standard-button { ... }`
-
-$ag-scroll-spacer-border: removed. Now drawn as a 'critical' level border controlled by $ag-borders.
-
-$ag-font-weight, $ag-secondary-font-family, $ag-secondary-font-size, $ag-secondary-font-weight - removed. Use css selectors to style the desired elements appropriately. $ag-font-family, $ag-font-size are still available.
-
-$ag-rich-select-item-height: removed. In practice, this caused issues if it was different from $ag-list-item-height, so use $ag-list-item-height instead.
-
-$ag-filter-tool-panel-top-level-row-height and $ag-filter-tool-panel-sub-level-row-height: removed. CSS selectors to set the height with one of these selectors:
-`.ag-filter-toolpanel-header`: all headers
-`.ag-filter-toolpanel-instance-header`: leaf level headers
-`.ag-filter-toolpanel-group-level-{X}-header`: specific level of header, e.g. `.ag-filter-toolpanel-group-level-0-header` for the top level
 
 ## CSS class renames
 
-ag-group-component
-ag-group-component-title-bar
-ag-group-component-title-bar-icon
-ag-group-component-title
-ag-group-component-container
-ag-group-component-toolbar
-Are now ag-group, ag-group-title-bar etc
+Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debugability, we recommend that all themes update their css class name-based selectors to use the new names.
 
-.ag-row-stub > .ag-row-loading
+If you want to upgrade to v23 without renaming your class name-based selectors, we provide a mixin to import the old class names. Include it in your custom theme file:
 
-.ag-faded > removed. This was only used on column-drop icons and titles when the component was empty. Use the new `.ag-column-drop-empty` class.
+```scss
+@import ag-alias-v22-to-v23-class-names();
+```
 
-.title (in the vertical column drop component) > .ag-column-drop-vertical-title
+This mixin emits Sass `@extend` rules that alias the old names to the new ones where possible.
 
-.ag-alignment-stretch, .ag-alignment-start, .ag-alignment-end
-are now
-.ag-group-item-alignment-stretch, .ag-group-item-alignment-start, .ag-group-item-alignment-end
+Note: some of the css class name changes made in v23 are not simple renames, and so aren't covered by the mixin. This is especially true within the Filters Tool Panel. After using the mixin, test your theme and add/edit css rules as necessary.
 
-.ag-column-drag and .ag-row-drag are now .ag-drag-handle
+The full list of renamed classes is as follows:
 
-.ag-nav-card-selector is now .ag-chart-settings-card-selector
-
-.ag-nav-card-item is now .ag-chart-settings-card-item
-
-ag-title-bar > ag-panel-title-bar
-ag-title-bar-title > ag-panel-title-bar-title
-ag-title-bar-buttons > ag-panel-title-bar-buttons
-.ag-button > ag-panel-title-bar-button
-
-.ag-paging-button > .ag-paging-button-wrapper
-
-.ag-cell-with-height > .ag-cell-auto-height
-
-.ag-name-value > ag-status-name-value
-
-
-ag-parent-circle > ag-angle-select-parent-circle
-ag-child-circle > ag-angle-select-child-circle
-
-ag-picker-button > ag-picker-field-button
-
-ag-fill > ag-spectrum-fill
-
-ag-hue-alpha > ag-spectrum-tool
-
-
-ag-tab-header > ag-tabs-header
-ag-tab-body > ag-tabs-body
-
-
-ag-chart-tabbed-menu > ag-chart-menu-tabs
-
-ag-column-select-panel > ag-column-select
-ag-primary-cols-header-panel > ag-column-select-header
-ag-primary-cols-filter > ag-column-select-header-filter
-ag-primary-cols-filter-wrapper > ag-column-select-header-filter-wrapper
-ag-primary-cols-list-panel > ag-column-select-list
-
-.ag-filter-toolpanel-header - this was set on headers and search. Now it is only set on headers. Use .ag-filter-toolpanel-search to style the search box.
-
-ag-filter-toolpanel-search
-ag-filter-toolpanel-group
-ag-filter-toolpanel-filter
-ag-filter-toolpanel-filter-header
-ag-filter-toolpanel-filter-body
-
-Shared: 
-ag-filter-toolpanel-header
-ag-filter-toolpanel-header-expand
-ag-filter-toolpanel-header-text
-
-
-ag-filter-panel -> ag-filter-toolpanel
-ag-filter-header > ag-filter-toolpanel-search-header
-ag-filter-toolpanel-header > ag-filter-toolpanel-instance-header
-ag-filter-panel-group-title -> ag-filter-toolpanel-group-title
-ag-filter-panel-group-title-bar -> ag-filter-toolpanel-group-title-bar
-ag-filter-panel-group-item -> ag-filter-toolpanel-group-item
-ag-filter-toolpanel-body > ag-filter-toolpanel-instance-body
-ag-filter-air > ag-filter-toolpanel-instance-filter
-
-ag-stub-cell > ag-loading
-
-
-ag-paging-button-wrapper
-
-ag-column-tool-panel-column > ag-column-select-column
-ag-column-tool-panel-column-group > ag-column-select-column-group
-ag-column-tool-panel-column-label > ag-column-select-column-label
-
-.ag-toolpanel-indent-1 > .ag-column-select-indent-1
-.ag-toolpanel-indent-2 > .ag-column-select-indent-2
-.ag-toolpanel-indent-3 > .ag-column-select-indent-3
-.ag-toolpanel-indent-4 > .ag-column-select-indent-4
-.ag-toolpanel-indent-5 > .ag-column-select-indent-5
-
-.ag-toolpanel-add-group-indent > .ag-column-select-add-group-indent
-
-.ag-column-drop > .ag-column-drop-horizontal-half-width
+ * ag-alignment-end > ag-group-item-alignment-end
+ * ag-alignment-start > ag-group-item-alignment-start
+ * ag-alignment-stretch > ag-group-item-alignment-stretch
+ * ag-button > ag-panel-title-bar-button
+ * ag-cell-with-height > ag-cell-auto-height
+ * ag-chart-tabbed-menu > ag-chart-menu-tabs
+ * ag-child-circle > ag-angle-select-child-circle
+ * ag-column-drag > ag-drag-handle
+ * ag-column-select-panel > ag-column-select
+ * ag-column-tool-panel-column > ag-column-select-column
+ * ag-column-tool-panel-column-group > ag-column-select-column-group
+ * ag-column-tool-panel-column-label > ag-column-select-column-label
+ * ag-faded > ag-column-drop-empty
+ * ag-fill > ag-spectrum-fill
+ * ag-group-component > ag-group
+ * ag-group-component-container > ag-group-container
+ * ag-group-component-title > ag-group-title
+ * ag-group-component-title-bar > ag-group-title-bar
+ * ag-group-component-title-bar-icon > ag-group-title-bar-icon
+ * ag-group-component-toolbar > ag-group-toolbar
+ * ag-hue-alpha > ag-spectrum-tool
+ * ag-name-value > ag-status-name-value
+ * ag-nav-card-item > ag-chart-settings-card-item
+ * ag-nav-card-selector > ag-chart-settings-card-selector
+ * ag-paging-button > ag-paging-button-wrapper
+ * ag-paging-button > ag-paging-button-wrapper
+ * ag-parent-circle > ag-angle-select-parent-circle
+ * ag-picker-button > ag-picker-field-button
+ * ag-primary-cols-filter > ag-column-select-header-filter
+ * ag-primary-cols-filter-wrapper > ag-column-select-header-filter-wrapper
+ * ag-primary-cols-header-panel > ag-column-select-header
+ * ag-primary-cols-list-panel > ag-column-select-list
+ * ag-row-stub > ag-row-loading
+ * ag-stub-cell > ag-loading
+ * ag-tab-body > ag-tabs-body
+ * ag-tab-header > ag-tabs-header
+ * ag-title-bar > ag-panel-title-bar
+ * ag-title-bar-buttons > ag-panel-title-bar-buttons
+ * ag-title-bar-title > ag-panel-title-bar-title
+ * ag-toolpanel-add-group-indent > ag-column-select-add-group-indent
+ * ag-toolpanel-indent-1 > ag-column-select-indent-1
+ * ag-toolpanel-indent-2 > ag-column-select-indent-2
+ * ag-toolpanel-indent-3 > ag-column-select-indent-3
+ * ag-toolpanel-indent-4 > ag-column-select-indent-4
+ * ag-toolpanel-indent-5 > ag-column-select-indent-5
+ * ag-width-half > ag-column-drop-horizontal-half-width
