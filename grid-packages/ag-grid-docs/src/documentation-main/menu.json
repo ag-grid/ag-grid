@@ -406,8 +406,8 @@
                 "matrixExcludeChildren": true,
                 "items": [
                   {
-                    "title": "Infinite Scroll",
-                    "url": "javascript-grid-server-side-model-infinite-scroll/",
+                    "title": "Server-side Datasource",
+                    "url": "javascript-grid-server-side-model-datasource/",
                     "enterprise": true
                   },
                   {

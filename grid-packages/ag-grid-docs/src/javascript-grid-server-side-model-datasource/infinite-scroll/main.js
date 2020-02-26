@@ -1,35 +1,21 @@
-var columnDefs = [
-  { field: 'id', maxWidth: 80 },
-  { field: 'athlete' },
-  { field: 'country' },
-  { field: 'year' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-];
-
 var gridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: [
+    { field: 'athlete' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+  ],
 
   defaultColDef: {
     flex: 1,
-    minWidth: 150,
-    resizable: true,
+    minWidth: 150
   },
 
   // use the server-side row model
   rowModelType: 'serverSide',
-
-  // fetch 100 rows at a time
-  cacheBlockSize: 100,
-
-  // only keep 10 blocks of rows
-  maxBlocksInCache: 10,
-
-  animateRows: true,
-
-  // debug: true,
 };
 
 // setup the grid after the page has finished loading
@@ -43,12 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json',
     })
     .then(function(data) {
-      // add id to data
-      var idSequence = 0;
-      data.forEach(function(item) {
-        item.id = idSequence++;
-      });
-
       var server = new FakeServer(data);
       var datasource = new ServerSideDatasource(server);
       gridOptions.api.setServerSideDatasource(datasource);
