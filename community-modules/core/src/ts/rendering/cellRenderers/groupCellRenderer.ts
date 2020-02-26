@@ -48,10 +48,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
@@ -82,7 +80,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     public init(params: GroupCellRendererParams): void {
-
         this.params = params;
 
         if (this.gridOptionsWrapper.isGroupIncludeTotalFooter()) {
@@ -99,7 +96,6 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
-
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
@@ -117,28 +113,24 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+        if (!this.params.fullWidth || !this.gridOptionsWrapper.isEmbedFullWidthRows()) { return false; }
 
-            const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
-            const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
-            const bodyCell = !pinnedLeftCell && !pinnedRightCell;
+        const pinnedLeftCell = this.params.pinned === Constants.PINNED_LEFT;
+        const pinnedRightCell = this.params.pinned === Constants.PINNED_RIGHT;
+        const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedRightCell;
-                } else {
-                    return !bodyCell;
-                }
-            } else {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedLeftCell;
-                } else {
-                    return !bodyCell;
-                }
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.columnController.isPinningLeft()) {
+                return !pinnedRightCell;
             }
-        } else {
-            return false;
+            return !bodyCell;
         }
+
+        if (this.columnController.isPinningLeft()) {
+            return !pinnedLeftCell;
+        }
+
+        return !bodyCell;
     }
 
     private setIndent(): void {
@@ -146,10 +138,9 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         const params = this.params;
         const rowNode: RowNode = params.node;
-
         const paddingCount = rowNode.uiLevel;
-
         const userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
+
         if (userProvidedPaddingPixelsTheDeprecatedWay) {
             this.setPaddingDeprecatedWay(paddingCount, params.padding);
             return;
@@ -167,18 +158,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         _.doOnce(() => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
 
         const paddingPx = paddingCount * padding;
+        const eGui = this.getGui();
+        const paddingSide = this.gridOptionsWrapper.isEnableRtl() ? 'paddingRight' : 'paddingLeft';
 
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
-        } else {
-            // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
-        }
+        eGui.style[paddingSide] = `${paddingPx}px`;
     }
 
     private setupIndent(): void {
-
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
@@ -194,6 +180,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private addValueElement(): void {
         const params = this.params;
         const rowNode = this.displayedGroup;
+
         if (rowNode.footer) {
             this.createFooterCell();
         } else if (
@@ -211,12 +198,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     private createFooterCell(): void {
-        let footerValue: string;
         const footerValueGetter = this.params.footerValueGetter;
+        let footerValue: string;
+
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             const paramsClone: any = _.cloneObject(this.params);
             paramsClone.value = this.params.value;
+
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             } else if (typeof footerValueGetter === 'string') {
@@ -234,10 +223,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private createGroupCell(): void {
         const params = this.params;
         const rowGroupColumn = this.displayedGroup.rowGroupColumn;
-
         // we try and use the cellRenderer of the column used for the grouping if we can
         const columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
-
         const groupName = this.params.value;
         const valueFormatted = columnToUse ?
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
@@ -245,11 +232,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         params.valueFormatted = valueFormatted;
 
         let rendererPromise:Promise<ICellRendererComp>;
-        if (params.fullWidth == true) {
-            rendererPromise = this.useFullWidth(params);
-        } else {
-            rendererPromise = this.useInnerRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), params);
-        }
+
+        rendererPromise = params.fullWidth
+            ? this.useFullWidth(params)
+            : this.useInnerRenderer(
+                this.params.colDef.cellRendererParams,
+                columnToUse.getColDef(),
+                params
+            );
 
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
         if (rendererPromise) {
@@ -276,8 +266,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-
         let cellRendererPromise: Promise<ICellRendererComp> = null;
+
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         const groupInnerRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
             .lookupComponentClassDef(groupCellRendererParams, "innerRenderer");
@@ -290,11 +280,18 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
             const groupColumnRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
-            if (groupColumnRendererClass && groupColumnRendererClass.source != ComponentSource.DEFAULT) {
+
+            if (
+                groupColumnRendererClass &&
+                groupColumnRendererClass.source != ComponentSource.DEFAULT
+            ) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
                 cellRendererPromise = this.userComponentFactory.newCellRenderer(groupedColumnDef, params);
-            } else if (groupColumnRendererClass && groupColumnRendererClass.source == ComponentSource.DEFAULT
-                && (_.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
+            } else if (
+                groupColumnRendererClass &&
+                groupColumnRendererClass.source == ComponentSource.DEFAULT &&
+                (_.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))
+            ) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
                 cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
@@ -303,6 +300,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
                 cellRendererPromise = this.userComponentFactory.newCellRenderer({}, params);
             }
         }
+
         if (cellRendererPromise != null) {
             cellRendererPromise.then(rendererToUse => {
                 if (rendererToUse == null) {
@@ -314,21 +312,23 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         } else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
+
         return cellRendererPromise;
     }
 
     private useFullWidth(params: any): Promise<ICellRendererComp> {
         const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer (params);
+
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
         } else {
             this.eValue.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
+
         return cellRendererPromise;
     }
 
     private addChildCount(): void {
-
         // only include the child count if it's included, eg if user doing custom aggregation,
         // then this could be left out, or set to -1, ie no child count
         if (this.params.suppressCount) { return; }
@@ -341,6 +341,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private updateChildCount(): void {
         const allChildrenCount = this.displayedGroup.allChildrenCount;
+
         this.eChildCount.innerHTML = allChildrenCount >= 0 ? `(${allChildrenCount})` : ``;
     }
 
@@ -352,25 +353,26 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private isUserWantsSelected(): boolean {
         const paramsCheckbox = this.params.checkbox;
-        if (typeof paramsCheckbox === 'function') {
-            return paramsCheckbox(this.params);
-        } else {
-            return paramsCheckbox === true;
-        }
+
+        if (typeof paramsCheckbox === 'function') { return paramsCheckbox(this.params); }
+
+        return paramsCheckbox === true;
     }
 
     private addCheckboxIfNeeded(): void {
         const rowNode = this.displayedGroup;
-        const checkboxNeeded = this.isUserWantsSelected()
+        const checkboxNeeded = this.isUserWantsSelected() &&
                 // footers cannot be selected
-                && !rowNode.footer
+                !rowNode.footer &&
                 // pinned rows cannot be selected
-                && !rowNode.rowPinned
+                !rowNode.rowPinned &&
                 // details cannot be selected
-                && !rowNode.detail;
+                !rowNode.detail;
+
         if (checkboxNeeded) {
             const cbSelectionComponent = new CheckboxSelectionComponent();
             this.getContext().wireBean(cbSelectionComponent);
+
             cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => cbSelectionComponent.destroy());
@@ -384,15 +386,16 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const eGroupCell = params.eGridCell;
         const eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         const eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
+
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
         this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
-
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+
         this.showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
@@ -415,19 +418,18 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private onKeyDown(event: KeyboardEvent): void {
         const enterKeyPressed = _.isKeyPressed(event, Constants.KEY_ENTER);
-        if (enterKeyPressed) {
-            if (this.params.suppressEnterExpand) { return; }
 
-            const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
-            if (cellEditable) { return; }
+        if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
 
-            event.preventDefault();
-            this.onExpandOrContract();
-        }
+        const cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
+
+        if (cellEditable) { return; }
+
+        event.preventDefault();
+        this.onExpandOrContract();
     }
 
     private setupDragOpenParents(): void {
-
         const column = this.params.column;
         const rowNode: RowNode = this.params.node;
 
@@ -452,6 +454,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         if (this.draggedFromHideOpenParents) {
             let pointer = rowNode.parent;
+
             while (true) {
                 if (_.missing(pointer)) {
                     break;
@@ -505,12 +508,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private isExpandable(): boolean {
         const rowNode = this.params.node;
         const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+
         return this.draggedFromHideOpenParents ||
                 (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
     }
 
     private showExpandAndContractIcons(): void {
-
         const rowNode = this.params.node;
 
         if (this.isExpandable()) {
@@ -530,6 +533,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const pivotModeAndLeafGroup = this.columnController.isPivotMode() && displayedGroup.leafGroup;
         const notExpandable = !displayedGroup.isExpandable();
         const addLeafIndentClass = displayedGroup.footer || notExpandable || pivotModeAndLeafGroup;
+
         this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }

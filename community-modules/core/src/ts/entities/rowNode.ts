@@ -583,6 +583,7 @@ export class RowNode implements IEventEmitter {
                 if (!child.selectable) { continue; }
 
                 const childState = child.isSelected();
+
                 switch (childState) {
                     case true:
                         atLeastOneSelected = true;
@@ -669,6 +670,7 @@ export class RowNode implements IEventEmitter {
         // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
         // here, otherwise the updatedCount would include it.
         const skipThisNode = groupSelectsFiltered && this.group;
+
         if (!skipThisNode) {
             const thisNodeWasSelected = this.selectThisNode(newValue);
             if (thisNodeWasSelected) {
@@ -682,7 +684,6 @@ export class RowNode implements IEventEmitter {
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-
             const clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
             if (clearOtherNodes) {
                 updatedCount += this.selectionController.clearOtherNodes(this);
@@ -737,6 +738,7 @@ export class RowNode implements IEventEmitter {
             api: this.gridApi,
             columnApi: this.columnApi
         };
+
         this.mainEventService.dispatchEvent(event);
 
         return updatedCount;
