@@ -3,10 +3,9 @@
 @import "../ag-theme-base-font-vars";
 
 @function ag-theme-base-create-params-from-legacy-vars($defaults) {
-    
     $params: (
-        foreground-color: rgba($ag-foreground-color, $ag-foreground-opacity),
-        secondary-foreground-color: rgba($ag-foreground-color, $ag-secondary-foreground-color-opacity),
+        foreground-color: $ag-foreground-color,
+        secondary-foreground-color: $ag-secondary-foreground-color,
         header-foreground-color: $ag-header-foreground-color,
         disabled-foreground-color: rgba($ag-foreground-color, $ag-disabled-foreground-color-opacity),
         background-color: $ag-background-color,
@@ -29,7 +28,7 @@
         chip-background-color: $ag-chip-background-color,
         border-radius: $ag-card-radius,
         border-color: $ag-border-color,
-        row-border-color: if($ag-row-border-width and $ag-row-border-width > 0, $ag-border-color, null),
+        row-border-color: if($ag-row-border-width and $ag-row-border-width > 0, map-get($defaults, "row-border-color"), null),
         cell-horizontal-border: $ag-cell-horizontal-border,
         input-disabled-background-color: $ag-input-disabled-background-color,
         input-border-color: $ag-input-border-color,

@@ -1,10 +1,6 @@
 @import "./ag-theme-alpine-dark-mixin";
 
-// LEGACY THEME FILE
-// This mixin is for backwards compatibility with older apps that use global variables.
-// Including this file emits CSS for the Alpine Dark theme. New apps should @import ag-theme-alpine-dark-mixin.scss
-// and @include ag-theme-alpine-dark($params), instead of using this file.
+// Including this file emits CSS for the Alpine Dark theme. If you want to extend the Alpine Dark theme,
+// @import ag-theme-alpine-mixin.scss and @include ag-theme-alpine($params) instead of using this file.
 
-// TODO re-instate legacy var import
-// @include ag-theme-alpine-dark(ag-theme-base-create-params-from-legacy-vars());
 @include ag-theme-alpine-dark($ag-theme-alpine-dark-default-params);

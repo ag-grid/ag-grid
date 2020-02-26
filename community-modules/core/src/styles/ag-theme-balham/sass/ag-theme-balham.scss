@@ -1,5 +1,4 @@
 @import "./ag-theme-balham-mixin";
-@import "./legacy/ag-theme-balham-create-params-from-legacy-vars";
 
 // LEGACY THEME FILE
 // This mixin is for backwards compatibility with older apps that use global variables.
@@ -8,6 +7,4 @@
 
 @import "./legacy/ag-theme-balham-define-legacy-vars";
 
-// @include ag-theme-balham(ag-theme-balham-create-params-from-legacy-vars());
-// TODO remove
-@include ag-theme-balham($ag-theme-balham-default-params);
+@include ag-theme-balham(ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-default-params));

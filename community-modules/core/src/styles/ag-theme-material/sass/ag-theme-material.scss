@@ -1,5 +1,4 @@
 @import "./ag-theme-material-mixin";
-@import "./legacy/ag-theme-material-create-params-from-legacy-vars";
 
 // LEGACY THEME FILE
 // This mixin is for backwards compatibility with older apps that use global variables
@@ -8,6 +7,4 @@
 
 @import "./legacy/ag-theme-material-define-legacy-vars";
 
-@include ag-theme-material(ag-theme-material-create-params-from-legacy-vars());
-// TODO remove
-// @include ag-theme-material($ag-theme-material-default-params);
+@include ag-theme-material(ag-theme-base-create-params-from-legacy-vars($ag-theme-material-default-params));

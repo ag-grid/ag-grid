@@ -138,10 +138,13 @@ $ag-theme-base-default-params: (
     checkbox-unchecked-color: ag-derived(foreground-color),
     checkbox-indeterminate-color: ag-derived(checkbox-unchecked-color),
 
-    toggle-button-off-color: ag-derived(checkbox-unchecked-color),
-    toggle-button-on-color: ag-derived(checkbox-checked-color),
-    toggle-button-switch-color: ag-derived(background-color),
-    toggle-button-switch-border-width: 1px,
+    toggle-button-off-border-color: ag-derived(checkbox-unchecked-color),
+    toggle-button-off-background-color: ag-derived(checkbox-unchecked-color),
+    toggle-button-on-border-color: ag-derived(checkbox-checked-color),
+    toggle-button-on-background-color: ag-derived(checkbox-checked-color),
+    toggle-button-switch-background-color: ag-derived(background-color),
+    toggle-button-switch-border-color: ag-derived(toggle-button-off-border-color),
+    toggle-button-border-width: 1px,
     toggle-button-height: ag-derived(icon-size),
     toggle-button-width: ag-derived(toggle-button-height, $times: 2),
 

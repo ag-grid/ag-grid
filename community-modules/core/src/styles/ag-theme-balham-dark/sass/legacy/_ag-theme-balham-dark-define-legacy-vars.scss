@@ -5,7 +5,7 @@
  */
  
 /* DO NOT EDIT (see note above) */ $ag-foreground-opacity: 0.87 !default;
-/* DO NOT EDIT (see note above) */ $ag-secondary-foreground-color-opacity: 0.64 !default;
+/* DO NOT EDIT (see note above) */ $ag-secondary-foreground-color-opacity: 0.87 !default;
 /* DO NOT EDIT (see note above) */ $ag-disabled-foreground-color-opacity: 0.38 !default;
 /* DO NOT EDIT (see note above) */ $ag-default-background: #2d3436 !default;
 /* DO NOT EDIT (see note above) */ $ag-foreground-color: #F5F5F5 !default;
@@ -30,7 +30,7 @@
 /* DO NOT EDIT (see note above) */ $ag-panel-background-color: $ag-chrome-background !default;
 /* DO NOT EDIT (see note above) */ $ag-tool-panel-background-color: $ag-chrome-background !default;
 /* DO NOT EDIT (see note above) */ $ag-header-background-color: $ag-chrome-background !default;
-/* DO NOT EDIT (see note above) */ $ag-header-foreground-color: $ag-secondary-foreground-color !default;
+/* DO NOT EDIT (see note above) */ $ag-header-foreground-color: rgba($ag-secondary-foreground-color, 0.64) !default;
 /* DO NOT EDIT (see note above) */ $ag-hover-color: lighten($ag-alt-background, 10) !default;
 /* DO NOT EDIT (see note above) */ $ag-chip-background-color: lighten($ag-alt-background, 5) !default;
 /* DO NOT EDIT (see note above) */ $ag-cell-data-changed-color: #fce4ec !default;

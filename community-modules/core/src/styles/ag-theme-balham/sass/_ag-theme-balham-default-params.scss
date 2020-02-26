@@ -12,7 +12,7 @@ $ag-theme-balham-default-params: (
     control-panel-background-color: #f5f7f7,
     balham-active-color: #0091ea,
     border-color: #bdc3c7,
-    row-border-color: #d9dcde,
+    row-border-color: ag-derived(border-color, $lighten: 10),
     odd-row-background-color: #fcfdfe,
     row-hover-color: #f2f2f2,
     input-border-color: #95a5a6,
@@ -58,7 +58,7 @@ $ag-theme-balham-default-params: (
     icons-font-codes: $ag-theme-balham-icons-font-codes,
 
     // Misc
-    card-radius: 2px,
+    border-radius: 2px,
     card-shadow: none,
 );
 
