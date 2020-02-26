@@ -118,7 +118,11 @@ function forEachExample(done, name, importType, regex, generateExample, scope = 
     });
 }
 
-const format = (source, parser) => prettier.format(source, { parser, singleQuote: true, trailingComma: 'es5' });
+function format(source, parser) {
+    const formatted = source.replace(/\/\/\s*inScope\[.*\n/, ''); // strip out inScope comments
+
+    return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
+}
 
 function createExampleGenerator(prefix, importType) {
     const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix, importType);
@@ -281,7 +285,7 @@ module.exports.generateGridPackageExamples = (scope, done) => {
         generateExamples('grid', 'packages', scope, done);
     } catch (e) {
         console.error('Failed to generate grid package examples', e);
-        if(done) {
+        if (done) {
             done(e);
         }
     }
@@ -292,7 +296,7 @@ module.exports.generateGridModuleExamples = (scope, done) => {
         generateExamples('grid', 'modules', scope, done);
     } catch (e) {
         console.error('Failed to generate grid module examples', e);
-        if(done) {
+        if (done) {
             done(e);
         }
     }
@@ -304,7 +308,7 @@ module.exports.generateChartExamples = (scope, done) => {
         generateExamples('chart', 'packages', scope, done);
     } catch (e) {
         console.error('Failed to generate chart examples', e);
-        if(done) {
+        if (done) {
             done(e);
         }
 

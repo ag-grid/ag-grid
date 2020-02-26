@@ -142,7 +142,14 @@ define('skipInPageNav', true);
         <div class="chart-gallery-item__name">Area With Negative Values</div>
     </a>
 </div>
-
+<div class="chart-gallery-item">
+    <a href="./area-with-updating-data.php" class="chart-gallery-item__link">
+        <img class="chart-gallery-item__thumbnail" src="./thumbnails/area-with-updating-data.png" /><br />
+        <div class="chart-gallery-item__name">Area With Updating Data</div>
+    </a>
+</div>
+<div class="chart-gallery-item chart-gallery-item--empty"></div>
+<div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 
 <h2>Next Up</h2>

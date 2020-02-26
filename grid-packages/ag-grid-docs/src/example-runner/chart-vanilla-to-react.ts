@@ -1,13 +1,15 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { isInstanceMethod } from './parser-utils';
-import { convertTemplate, getImport, convertFunctionToProperty } from './react-utils';
+import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
+import { convertTemplate, getImport } from './react-utils';
 
-function wrapChartUpdateCode(code: string): string {
-    if (code.indexOf('options.') < 0) {
-        return code;
+function processFunction(code: string): string {
+    const processedCode = convertFunctionToProperty(code);
+
+    if (processedCode.indexOf('options.') < 0) {
+        return processedCode;
     }
 
-    return code.replace(
+    return processedCode.replace(
         /(.*)\{(.*)\}/s,
         '$1{\nconst options = cloneDeep(this.state.options);\n$2\nthis.setState({ options });\n}');
 }
@@ -68,9 +70,8 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): str
     });
 
     const template = getTemplate(bindings, componentAttributes);
-    const externalEventHandlers = bindings.externalEventHandlers.map(
-        handler => wrapChartUpdateCode(convertFunctionToProperty(handler.body)));
-    const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
+    const instanceMethods = bindings.instanceMethods.map(processFunction);
 
     return `'use strict'
 
@@ -81,13 +82,17 @@ class ChartExample extends Component {
         super(props);
 
         this.state = {
-            ${stateProperties.join(',\n    ')}
+            ${stateProperties.join(',\n            ')}
         };
 
-        ${instanceBindings.join(';\n    ')}
+        ${instanceBindings.join(';\n        ')}
     }
 
-${instanceMethods.concat(externalEventHandlers).join('\n\n   ')}
+    componentDidMount() {
+        ${bindings.init.join(';\n        ')}
+    }
+
+    ${instanceMethods.concat(externalEventHandlers).join('\n\n    ')}
 
     render() {
         return ${template};

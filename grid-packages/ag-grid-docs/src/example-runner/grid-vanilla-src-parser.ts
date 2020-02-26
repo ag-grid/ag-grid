@@ -12,6 +12,7 @@ import {
     nodeIsPropertyWithName,
     nodeIsInScope,
     nodeIsUnusedFunction,
+    nodeIsFunctionCall,
     extractEventHandlers,
     extractUnboundInstanceMethods,
 } from './parser-utils';
@@ -24,8 +25,7 @@ const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 
 function nodeIsDocumentContentLoaded(node) {
     try {
-        return node.type === NodeType.Expression &&
-            node.expression.type == 'CallExpression' &&
+        return nodeIsFunctionCall(node) &&
             node.expression.arguments[0].type === 'Literal' &&
             node.expression.arguments[0].value === 'DOMContentLoaded';
     } catch (e) {

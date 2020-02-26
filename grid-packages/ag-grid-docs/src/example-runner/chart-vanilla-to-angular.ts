@@ -1,13 +1,15 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { convertFunctionToProperty, isInstanceMethod } from './parser-utils';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
 
-function wrapChartUpdateCode(code: string): string {
-    if (code.indexOf('options.') < 0) {
-        return code;
+function processFunction(code: string): string {
+    const processedCode = convertFunctionToProperty(code);
+
+    if (processedCode.indexOf('options.') < 0) {
+        return processedCode;
     }
 
-    return code.replace(
+    return processedCode.replace(
         /(.*)\{(.*)\}/s,
         '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
 }
@@ -67,10 +69,9 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
         }
     });
 
-    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
+    const instanceMethods = bindings.instanceMethods.map(processFunction);
     const template = getTemplate(bindings, propertyAttributes);
-    const externalEventHandlers = bindings.externalEventHandlers.map(
-        handler => wrapChartUpdateCode(removeFunctionKeyword(handler.body)));
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
 
     return `${imports.join('\n')}
 
@@ -85,6 +86,10 @@ export class AppComponent {
 
     constructor() {
         ${propertyAssignments.join(';\n')}
+    }
+
+    ngOnInit() {
+        ${bindings.init.join(';\n    ')}
     }
 
     ${instanceMethods.concat(externalEventHandlers).map(snippet => snippet.trim()).join('\n\n')}

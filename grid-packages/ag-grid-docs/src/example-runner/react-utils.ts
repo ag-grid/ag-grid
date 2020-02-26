@@ -1,8 +1,5 @@
 import { recognizedDomEvents } from './parser-utils';
 
-export const convertFunctionToProperty = (code: string) =>
-    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
-
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
 const toCamelCase = (value: string) => value.replace(/(?:-)(\w)/g, (_, c: string) => c ? c.toUpperCase() : '');
 

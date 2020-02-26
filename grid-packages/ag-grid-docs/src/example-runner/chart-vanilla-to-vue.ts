@@ -1,13 +1,15 @@
-import { getFunctionName, removeFunctionKeyword, isInstanceMethod } from './parser-utils';
+import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
 
-function wrapChartUpdateCode(code: string): string {
-    if (code.indexOf('options.') < 0) {
-        return code;
+function processFunction(code: string): string {
+    const processedCode = removeFunctionKeyword(code);
+
+    if (processedCode.indexOf('options.') < 0) {
+        return processedCode;
     }
 
-    return code.replace(
+    return processedCode.replace(
         /(.*)\{(.*)\}/s,
         '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
 }
@@ -68,11 +70,8 @@ function getTemplate(bindings: any, attributes: string[]): string {
 };
 
 function getAllMethods(bindings: any): [string[], string[], string[]] {
-    const externalEventHandlers = bindings.externalEventHandlers
-        .map(event => event.body)
-        .map(handler => wrapChartUpdateCode(removeFunctionKeyword(handler)));
-
-    const instanceMethods = bindings.instanceMethods.map(method => wrapChartUpdateCode(removeFunctionKeyword(method)));
+    const externalEventHandlers = bindings.externalEventHandlers.map(event => processFunction(event.body));
+    const instanceMethods = bindings.instanceMethods.map(processFunction);
 
     const globalMethods = bindings.globals.map(body => {
         const funcName = getFunctionName(body);
@@ -105,13 +104,14 @@ const ChartExample = {
     },
     data: function() {
         return {
-            ${propertyVars.join(',\n')}
+            ${propertyVars.join(',\n            ')}
         }
     },
     beforeMount() {
-        ${propertyAssignments.join(';\n')}
+        ${propertyAssignments.join(';\n        ')}
     },
     mounted() {
+        ${bindings.init.join(';\n        ')}
     },
     methods: {
         ${instanceMethods.concat(externalEventHandlers).map(snippet => `${snippet.trim()},`).join('\n')}

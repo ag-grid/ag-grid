@@ -24,7 +24,7 @@ export function modulesProcessor(modules: string[]) {
         suppliedModules.push(requiredModule.exported);
     });
 
-    return {moduleImports, suppliedModules};
+    return { moduleImports, suppliedModules };
 }
 
 export function removeFunctionKeyword(code: string): string {
@@ -36,6 +36,9 @@ export function getFunctionName(code: string): string {
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
+export const convertFunctionToProperty = (code: string) =>
+    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
+
 export function isInstanceMethod(methods: string[], property: any): boolean {
     return methods.map(getFunctionName).filter(name => name === property.name).length > 0;
 }
@@ -43,7 +46,7 @@ export function isInstanceMethod(methods: string[], property: any): boolean {
 export const enum NodeType {
     Variable = 'VariableDeclaration',
     Function = 'FunctionDeclaration',
-    Expression = 'ExpressionStatement'
+    Expression = 'ExpressionStatement',
 };
 
 export function collect(iterable: any[], initialBindings: any, collectors: any[]) {
@@ -82,6 +85,10 @@ export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceM
         used.indexOf(node.id.name) < 0;
 }
 
+export function nodeIsFunctionCall(node: any) {
+    return node.type === NodeType.Expression && node.expression.type === 'CallExpression';
+}
+
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
 
 function flatMap<T>(array: T[], callback: (value: T) => T): T[] {
@@ -104,7 +111,7 @@ export function extractEventHandlers(tree: any, eventNames: string[]) {
     return flatMap(eventNames, (event: string) => getHandlerAttributes(event).map(extractEventHandlerBody));
 }
 
-// if a function is marked as "inScope" then they'll be marked as "instance" methods, as opposed to (global/unused)
+// functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
 // "util" ones
 export function extractUnboundInstanceMethods(tree) {
     const inScopeRegex = /inScope\[([\w-].*)]/;

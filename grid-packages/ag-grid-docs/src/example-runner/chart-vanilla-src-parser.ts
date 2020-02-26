@@ -12,6 +12,7 @@ import {
     nodeIsUnusedFunction,
     extractEventHandlers,
     extractUnboundInstanceMethods,
+    nodeIsFunctionCall,
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -60,7 +61,7 @@ export function parser(js, html) {
     const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
         matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(generate(node, indentOne))
+        apply: (bindings, node) => bindings.instanceMethods.push(generateWithOptionReferences(node, indentOne))
     });
 
     // anything not marked as "inScope" is considered a "global" method
@@ -106,6 +107,11 @@ export function parser(js, html) {
         apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, optionsCollectors)
     });
 
+    collectors.push({
+        matches: node => nodeIsFunctionCall(node),
+        apply: (bindings, node) => bindings.init.push(generate(node))
+    });
+
     /*
      * properties -> chart related properties
      * globals -> none chart related methods/variables (i.e. non-instance)
@@ -118,6 +124,7 @@ export function parser(js, html) {
             externalEventHandlers: [],
             instanceMethods: [],
             globals: [],
+            init: [],
         },
         collectors
     );

@@ -1,10 +1,10 @@
-import {ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertFunctionToProperty, convertTemplate, getImport} from './react-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { ImportType, isInstanceMethod, modulesProcessor, convertFunctionToProperty } from './parser-utils';
+import { convertTemplate, getImport } from './react-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
+    const { modules } = gridSettings;
 
     const imports = [
         "import React, { Component } from 'react';",
@@ -13,7 +13,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     ];
 
     if (modules) {
-        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+        const { moduleImports, suppliedModules } = modulesProcessor(modules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -47,7 +47,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
         "import React, { Component } from 'react';",
@@ -81,7 +81,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const agGridTag = `<div
                 id="myGrid"
                 style={{
@@ -99,7 +99,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 }
 
 export function vanillaToReact(bindings: any, componentFilenames: string[], importType: ImportType): string {
-    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
     const imports = getImports(bindings, componentFilenames, importType);
     const instanceBindings = [];
     const stateProperties = [];

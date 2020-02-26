@@ -1,4 +1,21 @@
-import { removeFunctionKeyword, getFunctionName, NodeType, nodeIsVarWithName, nodeIsPropertyWithName, nodeIsFunctionWithName } from './parser-utils';
+import {
+    removeFunctionKeyword,
+    getFunctionName,
+    nodeIsVarWithName,
+    nodeIsPropertyWithName,
+    nodeIsFunctionWithName,
+    nodeIsFunctionCall,
+    convertFunctionToProperty
+} from './parser-utils';
+
+describe('convertFunctionToProperty', () => {
+    it('returns property definition', () => {
+        const functionDefinition = 'function foo(bar) { return true; }';
+        const propertyDefinition = convertFunctionToProperty(functionDefinition);
+
+        expect(propertyDefinition).toBe('foo = (bar) => { return true; }');
+    });
+});
 
 describe('removeFunctionKeyword', () => {
     it('removes function keyword', () => {
@@ -144,5 +161,29 @@ describe('nodeIsFunctionWithName', () => {
         };
 
         expect(nodeIsFunctionWithName(node, name)).toBe(false);
+    });
+});
+
+describe('nodeIsFunctionCall', () => {
+    it('returns true if node is an expression with a call', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'CallExpression',
+            }
+        };
+
+        expect(nodeIsFunctionCall(node)).toBe(true);
+    });
+
+    it('returns false if node is an expression with something other than a call', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'LiteralExpression',
+            }
+        };
+
+        expect(nodeIsFunctionCall(node)).toBe(false);
     });
 });

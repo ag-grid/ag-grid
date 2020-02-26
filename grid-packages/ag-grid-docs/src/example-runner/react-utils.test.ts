@@ -1,13 +1,4 @@
-import { convertFunctionToProperty, convertTemplate, getImport } from './react-utils';
-
-describe('convertFunctionToProperty', () => {
-    it('returns property definition', () => {
-        const functionDefinition = 'function foo(bar) { return true; }';
-        const propertyDefinition = convertFunctionToProperty(functionDefinition);
-
-        expect(propertyDefinition).toBe('foo = (bar) => { return true; }');
-    });
-});
+import { convertTemplate, getImport } from './react-utils';
 
 describe('convertTemplate', () => {
     it('converts event handlers', () => {
