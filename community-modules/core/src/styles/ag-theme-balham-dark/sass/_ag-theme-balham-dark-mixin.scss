@@ -4,4 +4,11 @@
 @mixin ag-theme-balham-dark($params, $theme-name: "ag-theme-balham-dark") {
     $params: ag-process-theme-variables($params, $ag-theme-balham-dark-default-params);
     @include ag-theme-balham($params, $theme-name);
+
+    .ag-theme-balham-dark {
+        .ag-tooltip {
+            border: none;
+            background-color: #1c1f20;
+        }
+    }
 }

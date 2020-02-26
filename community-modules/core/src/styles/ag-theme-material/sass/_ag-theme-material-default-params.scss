@@ -3,8 +3,8 @@
 
 $ag-theme-material-default-params: (
     // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
-    mat-primary-color: #3f51b5,
-    mat-accent-color: #ff4081,
+    material-primary-color: #3f51b5,
+    material-accent-color: #ff4081,
 
     // Colors
     foreground-color: rgba(#000, 0.87),
@@ -20,8 +20,8 @@ $ag-theme-material-default-params: (
     row-hover-color: #fafafa,
     control-panel-background-color: #fafafa,
     selected-row-background-color: #eee,
-    range-selection-border-color: ag-derived(mat-primary-color),
-    checkbox-checked-color: ag-derived(mat-accent-color),
+    range-selection-border-color: ag-derived(material-primary-color),
+    checkbox-checked-color: ag-derived(material-accent-color),
     checkbox-unchecked-color: #333,
     value-change-value-highlight-background-color: #00acc1,
 
@@ -55,11 +55,11 @@ $ag-theme-material-default-params: (
     icons-font-codes: $ag-theme-material-icons-font-codes,
 
     // Misc
-    selected-tab-underline-color: ag-derived(mat-primary-color),
+    selected-tab-underline-color: ag-derived(material-primary-color),
     selected-tab-underline-width: 2px,
     full-width-tabs: true,
 
-    input-focus-border-color: ag-derived(mat-accent-color),
+    input-focus-border-color: ag-derived(material-accent-color),
     input-focus-box-shadow: 0 0 4px 2px ag-derived(input-focus-border-color),
 
     card-shadow: (0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)),

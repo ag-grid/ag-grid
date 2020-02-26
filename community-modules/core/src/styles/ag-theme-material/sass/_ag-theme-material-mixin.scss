@@ -130,7 +130,7 @@
             border-bottom: 2px solid ag-param(border-color);
 
             &:focus {
-                border-bottom: 2px solid ag-param(mat-primary-color);
+                border-bottom: 2px solid ag-param(material-primary-color);
                 outline: none;
                 box-shadow: none;
             }
@@ -148,7 +148,7 @@
             appearance: none;
             background-color: transparent;
             border: 0;
-            color: ag-param(mat-primary-color);
+            color: ag-param(material-primary-color);
             font-family: inherit;
             font-size: inherit;
             margin: 0;
