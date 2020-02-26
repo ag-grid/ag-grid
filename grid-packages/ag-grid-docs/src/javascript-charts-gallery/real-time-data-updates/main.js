@@ -2,7 +2,7 @@
 var systemLoad = 0;
 var userLoad = 0;
 var data = [];
-var refreshRate = 50;
+var refreshRateInMilliseconds = 50;
 var millisecondsOfData = 30 * 1000;
 
 function calculateRandomDelta(maxChange) {
@@ -25,16 +25,16 @@ function calculateCpuUsage() {
 }
 
 function getData() {
-    var dataCount = millisecondsOfData / refreshRate;
+    var dataCount = millisecondsOfData / refreshRateInMilliseconds;
     data.shift();
 
-    var timeDelta = (dataCount - data.length - 1) * refreshRate;
+    var timeDelta = (dataCount - data.length - 1) * refreshRateInMilliseconds;
     var now = Date.now();
 
     while (data.length < dataCount) {
         calculateCpuUsage();
         data.push({ time: now - timeDelta, system: systemLoad, user: userLoad });
-        timeDelta -= refreshRate;
+        timeDelta -= refreshRateInMilliseconds;
     }
 
     return data;
@@ -88,4 +88,4 @@ function updateData() {
     chart.axes[0].max = now;
 }
 
-setInterval(this.updateData, refreshRate);
+setInterval(this.updateData, refreshRateInMilliseconds);

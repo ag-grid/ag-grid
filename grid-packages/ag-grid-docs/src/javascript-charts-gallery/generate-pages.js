@@ -7,13 +7,18 @@ const fs = require('fs');
 const Path = require('path');
 const { execSync } = require('child_process');
 
-console.log('Generating gallery using gallery.json');
+function hasArgument(name) {
+    return process.argv.some(arg => arg === `--${name}`);
+}
 
 const options = {
     galleryJsonFile: 'gallery.json',
     rootDirectory: 'javascript-charts-gallery',
     thumbnailDirectory: 'thumbnails',
+    encoding: 'utf8',
 };
+
+console.log('Generating gallery using gallery.json');
 
 const galleryConfig = getJson(options.galleryJsonFile);
 
@@ -23,21 +28,6 @@ updateMenu(galleryConfig);
 generateThumbnails(galleryConfig);
 
 console.log('Finished!');
-
-function writeFile(path, contents) {
-    const encoding = 'utf8';
-
-    if (fs.existsSync(path) && fs.readFileSync(path, { encoding }) === contents) {
-        return;
-    }
-
-    fs.writeFileSync(path, contents, encoding, err => {
-        if (err) {
-            console.log(`An error occurred when writing to ${path} :(`);
-            return console.log(err);
-        }
-    });
-}
 
 function getHeader(title) {
     return `<?php
@@ -53,20 +43,23 @@ define('skipInPageNav', true);
 
 function generateGalleryPages(galleryConfig) {
     console.log('Generating gallery pages...');
-    const names = Object.keys(galleryConfig);
+    const categories = Object.keys(galleryConfig);
+    const namesByCategory = categories.reduce(
+        (names, c) => names.concat(Object.keys(galleryConfig[c]).map(k => ({ category: c, name: k }))),
+        []);
 
-    Object.keys(galleryConfig).forEach((name, i) => {
-        const config = galleryConfig[name];
+    namesByCategory.forEach(({ category, name }, i) => {
+        const config = galleryConfig[category][name];
         const title = `Charts Standalone Gallery: ${name}`;
         const navigation = [];
 
         if (i > 0) {
-            const previousName = names[i - 1];
+            const previousName = namesByCategory[i - 1].name;
             navigation.push(`<a class="chart-navigation__left" href="./${getPageName(previousName)}">\u276e&nbsp;&nbsp;${previousName}</a>`);
         }
 
-        if (i < names.length - 1) {
-            const nextName = names[i + 1];
+        if (i < namesByCategory.length - 1) {
+            const nextName = namesByCategory[i + 1].name;
             navigation.push(`<a class="chart-navigation__right" href="./${getPageName(nextName)}">${nextName}&nbsp;&nbsp;\u276f</a>`);
         }
 
@@ -88,13 +81,28 @@ function generateGalleryPages(galleryConfig) {
 
         writeFile(getPageName(name), contents);
     });
+
+    const expectedFileNames = namesByCategory.map(x => getPageName(x.name)).concat('index.php');
+
+    fs.readdirSync('.')
+        .filter(file => file.endsWith('.php') && expectedFileNames.indexOf(file) < 0)
+        .forEach(file => fs.unlinkSync(file));
 };
+
+function generateGallerySection(title, exampleNames) {
+    return `<h3 id="${toKebabCase(title)}" class="chart-gallery__title">${title}</h3>
+
+<div class="chart-gallery">
+    ${exampleNames.map(getGalleryItem).join('\n    ')}
+    ${[...new Array((3 - exampleNames.length % 3) % 3)].map(getEmptyGalleryItem).join('\n    ')}
+</div>`;
+}
 
 function generateIndexPage(galleryConfig) {
     console.log('Generating index page...');
 
     const title = "Charts Standalone: Gallery";
-    const exampleNames = Object.keys(galleryConfig);
+    const categories = Object.keys(galleryConfig);
     const contents = `${getHeader(title)}
 
 <h1 class="heading">${title}</h1>
@@ -104,10 +112,7 @@ function generateIndexPage(galleryConfig) {
     visualisations of your data. Here are some examples.
 </p>
 
-<div class="chart-gallery">
-${exampleNames.map(getGalleryItem).join('\n')}
-${[...new Array((3 - exampleNames.length % 3) % 3)].map(getEmptyGalleryItem).join('\n')}
-</div>
+${categories.map(c => generateGallerySection(c, Object.keys(galleryConfig[c]))).join('\n\n')}
 
 <h2>Next Up</h2>
 
@@ -124,11 +129,11 @@ function getGalleryItem(name) {
     const kebabCase = toKebabCase(name);
 
     return `<div class="chart-gallery-item">
-    <a href="./${getPageName(name)}" class="chart-gallery-item__link">
-        <img class="chart-gallery-item__thumbnail" src="./${options.thumbnailDirectory}/${kebabCase}.png" /><br />
-        <div class="chart-gallery-item__name">${name}</div>
-    </a>
-</div>`;
+        <a href="./${getPageName(name)}" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./${options.thumbnailDirectory}/${kebabCase}.png" /><br />
+            <div class="chart-gallery-item__name">${name}</div>
+        </a>
+    </div>`;
 }
 
 function getEmptyGalleryItem() {
@@ -143,9 +148,14 @@ function updateMenu(galleryConfig) {
     const menu = getJson(menuPath);
     const galleryObject = findItemWithUrl(menu, rootPath);
 
-    galleryObject.items = Object.keys(galleryConfig).map(name => ({
-        title: name,
-        url: rootPath + getPageName(name),
+    galleryObject.items = Object.keys(galleryConfig).map(category => ({
+        title: category,
+        url: rootPath + `#${toKebabCase(category)}`,
+        disableActive: true,
+        items: Object.keys(galleryConfig[category]).map(name => ({
+            title: name,
+            url: rootPath + getPageName(name),
+        }))
     }));
 
     writeFile(menuPath, JSON.stringify(menu, null, 2));
@@ -158,33 +168,6 @@ function getChangedDirectories() {
         .filter(entry => entry.indexOf(`/${options.rootDirectory}/`) > 0)
         .map(entry => entry.replace(new RegExp(`^.*?${options.rootDirectory}`), '').replace(/^\/|\/$/g, ''))
         .filter(entry => entry.length > 0 && entry !== options.thumbnailDirectory);
-}
-
-function hasArgument(name) {
-    return process.argv.some(arg => arg === `--${name}`);
-}
-
-function emptyDirectory(directory) {
-    if (!directory || directory.trim().indexOf('/') === 0) { return; }
-
-    try {
-        const files = fs.readdirSync(directory);
-
-        files.forEach(file => {
-            const filePath = Path.join(directory, file);
-
-            if (fs.statSync(filePath).isFile()) {
-                fs.unlinkSync(filePath);
-            }
-            else {
-                emptyDirectory(filePath);
-            }
-        });
-    }
-    catch (e) {
-        console.error(`Failed to empty ${directory}`, e);
-        return;
-    }
 }
 
 function generateThumbnails(galleryConfig) {
@@ -208,8 +191,10 @@ function generateThumbnails(galleryConfig) {
 
     const chrome = '"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"';
     const changedDirectories = getChangedDirectories();
+    const names = Object.keys(galleryConfig).reduce((names, c) => names.concat(Object.keys(galleryConfig[c])), []);
 
-    Object.keys(galleryConfig)
+    names
+        .sort()
         .map(toKebabCase)
         .filter(name => shouldGenerateAllScreenshots || changedDirectories.indexOf(name) >= 0)
         .forEach(name => {
@@ -255,9 +240,47 @@ function findItemWithUrl(items, url) {
 }
 
 function toKebabCase(name) {
-    return name.replace(/ \w/g, v => `-${v.trim().toLowerCase()}`).toLowerCase();
+    return name.replace(/ \w/g, v => `-${v.trim().toLowerCase()}`).replace(/[^\w]/g, '-').toLowerCase();
 }
 
 function getJson(path) {
-    return JSON.parse(fs.readFileSync(path, { encoding: 'utf8' }));
+    return JSON.parse(fs.readFileSync(path, { encoding: options.encoding }));
+}
+
+function emptyDirectory(directory) {
+    if (!directory || directory.trim().indexOf('/') === 0) { return; }
+
+    try {
+        const files = fs.readdirSync(directory);
+
+        files.forEach(file => {
+            const filePath = Path.join(directory, file);
+
+            if (fs.statSync(filePath).isFile()) {
+                fs.unlinkSync(filePath);
+            }
+            else {
+                emptyDirectory(filePath);
+            }
+        });
+    }
+    catch (e) {
+        console.error(`Failed to empty ${directory}`, e);
+        return;
+    }
+}
+
+function writeFile(path, contents) {
+    const { encoding } = options;
+
+    if (fs.existsSync(path) && fs.readFileSync(path, { encoding }) === contents) {
+        return;
+    }
+
+    fs.writeFileSync(path, contents, encoding, err => {
+        if (err) {
+            console.log(`An error occurred when writing to ${path} :(`);
+            return console.log(err);
+        }
+    });
 }

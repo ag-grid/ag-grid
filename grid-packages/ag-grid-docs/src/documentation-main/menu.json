@@ -1005,92 +1005,134 @@
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Simple Column",
-                "url": "javascript-charts-gallery/simple-column.php"
+                "title": "Bar/Column",
+                "url": "javascript-charts-gallery/#bar-column",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Simple Column",
+                    "url": "javascript-charts-gallery/simple-column.php"
+                  },
+                  {
+                    "title": "Grouped Column",
+                    "url": "javascript-charts-gallery/grouped-column.php"
+                  },
+                  {
+                    "title": "Stacked Column",
+                    "url": "javascript-charts-gallery/stacked-column.php"
+                  },
+                  {
+                    "title": "Percentage Column",
+                    "url": "javascript-charts-gallery/percentage-column.php"
+                  },
+                  {
+                    "title": "Column With Negative Values",
+                    "url": "javascript-charts-gallery/column-with-negative-values.php"
+                  },
+                  {
+                    "title": "Simple Bar",
+                    "url": "javascript-charts-gallery/simple-bar.php"
+                  },
+                  {
+                    "title": "Grouped Bar",
+                    "url": "javascript-charts-gallery/grouped-bar.php"
+                  },
+                  {
+                    "title": "Stacked Bar",
+                    "url": "javascript-charts-gallery/stacked-bar.php"
+                  },
+                  {
+                    "title": "Percentage Bar",
+                    "url": "javascript-charts-gallery/percentage-bar.php"
+                  },
+                  {
+                    "title": "Bar With Negative Values",
+                    "url": "javascript-charts-gallery/bar-with-negative-values.php"
+                  }
+                ]
               },
               {
-                "title": "Grouped Column",
-                "url": "javascript-charts-gallery/grouped-column.php"
+                "title": "Pie/Doughnut",
+                "url": "javascript-charts-gallery/#pie-doughnut",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Simple Pie",
+                    "url": "javascript-charts-gallery/simple-pie.php"
+                  },
+                  {
+                    "title": "Simple Doughnut",
+                    "url": "javascript-charts-gallery/simple-doughnut.php"
+                  }
+                ]
               },
               {
-                "title": "Stacked Column",
-                "url": "javascript-charts-gallery/stacked-column.php"
+                "title": "Line",
+                "url": "javascript-charts-gallery/#line",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Simple Line",
+                    "url": "javascript-charts-gallery/simple-line.php"
+                  },
+                  {
+                    "title": "Line With Gaps",
+                    "url": "javascript-charts-gallery/line-with-gaps.php"
+                  }
+                ]
               },
               {
-                "title": "Percentage Column",
-                "url": "javascript-charts-gallery/percentage-column.php"
+                "title": "Scatter/Bubble",
+                "url": "javascript-charts-gallery/#scatter-bubble",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Simple Scatter",
+                    "url": "javascript-charts-gallery/simple-scatter.php"
+                  },
+                  {
+                    "title": "Simple Bubble",
+                    "url": "javascript-charts-gallery/simple-bubble.php"
+                  }
+                ]
               },
               {
-                "title": "Column With Negative Values",
-                "url": "javascript-charts-gallery/column-with-negative-values.php"
+                "title": "Area",
+                "url": "javascript-charts-gallery/#area",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Simple Area",
+                    "url": "javascript-charts-gallery/simple-area.php"
+                  },
+                  {
+                    "title": "Stacked Area",
+                    "url": "javascript-charts-gallery/stacked-area.php"
+                  },
+                  {
+                    "title": "Percentage Area",
+                    "url": "javascript-charts-gallery/percentage-area.php"
+                  },
+                  {
+                    "title": "Area With Negative Values",
+                    "url": "javascript-charts-gallery/area-with-negative-values.php"
+                  }
+                ]
               },
               {
-                "title": "Simple Bar",
-                "url": "javascript-charts-gallery/simple-bar.php"
-              },
-              {
-                "title": "Grouped Bar",
-                "url": "javascript-charts-gallery/grouped-bar.php"
-              },
-              {
-                "title": "Stacked Bar",
-                "url": "javascript-charts-gallery/stacked-bar.php"
-              },
-              {
-                "title": "Percentage Bar",
-                "url": "javascript-charts-gallery/percentage-bar.php"
-              },
-              {
-                "title": "Bar With Negative Values",
-                "url": "javascript-charts-gallery/bar-with-negative-values.php"
-              },
-              {
-                "title": "Simple Pie",
-                "url": "javascript-charts-gallery/simple-pie.php"
-              },
-              {
-                "title": "Simple Doughnut",
-                "url": "javascript-charts-gallery/simple-doughnut.php"
-              },
-              {
-                "title": "Simple Line",
-                "url": "javascript-charts-gallery/simple-line.php"
-              },
-              {
-                "title": "Line With Gaps",
-                "url": "javascript-charts-gallery/line-with-gaps.php"
-              },
-              {
-                "title": "Line With Irregular Time Intervals",
-                "url": "javascript-charts-gallery/line-with-irregular-time-intervals.php"
-              },
-              {
-                "title": "Simple Scatter",
-                "url": "javascript-charts-gallery/simple-scatter.php"
-              },
-              {
-                "title": "Simple Bubble",
-                "url": "javascript-charts-gallery/simple-bubble.php"
-              },
-              {
-                "title": "Simple Area",
-                "url": "javascript-charts-gallery/simple-area.php"
-              },
-              {
-                "title": "Stacked Area",
-                "url": "javascript-charts-gallery/stacked-area.php"
-              },
-              {
-                "title": "Percentage Area",
-                "url": "javascript-charts-gallery/percentage-area.php"
-              },
-              {
-                "title": "Area With Negative Values",
-                "url": "javascript-charts-gallery/area-with-negative-values.php"
-              },
-              {
-                "title": "Area With Real-Time Data",
-                "url": "javascript-charts-gallery/area-with-real-time-data.php"
+                "title": "Feature Highlights",
+                "url": "javascript-charts-gallery/#feature-highlights",
+                "disableActive": true,
+                "items": [
+                  {
+                    "title": "Time Axis With Irregular Intervals",
+                    "url": "javascript-charts-gallery/time-axis-with-irregular-intervals.php"
+                  },
+                  {
+                    "title": "Real-Time Data Updates",
+                    "url": "javascript-charts-gallery/real-time-data-updates.php"
+                  }
+                ]
               }
             ]
           },
