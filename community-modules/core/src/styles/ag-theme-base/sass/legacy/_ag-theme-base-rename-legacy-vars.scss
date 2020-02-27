@@ -4,6 +4,8 @@
  * and so should not be modified.
  */
 
+$ag-custom-icon-color-defined: global-variable-exists("icon-color") or global-variable-exists("ag-icon-color");
+
 @if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 /* DO NOT EDIT (see note above) */ @if (variable-exists("accent-color") and not variable-exists("ag-accent-color")) {
 /* DO NOT EDIT (see note above) */     $ag-accent-color: $accent-color !global;

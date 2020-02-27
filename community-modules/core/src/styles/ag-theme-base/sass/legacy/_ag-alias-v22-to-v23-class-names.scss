@@ -69,6 +69,12 @@
         font-size: $ag-secondary-font-size;
         font-weight: $ag-secondary-font-weight;
     }
+
+    @if global-variable-exists("ag-custom-icon-color-defined") and $ag-custom-icon-color-defined {
+        .ag-icon {
+            color: $ag-icon-color !important;
+        }
+    }
 }
 
 // Allow custom themes to use old placeholders instead of the new class name
