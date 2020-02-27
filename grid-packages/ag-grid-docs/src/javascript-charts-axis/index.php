@@ -130,13 +130,15 @@ include '../documentation-main/documentation_header.php';
     share:
 </p>
 
-<?= chart_example('Chart Axis Title', 'axis-title', 'generated'); ?>
+<?= chart_example('Axis Title', 'axis-title', 'generated'); ?>
 
 <h2>Ticks</h2>
 
 <h2>Labels</h2>
 
 <h2>Grid Lines</h2>
+
+<?= chart_example('Axis Grid Lines', 'axis-grid-lines', 'generated'); ?>
 
 <h2>API Reference</h2>
 
