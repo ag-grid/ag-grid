@@ -1,21 +1,49 @@
 In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. We have implemented a backwards compatibility mode so that the majority of custom themes should continue working without changes. Some apps may need to upgrade to use the new method for creating custom themes, either because:
 
 1. The backwards compatibility mode is causing issues for your app
-2. You want to use new theme features added in v23 or a later release
+2. You want to use new theme features added in v23 or a later release that are not supported in the backwards compatibility mode
 
 This guide explains what has changed, why we changed it, and how to update your apps.
 
-## Why we're updating our themes
+## About the backwards compatibility mode.
 
-Prior to this release, the primary way of customising a theme in ag-Grid was to define Sass variables, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable. We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach:
+_We recommend that all themes migrate to the new method when practical._ However it may take time to migrate apps with multiple or complex themes. The purpose of the backwards compatibility mode is provide a grace period, allowing such apps to update to v23 immediately, and then gradually migrate their themes at a later date. It is not intended as a long-term solution, and may stop working or be removed in a later release.
 
-1. There were never enough variables - every custom theme wants to make changes that we don't provide variables for, so needs to contain CSS rules as well as variable definitions.
-2. There were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to find out a class name.
-3. "Clever" variables that do more than one thing cause issues. For example, `$ag-accent-color` changed the colour of certain important elements, but in practice every custom theme has a different idea of which elements should be accented.
-4. Because our DOM and class name structures weren't designed as public APIs, the CSS rules required in custom themes were often complicated, deeply nested, and inconsistent beween grid features. This lead to brittleness: upgrading to a minor release could break people's themes.
-5. The base theme made some opinionated design decisions like adding borders and padding. Themes that didn't want those borders and padding to remove them with rules like `... some complex selector ... { border: none , padding: 0}`.
+To enable backwards-compatibility mode, add this line to your custom theme:
 
-So in the latest release of ag-Grid we have added many new css classes, renamed existing ones for consistency, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
+```scss
+// TODO add line for importing legacy vars?
+@include ag-v22-to-v23-compatibility-mode();
+```
+
+After adding the above line, you may need to add a few CSS rules to fix some edge cases that are not covered by backwards compatibility mode.
+
+## What has changed
+
+Prior to this release, the primary way of customising a theme in ag-Grid was to define Sass variables, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable.
+
+We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach. There were never enough variables - every custom theme wants to make changes that we don't provide variables for, so needs to contain CSS rules as well as variable definitions. On the other hand, there were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to find out a class name.
+
+### Themes are now configured using parameter maps
+
+We have moved from global variables to passing configuration to themes as a map of key/value parameters:
+
+```scss
+// old method:
+$ag-header-foreground-color: red;
+@import "path/to/ag-theme-xyz.scss";
+
+// new method
+@include ag-theme-xyz((
+    header-foreground-color: red
+));
+```
+
+The major advantage of this approach is that we are now able to warn when you pass a parameter that is not supported. It also allows our customers to use the [new module system](https://sass-lang.com/blog/the-module-system-is-launched) in Sass which does not support sharing global variables between modules.
+
+### More, and more consistent class names
+
+We have added many new css classes and renamed existing ones for consistency, so that any style effect can beachi, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
 
 * The primary way of customising elements is now CSS. In the majority of cases you should only need a single class name in your selector, e.g. `.ag-component-name { padding: 10px }`.
 * Variables in the base theme now do one thing only, and opinionated variables have been moved from the base theme to the provided themes.
@@ -24,17 +52,14 @@ So in the latest release of ag-Grid we have added many new css classes, renamed 
 
 The net effect is that custom themes will be simpler to write, and will break less between releases.
 
-## The effect on existing custom themes
 
-This is a big change, and all custom themes will require updating. But once they have been updated, they should be easier to maintain in the future.
-
-
-## Placeholders removed
+### Placeholders removed
 
 %tab - use .ag-tab
 %selected-tab - use .ag-tab-selected
 %card - use $ag-card-* variables or CSS selectors
 
+// TODO mention ag-v22-to-v23-compatibility-mode and ag-v22-to-v23-alias-deleted-placeholders()
 
 ## Theme configuration  changes
 
@@ -78,6 +103,8 @@ $ag-group-border-color: green;
 }
 ```
 
+// TODO mention ag-v22-to-v23-compatibility-mode ag-v22-to-v23-implement-deleted-variables()
+
 Here is a full list of removed variables. Some have suggested replacements documented. For the other variables, use your browser's developer tools to find the appropriate class names for the element you need to target and adding new CSS rules.
 
  * `$ag-customise-inputs`, `$ag-input-bottom-border`, `$ag-input-bottom-border-disabled`, `$ag-input-border-width`, `$ag-input-height`, `$ag-focused-textbox-border-bottom`. Use the new %ag-text-input placeholder selector to style text inputs instead.
@@ -104,10 +131,10 @@ Here is a full list of removed variables. Some have suggested replacements docum
 
 ## CSS class renames
 
-Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debugability, we recommend that all themes update their css class name-based selectors to use the new names.
 
-If you want to upgrade to v23 without renaming your class name-based selectors, we provide a mixin to import the old class names. Include it in your custom theme file:
+Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names.
 
+// TODO mention ag-v22-to-v23-compatibility-mode ag-v22-to-v23-alias-renamed-classes()
 ```scss
 @import ag-alias-v22-to-v23-class-names();
 ```

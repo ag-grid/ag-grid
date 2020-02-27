@@ -16,6 +16,7 @@
 @import "./parts/charts";
 
 @mixin ag-theme-base($params) {
+    @include ag-include-theme-once-only();
     $params: ag-process-theme-variables($params, $ag-theme-base-default-params);
 
     @include ag-icons-font-face();

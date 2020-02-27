@@ -1,12 +1,10 @@
-@import "../../../ag-theme-base/sass/legacy/ag-theme-base-rename-legacy-vars.scss";
-
 /**
  * In v23 we moved from using global variables to maps of parameters to configure Grid themes.
  * This file is part of a backwards-compatibility layer designed to emulate the pre-v23 behaviour
  * and so should not be modified.
  */
 
-// from _ag-theme-material-import-legacy-vars.scss v22.1.1
+@if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 /* DO NOT EDIT (see note above) */ @if (variable-exists("cell-data-changed-color") and not variable-exists("ag-cell-data-changed-color")) {
 /* DO NOT EDIT (see note above) */     $ag-cell-data-changed-color: $cell-data-changed-color !global;
 /* DO NOT EDIT (see note above) */ }
@@ -156,3 +154,4 @@
 /* DO NOT EDIT (see note above) */ @if variable-exists(ag-mat-cell-data-changed) { $ag-cell-data-changed-color: $ag-mat-cell-data-changed !global; }
 /* DO NOT EDIT (see note above) */ @if variable-exists(ag-mat-hover) { $ag-hover-color: $ag-mat-hover !global; }
 /* DO NOT EDIT (see note above) */ @if variable-exists(ag-mat-selected) { $ag-selected-color: $ag-mat-selected !global; }
+}

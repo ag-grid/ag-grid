@@ -1,4 +1,112 @@
-@mixin ag-alias-v22-to-v23-class-names {
+// Apply all 
+@mixin ag-v22-to-v23-compatibility-mode {
+    @include ag-v22-to-v23-implement-deleted-variables();
+    @include ag-v22-to-v23-alias-deleted-placeholders();
+    @include ag-v22-to-v23-alias-renamed-classes();
+}
+
+@mixin ag-v22-to-v23-implement-deleted-variables {
+    // - $ag-group-component-*
+    .ag-group {
+        background-color: $ag-group-component-background-color;
+        border-color: $ag-group-component-border-color;
+    }
+    .ag-group-title-bar {
+        background-color: $ag-group-component-title-background-color;
+    }
+
+    // - $ag-tooltip-*
+    .ag-tooltip {
+        background-color: $ag-tooltip-background-color;
+        color: $ag-tooltip-foreground-color;
+        padding: $ag-tooltip-padding;
+        border: $ag-tooltip-border-style $ag-tooltip-border-width $ag-tooltip-border-color;
+        border-radius: $ag-tooltip-border-radius;
+        transition: opacity 1s;
+    }
+
+    // - $ag-dialog-*
+    .ag-panel {
+        // Note: $ag-dialog-background-color not applied. In practice it wasn't visible in v22
+        // because all elements within the panel had opaque backgrounds, and enabling it on v23
+        // causes issues as some elements are transparent
+        // background-color: $ag-dialog-background-color;
+        border: $ag-dialog-border-size $ag-dialog-border-style $ag-dialog-border-color;
+    }
+
+    .ag-panel-title-bar {
+        background-color: $ag-dialog-title-background-color;
+        border-bottom: 1px solid lighten($ag-border-color, 10%);
+        color: $ag-dialog-title-foreground-color;
+        height: $ag-dialog-title-height;
+        font-size: $ag-dialog-title-font-size;
+        font-weight: $ag-dialog-title-font-weight;
+        font-family: $ag-dialog-title-font-family;
+        padding: $ag-dialog-title-padding;
+        // overriding padding-left reproduces behaviour of v22
+        padding-left: $ag-cell-horizontal-padding;
+    }
+
+    .ag-panel-title-bar-button-icon {
+        height: $ag-dialog-title-icon-size;
+        width: $ag-dialog-title-icon-size;
+        line-height: $ag-dialog-title-icon-size;
+        font-size: $ag-dialog-title-icon-size;
+    }
+
+    // - $ag-font-weight
+    .ag-root-wrapper {
+        font-weight: $ag-font-weight;
+    }
+
+    // - $ag-secondary-font-*
+    .ag-header,
+    .ag-dnd-ghost,
+    .ag-filter-toolpanel,
+    .ag-column-drop-empty-message,
+    .ag-status-bar {
+        font-family: $ag-secondary-font-family;
+        font-size: $ag-secondary-font-size;
+        font-weight: $ag-secondary-font-weight;
+    }
+}
+
+// Allow custom themes to use old placeholders instead of the new class name
+// selectors e.g. %tab instead of .ag-tab
+@mixin ag-v22-to-v23-alias-deleted-placeholders {
+    .ag-tab {
+        @extend %tab !optional;
+    }
+
+    .ag-tab-selected {
+        @extend %selected-tab !optional;
+    }
+
+    .ag-menu,
+    .ag-cell.ag-cell-inline-editing,
+    .ag-popup-editor,
+    .ag-select-agg-func-popup,
+    .ag-overlay-loading-center {
+        @extend %card !optional;
+    }
+
+    @if & {
+        &.ag-dnd-ghost {
+            @extend %card !optional;
+        }
+    }
+    @else {
+        @at-root {
+            .ag-dnd-ghost {
+                @extend %card !optional;
+            }
+        }
+    }
+}
+
+// Allow custom themes to use the old class names for various elements (e.g. use the old
+// .ag-group-component instead of the new .ag-group
+@mixin ag-v22-to-v23-alias-renamed-classes {
     .ag-group {
         @extend .ag-group-component !optional;
     }

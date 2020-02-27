@@ -4,6 +4,7 @@
  * and so should not be modified.
  */
 
+@if (not variable-exists("ag-suppress-legacy-var-import") or not $ag-suppress-legacy-var-import) {
 /* DO NOT EDIT (see note above) */ @if (variable-exists("active") and not variable-exists("ag-active")) {
 /* DO NOT EDIT (see note above) */     $ag-active: $active !global;
 /* DO NOT EDIT (see note above) */ }
@@ -91,3 +92,4 @@
 /* DO NOT EDIT (see note above) */ @if (variable-exists("value-change-value-highlight-background-color") and not variable-exists("ag-value-change-value-highlight-background-color")) {
 /* DO NOT EDIT (see note above) */     $ag-value-change-value-highlight-background-color: $value-change-value-highlight-background-color !global;
 /* DO NOT EDIT (see note above) */ }
+}
