@@ -61,7 +61,7 @@ The net effect is that custom themes will be simpler to write, and will break le
 
 // TODO mention ag-v22-to-v23-compatibility-mode and ag-v22-to-v23-alias-deleted-placeholders()
 
-## Theme configuration  changes
+## Theme configuration changes
 
 In the move from configuring themes with variables to using a map of key/value parameters, some variables have been directly converted to parameters:
 
@@ -129,10 +129,15 @@ Here is a full list of removed variables. Some have suggested replacements docum
  * `$ag-tooltip-background-color`, `$ag-tooltip-border-color`, `$ag-tooltip-border-radius`, `$ag-tooltip-border-style`, `$ag-tooltip-border-width`, `$ag-tooltip-foreground-color`, `$ag-tooltip-padding`: removed. Use a CSS rule like `.ag-tooltip { padding: 10px; }`
 
 
+## CSS class additions
+
+In v22 and earlier, components that appeared in multiple positions in the grid required nested CSS selectors to style. For example, to style groups in the chart settings tab, you'd need `.ag-chart-settings .ag-group-component-title-bar { ... }`. Now, generic components have multiple classes, one common to all instances and one that depends on the position in the grid. So you can use `.ag-charts-minichart-group-title-bar { ... }` to style just the settings tab groups.
+
+Nested selectors will continue to work, but new themes should use non-nested selectors, and existing themes may consider upgrading for clarity and performance.
+
 ## CSS class renames
 
-
-Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names.
+Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names. However, in compatibility mode the old names are aliased to the new names.
 
 // TODO mention ag-v22-to-v23-compatibility-mode ag-v22-to-v23-alias-renamed-classes()
 ```scss

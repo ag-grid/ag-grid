@@ -60,13 +60,13 @@
         margin-left: ag-param(grid-size);
     }
 
-    .ag-charts-minichart-group-title-bar,
+    .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {
         @include ag-border(secondary, top);
     }
 
-    .ag-charts-minichart-group-container {
+    .ag-charts-settings-group-container {
         padding: ag-param(grid-size);
     }
 

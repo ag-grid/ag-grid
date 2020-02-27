@@ -153,9 +153,9 @@ $ag-theme-base-default-params: (
 
     // CHART SETTINGS
 
-    // Color of border around selected minichart
+    // Color of border around selected chart style
     minichart-selected-chart-color: ag-derived(checkbox-checked-color),
-    // Color of dot representing selected chart page
+    // Color of dot representing selected page of chart styles
     minichart-selected-page-color: ag-derived(checkbox-checked-color),
 
 

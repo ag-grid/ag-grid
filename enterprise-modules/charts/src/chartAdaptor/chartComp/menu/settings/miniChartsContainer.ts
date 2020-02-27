@@ -82,7 +82,7 @@ export class MiniChartsContainer extends Component {
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-minichart',
+                cssIdentifier: 'charts-settings',
                 direction: 'horizontal'
             }));
 
