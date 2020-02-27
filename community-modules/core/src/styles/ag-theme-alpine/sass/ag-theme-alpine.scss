@@ -3,4 +3,6 @@
 // Including this file emits CSS for the Alpine theme. If you want to extend the Alpine theme,
 // @import ag-theme-alpine-mixin.scss and @include ag-theme-alpine($params) instead of using this file.
 
-@include ag-theme-alpine($ag-theme-alpine-default-params);
+.ag-theme-alpine {
+    @include ag-theme-alpine($ag-theme-alpine-default-params);
+}

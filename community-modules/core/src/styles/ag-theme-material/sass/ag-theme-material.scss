@@ -7,4 +7,6 @@
 
 @import "./legacy/ag-theme-material-define-legacy-vars";
 
-@include ag-theme-material(ag-theme-base-create-params-from-legacy-vars($ag-theme-material-default-params));
+.ag-theme-material {
+    @include ag-theme-material(ag-theme-base-create-params-from-legacy-vars($ag-theme-material-default-params));
+}

@@ -15,16 +15,7 @@
 @import "./parts/column-drop";
 @import "./parts/charts";
 
-@mixin ag-theme-base($params, $theme-name) {
-    @include ag-include-theme-once-only($theme-name);
-    .#{$theme-name} {
-        @include ag-theme-base-bare($params);
-    }
-}
-
-// emit base theme CSS directly into the current scope without nesting it in a .ag-theme-whatever selector
-@mixin ag-theme-base-bare($params) {
-
+@mixin ag-theme-base($params) {
     $params: ag-process-theme-variables($params, $ag-theme-base-default-params);
 
     @include ag-icons-font-face();

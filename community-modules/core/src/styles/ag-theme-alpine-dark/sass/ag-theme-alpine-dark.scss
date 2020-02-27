@@ -3,4 +3,6 @@
 // Including this file emits CSS for the Alpine Dark theme. If you want to extend the Alpine Dark theme,
 // @import ag-theme-alpine-mixin.scss and @include ag-theme-alpine($params) instead of using this file.
 
-@include ag-theme-alpine-dark($ag-theme-alpine-dark-default-params);
+.ag-theme-alpine-dark {
+    @include ag-theme-alpine-dark($ag-theme-alpine-dark-default-params);
+}

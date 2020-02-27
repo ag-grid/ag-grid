@@ -7,4 +7,6 @@
 
 @import "./legacy/ag-theme-balham-dark-define-legacy-vars";
 
-@include ag-theme-balham-dark(ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-dark-default-params));
+.ag-theme-balham-dark {
+    @include ag-theme-balham-dark(ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-dark-default-params));
+}

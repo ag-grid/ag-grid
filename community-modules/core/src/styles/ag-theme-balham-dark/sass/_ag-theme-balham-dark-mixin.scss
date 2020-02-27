@@ -1,14 +1,11 @@
 @import "../../ag-theme-balham/sass/ag-theme-balham-mixin";
 @import "./ag-theme-balham-dark-default-params";
 
-@mixin ag-theme-balham-dark($params, $theme-name: "ag-theme-balham-dark") {
+@mixin ag-theme-balham-dark($params) {
     $params: ag-process-theme-variables($params, $ag-theme-balham-dark-default-params);
-    @include ag-theme-balham($params, $theme-name);
+    @include ag-theme-balham($params);
 
-    .ag-theme-balham-dark {
-        .ag-tooltip {
-            border: none;
-            background-color: #1c1f20;
-        }
+    .ag-tooltip {
+        background-color: #1c1f20;
     }
 }
