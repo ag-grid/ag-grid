@@ -236,7 +236,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
 const exampleDirMatch = new RegExp('src/([-\\w]+)/');
 
-function watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules) {
+function watchAndGenerateExamples() {
     const callback = file => {
         let dir;
 
@@ -250,7 +250,7 @@ function watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules) {
             }
         }
 
-        genExamples(dir, gridCommunityModules, gridEnterpriseModules)();
+        genExamples(dir)();
     };
 
     callback();
@@ -610,7 +610,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-grid-react');
 
             // regenerate examples
-            watchAndGenerateExamples(gridCommunityModules, gridEnterpriseModules);
+            watchAndGenerateExamples();
 
             // PHP
             launchPhpCP(app);
@@ -629,10 +629,10 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
 
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-const genExamples = (dir, gridCommunityModules, gridEnterpriseModules) => {
+const genExamples = (dir) => {
     return () => {
         console.log('Re-generating examples... ');
-        generateExamples(dir, true, gridCommunityModules, gridEnterpriseModules);
+        generateExamples(dir);
     };
 };
 
@@ -641,8 +641,7 @@ const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 
 if (process.argv.length >= 3) {
     if (execFunc === 'generate-examples') {
-        const {gridCommunityModules, gridEnterpriseModules} = getAllModules();
-        const genExamplesFunc = genExamples(exampleDir, gridCommunityModules, gridEnterpriseModules);
+        const genExamplesFunc = genExamples(exampleDir);
 
         if (watch && exampleDir) {
             const examplePath = path.resolve('./src/', exampleDir);

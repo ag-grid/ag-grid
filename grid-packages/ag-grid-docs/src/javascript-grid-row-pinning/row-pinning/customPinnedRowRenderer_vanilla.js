@@ -1,8 +1,13 @@
+function setStyle(element, propertyObject) {
+    for (var property in propertyObject) {
+        element.style[property] = propertyObject[property];
+    }
+}
 function CustomPinnedRowRenderer () {}
 
 CustomPinnedRowRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('div');
-    this.eGui.style = params.style;
+    setStyle(this.eGui, params.style);
     this.eGui.innerHTML = params.value;
 };
 
