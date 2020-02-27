@@ -11,12 +11,6 @@
             "url": "javascript-grid-getting-started/"
           },
           {
-            "title": "Community & Enterprise",
-            "url": "javascript-grid-set-license/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
             "title": "Vanilla JavaScript",
             "url": "javascript-grid/",
             "items": [
@@ -296,6 +290,12 @@
         "icon": "icon-information",
         "matrixExclude": true,
         "items": [
+          {
+            "title": "Community & Enterprise",
+            "url": "javascript-grid-set-license/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
           {
             "title": "Packages & Modules",
             "url": "javascript-grid-packages/",
