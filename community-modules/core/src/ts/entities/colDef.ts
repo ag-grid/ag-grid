@@ -167,12 +167,12 @@ export interface ColDef extends AbstractColDef {
     pinnedRowCellRendererParams?: any;
 
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: (params: ValueFormatterParams) => string | string;
+    valueFormatter?: ((params: ValueFormatterParams) => string) | string;
     /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    pinnedRowValueFormatter?: (params: ValueFormatterParams) => string | string;
+    pinnedRowValueFormatter?: ((params: ValueFormatterParams) => string) | string;
 
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: (params: ValueParserParams) => any | string;
+    valueParser?: ((params: ValueParserParams) => any) | string;
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;

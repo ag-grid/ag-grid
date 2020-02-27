@@ -11,14 +11,15 @@ export class ValueFormatterService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    public formatValue(column: Column,
-                       rowNode: RowNode | null,
-                       $scope: any,
-                       value: any,
-                       suppliedFormatter?: (value: any) => string): string {
-
+    public formatValue(
+        column: Column,
+        rowNode: RowNode | null,
+        $scope: any,
+        value: any,
+        suppliedFormatter?: (value: any) => string
+    ): string {
         let result: string = null;
-        let formatter: (value: any) => string;
+        let formatter: ((value: any) => string) | string;
         const colDef = column.getColDef();
 
         if (suppliedFormatter) {
