@@ -1093,6 +1093,10 @@
                   {
                     "title": "Simple Bubble",
                     "url": "javascript-charts-gallery/simple-bubble.php"
+                  },
+                  {
+                    "title": "Bubble With Negative Values",
+                    "url": "javascript-charts-gallery/bubble-with-negative-values.php"
                   }
                 ]
               },

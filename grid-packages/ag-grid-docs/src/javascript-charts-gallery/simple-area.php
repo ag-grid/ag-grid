@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Simple Area', 'simple-area', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./simple-bubble.php">❮&nbsp;&nbsp;Simple Bubble</a>
+    <a class="chart-navigation__left" href="./bubble-with-negative-values.php">❮&nbsp;&nbsp;Bubble With Negative Values</a>
     <a class="chart-navigation__right" href="./stacked-area.php">Stacked Area&nbsp;&nbsp;❯</a>
 </div>
 

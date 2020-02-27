@@ -53,6 +53,9 @@
         },
         "Simple Bubble": {
             "description": "This bubble chart shows how independent variables can be plotted against each other including a third dimension."
+        },
+        "Bubble With Negative Values": {
+            "description": "A bubble chart demonstrating the support of negative values."
         }
     },
     "Area": {
