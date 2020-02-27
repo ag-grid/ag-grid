@@ -6,99 +6,91 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<style>
-    .feature-group-title {
-        display: block;
-        margin-top: 26px;
-        font-size: 30px;
-    }
-
-    .feature-title {
-        display: block;
-    }
-
-    .feature-title-indent-1 {
-        padding-left: 40px;
-    }
-
-    .feature-title-indent-2 {
-        padding-left: 80px;
-    }
-
-    .feature-title-indent-3 {
-        padding-left: 120px;
-    }
-
-    .feature-title-indent-4 {
-        padding-left: 160px;
-    }
-</style>
-<?php
-function printFeatures($enterprise, $framework)
-{
-    $lev1Items = json_decode(file_get_contents('../documentation-main/modules.json'), true);
-    foreach ($lev1Items as $lev1Item) {
-        if ($enterprise) {
-            if ($lev1Item['enterprise']) {
-                printFeature($lev1Item, 0);
-            }
-        } else if ($framework) {
-            if ($lev1Item['framework']) {
-                printFeature($lev1Item, 0);
-            }
-        } else if (!$lev1Item['enterprise'] && !$lev1Item['framework']) {
-            printFeature($lev1Item, 0);
-        }
-    }
-}
-
-function printFeature($item)
-{
-    $itemTitle = $item['title'];
-    $module = $item['module'];
-    $exported = $item['exported'];
-
-    echo "<tr>";
-    echo "<td style='white-space: nowrap'>$itemTitle ";
-    if ($item['enterprise']) {
-        echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
-    }
-    echo "</span></td>";
-    echo "<td style='white-space: nowrap'>$module</td>";
-    echo "<td>$exported</td>";
-    echo "</tr>";
-}
-
-?>
-
-<h1>ag-Grid Modules & Packages</h1>
+<h1>ag-Grid Packages</h1>
 
 <p class="lead">
-    Version 22.0.0 changes the way ag-Grid is made available by providing functionality in modules, allowing you to
-    pick and choose which features you require, resulting in a smaller application size overall.
+    ag-Grid <code>packages</code> are the easiest way to get started with ag-Grid, but the trade-off will be a larger overall bundle size may be
+    larger than required if you don't need all features within a given package.
 </p>
 
 <h2>Introduction</h2>
 
-<p>There are two main ways to install ag-Grid - either by using packages (<code>ag-grid-community</code> or <code>ag-grid-enterprise</code>),
-    or by using <a href="../javascript-grid-modules">modules</a>.</p>
+<p>The following artifacts are "<code>packages</code>" and are designed to work to together:</p>
 
-<p>Packages are the easiest way to use ag-Grid, but by default include all code specific to each package, whereas
-    modules allow you to
-    cherry pick what functionality you want, which will allow for a reduced overall bundle size.</p>
+<table class="properties">
+    <tr>
+        <th>Package Name</th>
+        <th>Contents</th>
+    </tr>
+    <tr>
+        <td><code>ag-grid-community</code></td>
+        <td>All Community Features</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-enterprise</code></td>
+        <td>All Enterprise Features</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-angular</code></td>
+        <td>Angular Support</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-react</code></td>
+        <td>React Support</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-vue</code></td>
+        <td>Vue Support</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-polymer</code></td>
+        <td>Polymer Support</td>
+    </tr>
+</table>
+
+<p>When using <code>packages</code> you get all of the code within that package and cannot pick and choose which features you require. You also don't need
+to register these packages in the same way you do with <code>modules</code>.</p>
+
+<p>This means that it is easier to use <code>packages</code> but the trade-off will be you'll end up with a larger bundle size if you don't require all features
+within a given package.</p>
+
+<p>If you do decide to use <code>packages</code> you'll need to specify <code>ag-grid-community</code> as a minimum dependency:</p>
+<snippet>
+"dependencies": {
+    "ag-grid-community": "^23.0.0"
+    ...other dependencies...
+</snippet>
+
+<p>You can then (optionally) specify <code>ag-grid-enterprise</code> if you require Enterprise features:</p>
+
+<snippet language="diff">
+"dependencies": {
+    "ag-grid-community": "^23.0.0"
++   "ag-grid-enterprise": "^23.0.0"
+    ...other dependencies...
+</snippet>
+
+<p>If you do require Enterprise features you'll additionally need to import the <code>ag-grid-enterprise</code> package
+    for it to be included in your application:</p>
+
+<snippet>
+import 'ag-grid-enterprise';
+</snippet>
+
+
+<p>Finally, if you're using a framework you'll need to specify <strong>one</strong> of the framework packages - for example assuming you're using
+Angular you'd add the <code>ag-grid-angular</code> package:</p>
+
+<snippet language="diff">
+"dependencies": {
+    "ag-grid-community": "^23.0.0"
+    "ag-grid-enterprise": "^23.0.0"
++   "ag-grid-angular": "^23.0.0"
+    ...other dependencies...
+</snippet>
 
 <p>The rest of this page will discuss the use of packages. Please refer to the <a href="../javascript-grid-modules">modules</a>
     documentation for more information on that side of things.</p>
-
-
-<h2><code>ag-grid-community</code> & <code>ag-grid-enterprise</code></h2>
-
-<p><code>ag-grid-community</code> contains all of the Community code and is additionally "self-registering", so you
-    don't need
-    to provide modules to the Grid (either directly, or via <code></code>).</p>
-
-<p><code>ag-grid-enterprise</code> adds Enterprise functionality - in order to use it you need to specify both it and
-    <code>ag-grid-community</code>.</p>
 
 <p>Please refer to the Getting Started guides for a walkthrough on how to install and use these packages from the ground up:</p>
 

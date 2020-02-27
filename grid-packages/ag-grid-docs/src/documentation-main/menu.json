@@ -298,12 +298,20 @@
           },
           {
             "title": "Packages & Modules",
-            "url": "javascript-grid-packages/",
+            "url": "javascript-grid-packages-modules/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Modules",
+                "title": "Packages",
+                "url": "javascript-grid-packages/"
+              },
+              {
+                "title": "Modules - Overview",
                 "url": "javascript-grid-modules/"
+              },
+              {
+                "title": "Modules - More Details",
+                "url": "javascript-grid-modules-more-details/"
               },
               {
                 "title": "Building",

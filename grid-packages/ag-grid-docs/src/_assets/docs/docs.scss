@@ -503,6 +503,65 @@ body {
         background-color: darken(#f9f9fa, 0);
     }
 
+    #get-started-packages-modules {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 0;
+        margin-top: 2rem;
+    }
+
+    #get-started-packages-modules > div > div {
+        @extend .col-md-3, .mb-4;
+    }
+
+    // get started overview
+    .get-started-published {
+        @extend .card, .bg-light;
+
+        > a:first-child {
+            @extend .card-header;
+
+            background-position-x: center;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            background-size: 6rem 6rem;
+            height: 15rem;
+            overflow: hidden;
+            text-indent: -10000px;
+        }
+
+        div:nth-child(2) {
+            @extend .card-body;
+        }
+
+        h2 {
+            @extend .card-title, h4;
+        }
+
+        p:first-child {
+            @extend .card-text;
+        }
+
+        p:last-child {
+            @extend .text-center, .card-text;
+
+            a {
+                @extend .btn, .btn-primary;
+            }
+        }
+    }
+
+    .get-started-published.package-card > a:first-child {
+        background-color: floralwhite;
+        background-image: url("../doodles/cubes.svg");
+    }
+
+    .get-started-published.module-card > a:first-child {
+        background-color: floralwhite;
+        background-image: url("../doodles/at-symbol.svg");
+    }
+
+
     p > img:only-child {
         display: block;
         margin: auto;
