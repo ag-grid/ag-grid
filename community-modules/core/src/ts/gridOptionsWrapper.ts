@@ -1263,6 +1263,19 @@ export class GridOptionsWrapper {
         return false;
     }
 
+    public getTooltipShowDelay(): number {
+        const tooltipShowDelay: number | undefined = this.gridOptions.tooltipShowDelay;
+        if (_.exists(tooltipShowDelay)) {
+            if (tooltipShowDelay < 0) {
+                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+            }
+
+            return Math.max(200, tooltipShowDelay);
+        }
+
+        return null;
+    }
+
     public getDocument(): Document {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.

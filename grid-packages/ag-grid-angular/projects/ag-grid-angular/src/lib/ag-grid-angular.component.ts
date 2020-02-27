@@ -233,6 +233,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public autoSizePadding : any = undefined;
     @Input() public maxBlocksInCache : any = undefined;
     @Input() public maxConcurrentDatasourceRequests : any = undefined;
+    @Input() public tooltipShowDelay : any = undefined;
     @Input() public cacheOverflowSize : any = undefined;
     @Input() public paginationPageSize : any = undefined;
     @Input() public cacheBlockSize : any = undefined;

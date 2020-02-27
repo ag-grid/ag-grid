@@ -642,6 +642,13 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to use the browser's default tooltip instead of using Ag-Grid's Tooltip Component.</td>
         </tr>
         <tr>
+            <th>tooltipShowDelay</th>
+            <td>
+                The delay in milliseconds that it takes for tooltips to show up once an element is hovered.<br>
+                <strong>Note:</strong> This property does not work if <code>enableBrowserTooltips</code> is true.
+            </td>
+        </tr>
+        <tr>
             <th>enableCellExpressions</th>
             <td>Set to true to allow <a href="../javascript-grid-cell-expressions/#cell-expressions">cell expressions</a>.</td>
         </tr>
@@ -653,13 +660,11 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-width-and-height/#auto-height">Auto Height</a>.
             </td>
         </tr>
-
         <tr>
             <th>ensureDomOrder</th>
             <td>When true, the order of rows and columns in the dom are consistent with what is on screen.
             See <a href="../javascript-grid-accessibility/#dom-order">Accessibility - Row and Column Order</a>.</td>
         </tr>
-
         <tr>
             <th>rowBuffer</th>
             <td>The number of rows rendered outside the scrollable viewable area the grid renders. Defaults to 20.

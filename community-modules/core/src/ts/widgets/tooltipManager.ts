@@ -33,7 +33,8 @@ export class TooltipManager {
 
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
-    private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
+    private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT: number;
+
     private readonly HIDE_SHOW_ONLY = true;
 
     private showTimeoutId: number = 0;
@@ -44,6 +45,12 @@ export class TooltipManager {
 
     // map of compId to [tooltip component, close function]
     private registeredComponents: { [key: string]: RegisteredComponent } = {};
+
+    constructor() {
+        const customDelay = this.gridOptionsWrapper.getTooltipShowDelay();
+
+        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = customDelay || 2000;
+    }
 
     public registerTooltip(targetCmp: TooltipTarget): void {
         const el = targetCmp.getGui();

@@ -136,6 +136,7 @@ export interface GridOptions {
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    tooltipShowDelay?: number;
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
