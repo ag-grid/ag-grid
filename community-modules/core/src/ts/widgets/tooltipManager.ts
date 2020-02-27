@@ -46,12 +46,6 @@ export class TooltipManager {
     // map of compId to [tooltip component, close function]
     private registeredComponents: { [key: string]: RegisteredComponent } = {};
 
-    constructor() {
-        const customDelay = this.gridOptionsWrapper.getTooltipShowDelay();
-
-        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = customDelay || 2000;
-    }
-
     public registerTooltip(targetCmp: TooltipTarget): void {
         const el = targetCmp.getGui();
         const id = targetCmp.getCompId();
