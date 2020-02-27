@@ -3,10 +3,10 @@ function CustomDateComponent() {
 
 CustomDateComponent.prototype.init = function (params) {
     var template = 
-        "<input type='text' data-input />" +
-        "<a class='input-button' title='clear' data-clear>" +
-            "<i class='fa fa-times'></i>" +
-        "</a>";
+        '<input type="text" data-input style="width: 100%;" />' +
+        '<a class="input-button" title="clear" data-clear>' +
+            '<i class="fa fa-times"></i>' +
+        '</a>';
 
     this.params = params;
 
