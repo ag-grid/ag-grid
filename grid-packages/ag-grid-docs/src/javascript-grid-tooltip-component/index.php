@@ -99,7 +99,7 @@ interface ITooltipParams {
 <ul class="content">
     <li><b>Custom Tooltip Component</b> is supplied by name via <code>colDef.tooltipComponent</code>.</li>
     <li><b>Custom Tooltip Parameters</b> are supplied using <code>colDef.tooltipComponentParams</code>.</li>
-    <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to <strong>0</strong>.</li>
+    <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to 0.</li>
 </ul>
 
 <?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
