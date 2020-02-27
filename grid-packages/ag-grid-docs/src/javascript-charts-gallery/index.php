@@ -188,7 +188,13 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Real-Time Data Updates</div>
         </a>
     </div>
-    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item">
+        <a href="./combination-of-different-series-types.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/combination-of-different-series-types.png" /><br />
+            <div class="chart-gallery-item__name">Combination of Different Series Types</div>
+        </a>
+    </div>
+    
 </div>
 
 <h2>Next Up</h2>

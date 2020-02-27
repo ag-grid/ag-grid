@@ -1143,6 +1143,10 @@
                   {
                     "title": "Real-Time Data Updates",
                     "url": "javascript-charts-gallery/real-time-data-updates.php"
+                  },
+                  {
+                    "title": "Combination of Different Series Types",
+                    "url": "javascript-charts-gallery/combination-of-different-series-types.php"
                   }
                 ]
               }

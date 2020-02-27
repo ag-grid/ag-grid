@@ -78,6 +78,9 @@
         },
         "Real-Time Data Updates": {
             "description": "This example demonstrates how the chart responds to data being updated in real-time."
+        },
+        "Combination of Different Series Types": {
+            "description": "This example demonstrates the combination of different types of series into one chart."
         }
     }
 }

@@ -18,6 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./time-axis-with-irregular-intervals.php">❮&nbsp;&nbsp;Time Axis With Irregular Intervals</a>
+    <a class="chart-navigation__right" href="./combination-of-different-series-types.php">Combination of Different Series Types&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
