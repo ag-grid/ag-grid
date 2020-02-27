@@ -170,6 +170,8 @@ var gridOptions = {
     // suppressMoveWhenRowDragging: true,
     // enableMultiRowDragging: true,
     popupParent: document.querySelector('#example-wrapper'),
+    // enableBrowserTooltips: true,
+    // tooltipShowDelay: 200,
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {

@@ -80,10 +80,15 @@ interface ITooltipParams {
 
 <p>
     If you don't want to use the grid's tooltip component, you can use the <code>enableBrowserTooltips</code> config to use
-    the browser's default tootip. 
+    the browser's default tooltip. 
 
     Note: That will use the element's title attribute to display the tooltip.
 </p>
+
+<h2>Tooltip Show Delay</h2>
+<p>
+    By default, once you hover an item, it will take <code>2000ms</code> for the tooltip to be displayed. If you need to change this
+    delay, the <code>tooltipShowDelay</code> config should be used.
 
 <h2>Example: Custom Tooltip</h2>
 
@@ -94,6 +99,7 @@ interface ITooltipParams {
 <ul class="content">
     <li><b>Custom Tooltip Component</b> is supplied by name via <code>colDef.tooltipComponent</code>.</li>
     <li><b>Custom Tooltip Parameters</b> are supplied using <code>colDef.tooltipComponentParams</code>.</li>
+    <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to <strong>0</strong>.</li>
 </ul>
 
 <?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
