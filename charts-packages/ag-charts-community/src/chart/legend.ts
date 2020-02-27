@@ -319,7 +319,7 @@ export class Legend extends Observable {
         });
     }
 
-    datumForPoint(x: number, y: number): LegendDatum | undefined {
+    getDatumForPoint(x: number, y: number): LegendDatum | undefined {
         const node = this.group.pickNode(x, y);
 
         if (node && node.parent) {

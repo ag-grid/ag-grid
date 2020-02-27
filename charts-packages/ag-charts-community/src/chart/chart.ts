@@ -587,8 +587,8 @@ export abstract class Chart extends Observable {
         const legendGroup = legend.group;
         const legendSpacing = legend.spacing;
 
-        legendGroup.translationX = 0;
-        legendGroup.translationY = 0;
+        let translationX = 0;
+        let translationY = 0;
 
         let legendBBox: BBox;
         switch (legend.position) {
@@ -596,8 +596,8 @@ export abstract class Chart extends Observable {
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
+                translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
 
                 legendAutoPadding.bottom = legendBBox.height;
                 break;
@@ -606,8 +606,8 @@ export abstract class Chart extends Observable {
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                legendGroup.translationY = captionAutoPadding + legendSpacing - legendBBox.y;
+                translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                translationY = captionAutoPadding + legendSpacing - legendBBox.y;
 
                 legendAutoPadding.top = legendBBox.height;
                 break;
@@ -616,8 +616,8 @@ export abstract class Chart extends Observable {
                 legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = legendSpacing - legendBBox.x;
-                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+                translationX = legendSpacing - legendBBox.x;
+                translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 legendAutoPadding.left = legendBBox.width;
                 break;
@@ -626,16 +626,16 @@ export abstract class Chart extends Observable {
                 legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
 
-                legendGroup.translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
-                legendGroup.translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+                translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
+                translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
                 legendAutoPadding.right = legendBBox.width;
                 break;
         }
 
         // Round off for pixel grid alignment to work properly.
-        legendGroup.translationX = Math.floor(legendGroup.translationX);
-        legendGroup.translationY = Math.floor(legendGroup.translationY);
+        legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
+        legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     }
 
     private setupListeners(chartElement: HTMLCanvasElement) {
@@ -702,7 +702,7 @@ export abstract class Chart extends Observable {
 
     private readonly onClick = (event: MouseEvent) => {
         const { offsetX: x, offsetY: y } = event;
-        const datum = this.legend.datumForPoint(x, y);
+        const datum = this.legend.getDatumForPoint(x, y);
 
         if (datum) {
             const { id, itemId, enabled } = datum;
