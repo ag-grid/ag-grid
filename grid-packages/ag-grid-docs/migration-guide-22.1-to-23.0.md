@@ -141,7 +141,7 @@ Throughout the grid, many css classes have been renamed to make them more consis
 
 // TODO mention ag-v22-to-v23-compatibility-mode ag-v22-to-v23-alias-renamed-classes()
 ```scss
-@import ag-alias-v22-to-v23-class-names();
+@import ag-v22-to-v23-alias-renamed-classes();
 ```
 
 This mixin emits Sass `@extend` rules that alias the old names to the new ones where possible.
