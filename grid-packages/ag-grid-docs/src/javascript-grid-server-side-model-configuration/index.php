@@ -6,11 +6,15 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Cache Configuration </h1>
+<h1 class="heading-enterprise"> Configuration </h1>
 
 <p class="lead">
-    This section describes the Server-side Datasource and demonstrates how it can be used to lazy load data from a
-    server through an infinite scroll.
+    This section covers the Server-side Cache and Configurations available in the Server-side Row Model.
+</p>
+
+<p>
+    As many of the configurations available in the Server-side Row Model relate to the Server-side Cache it important
+    to understand how the grid organises data obtained from the server into caches.
 </p>
 
 <h2>Server-side Cache</h2>

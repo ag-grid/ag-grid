@@ -419,8 +419,8 @@
                     "enterprise": true
                   },
                   {
-                    "title": "Cache Configuration",
-                    "url": "javascript-grid-server-side-model-cache-configuration/",
+                    "title": "Server-side Configuration",
+                    "url": "javascript-grid-server-side-model-configuration/",
                     "enterprise": true
                   },
                   {
