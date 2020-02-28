@@ -3,6 +3,9 @@ var options = {
     title: {
         text: "Most Common Girls' First Names In English"
     },
+    subtitle: {
+        text: "over the past 100 years"
+    },
     data: [
         { name: 'Mary', count: 234000 },
         { name: 'Patricia', count: 211000 },
@@ -11,9 +14,9 @@ var options = {
         { name: 'Linda', count: 123000 }
     ],
     series: [{
-        type: 'column',
+        type: 'line',
         xKey: 'name',
-        yKeys: ['count']
+        yKey: 'count'
     }],
     axes: [{
         type: 'category',
@@ -30,10 +33,38 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function useGridStyle1() {
+    var gridStyle = [{
+        stroke: 'gray',
+        lineDash: [10, 5]
+    }, {
+        stroke: 'lightgray',
+        lineDash: [5, 5]
+    }];
+    chart.axes[0].gridStyle = gridStyle;
+    chart.axes[1].gridStyle = gridStyle;
+    chart.performLayout();
 }
 
 function useGridStyle2() {
+    var xGridStyle = [{
+        stroke: 'red',
+        lineDash: [3, 3]
+    }];
+    var yGridStyle = [{
+        stroke: 'green',
+        lineDash: [8, 3, 3, 3]
+    }];
+    chart.axes[0].gridStyle = xGridStyle;
+    chart.axes[1].gridStyle = yGridStyle;
+    chart.performLayout();
 }
 
 function useGridStyle3() {
+    var gridStyle = [{
+        stroke: 'rgba(219, 219, 219, 1)',
+        lineDash: [4, 2]
+    }];
+    chart.axes[0].gridStyle = gridStyle;
+    chart.axes[1].gridStyle = gridStyle;
+    chart.performLayout();
 }

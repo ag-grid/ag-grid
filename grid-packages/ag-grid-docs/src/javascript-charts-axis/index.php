@@ -126,8 +126,11 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Luckily, an axis can have a title just like a chart. In the example below we can use axes titles
-    to show that the bottom axis shows desktop operating systems and the left one their percentage market
-    share:
+    to point out that:
+    <ul>
+        <li>the horizontal dimension shows desktop operating systems</li>
+        <li>the vertical dimension shows their percentage market share</li>
+    </ul>
 </p>
 
 <?= chart_example('Axis Title', 'axis-title', 'generated'); ?>
@@ -137,6 +140,37 @@ include '../documentation-main/documentation_header.php';
 <h2>Labels</h2>
 
 <h2>Grid Lines</h2>
+
+<p>
+    Chart axes can and do feature grid lines by default. Grid lines extend from axis
+    ticks on the other side of the axis into the series area, so that it's easy to trace
+    a series item such as a marker to a corresponding tick/label using a grid line.
+</p>
+
+<p>Grid lines have the same stroke width as ticks.</p>
+
+<p>
+    Grid lines of each axis can be styled individually via the <code>gridStyle</code> config.
+    The config takes are array of objects with two properties:
+    <ul>
+        <li>
+            <code>stroke</code> - color string in hex,
+            <a href="https://www.w3.org/TR/css-color-4/#typedef-named-color" target="blank">named</a>,
+            rgb, or rgba color format.
+        </li>
+        <li>
+            <code>lineDash</code> - an array of numbers that specify distances to alternately
+            draw a line and a gap. If the number of elements in the array is odd, the elements
+            of the array get copied and concatenated. For example, [5, 15, 25] will become
+            [5, 15, 25, 5, 15, 25]. If the array is empty, the line dash list is cleared and
+            line strokes return to being solid.
+        </li>
+    </ul>
+    Each config object in the <code>gridStyle</code> array is alternately applied to the grid lines
+    of the axis.
+</p>
+
+<h3>Example - Grid Lines</h3>
 
 <?= chart_example('Axis Grid Lines', 'axis-grid-lines', 'generated'); ?>
 

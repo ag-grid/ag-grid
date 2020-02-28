@@ -35,9 +35,11 @@ var chart = agCharts.AgChart.create(options);
 function showAxisTitles() {
     chart.axes[0].title.enabled = true;
     chart.axes[1].title.enabled = true;
+    chart.performLayout();
 }
 
 function hideAxisTitles() {
     chart.axes[0].title.enabled = false;
     chart.axes[1].title.enabled = false;
+    chart.performLayout();
 }
