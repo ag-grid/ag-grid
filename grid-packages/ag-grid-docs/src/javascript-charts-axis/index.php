@@ -144,6 +144,41 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Ticks</h2>
 
+<p>
+    Category axes show a tick for every category. Number and time axes on the other hand
+    try to segment the whole range into 10 intervals for 11 ticks total.
+</p>
+
+<p>
+    The <code>width</code>, <code>size</code> and <code>color</code> of chart axis ticks
+    can be configured as explained in the <a href="#axisConfig.axisConfig.tick">API reference</a>
+    below. These configs apply to all axis types.
+</p>
+
+<p>
+    With number and time axes you can additionally set the <code>count</code> property:
+    <ul>
+        <li>
+        In number axes the <code>count</code> means the desired number of ticks for the axis to use.
+        Note that this value merely serves as a hint and doesn't guarantee that this number of
+        ticks is going to be used.
+        </li>
+        <li>
+        In time axes the <code>count</code> property can also be set to a time interval,
+        for example <code>agCharts.time.month</code>, to make an axis show a tick every month.
+        </li>
+    </ul>
+</p>
+
+<p>
+    The example below demonstrates how the <code>count</code> property of the number axis
+    can be used to reduce or increase the amount of ticks.
+</p>
+
+<h3>Example - Axis Ticks</h3>
+
+<?= chart_example('Axis Tick Styling', 'axis-tick-count', 'generated'); ?>
+
 <h2>Labels</h2>
 
 <p>
@@ -189,6 +224,19 @@ formatter: function (params) {
 <?= chart_example('Axis Label Formatter', 'axis-label-formatter', 'generated'); ?>
 
 <h3>Example - Time Label Format</h3>
+
+<p>
+    The <code>label</code> config of the bottom axis in the example below uses the <code>'%b %Y'</code>
+    specifier string for the <code>format</code> property to format dates as the the abbreviated
+    name of the month followed by the full year.
+</p>
+
+<p>
+    Notice that the <code>label.format</code> property only affects label formatting but not segmentation.
+    The fact that axis labels were configured to show the name of the month and the year
+    doesn't mean, that the axis will show a tick every month. To ensure that it does, we also
+    set the <code>tick.count</code> config to use the <code>agCharts.time.month</code> interval.
+</p>
 
 <?= chart_example('Axis Label Formatter', 'time-axis-label-format', 'generated'); ?>
 
