@@ -62,7 +62,7 @@ export function finiteExtent<T>(values: T[]): [T, T] | undefined {
         }
     }
 
-    return typeof min === 'undefined' || typeof max === 'undefined' ? undefined : [min, max];
+    return min === undefined || max === undefined ? undefined : [min, max];
 }
 
 /**
