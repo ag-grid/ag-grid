@@ -104,8 +104,17 @@
             "tree-indeterminate": $ag-icon-tree-indeterminate,
             "tree-open": $ag-icon-tree-open,
             "unlinked": $ag-icon-unlinked,
-        )
+        ),
+        --internal-deprecated-compatibility-mode: $ag-compatibility-mode == "deprecated",
     );
+
+    @if not $ag-compatibility-mode {
+        // TODO confirm URL is still correct (move to master for release)?
+        @warn "$ag-compatibility-mode not defined, defaulting to \"variables\". See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md";
+    }
+    @else if $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "deprecated" {
+        @warn "Invalid value for $ag-compatibility-mode: \"#{$ag-compatibility-mode}\". Valid values are \"variables\" and \"deprecated\"";
+    }
 
     @return map-merge($defaults, $params);
 };

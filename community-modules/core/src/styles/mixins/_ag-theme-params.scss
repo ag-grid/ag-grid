@@ -77,6 +77,10 @@ $-ag-params: null !default;
     @if $-ag-params == null {
         @error "ag-param() called before ag-register-params";
     }
+    @if str-index($name, "--internal-") == 1 {
+        // internal vars are returned without ag-derived resolution or validation that the var exists
+        @return map-get($-ag-params, $name);
+    }
     @if not map-has-key($-ag-params, $name) {
         @error "ag-param(#{$name}): no such parameter";
     }
@@ -94,7 +98,7 @@ $-ag-params: null !default;
     // passed to the base theme, so don't re-validate params that have already been validated
     @if not map-has-key($params, "--ag-already-validated") {
         @each $key in map-keys($params) {
-            @if not map-has-key($defaults, $key) {
+            @if not map-has-key($defaults, $key) and str-index($key, "--internal-") != 1 {
                 @warn "Unrecognised param \"#{$key}\"";
             }
         }
@@ -146,7 +150,7 @@ $ag-not-defined: "--ag-not-defined" !default;
     $derived: $input-value;
     $reference-name: map-get($derived, "reference-name");
     @if not map-has-key($params, $reference-name) {
-        @error "ag-derived: no such param \"#{$reference-name}\"";
+        @error "ag-derived: no such parameter \"#{$reference-name}\"";
     }
     $resolved: map-get($params, $reference-name);
     $resolved: -ag-resolve-param-value($params, $resolved);

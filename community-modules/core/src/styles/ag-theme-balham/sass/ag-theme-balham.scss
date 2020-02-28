@@ -9,4 +9,5 @@
 
 .ag-theme-balham {
     @include ag-theme-balham(ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-default-params));
+    @include ag-v22-to-v23-compatibility-mode();
 }

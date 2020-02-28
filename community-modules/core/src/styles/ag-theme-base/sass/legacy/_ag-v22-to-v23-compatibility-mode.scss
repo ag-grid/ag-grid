@@ -1,8 +1,10 @@
 // Apply all 
 @mixin ag-v22-to-v23-compatibility-mode {
-    @include ag-v22-to-v23-implement-deleted-variables();
-    @include ag-v22-to-v23-alias-deleted-placeholders();
-    @include ag-v22-to-v23-alias-renamed-classes();
+    @if $ag-compatibility-mode == "deprecated" {
+        @include ag-v22-to-v23-implement-deleted-variables();
+        @include ag-v22-to-v23-alias-deleted-placeholders();
+        @include ag-v22-to-v23-alias-renamed-classes();
+    }
 }
 
 @mixin ag-v22-to-v23-implement-deleted-variables {

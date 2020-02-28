@@ -111,7 +111,7 @@ Here is a full list of removed variables. Some have suggested replacements docum
  * `$ag-customize-buttons`, `$ag-button-color`, `$ag-button-text-transform`, `$ag-button-background-color`: Use a CSS rule like `.ag-standard-button { ... }` instead.
  * All `$ag-dialog-*` variables: `$ag-dialog-background-color`, `$ag-dialog-border-color`, `$ag-dialog-border-size`, `$ag-dialog-border-style`, `$ag-dialog-title-background-color`, `$ag-dialog-title-font-family`, `$ag-dialog-title-font-size`, `$ag-dialog-title-font-weight`, `$ag-dialog-title-foreground-color`, `$ag-dialog-title-height`, `$ag-dialog-title-icon-size`, `$ag-dialog-title-padding`
  * `$ag-editor-background-color`
- * `$ag-filter-tool-panel-top-level-row-height` and `$ag-filter-tool-panel-sub-level-row-height`. Use 
+ * `$ag-filter-tool-panel-top-level-row-height` and `$ag-filter-tool-panel-sub-level-row-height`: se 
 `.ag-filter-toolpanel-header` to style all headers, `.ag-filter-toolpanel-instance-header` for leaf level headers, and `.ag-filter-toolpanel-group-level-{X}-header` for a specific level of header, e.g. `.ag-filter-toolpanel-group-level-0-header` for the top level.
  * `$ag-font-weight`, `$ag-secondary-font-family`, `$ag-secondary-font-size`, `$ag-secondary-font-weight`
  * `$ag-foreground-opacity`
@@ -121,12 +121,14 @@ Here is a full list of removed variables. Some have suggested replacements docum
  * `$ag-group-title-background-color`
  * `$ag-group-toolbar-background-color`
  * `$ag-header-background-image`
+ * `$ag-icon-color`: use a CSS rule like `.ag-icon { color: red; }`
  * `$ag-panel-background-color`
- * `$ag-rich-select-item-height` (note - this was removed because it caused issues if it was different to `list-item-height`, so use `list-item-height` instead.
+ * `$ag-rich-select-item-height`: note - this was removed because it caused issues if it was different to `list-item-height`, so use `list-item-height` instead.
  * `$ag-row-floating-background-color`
+ * `$row-border-width`: use `.ag-row { border-width: 2px }`
  * `$ag-row-stub-background-color`
  * `$ag-scroll-spacer-border`
- * `$ag-tooltip-background-color`, `$ag-tooltip-border-color`, `$ag-tooltip-border-radius`, `$ag-tooltip-border-style`, `$ag-tooltip-border-width`, `$ag-tooltip-foreground-color`, `$ag-tooltip-padding`: removed. Use a CSS rule like `.ag-tooltip { padding: 10px; }`
+ * `$ag-tooltip-background-color`, `$ag-tooltip-border-color`, `$ag-tooltip-border-radius`, `$ag-tooltip-border-style`, `$ag-tooltip-border-width`, `$ag-tooltip-foreground-color`, `$ag-tooltip-padding`: use a CSS rule like `.ag-tooltip { padding: 10px; }`
 
 
 ## CSS class additions
@@ -144,7 +146,7 @@ Throughout the grid, many css classes have been renamed to make them more consis
 @import ag-v22-to-v23-alias-renamed-classes();
 ```
 
-This mixin emits Sass `@extend` rules that alias the old names to the new ones where possible.
+This mixin uses Sass `@extend` rules to alias the old names to the new ones where possible.
 
 Note: some of the css class name changes made in v23 are not simple renames, and so aren't covered by the mixin. This is especially true within the Filters Tool Panel. After using the mixin, test your theme and add/edit css rules as necessary.
 
