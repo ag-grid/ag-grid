@@ -37,7 +37,7 @@ var options = {
             '#a43535',
             '#4a7b35',
             '#58969c',
-        ]
+        ],
     }],
     legend: {
         enabled: false,

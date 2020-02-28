@@ -73,9 +73,9 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./bar-with-negative-values.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-values.png" /><br />
-            <div class="chart-gallery-item__name">Bar With Negative Values</div>
+        <a href="./bar-with-labels.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-labels.png" /><br />
+            <div class="chart-gallery-item__name">Bar With Labels</div>
         </a>
     </div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
