@@ -98,9 +98,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             return;
         }
 
-        if (reactComponent.isStatelessComponent() && reactComponent.statelessComponentRendered()) {
-            resolve(null);
-        } else if (!reactComponent.isStatelessComponent() && reactComponent.getFrameworkComponentInstance()) {
+        if (reactComponent.rendered()) {
             resolve(null);
         } else {
             if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
