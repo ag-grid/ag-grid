@@ -195,12 +195,17 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
+        <a href="./custom-marker-shapes.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/custom-marker-shapes.png" /><br />
+            <div class="chart-gallery-item__name">Custom Marker Shapes</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
         <a href="./individual-marker-customisation.php" class="chart-gallery-item__link">
             <img class="chart-gallery-item__thumbnail" src="./thumbnails/individual-marker-customisation.png" /><br />
             <div class="chart-gallery-item__name">Individual Marker Customisation</div>
         </a>
     </div>
-    <div class="chart-gallery-item chart-gallery-item--empty"></div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 

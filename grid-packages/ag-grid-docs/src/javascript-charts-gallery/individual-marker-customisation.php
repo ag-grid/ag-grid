@@ -17,7 +17,7 @@ define('skipInPageNav', true);
 <?= chart_example('Individual Marker Customisation', 'individual-marker-customisation', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./combination-of-different-series-types.php">❮&nbsp;&nbsp;Combination of Different Series Types</a>
+    <a class="chart-navigation__left" href="./custom-marker-shapes.php">❮&nbsp;&nbsp;Custom Marker Shapes</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
