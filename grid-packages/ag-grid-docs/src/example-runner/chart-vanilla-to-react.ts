@@ -1,17 +1,13 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { isInstanceMethod, convertFunctionToProperty } from './parser-utils';
 import { convertTemplate, getImport } from './react-utils';
+import { wrapOptionsUpdateCode } from './chart-utils';
 
-function processFunction(code: string): string {
-    const processedCode = convertFunctionToProperty(code);
-
-    if (processedCode.indexOf('options.') < 0) {
-        return processedCode;
-    }
-
-    return processedCode.replace(
-        /(.*)\{(.*)\}/s,
-        '$1{\nconst options = cloneDeep(this.state.options);\n$2\nthis.setState({ options });\n}');
+export function processFunction(code: string): string {
+    return wrapOptionsUpdateCode(
+        convertFunctionToProperty(code),
+        'const options = cloneDeep(this.state.options);',
+        'this.setState({ options });');
 }
 
 function getImports(componentFilenames: string[]): string[] {

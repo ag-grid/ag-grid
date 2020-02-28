@@ -1,17 +1,10 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { convertFunctionToProperty, isInstanceMethod } from './parser-utils';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
+import { wrapOptionsUpdateCode } from './chart-utils';
 
-function processFunction(code: string): string {
-    const processedCode = convertFunctionToProperty(code);
-
-    if (processedCode.indexOf('options.') < 0) {
-        return processedCode;
-    }
-
-    return processedCode.replace(
-        /(.*)\{(.*)\}/s,
-        '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
+export function processFunction(code: string): string {
+    return wrapOptionsUpdateCode(convertFunctionToProperty(code));
 }
 
 function getImports(componentFileNames: string[]): string[] {
