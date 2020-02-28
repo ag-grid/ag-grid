@@ -44,7 +44,7 @@ export class ReactComponent extends BaseReactComponent {
     public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
 
-        // we populate the innerHTML first, so that autoRowHeight can be calulated first
+        // we populate the innerHTML first, so that autoRowHeight can be calculated first
         if (params.colDef.autoHeight) {
             const reactComponent = React.createElement(this.reactComponent, params);
             this.eParentElement.innerHTML = renderToStaticMarkup(reactComponent);
@@ -85,7 +85,7 @@ export class ReactComponent extends BaseReactComponent {
         this.portal = portal;
         if (!params.colDef.autoHeight) {
             this.parentComponent.mountReactPortal(portal!, this, resolve);
-        } else { // remove the hack that allowed autoHeight to work (note, does not affect display, so it's an visually invisible change to the user)
+        } else { // remove the hack that allowed autoHeight to work (note: does not affect display, so it's a visually invisible change to the user)
             this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
                 resolve(value);
                 setTimeout(() => {
