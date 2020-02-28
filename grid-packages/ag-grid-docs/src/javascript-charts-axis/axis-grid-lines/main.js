@@ -59,7 +59,7 @@ function useGridStyle2() {
     chart.performLayout();
 }
 
-function useGridStyle3() {
+function useDefaultGridStyle() {
     var gridStyle = [{
         stroke: 'rgba(219, 219, 219, 1)',
         lineDash: [4, 2]

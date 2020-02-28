@@ -133,11 +133,64 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
+<p>
+    Please see the <a href="#axisConfig.axisConfig.title">API reference</a>
+    for axis title styling options like font and color.
+</p>
+
+<h3>Example - Axis Title</h3>
+
 <?= chart_example('Axis Title', 'axis-title', 'generated'); ?>
 
 <h2>Ticks</h2>
 
 <h2>Labels</h2>
+
+<p>
+    The axis renders a label next to every tick to show the tick's value. Chart axis labels
+    support the same font and color options as the axis title. Additionally, the distance
+    of the labels from the ticks and their rotation can be configured via the <code>padding</code>
+    and <code>rotation</code> axis properties, respectively.
+</p>
+
+<p>
+    A label formatter function can be used to change the value displayed in the label.
+    It's a handy feature when you need to show units next to values or format number
+    values to a certain precision, for example.
+</p>
+
+<p>
+    A label formatter function receives a single <code>params</code> object which contains:
+    <ul>
+        <li>the raw <code>value</code> of the label (without the default formatting applied)</li>
+        <li>the <code>index</code> of the label</li>
+        <li>the number of <code>fractionDigits</code>, if the value is a number</li>
+        <li>the default label <code>formatter</code>, if the axis is a time axis</li>
+    </ul>
+</p>
+
+<p>
+    For example, to add <code>'%'</code> units to next number values, one can use the following
+    formatter function:
+</p>
+
+<snippet language="ts">
+formatter: function (params) {
+    return params.value + '%';
+}
+</snippet>
+
+<p>
+    The use of the formatter function in the snippet above is demonstrated in the example below:
+</p>
+
+<h3>Example - Label Formatter</h3>
+
+<?= chart_example('Axis Label Formatter', 'axis-label-formatter', 'generated'); ?>
+
+<h3>Example - Time Label Format</h3>
+
+<?= chart_example('Axis Label Formatter', 'time-axis-label-format', 'generated'); ?>
 
 <h2>Grid Lines</h2>
 
