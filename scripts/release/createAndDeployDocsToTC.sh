@@ -15,6 +15,9 @@ rm -rf /var/www/html/*
 mv $FILENAME /var/www/html/
 unzip /var/www/html/$FILENAME -d /var/www/html/
 
-mkdir /var/www/html/lighthouse/
+touch /var/www/html/robots.txt
+echo "User-agent: *
+Disallow: /" > /var/www/html/robots.txt
 
-npx lighthouse http://teamcity.ag-grid.com  --chrome-flags="--headless" --output json --output-path /var/www/html/lighthouse/report.json
+#mkdir /var/www/html/lighthouse/
+#npx lighthouse http://teamcity.ag-grid.com  --chrome-flags="--headless" --output json --output-path /var/www/html/lighthouse/report.json
