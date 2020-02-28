@@ -3,7 +3,7 @@
 ZIP_PREFIX=`date +%Y%m%d`
 
 cd grid-packages/ag-grid-docs
-npx gulp release
+npx gulp release-archive
 cd dist
 
 FILENAME=release_"$ZIP_PREFIX"_v"$ZIP_PREFIX".zip
@@ -15,6 +15,6 @@ rm -rf /var/www/html/*
 mv $FILENAME /var/www/html/
 unzip /var/www/html/$FILENAME -d /var/www/html/
 
-mkdir /var/www/html/lighthouse/
-
-npx lighthouse http://teamcity.ag-grid.com  --chrome-flags="--headless" --output json --output-path /var/www/html/lighthouse/report.json
+touch /var/www/html/robots.txt
+echo "User-agent: *
+Disallow: /" > /var/www/html/robots.txt

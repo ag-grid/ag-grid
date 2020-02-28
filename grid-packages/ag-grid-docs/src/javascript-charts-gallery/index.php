@@ -73,9 +73,9 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./bar-with-negative-values.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-negative-values.png" /><br />
-            <div class="chart-gallery-item__name">Bar With Negative Values</div>
+        <a href="./bar-with-labels.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-labels.png" /><br />
+            <div class="chart-gallery-item__name">Bar With Labels</div>
         </a>
     </div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
@@ -188,6 +188,19 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Real-Time Data Updates</div>
         </a>
     </div>
+    <div class="chart-gallery-item">
+        <a href="./combination-of-different-series-types.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/combination-of-different-series-types.png" /><br />
+            <div class="chart-gallery-item__name">Combination of Different Series Types</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./individual-marker-customisation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/individual-marker-customisation.png" /><br />
+            <div class="chart-gallery-item__name">Individual Marker Customisation</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item chart-gallery-item--empty"></div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 

@@ -1,11 +1,11 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
-import { numericExtent } from "../../../util/array";
+import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Shape } from "../../../scene/shape/shape";
-import linearScale from "../../../scale/linearScale";
+import { LinearScale } from "../../../scale/linearScale";
 import { Marker } from "../../marker/marker";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
@@ -13,6 +13,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
+import ContinuousScale from "../../../scale/continuousScale";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
     x: number;
@@ -38,7 +39,7 @@ export class ScatterSeries extends CartesianSeries {
     private xData: any[] = [];
     private yData: any[] = [];
     private sizeData: number[] = [];
-    private sizeScale = linearScale();
+    private sizeScale = new LinearScale();
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
 
@@ -145,7 +146,9 @@ export class ScatterSeries extends CartesianSeries {
         const {
             xKey,
             yKey,
-            sizeKey
+            sizeKey,
+            xAxis,
+            yAxis
         } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
@@ -159,9 +162,17 @@ export class ScatterSeries extends CartesianSeries {
             this.sizeData = [];
         }
 
-        this.sizeScale.domain = numericExtent(this.sizeData) || [1, 1];
-        this.xDomain = this.fixNumericExtent(numericExtent(this.xData), 'x');
-        this.yDomain = this.fixNumericExtent(numericExtent(this.yData), 'y');
+        this.sizeScale.domain = finiteExtent(this.sizeData) || [1, 1];
+        if (xAxis.scale instanceof ContinuousScale) {
+            this.xDomain = this.fixNumericExtent(finiteExtent(this.xData), 'x');
+        } else {
+            this.xDomain = this.xData;
+        }
+        if (yAxis.scale instanceof ContinuousScale) {
+            this.yDomain = this.fixNumericExtent(finiteExtent(this.yData), 'y');
+        } else {
+            this.yDomain = this.yData;
+        }
 
         return true;
     }
@@ -320,7 +331,8 @@ export class ScatterSeries extends CartesianSeries {
             const seriesDatum = nodeDatum.seriesDatum;
             const xValue = seriesDatum[xKey];
             const yValue = seriesDatum[yKey];
-            let contentHtml = `<b>${xName || xKey}</b>: ${toFixed(xValue)}<br><b>${yName || yKey}</b>: ${toFixed(yValue)}`;
+            let contentHtml = `<b>${xName || xKey}</b>: ${typeof xValue === 'number' ? toFixed(xValue) : xValue}`
+                + `<br><b>${yName || yKey}</b>: ${typeof yValue === 'number' ? toFixed(yValue) : yValue}`;
 
             if (sizeKey) {
                 contentHtml += `<br><b>${sizeName}</b>: ${seriesDatum[sizeKey]}`;

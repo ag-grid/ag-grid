@@ -84,8 +84,11 @@ function getFileContents(path) {
     return fs.readFileSync(path, { encoding: 'utf8' });
 }
 
-function forEachExample(done, name, importType, regex, generateExample, scope = '*') {
-    glob(`src/${scope}/*.php`, {}, (_, files) => {
+function forEachExample(done, name, importType, regex, generateExample, scope = '*', trigger) {
+    const pattern = trigger && trigger.endsWith('.php') ? trigger : `src/${scope}/*.php`;
+    const specificExample = trigger && (matches = /src\/[^\/]+\/([^\/]+)\//.exec(trigger)) && matches[1];
+
+    glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
         let count = 0;
 
@@ -98,7 +101,7 @@ function forEachExample(done, name, importType, regex, generateExample, scope = 
             while ((matches = regex.exec(contents))) {
                 const [example, type, options] = matches.slice(1);
 
-                if (type === 'generated') {
+                if (type === 'generated' && (!specificExample || example === specificExample)) {
                     try {
                         const examplePath = path.join('./src', section, example);
                         generateExample(examplePath, phpArrayToJSON(options));
@@ -111,7 +114,8 @@ function forEachExample(done, name, importType, regex, generateExample, scope = 
             }
         });
 
-        console.log(`-> ${count} ${name} (${importType}) example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+        console.log(`\u2714 ${count} ${name} (${importType}) example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
+
         if (done) {
             done();
         }
@@ -272,17 +276,17 @@ function getGeneratorCode(prefix, importType) {
     return [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular];
 }
 
-function generateExamples(type, importType, scope, done) {
+function generateExamples(type, importType, scope, trigger, done) {
     const exampleGenerator = createExampleGenerator(`./src/example-runner/${type}-`, importType);
     const regex = new RegExp(`${type}_example\\('.+?'\\s*,\\s*'(.+?)'\\s*,\\s*'(.+?)'(.*?)\\);?\\s*\\?>`, 'g');
 
-    forEachExample(done, type, importType, regex, exampleGenerator, scope);
+    forEachExample(done, type, importType, regex, exampleGenerator, scope, trigger);
 }
 
-module.exports.generateGridPackageExamples = (scope, done) => {
+module.exports.generateGridPackageExamples = (scope, trigger, done) => {
     try {
         require('ts-node').register();
-        generateExamples('grid', 'packages', scope, done);
+        generateExamples('grid', 'packages', scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate grid package examples', e);
         if (done) {
@@ -290,10 +294,10 @@ module.exports.generateGridPackageExamples = (scope, done) => {
         }
     }
 };
-module.exports.generateGridModuleExamples = (scope, done) => {
+module.exports.generateGridModuleExamples = (scope, trigger, done) => {
     try {
         require('ts-node').register();
-        generateExamples('grid', 'modules', scope, done);
+        generateExamples('grid', 'modules', scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate grid module examples', e);
         if (done) {
@@ -302,10 +306,10 @@ module.exports.generateGridModuleExamples = (scope, done) => {
     }
 };
 
-module.exports.generateChartExamples = (scope, done) => {
+module.exports.generateChartExamples = (scope, trigger, done) => {
     try {
         require('ts-node').register();
-        generateExamples('chart', 'packages', scope, done);
+        generateExamples('chart', 'packages', scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate chart examples', e);
         if (done) {
@@ -315,8 +319,17 @@ module.exports.generateChartExamples = (scope, done) => {
     }
 };
 
-module.exports.generateExamples = (scope) => {
-    module.exports.generateGridPackageExamples(scope);
-    module.exports.generateGridModuleExamples(scope);
-    module.exports.generateChartExamples(scope);
+module.exports.generateExamples = (scope, trigger) => {
+    if (trigger) {
+        console.log(`\u270E ${trigger} was changed`);
+        console.log(`\u27F3 Re-generating affected examples...`);
+    } else if (scope) {
+        console.log(`\u27F3 Generating examples for ${scope}...`);
+    } else {
+        console.log(`\u27F3 Generating all examples...`);
+    }
+
+    module.exports.generateGridPackageExamples(scope, trigger);
+    module.exports.generateGridModuleExamples(scope, trigger);
+    module.exports.generateChartExamples(scope, trigger);
 };

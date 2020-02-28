@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const gulp = require('gulp');
-const {series, parallel} = require('gulp');
+const { series, parallel } = require('gulp');
 const postcss = require('gulp-postcss');
 const uncss = require('postcss-uncss');
 const inlinesource = require('gulp-inline-source');
@@ -16,7 +16,7 @@ const merge = require('merge-stream');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const PurgecssPlugin = require('purgecss-webpack-plugin');
-const {updateBetweenStrings, getAllModules} = require("./utils");
+const { updateBetweenStrings, getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
 const generateGridPackageExamples = require('./example-generator').generateGridPackageExamples;
@@ -26,7 +26,7 @@ const generateChartExamples = require('./example-generator').generateChartExampl
 const SKIP_INLINE = true;
 const DEV_DIR = "dev";
 
-const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 
 // copy core project libs (community, enterprise, angular etc) to dist/dev folder
 const populateDevFolder = () => {
@@ -37,23 +37,23 @@ const populateDevFolder = () => {
         .concat(chartCommunityModules)
         .forEach(module => {
             copyTasks.push(
-                gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], {cwd: `${module.rootDir}/`})
+                gulp.src([`${module.rootDir}/**/*.*`, '!node_modules/**/*', '!src/**/*'], { cwd: `${module.rootDir}/` })
                     .pipe(gulp.dest(`dist/${DEV_DIR}/${module.publishedName}`)));
         });
 
-    const react = gulp.src(['../../community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../community-modules/react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
-    const angular = gulp.src(['../../community-modules/angular/dist/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
-    const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], {cwd: '../../community-modules/vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
+    const react = gulp.src(['../../community-modules/react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../community-modules/react/' }).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/react`));
+    const angular = gulp.src(['../../community-modules/angular/dist/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*'], { cwd: '../../community-modules/angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/angular`));
+    const vue = gulp.src(['../../community-modules/vue/**/*.*', '!node_modules/**/*', '!src/**/*'], { cwd: '../../community-modules/vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/@ag-grid-community/vue`));
 
-    const chartReact = gulp.src(['../../charts-packages/ag-charts-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
-    const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
-    const chartVue = gulp.src(['../../charts-packages/ag-charts-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../charts-packages/ag-charts-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-vue`));
+    const chartReact = gulp.src(['../../charts-packages/ag-charts-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-react/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-react`));
+    const chartAngular = gulp.src(['../../charts-packages/ag-charts-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-angular`));
+    const chartVue = gulp.src(['../../charts-packages/ag-charts-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../charts-packages/ag-charts-vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-charts-vue`));
 
-    const packageCommunity = gulp.src(['../../grid-packages/ag-grid-community/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-community/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
-    const packageEnterprise = gulp.src(['../../grid-packages/ag-grid-enterprise/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-enterprise/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise`));
-    const packageAngular = gulp.src(['../../grid-packages/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-angular/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
-    const packageReact = gulp.src(['../../grid-packages/ag-grid-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-react/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
-    const packageVue = gulp.src(['../../grid-packages/ag-grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], {cwd: '../../grid-packages/ag-grid-vue/'}).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
+    const packageCommunity = gulp.src(['../../grid-packages/ag-grid-community/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-community/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
+    const packageEnterprise = gulp.src(['../../grid-packages/ag-grid-enterprise/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-enterprise/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise`));
+    const packageAngular = gulp.src(['../../grid-packages/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
+    const packageReact = gulp.src(['../../grid-packages/ag-grid-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-react/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
+    const packageVue = gulp.src(['../../grid-packages/ag-grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
 
     return merge(
         ...copyTasks,
@@ -77,7 +77,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
     ];
 
     boilerPlateLocation.forEach(boilerPlateLocation => {
-        fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`)
+        fs.renameSync(`${boilerPlateLocation}/systemjs.prod.config.js`, `${boilerPlateLocation}/systemjs.config.js`);
     });
 
     const utilFileContent = fs.readFileSync('./dist/example-runner/example-mappings.php', 'UTF-8');
@@ -108,7 +108,7 @@ updateFrameworkBoilerplateSystemJsEntry = (done) => {
 
 const processSource = () => {
     // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
-    const phpFilter = filter('**/*.php', {restore: true});
+    const phpFilter = filter('**/*.php', { restore: true });
     const bootstrapFilter = filter('src/dist/bootstrap/css/bootstrap.css', {
         restore: true
     });
@@ -166,14 +166,14 @@ const bundleSite = (production) => {
     };
     webpackConfig.plugins.push(
         new PurgecssPlugin({
-            paths: glob.sync(`${CSS_SRC_PATHS.src}/**/*.{php,js,ts,html}`, {nodir: true}),
+            paths: glob.sync(`${CSS_SRC_PATHS.src}/**/*.{php,js,ts,html}`, { nodir: true }),
             whitelist: cssWhitelist,
             whitelistPatterns: cssWhitelistPatterns
         })
     );
 
     if (production) {
-        webpackConfig.plugins.push(new UglifyJSPlugin({sourceMap: true}));
+        webpackConfig.plugins.push(new UglifyJSPlugin({ sourceMap: true }));
         webpackConfig.devtool = false;
         webpackConfig.mode = 'production';
         webpackConfig.optimization = {
@@ -220,26 +220,17 @@ const replaceAgReferencesWithCdnLinks = () => {
 };
 
 gulp.task('generate-grid-package-examples', (done) => {
-    generateGridPackageExamples.bind(
-        null,
-        '*',
-        done
-    )();
+    generateGridPackageExamples.bind(null, '*', null, done)();
 });
+
 gulp.task('generate-grid-module-examples', (done) => {
-    generateGridModuleExamples.bind(
-        null,
-        '*',
-        done
-    )();
+    generateGridModuleExamples.bind(null, '*', null, done)();
 });
+
 gulp.task('generate-chart-examples', (done) => {
-    generateChartExamples.bind(
-        null,
-        '*',
-        done,
-    )();
+    generateChartExamples.bind(null, '*', null, done)();
 });
+
 gulp.task('populate-dev-folder', populateDevFolder);
 gulp.task('update-dist-systemjs-files', updateFrameworkBoilerplateSystemJsEntry);
 gulp.task('process-src', processSource);
@@ -258,4 +249,3 @@ gulp.task('serve-legacy', require('./dev-server').bind(null, false, true, false)
 gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true, true, false));
 gulp.task('serve', require('./dev-server').bind(null, true, false, false));
 gulp.task('serve-check', require('./dev-server').bind(null, false, true, true));
-

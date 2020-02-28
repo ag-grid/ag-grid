@@ -419,6 +419,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Server-side Configuration",
+                    "url": "javascript-grid-server-side-model-configuration/",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Sorting / Filtering",
                     "url": "javascript-grid-server-side-model-sort-filter/",
                     "enterprise": true
@@ -1054,8 +1059,8 @@
                     "url": "javascript-charts-gallery/percentage-bar.php"
                   },
                   {
-                    "title": "Bar With Negative Values",
-                    "url": "javascript-charts-gallery/bar-with-negative-values.php"
+                    "title": "Bar With Labels",
+                    "url": "javascript-charts-gallery/bar-with-labels.php"
                   }
                 ]
               },
@@ -1143,6 +1148,14 @@
                   {
                     "title": "Real-Time Data Updates",
                     "url": "javascript-charts-gallery/real-time-data-updates.php"
+                  },
+                  {
+                    "title": "Combination of Different Series Types",
+                    "url": "javascript-charts-gallery/combination-of-different-series-types.php"
+                  },
+                  {
+                    "title": "Individual Marker Customisation",
+                    "url": "javascript-charts-gallery/individual-marker-customisation.php"
                   }
                 ]
               }

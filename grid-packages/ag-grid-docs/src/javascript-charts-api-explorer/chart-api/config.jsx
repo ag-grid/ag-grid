@@ -312,16 +312,16 @@ export const axisConfig = Object.freeze({
             max: 359,
             unit: '&deg;',
         },
-        mirrored: {
-            default: false,
-            description: 'By default, labels and ticks are positioned to the left of the axis. Setting this to <code>true</code> will position them on the right instead.',
-            editor: BooleanEditor,
-        },
-        parallel: {
-            default: false,
-            description: 'By default, labels are rendered perpendicular to the axis. Setting this to <code>true</code> will render them parallel to the line instead.',
-            editor: BooleanEditor,
-        },
+        // mirrored: {
+        //     default: false,
+        //     description: 'By default, labels and ticks are positioned to the left of the axis. Setting this to <code>true</code> will position them on the right instead.',
+        //     editor: BooleanEditor,
+        // },
+        // parallel: {
+        //     default: false,
+        //     description: 'By default, labels are rendered perpendicular to the axis. Setting this to <code>true</code> will render them parallel to the line instead.',
+        //     editor: BooleanEditor,
+        // },
         format: {
             type: 'string',
             description: 'Format string used when rendering labels for time axes. For more information on the structure of the string, <a href="./javascript-grid-charts-integrated-customisation-cartesian/#format-string">click here</a>.',

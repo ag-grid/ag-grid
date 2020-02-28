@@ -1,17 +1,10 @@
 import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
 import { templatePlaceholder } from './chart-vanilla-src-parser';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
+import { wrapOptionsUpdateCode } from './chart-utils';
 
 function processFunction(code: string): string {
-    const processedCode = removeFunctionKeyword(code);
-
-    if (processedCode.indexOf('options.') < 0) {
-        return processedCode;
-    }
-
-    return processedCode.replace(
-        /(.*)\{(.*)\}/s,
-        '$1{\nconst options = cloneDeep(this.options);\n$2\nthis.options = options;\n}');
+    return wrapOptionsUpdateCode(removeFunctionKeyword(code));
 }
 
 function getImports(componentFileNames: string[]): string[] {

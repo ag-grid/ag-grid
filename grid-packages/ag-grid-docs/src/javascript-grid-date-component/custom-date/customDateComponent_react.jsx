@@ -14,7 +14,7 @@ export default class CustomDateComponent extends Component {
         //Inlining styles to make simpler the component
         return (
             <div className="ag-input-wrapper custom-date-filter"  role="presentation" ref="flatpickr">
-                <input type='text' data-input />
+                <input type="text" data-input style="width: 100%;" />
                 <a class='input-button' title='clear' data-clear>
                     <i class='fa fa-times'></i>
                 </a>

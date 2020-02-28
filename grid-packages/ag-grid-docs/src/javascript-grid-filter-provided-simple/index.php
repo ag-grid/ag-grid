@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td class="parameter-key">filterOptions</td>
         <td>
-            What <a href="filterOptions">Filter Options</a> to present to the user.
+            What <a href="#filterOptions">Filter Options</a> to present to the user.
         </td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>

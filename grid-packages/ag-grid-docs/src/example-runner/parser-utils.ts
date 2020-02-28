@@ -1,6 +1,7 @@
 export type ImportType = 'packages' | 'modules';
 
 const moduleMapping = require('../documentation-main/modules.json');
+
 export function modulesProcessor(modules: string[]) {
     const moduleImports = [];
     const suppliedModules = [];
@@ -14,7 +15,7 @@ export function modulesProcessor(modules: string[]) {
                 found = true;
             }
         });
-        if(!found) {
+        if (!found) {
             console.error(`Could not find module ${module} in modules.json`);
         }
     });

@@ -42,7 +42,8 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 100,
+        flex: 1,
+        minWidth: 150,
         // restrict what aggregation functions the columns can have,
         // include a custom function 'random' that just returns a
         // random number
@@ -52,7 +53,7 @@ var gridOptions = {
         filter: true
     },
     autoGroupColumnDef: {
-        width: 150
+        width: 180
     },
     components: {
         customAgeFilter: createCustomAgeFilter()

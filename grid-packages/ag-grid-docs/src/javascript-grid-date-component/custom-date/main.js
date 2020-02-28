@@ -31,7 +31,8 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        filter: true,
+        resizable: true
     },
     floatingFilter: true,
     columnDefs: columnDefs,

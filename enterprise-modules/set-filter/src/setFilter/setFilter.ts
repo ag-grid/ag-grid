@@ -71,21 +71,22 @@ export class SetFilter extends ProvidedFilter {
 
     protected setModelIntoUi(model: SetFilterModel): void {
         this.resetUiToDefaults();
-        if (model) {
-            if (model instanceof Array) {
-                const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
-                    'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
-                    'ag-Grid will have the array version of the model removed.';
-                _.doOnce( ()=> console.warn(message), 'setFilter.modelAsArray');
-            }
 
-            // also supporting old filter model for backwards compatibility
-            const newValues: string[] | null = (model instanceof Array) ? model : model.values;
+        if (!model) { return; }
 
-            this.valueModel.setModel(newValues);
-            this.updateSelectAll();
-            this.virtualList.refresh();
+        if (model instanceof Array) {
+            const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
+                'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
+                'ag-Grid will have the array version of the model removed.';
+            _.doOnce( ()=> console.warn(message), 'setFilter.modelAsArray');
         }
+
+        // also supporting old filter model for backwards compatibility
+        const newValues: string[] | null = (model instanceof Array) ? model : model.values;
+
+        this.valueModel.setModel(newValues);
+        this.updateSelectAll();
+        this.virtualList.refresh();
     }
 
     public getModelFromUi(): SetFilterModel | null {
@@ -108,16 +109,14 @@ export class SetFilter extends ProvidedFilter {
         super.setParams(params);
 
         this.checkSetFilterDeprecatedParams(params);
-
         this.setFilterParams = params;
-
         this.initialiseFilterBodyUi();
 
-        const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange
+        const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange &&
                                     // sync values only with CSRM
-                                    && this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE
+                                    this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
                                     // sync only needed if user not providing values
-                                    && !params.values;
+                                    !params.values;
 
         if (syncValuesAfterDataChange) {
             this.setupSyncValuesAfterDataChange();
@@ -140,7 +139,9 @@ export class SetFilter extends ProvidedFilter {
 
     private resetFilterValuesAndReapplyModel(): void {
         const modelBeforeUpdate = this.getModel();
+
         this.resetFilterValues();
+
         if (modelBeforeUpdate) {
             this.setModel(modelBeforeUpdate);
         }
@@ -174,6 +175,7 @@ export class SetFilter extends ProvidedFilter {
     private initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList('filter');
         this.getContext().wireBean(this.virtualList);
+
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (eSetFilterList) {
@@ -214,6 +216,13 @@ export class SetFilter extends ProvidedFilter {
             _.setDisplayed(this.eSelectAllContainer, false);
         }
 
+        this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_SPACE) {
+                e.preventDefault();
+                this.onSelectAll(e);
+            }
+        });
+
         this.virtualList.refresh();
     }
 
@@ -249,9 +258,9 @@ export class SetFilter extends ProvidedFilter {
 
     public applyModel(): boolean {
         const res = super.applyModel();
-
         // keep the appliedModelValuesMapped in sync with the applied model
         const appliedModel = this.getModel() as SetFilterModel;
+
         if (appliedModel) {
             this.appliedModelValuesMapped = {};
             appliedModel.values.forEach( value => this.appliedModelValuesMapped![value] = true );
@@ -278,9 +287,8 @@ export class SetFilter extends ProvidedFilter {
         if (Array.isArray(value)) {
             for (let i = 0; i < value.length; i++) {
                 const valueExistsInMap = !!this.appliedModelValuesMapped![value[i]];
-                if (valueExistsInMap) {
-                    return true;
-                }
+
+                if (valueExistsInMap) { return true; }
             }
             return false;
         }
@@ -291,8 +299,8 @@ export class SetFilter extends ProvidedFilter {
     public onNewRowsLoaded(): void {
         const valuesType = this.valueModel.getValuesType();
         const valuesTypeProvided =
-            valuesType === SetFilterModelValuesType.PROVIDED_CB
-            || valuesType === SetFilterModelValuesType.PROVIDED_LIST;
+            valuesType === SetFilterModelValuesType.PROVIDED_CB ||
+            valuesType === SetFilterModelValuesType.PROVIDED_LIST;
 
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.
@@ -330,6 +338,7 @@ export class SetFilter extends ProvidedFilter {
 
             actualToSelect.forEach(option => this.valueModel.selectValue(option));
             this.virtualList.refresh();
+
             if (notify) {
                 // this.onUiChangedListener(true);
                 this.onUiChanged();
@@ -378,30 +387,36 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterInput() {
         const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.getValue());
+
         if (miniFilterChanged) {
             this.virtualList.refresh();
         }
+
         this.updateSelectAll();
     }
 
     private onSelectAll(event: Event) {
         event.preventDefault();
         _.addAgGridEventPath(event);
+
         if (this.selectAllState === true) {
             this.selectAllState = false;
         } else {
             this.selectAllState = true;
         }
+
         this.doSelectAll();
     }
 
     private doSelectAll(): void {
         const checked = this.selectAllState === true;
+
         if (checked) {
             this.valueModel.selectAllUsingMiniFilter();
         } else {
             this.valueModel.selectNothingUsingMiniFilter();
         }
+
         this.virtualList.refresh();
         this.onUiChanged();
         this.updateSelectAll();
@@ -415,7 +430,6 @@ export class SetFilter extends ProvidedFilter {
         }
 
         this.updateSelectAll();
-
         this.onUiChanged();
     }
 
