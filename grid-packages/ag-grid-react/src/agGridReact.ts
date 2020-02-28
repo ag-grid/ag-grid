@@ -21,6 +21,7 @@ export interface AgGridReactProps extends GridOptions {
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
+    disableStaticMarkup?: boolean;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
@@ -241,6 +242,10 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             this.api = null;
         }
         this.destroyed = true;
+    }
+
+    public isDisableStaticMarkup(): boolean {
+        return !!this.props.disableStaticMarkup;
     }
 }
 

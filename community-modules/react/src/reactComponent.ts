@@ -6,6 +6,7 @@ import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
 import generateNewKey from "./keyGenerator";
+import {renderToStaticMarkup} from "react-dom/server";
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -18,6 +19,7 @@ export class ReactComponent extends BaseReactComponent {
     private portal: ReactPortal | null = null;
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
+    private staticMarkup: HTMLElement | null = null;
 
     constructor(reactComponent: any, parentComponent: AgGridReact) {
         super();
@@ -40,8 +42,11 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     public init(params: any): Promise<void> {
+        this.eParentElement = this.createParentElement(params);
+
+        this.renderStaticMarkup(params);
+
         return new Promise<void>((resolve: any) => {
-            this.eParentElement = this.createParentElement(params);
             this.createReactComponent(params, resolve);
         });
     }
@@ -71,7 +76,11 @@ export class ReactComponent extends BaseReactComponent {
             generateNewKey() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal!, this, resolve);
+        this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
+            resolve(value);
+
+            this.removeStaticMarkup();
+        });
     }
 
     private addParentContainerStyleAndClasses() {
@@ -110,7 +119,43 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     private static isStateless(Component: any) {
-        return (typeof Component === 'function' &&  !(Component.prototype && Component.prototype.isReactComponent))
-            || (typeof Component === 'object' &&  Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
+        return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
+            || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
+    }
+
+    /*
+     * Attempt to render the component as static markup if possible
+     * What this does is eliminate any visible flicker for the user in the scenario where a component is destroyed and
+     * recreated with exactly the same data (ie with force refresh)
+     * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
+     */
+    private renderStaticMarkup(params: any) {
+        if(this.parentComponent.isDisableStaticMarkup()) {
+            return;
+        }
+
+        const reactComponent = React.createElement(this.reactComponent, params);
+        try {
+            const staticMarkup = renderToStaticMarkup(reactComponent);
+            if (staticMarkup) {
+                this.eParentElement.innerHTML = staticMarkup;
+                this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+            }
+        } catch (e) {
+            // we tried - this can happen if using context/stores etc
+        }
+    }
+
+    private removeStaticMarkup() {
+        if(this.parentComponent.isDisableStaticMarkup()) {
+            return;
+        }
+
+        setTimeout(() => {
+            if (this.staticMarkup) {
+                this.staticMarkup.remove();
+                this.staticMarkup = null;
+            }
+        })
     }
 }
