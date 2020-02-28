@@ -419,6 +419,11 @@
                     "enterprise": true
                   },
                   {
+                    "title": "Cache Configuration",
+                    "url": "javascript-grid-server-side-model-cache-configuration/",
+                    "enterprise": true
+                  },
+                  {
                     "title": "Sorting / Filtering",
                     "url": "javascript-grid-server-side-model-sort-filter/",
                     "enterprise": true

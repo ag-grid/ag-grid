@@ -9,38 +9,38 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise"> Server-side Row Model </h1>
 
 <p class="lead">
-    When working with very large datasets, use the Server-side Row Model to lazy-load data while performing server-side
-    operations such as grouping, filtering and pivoting.
+    This section gives an overview of the Server-side Row Model and provides guidance on when it should be used.
 </p>
 
 <? enterprise_feature("Server-side Row Model"); ?>
+
+<p>
+    The Server-side Row Model allows applications to work with very large datasets by delegating grid operations such
+    as grouping, sorting and pivoting to the server. This is demonstrated below:
+</p>
+
+<p>
+    <img alt="Server-side Row Model" src="server-side-showcase.gif" style="width: 100%; border: lightgray solid 1px">
+</p>
+
+<p>
+    Before diving into the details of how to use the Server-side Row Model, the next section provides an overview and
+    explains when it should be used in place of the default <a href="/javascript-grid-client-side-model/">Client-side Row Model</a>.
+</p>
 
 <h2>Overview</h2>
 
 <p>
     When designing a grid based application, one of the key considerations is how much data needs to be sent from
-    the server to the client? As a developer using ag-Grid you won't need to switch between grids based on the
-    answer to this question, instead just select the appropriate Row Model used by the grid.
+    the server to the client? The answer to this question determines which Row Model should be selected for the grid.
 </p>
-
-<note>
-    <p>
-        Also see our guides which provide reference implementations for numerous data sources:
-    <ul>
-        <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
-        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
-        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
-        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
-    </ul>
-    </p>
-</note>
 
 <h4>Client-side Row Model</h4>
 
 <p>
     The simplest approach is to send all row data to the browser in response to a single request at initialisation.
     For this use case the <a href="/javascript-grid-client-side-model/">Client-side Row Model</a> has been designed.
-
+</p>
 <p>
     This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 </p>
@@ -82,7 +82,6 @@ include '../documentation-main/documentation_header.php';
     The browser will never run out of heap space as the grid will automatically purge out-of-range records.
 </p>
 
-
 <h2>Features</h2>
 
 <p>
@@ -123,12 +122,22 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
+<note>
+    <p>
+        Also see our guides which provide reference implementations for numerous data sources:
+    <ul>
+        <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
+        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
+        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
+    </ul>
+    </p>
+</note>
 
 <h2>Next Up</h2>
 
 <p>
-    To see how the above interfaces are implemented, continue to the next section: <a href="../javascript-grid-server-side-model-infinite/">Infinite Scroll</a>.
+    To get started using the Server-side Row Model see the next section on: <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>.
 </p>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

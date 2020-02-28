@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Charts</h1>
+    <h1 class="heading-enterprise">Integrated Charts</h1>
 
     <p class="lead">
        This section introduces the grid's integrated charting functionality, which allows users to chart directly inside
