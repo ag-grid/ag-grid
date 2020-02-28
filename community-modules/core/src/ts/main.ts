@@ -299,6 +299,7 @@ export {
     ProcessChartOptionsParams
 } from "./entities/gridOptions";
 
+export * from "./propertyKeys";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { ColumnGroupChild } from "./entities/columnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";

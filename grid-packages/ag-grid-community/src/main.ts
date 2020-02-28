@@ -7,4 +7,5 @@ ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(InfiniteRowModelModule);
 ModuleRegistry.register(CsvExportModule);
 
+export * from "@ag-grid-community/csv-export";
 export * from "@ag-grid-community/core";
