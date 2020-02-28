@@ -81,6 +81,9 @@
         },
         "Combination of Different Series Types": {
             "description": "This example demonstrates the combination of different types of series into one chart."
+        },
+        "Individual Marker Customisation": {
+            "description": "This example shows how individual markers can be customised based on the datum they represent."
         }
     }
 }
