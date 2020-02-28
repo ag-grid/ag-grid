@@ -87,6 +87,9 @@
         },
         "Individual Marker Customisation": {
             "description": "This example shows how individual markers can be customised based on the datum they represent."
+        },
+        "Axis Customisation": {
+            "description": "This example shows how many aspects of the axes can be customised, including titles, labels, ticks, and grid lines."
         }
     }
 }

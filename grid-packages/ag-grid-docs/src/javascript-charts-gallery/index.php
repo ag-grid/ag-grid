@@ -206,7 +206,13 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Individual Marker Customisation</div>
         </a>
     </div>
-    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item">
+        <a href="./axis-customisation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/axis-customisation.png" /><br />
+            <div class="chart-gallery-item__name">Axis Customisation</div>
+        </a>
+    </div>
+    
 </div>
 
 <h2>Next Up</h2>

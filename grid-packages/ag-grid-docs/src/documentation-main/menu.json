@@ -1160,6 +1160,10 @@
                   {
                     "title": "Individual Marker Customisation",
                     "url": "javascript-charts-gallery/individual-marker-customisation.php"
+                  },
+                  {
+                    "title": "Axis Customisation",
+                    "url": "javascript-charts-gallery/axis-customisation.php"
                   }
                 ]
               }

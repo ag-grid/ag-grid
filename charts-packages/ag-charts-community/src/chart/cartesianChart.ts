@@ -96,7 +96,7 @@ export class CartesianChart extends Chart {
                     break;
                 case ChartAxisPosition.Right:
                     shrinkRect.width -= axisThickness;
-                    axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width + 1);
+                    axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width);
                     axis.label.mirrored = true;
                     break;
                 case ChartAxisPosition.Bottom:
