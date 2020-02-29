@@ -2083,6 +2083,7 @@ export class CellComp extends Component {
 
         let newValueExists = false;
         let newValue: any;
+        let oldValue = this.getValue();
 
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
@@ -2140,7 +2141,7 @@ export class CellComp extends Component {
 
         this.setInlineEditingClass();
 
-        if (newValueExists) {
+        if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
             // getting triggered, which results in all cells getting refreshed. we do not want this refresh
             // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.

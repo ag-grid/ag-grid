@@ -42,6 +42,7 @@ export interface DataChangedEvent extends RowNodeEvent {
 export interface CellChangedEvent extends RowNodeEvent {
     column: Column;
     newValue: any;
+    oldValue: any;
 }
 
 export class RowNode implements IEventEmitter {
@@ -493,9 +494,12 @@ export class RowNode implements IEventEmitter {
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any): void {
         const column = this.columnController.getPrimaryColumn(colKey);
+        const oldValue = this.valueService.getValue(column, this);
+
+        if (newValue === oldValue) { return; }
 
         this.valueService.setValue(this, column, newValue);
-        this.dispatchCellChangedEvent(column, newValue);
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
@@ -503,14 +507,20 @@ export class RowNode implements IEventEmitter {
 
         if (_.missing(this.groupData)) { this.groupData = {}; }
 
-        this.groupData[column.getColId()] = newValue;
-        this.dispatchCellChangedEvent(column, newValue);
+        const columnId = column.getColId();
+        const oldValue = this.groupData[columnId];
+
+        if (oldValue === newValue) { return; }
+
+        this.groupData[columnId] = newValue;
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     }
 
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
         // find out all keys that could potentially change
         const colIds = _.getAllKeysInObjects([this.aggData, newAggData]);
+        const oldAggData = this.aggData;
 
         this.aggData = newAggData;
 
@@ -519,7 +529,8 @@ export class RowNode implements IEventEmitter {
             colIds.forEach(colId => {
                 const column = this.columnController.getGridColumn(colId);
                 const value = this.aggData ? this.aggData[colId] : undefined;
-                this.dispatchCellChangedEvent(column, value);
+                const oldValue = oldAggData ? oldAggData[colId] : undefined;
+                this.dispatchCellChangedEvent(column, value, oldValue);
             });
         }
     }
@@ -535,12 +546,13 @@ export class RowNode implements IEventEmitter {
         return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
-    private dispatchCellChangedEvent(column: Column, newValue: any): void {
+    private dispatchCellChangedEvent(column: Column, newValue: any, oldValue: any): void {
         const cellChangedEvent: CellChangedEvent = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
             column: column,
-            newValue: newValue
+            newValue: newValue,
+            oldValue: oldValue
         };
         this.dispatchLocalEvent(cellChangedEvent);
     }

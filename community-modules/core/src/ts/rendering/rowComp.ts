@@ -515,7 +515,7 @@ export class RowComp extends Component {
         this.postProcessCss();
     }
 
-    private onRowNodeCellChanged(event: CellChangedEvent): void {
+    private onRowNodeCellChanged(): void {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
     }

@@ -39,13 +39,14 @@ export class SortService {
         this.postSortFunc = this.gridOptionsWrapper.getPostSortFunc();
     }
 
-    public sort(sortOptions: SortOption[],
-                sortActive: boolean,
-                deltaSort: boolean,
-                dirtyLeafNodes: { [nodeId: string]: boolean },
-                changedPath: ChangedPath,
-                noAggregations: boolean): void {
-
+    public sort(
+        sortOptions: SortOption[],
+        sortActive: boolean,
+        deltaSort: boolean,
+        dirtyLeafNodes: { [nodeId: string]: boolean },
+        changedPath: ChangedPath,
+        noAggregations: boolean
+    ): void {
         const callback = (rowNode: RowNode) => {
 
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -78,7 +79,9 @@ export class SortService {
     private doFullSort(rowNode: RowNode, sortOptions: SortOption[]): SortedRowNode[] {
         const sortedRowNodes: SortedRowNode[] = rowNode.childrenAfterFilter
             .map(this.mapNodeToSortedNode.bind(this));
+
         sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));
+
         return sortedRowNodes;
     }
 
