@@ -18,6 +18,11 @@ include '../documentation-main/documentation_header.php';
     operations such as sorting or grouping more data will be requested via the datasource.
 </p>
 
+<note>
+    The Server-side Datasource does not impose any  restrictions on the server side technologies used. It is left up
+    to applications to decide how and where data is sourced for the grid.
+</note>
+
 <h2>Enabling Server-side Row Model</h2>
 
 <p>
@@ -36,38 +41,28 @@ include '../documentation-main/documentation_header.php';
     a datasource that conforms to the <a href="#datasource-interface">Server-side Datasource Interface</a>.
 </p>
 
-<p>
-    This interface does not impose any restrictions on the server side technologies used.
-</p>
-
-<p> The following snippet shows a possible datasource implementation: </p>
+<p> The following snippet shows a simple datasource implementation: </p>
 
 <snippet>
-var datasource = function getRows(params) {
-    var server = lookupServer();
+function createDatasource(server) {
+    return {
+        // called by the grid when more rows are required
+        getRows: function(params) {
 
-    // get data for request from server
-    var response = server.getData(params.request);
+            // get data for request from server
+            var response = server.getData(params.request);
 
-    // supply rows for requested block to grid
-    params.successCallback(response.rows, response.lastRowIndex);
+            if (response.success) {
+                // supply rows for requested block to grid
+                params.successCallback(response.rows, response.lastRow);
+            } else {
+                // inform grid request failed
+                params.failCallback();
+            }
+        }
+    };
 }
 </snippet>
-
-<!--<snippet>-->
-<!--function createServerSideDatasource(server) {-->
-<!--    return {-->
-<!--        getRows: function(params) {-->
-<!---->
-<!--            // get data for request from server-->
-<!--            var response = server.getData(params.request);-->
-<!---->
-<!--            // supply rows for requested block to grid-->
-<!--            params.successCallback(response.rows, response.lastRowIndex);-->
-<!--        }-->
-<!--    };-->
-<!--}-->
-<!--</snippet>-->
 
 <p>
 Notice that the datasource contains a single method <code>getRows(params)</code> which is called by the grid when more
@@ -81,14 +76,15 @@ Note the <code>lastRowIndex</code> can be optionally supplied so the grid. This 
 the scrollbar match the entire dataset contained on the server.
 </p>
 
+<h2>Registering the Datasource</h2>
+
 <p>
 The datasource is registered with the grid via the grid api as follows:
 </p>
 
 <snippet>
-// register Server-side Datasource with the grid
-var datasource = new ServerSideDatasource();
-gridOptions.api.setServerSideDatasource(datasource);
+var myDatasource = createDatasource();
+gridOptions.api.setServerSideDatasource(myDatasource);
 </snippet>
 
 <h2>Example - Infinite Scroll</h2>
@@ -100,7 +96,8 @@ gridOptions.api.setServerSideDatasource(datasource);
 <ul class="content">
     <li>The Server-side Row Model is selected using the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
     <li>A datasource is registered with the grid using: <code>api.setServerSideDatasource(datasource)</code>.</li>
-    <li>When scrolling down there is a delay when more rows are fetched from the server.</li>
+    <li>When scrolling down there is a delay as more rows are fetched from the server.</li>
+    <li>Open the browsers dev console to view the contents of the requests made by the grid for more rows.</li>
 </ul>
 
 <?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
@@ -198,7 +195,7 @@ export interface ColumnVO {
 
 <p>
     Continue to the next section to learn about
-     <a href="../javascript-grid-server-side-model-cache-configuration/">Cache Configuration</a>.
+     <a href="../javascript-grid-server-side-model-configuration/"> Server-side Configuration</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

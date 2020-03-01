@@ -6,7 +6,6 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
     <h1>Selection Overview</h1>
 
     <p class="lead">

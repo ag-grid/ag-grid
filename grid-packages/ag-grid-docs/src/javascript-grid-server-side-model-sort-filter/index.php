@@ -14,6 +14,15 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Sorting</h2>
 
+<p>
+    From this point onwards most of the examples use a fake server that generates sql to imitate how a real server
+    might use the requests send from the grid, in this case to dynamically create sql queries.
+
+    This is to emphasise the separation of the responsibilities between the grid, client application and server.
+
+    alasql a javascript sql database that is capable of running in a browser.
+</p>
+
 <?= grid_example('Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Simple Column Filters</h2>

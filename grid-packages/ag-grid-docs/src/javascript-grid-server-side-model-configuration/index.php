@@ -20,17 +20,18 @@ include '../documentation-main/documentation_header.php';
 <h2>Server-side Cache</h2>
 
 <p>
-    At the heart of the Server-side Row Model lies the Server-side Cache. When there are no row groups, like in the
-    example covered in this section, a single cache will be associated with the root level node.
+    At the heart of the Server-side Row Model lies the Server-side Cache. There is a cache containing the top level
+    rows (i.e. on the root node) and for each individual <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> level.
 </p>
 
 <p>
     When the grid loads it will retrieve an initial number (as per configuration) of blocks containing rows. As the user
-    scrolls down, more blocks will be loaded via the server-side datasource.
+    scrolls down, more blocks will be loaded via the
+    <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>.
 </p>
 
 <p>
-    The following illustration shows how the grid arranges rows in blocks which are in turn contained in a cache:
+    The following illustration shows how the grid arranges rows into blocks which are in turn contained in a cache:
 </p>
 
 <p>
@@ -54,7 +55,25 @@ include '../documentation-main/documentation_header.php';
         <th>Property</th>
         <th>Description</th>
     </tr>
-    <tr id="property-overflow-size">
+    <tr>
+        <th>cacheBlockSize</th>
+        <td>
+            <p>How many rows for each block in the cache, i.e. how many rows returned from the server at a time.
+               The default is 100 rows per block.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <th>maxBlocksInCache</th>
+        <td>
+            <p>How many blocks to cache in the client. Default is no limit, so every requested
+               block is kept. Use this if you have memory concerns, so blocks least recently viewed are purged.
+               If used, make sure you have enough blocks in the cache to display one whole view of the table
+               (ie what's within the scrollable area), otherwise it won't work and an infinite loop of
+               requesting blocks will happen.</p>
+        </td>
+    </tr>
+    <tr>
         <th>cacheOverflowSize</th>
         <td>
             <p>When infinite scrolling is active, this says how many rows beyond the current last row
@@ -62,22 +81,19 @@ include '../documentation-main/documentation_header.php';
                 and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.</p>
         </td>
     </tr>
-    <tr id="property-max-concurrent-requests">
+    <tr>
         <th>maxConcurrentDatasourceRequests</th>
         <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
                 Default is 1, thus by default, only one request will be active at any given time.</p></td>
     </tr>
-    <tr id="property-max-blocks-in-cache">
-        <th>maxBlocksInCache</th>
+    <tr>
+        <th>blockLoadDebounceMillis</th>
         <td>
-            <p>How many blocks to cache in the client. Default is no limit, so every requested
-                block is kept. Use this if you have memory concerns, so blocks least recently viewed are purged.
-                If used, make sure you have enough blocks in the cache to display one whole view of the table
-                (ie what's within the scrollable area), otherwise it won't work and an infinite loop of
-                requesting blocks will happen.</p>
+            <p>Prevents blocks loading until scrolling has stopped. When row count (i.e. lastRowIndex) is known.
+                setting his property in millis will enable skipping over blocks when scrolling.</p>
         </td>
     </tr>
-    <tr id="property-pagination-initial-row-count">
+    <tr>
         <th>infiniteInitialRowCount</th>
         <td>
             <p>How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
@@ -85,22 +101,14 @@ include '../documentation-main/documentation_header.php';
                 additional data.</p>
         </td>
     </tr>
-    <tr id="property-infinite-block-size">
-        <th>cacheBlockSize</th>
-        <td>
-            <p>How many rows for each block in the cache.</p>
-        </td>
-    </tr>
-
-    <tr id="property-infinite-purge-closed-row-nodes">
+    <tr>
         <th>purgeClosedRowNodes</th>
         <td>
             <p>When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only
             applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
         </td>
     </tr>
-
-    <tr id="property-infinite-purge-closed-row-nodes">
+    <tr>
         <th>serverSideSortingAlwaysResets</th>
         <td>
             <p>When enabled, always refreshes top level groups regardless of which column was sorted. This property only
@@ -109,20 +117,53 @@ include '../documentation-main/documentation_header.php';
     </tr>
 </table>
 
-<h2>Example - Block Load Debounce</h2>
+<h2>Cache Debugging</h2>
 
 <p>
-    The example below demonstrates lazy loading of data with an infinite scroll. Notice the following:
+    When experimenting with different configurations it is useful to enable debug mode as follows:
+</p>
+
+<snippet>
+gridOptions.debug = true;
+</snippet>
+
+<p>
+    The screenshot below is taken from the browsers dev console when <code>debug</code> is enabled:
+</p>
+
+<p>
+    <img alt="Server-side Row Model" src="debug.png" style="width: 100%; border: lightgray solid 1px">
+</p>
+
+<p>
+    Notice that the current cache status is logged showing block details such as the <code>startRow</code> and
+    <code>endRow</code>.
+</p>
+
+<p> This can be very useful when debugging issues on the server.</p>
+
+<h2>Example - Block Loading Debounce</h2>
+
+<p>
+    The example below demonstrates a number of the configurations listed in this section and shows how adding a debounce
+    to block loading allows for quick scrolling over rows. Note the following:
 </p>
 
 <ul class="content">
-    <li>The Server-side Row Model is selected using the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
-    <li>A datasource is registered with the grid using: <code>api.setServerSideDatasource(datasource)</code>.</li>
-    <li>When scrolling down there is a delay when more rows are fetched from the server.</li>
+    <li><code>cacheBlockSize=200</code> - fetches 200 rows per request instead of 100 by default.</li>
+    <li>
+        <code>maxBlocksInCache=10</code> - once a cache contains 10 blocks the oldest blocks will be
+        purged to ensure the cache is constrained to 10 blocks. By default all blocks are kept.
+    </li>
+    <li>
+        <code>blockLoadDebounceMillis=100</code> - loading of blocks is delayed by <code>100ms</code>. This
+        allows for skipping over blocks when scrolling to advanced positions. Note that the last row index
+        should be supplied in <code>successCallback(rows, lastRow)</code> so that the scrollbars are sized correctly.
+    </li>
+    <li><code>debug=true</code> - open the browsers dev console to view the cache status and block details.</li>
 </ul>
 
-<?= grid_example('Block Load Debounce', 'block-load-debounce', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
+<?= grid_example('Block Loading Debounce', 'block-load-debounce', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
 <h2>Next Up</h2>
 

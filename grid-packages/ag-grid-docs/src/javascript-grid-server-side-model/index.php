@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Before diving into the details of how to use the Server-side Row Model, the next section provides an overview and
-    explains when it should be used in place of the default <a href="/javascript-grid-client-side-model/">Client-side Row Model</a>.
+    explains when it should be used in instead of the default <a href="/javascript-grid-client-side-model/">Client-side Row Model</a>.
 </p>
 
 <h2>Overview</h2>

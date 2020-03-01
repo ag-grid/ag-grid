@@ -14,7 +14,7 @@ var gridOptions = {
     minWidth: 150
   },
 
-  // use the server-side row model
+  // use the server-side row model instead of the default 'client-side'
   rowModelType: 'serverSide',
 };
 
@@ -29,13 +29,18 @@ document.addEventListener('DOMContentLoaded', function() {
         'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json',
     })
     .then(function(data) {
-      var server = new FakeServer(data);
-      var datasource = new ServerSideDatasource(server);
+      // setup the fake server with entire dataset
+      var fakeServer = createFakeServer(data);
+
+      // create datasource with a reference to the fake server
+      var datasource = createServerSideDatasource(fakeServer);
+
+      // register the datasource with the grid
       gridOptions.api.setServerSideDatasource(datasource);
     });
 });
 
-function ServerSideDatasource(server) {
+function createServerSideDatasource(server) {
   return {
     getRows: function(params) {
       console.log('[Datasource] - rows requested by grid: ', params.request);
@@ -56,18 +61,18 @@ function ServerSideDatasource(server) {
   };
 }
 
-function FakeServer(allData) {
+function createFakeServer(allData) {
   return {
     getData: function(request) {
-      // take a slice of the total rows for requested block
-      var rowsForBlock = allData.slice(request.startRow, request.endRow);
+      // in this simplified fake server all rows are contained in an array
+      var requestedRows = allData.slice(request.startRow, request.endRow);
 
-      // if on or after the last block, work out the last row, otherwise return -1
-      var lastRow = getLastRowIndex(request, rowsForBlock);
+      // here we are pretending we don't know the last row until we reach it!
+      var lastRow = getLastRowIndex(request, requestedRows);
 
       return {
         success: true,
-        rows: rowsForBlock,
+        rows: requestedRows,
         lastRow: lastRow,
       };
     },
@@ -75,7 +80,9 @@ function FakeServer(allData) {
 }
 
 function getLastRowIndex(request, results) {
-  if (!results || results.length === 0) return -1;
+  if (!results || results.length === 0) return undefined;
   var currentLastRow = request.startRow + results.length + 1;
-  return currentLastRow <= request.endRow ? currentLastRow : -1;
+
+  // if on or after the last block, work out the last row, otherwise return 'undefined'
+  return currentLastRow <= request.endRow ? currentLastRow : undefined;
 }
