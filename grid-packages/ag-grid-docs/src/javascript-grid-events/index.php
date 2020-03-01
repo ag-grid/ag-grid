@@ -433,6 +433,7 @@ interface CellValueChangedEvent {
         │     }</span>
         ├── DragEvent <span class="event-properties">{
         │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
+                 <span class="event-attribute">target</span>: HTMLElement, // The DOM element that started the event.
         │   │  }</span>
         │   ├── DragStartedEvent <span class="event-properties">{}</span>
         │   ├── DragStoppedEvent <span class="event-properties">{}</span>

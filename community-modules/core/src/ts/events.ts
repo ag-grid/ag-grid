@@ -109,7 +109,7 @@ export interface ComponentStateChangedEvent extends AgGridEvent {
 
 export interface DragEvent extends AgGridEvent {
     type: string;
-    source: HTMLElement;
+    target: HTMLElement;
 }
 
 export interface DragStartedEvent extends DragEvent {

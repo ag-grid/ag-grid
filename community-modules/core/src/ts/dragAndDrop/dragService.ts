@@ -216,7 +216,7 @@ export class DragService {
                 type: Events.EVENT_DRAG_STARTED,
                 api: this.gridApi,
                 columnApi: this.columnApi,
-                source: el
+                target: el
             };
             this.eventService.dispatchEvent(event);
             this.currentDragParams.onDragStart(startEvent);
@@ -283,7 +283,7 @@ export class DragService {
                 type: Events.EVENT_DRAG_STOPPED,
                 api: this.gridApi,
                 columnApi: this.columnApi,
-                source: el
+                target: el
             };
             this.eventService.dispatchEvent(event);
         }
