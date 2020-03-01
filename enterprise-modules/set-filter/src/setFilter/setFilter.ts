@@ -50,7 +50,7 @@ export class SetFilter extends ProvidedFilter {
         return `<div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div>
                     <div class="ag-filter-header-container" role="presentation">
-                        <ag-input-text-field class="eMiniFilter" class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
+                        <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                         <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
                             <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
                         </label>
@@ -339,8 +339,7 @@ export class SetFilter extends ProvidedFilter {
             actualToSelect.forEach(option => this.valueModel.selectValue(option));
             this.virtualList.refresh();
 
-            if (notify) {
-                // this.onUiChangedListener(true);
+            if (notify) { 
                 this.onUiChanged();
             }
         });
@@ -379,10 +378,17 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onEnterKeyOnMiniFilter(): void {
-        this.valueModel.selectAllFromMiniFilter();
-        this.virtualList.refresh();
-        this.updateSelectAll();
-        this.onUiChanged();
+        this.onUiChanged(true);
+    }
+
+    protected onBtApply(afterFloatingFilter = false) {
+        if (afterFloatingFilter) {
+            this.valueModel.selectAllFromMiniFilter();
+            this.virtualList.refresh();
+            this.updateSelectAll();
+        }
+
+        super.onBtApply(afterFloatingFilter);
     }
 
     private onMiniFilterInput() {

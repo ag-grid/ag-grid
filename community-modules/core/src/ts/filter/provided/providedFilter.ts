@@ -110,7 +110,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         _.setDisplayed(this.eApplyButton, this.applyActive);
         // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
         // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply());
+        this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply(true));
 
         const clearActive = params.clearButton === true;
         _.setDisplayed(this.eClearButton, clearActive);
@@ -174,7 +174,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return newModelDifferent;
     }
 
-    private onBtApply(afterFloatingFilter = false) {
+    protected onBtApply(afterFloatingFilter = false) {
         const newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
@@ -201,7 +201,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(true);
+            this.onBtApply(afterFloatingFilter);
         // otherwise if no apply button, we apply (but debounce for time delay)
         } else if (!this.applyActive) {
             this.onBtApplyDebounce();
