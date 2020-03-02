@@ -1,5 +1,8 @@
 <?php
 $navKey = "pipeline";
+
+ini_set('memory_limit', '1024M');
+
 include_once '../includes/html-helpers.php';
 gtm_data_layer('pipeline');
 include '../jira_reports/jira_utilities.php';
@@ -159,6 +162,7 @@ include '../jira_reports/jira_utilities.php';
                                     aria-hidden="true"></i>
                                 </a></li>
                         </ul>
+                        <script src="../dist/homepage.js"></script>
                         <div class="tab-content" style="margin-top: 5px">
                             <div class="tab-pane top-level-pane active" id="release">
                                 <?php
@@ -209,7 +213,6 @@ include '../jira_reports/jira_utilities.php';
                 </section>
             </div>
         </div>
-    <script src="../dist/homepage.js"></script>
     </div>
     <?php include_once("../includes/footer.php"); ?>
 </div>
