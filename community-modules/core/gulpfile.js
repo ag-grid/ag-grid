@@ -92,7 +92,12 @@ const scssTask = () => {
                             {
                                 loader: "css-loader"
                             },
-                            "sass-loader",
+                            {
+                                loader: 'sass-loader',
+                                options: {
+                                    prependData: '$ag-compatibility-mode: false;',
+                                },
+                            },
                             {
                                 loader: 'postcss-loader',
                                 options: {

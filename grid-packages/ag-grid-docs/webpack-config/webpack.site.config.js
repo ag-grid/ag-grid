@@ -70,7 +70,12 @@ module.exports = {
                             })]
                         }
                     },
-                    "sass-loader"
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            prependData: '$ag-compatibility-mode: false;',
+                        },
+                    },
                 ]
             },
             {

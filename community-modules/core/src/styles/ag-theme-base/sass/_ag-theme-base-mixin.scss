@@ -15,7 +15,8 @@
 @import "./parts/column-drop";
 @import "./parts/charts";
 
-$ag-compatibility-mode: null !default;
+$ag-compatibility-mode-set-by-user: global-variable-exists("ag-compatibility-mode");
+$ag-compatibility-mode: false !default;
 
 @mixin ag-theme-base($params) {
     @include ag-include-theme-once-only();

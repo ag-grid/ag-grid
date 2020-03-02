@@ -1,13 +1,13 @@
-In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. We have implemented a backwards compatibility mode so that the majority of custom themes should continue working without changes. Some apps may need to upgrade to use the new method for creating custom themes, either because:
+In v23 we are releasing a major rewrite of our themes with the goal of making it easier to write custom themes. We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. Some apps may need to upgrade to use the new method for creating custom themes, either because:
 
 1. The backwards compatibility mode is causing issues for your app
 2. You want to use new theme features added in v23 or a later release that are not supported in the backwards compatibility mode
 
 This guide explains what has changed, why we changed it, and how to update your apps.
 
-## Configuring backwards compatibility mode.
+### Configuring backwards compatibility mode.
 
-If you are extending a provided theme by importing the main theme file, e.g. `ag-theme-balham.scss`, then compatibility mode will be enabled and default to "variables". You will see a warning when compiling that compatibility mode is defaulting to "variables". You can suppress this warning by explicitly defining `$ag-compatibility-mode`.
+If you are extending a provided theme by importing the main theme file, e.g. `ag-theme-balham.scss`, upon upgrading to v23 you should see a warning that `$ag-compatibility-mode` is not defined.
 
 Define the `$ag-compatibility-mode` *before* the line that imports the provided theme file:
 
@@ -18,12 +18,12 @@ $ag-compatibility-mode: "variables"; // or "legacy"
 
 There are two supported values, `"variables"` and `"legacy"`.
 
-* variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, *only if there is an equivalent parameter for a variable*. This mode:
+* variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, *only if there is an equivalent parameter for a variable* (most variables are supported). This mode:
   * is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation)
-  * does not support [variables removed with no equivalent parameter](#variables-removed-with-no-equivalent-parameter) - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is very easy to write CSS to achieve the same effect.
+  * does not support [variables removed with no equivalent parameter](#variables-removed-with-no-equivalent-parameter) - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is simple to write CSS to achieve the same effect.
   * does not modify your CSS selectors. If you are using any of the [renamed CSS classes](#renamed-CSS-classes) you will need to update your CSS selectors
 * legacy mode: attempts to make themes written for v22 and earlier work in v23. This mode:
-  * is intended to be used as a temporary solution for graceful migration to v23 for apps with many or complex themes, allowing these apps to update to v23 immediately, and then gradually migrate their themes at a later date
+  * is intended to be used as a temporary solution for graceful migration to v23 for apps with many or complex themes, allowing these apps to update to v23 immediately and then gradually migrate their themes at a later date
   * generates new CSS and uses Sass `@extend` directives to alias old names to new names
   * is a "best effort" solution - it will support the majority of use cases for the majority of apps, but you may need to tweak the result by adding new CSS rules to cover edge cases where the automated conversion did not work perfectly
 
@@ -32,6 +32,14 @@ There are two supported values, `"variables"` and `"legacy"`.
 Prior to this release, the primary way of customising a theme in ag-Grid was to define Sass variables, so if you wanted to change the header background colour you'd define the `$ag-header-background-color` variable.
 
 We considered our DOM class attributes and CSS structure to be an implementation detail, not a public API. But several years of using Sass variables has taught us the limitations of this approach. There were never enough variables - every custom theme wants to make changes that we don't provide variables for, so needs to contain CSS rules as well as variable definitions. On the other hand, there were too many variables! Adding more variables was not the solution, because they are hard to discover - you need to check the documentation, rather than using the browser developer tools to find out a class name.
+
+In v23 we have moved from configuring themes using global variables to using maps of parameters. Many parameters are direct equivalents of variables in v22, but this is not always the case:
+
+* We provide parameters for complex use cases where changing the value of a parameter makes multiple changes across the grid.
+* For simple use cases like changing the color of a single element, the recommended method is now to create a CSS selector e.g. `.ag-component-name { background-color: red }`. We have removed variables that do something that can be achieved with a simple CSS selector.
+* We have added many new css classes and renamed existing ones for consistency, to improve the experience of styling the grid using CSS selectors.
+
+The net effect is that custom themes will be simpler to write, and will break less between releases.
 
 ### Themes are now configured using parameter maps
 
@@ -49,35 +57,6 @@ $ag-header-foreground-color: red;
 ```
 
 The major advantage of this approach is that we are now able to warn when you pass a parameter that is not supported. It also allows our customers to use the [new module system](https://sass-lang.com/blog/the-module-system-is-launched) in Sass which does not support sharing global variables between modules.
-
-### More, and more consistent class names
-
-We have added many new css classes and renamed existing ones for consistency, so that any style effect can beachi, and rewritten the base theme and our provided themes (Alpine, Balham and Material) to make them easier to extend. The strategy for theming ag-Grid is now:
-
-* The primary way of customising elements is now CSS. In the majority of cases you should only need a single class name in your selector, e.g. `.ag-component-name { padding: 10px }`.
-* Variables in the base theme now do one thing only, and opinionated variables have been moved from the base theme to the provided themes.
-* We have removed variables that do something that can be easily achieved with a CSS selector.
-* Our base theme still has contains opinionated design features, but themes can opt-out. If you have a different idea about where borders should be drawn, you can define `$ag-borders: false` and the base theme will not add any borders, giving you a clean slate to add your own borders.
-
-The net effect is that custom themes will be simpler to write, and will break less between releases.
-
-
-## Theme configuration changes
-
-In the move from configuring themes with variables to using a map of key/value parameters, some variables have been directly converted to parameters:
-
-```scss
-// old method:
-$ag-header-foreground-color: red;
-@import "path/to/ag-theme-xyz.scss";
-
-// new method
-@include ag-theme-xyz((
-    header-foreground-color: red
-));
-```
-
-However some variables have been renamed or removed. Check the documentation for your theme for an up-to-date list of supported parameters. Here is a list of the changes made:
 
 ### Renamed variables
 
