@@ -105,14 +105,14 @@
             "tree-open": $ag-icon-tree-open,
             "unlinked": $ag-icon-unlinked,
         ),
-        --internal-deprecated-compatibility-mode: $ag-compatibility-mode == "deprecated",
+        --internal-deprecated-compatibility-mode: $ag-compatibility-mode == "legacy",
     );
 
     @if not $ag-compatibility-mode {
         // TODO confirm URL is still correct (move to master for release)?
-        @warn "$ag-compatibility-mode not defined, defaulting to \"variables\". See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md";
+        @warn "Compiling theme in v22 compatibility mode (variables-only). See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md. define $ag-compatibility-mode to suppress this message.";
     }
-    @else if $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "deprecated" {
+    @else if $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "legacy" {
         @warn "Invalid value for $ag-compatibility-mode: \"#{$ag-compatibility-mode}\". Valid values are \"variables\" and \"deprecated\"";
     }
 

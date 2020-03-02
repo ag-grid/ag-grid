@@ -5,18 +5,27 @@ In v23 we are releasing a major rewrite of our themes with the goal of making it
 
 This guide explains what has changed, why we changed it, and how to update your apps.
 
-## About the backwards compatibility mode.
+## Configuring backwards compatibility mode.
 
-_We recommend that all themes migrate to the new method when practical._ However it may take time to migrate apps with multiple or complex themes. The purpose of the backwards compatibility mode is provide a grace period, allowing such apps to update to v23 immediately, and then gradually migrate their themes at a later date. It is not intended as a long-term solution, and may stop working or be removed in a later release.
+If you are extending a provided theme by importing the main theme file, e.g. `ag-theme-balham.scss`, then compatibility mode will be enabled and default to "variables". You will see a warning when compiling that compatibility mode is defaulting to "variables". You can suppress this warning by explicitly defining `$ag-compatibility-mode`.
 
-To enable backwards-compatibility mode, add this line to your custom theme:
+Define the `$ag-compatibility-mode` *before* the line that imports the provided theme file:
 
 ```scss
-// TODO add line for importing legacy vars?
-@include ag-v22-to-v23-compatibility-mode();
+$ag-compatibility-mode: "variables"; // or "legacy"
+@import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
 ```
 
-After adding the above line, you may need to add a few CSS rules to fix some edge cases that are not covered by backwards compatibility mode.
+There are two supported values, `"variables"` and `"legacy"`.
+
+* variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, *only if there is an equivalent parameter for a variable*. This mode:
+  * is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation)
+  * does not support [variables removed with no equivalent parameter](#variables-removed-with-no-equivalent-parameter) - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is very easy to write CSS to achieve the same effect.
+  * does not modify your CSS selectors. If you are using any of the [renamed CSS classes](#renamed-CSS-classes) you will need to update your CSS selectors
+* legacy mode: attempts to make themes written for v22 and earlier work in v23. This mode:
+  * is intended to be used as a temporary solution for graceful migration to v23 for apps with many or complex themes, allowing these apps to update to v23 immediately, and then gradually migrate their themes at a later date
+  * generates new CSS and uses Sass `@extend` directives to alias old names to new names
+  * is a "best effort" solution - it will support the majority of use cases for the majority of apps, but you may need to tweak the result by adding new CSS rules to cover edge cases where the automated conversion did not work perfectly
 
 ## What has changed
 
@@ -52,14 +61,6 @@ We have added many new css classes and renamed existing ones for consistency, so
 
 The net effect is that custom themes will be simpler to write, and will break less between releases.
 
-
-### Placeholders removed
-
-%tab - use .ag-tab
-%selected-tab - use .ag-tab-selected
-%card - use $ag-card-* variables or CSS selectors
-
-// TODO mention ag-v22-to-v23-compatibility-mode and ag-v22-to-v23-alias-deleted-placeholders()
 
 ## Theme configuration changes
 
@@ -130,14 +131,7 @@ Here is a full list of removed variables. Some have suggested replacements docum
  * `$ag-scroll-spacer-border`
  * `$ag-tooltip-background-color`, `$ag-tooltip-border-color`, `$ag-tooltip-border-radius`, `$ag-tooltip-border-style`, `$ag-tooltip-border-width`, `$ag-tooltip-foreground-color`, `$ag-tooltip-padding`: use a CSS rule like `.ag-tooltip { padding: 10px; }`
 
-
-## CSS class additions
-
-In v22 and earlier, components that appeared in multiple positions in the grid required nested CSS selectors to style. For example, to style groups in the chart settings tab, you'd need `.ag-chart-settings .ag-group-component-title-bar { ... }`. Now, generic components have multiple classes, one common to all instances and one that depends on the position in the grid. So you can use `.ag-charts-minichart-group-title-bar { ... }` to style just the settings tab groups.
-
-Nested selectors will continue to work, but new themes should use non-nested selectors, and existing themes may consider upgrading for clarity and performance.
-
-## CSS class renames
+## Renamed CSS classes
 
 Throughout the grid, many css classes have been renamed to make them more consistent. For clarity and debuggability, we recommend that all themes update their css class name-based selectors to use the new names. However, in compatibility mode the old names are aliased to the new names.
 
@@ -198,3 +192,19 @@ The full list of renamed classes is as follows:
  * ag-toolpanel-indent-4 > ag-column-select-indent-4
  * ag-toolpanel-indent-5 > ag-column-select-indent-5
  * ag-width-half > ag-column-drop-horizontal-half-width
+
+## Additional CSS classes
+
+In v22 and earlier, components that appeared in multiple positions in the grid required nested CSS selectors to style. For example, to style groups in the chart settings tab subheadings, you'd need `.ag-chart-settings .ag-group-component-title-bar { ... }`. Now, generic components have multiple classes, one common to all instances and one that depends on the position in the grid. So you can use `.ag-charts-settings-group-title-bar { ... }` to style just the settings tab groups.
+
+Nested selectors will continue to work, but new themes should use non-nested selectors, and existing themes may consider upgrading for clarity and performance.
+
+### Deleted placeholder selectors
+
+v22 defined some placeholder selectors that could be extended by 
+
+%tab - use .ag-tab
+%selected-tab - use .ag-tab-selected
+%card - rounding and shadow of floating elements can be controlled by the card-radius or card-shadow parameters, or add CSS selectors to target specific elements.
+
+// TODO mention ag-v22-to-v23-compatibility-mode and ag-v22-to-v23-alias-deleted-placeholders()
