@@ -47,7 +47,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     align-items: center;
     line-height: normal;
     position: relative;
-    overflow: hidden;
 }
 
 // setting shake class to an item will give it a left ot right animation
@@ -694,7 +693,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     display: flex;
     flex: 1 1 auto;
     height: 100%;
-    overflow: hidden;
 }
 
 .ag-floating-filter-full-body {

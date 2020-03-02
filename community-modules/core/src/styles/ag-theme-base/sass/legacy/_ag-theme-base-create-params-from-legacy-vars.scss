@@ -120,5 +120,23 @@
         --internal-legacy-compatibility-mode: $ag-compatibility-mode == "legacy",
     );
 
+    @if map-has-key($defaults, "material-primary-color") and global-variable-exists("ag-primary-color") {
+        $params: map-merge($params, (
+            material-primary-color: $ag-primary-color
+        ));
+    }
+
+    @if map-has-key($defaults, "material-accent-color") and global-variable-exists("ag-accent-color") {
+        $params: map-merge($params, (
+            material-accent-color: $ag-accent-color
+        ));
+    }
+
+    @if map-has-key($defaults, "balham-active-color") and global-variable-exists("ag-active") {
+        $params: map-merge($params, (
+            balham-active-color: $ag-active
+        ));
+    }
+
     @return map-merge($defaults, $params);
 };
