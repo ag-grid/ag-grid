@@ -77,10 +77,12 @@
 
 .option__type {
     color: #0084e7;
+    user-select: none;
 }
 
 .option__default {
     float: right;
+    user-select: none;
 }
 
 .option code {

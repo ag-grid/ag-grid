@@ -1154,16 +1154,16 @@
                     "url": "javascript-charts-gallery/combination-of-different-series-types.php"
                   },
                   {
+                    "title": "Chart Customisation",
+                    "url": "javascript-charts-gallery/chart-customisation.php"
+                  },
+                  {
                     "title": "Custom Marker Shapes",
                     "url": "javascript-charts-gallery/custom-marker-shapes.php"
                   },
                   {
                     "title": "Individual Marker Customisation",
                     "url": "javascript-charts-gallery/individual-marker-customisation.php"
-                  },
-                  {
-                    "title": "Axis Customisation",
-                    "url": "javascript-charts-gallery/axis-customisation.php"
                   }
                 ]
               }

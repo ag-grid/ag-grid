@@ -18,7 +18,6 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./custom-marker-shapes.php">❮&nbsp;&nbsp;Custom Marker Shapes</a>
-    <a class="chart-navigation__right" href="./axis-customisation.php">Axis Customisation&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -82,14 +82,14 @@
         "Combination of Different Series Types": {
             "description": "This example demonstrates the combination of different types of series into one chart."
         },
+        "Chart Customisation": {
+            "description": "This example shows how many aspects of the axes can be customised, including titles, labels, ticks, and grid lines."
+        },
         "Custom Marker Shapes": {
             "description": "This example shows how different marker shapes can be used for different series, using both built-in shapes and by providing custom ones."
         },
         "Individual Marker Customisation": {
             "description": "This example shows how individual markers can be customised based on the datum they represent."
-        },
-        "Axis Customisation": {
-            "description": "This example shows how many aspects of the axes can be customised, including titles, labels, ticks, and grid lines."
         }
     }
 }

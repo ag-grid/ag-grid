@@ -195,6 +195,12 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
+        <a href="./chart-customisation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/chart-customisation.png" /><br />
+            <div class="chart-gallery-item__name">Chart Customisation</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
         <a href="./custom-marker-shapes.php" class="chart-gallery-item__link">
             <img class="chart-gallery-item__thumbnail" src="./thumbnails/custom-marker-shapes.png" /><br />
             <div class="chart-gallery-item__name">Custom Marker Shapes</div>
@@ -204,12 +210,6 @@ define('skipInPageNav', true);
         <a href="./individual-marker-customisation.php" class="chart-gallery-item__link">
             <img class="chart-gallery-item__thumbnail" src="./thumbnails/individual-marker-customisation.png" /><br />
             <div class="chart-gallery-item__name">Individual Marker Customisation</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
-        <a href="./axis-customisation.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/axis-customisation.png" /><br />
-            <div class="chart-gallery-item__name">Axis Customisation</div>
         </a>
     </div>
     

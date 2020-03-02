@@ -1,12 +1,26 @@
 var options = {
     container: document.querySelector('#myChart'),
     data: data,
+    background: {
+        fill: '#ecf2f9',
+    },
+    padding: {
+        top: 10,
+        bottom: 30,
+        left: 10,
+        right: 10,
+    },
     title: {
         text: 'Marriage Statistics (Northern Ireland)',
-        fontSize: 18,
+        fontFamily: 'Georgia, Times New Roman, Times, Serif',
+        fontSize: 22,
+        color: '#162c53',
     },
     subtitle: {
         text: 'Source: Northern Ireland Statistics and Research Agency',
+        fontSize: 10,
+        color: '#3f7cbf',
+        fontStyle: 'italic',
     },
     series: [
         {
@@ -104,6 +118,15 @@ var options = {
     legend: {
         position: 'bottom',
         strokeWidth: 0,
+        spacing: 10,
+        layoutHorizontalSpacing: 40,
+        itemSpacing: 10,
+        markerShape: 'diamond',
+        markerSize: 20,
+        color: '#3f7cbf',
+        fontWeight: 600,
+        fontSize: 14,
+        fontFamily: 'Georgia, Times New Roman, Times, Serif',
     }
 };
 
