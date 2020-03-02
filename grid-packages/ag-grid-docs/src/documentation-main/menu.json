@@ -1162,8 +1162,12 @@
                     "url": "javascript-charts-gallery/custom-marker-shapes.php"
                   },
                   {
-                    "title": "Individual Marker Customisation",
-                    "url": "javascript-charts-gallery/individual-marker-customisation.php"
+                    "title": "Custom Tooltips",
+                    "url": "javascript-charts-gallery/custom-tooltips.php"
+                  },
+                  {
+                    "title": "Per-Marker Customisation",
+                    "url": "javascript-charts-gallery/per-marker-customisation.php"
                   }
                 ]
               }

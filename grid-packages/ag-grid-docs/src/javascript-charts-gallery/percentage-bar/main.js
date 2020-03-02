@@ -21,6 +21,9 @@ var options = {
         {
             type: 'category',
             position: 'left',
+            label: {
+                rotation: -30,
+            }
         },
         {
             type: 'number',

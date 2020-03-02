@@ -207,12 +207,19 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./individual-marker-customisation.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/individual-marker-customisation.png" /><br />
-            <div class="chart-gallery-item__name">Individual Marker Customisation</div>
+        <a href="./custom-tooltips.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/custom-tooltips.png" /><br />
+            <div class="chart-gallery-item__name">Custom Tooltips</div>
         </a>
     </div>
-    
+    <div class="chart-gallery-item">
+        <a href="./per-marker-customisation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/per-marker-customisation.png" /><br />
+            <div class="chart-gallery-item__name">Per-Marker Customisation</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 
 <h2>Next Up</h2>

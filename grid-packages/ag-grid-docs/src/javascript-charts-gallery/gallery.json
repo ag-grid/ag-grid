@@ -88,7 +88,10 @@
         "Custom Marker Shapes": {
             "description": "This example shows how different marker shapes can be used for different series, using both built-in shapes and by providing custom ones."
         },
-        "Individual Marker Customisation": {
+        "Custom Tooltips": {
+            "description": "The tooltips used in the chart can be fully customised, using your own HTML and CSS to achieve the look you want."
+        },
+        "Per-Marker Customisation": {
             "description": "This example shows how individual markers can be customised based on the datum they represent."
         }
     }

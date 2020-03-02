@@ -18,7 +18,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./chart-customisation.php">❮&nbsp;&nbsp;Chart Customisation</a>
-    <a class="chart-navigation__right" href="./individual-marker-customisation.php">Individual Marker Customisation&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./custom-tooltips.php">Custom Tooltips&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

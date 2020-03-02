@@ -200,7 +200,7 @@ function generateThumbnails(galleryConfig) {
         .forEach(name => {
             try {
                 const url = `http://localhost:8080/example-runner/chart-vanilla.php?section=${options.rootDirectory}&example=${name}&generated=1`;
-                execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,600 "${url}"`, { stdio: 'pipe' });
+                execSync(`${chrome} --headless --disable-gpu --screenshot --window-size=800,570 "${url}"`, { stdio: 'pipe' });
                 fs.renameSync('screenshot.png', Path.join(thumbnailDirectory, `${name}.png`));
                 console.log(`Generated thumbnail for ${name}`);
             } catch (e) {
