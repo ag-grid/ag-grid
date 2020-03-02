@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import {Promise, Utils} from '@ag-grid-community/core';
+import {ComponentType, Promise, Utils} from '@ag-grid-community/core';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
@@ -15,16 +15,20 @@ export class ReactComponent extends BaseReactComponent {
     private componentInstance: any;
 
     private reactComponent: any;
+    private componentType: ComponentType;
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact) {
+    constructor(reactComponent: any,
+                parentComponent: AgGridReact,
+                componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
+        this.componentType = componentType;
         this.parentComponent = parentComponent;
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
     }
@@ -66,6 +70,8 @@ export class ReactComponent extends BaseReactComponent {
                 this.componentInstance = element;
 
                 this.addParentContainerStyleAndClasses();
+
+                this.removeStaticMarkup();
             };
         }
 
@@ -79,7 +85,11 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
-            this.removeStaticMarkup();
+            if(this.statelessComponent) {
+                setTimeout(() => {
+                    this.removeStaticMarkup();
+                })
+            }
         });
     }
 
@@ -134,7 +144,7 @@ export class ReactComponent extends BaseReactComponent {
      * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
      */
     private renderStaticMarkup(params: any) {
-        if (this.parentComponent.isDisableStaticMarkup()) {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
 
@@ -145,15 +155,17 @@ export class ReactComponent extends BaseReactComponent {
             if (staticMarkup === "") {
                 this.staticMarkup = staticMarkup;
             } else {
-                if(staticMarkup) {
+                if (staticMarkup) {
                     // in the event of memoized renderers, renderers that that return simple strings or NaN etc
                     // we don't do anything - we can't readily remove these from the dom safely so we just skip 'em
-                    const testElement = document.createElement('div');
+                    const testElement = document.createElement('span');
                     testElement.innerHTML = staticMarkup;
-                    if(testElement.children[0]) {
+                    if (testElement.children[0]) {
                         this.eParentElement.innerHTML = staticMarkup;
-                        this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+                    } else {
+                        this.eParentElement.appendChild(testElement);
                     }
+                    this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
                 }
             }
         } catch (e) {
@@ -162,16 +174,14 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     private removeStaticMarkup() {
-        if (this.parentComponent.isDisableStaticMarkup()) {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
 
-        setTimeout(() => {
-            if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
-                (this.staticMarkup as HTMLElement).remove();
-                this.staticMarkup = null;
-            }
-        })
+        if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
+            (this.staticMarkup as HTMLElement).remove();
+            this.staticMarkup = null;
+        }
     }
 
     rendered() {

@@ -5,6 +5,7 @@ import {
     BaseComponentWrapper,
     ColumnApi,
     ComponentUtil,
+    ComponentType,
     FrameworkComponentWrapper,
     Grid,
     GridApi,
@@ -274,7 +275,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
         this.agGridReact = agGridReact;
     }
 
-    createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
-        return new ReactComponent(UserReactComponent, this.agGridReact);
+    createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrapableInterface {
+        return new ReactComponent(UserReactComponent, this.agGridReact, componentType);
     }
 }

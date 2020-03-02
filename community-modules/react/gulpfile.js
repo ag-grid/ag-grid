@@ -1,5 +1,6 @@
 const fs = require('fs');
 const gulp = require('gulp');
+const sourcemaps = require('gulp-sourcemaps');
 const {series} = require('gulp');
 const gulpTypescript = require('gulp-typescript');
 const header = require('gulp-header');
@@ -33,11 +34,15 @@ tscTask = async () => {
             '!src/**/__tests__/**/*',
             '!src/**/setupTests.ts'
         ]
-    ).pipe(tscProject());
+    ).pipe(sourcemaps.init())
+        .pipe(tscProject());
 
     return merge([
         tsResult.dts.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib')),
-        tsResult.js.pipe(header(headerTemplate, {pkg: pkg})).pipe(gulp.dest('lib'))
+        tsResult.js
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest('lib'))
     ]);
 };
 
@@ -57,6 +62,7 @@ const umd = () => {
             globals: {
                 react: 'React',
                 'react-dom': 'ReactDOM',
+                'react-dom/server': 'ReactDOMServer',
                 'prop-types': 'PropTypes',
                 '@ag-grid-community/core': 'agGrid'
             },

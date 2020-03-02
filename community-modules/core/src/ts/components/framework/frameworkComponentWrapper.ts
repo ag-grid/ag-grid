@@ -1,4 +1,5 @@
 import { IComponent } from "../../interfaces/iComponent";
+import {ComponentType} from "./userComponentFactory";
 
 /**
  * B the business interface (ie IHeader)
@@ -8,6 +9,7 @@ export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: { new(): any },
                                     methodList: string[],
                                     optionalMethodList: string[],
+                                    componentType: ComponentType,
                                     componentName?: string
     ): A;
 }
@@ -24,8 +26,9 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
     wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
                                     mandatoryMethodList: string[],
                                     optionalMethodList: string[] = [],
+                                    componentType: ComponentType,
                                     componentName?: string): A {
-        const wrapper: F = this.createWrapper(OriginalConstructor, componentName);
+        const wrapper: F = this.createWrapper(OriginalConstructor, componentType, componentName);
 
         mandatoryMethodList.forEach((methodName => {
             this.createMethod(wrapper, methodName, true);
@@ -39,7 +42,7 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
 
     }
 
-    abstract createWrapper(OriginalConstructor: { new(): any }, componentName?: string): F;
+    abstract createWrapper(OriginalConstructor: { new(): any }, componentType: ComponentType, componentName?: string): F;
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));

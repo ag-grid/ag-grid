@@ -36,7 +36,7 @@ it('stateful component returns a valid component instance', () => {
     expect(frameworkInstance.getValue()).toEqual("Test Value");
 });
 
-xit('cell should be editable and editor component usable', async () => {
+it('cell should be editable and editor component usable', async () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 24</div></div>`);
 
     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
