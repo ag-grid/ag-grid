@@ -61,13 +61,18 @@
     .ag-row {
         height: ag-param(row-height);
         color: ag-param(data-color);
+        
+        @if ag-param(row-border-color) and ag-param(borders-critical) {
+            // NOTE: we define border-width and border-color at .ag-row level and only set
+            // border-style inside nested pseudoclass selectors, to allow derived themes
+            // to override border-width on .ag-row
+            border: none 1px ag-param(row-border-color);
 
-        @if ag-param(row-border-color) {
             &:not(.ag-row-first) {
-                @include ag-border(critical, top, $color: ag-param(row-border-color));
+                border-top-style: solid;
             }
             &.ag-row-last {
-                @include ag-border(critical, bottom, $color: ag-param(row-border-color));
+                border-bottom-style: solid;
             }
         }
     }

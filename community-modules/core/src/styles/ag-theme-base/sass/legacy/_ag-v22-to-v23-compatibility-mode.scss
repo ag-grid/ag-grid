@@ -77,6 +77,10 @@
             color: $ag-icon-color !important;
         }
     }
+
+    .ag-row {
+        border-width: $ag-row-border-width;
+    }
 }
 
 // Allow custom themes to use old placeholders instead of the new class name
