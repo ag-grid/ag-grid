@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Doughnut</h1>
 
 <p class="lead">
-    The doughnut chart shows multiple pie series.
+    Doughnut charts are similar to <a href='./simple-pie.php'>pie charts</a>, being used to express a part-to-whole relationship, but allow for multiple series to be shown on the same chart for comparison.
 </p>
 
 <?= chart_example('Simple Doughnut', 'simple-doughnut', 'generated', array('exampleHeight' => '60vh')) ?>

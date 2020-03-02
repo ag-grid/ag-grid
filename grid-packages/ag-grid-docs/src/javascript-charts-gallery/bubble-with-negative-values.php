@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Bubble With Negative Values</h1>
 
 <p class="lead">
-    A bubble chart demonstrating the support of negative values.
+    The axes of scatter and bubble charts can be extended to plot positive and negative values for the variables.
 </p>
 
 <?= chart_example('Bubble With Negative Values', 'bubble-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>

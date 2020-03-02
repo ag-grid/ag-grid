@@ -11,14 +11,14 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Stacked Area</h1>
 
 <p class="lead">
-    This demonstrates an area chart with stacked areas.
+    Stacked area charts plot multiple <a href='./simple-area.php'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time.
 </p>
 
 <?= chart_example('Stacked Area', 'stacked-area', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-area.php">❮&nbsp;&nbsp;Simple Area</a>
-    <a class="chart-navigation__right" href="./percentage-area.php">Percentage Area&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./100--stacked-area.php">100% Stacked Area&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

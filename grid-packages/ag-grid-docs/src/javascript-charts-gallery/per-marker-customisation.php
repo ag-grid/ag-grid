@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Per-Marker Customisation</h1>
 
 <p class="lead">
-    This example shows how individual markers can be customised based on the datum they represent.
+    As well as customising all markers for a particular series, you can also customise each marker in the series individually, based on the datum that the marker represents. For example, the colour of the markers below is set based on the magnitude.
 </p>
 
 <?= chart_example('Per-Marker Customisation', 'per-marker-customisation', 'generated', array('exampleHeight' => '60vh')) ?>

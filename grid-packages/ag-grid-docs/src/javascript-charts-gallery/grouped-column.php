@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Grouped Column</h1>
 
 <p class="lead">
-    The column chart represents data as a series of vertical columns grouped together.
+    Grouped column charts (also known as clustered column charts) present multiple series with the <a href='./simple-column.php'>columns</a> grouped by category, to allow for easier comparisons across different series.
 </p>
 
 <?= chart_example('Grouped Column', 'grouped-column', 'generated', array('exampleHeight' => '60vh')) ?>

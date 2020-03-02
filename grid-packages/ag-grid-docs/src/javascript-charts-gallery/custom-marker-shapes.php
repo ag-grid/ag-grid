@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Custom Marker Shapes</h1>
 
 <p class="lead">
-    This example shows how different marker shapes can be used for different series, using both built-in shapes and by providing custom ones.
+    The library provides a variety of different marker shapes that can be used. In addition, you can provide your own shapes by extending the <code>Marker</code> class, as shown with the heart-shaped marker below.
 </p>
 
 <?= chart_example('Custom Marker Shapes', 'custom-marker-shapes', 'generated', array('exampleHeight' => '60vh')) ?>

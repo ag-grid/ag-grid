@@ -1028,26 +1028,6 @@
                 "disableActive": true,
                 "items": [
                   {
-                    "title": "Simple Column",
-                    "url": "javascript-charts-gallery/simple-column.php"
-                  },
-                  {
-                    "title": "Grouped Column",
-                    "url": "javascript-charts-gallery/grouped-column.php"
-                  },
-                  {
-                    "title": "Stacked Column",
-                    "url": "javascript-charts-gallery/stacked-column.php"
-                  },
-                  {
-                    "title": "Percentage Column",
-                    "url": "javascript-charts-gallery/percentage-column.php"
-                  },
-                  {
-                    "title": "Column With Negative Values",
-                    "url": "javascript-charts-gallery/column-with-negative-values.php"
-                  },
-                  {
                     "title": "Simple Bar",
                     "url": "javascript-charts-gallery/simple-bar.php"
                   },
@@ -1060,12 +1040,32 @@
                     "url": "javascript-charts-gallery/stacked-bar.php"
                   },
                   {
-                    "title": "Percentage Bar",
-                    "url": "javascript-charts-gallery/percentage-bar.php"
+                    "title": "100% Stacked Bar",
+                    "url": "javascript-charts-gallery/100--stacked-bar.php"
                   },
                   {
                     "title": "Bar With Labels",
                     "url": "javascript-charts-gallery/bar-with-labels.php"
+                  },
+                  {
+                    "title": "Simple Column",
+                    "url": "javascript-charts-gallery/simple-column.php"
+                  },
+                  {
+                    "title": "Grouped Column",
+                    "url": "javascript-charts-gallery/grouped-column.php"
+                  },
+                  {
+                    "title": "Stacked Column",
+                    "url": "javascript-charts-gallery/stacked-column.php"
+                  },
+                  {
+                    "title": "100% Stacked Column",
+                    "url": "javascript-charts-gallery/100--stacked-column.php"
+                  },
+                  {
+                    "title": "Column With Negative Values",
+                    "url": "javascript-charts-gallery/column-with-negative-values.php"
                   }
                 ]
               },
@@ -1132,8 +1132,8 @@
                     "url": "javascript-charts-gallery/stacked-area.php"
                   },
                   {
-                    "title": "Percentage Area",
-                    "url": "javascript-charts-gallery/percentage-area.php"
+                    "title": "100% Stacked Area",
+                    "url": "javascript-charts-gallery/100--stacked-area.php"
                   },
                   {
                     "title": "Area With Negative Values",

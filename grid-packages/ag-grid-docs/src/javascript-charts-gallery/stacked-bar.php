@@ -11,14 +11,14 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Stacked Bar</h1>
 
 <p class="lead">
-    The bar chart represents data as a series of stacked horizontal bars.
+    Stacked bar charts allow part-to-whole comparisons, with series stacked from left to right in the horizontal <a href='./simple-bar.php'>bars</a>. They make it easy to compare combined bar lengths.
 </p>
 
 <?= chart_example('Stacked Bar', 'stacked-bar', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./grouped-bar.php">❮&nbsp;&nbsp;Grouped Bar</a>
-    <a class="chart-navigation__right" href="./percentage-bar.php">Percentage Bar&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./100--stacked-bar.php">100% Stacked Bar&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

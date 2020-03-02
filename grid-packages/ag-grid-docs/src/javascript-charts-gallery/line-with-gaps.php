@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Line With Gaps</h1>
 
 <p class="lead">
-    This example shows how the line series handles gaps in the data.
+    When data is missing in some line series compared to others, these gaps in the data are reflected in the lines.
 </p>
 
 <?= chart_example('Line With Gaps', 'line-with-gaps', 'generated', array('exampleHeight' => '60vh')) ?>

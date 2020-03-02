@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Chart Customisation</h1>
 
 <p class="lead">
-    This example shows how many aspects of the axes can be customised, including titles, labels, ticks, and grid lines.
+    As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend.
 </p>
 
 <?= chart_example('Chart Customisation', 'chart-customisation', 'generated', array('exampleHeight' => '60vh')) ?>

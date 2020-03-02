@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Time Axis With Irregular Intervals</h1>
 
 <p class="lead">
-    This example demonstrates the plotting of irregular data on a time axis.
+    A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals.
 </p>
 
 <?= chart_example('Time Axis With Irregular Intervals', 'time-axis-with-irregular-intervals', 'generated', array('exampleHeight' => '60vh')) ?>

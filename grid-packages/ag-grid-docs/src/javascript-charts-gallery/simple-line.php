@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Line</h1>
 
 <p class="lead">
-    The line chart represents data using a number of lines.
+    Line charts represent each series as a separate line. They are useful to show change or trends over time, and are able to better present more data points than <a href='./simple-bar.php'>bar</a> or <a href='./simple-column.php'>column</a> charts.
 </p>
 
 <?= chart_example('Simple Line', 'simple-line', 'generated', array('exampleHeight' => '60vh')) ?>

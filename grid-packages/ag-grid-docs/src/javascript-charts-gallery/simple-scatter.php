@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Scatter</h1>
 
 <p class="lead">
-    This scatter chart shows how independent variables can be plotted against each other.
+    Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables.
 </p>
 
 <?= chart_example('Simple Scatter', 'simple-scatter', 'generated', array('exampleHeight' => '60vh')) ?>

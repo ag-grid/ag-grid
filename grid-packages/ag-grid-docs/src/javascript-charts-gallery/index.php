@@ -19,36 +19,6 @@ define('skipInPageNav', true);
 
 <div class="chart-gallery">
     <div class="chart-gallery-item">
-        <a href="./simple-column.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-column.png" /><br />
-            <div class="chart-gallery-item__name">Simple Column</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
-        <a href="./grouped-column.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/grouped-column.png" /><br />
-            <div class="chart-gallery-item__name">Grouped Column</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
-        <a href="./stacked-column.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/stacked-column.png" /><br />
-            <div class="chart-gallery-item__name">Stacked Column</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
-        <a href="./percentage-column.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/percentage-column.png" /><br />
-            <div class="chart-gallery-item__name">Percentage Column</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
-        <a href="./column-with-negative-values.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-with-negative-values.png" /><br />
-            <div class="chart-gallery-item__name">Column With Negative Values</div>
-        </a>
-    </div>
-    <div class="chart-gallery-item">
         <a href="./simple-bar.php" class="chart-gallery-item__link">
             <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-bar.png" /><br />
             <div class="chart-gallery-item__name">Simple Bar</div>
@@ -67,15 +37,45 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./percentage-bar.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/percentage-bar.png" /><br />
-            <div class="chart-gallery-item__name">Percentage Bar</div>
+        <a href="./100--stacked-bar.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/100--stacked-bar.png" /><br />
+            <div class="chart-gallery-item__name">100% Stacked Bar</div>
         </a>
     </div>
     <div class="chart-gallery-item">
         <a href="./bar-with-labels.php" class="chart-gallery-item__link">
             <img class="chart-gallery-item__thumbnail" src="./thumbnails/bar-with-labels.png" /><br />
             <div class="chart-gallery-item__name">Bar With Labels</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./simple-column.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-column.png" /><br />
+            <div class="chart-gallery-item__name">Simple Column</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./grouped-column.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/grouped-column.png" /><br />
+            <div class="chart-gallery-item__name">Grouped Column</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./stacked-column.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/stacked-column.png" /><br />
+            <div class="chart-gallery-item__name">Stacked Column</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./100--stacked-column.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/100--stacked-column.png" /><br />
+            <div class="chart-gallery-item__name">100% Stacked Column</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./column-with-negative-values.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/column-with-negative-values.png" /><br />
+            <div class="chart-gallery-item__name">Column With Negative Values</div>
         </a>
     </div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
@@ -158,9 +158,9 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./percentage-area.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/percentage-area.png" /><br />
-            <div class="chart-gallery-item__name">Percentage Area</div>
+        <a href="./100--stacked-area.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/100--stacked-area.png" /><br />
+            <div class="chart-gallery-item__name">100% Stacked Area</div>
         </a>
     </div>
     <div class="chart-gallery-item">

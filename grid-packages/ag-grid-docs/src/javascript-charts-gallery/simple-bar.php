@@ -11,13 +11,12 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Bar</h1>
 
 <p class="lead">
-    The bar chart represents data as a series of horizontal bars.
+    Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited.
 </p>
 
 <?= chart_example('Simple Bar', 'simple-bar', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./column-with-negative-values.php">❮&nbsp;&nbsp;Column With Negative Values</a>
     <a class="chart-navigation__right" href="./grouped-bar.php">Grouped Bar&nbsp;&nbsp;❯</a>
 </div>
 

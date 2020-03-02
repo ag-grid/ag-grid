@@ -11,13 +11,13 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Area With Negative Values</h1>
 
 <p class="lead">
-    An area chart demonstrating the support of negative values.
+    <a href='./simple-area.php'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled.
 </p>
 
 <?= chart_example('Area With Negative Values', 'area-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./percentage-area.php">❮&nbsp;&nbsp;Percentage Area</a>
+    <a class="chart-navigation__left" href="./100--stacked-area.php">❮&nbsp;&nbsp;100% Stacked Area</a>
     <a class="chart-navigation__right" href="./time-axis-with-irregular-intervals.php">Time Axis With Irregular Intervals&nbsp;&nbsp;❯</a>
 </div>
 

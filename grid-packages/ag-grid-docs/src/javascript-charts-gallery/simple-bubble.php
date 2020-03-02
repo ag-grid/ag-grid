@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Bubble</h1>
 
 <p class="lead">
-    This bubble chart shows how independent variables can be plotted against each other including a third dimension.
+    Bubble charts are a specialised type of <a href=./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble).
 </p>
 
 <?= chart_example('Simple Bubble', 'simple-bubble', 'generated', array('exampleHeight' => '60vh')) ?>

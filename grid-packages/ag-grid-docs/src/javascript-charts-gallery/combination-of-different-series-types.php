@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Combination of Different Series Types</h1>
 
 <p class="lead">
-    This example demonstrates the combination of different types of series into one chart.
+    Different types of data series can be combined together in the same chart. This example shows how a <a href='./simple-line.php'>line series</a> might be combined with a <a href='./grouped-column.php'>grouped column series</a>.
 </p>
 
 <?= chart_example('Combination of Different Series Types', 'combination-of-different-series-types', 'generated', array('exampleHeight' => '60vh')) ?>

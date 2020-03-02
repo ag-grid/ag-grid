@@ -210,7 +210,7 @@ var options = {
             type: 'number',
             position: 'left',
             title: {
-                text: 'Pounds (£) per kg'
+                text: '£ per kg'
             },
             nice: false,
             min: 0.2,

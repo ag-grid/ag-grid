@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Custom Tooltips</h1>
 
 <p class="lead">
-    The tooltips used in the chart can be fully customised, using your own HTML and CSS to achieve the look you want.
+    The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want.
 </p>
 
 <?= chart_example('Custom Tooltips', 'custom-tooltips', 'generated', array('exampleHeight' => '60vh')) ?>

@@ -11,13 +11,13 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Pie</h1>
 
 <p class="lead">
-    The pie chart represents proportional data as a pie.
+    Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories.
 </p>
 
 <?= chart_example('Simple Pie', 'simple-pie', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./bar-with-labels.php">❮&nbsp;&nbsp;Bar With Labels</a>
+    <a class="chart-navigation__left" href="./column-with-negative-values.php">❮&nbsp;&nbsp;Column With Negative Values</a>
     <a class="chart-navigation__right" href="./simple-doughnut.php">Simple Doughnut&nbsp;&nbsp;❯</a>
 </div>
 

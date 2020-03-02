@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Simple Area</h1>
 
 <p class="lead">
-    This area chart represents data using areas.
+    Area charts plot series using a line with the area below the line filled. They are useful to show changes over time, and are easy to interpret.
 </p>
 
 <?= chart_example('Simple Area', 'simple-area', 'generated', array('exampleHeight' => '60vh')) ?>

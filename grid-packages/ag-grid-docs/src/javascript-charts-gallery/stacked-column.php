@@ -11,14 +11,14 @@ define('skipInPageNav', true);
 <h1 class="heading">Charts Standalone Gallery: Stacked Column</h1>
 
 <p class="lead">
-    The column chart represents data as a series of stacked vertical columns.
+    Stacked column charts allow part-to-whole comparisons, with series stacked on top of each other in the vertical <a href='./simple-column.php'>columns</a>.
 </p>
 
 <?= chart_example('Stacked Column', 'stacked-column', 'generated', array('exampleHeight' => '60vh')) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./grouped-column.php">❮&nbsp;&nbsp;Grouped Column</a>
-    <a class="chart-navigation__right" href="./percentage-column.php">Percentage Column&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./100--stacked-column.php">100% Stacked Column&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
