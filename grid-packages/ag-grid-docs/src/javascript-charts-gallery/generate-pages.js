@@ -143,6 +143,7 @@ function getEmptyGalleryItem() {
 function updateMenu(galleryConfig) {
     console.log('Updating menu...');
 
+    const includeSpecificExamples = false;
     const rootPath = options.rootDirectory + '/';
     const menuPath = '../documentation-main/menu.json';
     const menu = getJson(menuPath);
@@ -152,10 +153,10 @@ function updateMenu(galleryConfig) {
         title: category,
         url: rootPath + `#${toKebabCase(category)}`,
         disableActive: true,
-        items: Object.keys(galleryConfig[category]).map(name => ({
+        items: includeSpecificExamples ? Object.keys(galleryConfig[category]).map(name => ({
             title: name,
             url: rootPath + getPageName(name),
-        }))
+        })) : []
     }));
 
     writeFile(menuPath, JSON.stringify(menu, null, 2));

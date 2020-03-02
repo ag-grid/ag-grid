@@ -1026,155 +1026,37 @@
                 "title": "Bar/Column",
                 "url": "javascript-charts-gallery/#bar-column",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Bar",
-                    "url": "javascript-charts-gallery/simple-bar.php"
-                  },
-                  {
-                    "title": "Grouped Bar",
-                    "url": "javascript-charts-gallery/grouped-bar.php"
-                  },
-                  {
-                    "title": "Stacked Bar",
-                    "url": "javascript-charts-gallery/stacked-bar.php"
-                  },
-                  {
-                    "title": "100% Stacked Bar",
-                    "url": "javascript-charts-gallery/100--stacked-bar.php"
-                  },
-                  {
-                    "title": "Bar With Labels",
-                    "url": "javascript-charts-gallery/bar-with-labels.php"
-                  },
-                  {
-                    "title": "Simple Column",
-                    "url": "javascript-charts-gallery/simple-column.php"
-                  },
-                  {
-                    "title": "Grouped Column",
-                    "url": "javascript-charts-gallery/grouped-column.php"
-                  },
-                  {
-                    "title": "Stacked Column",
-                    "url": "javascript-charts-gallery/stacked-column.php"
-                  },
-                  {
-                    "title": "100% Stacked Column",
-                    "url": "javascript-charts-gallery/100--stacked-column.php"
-                  },
-                  {
-                    "title": "Column With Negative Values",
-                    "url": "javascript-charts-gallery/column-with-negative-values.php"
-                  }
-                ]
+                "items": []
               },
               {
                 "title": "Pie/Doughnut",
                 "url": "javascript-charts-gallery/#pie-doughnut",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Pie",
-                    "url": "javascript-charts-gallery/simple-pie.php"
-                  },
-                  {
-                    "title": "Simple Doughnut",
-                    "url": "javascript-charts-gallery/simple-doughnut.php"
-                  }
-                ]
+                "items": []
               },
               {
                 "title": "Line",
                 "url": "javascript-charts-gallery/#line",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Line",
-                    "url": "javascript-charts-gallery/simple-line.php"
-                  },
-                  {
-                    "title": "Line With Gaps",
-                    "url": "javascript-charts-gallery/line-with-gaps.php"
-                  }
-                ]
+                "items": []
               },
               {
                 "title": "Scatter/Bubble",
                 "url": "javascript-charts-gallery/#scatter-bubble",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Scatter",
-                    "url": "javascript-charts-gallery/simple-scatter.php"
-                  },
-                  {
-                    "title": "Simple Bubble",
-                    "url": "javascript-charts-gallery/simple-bubble.php"
-                  },
-                  {
-                    "title": "Bubble With Negative Values",
-                    "url": "javascript-charts-gallery/bubble-with-negative-values.php"
-                  }
-                ]
+                "items": []
               },
               {
                 "title": "Area",
                 "url": "javascript-charts-gallery/#area",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Area",
-                    "url": "javascript-charts-gallery/simple-area.php"
-                  },
-                  {
-                    "title": "Stacked Area",
-                    "url": "javascript-charts-gallery/stacked-area.php"
-                  },
-                  {
-                    "title": "100% Stacked Area",
-                    "url": "javascript-charts-gallery/100--stacked-area.php"
-                  },
-                  {
-                    "title": "Area With Negative Values",
-                    "url": "javascript-charts-gallery/area-with-negative-values.php"
-                  }
-                ]
+                "items": []
               },
               {
                 "title": "Feature Highlights",
                 "url": "javascript-charts-gallery/#feature-highlights",
                 "disableActive": true,
-                "items": [
-                  {
-                    "title": "Time Axis With Irregular Intervals",
-                    "url": "javascript-charts-gallery/time-axis-with-irregular-intervals.php"
-                  },
-                  {
-                    "title": "Real-Time Data Updates",
-                    "url": "javascript-charts-gallery/real-time-data-updates.php"
-                  },
-                  {
-                    "title": "Combination of Different Series Types",
-                    "url": "javascript-charts-gallery/combination-of-different-series-types.php"
-                  },
-                  {
-                    "title": "Chart Customisation",
-                    "url": "javascript-charts-gallery/chart-customisation.php"
-                  },
-                  {
-                    "title": "Custom Marker Shapes",
-                    "url": "javascript-charts-gallery/custom-marker-shapes.php"
-                  },
-                  {
-                    "title": "Custom Tooltips",
-                    "url": "javascript-charts-gallery/custom-tooltips.php"
-                  },
-                  {
-                    "title": "Per-Marker Customisation",
-                    "url": "javascript-charts-gallery/per-marker-customisation.php"
-                  }
-                ]
+                "items": []
               }
             ]
           },
