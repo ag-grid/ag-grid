@@ -37,7 +37,7 @@ export class CheckboxSelectionComponent extends Component {
     private onSelectionChanged(): void {
         const state = this.rowNode.isSelected();
 
-        this.eCheckbox.setValue(state);
+        this.eCheckbox.setValue(state, true);
     }
 
     private onCheckedClicked(): number {
