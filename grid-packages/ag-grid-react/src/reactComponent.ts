@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import {Promise, Utils} from 'ag-grid-community';
+import {ComponentType, Promise, Utils} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
@@ -15,16 +15,20 @@ export class ReactComponent extends BaseReactComponent {
     private componentInstance: any;
 
     private reactComponent: any;
+    private componentType: ComponentType;
     private parentComponent: AgGridReact;
     private portal: ReactPortal | null = null;
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
-    private staticMarkup: HTMLElement | null = null;
+    private staticMarkup: HTMLElement | null | string = null;
 
-    constructor(reactComponent: any, parentComponent: AgGridReact) {
+    constructor(reactComponent: any,
+                parentComponent: AgGridReact,
+                componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
+        this.componentType = componentType;
         this.parentComponent = parentComponent;
         this.statelessComponent = ReactComponent.isStateless(this.reactComponent);
     }
@@ -66,6 +70,8 @@ export class ReactComponent extends BaseReactComponent {
                 this.componentInstance = element;
 
                 this.addParentContainerStyleAndClasses();
+
+                this.removeStaticMarkup();
             };
         }
 
@@ -79,7 +85,11 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
-            this.removeStaticMarkup();
+            if(this.statelessComponent) {
+                setTimeout(() => {
+                    this.removeStaticMarkup();
+                })
+            }
         });
     }
 
@@ -123,6 +133,10 @@ export class ReactComponent extends BaseReactComponent {
             || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
     }
 
+    public isNullRender(): boolean {
+        return this.staticMarkup === "";
+    }
+
     /*
      * Attempt to render the component as static markup if possible
      * What this does is eliminate any visible flicker for the user in the scenario where a component is destroyed and
@@ -130,16 +144,29 @@ export class ReactComponent extends BaseReactComponent {
      * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
      */
     private renderStaticMarkup(params: any) {
-        if(this.parentComponent.isDisableStaticMarkup()) {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
 
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
             const staticMarkup = renderToStaticMarkup(reactComponent);
-            if (staticMarkup) {
-                this.eParentElement.innerHTML = staticMarkup;
-                this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+            // if the render method returns null the result will be an empty string
+            if (staticMarkup === "") {
+                this.staticMarkup = staticMarkup;
+            } else {
+                if (staticMarkup) {
+                    // in the event of memoized renderers, renderers that that return simple strings or NaN etc
+                    // we wrap the value in a span so that we can remove it easily
+                    const testElement = document.createElement('span');
+                    testElement.innerHTML = staticMarkup;
+                    if (testElement.children[0]) {
+                        this.eParentElement.innerHTML = staticMarkup;
+                    } else {
+                        this.eParentElement.appendChild(testElement);
+                    }
+                    this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+                }
             }
         } catch (e) {
             // we tried - this can happen if using context/stores etc
@@ -147,15 +174,20 @@ export class ReactComponent extends BaseReactComponent {
     }
 
     private removeStaticMarkup() {
-        if(this.parentComponent.isDisableStaticMarkup()) {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
 
-        setTimeout(() => {
-            if (this.staticMarkup) {
-                this.staticMarkup.remove();
-                this.staticMarkup = null;
-            }
-        })
+        if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
+            (this.staticMarkup as HTMLElement).remove();
+            this.staticMarkup = null;
+        }
+    }
+
+    rendered() {
+        return this.isNullRender() ||
+            this.staticMarkup ||
+            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            (!this.isStatelessComponent() && this.getFrameworkComponentInstance());
     }
 }

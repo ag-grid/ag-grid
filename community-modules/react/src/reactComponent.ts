@@ -157,7 +157,7 @@ export class ReactComponent extends BaseReactComponent {
             } else {
                 if (staticMarkup) {
                     // in the event of memoized renderers, renderers that that return simple strings or NaN etc
-                    // we don't do anything - we can't readily remove these from the dom safely so we just skip 'em
+                    // we wrap the value in a span so that we can remove it easily
                     const testElement = document.createElement('span');
                     testElement.innerHTML = staticMarkup;
                     if (testElement.children[0]) {

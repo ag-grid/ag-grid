@@ -58,6 +58,7 @@ const umd = () => {
             globals: {
                 react: 'React',
                 'react-dom': 'ReactDOM',
+                'react-dom/server': 'ReactDOMServer',
                 'prop-types': 'PropTypes',
                 'ag-grid-community': 'agGrid'
             },
@@ -100,11 +101,14 @@ const linkUmdForE2E = (done) => {
 };
 
 const copyFromModuleSource = () => {
-    const copySource = gulp.src([
-        "../../community-modules/react/src/**/!__tests__"
-    ])
+    const copySource = gulp.src(
+        [
+            "**/*",
+            '!**/__tests__*/**/*'
+        ], {cwd: '../../community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
-        .pipe(gulp.dest("./src"));
+        .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))
+        .pipe(gulp.dest("./src"),{cwd: '.'});
 
     const copyMain = gulp.src(["../../community-modules/react/main.d.ts",
         "../../community-modules/react/main.js"])
