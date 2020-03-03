@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">ag-Charts Gallery: Simple Bubble</h1>
 
 <p class="lead">
-    Bubble charts are a specialised type of <a href=./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble).
+    Bubble charts are a specialised type of <a href="./simple-scatter.php">scatter charts</a> that can represent a third variable through the size of each marker (or bubble).
 </p>
 
 <?= chart_example('Simple Bubble', 'simple-bubble', 'generated', array('exampleHeight' => '60vh')) ?>

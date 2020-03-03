@@ -105,7 +105,7 @@ class ChartExample extends Component {
     }
 
     render() {
-        return <AgChartsReact options={this.state.options}/>;
+        return &lt;AgChartsReact options={this.state.options}/>;
     }
 }</code>
         </pre>
@@ -286,7 +286,7 @@ constructor(props) {
 
 <p>
 Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation
-for specific chart types to learn more.
+for specific chart types.
 </p>
 
 </div>

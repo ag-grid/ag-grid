@@ -18,9 +18,9 @@ include '../documentation-main/documentation_header.php';
     <img alt="Chart Layout" src="cartesian-chart-layout.png" style="margin-bottom: 0px; width: 100%">
 </p>
 
-<p>Each chart is composed of a single or multiple series and (optionally) a legend, axes, and captions, such as title and subtitle. All these components are managed by the chart's layout engine and are sized and positioned appropriately based on chart's dimensions, the nature of the data and the user's config.</p>
+<p>Each chart is composed of a single or multiple series and (optionally) a legend, axes, and captions, such as title and subtitle. All these components are managed by the chart's layout engine and are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the user's config.</p>
 
-<p>It helps to understand the way layout works to configure presentation to one's liking and to get expected results on chart size or data changes.</p>
+<p>To get the desired results on chart size or data changes it helps to understand the way layout works.</p>
 
 <p>For example, given the data:</p>
 

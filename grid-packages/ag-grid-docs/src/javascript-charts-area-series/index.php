@@ -41,7 +41,7 @@ series: [{
 <p>
     In the snippet above we are using the <code>'ie'</code> as the only <code>yKey</code>,
     to show market share of this internet browser alone.
-    Just using this simple series config produces the following chart:
+    Using this simple series config produces the following chart:
 </p>
 
 <h3>Example: Basic Area Chart</h3>

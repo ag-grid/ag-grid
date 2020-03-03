@@ -31,7 +31,7 @@ include './intro.php';
 
 <p>For the purposes of this tutorial, we are going to scaffold an Angular app with the <a href="https://cli.angular.io/">Angular CLI</a>.</p>
 <p>Don't worry if your project has a different configuration - ag-Charts and its Angular wrapper are distributed as NPM
-    packages which should work with any common Angular project module bundler setup.</p>
+    packages and works with all common Angular project setups.</p>
 
 <p>
 Let's follow the <a href="https://github.com/angular/angular-cli#installation">Angular CLI instructions</a> - run the following in your terminal:</p>
@@ -303,8 +303,8 @@ constructor() {
 </p>
 
 <p>
-Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation
-for specific chart types to learn more.
+Now that you've had a taste of ag-Charts we encourage you to explore our documentation
+of specific chart types.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

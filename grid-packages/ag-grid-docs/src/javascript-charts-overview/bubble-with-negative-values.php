@@ -11,7 +11,7 @@ define('skipInPageNav', true);
 <h1 class="heading">ag-Charts Gallery: Bubble With Negative Values</h1>
 
 <p class="lead">
-    The axes of scatter and bubble charts can be extended to plot positive and negative values for the variables.
+    The axes of scatter and bubble charts can be extended to plot positive and negative values.
 </p>
 
 <?= chart_example('Bubble With Negative Values', 'bubble-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
