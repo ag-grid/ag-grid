@@ -102,7 +102,24 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
-        return false;
+        // both are missing
+        if (!a && !b) { return true; }
+
+        // one is missing, other present
+        if ((!a && b) || (a && !b)) { return false; }
+
+        // both present, so compare
+
+        // if different sizes, they are different
+        if (a.values.length != b.values.length) { return false; }
+
+        // now check each one value by value
+        for (let i = 0; i<a.values.length; i++) {
+            if (a.values[i]!==b.values[i]) { return false; }
+        }
+
+        // got this far means value lists are identical
+        return true;
     }
 
     public setParams(params: ISetFilterParams): void {

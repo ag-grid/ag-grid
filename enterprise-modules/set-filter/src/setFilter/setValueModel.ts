@@ -100,7 +100,7 @@ export class SetValueModel {
         // we use a map rather than an array for the selected values as the lookup
         // for a map is much faster than the lookup for an array, especially when
         // the length of the array is thousands of records long
-        this.selectedValuesMap = {};
+        this.selectNothing();
         this.selectAllUsingMiniFilter();
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
@@ -126,7 +126,7 @@ export class SetValueModel {
 
         const oldModel = Object.keys(this.selectedValuesMap);
 
-        this.selectedValuesMap = {};
+        this.selectNothing();
         this.processMiniFilter();
 
         if (keepSelection) {
