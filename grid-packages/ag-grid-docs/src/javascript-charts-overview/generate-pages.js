@@ -101,7 +101,7 @@ function generateGallerySection(title, exampleNames) {
 function generateIndexPage(galleryConfig) {
     console.log('Generating index page...');
 
-    const title = "ag-Charts";
+    const title = 'ag-Charts';
     const categories = Object.keys(galleryConfig);
     const contents = `${getHeader(title)}
 
@@ -193,7 +193,6 @@ function getEmptyGalleryItem() {
 function updateMenu(galleryConfig) {
     console.log('Updating menu...');
 
-    const includeSpecificExamples = false;
     const rootPath = options.rootDirectory + '/';
     const menuPath = '../documentation-main/menu.json';
     const menu = getJson(menuPath);
@@ -203,10 +202,12 @@ function updateMenu(galleryConfig) {
         title: category,
         url: rootPath + `#${toKebabCase(category)}`,
         disableActive: true,
-        items: includeSpecificExamples ? Object.keys(galleryConfig[category]).map(name => ({
+        // by including children but hiding them, the menu will still expand correctly when those children pages are open
+        hideChildren: true,
+        items: Object.keys(galleryConfig[category]).map(name => ({
             title: name,
             url: rootPath + getPageName(name),
-        })) : []
+        }))
     }));
 
     writeFile(menuPath, JSON.stringify(menu, null, 2));

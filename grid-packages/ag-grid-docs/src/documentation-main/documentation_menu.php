@@ -22,8 +22,12 @@ function is_current($item) {
 }
 
 function should_expand($item) {
-    if (count($item['items']) == 0) {
+    if (count($item['items']) === 0) {
         return false;
+    }
+
+    if (is_current($item)) {
+        return true;
     }
 
     foreach ($item['items'] as $child) {
@@ -56,14 +60,9 @@ function render_menu_items($items, $gtm, $level) {
 
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
-        $current = is_current($item);
+        $isCurrent = is_current($item);
         $isCategory = $level === 1 || $item['isCategory'];
-
-        if ($isCategory) {
-            $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
-        } else {
-            $li_class = ' class="expanded"';
-        }
+        $li_class = !$isCategory || should_expand($item) ? ' class="expanded"' : '';
 
         echo "<li$li_class>";
 
@@ -84,7 +83,7 @@ function render_menu_items($items, $gtm, $level) {
 
             $a_class = count($a_classes) > 0 ? ' class="' . join($a_classes, ' ') . '"' : '';
 
-            if ($current) {
+            if ($isCurrent) {
                 $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
             }
             echo "<a href=\"$url\"$a_class>{$item['title']}$new_marker$enterprise_icon</a>";
@@ -93,7 +92,9 @@ function render_menu_items($items, $gtm, $level) {
             echo "<span class='$class'>{$item['title']}</span>";
         }
 
-        render_menu_items($item['items'], $item_gtm, $level + 1);
+        if (!$item['hideChildren']) {
+            render_menu_items($item['items'], $item_gtm, $level + 1);
+        }
 
         echo "</li>";
     }
