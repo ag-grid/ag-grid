@@ -6,10 +6,10 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Configuration </h1>
+<h1 class="heading-enterprise"> Server-side Configuration </h1>
 
 <p class="lead">
-    This section covers the Server-side Cache and Configurations available in the Server-side Row Model.
+    This section covers the Server-side Cache and configurations available in the Server-side Row Model.
 </p>
 
 <p>

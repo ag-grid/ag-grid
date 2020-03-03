@@ -1,31 +1,40 @@
 var columnDefs = [
-    {field: 'athlete'},
-    {field: 'country'},
-    {field: 'year'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'}
+    { field: 'athlete', type: 'text' },
+    { field: 'year',
+      filter: 'agNumberColumnFilter',
+      filterParams: {
+        resetButton: true,
+        debounceMs: 1000,
+        suppressAndOrCondition: true,
+      }
+    },
+    { field: 'gold', type: 'number' },
+    { field: 'silver', type: 'number' },
+    { field: 'bronze', type: 'number' }
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
         sortable: true,
-        resizable: true
+        resizable: true,
+        menuTabs: ['filterMenuTab']
     },
-
+    columnTypes: {
+        'text': {filter: 'agTextColumnFilter'},
+        'number': {filter: 'agNumberColumnFilter'},
+        'numberWithFilterReset': {
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                resetButton: true,
+                debounceMs: 1500
+            }
+        }
+    },
     // use the server-side row model
     rowModelType: 'serverSide',
-
-    // fetch 100 rows at a time
-    cacheBlockSize: 100,
-
-    // only keep 10 blocks of rows
-    maxBlocksInCache: 10,
 
     animateRows: true,
     // debug: true
@@ -68,3 +77,4 @@ document.addEventListener('DOMContentLoaded', function () {
         gridOptions.api.setServerSideDatasource(datasource);
     });
 });
+

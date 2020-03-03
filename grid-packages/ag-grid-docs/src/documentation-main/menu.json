@@ -414,18 +414,23 @@
                 "matrixExcludeChildren": true,
                 "items": [
                   {
-                    "title": "Server-side Datasource",
+                    "title": "Datasource",
                     "url": "javascript-grid-server-side-model-datasource/",
                     "enterprise": true
                   },
                   {
-                    "title": "Server-side Configuration",
+                    "title": "Configuration",
                     "url": "javascript-grid-server-side-model-configuration/",
                     "enterprise": true
                   },
                   {
-                    "title": "Sorting / Filtering",
-                    "url": "javascript-grid-server-side-model-sort-filter/",
+                    "title": "Sorting",
+                    "url": "javascript-grid-server-side-model-sorting/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Filtering",
+                    "url": "javascript-grid-server-side-model-filtering/",
                     "enterprise": true
                   },
                   {
