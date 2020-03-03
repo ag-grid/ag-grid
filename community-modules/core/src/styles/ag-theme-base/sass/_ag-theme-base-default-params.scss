@@ -133,7 +133,7 @@ $ag-theme-base-default-params: (
     // these yourself, set this to true. If you only want to disable styling for some kinds of
     // input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false))
     // which will emit styles for all kinds of input except checkboxes.
-    suppress-native-input-styling: true,
+    suppress-native-input-styling: false,
 
     input-disabled-background-color: null,
     input-border-color: null,
