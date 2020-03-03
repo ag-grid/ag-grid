@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1>Legend</h1>
 
 <p class="lead">
-    A legend makes it easier to tell at a glance which series or series items correspond to what pecies of data.
-    This section describes legend's options and layout behavior.
+    A legend makes it easier to tell at a glance which series or series items correspond to which pieces of data.
+    This section describes the legend options and layout behaviour.
 </p>
 
 <h2>Position</h2>

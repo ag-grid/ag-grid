@@ -11,8 +11,8 @@ include '../documentation-main/documentation_header.php';
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 
 <p class="lead" id="vue-charts-description">
-    ag-Charts is the industry standard for Vue Enterprise Applications. Developers using ag-Charts
-    are building applications that would not be possible if ag-Charts did not exist.
+    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well 
+    as standalone fully functional charting capabilities.
 </p>
 
 <?php
@@ -23,13 +23,13 @@ include './intro.php';
 
 <p>
     In this article we will walk you through the necessary steps to add ag-Charts to an existing JavaScript
-    project and configure some of the essential features of it.
+    project and configure some of the essential features.
 </p>
 
 <h2 id="add-ag-charts-to-your-project">Add ag-Charts to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.vuejs.org/">Vue CLI</a>.
-Don't worry if your project has a different configuration. Ag-Charts and its Vue wrapper are distributed as NPM packages, which should work with any common Vue project module bundler setup.
+Don't worry if your project has a different configuration. Ag-Charts and its Vue wrapper are distributed as NPM packages and work with any common Vue project setup. 
 Let's follow the <a href="https://cli.vuejs.org/">Vue CLI instructions</a> - run the following in your terminal:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-vuejs">Copy Code</button>
@@ -53,7 +53,7 @@ npm run serve
 
 <p>If everything goes well, <code>npm run serve</code> has started the web server. You can open the default app at <a href="http://localhost:8080" target="_blank">localhost:8080</a>.</p>
 
-<p>As a next step, let's add the ag-Charts NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
+<p>Let's add the ag-Charts NPM packages. run the following command in <code>my-project</code> (you may need a new instance of the terminal):</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <snippet language="sh">
@@ -180,7 +180,7 @@ beforeMount() {
 
 <p>
     Now let's try something more interesting.
-    Let us say you want to visualize how much is spent on coffee, milk and tea in your company each quarter and in total.
+    Let us say you want to visualise how much is spent on coffee, milk and tea in your company each quarter and in total.
     Your data might look something like this:
 </p>
 
@@ -238,7 +238,7 @@ beforeMount() {
 
 <h2>Labels & Titles</h2>
 
-<p>We can enhance our chart by providing a label for each block segment. We can a label's <code>fontSize</code>, <code>fontFamily</code> and other properties,
+<p>We can enhance our chart by providing a label for each block segment. We can set a label's <code>fontSize</code>, <code>fontFamily</code> and other properties,
     but for now we'll just accept the default values:
 </p>
 
@@ -287,8 +287,8 @@ beforeMount() {
 </p>
 
 <p>
-Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation
-for specific chart types to learn more.
+Now that you've had a taste of ag-Charts, we encourage you to explore our documentation
+of specific chart types.
 </p>
 
 <h2>Next Up</h2>

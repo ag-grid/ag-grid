@@ -47,7 +47,7 @@ series: [{
 
 <p>
     In the snippet above we are using the <code>'iphone'</code> as the only <code>yKey</code>,
-    to show revenue per quarter for this product alone. Just using this simple series config
+    to show revenue per quarter for this product alone. Using this simple series config
     produces the following chart:
 </p>
 
