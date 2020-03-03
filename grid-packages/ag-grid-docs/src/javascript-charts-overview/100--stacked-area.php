@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: 100% Stacked Area';
+$pageTitle = 'ag-Charts Gallery: 100% Stacked Area';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: 100% Stacked Area</h1>
+<h1 class="heading">ag-Charts Gallery: 100% Stacked Area</h1>
 
 <p class="lead">
     100% stacked area charts show the relative percentage of multiple series in <a href='./stacked-area.php'>stacked areas</a>, where the cumulative area always totals to 100%.

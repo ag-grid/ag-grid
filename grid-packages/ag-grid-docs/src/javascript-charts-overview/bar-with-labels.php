@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Bar With Labels';
+$pageTitle = 'ag-Charts Gallery: Bar With Labels';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Bar With Labels</h1>
+<h1 class="heading">ag-Charts Gallery: Bar With Labels</h1>
 
 <p class="lead">
     Using labels in a <a href='./simple-bar.php'>bar chart</a> can be useful to highlight the values of each bar.

@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Time Axis With Irregular Intervals';
+$pageTitle = 'ag-Charts Gallery: Time Axis With Irregular Intervals';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Time Axis With Irregular Intervals</h1>
+<h1 class="heading">ag-Charts Gallery: Time Axis With Irregular Intervals</h1>
 
 <p class="lead">
     A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals.

@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Simple Column';
+$pageTitle = 'ag-Charts Gallery: Simple Column';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Simple Column</h1>
+<h1 class="heading">ag-Charts Gallery: Simple Column</h1>
 
 <p class="lead">
     Column charts (also known as vertical <a href='./simple-bar.php'>bar charts</a>) represent data using vertical columns, with the height of each column proportional to the value being plotted. They can be used to plot both nominal and ordinal data, and are simple to interpret. They work best where the number of data points is limited.

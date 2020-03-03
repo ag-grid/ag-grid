@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Area With Negative Values';
+$pageTitle = 'ag-Charts Gallery: Area With Negative Values';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Area With Negative Values</h1>
+<h1 class="heading">ag-Charts Gallery: Area With Negative Values</h1>
 
 <p class="lead">
     <a href='./simple-area.php'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled.

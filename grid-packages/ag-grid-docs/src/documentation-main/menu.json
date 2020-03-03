@@ -991,14 +991,52 @@
         "icon": "icon-charts",
         "items": [
           {
-            "title": "Overview",
-            "url": "javascript-charts-overview/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Getting Started",
-            "url": "javascript-charts-getting-started/",
+            "isCategory": true,
             "items": [
+              {
+                "title": "Overview",
+                "url": "javascript-charts-overview/",
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-charts-overview/#bar-column",
+                    "disableActive": true,
+                    "items": []
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-charts-overview/#pie-doughnut",
+                    "disableActive": true,
+                    "items": []
+                  },
+                  {
+                    "title": "Line",
+                    "url": "javascript-charts-overview/#line",
+                    "disableActive": true,
+                    "items": []
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-charts-overview/#scatter-bubble",
+                    "disableActive": true,
+                    "items": []
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-charts-overview/#area",
+                    "disableActive": true,
+                    "items": []
+                  },
+                  {
+                    "title": "Feature Highlights",
+                    "url": "javascript-charts-overview/#feature-highlights",
+                    "disableActive": true,
+                    "items": []
+                  }
+                ]
+              },
               {
                 "title": "Vanilla JavaScript",
                 "url": "javascript-charts/"
@@ -1018,51 +1056,22 @@
             ]
           },
           {
-            "title": "Gallery",
-            "url": "javascript-charts-gallery/",
-            "showInCollapsed": true,
+            "title": "API",
+            "isCategory": true,
             "items": [
               {
-                "title": "Bar/Column",
-                "url": "javascript-charts-gallery/#bar-column",
-                "disableActive": true,
-                "items": []
+                "title": "Reference",
+                "url": "javascript-charts-api/"
               },
               {
-                "title": "Pie/Doughnut",
-                "url": "javascript-charts-gallery/#pie-doughnut",
-                "disableActive": true,
-                "items": []
-              },
-              {
-                "title": "Line",
-                "url": "javascript-charts-gallery/#line",
-                "disableActive": true,
-                "items": []
-              },
-              {
-                "title": "Scatter/Bubble",
-                "url": "javascript-charts-gallery/#scatter-bubble",
-                "disableActive": true,
-                "items": []
-              },
-              {
-                "title": "Area",
-                "url": "javascript-charts-gallery/#area",
-                "disableActive": true,
-                "items": []
-              },
-              {
-                "title": "Feature Highlights",
-                "url": "javascript-charts-gallery/#feature-highlights",
-                "disableActive": true,
-                "items": []
+                "title": "Explorer",
+                "url": "javascript-charts-api-explorer/"
               }
             ]
           },
           {
             "title": "Series",
-            "url": "javascript-charts-series/",
+            "isCategory": true,
             "items": [
               {
                 "title": "Line",
@@ -1088,7 +1097,7 @@
           },
           {
             "title": "Features",
-            "url": "javascript-charts-features/",
+            "isCategory": true,
             "items": [
               {
                 "title": "Layout",
@@ -1109,25 +1118,6 @@
               {
                 "title": "Axes",
                 "url": "javascript-charts-axis/"
-              }
-            ]
-          },
-          {
-            "title": "API",
-            "url": "javascript-charts-api/",
-            "items": [
-              {
-                "title": "API Explorer",
-                "url": "javascript-charts-api-explorer/"
-              }
-            ]
-          },
-          {
-            "title": "See Also",
-            "items": [
-              {
-                "title": "Third Party Charting",
-                "url": "javascript-grid-graphing/"
               }
             ]
           }
@@ -1214,6 +1204,10 @@
                 "enterprise": true
               }
             ]
+          },
+          {
+            "title": "Third-Party Charting",
+            "url": "javascript-grid-graphing/"
           }
         ]
       }

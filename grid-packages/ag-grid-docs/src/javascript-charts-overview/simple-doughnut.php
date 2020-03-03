@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Simple Doughnut';
+$pageTitle = 'ag-Charts Gallery: Simple Doughnut';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Simple Doughnut</h1>
+<h1 class="heading">ag-Charts Gallery: Simple Doughnut</h1>
 
 <p class="lead">
     Doughnut charts are similar to <a href='./simple-pie.php'>pie charts</a>, being used to express a part-to-whole relationship, but allow for multiple series to be shown on the same chart for comparison.

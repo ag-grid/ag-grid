@@ -37,7 +37,7 @@ function should_expand($item) {
 
 function render_titles($items, $gtm = array()) {
     echo "<ul>";
-    foreach($items as $item) {
+    foreach ($items as $item) {
         $actualMenuItems = $item['items'];
         render_menu_items($actualMenuItems, $gtm, 1);
     }
@@ -46,7 +46,7 @@ function render_titles($items, $gtm = array()) {
 }
 
 function render_menu_items($items, $gtm, $level) {
-    if (count($items) == 0) {
+    if (count($items) === 0) {
         return;
     }
 
@@ -57,8 +57,9 @@ function render_menu_items($items, $gtm, $level) {
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
         $current = is_current($item);
+        $isCategory = $level === 1 || $item['isCategory'];
 
-        if ($level == 1) {
+        if ($isCategory) {
             $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
         } else {
             $li_class = ' class="expanded"';
@@ -77,7 +78,7 @@ function render_menu_items($items, $gtm, $level) {
                 array_push($a_classes, 'active');
             }
 
-            if ($level == 1) {
+            if ($isCategory) {
                 array_push($a_classes, 'has-children');
             }
 
@@ -88,7 +89,8 @@ function render_menu_items($items, $gtm, $level) {
             }
             echo "<a href=\"$url\"$a_class>{$item['title']}$new_marker$enterprise_icon</a>";
         } else {
-            echo "<span>{$item['title']}</span>";
+            $class = $isCategory ? 'has-children' : '';
+            echo "<span class='$class'>{$item['title']}</span>";
         }
 
         render_menu_items($item['items'], $item_gtm, $level + 1);

@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Grouped Column';
+$pageTitle = 'ag-Charts Gallery: Grouped Column';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Grouped Column</h1>
+<h1 class="heading">ag-Charts Gallery: Grouped Column</h1>
 
 <p class="lead">
     Grouped column charts (also known as clustered column charts) present multiple series with the <a href='./simple-column.php'>columns</a> grouped by category, to allow for easier comparisons across different series.

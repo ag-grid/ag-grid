@@ -13,7 +13,7 @@ function hasArgument(name) {
 
 const options = {
     galleryJsonFile: 'gallery.json',
-    rootDirectory: 'javascript-charts-gallery',
+    rootDirectory: 'javascript-charts-overview',
     thumbnailDirectory: 'thumbnails',
     encoding: 'utf8',
 };
@@ -50,7 +50,7 @@ function generateGalleryPages(galleryConfig) {
 
     namesByCategory.forEach(({ category, name }, i) => {
         const config = galleryConfig[category][name];
-        const title = `Charts Standalone Gallery: ${name}`;
+        const title = `ag-Charts Gallery: ${name}`;
         const navigation = [];
 
         if (i > 0) {
@@ -101,23 +101,73 @@ function generateGallerySection(title, exampleNames) {
 function generateIndexPage(galleryConfig) {
     console.log('Generating index page...');
 
-    const title = "Charts Standalone: Gallery";
+    const title = "ag-Charts";
     const categories = Object.keys(galleryConfig);
     const contents = `${getHeader(title)}
 
 <h1 class="heading">${title}</h1>
 
 <p class="lead">
-    The standalone charting library is flexible and powerful, allowing you to create a variety of different
-    visualisations of your data. Here are some examples.
+    Our standalone chart library ag-Charts is flexible and powerful, enabling you to create your own charts without needing to go
+    through the grid. If you want to jump straight in, click through to the Getting Started section for your preferred
+    framework, or head to the <a href='../javascript-charts-api-explorer/'>API Explorer</a>. Alternatively, scroll down
+    for a gallery of examples demonstrating the variety of visualisations you can produce using our library.
 </p>
+
+<p>
+    As with the grid, the "ag" part of ag-Charts stands for "agnostic". The internal ag-Charts engine is implemented in
+    TypeScript with zero dependencies. You can just use the vanilla JavaScript ag-Charts library, or alternatively
+    take advantage of the framework-specific ag-Charts Components to integrate with any major framework of your choice.
+</p>
+
+<div id="get-started-frameworks">
+    <div class="row no-gutters">
+        <div>
+            <div class="get-started-framework card-javascript">
+                <a href="../javascript-charts/">JavaScript</a>
+                <div>
+                    <p><a href="../javascript-charts/">Get Started</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="get-started-framework card-angular">
+                <a href="../angular-charts/">Angular</a>
+                <div>
+                    <p><a href="../angular-charts/">Get Started</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="get-started-framework card-react">
+                <a href="../react-charts/">React</a>
+                <div>
+                    <p><a href="../react-charts/">Get Started</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="get-started-framework card-vue-inverted">
+                <a href="../vuejs-charts/">Vue.js</a>
+                <div>
+                    <p><a href="../vuejs-charts/">Get Started</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="chart-gallery__title">Gallery</h2>
 
 ${categories.map(c => generateGallerySection(c, Object.keys(galleryConfig[c]))).join('\n\n')}
 
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about the: <a href="../javascript-charts-features/">Standalone Chart Features</a>.
+    Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>`;

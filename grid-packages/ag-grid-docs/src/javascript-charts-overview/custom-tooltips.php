@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Custom Tooltips';
+$pageTitle = 'ag-Charts Gallery: Custom Tooltips';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Custom Tooltips</h1>
+<h1 class="heading">ag-Charts Gallery: Custom Tooltips</h1>
 
 <p class="lead">
     The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want.

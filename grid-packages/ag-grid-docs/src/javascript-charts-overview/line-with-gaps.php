@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Line With Gaps';
+$pageTitle = 'ag-Charts Gallery: Line With Gaps';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Line With Gaps</h1>
+<h1 class="heading">ag-Charts Gallery: Line With Gaps</h1>
 
 <p class="lead">
     When data is missing in some line series compared to others, these gaps in the data are reflected in the lines.

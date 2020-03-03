@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Stacked Bar';
+$pageTitle = 'ag-Charts Gallery: Stacked Bar';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Stacked Bar</h1>
+<h1 class="heading">ag-Charts Gallery: Stacked Bar</h1>
 
 <p class="lead">
     Stacked bar charts allow part-to-whole comparisons, with series stacked from left to right in the horizontal <a href='./simple-bar.php'>bars</a>. They make it easy to compare combined bar lengths.

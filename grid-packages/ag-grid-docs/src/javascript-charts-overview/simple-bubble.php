@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Simple Bubble';
+$pageTitle = 'ag-Charts Gallery: Simple Bubble';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Simple Bubble</h1>
+<h1 class="heading">ag-Charts Gallery: Simple Bubble</h1>
 
 <p class="lead">
     Bubble charts are a specialised type of <a href=./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble).

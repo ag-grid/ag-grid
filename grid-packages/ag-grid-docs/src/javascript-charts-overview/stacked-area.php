@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Stacked Area';
+$pageTitle = 'ag-Charts Gallery: Stacked Area';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Stacked Area</h1>
+<h1 class="heading">ag-Charts Gallery: Stacked Area</h1>
 
 <p class="lead">
     Stacked area charts plot multiple <a href='./simple-area.php'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time.

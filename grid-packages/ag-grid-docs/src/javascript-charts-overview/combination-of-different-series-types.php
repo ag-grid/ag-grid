@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Combination of Different Series Types';
+$pageTitle = 'ag-Charts Gallery: Combination of Different Series Types';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Combination of Different Series Types</h1>
+<h1 class="heading">ag-Charts Gallery: Combination of Different Series Types</h1>
 
 <p class="lead">
     Different types of data series can be combined together in the same chart. This example shows how a <a href='./simple-line.php'>line series</a> might be combined with a <a href='./grouped-column.php'>grouped column series</a>.

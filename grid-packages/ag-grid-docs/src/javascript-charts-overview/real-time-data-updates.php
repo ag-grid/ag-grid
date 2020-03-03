@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Real-Time Data Updates';
+$pageTitle = 'ag-Charts Gallery: Real-Time Data Updates';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Real-Time Data Updates</h1>
+<h1 class="heading">ag-Charts Gallery: Real-Time Data Updates</h1>
 
 <p class="lead">
     Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds.

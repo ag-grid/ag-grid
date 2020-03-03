@@ -1,6 +1,6 @@
 <?php
 // NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
-$pageTitle = 'Charts Standalone Gallery: Column With Negative Values';
+$pageTitle = 'ag-Charts Gallery: Column With Negative Values';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
 $pageGroup = 'feature';
@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">Charts Standalone Gallery: Column With Negative Values</h1>
+<h1 class="heading">ag-Charts Gallery: Column With Negative Values</h1>
 
 <p class="lead">
     Column and bar charts can also be used to represent negative values alongside positive ones.
