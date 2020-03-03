@@ -35,7 +35,7 @@ var chart = agCharts.AgChart.create(options);
 function updateWidth(event) {
     var value = event.target.value;
 
-    chart.width = event.target.value;
+    chart.width = +event.target.value;
 
     document.getElementById('sliderValue').innerHTML = value;
 }

@@ -24,3 +24,7 @@ var chart = agCharts.AgChart.create(options);
 function updateLegendPosition(value) {
     chart.legend.position = value;
 }
+
+function setLegendEnabled(enabled) {
+    chart.legend.enabled = enabled;
+}

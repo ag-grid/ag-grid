@@ -1,0 +1,24 @@
+<div class="wrapper">
+    <div class="toolPanel">
+        <div class="slider">
+            <label for="sliderInput"><strong>layoutHorizontalSpacing:</strong></label>
+            <span id="sliderValue">32</span>
+            <input type="range" id="sliderInput" min="0" max="50" oninput="updateLegendLayoutHorizontalSpacing(event)" />
+        </div>
+    </div>
+    <div class="toolPanel">
+        <div class="slider">
+            <label for="sliderInput"><strong>layoutVerticalSpacing:</strong></label>
+            <span id="sliderValue">8</span>
+            <input type="range" id="sliderInput" min="0" max="30" oninput="updateLegendLayoutVerticalSpacing(event)" />
+        </div>
+    </div>
+    <div class="toolPanel">
+        <div class="slider">
+            <label for="sliderInput"><strong>itemSpacing:</strong></label>
+            <span id="sliderValue">8</span>
+            <input type="range" id="sliderInput" min="0" max="30" oninput="updateLegendItemSpacing(event)" />
+        </div>
+    </div>
+    <div id="myChart"></div>
+</div>

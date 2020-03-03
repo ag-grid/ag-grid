@@ -25,14 +25,33 @@ var options = {
         labelKey: 'label',
         strokeWidth: 3
     }],
+    legend: {
+        position: 'bottom'
+    }
 };
 
 var chart = agCharts.AgChart.create(options);
 
-function updateHeight(event) {
+function updateLegendLayoutHorizontalSpacing(event) {
     var value = event.target.value;
 
-    chart.height = +event.target.value;
+    chart.legend.layoutHorizontalSpacing = +event.target.value;
+
+    document.getElementById('sliderValue').innerHTML = value;
+}
+
+function updateLegendLayoutVerticalSpacing(event) {
+    var value = event.target.value;
+
+    chart.legend.layoutVerticalSpacing = +event.target.value;
+
+    document.getElementById('sliderValue').innerHTML = value;
+}
+
+function updateLegendItemSpacing(event) {
+    var value = event.target.value;
+
+    chart.legend.itemSpacing = +event.target.value;
 
     document.getElementById('sliderValue').innerHTML = value;
 }

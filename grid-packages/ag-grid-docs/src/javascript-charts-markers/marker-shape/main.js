@@ -32,7 +32,7 @@ var options = {
         title: 'Gas',
         marker: {
             shape: 'square',
-            size: 16
+            size: 10
         }
     }, {
         xKey: 'quarter',
@@ -40,7 +40,7 @@ var options = {
         title: 'Diesel',
         stroke: 'black',
         marker: {
-            size: 16,
+            size: 15,
             fill: 'gray',
             stroke: 'black'
         }
@@ -51,7 +51,7 @@ var options = {
         stroke: '#8bc24a',
         marker: {
             shape: 'cross',
-            size: 16,
+            size: 20,
             fill: '#8bc24a',
             stroke: '#658d36'
         }
