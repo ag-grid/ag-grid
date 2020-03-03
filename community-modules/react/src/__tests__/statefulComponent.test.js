@@ -36,7 +36,7 @@ it('stateful component returns a valid component instance', () => {
     expect(frameworkInstance.getValue()).toEqual("Test Value");
 });
 
-xit('cell should be editable and editor component usable', async () => {
+it('cell should be editable and editor component usable', async () => {
     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 24</div></div>`);
 
     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
@@ -59,7 +59,7 @@ xit('cell should be editable and editor component usable', async () => {
     await waitForAsyncCondition(() => agGridReact.api.getCellRendererInstances() && agGridReact.api.getCellRendererInstances().length > 0,
         5).then(() => null, () => fail("Renderer instance not created within expected time"));
 
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 50</div></div>`);
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><span><div>Age: 50</div></span></div>`);
 
 
 });
