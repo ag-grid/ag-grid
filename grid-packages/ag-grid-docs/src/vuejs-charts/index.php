@@ -29,7 +29,7 @@ include './intro.php';
 <h2 id="add-ag-charts-to-your-project">Add ag-Charts to Your Project</h2>
 
 <p>For the purposes of this tutorial, we are going to scaffold an Vue app with <a href="https://cli.vuejs.org/">Vue CLI</a>.
-Don't worry if your project has a different configuration. Ag-Charts and its Vue wrapper are distributed as NPM packages, which should work with any common Vue project module bundler setup. 
+Don't worry if your project has a different configuration. Ag-Charts and its Vue wrapper are distributed as NPM packages, which should work with any common Vue project module bundler setup.
 Let's follow the <a href="https://cli.vuejs.org/">Vue CLI instructions</a> - run the following in your terminal:</p>
 <section>
 <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-vuejs">Copy Code</button>
@@ -289,6 +289,12 @@ beforeMount() {
 <p>
 Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation
 for specific chart types to learn more.
+</p>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

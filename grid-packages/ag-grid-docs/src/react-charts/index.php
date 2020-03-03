@@ -291,4 +291,10 @@ for specific chart types to learn more.
 
 </div>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
+</p>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
