@@ -123,8 +123,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
-
+<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 

@@ -95,7 +95,9 @@ gridOptions.api.setServerSideDatasource(myDatasource);
 
 <ul class="content">
     <li>The Server-side Row Model is selected using the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
-    <li>A datasource is registered with the grid using: <code>api.setServerSideDatasource(datasource)</code>.</li>
+    <li>The datasource is registered with the grid using: <code>api.setServerSideDatasource(datasource)</code>.</li>
+    <li>A request is contained in params supplied to <code>getRows(params)</code> with <code>startRow</code> and <code>endRow</code>.
+        This is used by the server to determine the range of rows to return.</li>
     <li>When scrolling down there is a delay as more rows are fetched from the server.</li>
     <li>Open the browsers dev console to view the contents of the requests made by the grid for more rows.</li>
 </ul>

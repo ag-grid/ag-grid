@@ -1,0 +1,98 @@
+{
+    "Bar/Column": {
+        "Simple Bar": {
+            "description": "Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited."
+        },
+        "Grouped Bar": {
+            "description": "Grouped bar charts (also known as clustered bar charts) show multiple series with the <a href='./simple-bar.php'>bars</a> grouped by category, to allow for easier comparisons across different series."
+        },
+        "Stacked Bar": {
+            "description": "Stacked bar charts allow part-to-whole comparisons, with series stacked from left to right in the horizontal <a href='./simple-bar.php'>bars</a>. They make it easy to compare combined bar lengths."
+        },
+        "100% Stacked Bar": {
+            "description": "100% stacked bar charts show the relative percentage of multiple series in <a href='./stacked-bar.php'>stacked bars</a>, where each stacked bar always totals to 100%."
+        },
+        "Bar With Labels": {
+            "description": "Using labels in a <a href='./simple-bar.php'>bar chart</a> can be useful to highlight the values of each bar."
+        },
+        "Simple Column": {
+            "description": "Column charts (also known as vertical <a href='./simple-bar.php'>bar charts</a>) represent data using vertical columns, with the height of each column proportional to the value being plotted. They can be used to plot both nominal and ordinal data, and are simple to interpret. They work best where the number of data points is limited."
+        },
+        "Grouped Column": {
+            "description": "Grouped column charts (also known as clustered column charts) present multiple series with the <a href='./simple-column.php'>columns</a> grouped by category, to allow for easier comparisons across different series."
+        },
+        "Stacked Column": {
+            "description": "Stacked column charts allow part-to-whole comparisons, with series stacked on top of each other in the vertical <a href='./simple-column.php'>columns</a>."
+        },
+        "100% Stacked Column": {
+            "description": "100% stacked column charts show the relative percentage of multiple series in <a href='./stacked-column.php'>stacked columns</a>, where each stacked column always totals to 100%."
+        },
+        "Column With Negative Values": {
+            "description": "Column and bar charts can also be used to represent negative values alongside positive ones."
+        }
+    },
+    "Pie/Doughnut": {
+        "Simple Pie": {
+            "description": "Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories."
+        },
+        "Simple Doughnut": {
+            "description": "Doughnut charts are similar to <a href='./simple-pie.php'>pie charts</a>, being used to express a part-to-whole relationship, but allow for multiple series to be shown on the same chart for comparison."
+        }
+    },
+    "Line": {
+        "Simple Line": {
+            "description": "Line charts represent each series as a separate line. They are useful to show change or trends over time, and are able to better present more data points than <a href='./simple-bar.php'>bar</a> or <a href='./simple-column.php'>column</a> charts."
+        },
+        "Line With Gaps": {
+            "description": "When data is missing in some line series compared to others, these gaps in the data are reflected in the lines."
+        }
+    },
+    "Scatter/Bubble": {
+        "Simple Scatter": {
+            "description": "Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables."
+        },
+        "Simple Bubble": {
+            "description": "Bubble charts are a specialised type of <a href=./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble)."
+        },
+        "Bubble With Negative Values": {
+            "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values for the variables."
+        }
+    },
+    "Area": {
+        "Simple Area": {
+            "description": "Area charts plot series using a line with the area below the line filled. They are useful to show changes over time, and are easy to interpret."
+        },
+        "Stacked Area": {
+            "description": "Stacked area charts plot multiple <a href='./simple-area.php'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time."
+        },
+        "100% Stacked Area": {
+            "description": "100% stacked area charts show the relative percentage of multiple series in <a href='./stacked-area.php'>stacked areas</a>, where the cumulative area always totals to 100%."
+        },
+        "Area With Negative Values": {
+            "description": "<a href='./simple-area.php'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled."
+        }
+    },
+    "Feature Highlights": {
+        "Time Axis With Irregular Intervals": {
+            "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."
+        },
+        "Real-Time Data Updates": {
+            "description": "Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds."
+        },
+        "Combination of Different Series Types": {
+            "description": "Different types of data series can be combined together in the same chart. This example shows how a <a href='./simple-line.php'>line series</a> might be combined with a <a href='./grouped-column.php'>grouped column series</a>."
+        },
+        "Chart Customisation": {
+            "description": "As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend."
+        },
+        "Custom Marker Shapes": {
+            "description": "The library provides a variety of different marker shapes that can be used. In addition, you can provide your own shapes by extending the <code>Marker</code> class, as shown with the heart-shaped marker below."
+        },
+        "Custom Tooltips": {
+            "description": "The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want."
+        },
+        "Per-Marker Customisation": {
+            "description": "As well as customising all markers for a particular series, you can also customise each marker in the series individually, based on the datum that the marker represents. For example, the colour of the markers below is set based on the magnitude."
+        }
+    }
+}

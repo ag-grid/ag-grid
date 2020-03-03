@@ -176,8 +176,7 @@ body {
         }
 
         #side-nav-container:not(.flat) > ul {
-            > li > a::after,
-            > li > span::after {
+            .has-children::after {
                 color: $gray-600;
                 content: "❯";
                 display: inline-block;
@@ -185,15 +184,17 @@ body {
                 font-size: 80%;
                 line-height: 1.8rem;
                 transition: transform 0.3s ease-out;
+                margin-right: 0.3rem;
 
                 @include media-breakpoint-down(sm) {
                     margin-right: 1rem;
                 }
             }
 
-            > li.expanded > a::after,
-            > li.expanded > span::after {
-                transform: rotate(90deg);
+            li.expanded {
+                > .has-children::after {
+                    transform: rotate(90deg);
+                }
             }
         }
 

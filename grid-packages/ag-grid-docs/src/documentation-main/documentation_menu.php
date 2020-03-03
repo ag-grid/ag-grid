@@ -16,14 +16,18 @@ if (basename($_SERVER['PHP_SELF']) == 'index.php') {
 define('DOC_SECTION', $article_id);
 
 function is_current($item) {
-    return (!is_bool($item['disableActive']) || !$item['disableActive']) &&
+    return !$item['disableActive'] &&
         $item['url'] &&
         explode('#', $item['url'])[0] === DOC_SECTION;
 }
 
 function should_expand($item) {
-    if (count($item['items']) == 0) {
+    if (count($item['items']) === 0) {
         return false;
+    }
+
+    if (is_current($item)) {
+        return true;
     }
 
     foreach ($item['items'] as $child) {
@@ -37,7 +41,7 @@ function should_expand($item) {
 
 function render_titles($items, $gtm = array()) {
     echo "<ul>";
-    foreach($items as $item) {
+    foreach ($items as $item) {
         $actualMenuItems = $item['items'];
         render_menu_items($actualMenuItems, $gtm, 1);
     }
@@ -46,7 +50,7 @@ function render_titles($items, $gtm = array()) {
 }
 
 function render_menu_items($items, $gtm, $level) {
-    if (count($items) == 0) {
+    if (count($items) === 0) {
         return;
     }
 
@@ -56,13 +60,9 @@ function render_menu_items($items, $gtm, $level) {
 
     foreach($items as $item) {
         $item_gtm = array_merge($gtm, ($item['gtm'] ? $item['gtm'] : array()));
-        $current = is_current($item);
-
-        if ($level == 1) {
-            $li_class = should_expand($item) || $current ? ' class="expanded"' : '';
-        } else {
-            $li_class = ' class="expanded"';
-        }
+        $isCurrent = is_current($item);
+        $isCategory = $level === 1 || $item['isCategory'];
+        $li_class = !$isCategory || should_expand($item) ? ' class="expanded"' : '';
 
         echo "<li$li_class>";
 
@@ -73,25 +73,28 @@ function render_menu_items($items, $gtm, $level) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
             $a_classes = array();
 
-            if ($current) {
+            if ($isCurrent) {
                 array_push($a_classes, 'active');
             }
 
-            if ($level == 1) {
+            if ($isCategory) {
                 array_push($a_classes, 'has-children');
             }
 
             $a_class = count($a_classes) > 0 ? ' class="' . join($a_classes, ' ') . '"' : '';
 
-            if ($current) {
+            if ($isCurrent) {
                 $GLOBALS['DOC_GTM'] = json_encode($item_gtm);
             }
             echo "<a href=\"$url\"$a_class>{$item['title']}$new_marker$enterprise_icon</a>";
         } else {
-            echo "<span>{$item['title']}</span>";
+            $class = $isCategory ? 'has-children' : '';
+            echo "<span class='$class'>{$item['title']}</span>";
         }
 
-        render_menu_items($item['items'], $item_gtm, $level + 1);
+        if (!$item['hideChildren']) {
+            render_menu_items($item['items'], $item_gtm, $level + 1);
+        }
 
         echo "</li>";
     }

@@ -414,18 +414,23 @@
                 "matrixExcludeChildren": true,
                 "items": [
                   {
-                    "title": "Server-side Datasource",
+                    "title": "Datasource",
                     "url": "javascript-grid-server-side-model-datasource/",
                     "enterprise": true
                   },
                   {
-                    "title": "Server-side Configuration",
+                    "title": "Configuration",
                     "url": "javascript-grid-server-side-model-configuration/",
                     "enterprise": true
                   },
                   {
-                    "title": "Sorting / Filtering",
-                    "url": "javascript-grid-server-side-model-sort-filter/",
+                    "title": "Sorting",
+                    "url": "javascript-grid-server-side-model-sorting/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Filtering",
+                    "url": "javascript-grid-server-side-model-filtering/",
                     "enterprise": true
                   },
                   {
@@ -982,271 +987,6 @@
         ]
       },
       {
-        "title": "Standalone Charts",
-        "icon": "icon-charts",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "javascript-charts-overview/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Getting Started",
-            "url": "javascript-charts-getting-started/",
-            "items": [
-              {
-                "title": "Vanilla JavaScript",
-                "url": "javascript-charts/"
-              },
-              {
-                "title": "Angular",
-                "url": "angular-charts/"
-              },
-              {
-                "title": "React",
-                "url": "react-charts/"
-              },
-              {
-                "title": "Vue",
-                "url": "vuejs-charts/"
-              }
-            ]
-          },
-          {
-            "title": "Gallery",
-            "url": "javascript-charts-gallery/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Bar/Column",
-                "url": "javascript-charts-gallery/#bar-column",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Column",
-                    "url": "javascript-charts-gallery/simple-column.php"
-                  },
-                  {
-                    "title": "Grouped Column",
-                    "url": "javascript-charts-gallery/grouped-column.php"
-                  },
-                  {
-                    "title": "Stacked Column",
-                    "url": "javascript-charts-gallery/stacked-column.php"
-                  },
-                  {
-                    "title": "Percentage Column",
-                    "url": "javascript-charts-gallery/percentage-column.php"
-                  },
-                  {
-                    "title": "Column With Negative Values",
-                    "url": "javascript-charts-gallery/column-with-negative-values.php"
-                  },
-                  {
-                    "title": "Simple Bar",
-                    "url": "javascript-charts-gallery/simple-bar.php"
-                  },
-                  {
-                    "title": "Grouped Bar",
-                    "url": "javascript-charts-gallery/grouped-bar.php"
-                  },
-                  {
-                    "title": "Stacked Bar",
-                    "url": "javascript-charts-gallery/stacked-bar.php"
-                  },
-                  {
-                    "title": "Percentage Bar",
-                    "url": "javascript-charts-gallery/percentage-bar.php"
-                  },
-                  {
-                    "title": "Bar With Labels",
-                    "url": "javascript-charts-gallery/bar-with-labels.php"
-                  }
-                ]
-              },
-              {
-                "title": "Pie/Doughnut",
-                "url": "javascript-charts-gallery/#pie-doughnut",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Pie",
-                    "url": "javascript-charts-gallery/simple-pie.php"
-                  },
-                  {
-                    "title": "Simple Doughnut",
-                    "url": "javascript-charts-gallery/simple-doughnut.php"
-                  }
-                ]
-              },
-              {
-                "title": "Line",
-                "url": "javascript-charts-gallery/#line",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Line",
-                    "url": "javascript-charts-gallery/simple-line.php"
-                  },
-                  {
-                    "title": "Line With Gaps",
-                    "url": "javascript-charts-gallery/line-with-gaps.php"
-                  }
-                ]
-              },
-              {
-                "title": "Scatter/Bubble",
-                "url": "javascript-charts-gallery/#scatter-bubble",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Scatter",
-                    "url": "javascript-charts-gallery/simple-scatter.php"
-                  },
-                  {
-                    "title": "Simple Bubble",
-                    "url": "javascript-charts-gallery/simple-bubble.php"
-                  },
-                  {
-                    "title": "Bubble With Negative Values",
-                    "url": "javascript-charts-gallery/bubble-with-negative-values.php"
-                  }
-                ]
-              },
-              {
-                "title": "Area",
-                "url": "javascript-charts-gallery/#area",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Simple Area",
-                    "url": "javascript-charts-gallery/simple-area.php"
-                  },
-                  {
-                    "title": "Stacked Area",
-                    "url": "javascript-charts-gallery/stacked-area.php"
-                  },
-                  {
-                    "title": "Percentage Area",
-                    "url": "javascript-charts-gallery/percentage-area.php"
-                  },
-                  {
-                    "title": "Area With Negative Values",
-                    "url": "javascript-charts-gallery/area-with-negative-values.php"
-                  }
-                ]
-              },
-              {
-                "title": "Feature Highlights",
-                "url": "javascript-charts-gallery/#feature-highlights",
-                "disableActive": true,
-                "items": [
-                  {
-                    "title": "Time Axis With Irregular Intervals",
-                    "url": "javascript-charts-gallery/time-axis-with-irregular-intervals.php"
-                  },
-                  {
-                    "title": "Real-Time Data Updates",
-                    "url": "javascript-charts-gallery/real-time-data-updates.php"
-                  },
-                  {
-                    "title": "Combination of Different Series Types",
-                    "url": "javascript-charts-gallery/combination-of-different-series-types.php"
-                  },
-                  {
-                    "title": "Chart Customisation",
-                    "url": "javascript-charts-gallery/chart-customisation.php"
-                  },
-                  {
-                    "title": "Custom Marker Shapes",
-                    "url": "javascript-charts-gallery/custom-marker-shapes.php"
-                  },
-                  {
-                    "title": "Custom Tooltips",
-                    "url": "javascript-charts-gallery/custom-tooltips.php"
-                  },
-                  {
-                    "title": "Per-Marker Customisation",
-                    "url": "javascript-charts-gallery/per-marker-customisation.php"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Series",
-            "url": "javascript-charts-series/",
-            "items": [
-              {
-                "title": "Line",
-                "url": "javascript-charts-line-series/"
-              },
-              {
-                "title": "Bar/Column",
-                "url": "javascript-charts-bar-series/"
-              },
-              {
-                "title": "Area",
-                "url": "javascript-charts-area-series/"
-              },
-              {
-                "title": "Scatter/Bubble",
-                "url": "javascript-charts-scatter-series/"
-              },
-              {
-                "title": "Pie/Doughnut",
-                "url": "javascript-charts-pie-series/"
-              }
-            ]
-          },
-          {
-            "title": "Features",
-            "url": "javascript-charts-features/",
-            "items": [
-              {
-                "title": "Layout",
-                "url": "javascript-charts-layout/"
-              },
-              {
-                "title": "Legend",
-                "url": "javascript-charts-legend/"
-              },
-              {
-                "title": "Markers",
-                "url": "javascript-charts-markers/"
-              },
-              {
-                "title": "Tooltips",
-                "url": "javascript-charts-tooltips/"
-              },
-              {
-                "title": "Axes",
-                "url": "javascript-charts-axis/"
-              }
-            ]
-          },
-          {
-            "title": "API",
-            "url": "javascript-charts-api/",
-            "items": [
-              {
-                "title": "API Explorer",
-                "url": "javascript-charts-api-explorer/"
-              }
-            ]
-          },
-          {
-            "title": "See Also",
-            "items": [
-              {
-                "title": "Third Party Charting",
-                "url": "javascript-grid-graphing/"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "title": "Integrated Charts",
         "icon": "icon-charts",
         "items": [
@@ -1259,12 +999,14 @@
           {
             "title": "Range Chart",
             "url": "javascript-grid-charts-integrated-range-chart/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Pivot Chart",
             "url": "javascript-grid-charts-integrated-pivot-chart/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Chart Toolbar",
@@ -1325,6 +1067,275 @@
                 "title": "Pie/Doughnut",
                 "url": "javascript-grid-charts-integrated-customisation-pie/",
                 "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Third-Party Charting",
+            "url": "javascript-grid-graphing/"
+          }
+        ]
+      },
+      {
+        "title": "Standalone Charts",
+        "icon": "icon-charts",
+        "items": [
+          {
+            "title": "Getting Started",
+            "isCategory": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Overview",
+                "url": "javascript-charts-overview/",
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Bar/Column",
+                    "url": "javascript-charts-overview/#bar-column",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Simple Bar",
+                        "url": "javascript-charts-overview/simple-bar.php"
+                      },
+                      {
+                        "title": "Grouped Bar",
+                        "url": "javascript-charts-overview/grouped-bar.php"
+                      },
+                      {
+                        "title": "Stacked Bar",
+                        "url": "javascript-charts-overview/stacked-bar.php"
+                      },
+                      {
+                        "title": "100% Stacked Bar",
+                        "url": "javascript-charts-overview/100--stacked-bar.php"
+                      },
+                      {
+                        "title": "Bar With Labels",
+                        "url": "javascript-charts-overview/bar-with-labels.php"
+                      },
+                      {
+                        "title": "Simple Column",
+                        "url": "javascript-charts-overview/simple-column.php"
+                      },
+                      {
+                        "title": "Grouped Column",
+                        "url": "javascript-charts-overview/grouped-column.php"
+                      },
+                      {
+                        "title": "Stacked Column",
+                        "url": "javascript-charts-overview/stacked-column.php"
+                      },
+                      {
+                        "title": "100% Stacked Column",
+                        "url": "javascript-charts-overview/100--stacked-column.php"
+                      },
+                      {
+                        "title": "Column With Negative Values",
+                        "url": "javascript-charts-overview/column-with-negative-values.php"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Pie/Doughnut",
+                    "url": "javascript-charts-overview/#pie-doughnut",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Simple Pie",
+                        "url": "javascript-charts-overview/simple-pie.php"
+                      },
+                      {
+                        "title": "Simple Doughnut",
+                        "url": "javascript-charts-overview/simple-doughnut.php"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Line",
+                    "url": "javascript-charts-overview/#line",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Simple Line",
+                        "url": "javascript-charts-overview/simple-line.php"
+                      },
+                      {
+                        "title": "Line With Gaps",
+                        "url": "javascript-charts-overview/line-with-gaps.php"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Scatter/Bubble",
+                    "url": "javascript-charts-overview/#scatter-bubble",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Simple Scatter",
+                        "url": "javascript-charts-overview/simple-scatter.php"
+                      },
+                      {
+                        "title": "Simple Bubble",
+                        "url": "javascript-charts-overview/simple-bubble.php"
+                      },
+                      {
+                        "title": "Bubble With Negative Values",
+                        "url": "javascript-charts-overview/bubble-with-negative-values.php"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Area",
+                    "url": "javascript-charts-overview/#area",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Simple Area",
+                        "url": "javascript-charts-overview/simple-area.php"
+                      },
+                      {
+                        "title": "Stacked Area",
+                        "url": "javascript-charts-overview/stacked-area.php"
+                      },
+                      {
+                        "title": "100% Stacked Area",
+                        "url": "javascript-charts-overview/100--stacked-area.php"
+                      },
+                      {
+                        "title": "Area With Negative Values",
+                        "url": "javascript-charts-overview/area-with-negative-values.php"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "Feature Highlights",
+                    "url": "javascript-charts-overview/#feature-highlights",
+                    "disableActive": true,
+                    "hideChildren": true,
+                    "items": [
+                      {
+                        "title": "Time Axis With Irregular Intervals",
+                        "url": "javascript-charts-overview/time-axis-with-irregular-intervals.php"
+                      },
+                      {
+                        "title": "Real-Time Data Updates",
+                        "url": "javascript-charts-overview/real-time-data-updates.php"
+                      },
+                      {
+                        "title": "Combination of Different Series Types",
+                        "url": "javascript-charts-overview/combination-of-different-series-types.php"
+                      },
+                      {
+                        "title": "Chart Customisation",
+                        "url": "javascript-charts-overview/chart-customisation.php"
+                      },
+                      {
+                        "title": "Custom Marker Shapes",
+                        "url": "javascript-charts-overview/custom-marker-shapes.php"
+                      },
+                      {
+                        "title": "Custom Tooltips",
+                        "url": "javascript-charts-overview/custom-tooltips.php"
+                      },
+                      {
+                        "title": "Per-Marker Customisation",
+                        "url": "javascript-charts-overview/per-marker-customisation.php"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "title": "Vanilla JavaScript",
+                "url": "javascript-charts/"
+              },
+              {
+                "title": "Angular",
+                "url": "angular-charts/"
+              },
+              {
+                "title": "React",
+                "url": "react-charts/"
+              },
+              {
+                "title": "Vue",
+                "url": "vuejs-charts/"
+              }
+            ]
+          },
+          {
+            "title": "API",
+            "isCategory": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Reference",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api/"
+              },
+              {
+                "title": "Explorer",
+                "showInCollapsed": true,
+                "url": "javascript-charts-api-explorer/"
+              }
+            ]
+          },
+          {
+            "title": "Series",
+            "isCategory": true,
+            "items": [
+              {
+                "title": "Line",
+                "url": "javascript-charts-line-series/"
+              },
+              {
+                "title": "Bar/Column",
+                "url": "javascript-charts-bar-series/"
+              },
+              {
+                "title": "Area",
+                "url": "javascript-charts-area-series/"
+              },
+              {
+                "title": "Scatter/Bubble",
+                "url": "javascript-charts-scatter-series/"
+              },
+              {
+                "title": "Pie/Doughnut",
+                "url": "javascript-charts-pie-series/"
+              }
+            ]
+          },
+          {
+            "title": "Features",
+            "isCategory": true,
+            "items": [
+              {
+                "title": "Layout",
+                "url": "javascript-charts-layout/"
+              },
+              {
+                "title": "Legend",
+                "url": "javascript-charts-legend/"
+              },
+              {
+                "title": "Markers",
+                "url": "javascript-charts-markers/"
+              },
+              {
+                "title": "Tooltips",
+                "url": "javascript-charts-tooltips/"
+              },
+              {
+                "title": "Axes",
+                "url": "javascript-charts-axis/"
               }
             ]
           }
