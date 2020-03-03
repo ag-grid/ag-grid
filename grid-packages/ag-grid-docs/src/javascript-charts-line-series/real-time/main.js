@@ -33,21 +33,25 @@ var options = {
 };
 
 var chart = agCharts.AgChart.create(options);
-
 var updating = false;
+
 function startUpdates() {
     if (updating) {
         return;
     }
+
     updating = true;
-    setInterval(update, 1000);
+    this.update();
+    setInterval(this.update, 500);
 }
 
+// inScope[update]
 function update() {
     data.shift();
     data.push({
         time: new Date(lastTime += 1000),
         voltage: 1.1 + Math.random() / 2
     });
+
     chart.data = data;
 }

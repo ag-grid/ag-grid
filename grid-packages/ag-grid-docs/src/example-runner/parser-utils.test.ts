@@ -5,7 +5,8 @@ import {
     nodeIsPropertyWithName,
     nodeIsFunctionWithName,
     nodeIsFunctionCall,
-    convertFunctionToProperty
+    convertFunctionToProperty,
+    nodeIsGlobalFunctionCall
 } from './parser-utils';
 
 describe('convertFunctionToProperty', () => {
@@ -185,5 +186,60 @@ describe('nodeIsFunctionCall', () => {
         };
 
         expect(nodeIsFunctionCall(node)).toBe(false);
+    });
+});
+
+describe('nodeIsGlobalFunctionCall', () => {
+    it('returns true if node is an expression with a call using identifier', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'CallExpression',
+            },
+            callee: {
+                type: 'Identifier',
+            },
+        };
+
+        expect(nodeIsGlobalFunctionCall(node)).toBe(true);
+    });
+
+    it('returns false if node is an expression with a call but no callee', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'LiteralExpression',
+            },
+        };
+
+        expect(nodeIsGlobalFunctionCall(node)).toBe(false);
+    });
+
+    it('returns false if node is an expression with a call using something other than an identifier', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'CallExpression',
+            },
+            callee: {
+                type: 'MemberExpression',
+            },
+        };
+
+        expect(nodeIsGlobalFunctionCall(node)).toBe(false);
+    });
+
+    it('returns false if node is an expression with something other than a call using identifier', () => {
+        const node = {
+            type: 'ExpressionStatement',
+            expression: {
+                type: 'LiteralExpression',
+            },
+            callee: {
+                type: 'Identifier',
+            },
+        };
+
+        expect(nodeIsGlobalFunctionCall(node)).toBe(false);
     });
 });

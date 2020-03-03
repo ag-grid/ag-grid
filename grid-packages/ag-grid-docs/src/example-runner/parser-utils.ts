@@ -90,6 +90,10 @@ export function nodeIsFunctionCall(node: any) {
     return node.type === NodeType.Expression && node.expression.type === 'CallExpression';
 }
 
+export function nodeIsGlobalFunctionCall(node: any) {
+    return nodeIsFunctionCall(node) && node.callee && node.callee.type === 'Identifier';
+}
+
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
 
 function flatMap<T>(array: T[], callback: (value: T) => T): T[] {

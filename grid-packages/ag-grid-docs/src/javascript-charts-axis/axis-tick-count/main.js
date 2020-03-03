@@ -9,13 +9,21 @@ var options = {
             enabled: false
         }
     }],
-    axes: [{
-        type: 'number',
-        position: 'bottom'
-    }, {
-        type: 'number',
-        position: 'left'
-    }],
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom',
+            tick: {
+                count: 10,
+            },
+        }, {
+            type: 'number',
+            position: 'left',
+            tick: {
+                count: 10,
+            },
+        }
+    ],
     legend: {
         enabled: false
     }

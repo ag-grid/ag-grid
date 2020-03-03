@@ -12,15 +12,19 @@ import {
     nodeIsUnusedFunction,
     extractEventHandlers,
     extractUnboundInstanceMethods,
-    nodeIsFunctionCall,
+    nodeIsGlobalFunctionCall,
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
 
-const PROPERTIES = ['options'];
+const chartVariableName = 'chart';
+const optionsVariableName = 'options';
+const PROPERTIES = [optionsVariableName];
 
 function generateWithOptionReferences(node, options?) {
-    return generate(node, options).replace(/chart\./g, 'options.');
+    return generate(node, options)
+        .replace(new RegExp(`${chartVariableName}\\.performLayout\\(\\);?`, 'g'), '')
+        .replace(new RegExp(`${chartVariableName}\\.`, 'g'), `${optionsVariableName}.`);
 }
 
 export function parser(js, html) {
@@ -33,8 +37,7 @@ export function parser(js, html) {
     const collectors = [];
     const optionsCollectors = [];
     const indentOne = { format: { indent: { base: 1 } } };
-    const optionsName = 'options';
-    const registered = [optionsName, 'chart'];
+    const registered = [chartVariableName, optionsVariableName];
 
     // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
@@ -84,7 +87,12 @@ export function parser(js, html) {
             matches: node => nodeIsVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    const code = generate(node.declarations[0].init, indentOne).replace(/container:.*/, '');
+                    let code = generate(node.declarations[0].init, indentOne);
+
+                    if (propertyName === optionsVariableName) {
+                        code = code.replace(/container:.*/, '');
+                    }
+
                     bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
@@ -103,12 +111,12 @@ export function parser(js, html) {
 
     // optionsCollectors captures all events, properties etc that are related to options
     collectors.push({
-        matches: node => nodeIsVarWithName(node, optionsName),
+        matches: node => nodeIsVarWithName(node, optionsVariableName),
         apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, optionsCollectors)
     });
 
     collectors.push({
-        matches: node => nodeIsFunctionCall(node),
+        matches: node => nodeIsGlobalFunctionCall(node),
         apply: (bindings, node) => bindings.init.push(generate(node))
     });
 

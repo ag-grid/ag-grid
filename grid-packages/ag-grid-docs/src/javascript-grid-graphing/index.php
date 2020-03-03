@@ -6,7 +6,7 @@ $pageGroup = "thirdparty";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Third Party Charting</h1>
+    <h1>Third-Party Charting</h1>
 
     <p class="lead">
         This section goes through examples of integrating the grid with <a href="https://d3js.org/">D3</a>
@@ -15,10 +15,10 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        In v21 of ag-Grid we introduced charting using the grid's own
-        <a href="../javascript-grid-charts-integrated-overview/">internal charting library</a>. This page pre-dates the grid's
-        internal charting library. It is our plan in the future to allow using the charting library
-        to achieve the below, but for now we will leave the examples using D3 and Sparklines.
+        This page pre-dates the introduction of the grid's own
+        <a href="../javascript-grid-charts-integrated-overview/">integrated charting library</a> in v21.
+        It is our plan in the future to add support to our charting library
+        to achieve the below, but for now we will leave these examples using D3 and Sparklines.
     </note>
 
     <h2>External Graphs using D3</h2>
