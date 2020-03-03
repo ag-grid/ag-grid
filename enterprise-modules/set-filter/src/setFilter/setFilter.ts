@@ -395,17 +395,10 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onEnterKeyOnMiniFilter(): void {
+        this.valueModel.selectAllFromMiniFilter();
+        this.virtualList.refresh();
+        this.updateSelectAll();
         this.onUiChanged(true);
-    }
-
-    protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
-        if (afterFloatingFilter) {
-            this.valueModel.selectAllFromMiniFilter();
-            this.virtualList.refresh();
-            this.updateSelectAll();
-        }
-
-        super.onBtApply(afterFloatingFilter, afterDataChange);
     }
 
     private onMiniFilterInput() {

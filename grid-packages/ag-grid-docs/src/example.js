@@ -730,8 +730,7 @@ var desktopDefaultCols = [
                 },
                 filterParams: {
                     newRowsAction: 'keep',
-                    resetButton: true,
-                    applyButton: true
+                    resetButton: true
                 },
                 enableRowGroup: true,
                 enablePivot: true,
