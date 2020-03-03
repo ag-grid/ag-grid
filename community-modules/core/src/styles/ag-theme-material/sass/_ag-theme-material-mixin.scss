@@ -1,12 +1,10 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 @import "./ag-theme-material-default-params";
 
-@mixin ag-theme-material($params) {
+@mixin ag-theme-material($params: ()) {
   
     $params: ag-process-theme-variables($params, $ag-theme-material-default-params);
     @include ag-theme-base($params);
-
-    @include ag-native-inputs();
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,

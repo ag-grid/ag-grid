@@ -71,6 +71,7 @@ export class ReactComponent extends BaseReactComponent {
 
                 this.addParentContainerStyleAndClasses();
 
+                // regular components (ie not functional)
                 this.removeStaticMarkup();
             };
         }
@@ -85,6 +86,8 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
+            // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
+            // here
             if(this.statelessComponent) {
                 setTimeout(() => {
                     this.removeStaticMarkup();
@@ -156,20 +159,15 @@ export class ReactComponent extends BaseReactComponent {
                 this.staticMarkup = staticMarkup;
             } else {
                 if (staticMarkup) {
-                    // in the event of memoized renderers, renderers that that return simple strings or NaN etc
-                    // we wrap the value in a span so that we can remove it easily
-                    const testElement = document.createElement('span');
-                    testElement.innerHTML = staticMarkup;
-                    if (testElement.children[0]) {
-                        this.eParentElement.innerHTML = staticMarkup;
-                    } else {
-                        this.eParentElement.appendChild(testElement);
-                    }
-                    this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+                    // we wrap the content as if there is "trailing" text etc it's not easy to safely remove
+                    // the same is true for memoized renderers, renderers that that return simple strings or NaN etc
+                    this.staticMarkup = document.createElement('span');
+                    this.staticMarkup.innerHTML = staticMarkup;
+                    this.eParentElement.appendChild(this.staticMarkup);
                 }
             }
         } catch (e) {
-            // we tried - this can happen if using context/stores etc
+            // we tried - this can happen with certain (rare) edge cases
         }
     }
 

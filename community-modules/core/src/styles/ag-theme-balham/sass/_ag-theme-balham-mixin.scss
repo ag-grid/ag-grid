@@ -1,12 +1,10 @@
 @import "../../ag-theme-base/sass/ag-theme-base";
 @import "./ag-theme-balham-default-params";
 
-@mixin ag-theme-balham($params) {
+@mixin ag-theme-balham($params: ()) {
     
     $params: ag-process-theme-variables($params, $ag-theme-balham-default-params);
     @include ag-theme-base($params);
-
-    @include ag-native-inputs();
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,

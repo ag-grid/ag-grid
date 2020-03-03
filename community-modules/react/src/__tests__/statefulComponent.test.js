@@ -59,7 +59,7 @@ it('cell should be editable and editor component usable', async () => {
     await waitForAsyncCondition(() => agGridReact.api.getCellRendererInstances() && agGridReact.api.getCellRendererInstances().length > 0,
         5).then(() => null, () => fail("Renderer instance not created within expected time"));
 
-    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><div>Age: 50</div></div>`);
+    expect(component.render().find('.ag-cell-value').html()).toEqual(`<div class="ag-react-container"><span><div>Age: 50</div></span></div>`);
 
 
 });

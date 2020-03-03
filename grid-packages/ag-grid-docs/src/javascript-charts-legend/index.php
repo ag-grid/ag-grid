@@ -9,11 +9,11 @@ include '../documentation-main/documentation_header.php';
 <h1>Legend</h1>
 
 <p class="lead">
-    A legend makes it easier to tell at a glance which series or series items correspond to what pecies of data.
-    This section describes legend's options and layout behavior.
+    A legend makes it easier to tell at a glance which series or series items correspond to which pieces of data.
+    This section describes the legend options and layout behaviour.
 </p>
 
-<h2>Position</h2>
+<h2>Position and Visibility</h2>
 
 <p>
     A legend can be positioned to any side of a chart using the <code>position</code> config:
@@ -25,12 +25,8 @@ legend: {
 }
 </snippet>
 
-<?= chart_example('Legend Position', 'legend-position', 'generated') ?>
-
-<h2>Visibility</h2>
-
 <p>
-    A legend is shown by default. To hide it, use the <code>enabled</code> config:
+    A legend is shown by default but can be hidden using the <code>enabled</code> config:
 </p>
 
 <snippet language="ts">
@@ -39,25 +35,45 @@ legend: {
 }
 </snippet>
 
-<?= chart_example('Legend Visibility', 'legend-enabled', 'generated') ?>
+<h2>Example - Legend Position and Visibility</h2>
 
-<h2>Layout</h2>
+<p>
+    Notice how when you click on one of the buttons in the example to change the position
+    of the legend:
+    <ul>
+        <li>the layout of the legend items also changes</li>
+        <li>
+            the layout of the chart changes as well, with series moving around a bit
+            and growing/shriking slighlty to accomodate the legend
+        </li>
+    </ul>
+</p>
+
+<?= chart_example('Legend Position and Visibility', 'legend-position', 'generated') ?>
+
+<h2>Vertical Legend Layout</h2>
 
 <p>
     Whenever the size of a chart changes, the legend layout is triggered.
     If the legend is vertical (positioned to the <code>right</code> or <code>left</code> of a chart),
     the layout algorithm tries to use the minimum number of columns possible to render all legend items
     using current constraints. Notice how the number of columns in a legend increases as the height of
-    a chart shrinks:
+    a chart shrinks.
 </p>
 
+<h2>Example - Vertical Legend Layout</h2>
+
 <?= chart_example('Vertical Legend Layout', 'legend-layout-vertical', 'generated') ?>
+
+<h2>Horizontal Legend Layout</h2>
 
 <p>
     If the legend is horizontal (positioned to the <code>bottom</code> or <code>top</code> of a chart),
     the layout algorithm tries to use the minimum possible number of rows. If a chart is not wide enough,
-    the legend will keep subdividing its items into rows until everything fits:
+    the legend will keep subdividing its items into rows until everything fits.
 </p>
+
+<h2>Example - Horizontal Legend Layout</h2>
 
 <?= chart_example('Horizontal Legend Layout', 'legend-layout-horizontal', 'generated') ?>
 
@@ -67,10 +83,6 @@ legend: {
     A few things other than the width and height of a chart can affect legend's layout and that is the amout of spacing
     between and within the legend items. For example, <code>layoutHorizontalSpacing</code> controls the amount
     of spacing between adjacent horizontal legend items:
-</p>
-
-<p>
-    <img alt="Legend Horizontal Spacing Size" src="layout-horizontal-spacing.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
 </p>
 
 <snippet language="ts">
@@ -85,10 +97,6 @@ legend: {
     all of its items:
 </p>
 
-<p>
-    <img alt="Legend Vertical Spacing Size" src="layout-vertical-spacing.gif" style="margin-bottom: 0px; height: 250px; max-width: 100%">
-</p>
-
 <snippet language="ts">
 legend: {
     layoutVerticalSpacing: 8
@@ -100,25 +108,21 @@ legend: {
     and the label:
 </p>
 
-<p>
-    <img alt="Legend Item Spacing Size" src="layout-item-spacing.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
-</p>
-
 <snippet language="ts">
 legend: {
     itemSpacing: 8
 }
 </snippet>
 
+<h2>Example - Legend Constraints</h2>
+
+<?= chart_example('Legend Constraints', 'legend-contstraints', 'generated') ?>
+
 <h2>Fonts</h2>
 
 <p>
     There are a number of configs that affect the <code>fontSize</code>, <code>fontStyle</code>,
     <code>fontWeight</code>, <code>fontFamily</code>, and <code>color</code> of the legend item labels:
-</p>
-
-<p>
-    <img alt="Legend Font Configs" src="legend-font-configs.gif" style="margin-bottom: 0px; width: 300px; max-width: 100%">
 </p>
 
 <snippet language="ts">
@@ -141,10 +145,6 @@ legend: {
     using the following configs:
 </p>
 
-<p>
-    <img alt="Legend Marker Size and Stroke" src="legend-marker-size-stroke.gif" style="margin-bottom: 0px; max-width: 100%">
-</p>
-
 <snippet language="ts">
 legend: {
     markerSize: 20,
@@ -163,11 +163,7 @@ legend: {
 <p>
     It's also possible to override the default behavior and make the legend use
     the specified marker shape for all legend items, regardless of the shapes the series
-    are using.
-</p>
-
-<p>
-    <img alt="Legend Marker Shape" src="legend-marker-shape.gif" style="margin-bottom: 0px; max-width: 100%">
+    are using:
 </p>
 
 <snippet language="ts">
@@ -175,5 +171,9 @@ legend: {
     markerShape: 'circle' // 'square', 'diamond', 'cross', 'plus', 'triangle'
 }
 </snippet>
+
+<note>
+    Markers are covered in more detail <a href="/javascript-charts-markers">here</a>.
+</note>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

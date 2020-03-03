@@ -30,6 +30,24 @@ import {IFloatingFilterComp} from "../../filter/floating/floatingFilter";
 import {ICellEditorComp} from "../../interfaces/iCellEditor";
 import {IToolPanelComp} from "../../interfaces/iToolPanel";
 import {StatusPanelDef} from "../../interfaces/iStatusPanel";
+import {
+    CellEditorComponent,
+    CellRendererComponent,
+    ComponentType,
+    DateComponent,
+    FilterComponent,
+    FloatingFilterComponent,
+    GroupRowInnerRendererComponent,
+    HeaderComponent,
+    HeaderGroupComponent,
+    InnerRendererComponent,
+    LoadingOverlayComponent,
+    NoRowsOverlayComponent,
+    PinnedRowCellRendererComponent,
+    StatusPanelComponent,
+    ToolPanelComponent,
+    TooltipComponent
+} from "./componentTypes";
 
 export type DefinitionObject =
     GridOptions
@@ -66,86 +84,6 @@ export interface ModifyParamsCallback {
     (params: any, component: IComponent<any>): void;
 }
 
-export interface ComponentType {
-    propertyName: string;
-
-    isCellRenderer(): boolean;
-}
-
-const DateComponent: ComponentType = {
-    propertyName: 'dateComponent',
-    isCellRenderer: () => false
-};
-
-const HeaderComponent: ComponentType = {
-    propertyName: 'headerComponent',
-    isCellRenderer: () => false,
-};
-
-const HeaderGroupComponent: ComponentType = {
-    propertyName: 'headerGroupComponent',
-    isCellRenderer: () => false,
-};
-
-const GroupRowInnerRendererComponent: ComponentType = {
-    propertyName: 'groupRowInnerRenderer',
-    isCellRenderer: () => true,
-};
-
-const CellRendererComponent: ComponentType = {
-    propertyName: 'cellRenderer',
-    isCellRenderer: () => true,
-};
-
-const PinnedRowCellRendererComponent: ComponentType = {
-    propertyName: 'pinnedRowCellRenderer',
-    isCellRenderer: () => true,
-};
-
-const CellEditorComponent: ComponentType = {
-    propertyName: 'cellEditor',
-    isCellRenderer: () => false,
-};
-
-const InnerRendererComponent: ComponentType = {
-    propertyName: 'innerRenderer',
-    isCellRenderer: () => true,
-};
-
-const LoadingOverlayComponent: ComponentType = {
-    propertyName: 'loadingOverlayComponent',
-    isCellRenderer: () => false,
-};
-
-const NoRowsOverlayComponent: ComponentType = {
-    propertyName: 'noRowsOverlayComponent',
-    isCellRenderer: () => false,
-};
-
-const TooltipComponent: ComponentType = {
-    propertyName: 'tooltipComponent',
-    isCellRenderer: () => false,
-};
-
-const FilterComponent: ComponentType = {
-    propertyName: 'filter',
-    isCellRenderer: () => false,
-};
-
-const FloatingFilterComponent: ComponentType = {
-    propertyName: 'floatingFilterComponent',
-    isCellRenderer: () => false,
-};
-
-const ToolPanelComponent: ComponentType = {
-    propertyName: 'toolPanel',
-    isCellRenderer: () => false,
-};
-
-const StatusPanelComponent: ComponentType = {
-    propertyName: 'statusPanel',
-    isCellRenderer: () => false,
-};
 
 @Bean('userComponentFactory')
 export class UserComponentFactory {

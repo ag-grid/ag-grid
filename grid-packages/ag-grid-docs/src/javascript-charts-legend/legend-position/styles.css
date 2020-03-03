@@ -4,7 +4,7 @@
     flex-direction: column;
 }
 
-#toolPanel {
+.toolPanel {
     text-align: center;
     font-size: 12px;
     font-family: Verdana, Arial, Helvetica, sans-serif;

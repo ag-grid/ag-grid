@@ -27,14 +27,18 @@ marker: {
 </snippet>
 
 <p>
-    For example:
+    Please see the <a href="#api-reference">API reference</a> for the list of all available options.
+</p>
+
+<h2>Example - Marker Shape, Size and Color</h2>
+
+<p>
+    Notice how the shape and color of the legend markers match the shape and color of
+    the markers used by the series, but the size of the markers in the legend is always
+    the same.
 </p>
 
 <?= chart_example('Marker Shape, Size and Color', 'marker-shape', 'generated'); ?>
-
-<h2>API Reference</h2>
-
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig.marker") ?>
 
 <h2>Custom Markers</h2>
 
@@ -93,9 +97,16 @@ marker: {
 </snippet>
 
 <p>
-    And the final result is:
+    The final result can be in the example below.
 </p>
 
+<h2>Example - Custom Marker</h2>
+
 <?= chart_example('Custom Marker', 'custom-marker', 'generated'); ?>
+
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig.marker") ?>
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
