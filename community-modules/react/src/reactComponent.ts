@@ -71,6 +71,7 @@ export class ReactComponent extends BaseReactComponent {
 
                 this.addParentContainerStyleAndClasses();
 
+                // regular components (ie not functional)
                 this.removeStaticMarkup();
             };
         }
@@ -85,6 +86,8 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
+            // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
+            // here
             if(this.statelessComponent) {
                 setTimeout(() => {
                     this.removeStaticMarkup();
@@ -158,9 +161,11 @@ export class ReactComponent extends BaseReactComponent {
                 if (staticMarkup) {
                     // in the event of memoized renderers, renderers that that return simple strings or NaN etc
                     // we wrap the value in a span so that we can remove it easily
+                    // we'll do the same if the rendered content has any text content as we can't easily remove
+                    // that (safely) when the actual component is rendered
                     const testElement = document.createElement('span');
                     testElement.innerHTML = staticMarkup;
-                    if (testElement.children[0]) {
+                    if (testElement.children[0] && !testElement.textContent) {
                         this.eParentElement.innerHTML = staticMarkup;
                     } else {
                         this.eParentElement.appendChild(testElement);
@@ -169,7 +174,7 @@ export class ReactComponent extends BaseReactComponent {
                 }
             }
         } catch (e) {
-            // we tried - this can happen if using context/stores etc
+            // we tried - this can happen with certain (rare) edge cases
         }
     }
 

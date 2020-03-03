@@ -28,7 +28,8 @@ import {
     SelectionController,
     ValueCache,
     ValueService,
-    IClientSideRowModel
+    IClientSideRowModel,
+    FilterChangedEvent
 } from "@ag-grid-community/core"
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
@@ -316,7 +317,8 @@ export class ClientSideRowModel implements IClientSideRowModel {
         this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
     }
 
-    private onFilterChanged(): void {
+    private onFilterChanged(event: FilterChangedEvent): void {
+        if (event.afterDataChange) { return; }
         const animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
     }

@@ -137,31 +137,30 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    private resetFilterValuesAndReapplyModel(): void {
-        const modelBeforeUpdate = this.getModel();
+    // gets called with change to data values, thus need to update the values available for selection
+    // in the set filter.
+    private syncValuesAfterDataChange(): void {
+        const everythingSelected = !this.getModel();
 
-        this.resetFilterValues();
+        this.valueModel.refreshAfterNewRowsLoaded(true, everythingSelected);
+        this.updateSelectAll();
+        this.virtualList.refresh();
 
-        if (modelBeforeUpdate) {
-            this.setModel(modelBeforeUpdate);
-        }
+        this.onBtApply(false, true);
     }
 
+    // this keeps the filter up to date with changes in the row data
     private setupSyncValuesAfterDataChange(): void {
-        const col = this.setFilterParams.column;
 
-        const rowDataUpdatedListener = () => {
-            this.resetFilterValuesAndReapplyModel();
-        };
+        // add listener for when data is changed via transaction update (includes delta row mode
+        // as this uses transaction updates)
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.syncValuesAfterDataChange.bind(this));
 
-        const cellValueChangedListener = (event: CellValueChangedEvent) => {
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, (event: CellValueChangedEvent) => {
             // only interested in changes to do with this column
-            if (event.column !== col) { return; }
-            this.resetFilterValuesAndReapplyModel();
-        };
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, rowDataUpdatedListener);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, cellValueChangedListener);
+            if (event.column !== this.setFilterParams.column) { return; }
+            this.syncValuesAfterDataChange();
+        });
     }
 
     private updateCheckboxIcon() {
@@ -230,7 +229,8 @@ export class SetFilter extends ProvidedFilter {
         const listItem = new SetFilterListItem(value, this.setFilterParams.column);
 
         this.getContext().wireBean(listItem);
-        listItem.setSelected(this.valueModel.isValueSelected(value));
+        const selected = this.valueModel.isValueSelected(value);
+        listItem.setSelected(selected);
 
         listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, () => {
             this.onItemSelected(value, listItem.isSelected());
@@ -304,18 +304,18 @@ export class SetFilter extends ProvidedFilter {
 
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.
-        const newRowsActionKeep = this.isNewRowsActionKeep();
+        const keepSelection = this.isNewRowsActionKeep();
 
-        if (newRowsActionKeep && valuesTypeProvided) { return; }
+        if (keepSelection && valuesTypeProvided) { return; }
 
         const everythingSelected = !this.getModel();
 
         // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(newRowsActionKeep, everythingSelected);
+        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
         this.updateSelectAll();
         this.virtualList.refresh();
 
-        this.applyModel();
+        this.onBtApply(false, true);
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -381,14 +381,14 @@ export class SetFilter extends ProvidedFilter {
         this.onUiChanged(true);
     }
 
-    protected onBtApply(afterFloatingFilter = false) {
+    protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
         if (afterFloatingFilter) {
             this.valueModel.selectAllFromMiniFilter();
             this.virtualList.refresh();
             this.updateSelectAll();
         }
 
-        super.onBtApply(afterFloatingFilter);
+        super.onBtApply(afterFloatingFilter, afterDataChange);
     }
 
     private onMiniFilterInput() {

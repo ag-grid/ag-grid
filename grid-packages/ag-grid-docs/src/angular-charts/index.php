@@ -146,7 +146,7 @@ export class AppComponent {
 <snippet language="html">
 &lt;ag-charts-angular
         style="height: 100%"
-        [options]="options"&gt;            
+        [options]="options"&gt;
 &lt;/ag-charts-angular&gt;
 </snippet>
 </section>
@@ -305,6 +305,12 @@ constructor() {
 <p>
 Now that you've had a taste of ag-Charts we encourage you to explore our documentation
 of specific chart types.
+</p>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

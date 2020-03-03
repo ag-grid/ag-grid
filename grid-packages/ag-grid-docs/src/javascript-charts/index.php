@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Charts Standalone: Overview";
+$pageTitle = "JavaScript Charts";
 $pageDescription = "ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.";
 $pageKeywords = "Javascript Grid Charting";
 $pageGroup = "feature";
@@ -226,10 +226,10 @@ Now that you've had a taste of what it's like to use AgCharts, we encourage you 
 for specific chart types to learn more.
 </p>
 
-        <h2>Next Up</h2>
+<h2>Next Up</h2>
 
 <p>
-    Continue to the next section to see the: <a href="../javascript-charts-gallery/">Standalone Charts Gallery</a>.
+    Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

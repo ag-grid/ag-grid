@@ -51,7 +51,7 @@ const populateDevFolder = () => {
 
     const packageCommunity = gulp.src(['../../grid-packages/ag-grid-community/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-community/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-community`));
     const packageEnterprise = gulp.src(['../../grid-packages/ag-grid-enterprise/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-enterprise/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-enterprise`));
-    const packageAngular = gulp.src(['../../grid-packages/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
+    const packageAngular = gulp.src(['../../grid-packages/ag-grid-angular/dist/ag-grid-angular/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-angular/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-angular`));
     const packageReact = gulp.src(['../../grid-packages/ag-grid-react/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-react/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-react`));
     const packageVue = gulp.src(['../../grid-packages/ag-grid-vue/**/*.*', '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd: '../../grid-packages/ag-grid-vue/' }).pipe(gulp.dest(`dist/${DEV_DIR}/ag-grid-vue`));
 

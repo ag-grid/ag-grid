@@ -236,12 +236,21 @@ filterParams: {
 
     <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
 
-    <h2>Refresh After Edit or Transcation Update</h2>
+    <h2>Set Filter Values with Live Data</h2>
 
     <p>
-        The set filter will refresh it's values after you
-        a) <a href="../javascript-grid-cell-editing">edit the data</a> (eg through the grid UI) or 2) update
-        the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>.
+        The set filter will refresh it's values after any of the following:
+        <ol>
+            <li>
+                <a href="../javascript-grid-cell-editing">Edit the data</a> (eg through the grid UI).
+            </li>
+            <li>
+                Update the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>
+            </li>
+            <li>
+                Update the data using <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Mode</a>.
+            </li>
+        </ol>
     </p>
 
     <p>
@@ -257,10 +266,13 @@ filterParams: {
         <li>
             When a filter is active, new items (either new data into the grid, or edits to current data
             with new values not previously seen) will get added to the filter but will not be selected.
-            This will be somewhat strange as the row will not be filtered out even though the value in the
-            cell is not selected in the filter.
         </li>
     </ul>
+
+    <p>
+        This will be somewhat strange when editing data as filtering does not re-execute when editing,
+        so the row will not be filtered out even though the value in the cell is not selected in the filter.
+    </p>
 
     <p>
         If you do not want the set filter to update it's list of values after the data changes,

@@ -16,7 +16,7 @@ if (basename($_SERVER['PHP_SELF']) == 'index.php') {
 define('DOC_SECTION', $article_id);
 
 function is_current($item) {
-    return (!is_bool($item['disableActive']) || !$item['disableActive']) &&
+    return !$item['disableActive'] &&
         $item['url'] &&
         explode('#', $item['url'])[0] === DOC_SECTION;
 }
@@ -73,7 +73,7 @@ function render_menu_items($items, $gtm, $level) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
             $a_classes = array();
 
-            if ($current) {
+            if ($isCurrent) {
                 array_push($a_classes, 'active');
             }
 

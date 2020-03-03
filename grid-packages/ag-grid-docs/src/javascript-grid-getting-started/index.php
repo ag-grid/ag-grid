@@ -4,6 +4,7 @@ $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Ente
 $pageKeywords = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
+define('skipInPageNav', true);
 ?>
 
 <h1>Getting Started</h1>
@@ -21,7 +22,7 @@ include '../documentation-main/documentation_header.php';
 <div><div class="get-started-framework card-javascript">
     <a href="../javascript-grid/">JavaScript</a>
     <div>
-        <p><a href="../javascript-grid/">Get Started</a></p>
+        <p><a href="../javascript-grid/">Get Started with JS</a></p>
     </div>
 </div></div>
 
@@ -29,31 +30,31 @@ include '../documentation-main/documentation_header.php';
 <div><div class="get-started-framework card-angular">
     <a href="../angular-grid/">Angular</a>
     <div>
-        <p><a href="../angular-grid/">Get Started</a></p>
+        <p><a href="../angular-grid/">Get Started with Angular</a></p>
     </div>
 </div></div>
 
 <div><div class="get-started-framework card-react">
     <a href="../react-grid/">React</a>
     <div>
-        <p><a href="../react-grid/">Get Started</a></p>
+        <p><a href="../react-grid/">Get Started with React</a></p>
     </div>
 </div></div>
 
 <div><div class="get-started-framework card-vue-inverted">
     <a href="../vuejs-grid/">Vue.js</a>
     <div>
-        <p><a href="../vuejs-grid/">Get Started</a></p>
+        <p><a href="../vuejs-grid/">Get Started with Vue</a></p>
     </div>
 </div></div>
 
 </div></div>
 
-<p>Or maybe your are doing something a little less common...</p>
+<p>Or maybe you're using something a little less common...</p>
 
 <ul>
-    <li><a href="../best-angularjs-grid/">Start with AngularJS</a></li>
-    <li><a href="../polymer-getting-started/">Start with Polymer</a></li>
+    <li><a href="../best-angularjs-grid/">Get Started with AngularJS</a></li>
+    <li><a href="../polymer-getting-started/">Get Started with Polymer</a></li>
 </ul>
 
 

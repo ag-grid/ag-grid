@@ -183,10 +183,10 @@ $ag-not-defined: "--ag-not-defined" !default;
 }
 
 @function -ag-require-type($value, $expected, $context) {
-    @if type-of($value) != $expected {
-        @error "Expected #{$context} to be a #{$expected} but got a #{type-of($value)} instead (#{inspect($value)})";
+    @if type-of($value) == $expected or ($expected == "map" and $value == ()) {
+        @return $value;
     }
-    @return $value;
+    @error "Expected #{$context} to be a #{$expected} but got a #{type-of($value)} instead (#{inspect($value)})";
 }
 
 @function -ag-operator-function-times($params, $lhs, $rhs) {

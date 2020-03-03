@@ -74,6 +74,8 @@ export interface SelectionChangedEvent extends AgGridEvent {
 }
 
 export interface FilterChangedEvent extends AgGridEvent {
+    afterDataChange?: boolean;
+    afterFloatingFilter?: boolean
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {
