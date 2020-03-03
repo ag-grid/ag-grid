@@ -122,7 +122,7 @@
                 }
             },
             'ag-grid-angular': {
-                main: './main.js',
+                main: './dist/ag-grid-angular/bundles/ag-grid-angular.umd.js',
                 defaultExtension: 'js'
             },
             'ag-grid-community': {
