@@ -29,7 +29,7 @@ define('skipInPageNav', true);
             <div class="get-started-framework card-javascript">
                 <a href="../javascript-charts/">JavaScript</a>
                 <div>
-                    <p><a href="../javascript-charts/">Get Started</a></p>
+                    <p><a href="../javascript-charts/">Get Started with JS</a></p>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@ define('skipInPageNav', true);
             <div class="get-started-framework card-angular">
                 <a href="../angular-charts/">Angular</a>
                 <div>
-                    <p><a href="../angular-charts/">Get Started</a></p>
+                    <p><a href="../angular-charts/">Get Started with Angular</a></p>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@ define('skipInPageNav', true);
             <div class="get-started-framework card-react">
                 <a href="../react-charts/">React</a>
                 <div>
-                    <p><a href="../react-charts/">Get Started</a></p>
+                    <p><a href="../react-charts/">Get Started with React</a></p>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@ define('skipInPageNav', true);
             <div class="get-started-framework card-vue-inverted">
                 <a href="../vuejs-charts/">Vue.js</a>
                 <div>
-                    <p><a href="../vuejs-charts/">Get Started</a></p>
+                    <p><a href="../vuejs-charts/">Get Started with Vue</a></p>
                 </div>
             </div>
         </div>
@@ -189,7 +189,7 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Bubble With Negative Values</div>
         </a>
     </div>
-    
+
 </div>
 
 <h3 id="area" class="chart-gallery__title">Area</h3>

@@ -115,7 +115,6 @@
     white-space: nowrap;
 }
 
-#documentation .docs-homepage-section-preview:not(.open) span.no-link,
 #documentation .docs-homepage-section-preview:not(.open) span.hide-collapsed {
     display: none !important;
 }

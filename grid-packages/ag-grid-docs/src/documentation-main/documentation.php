@@ -57,13 +57,12 @@ function renderDocs() {
     $top_level_items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
 
     foreach($top_level_items as $item) {
-
         $name = $item['group'];
 
         echo "<div class='group'>";
         echo "<h1>$name</h1>";
         echo "<div class='group-items'>";
-            renderTitle($item);
+        renderTitle($item);
         echo "</div>";
         echo "</div>";
     }
@@ -130,20 +129,19 @@ function renderItems($items, $level) {
             echo "</a>";
         }
 
-        
-
         if ($level > 0) {
             echo "<span class=\"item-split\">, &nbsp;</span>";
         }
 
         echo "</span>";
 
-        if ($item['items'] <> null) {
+        if (!$item['hideChildren'] && $item['items'] <> null) {
             renderItems($item['items'], $level + 1);
         }
 
         echo "</li>";
     }
+
     echo "</ul>";
 }
 
