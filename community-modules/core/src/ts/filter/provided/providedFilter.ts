@@ -174,12 +174,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return newModelDifferent;
     }
 
-    protected onBtApply(afterFloatingFilter = false) {
+    protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
         const newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({afterFloatingFilter: afterFloatingFilter});
+            this.providedFilterParams.filterChangedCallback({afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange});
         }
     }
 

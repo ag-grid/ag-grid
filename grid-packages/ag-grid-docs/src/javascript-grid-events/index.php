@@ -378,7 +378,10 @@ interface CellValueChangedEvent {
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
         ├── ToolPanelVisibleChangedEvent <span class="event-properties">{}</span>
         ├── AnimationQueueEmptyEvent <span class="event-properties">{}</span>
-        ├── FilterChangedEvent <span class="event-properties">{}</span>
+        ├── FilterChangedEvent <span class="event-properties">{</span>
+        │       <span class="event-attribute">afterFloatingFilter</span>: Column, // if filter was changed via floating filter
+        │       <span class="event-attribute">afterDataChange</span>: number, // if filter was changed as a result of data changing
+        │     }</span>
         ├── FilterModifiedEvent <span class="event-properties">{</span>
         │       <span class="event-attribute">column</span>: Column, // the column for the event
         │       <span class="event-attribute">filterInstance</span>: number, // the filter instance
