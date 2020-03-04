@@ -169,7 +169,7 @@ gridOptions.debug = true;
 
 <p>
     Continue to the next section to learn about
-     <a href="../javascript-grid-server-side-model-sort-filter/">Server-side Sorting / Filtering</a>.
+     <a href="../javascript-grid-server-side-model-sorting/">Server-side Sorting</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

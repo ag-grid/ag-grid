@@ -78,7 +78,9 @@ function FakeServer(allData) {
     }
 
     function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) return -1;
+        if (!results || results.length === 0) {
+            return request.startRow;
+        }
         var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }

@@ -465,7 +465,10 @@ const markerConfig = {
                     size: 'number',
                 },
             },
-            description: 'Function used to return formatting for individual markers, based on the supplied information.',
+            description: 'Function used to return formatting for individual markers, based on the supplied information.'
+                + ' If the current marker is highlighted the correponding property will be set to `true`. Make sure to'
+                + ' check for the value of the `highlighted` property if you want to differentiate between the highlighted'
+                + ' and unhighlighted states.',
         }
     }
 };
