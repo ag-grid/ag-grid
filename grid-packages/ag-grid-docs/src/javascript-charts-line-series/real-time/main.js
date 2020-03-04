@@ -60,12 +60,9 @@ function startUpdates() {
 
     updating = true;
     this.update();
-
 }
 
 // inScope[update]
 function update() {
     chart.data = getData();
 }
-
-setInterval(this.update, 500);
