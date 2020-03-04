@@ -10,9 +10,9 @@ const updateProperties = (callback) => {
 };
 
 const copyFromModuleSource = () => {
-    return gulp.src("../../community-modules/angular/src/**/*")
+    return gulp.src(["**/*"], {cwd: '../../community-modules/angular/projects/ag-grid-angular/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
-        .pipe(gulp.dest("./projects/ag-grid-angular/src"));
+        .pipe(gulp.dest("./projects/ag-grid-angular/src", {cwd: '.'}));
 };
 
 const angularBuild = () => {
