@@ -1,5 +1,7 @@
 <?php
-// NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
+/*
+ * WARNING: This page is generated automatically; please do not edit it directly. See generate-pages.js and gallery.json
+ */
 $pageTitle = 'ag-Charts';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
@@ -189,7 +191,7 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Bubble With Negative Values</div>
         </a>
     </div>
-
+    
 </div>
 
 <h3 id="area" class="chart-gallery__title">Area</h3>

@@ -31,7 +31,9 @@ console.log('Finished!');
 
 function getHeader(title) {
     return `<?php
-// NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
+/*
+ * WARNING: This page is generated automatically; please do not edit it directly. See generate-pages.js and gallery.json
+ */
 $pageTitle = '${title}';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';
@@ -109,15 +111,15 @@ function generateIndexPage(galleryConfig) {
 
 <p class="lead">
     Our standalone chart library ag-Charts is flexible and powerful, enabling you to create your own charts without needing to go
-    through the grid. If you want to jump straight in, click through to the Getting Started section for your preferred
+    through the grid. If you want to jump straight in, click through to the Get Started section for your preferred
     framework, or head to the <a href='../javascript-charts-api-explorer/'>API Explorer</a>. Alternatively, scroll down
     for a gallery of examples demonstrating the variety of visualisations you can produce using our library.
 </p>
 
 <p>
     As with the grid, the "ag" part of ag-Charts stands for "agnostic". The internal ag-Charts engine is implemented in
-    TypeScript with zero dependencies. You can just use the vanilla JavaScript ag-Charts library, or alternatively
-    take advantage of the framework-specific ag-Charts Components to integrate with any major framework of your choice.
+    TypeScript with zero dependencies. You can use the vanilla JavaScript ag-Charts library, or alternatively
+    take advantage of the framework-specific ag-Charts Components to integrate with any major framework.
 </p>
 
 <div id="get-started-frameworks">
@@ -126,7 +128,7 @@ function generateIndexPage(galleryConfig) {
             <div class="get-started-framework card-javascript">
                 <a href="../javascript-charts/">JavaScript</a>
                 <div>
-                    <p><a href="../javascript-charts/">Get Started</a></p>
+                    <p><a href="../javascript-charts/">Get Started with JS</a></p>
                 </div>
             </div>
         </div>
@@ -135,7 +137,7 @@ function generateIndexPage(galleryConfig) {
             <div class="get-started-framework card-angular">
                 <a href="../angular-charts/">Angular</a>
                 <div>
-                    <p><a href="../angular-charts/">Get Started</a></p>
+                    <p><a href="../angular-charts/">Get Started with Angular</a></p>
                 </div>
             </div>
         </div>
@@ -144,7 +146,7 @@ function generateIndexPage(galleryConfig) {
             <div class="get-started-framework card-react">
                 <a href="../react-charts/">React</a>
                 <div>
-                    <p><a href="../react-charts/">Get Started</a></p>
+                    <p><a href="../react-charts/">Get Started with React</a></p>
                 </div>
             </div>
         </div>
@@ -153,7 +155,7 @@ function generateIndexPage(galleryConfig) {
             <div class="get-started-framework card-vue-inverted">
                 <a href="../vuejs-charts/">Vue.js</a>
                 <div>
-                    <p><a href="../vuejs-charts/">Get Started</a></p>
+                    <p><a href="../vuejs-charts/">Get Started with Vue</a></p>
                 </div>
             </div>
         </div>

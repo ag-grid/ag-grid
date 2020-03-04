@@ -44,7 +44,7 @@ var options = {
                 text: 'Number of cattle',
             },
             label: {
-                formatter: function(params) { return params.value / 1000 + 'm'; },
+                formatter: function(params) { return params.value / 1000 + 'M'; },
             },
         },
         {

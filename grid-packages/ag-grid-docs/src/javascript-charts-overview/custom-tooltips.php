@@ -1,5 +1,7 @@
 <?php
-// NOTE: This page is generated automatically; please do not edit it directly. See generate-pages.js
+/*
+ * WARNING: This page is generated automatically; please do not edit it directly. See generate-pages.js and gallery.json
+ */
 $pageTitle = 'ag-Charts Gallery: Custom Tooltips';
 $pageDescription = 'ag-Charts is a highly performant charting library with a clean API to effortlessly create beautiful visualizations.';
 $pageKeywords = 'Javascript Grid Charting';

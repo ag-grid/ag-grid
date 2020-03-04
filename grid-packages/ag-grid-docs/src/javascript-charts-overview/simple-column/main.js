@@ -34,7 +34,7 @@ var options = {
                 text: 'Total visitors',
             },
             label: {
-                formatter: function(params) { return params.value / 1000000 + 'm'; },
+                formatter: function(params) { return params.value / 1000000 + 'M'; },
             },
         }],
     legend: {

@@ -52,10 +52,10 @@
             "description": "Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables."
         },
         "Simple Bubble": {
-            "description": "Bubble charts are a specialised type of <a href=./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble)."
+            "description": "Bubble charts are a specialised type of <a href='./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble)."
         },
         "Bubble With Negative Values": {
-            "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values for the variables."
+            "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values."
         }
     },
     "Area": {
