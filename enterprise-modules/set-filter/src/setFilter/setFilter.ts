@@ -101,6 +101,10 @@ export class SetFilter extends ProvidedFilter {
         return { values,  filterType: 'set' };
     }
 
+    public getValueModel(): SetValueModel {
+        return this.valueModel;
+    }
+
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
         if (!a && !b) { return true; }

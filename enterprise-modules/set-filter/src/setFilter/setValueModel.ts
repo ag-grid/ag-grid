@@ -12,7 +12,9 @@ import {
     TextFilter,
     TextFormatter,
     ValueFormatterService,
-    _
+    IEventEmitter,
+    _,
+    EventService
 } from "@ag-grid-community/core";
 
 // we cannot have 'null' as a key in a JavaScript map,
@@ -24,7 +26,9 @@ export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CB, NOT_PROVIDED
 }
 
-export class SetValueModel {
+export class SetValueModel implements IEventEmitter {
+
+    public static EVENT_AVAILABLE_VALUES_CHANGES = 'availableValuesChanged';
 
     private colDef: ColDef;
     private filterParams: ISetFilterParams;
@@ -33,6 +37,7 @@ export class SetValueModel {
     private valueGetter: any;
     private allUniqueValues: (string | null)[]; // all values in the table
     private availableUniqueValues: (string | null)[]; // all values not filtered by other rows
+    private availableUniqueValuesMap: { [value: string]: boolean }; // same as availableUniqueValues but in a map, for quick lookup
     private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
     private miniFilter: string | null;
     private selectedValuesCount: number;
@@ -54,6 +59,8 @@ export class SetValueModel {
 
     private valueFormatterService: ValueFormatterService;
     private column: Column;
+
+    private localEventService = new EventService();
 
     constructor(
         colDef: ColDef,
@@ -103,6 +110,14 @@ export class SetValueModel {
         this.selectNothing();
         this.selectAllUsingMiniFilter();
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
+    }
+
+    public addEventListener(eventType: string, listener: Function, async?: boolean): void {
+        this.localEventService.addEventListener(eventType, listener, async);
+    }
+
+    public removeEventListener(eventType: string, listener: Function, async?: boolean): void {
+        this.localEventService.removeEventListener(eventType, listener, async);
     }
 
     // if keepSelection not set will always select all filters
@@ -206,16 +221,26 @@ export class SetValueModel {
         return valuesToUse;
     }
 
+    public isValueAvailable(value: string): boolean {
+        return this.availableUniqueValuesMap[value];
+    }
+
     private createAvailableUniqueValues() {
         const dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
-            return;
+        } else {
+            const uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+            this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
+            this.sortValues(this.availableUniqueValues);
         }
 
-        const uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
-        this.sortValues(this.availableUniqueValues);
+        this.availableUniqueValuesMap = {};
+        if (this.availableUniqueValues) {
+            this.availableUniqueValues.forEach( value => this.availableUniqueValuesMap[value] = true);
+        }
+
+        this.localEventService.dispatchEvent({type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES});
     }
 
     private sortValues(values: any[]): void {
