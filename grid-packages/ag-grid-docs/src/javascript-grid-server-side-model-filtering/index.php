@@ -85,17 +85,101 @@ columnDefs: [
 </p>
 
 <ul class="content">
-    <li>Try single / multi column (using shift key) sorting by clicking on columns headers.</li>
-    <li>All columns have sorting enabled using the <code>defaultColDef</code> grid options property with
-        <code>sortable=true</code>.
+    <li>
+        <b>Athlete</b> column has a 'text' filter defined using: <code>filter: "agTextColumnFilter"</code>.
     </li>
-    <li>The server uses the metadata contained in the <code>sortModel</code> to sort the rows.</li>
-    <li>Open the browsers dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
+    <li>
+        <b>Year</b> column has a 'number' filter defined using: <code>filter: "agNumberColumnFilter"</code>.
+    </li>
+    <li>
+        The server uses the metadata contained in the <code>filterModel</code> to filter the rows.
+    </li>
+    <li>
+        Open the browsers dev console to view the <code>filterModel</code> supplied in the request to the datasource.
+    </li>
 </ul>
 
 <?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Set Filter</h2>
+<h2>Filtering with the Set Filter</h2>
+
+<p>
+    The <a href="../javascript-grid-filter-set/">Set Filter</a> is the default filter used if <code>filter: true</code>
+
+    entries in the <code>filterModel</code>
+    have a different format to the <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
+</p>
+
+<p>
+    An example of the contents contained in the <code>filterModel</code> for the Set Filter is shown below:
+</p>
+
+<snippet>
+{
+    filterModel: {
+        country: {
+            filterType: "set",
+            values: ["Australia", "Belgium"]
+        }
+    }
+}
+</snippet>
+
+<p>The snippet above shows the <code>filterModel</code> for a single column with a Set Filter where two items are selected.</p>
+
+<p>When using the Server-side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
+   This can be done either synchronously or asynchronously using the <code>values</code> filter param as shown below:
+</p>
+
+<snippet>
+// colDef with Set Filter values supplied synchronously
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        values: ['Australia', 'China', 'Sweden']
+    }
+}
+
+// colDef with Set Filter values supplied asynchronously
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        values: (params) => {
+            // simulating async delay
+            setTimeout(() => {
+                params.success(['Australia', 'China', 'Sweden'])
+            }, 500);
+        }
+    }
+}
+</snippet>
+
+<p>
+    For more details on setting values refer to the <a href="../javascript-grid-filter-set/">Set Filter</a> documentation.
+</p>
+
+<h2>Example - Set Filter</h2>
+
+<p>
+    The example below demonstrates server-side filtering using the Set Filter. Notice the following:
+</p>
+
+<ul class="content">
+    <li>
+        <b>Country</b> column has a Set Filter defined using: <code>filter: "agSetColumnFilter"</code>.
+    </li>
+    <li>
+        Set Filter values are fetched asynchronously and supplied via the <code>params.success(values)</code> callback.
+    </li>
+    <li>
+        The server uses the metadata contained in the <code>filterModel</code> to filter the rows.
+    </li>
+    <li>
+        Open the browsers dev console to view the <code>filterModel</code> supplied in the request to the datasource.
+    </li>
+</ul>
 
 <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
