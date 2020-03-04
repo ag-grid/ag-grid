@@ -50,7 +50,7 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 };
 
-export function collect(iterable: any[], initialBindings: any, collectors: any[]): any[] {
+export function collect(iterable: any[], initialBindings: any, collectors: any[]): any {
     return iterable.reduce((bindings, value) => {
         collectors.filter(c => c.matches(value)).forEach(c => c.apply(bindings, value));
 
