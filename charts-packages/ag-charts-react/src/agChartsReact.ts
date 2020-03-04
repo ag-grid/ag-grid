@@ -1,7 +1,6 @@
 import {Component, createElement, createRef, RefObject} from "react";
 import * as PropTypes from "prop-types";
 import {AgChart, Chart} from "ag-charts-community";
-import {ChangeDetectionService, ChangeDetectionStrategyType} from "./changeDetectionService";
 
 export interface AgLegendProps {
     enabled?: boolean;
@@ -28,7 +27,6 @@ export interface AgChartOptions {
 
 export interface AgChartProps {
     options: AgChartOptions;
-    // seriesChangeDetectionStrategy?: ChangeDetectionStrategyType; to follow...if needed
 }
 
 interface AgChartState {
@@ -37,7 +35,6 @@ interface AgChartState {
 export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     static propTypes: any;
 
-    private changeDetectionService = new ChangeDetectionService();
     private chart!: Chart;
 
     protected chartRef: RefObject<HTMLElement>;
@@ -71,7 +68,7 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
             return propsOptions;
         }
 
-        return { ...propsOptions, container: this.chartRef.current };
+        return {...propsOptions, container: this.chartRef.current};
     }
 
     shouldComponentUpdate(nextProps: any) {
@@ -88,15 +85,11 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
     }
 
     processPropsChanges(prevProps: any, nextProps: any) {
-        const changeDetectionStrategy = this.changeDetectionService.getStrategy(ChangeDetectionStrategyType.DeepValueCheck);
-
-        if (!changeDetectionStrategy.areEqual(prevProps.options, nextProps.options)) {
-            AgChart.update(this.chart, this.applyContainerIfNotSet(nextProps.options));
-        }
+        AgChart.update(this.chart, this.applyContainerIfNotSet(nextProps.options));
     }
 
     componentWillUnmount() {
-        if(this.chart) {
+        if (this.chart) {
             this.chart.destroy();
         }
     }
