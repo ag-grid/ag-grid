@@ -195,9 +195,9 @@ describe('nodeIsGlobalFunctionCall', () => {
             type: 'ExpressionStatement',
             expression: {
                 type: 'CallExpression',
-            },
-            callee: {
-                type: 'Identifier',
+                callee: {
+                    type: 'Identifier',
+                },
             },
         };
 
@@ -220,9 +220,9 @@ describe('nodeIsGlobalFunctionCall', () => {
             type: 'ExpressionStatement',
             expression: {
                 type: 'CallExpression',
-            },
-            callee: {
-                type: 'MemberExpression',
+                callee: {
+                    type: 'MemberExpression',
+                },
             },
         };
 
@@ -234,9 +234,9 @@ describe('nodeIsGlobalFunctionCall', () => {
             type: 'ExpressionStatement',
             expression: {
                 type: 'LiteralExpression',
-            },
-            callee: {
-                type: 'Identifier',
+                callee: {
+                    type: 'Identifier',
+                },
             },
         };
 

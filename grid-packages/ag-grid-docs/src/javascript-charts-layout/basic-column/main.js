@@ -47,4 +47,4 @@ var options = {
     }
 };
 
-var chart = agCharts.AgChart.create(options);
+agCharts.AgChart.create(options);

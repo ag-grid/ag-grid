@@ -50,7 +50,7 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 };
 
-export function collect(iterable: any[], initialBindings: any, collectors: any[]) {
+export function collect(iterable: any[], initialBindings: any, collectors: any[]): any[] {
     return iterable.reduce((bindings, value) => {
         collectors.filter(c => c.matches(value)).forEach(c => c.apply(bindings, value));
 
@@ -58,7 +58,7 @@ export function collect(iterable: any[], initialBindings: any, collectors: any[]
     }, initialBindings);
 }
 
-export function nodeIsVarWithName(node: any, name: string) {
+export function nodeIsVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
     return node.type === NodeType.Variable && node.declarations[0].id.name === name;
 }
@@ -69,29 +69,35 @@ export function nodeIsPropertyWithName(node: any, name: string) {
     return node.key.name == name && node.value.type != 'Identifier';
 }
 
-export function nodeIsFunctionWithName(node: any, name: string) {
+export function nodeIsFunctionWithName(node: any, name: string): boolean {
     // eg: function someFunction() { }
     return node.type === NodeType.Function && node.id.name === name;
 }
 
-export function nodeIsInScope(node: any, unboundInstanceMethods: string[]) {
+export function nodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
     return unboundInstanceMethods &&
         node.type === NodeType.Function &&
         unboundInstanceMethods.indexOf(node.id.name) >= 0;
 }
 
-export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]) {
+export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
     return !nodeIsInScope(node, unboundInstanceMethods) &&
         node.type === NodeType.Function &&
         used.indexOf(node.id.name) < 0;
 }
 
-export function nodeIsFunctionCall(node: any) {
+export function nodeIsFunctionCall(node: any): boolean {
     return node.type === NodeType.Expression && node.expression.type === 'CallExpression';
 }
 
-export function nodeIsGlobalFunctionCall(node: any) {
-    return nodeIsFunctionCall(node) && node.callee && node.callee.type === 'Identifier';
+export function nodeIsGlobalFunctionCall(node: any): boolean {
+    if (!nodeIsFunctionCall(node)) {
+        return false;
+    }
+
+    const { callee } = node.expression;
+
+    return callee && callee.type === 'Identifier';
 }
 
 export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dragstart', 'drop'];
