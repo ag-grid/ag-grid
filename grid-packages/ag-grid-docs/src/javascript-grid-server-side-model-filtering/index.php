@@ -183,9 +183,9 @@ columnDefs: [
 
 <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Set Filter with Complex Object</h2>
-
-<?= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<!--<h2>Set Filter with Complex Object</h2>-->
+<!---->
+<?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 
