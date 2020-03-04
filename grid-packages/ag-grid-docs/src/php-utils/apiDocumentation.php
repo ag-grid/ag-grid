@@ -62,7 +62,7 @@
                 echo "</td><td>$definition</td></tr>";
             } else {
                 // this must be the parent of a child object
-                $targetId = "$newPrefix--$name";
+                $targetId = "$newPrefix.$name";
                 echo "</td><td>";
 
                 if (isset($definition->meta->description)) {
