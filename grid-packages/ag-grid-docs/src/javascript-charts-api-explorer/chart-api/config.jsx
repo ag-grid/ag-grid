@@ -71,7 +71,7 @@ export const generalConfig = Object.freeze({
     data: {
         type: 'object[]',
         isRequired: true,
-        description: 'The data to render the chart from. If it is not specified, it must be set on individual series instead.',
+        description: 'The data to render the chart from. If this is not specified, it must be set on individual series instead.',
     },
     container: {
         type: 'HTMLElement',
@@ -184,8 +184,11 @@ export const generalConfig = Object.freeze({
             unit: 'px',
         },
         markerShape: {
-            default: 'square',
-            description: 'This will override the marker shape from the series and show the specified marker shape in the legend instead.',
+            type: 'string',
+            description: 
+                `If set, overrides the marker shape from the series and the Legend will show the 
+                specified marker shape instead. If not set, will use a marker shape matching the 
+                shape from the series, or fall back to square if there is none.`,
             editor: PresetEditor,
             options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle'],
         },
@@ -226,7 +229,7 @@ export const axisConfig = Object.freeze({
     },
     position: {
         type: 'string',
-        description: 'The position on the chart to render the axis in.',
+        description: 'The position on the chart where the axis should be rendered.',
         editor: PresetEditor,
         options: ['top', 'right', 'bottom', 'left'],
     },
@@ -280,7 +283,8 @@ export const axisConfig = Object.freeze({
         },
         count: {
             default: 10,
-            description: 'A hint of how many ticks to use across an axis.',
+            description: `A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly
+            this number of ticks, but will try to use a number of ticks that is close to the number given.`,
             editor: NumberEditor,
             min: 0,
             max: 50,
@@ -361,7 +365,7 @@ const seriesConfig = {
     data: {
         type: 'object[]',
         isRequired: true,
-        description: 'The data to use when rendering the series. If it is not supplied, data must be set on the chart instead.',
+        description: 'The data to use when rendering the series. If this is not supplied, data must be set on the chart instead.',
     },
     visible: {
         default: true,
@@ -395,20 +399,20 @@ const seriesConfig = {
     },
 };
 
-const markerConfig = {
+const markerConfig = ({enabledByDefault = true} = {enabledByDefault:true}) => ({
     marker: {
         meta: {
             description: 'Configuration for the markers used in the series.',
         },
         enabled: {
-            default: true,
+            default: enabledByDefault,
             description: 'Whether or not to show markers.',
             editor: BooleanEditor,
         },
         shape: {
             type: 'string | Marker',
             default: 'circle',
-            description: 'The shape to use for the markers. You can also supply a custom marker by extending the <code>Marker</code> class and providing that.',
+            description: 'The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.',
             editor: PresetEditor,
             options: ['circle', 'cross', 'diamond', 'plus', 'square', 'triangle']
         },
@@ -471,7 +475,7 @@ const markerConfig = {
                 + ' and unhighlighted states.',
         }
     }
-};
+});
 
 const getCartesianKeyConfig = (hasMultipleYValues = false) => {
     const config = {
@@ -629,7 +633,7 @@ const shadowConfig = {
         },
         blur: {
             default: 5,
-            description: 'How much in pixels to blur the shadow.',
+            description: 'The radius of the shadow\'s blur, given in pixels.',
             editor: NumberEditor,
             min: 0,
             max: 20,
@@ -671,7 +675,9 @@ export const barSeriesConfig = Object.freeze({
     },
     normalizedTo: {
         type: 'number',
-        description: 'The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.',
+        description: `The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.
+        For example, if normalizedTo is set to 100, the bar stacks will all be scaled proportionally so that each of their
+        totals is 100.`,
         editor: NumberEditor,
         min: 1,
         max: 100,
@@ -710,7 +716,7 @@ export const lineSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig('lines', false, false),
-    ...markerConfig,
+    ...markerConfig(),
     ...getHighlightConfig(),
 });
 
@@ -723,13 +729,15 @@ export const areaSeriesConfig = Object.freeze({
     ...seriesConfig,
     normalizedTo: {
         type: 'number',
-        description: 'The number to normalise the areas stack to.',
+        description: `The number to normalise the area stacks to.
+        For example, if normalizedTo is set to 100, the stacks will all be scaled proportionally so that their total
+        height is always 100.`,
         editor: NumberEditor,
         min: 1,
         max: 100,
     },
     ...getColourConfig('areas', true),
-    ...markerConfig,
+    ...markerConfig({enabledByDefault: false}),
     ...getHighlightConfig(),
     ...shadowConfig,
 });
@@ -782,7 +790,7 @@ export const scatterSeriesConfig = Object.freeze({
         editor: StringEditor,
     },
     ...getColourConfig(),
-    ...markerConfig,
+    ...markerConfig(),
     ...getHighlightConfig(),
 });
 
@@ -845,7 +853,8 @@ export const pieSeriesConfig = Object.freeze({
     },
     innerRadiusOffset: {
         default: 0,
-        description: 'The offset in pixels of the inner radius of the series. Used to construct doughnut charts.',
+        description: `The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If
+        this is not given, or a value of zero is given, a pie chart will be rendered.`,
         editor: NumberEditor,
         min: -50,
         max: 50,

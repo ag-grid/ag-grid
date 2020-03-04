@@ -7,7 +7,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to render the chart from. If it is not specified, it must be set on individual series instead."
+      "description": "The data to render the chart from. If this is not specified, it must be set on individual series instead."
     },
     "container": {
       "type": "HTMLElement",
@@ -256,8 +256,8 @@
         "unit": "px"
       },
       "markerShape": {
-        "default": "square",
-        "description": "This will override the marker shape from the series and show the specified marker shape in the legend instead.",
+        "type": "string",
+        "description": "If set, overrides the marker shape from the series and the Legend will show the \n                specified marker shape instead. If not set, will use a marker shape matching the \n                shape from the series, or fall back to square if there is none.",
         "options": [
           "circle",
           "cross",
@@ -348,7 +348,7 @@
     },
     "position": {
       "type": "string",
-      "description": "The position on the chart to render the axis in.",
+      "description": "The position on the chart where the axis should be rendered.",
       "options": [
         "top",
         "right",
@@ -463,7 +463,7 @@
       },
       "count": {
         "default": 10,
-        "description": "A hint of how many ticks to use across an axis.",
+        "description": "A hint of how many ticks to use across an axis. The axis is not guaranteed to use exactly\n            this number of ticks, but will try to use a number of ticks that is close to the number given.",
         "min": 0,
         "max": 50
       }
@@ -596,7 +596,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to use when rendering the series. If it is not supplied, data must be set on the chart instead."
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
     },
     "visible": {
       "default": true,
@@ -631,7 +631,7 @@
     },
     "normalizedTo": {
       "type": "number",
-      "description": "The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.",
+      "description": "The number to normalise the bar stacks to. Has no effect when <code>grouped</code> is <code>true</code>.\n        For example, if normalizedTo is set to 100, the bar stacks will all be scaled proportionally so that each of their\n        totals is 100.",
       "min": 1,
       "max": 100
     },
@@ -724,7 +724,7 @@
       },
       "blur": {
         "default": 5,
-        "description": "How much in pixels to blur the shadow.",
+        "description": "The radius of the shadow's blur, given in pixels.",
         "min": 0,
         "max": 20,
         "unit": "px"
@@ -815,7 +815,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to use when rendering the series. If it is not supplied, data must be set on the chart instead."
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
     },
     "visible": {
       "default": true,
@@ -877,7 +877,7 @@
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by extending the <code>Marker</code> class and providing that.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
         "options": [
           "circle",
           "cross",
@@ -935,7 +935,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted the correponding property will be set to `true`. Make sure to check for the value of the `highlighted` property if you want to differentiate between the highlighted and unhighlighted states."
       }
     },
     "highlightStyle": {
@@ -979,7 +979,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to use when rendering the series. If it is not supplied, data must be set on the chart instead."
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
     },
     "visible": {
       "default": true,
@@ -1010,7 +1010,7 @@
     },
     "normalizedTo": {
       "type": "number",
-      "description": "The number to normalise the areas stack to.",
+      "description": "The number to normalise the area stacks to.\n        For example, if normalizedTo is set to 100, the stacks will all be scaled proportionally so that their total\n        height is always 100.",
       "min": 1,
       "max": 100
     },
@@ -1066,13 +1066,13 @@
         "description": "Configuration for the markers used in the series."
       },
       "enabled": {
-        "default": true,
+        "default": false,
         "description": "Whether or not to show markers."
       },
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by extending the <code>Marker</code> class and providing that.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
         "options": [
           "circle",
           "cross",
@@ -1130,7 +1130,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted the correponding property will be set to `true`. Make sure to check for the value of the `highlighted` property if you want to differentiate between the highlighted and unhighlighted states."
       }
     },
     "highlightStyle": {
@@ -1175,7 +1175,7 @@
       },
       "blur": {
         "default": 5,
-        "description": "How much in pixels to blur the shadow.",
+        "description": "The radius of the shadow's blur, given in pixels.",
         "min": 0,
         "max": 20,
         "unit": "px"
@@ -1224,7 +1224,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to use when rendering the series. If it is not supplied, data must be set on the chart instead."
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
     },
     "visible": {
       "default": true,
@@ -1301,7 +1301,7 @@
       "shape": {
         "type": "string | Marker",
         "default": "circle",
-        "description": "The shape to use for the markers. You can also supply a custom marker by extending the <code>Marker</code> class and providing that.",
+        "description": "The shape to use for the markers. You can also supply a custom marker by providing a <code>Marker</code> subclass.",
         "options": [
           "circle",
           "cross",
@@ -1359,7 +1359,7 @@
             "size": "number"
           }
         },
-        "description": "Function used to return formatting for individual markers, based on the supplied information."
+        "description": "Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted the correponding property will be set to `true`. Make sure to check for the value of the `highlighted` property if you want to differentiate between the highlighted and unhighlighted states."
       }
     },
     "highlightStyle": {
@@ -1411,7 +1411,7 @@
     "data": {
       "type": "object[]",
       "isRequired": true,
-      "description": "The data to use when rendering the series. If it is not supplied, data must be set on the chart instead."
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
     },
     "visible": {
       "default": true,
@@ -1451,7 +1451,7 @@
     },
     "innerRadiusOffset": {
       "default": 0,
-      "description": "The offset in pixels of the inner radius of the series. Used to construct doughnut charts.",
+      "description": "The offset in pixels of the inner radius of the series. Used to construct doughnut charts. If\n        this is not given, or a value of zero is given, a pie chart will be rendered.",
       "min": -50,
       "max": 50,
       "unit": "px"
@@ -1718,7 +1718,7 @@
       },
       "blur": {
         "default": 5,
-        "description": "How much in pixels to blur the shadow.",
+        "description": "The radius of the shadow's blur, given in pixels.",
         "min": 0,
         "max": 20,
         "unit": "px"
