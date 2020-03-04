@@ -1,6 +1,4 @@
 // to satisfy server side compilation
-import { CreateRangeChartParams } from "./gridApi";
-
 declare let global: any;
 const globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
