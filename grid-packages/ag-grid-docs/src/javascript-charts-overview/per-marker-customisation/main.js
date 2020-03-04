@@ -50,7 +50,7 @@ var options = {
                 minSize: minSize,
                 formatter: function(params) {
                     return {
-                        fill: calculateColour(params.size),
+                        fill: params.highlighted ? params.fill : calculateColour(params.size)
                     };
                 },
                 strokeWidth: 0,

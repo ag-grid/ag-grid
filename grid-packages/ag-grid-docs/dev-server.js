@@ -471,30 +471,18 @@ function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
 }
 
 function buildFrameworkModules(exitOnError) {
-    console.log("Building Framework Modules...");
+    console.log("Building Grid Framework Modules...");
     return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
 }
 
 function buildFrameworkPackages(exitOnError) {
-    console.log("Building Framework Packages...");
+    console.log("Building Grid Framework Packages...");
     return buildFrameworks('grid-packages', ['ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
 }
 
-function buildPackages(exitOnError) {
-    console.log("Building Packages...");
-    const tsc = getTscPath();
-    const result = cp.spawnSync(tsc, ['--build'], {
-        stdio: 'inherit',
-        cwd: WINDOWS ? '..\\..\\' : '../../'
-    });
-
-    if (result && result.status !== 0) {
-        console.log('ERROR Building Modules');
-
-        if(exitOnError) {
-            process.exit(result.status)
-        }
-    }
+function buildChartsPackages(exitOnError) {
+    console.log("Building Chart Framework Packages...");
+    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError);
 }
 
 function buildCss() {
@@ -589,6 +577,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             buildCoreModules(!legacy);
             buildFrameworkModules(!legacy);
             buildFrameworkPackages(!legacy);
+            buildChartsPackages(!legacy);
 
             buildCss();
 

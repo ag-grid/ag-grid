@@ -80,10 +80,6 @@ export class AgChartsReact extends Component<AgChartProps, AgChartState> {
         return false;
     }
 
-    componentDidUpdate(prevProps: any) {
-        this.processPropsChanges(prevProps, this.props);
-    }
-
     processPropsChanges(prevProps: any, nextProps: any) {
         AgChart.update(this.chart, this.applyContainerIfNotSet(nextProps.options));
     }
