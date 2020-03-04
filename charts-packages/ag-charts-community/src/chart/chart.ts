@@ -17,7 +17,7 @@ import { createId } from "../util/id";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
-    display: table;
+    display: none;
     position: absolute;
     user-select: none;
     pointer-events: none;
@@ -33,7 +33,7 @@ const defaultTooltipCss = `
 }
 
 .ag-chart-tooltip-visible {
-    opacity: 1;
+    display: table;
 }
 
 .ag-chart-tooltip-title {
