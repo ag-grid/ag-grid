@@ -159,18 +159,11 @@ export class ReactComponent extends BaseReactComponent {
                 this.staticMarkup = staticMarkup;
             } else {
                 if (staticMarkup) {
-                    // in the event of memoized renderers, renderers that that return simple strings or NaN etc
-                    // we wrap the value in a span so that we can remove it easily
-                    // we'll do the same if the rendered content has any text content as we can't easily remove
-                    // that (safely) when the actual component is rendered
-                    const testElement = document.createElement('span');
-                    testElement.innerHTML = staticMarkup;
-                    if (testElement.children[0] && !testElement.textContent) {
-                        this.eParentElement.innerHTML = staticMarkup;
-                    } else {
-                        this.eParentElement.appendChild(testElement);
-                    }
-                    this.staticMarkup = this.eParentElement.children[0] as HTMLElement;
+                    // we wrap the content as if there is "trailing" text etc it's not easy to safely remove
+                    // the same is true for memoized renderers, renderers that that return simple strings or NaN etc
+                    this.staticMarkup = document.createElement('span');
+                    this.staticMarkup.innerHTML = staticMarkup;
+                    this.eParentElement.appendChild(this.staticMarkup);
                 }
             }
         } catch (e) {
