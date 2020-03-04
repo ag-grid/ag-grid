@@ -60,6 +60,7 @@ function startUpdates() {
 
     updating = true;
     this.update();
+    setInterval(this.update, 500);
 }
 
 // inScope[update]
