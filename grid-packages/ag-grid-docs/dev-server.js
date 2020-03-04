@@ -455,13 +455,15 @@ function buildCoreModules() {
 function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
     frameworkDirectories.forEach(frameworkDirectory => {
         const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
-        const result = cp.spawnSync('npm', ['run', 'build'], {
+        const npm = WINDOWS ? 'npm.cmd' : 'npm';
+        const result = cp.spawnSync(npm, ['run', 'build'], {
             stdio: 'inherit',
             cwd: frameworkRoot
         });
 
         if (result && result.status !== 0) {
             console.log(`ERROR Building The ${frameworkDirectory} Module`);
+            console.error(result.error);
 
             if(exitOnError) {
                 process.exit(result.status)
