@@ -470,14 +470,14 @@ function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
     });
 }
 
-function buildFrameworkModules(exitOnError) {
+function buildGridFrameworkModules(exitOnError) {
     console.log("Building Grid Framework Modules...");
     return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
 }
 
-function buildFrameworkPackages(exitOnError) {
-    console.log("Building Grid Framework Packages...");
-    return buildFrameworks('grid-packages', ['ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
+function buildGridPackages(exitOnError) {
+    console.log("Building Grid Packages...");
+    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
 }
 
 function buildChartsPackages(exitOnError) {
@@ -575,8 +575,8 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             // if we encounter a build failure on startup we exit
             // prevents the need to have to CTRL+C several times for certain types of error
             buildCoreModules(!legacy);
-            buildFrameworkModules(!legacy);
-            buildFrameworkPackages(!legacy);
+            buildGridFrameworkModules(!legacy);
+            buildGridPackages(!legacy);
             buildChartsPackages(!legacy);
 
             buildCss();
