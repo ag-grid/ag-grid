@@ -29,7 +29,6 @@ const defaultTooltipCss = `
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-    opacity: 0;
 }
 
 .ag-chart-tooltip-visible {
@@ -675,8 +674,7 @@ export abstract class Chart extends Observable {
     };
 
     private readonly onMouseMove = (event: MouseEvent) => {
-        const { offsetX: x, offsetY: y } = event;
-        const pick = this.pickSeriesNode(x, y);
+        const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
 
         if (pick) {
             const { node } = pick;
@@ -701,8 +699,7 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onClick = (event: MouseEvent) => {
-        const { offsetX: x, offsetY: y } = event;
-        const datum = this.legend.getDatumForPoint(x, y);
+        const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
 
         if (datum) {
             const { id, itemId, enabled } = datum;
@@ -782,7 +779,7 @@ export abstract class Chart extends Observable {
             parent &&
             parent.parentElement &&
             (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0];
+            left -= tooltipRect.width + offset[0] * 2;
         }
 
         el.style.left = `${left}px`;
