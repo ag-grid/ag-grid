@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm run update-properties && ng build --prod && npm run verify-properties",
+    "build": "npx gulp copy-from-module-source && npm run update-properties && ng build --prod && npm run verify-properties",
     "build-cjs": "npm run build",
     "test": "ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
@@ -52,6 +52,8 @@
     "tslint": "~5.18.0",
     "typescript": "~3.7.5",
     "replace-in-file": "^4.1.0",
-    "typescript-simple": "8.0.6"
+    "typescript-simple": "8.0.6",
+    "gulp": "^4.0.0",
+    "gulp-replace": "^1.0.0"
   }
 }

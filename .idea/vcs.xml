@@ -14,5 +14,6 @@
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-react-package-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-vue-example" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/examples-grid/ag-grid-vue-package-example" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples-grid/seans-react" vcs="Git" />
   </component>
 </project>

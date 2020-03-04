@@ -424,7 +424,6 @@ function watchCssModules() {
 function watchModules() {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
-    const node = 'node';
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
@@ -438,8 +437,8 @@ function watchModules() {
     });
 }
 
-function buildModules() {
-    console.log("Building Modules...");
+function buildCoreModules() {
+    console.log("Building Core Modules...");
     const tsc = getTscPath();
     const result = cp.spawnSync(tsc, ['--build'], {
         stdio: 'inherit',
@@ -451,6 +450,51 @@ function buildModules() {
         return result.status;
     }
     return 0;
+}
+
+function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
+    frameworkDirectories.forEach(frameworkDirectory => {
+        const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
+        const result = cp.spawnSync('npm', ['run', 'build'], {
+            stdio: 'inherit',
+            cwd: frameworkRoot
+        });
+
+        if (result && result.status !== 0) {
+            console.log(`ERROR Building The ${frameworkDirectory} Module`);
+
+            if(exitOnError) {
+                process.exit(result.status)
+            }
+        }
+    });
+}
+
+function buildFrameworkModules(exitOnError) {
+    console.log("Building Framework Modules...");
+    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
+}
+
+function buildFrameworkPackages(exitOnError) {
+    console.log("Building Framework Packages...");
+    return buildFrameworks('grid-packages', ['ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
+}
+
+function buildPackages(exitOnError) {
+    console.log("Building Packages...");
+    const tsc = getTscPath();
+    const result = cp.spawnSync(tsc, ['--build'], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    if (result && result.status !== 0) {
+        console.log('ERROR Building Modules');
+
+        if(exitOnError) {
+            process.exit(result.status)
+        }
+    }
 }
 
 function buildCss() {
@@ -542,11 +586,9 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
 
             // if we encounter a build failure on startup we exit
             // prevents the need to have to CTRL+C several times for certain types of error
-            const exitCode = buildModules();
-            if (exitCode === 1 && !legacy) {
-                done();
-                return;
-            }
+            buildCoreModules(!legacy);
+            buildFrameworkModules(!legacy);
+            buildFrameworkPackages(!legacy);
 
             buildCss();
 
