@@ -29,18 +29,19 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     private static readonly FILTER_TYPE = 'date';
 
-    public static DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.GREATER_THAN,
-    ScalerFilter.LESS_THAN, ScalerFilter.NOT_EQUAL, ScalerFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [
+        ScalerFilter.EQUALS,
+        ScalerFilter.GREATER_THAN,
+        ScalerFilter.LESS_THAN,
+        ScalerFilter.NOT_EQUAL,
+        ScalerFilter.IN_RANGE
+    ];
 
-    @RefSelector('ePanelFrom1')
-    private ePanelFrom1: HTMLElement;
-    @RefSelector('ePanelFrom2')
-    private ePanelFrom2: HTMLElement;
+    @RefSelector('ePanelFrom1') private ePanelFrom1: HTMLElement;
+    @RefSelector('ePanelFrom2') private ePanelFrom2: HTMLElement;
 
-    @RefSelector('ePanelTo1')
-    private ePanelTo1: HTMLElement;
-    @RefSelector('ePanelTo2')
-    private ePanelTo2: HTMLElement;
+    @RefSelector('ePanelTo1') private ePanelTo1: HTMLElement;
+    @RefSelector('ePanelTo2') private ePanelTo2: HTMLElement;
 
     private dateCompFrom1: DateCompWrapper;
     private dateCompFrom2: DateCompWrapper;
@@ -112,8 +113,10 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     private defaultComparator(filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
         const cellAsDate = cellValue as Date;
+
         if (cellAsDate < filterDate) { return -1; }
         if (cellAsDate > filterDate) { return 1; }
+
         return cellValue != null ? 0 : -1;
     }
 
@@ -150,9 +153,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected createValueTemplate(position: ConditionPosition): string {
-
         const positionOne = position === ConditionPosition.One;
-
         const pos = positionOne ? '1' : '2';
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
@@ -165,11 +166,9 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
         const positionOne = position === ConditionPosition.One;
-
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
-
         const valueFrom = compFrom.getDate();
         const valueTo = compTo.getDate();
 
@@ -181,9 +180,9 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
         if (option === SimpleFilter.IN_RANGE) {
             return valueFrom != null && valueTo != null;
-        } else {
-            return valueFrom != null;
         }
+
+        return valueFrom != null;
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {

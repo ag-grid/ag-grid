@@ -99,11 +99,14 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
     private resetPlaceholder(): void {
         const translate = this.translate.bind(this);
-        const placeholder = translate('filterOoo');
+        const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
+        const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
 
-        const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+        this.eValueFrom1.setInputPlaceHolder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceHolder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
 
-        fields.forEach(field => field.setInputPlaceHolder(placeholder));
+        this.eValueFrom2.setInputPlaceHolder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceHolder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
     }
 
     public afterGuiAttached() {
@@ -198,6 +201,8 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
+
+        this.resetPlaceholder();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
         _.setDisplayed(this.eValueFrom1.getGui(), showFrom1);

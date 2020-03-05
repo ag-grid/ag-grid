@@ -48,6 +48,8 @@ localeText = {
         lessThanOrEqual: 'daLessThanOrEqual',
         greaterThanOrEqual: 'daGreaterThanOrEqual',
         inRange: 'daInRange',
+        inRangeStart: 'daRangeStart',
+        inRangeEnd: 'daRangeEnd',
 
         // for text filter
         contains: 'daContains',
