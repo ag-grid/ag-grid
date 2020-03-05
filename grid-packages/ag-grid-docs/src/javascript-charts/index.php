@@ -243,4 +243,7 @@ SNIPPET, 'diff') ?>
     Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
 
+<style><?php include '../_assets/pages/copy-code.css'; ?></style>
+<script src="../_assets/js/copy-code.js"></script>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

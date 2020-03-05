@@ -6,9 +6,6 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<script src="../_assets/js/copy-code.js"></script>
-<style><?php include '../_assets/pages/get-started.css'; ?></style>
-
 <h1>React Charts | Get Started with ag-Charts and React</h1>
 
 <p class="lead" id="react-charts">
@@ -44,15 +41,11 @@ include '../documentation-main/documentation_header.php';
     following commands in your terminal:
 </p>
 
-<section>
-    <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 npx create-react-app my-app
 cd my-app
 npm start
 SNIPPET, 'sh') ?>
-
-</section>
 
 <div class="note">
     <a href="https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b" rel="nofollow">npx</a>
@@ -70,18 +63,13 @@ SNIPPET, 'sh') ?>
     need a new instance of the terminal):
 </p>
 
-<section>
-    <button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-react">Copy Code</button>
-    <?= createSnippet('npm install --save ag-charts-community ag-charts-react', 'sh') ?>
-</section>
+<?= createSnippet('npm install --save ag-charts-community ag-charts-react', 'sh') ?>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! Open
     <code>src/App.js</code> in your favourite text editor and change its contents to the following:
 </p>
 
-<section>
-    <button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 import React, { Component } from 'react';
 import { render } from 'react-dom';
@@ -131,7 +119,6 @@ class ChartExample extends Component {
     }
 }
 SNIPPET, 'jsx') ?>
-</section>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -326,5 +313,8 @@ SNIPPET, 'diff') ?>
 <p>
     Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
+
+<style><?php include '../_assets/pages/copy-code.css'; ?></style>
+<script src="../_assets/js/copy-code.js"></script>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

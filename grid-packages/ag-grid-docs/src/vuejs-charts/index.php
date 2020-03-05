@@ -6,9 +6,6 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<script src="../_assets/js/copy-code.js"></script>
-<style><?php include '../_assets/pages/get-started.css'; ?></style>
-
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 
 <p class="lead" id="vue-charts-description">
@@ -40,13 +37,10 @@ include '../documentation-main/documentation_header.php';
     Let's follow the <a href="https://cli.vuejs.org/">Vue CLI instructions</a> and run the following in your terminal:
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-vuejs">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 npm install -g @vue/cli
 vue create my-project
 SNIPPET, 'sh') ?>
-</section>
 
 <p>When prompted choose "default (babel, eslint)":</p>
 
@@ -54,13 +48,10 @@ SNIPPET, 'sh') ?>
 
 <p>We're now ready to start our application:</p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 cd my-project
 npm run serve
 SNIPPET, 'sh') ?>
-</section>
 
 <p>
     If everything goes well, <code>npm run serve</code> has started the web server. You can open the default app at
@@ -72,10 +63,7 @@ SNIPPET, 'sh') ?>
     instance of the terminal):
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet('npm install --save ag-charts-community ag-charts-vue', 'sh') ?>
-</section>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step,
@@ -87,19 +75,14 @@ SNIPPET, 'sh') ?>
     Let's add the component definition to our template. Edit <code>app/App.vue</code> and replace the scaffold code:
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 <template>
     <ag-charts-vue :options="options"></ag-charts-vue>
 </template>
 SNIPPET, 'html') ?>
-</section>
 
 <p>Next, let's declare the basic charts configuration. Edit <code>src/App.vue</code>:</p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 <script>
 import Vue from 'vue';
@@ -150,7 +133,6 @@ export default {
 };
 </script>
 SNIPPET, 'html') ?>
-</section>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -327,5 +309,8 @@ SNIPPET, 'diff') ?>
 <p>
     Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
+
+<style><?php include '../_assets/pages/copy-code.css'; ?></style>
+<script src="../_assets/js/copy-code.js"></script>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

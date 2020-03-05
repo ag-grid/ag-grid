@@ -6,9 +6,6 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<script src="../_assets/js/copy-code.js"></script>
-<style><?php include '../_assets/pages/get-started.css'; ?></style>
-
 <h1>Angular Charts | Get Started with ag-Charts and Angular</h1>
 
 <p class="lead" id="angular-charts">
@@ -42,15 +39,12 @@ include '../documentation-main/documentation_header.php';
     the following in your terminal:
 </p>
 
-<section>
-    <button class="btn copy-code-button" onclick="copyCode(event)" id="install-angular-cli">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 npm install -g @angular/cli
 ng new my-app --routing false
 cd my-app
 ng serve
 SNIPPET, 'sh') ?>
-</section>
 
 <p>
     If everything goes well, <code>ng serve</code> has started the web server. You can open your app at
@@ -62,21 +56,16 @@ SNIPPET, 'sh') ?>
     need a new instance of the terminal):
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)" id="install-ag-angular">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 npm install --save ag-charts-community ag-charts-angular
 npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
 SNIPPET, 'sh') ?>
-</section>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add
     the ag-Charts Angular module to our app module (<code>src/app/app.module.ts</code>):
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -94,12 +83,9 @@ import { AppComponent } from './app.component';
 export class AppModule {
 }
 SNIPPET, 'ts') ?>
-</section>
 
 <p>Next, let's declare the basic chart configuration. Edit <code>src/app.component.ts</code>:</p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 import { Component } from '@angular/core';
 import { AgChartOptions } from 'ag-charts-angular';
@@ -146,7 +132,6 @@ export class AppComponent {
     }
 }
 SNIPPET, 'ts') ?>
-</section>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -164,15 +149,12 @@ SNIPPET, 'ts') ?>
     scaffold code:
 </p>
 
-<section>
-<button class="btn copy-code-button" onclick="copyCode(event)">Copy Code</button>
 <?= createSnippet(<<<SNIPPET
 <ag-charts-angular
     style="height: 100%"
     [options]="options">
 </ag-charts-angular>
 SNIPPET, 'html') ?>
-</section>
 
 <p>
     The <code>series</code> property is an array because it is possible to supply multiple series (including mixed
@@ -338,5 +320,8 @@ SNIPPET, 'diff') ?>
 <p>
     Continue to the next section to see the <a href="../javascript-charts-api/">API Reference</a>.
 </p>
+
+<style><?php include '../_assets/pages/copy-code.css'; ?></style>
+<script src="../_assets/js/copy-code.js"></script>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

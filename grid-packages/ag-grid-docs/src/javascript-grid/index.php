@@ -14,8 +14,6 @@ include '../documentation-main/documentation_header.php';
     are building applications that would not be possible if ag-Grid did not exist.
 </p>
 
-
-
 <?php
 include './intro.php';
 ?>
@@ -34,7 +32,7 @@ include './intro.php';
 
 <h2>The Project Setup</h2>
 
-<p>During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks. It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps. 
+<p>During the last couple of years, we are witnessing a Cambrian Explosion of JavaScript project stacks. It seems like everyday there is a new, better way for JavaScript developers to build and distribute their apps.
 However,  for the purposes of this setup, we are going to stick to tried-and-true no-build, single HTML file setup which loads the ag-Grid scripts from CDN (our favorite one is <a href="https://unpkg.com/#/">unpkg</a>). Let's start from this clean html file:</p>
 
 <snippet language="html">
@@ -346,8 +344,8 @@ var gridOptions = {
     ];
 
     var autoGroupColumnDef = {
-        headerName: &quot;Model&quot;, 
-        field: &quot;model&quot;, 
+        headerName: &quot;Model&quot;,
+        field: &quot;model&quot;,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
@@ -367,13 +365,13 @@ var gridOptions = {
 
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
-  
+
   agGrid.simpleHttpRequest({url: 'https://api.myjson.com/bins/15psn9'}).then(function(data) {
       gridOptions.api.setRowData(data);
   });
-  
+
   function getSelectedRows() {
-    const selectedNodes = gridOptions.api.getSelectedNodes()  
+    const selectedNodes = gridOptions.api.getSelectedNodes()
     const selectedData = selectedNodes.map( function(node) { return node.data })
     const selectedDataStringPresentation = selectedData.map( function(node) { return node.make + ' ' + node.model }).join(', ')
     alert('Selected nodes: ' + selectedDataStringPresentation);
@@ -383,13 +381,13 @@ var gridOptions = {
 &lt;/html&gt;
 </snippet>
 
-<h2>Summary</h2> 
+<h2>Summary</h2>
 
-<p>With this Javascript datagrid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping! 
-While doing so, we learned how to configure the grid and how how to use its api object to call methods.</p> 
+<p>With this Javascript datagrid tutorial, we managed to accomplish a lot. Starting from the humble beginnings of a three row / column setup, we now have a grid that supports sorting, filtering, binding to remote data, selection and even grouping!
+While doing so, we learned how to configure the grid and how how to use its api object to call methods.</p>
 
 
-<h2>Next Steps</h2> 
+<h2>Next Steps</h2>
 
 <p>The best thing you can check after the Javascript grid tutorial is the <a href="../javascript-grid-features/">features overview</a>. It provides an extensive review of what you can achieve with ag-Grid. In addition, you can go through the following help articles to learn more about the features we enabled:</p>
 
@@ -401,5 +399,8 @@ While doing so, we learned how to configure the grid and how how to use its api 
 </div>
 <br>
 </div>
+
+<style><?php include '../_assets/pages/copy-code.css'; ?></style>
+<script src="../_assets/js/copy-code.js"></script>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
