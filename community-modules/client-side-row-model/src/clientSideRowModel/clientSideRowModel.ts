@@ -136,7 +136,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
             for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                 const rowNode = this.getRow(rowIndex);
-                if (rowNode.rowHeightEstimated || rowNode.__autoHeightChanged) {
+                if (rowNode.rowHeightEstimated) {
                     const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode);
                     rowNode.setRowHeight(rowHeight.height);
                     atLeastOneChange = true;

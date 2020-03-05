@@ -167,10 +167,6 @@ export class Events {
     // primarily for charts
     public static EVENT_POPUP_TO_FRONT = 'popupToFront';
 
-    /** Internal event raised after auto height (async) cell renderers have been created. The AutoHeightCalculator
-     *  listens to these changes in order to refresh row heights */
-    public static EVENT_CELL_RENDERER_HEIGHT_CHANGED = 'cellRendererHeightChanged';
-
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.
