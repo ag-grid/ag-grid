@@ -58,6 +58,15 @@
         transition: background-color 1s;
     }
 
+    .ag-cell-highlight {
+        background-color: ag-param(range-selection-highlight-color) !important;
+    }
+
+    .ag-cell-highlight-animation {
+        background-color: transparent;
+        transition: background-color 1s;
+    }
+
     .ag-row {
         height: ag-param(row-height);
         color: ag-param(data-color);

@@ -32,7 +32,7 @@
     // HORIZONTAL COLUMN DROP
     
     .ag-column-drop-horizontal {
-        background-color: ag-param(header-background-color);
+        background-color: ag-param(control-panel-background-color);
         color: ag-param(secondary-foreground-color);
         height: ag-param(row-height);
         @include ag-border(primary, bottom);

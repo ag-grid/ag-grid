@@ -63,7 +63,7 @@ The major advantage of this approach is that we are now able to warn when you pa
 These variables correspond to parameters with different names:
 
  * `$ag-primary-color` and `$ag-accent-color`. If extending a provided theme, use the theme-specific parameters to control key colours. Balham provides `balham-active-color`; Alpine provides `alpine-active-color`; and Material provides `material-primary-color` and `material-accent-color`. Or use specific parameters like `checkbox-checked-color` that control the colours of individual elements.
- * `$ag-alt-icon-color`. Use `checkbox-background-color` and `range-selection-border-color`.
+ * `$ag-alt-icon-color`. Use `checkbox-background-color`
  * `$ag-range-selected-color-1` (and `-2`, `-3`, `-4`). Set a semi-transparent colour to `range-selection-background-color` and the correct color when multiple ranges overlap is automatically calculated.
  * `$ag-virtual-item-height`. Use `$ag-list-item-height` instead.
  * `$ag-foreground-color-opacity`, `$ag-secondary-foreground-color-opacity`, `$ag-disabled-foreground-color-opacity`. Set a semi-transparent colour to `foreground-color`, `secondary-foreground-color`, or `disabled-foreground-color`.

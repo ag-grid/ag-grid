@@ -34,6 +34,10 @@
         border-bottom-color: transparent;
     }
 
+    .ag-tabs-header {
+        border-bottom: 1px solid ag-param(border-color);
+    }
+
     .ag-column-drop-cell {
         min-height: ag-param(grid-size) * 6;
     }
@@ -76,10 +80,6 @@
 
     .ag-column-drop-vertical {
         padding-top: ag-param(grid-size) * 2;
-    }
-
-    .ag-tabs-header {
-        border-bottom: 1px solid ag-param(border-color);
     }
 
     .ag-menu-header {

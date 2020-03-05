@@ -107,10 +107,6 @@
         cursor: nwse-resize;
     }
 
-    .ag-cell-highlight {
-        background-color: ag-param(range-selection-highlight-color) !important;
-    }
-
     .ag-cell-inline-editing {
         border-color: ag-param(input-focus-border-color) !important;
     }

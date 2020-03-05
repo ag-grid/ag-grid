@@ -6,10 +6,12 @@
         outline: none;
     }
 
-    button {
+    input, button, select, optgroup, textarea {
         color: inherit;
+        font-family: inherit;
         font-size: inherit;
         font-weight: inherit;
+        line-height: inherit;
     }
 
     input {
