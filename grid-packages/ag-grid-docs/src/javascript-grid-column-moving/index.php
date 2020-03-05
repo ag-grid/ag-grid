@@ -65,7 +65,9 @@ include '../documentation-main/documentation_header.php';
     To turn OFF column animations, set the grid property <code>suppressColumnMoveAnimation=true</code>.
 </p>
 
-<img src="./columnAnimation.gif" style="1px solid grey; margin: 20px; margin-bottom: 50px;"/>
+<div class="animated-example">
+    <img data-gifffer="./columnAnimation.gif" data-gifffer-width="99%" />
+</div>
 
 <p>
     The move column animation transitions the columns position only. So when you move a column,

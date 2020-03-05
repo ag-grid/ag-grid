@@ -17,9 +17,9 @@ include '../documentation-main/documentation_header.php';
         selected a range of cells in the grid, a chart can be created from the context menu, as shown below:
     </p>
 
-    <p>
-        <img alt="Pivot Chart" src="range-chart.gif" style="margin-bottom: 0px; width: 100%">
-    </p>
+    <div class="animated-example">
+        <img data-gifffer="range-chart.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for
@@ -52,9 +52,9 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <p>
-        <img alt="Charting Ranges" src="charting-ranges.gif" style="margin-bottom: 0px; width: 100%">
-    </p>
+    <div class="animated-example">
+        <img data-gifffer="charting-ranges.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle,

@@ -19,9 +19,9 @@ include '../documentation-main/documentation_header.php';
     as grouping, sorting and pivoting to the server. This is demonstrated below:
 </p>
 
-<p>
-    <img alt="Server-side Row Model" src="server-side-showcase.gif" style="width: 100%; border: lightgray solid 1px">
-</p>
+<div class="animated-example">
+    <img data-gifffer="server-side-showcase.gif" data-gifffer-width="99%" />
+</div>
 
 <p>
     Before diving into the details of how to use the Server-side Row Model, the next section provides an overview and
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
     This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 </p>
 
-<p><img src="in-memory-row-model.png" alt="in-memory-row-model" width="90%" style="border: 1px solid grey"/></p>
+<p><img src="in-memory-row-model.png" alt="in-memory-row-model" width="90%" /></p>
 
 <p>
     The Client-side Row Model only renders the rows currently visible, so the upper limit of rows is governed by the
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
     however the number of records is only constrained by the limits of the server-side:
 </p>
 
-<p><img src="enterprise-row-model.png" alt="enterprise-row-model" width="90%" style="border: 1px solid grey"/></p>
+<p><img src="enterprise-row-model.png" alt="enterprise-row-model" width="90%" /></p>
 
 <p>
     As the user performs operations such as sorting and grouping, the grid issues requests to the server that contains

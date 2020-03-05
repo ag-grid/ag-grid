@@ -34,9 +34,9 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <p>
-        <img alt="Pivot Chart" src="pivot-chart.gif" style="width: 100%; height: 100%">
-    </p>
+    <div class="animated-example">
+        <img data-gifffer="pivot-chart.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         Notice from the demonstration above that all data is charted when using the Pivot Chart. Also note
