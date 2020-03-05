@@ -13,6 +13,13 @@
         font-weight: 600;
         color: ag-param(header-foreground-color);
     }
+
+    %ag-text-input {
+        @include ag-theme-rtl((
+            padding-left: ag-param(grid-size),
+        ));
+    }
+
     .ag-column-drop-vertical-empty-message, .ag-status-bar {
         font-weight: 600;
         color: ag-param(disabled-foreground-color);

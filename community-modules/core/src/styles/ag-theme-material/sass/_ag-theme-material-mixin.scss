@@ -110,7 +110,6 @@
     }
 
     %ag-text-input {
-
         background: transparent;
         color: ag-param(foreground-color);
         font-family: inherit;
@@ -119,7 +118,6 @@
         padding-bottom: ag-param(grid-size);
 
         border-width: 0;
-
         border-bottom: 2px solid ag-param(border-color);
 
         &:focus {
