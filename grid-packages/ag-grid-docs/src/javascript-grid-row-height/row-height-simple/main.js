@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        var differentHeights = [25, 50, 100, 200];
+        var differentHeights = [40, 80, 120, 200];
         data.forEach(function(dataItem, index) {
             dataItem.rowHeight = differentHeights[index % 4];
         });
