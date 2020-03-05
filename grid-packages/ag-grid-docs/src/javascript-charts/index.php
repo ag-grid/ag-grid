@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     In this article we will walk through the necessary steps to add ag-Charts to an existing JavaScript
-    project and configure some of its essential features.
+    project and produce your first charts.
 </p>
 
 <h2>Your First Chart</h2>
@@ -81,7 +81,7 @@ SNIPPET) ?>
 
 <p>
     The <code>series</code> property is an array
-    because it is possible to supply multiple series (including different kinds!) into a single chart.
+    because it is possible to supply multiple series (including mixed kinds!) into a single chart.
 </p>
 
 <p>
@@ -95,9 +95,7 @@ SNIPPET) ?>
     is <code>'spending'</code>.
 </p>
 
-<p>
-    <img alt="Line Chart" src="line-chart.png" style="margin-bottom: 0; width: 100%">
-</p>
+<img alt="Line Chart" src="line-chart.png" style="margin-bottom: 0; width: 100%">
 
 <h2>Customising the Legend</h2>
 <p>
@@ -125,9 +123,7 @@ AgChart.create({
 });
 SNIPPET, 'diff') ?>
 
-<p>
-    <img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
-</p>
+<img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
 
 <h2>Basic Column Chart</h2>
 
@@ -189,9 +185,7 @@ SNIPPET) ?>
     Chart tooltips are enabled by default so you can hover over a block to see its value.
 </p>
 
-<p>
-    <img alt="Column Chart" src="beverage-expenses-no-captions.png" style="margin-bottom: 0px; width: 100%">
-</p>
+<img alt="Column Chart" src="beverage-expenses-no-captions.png" style="margin-bottom: 0px; width: 100%">
 
 <h2>Labels and Titles</h2>
 
@@ -213,9 +207,7 @@ AgChart.create({
 });
 SNIPPET, 'diff') ?>
 
-<p>
-    <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0px; width: 100%">
-</p>
+<img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0px; width: 100%">
 
 <p>If we then want to add a title and subtitle to the chart, we can simply add this to our chart config:</p>
 
@@ -238,9 +230,7 @@ AgChart.create({
 });
 SNIPPET, 'diff') ?>
 
-<p>
-    <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
-</p>
+<img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
 
 <p>
     Now that you've had a taste of what it's like to use ag-Charts, we encourage you to explore our documentation

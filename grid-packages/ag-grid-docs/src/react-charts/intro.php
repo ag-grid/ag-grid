@@ -12,10 +12,10 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-<snippet>
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgChartsReact} from 'ag-charts-react';
+<?= createSnippet(<<<SNIPPET
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgChartsReact } from 'ag-charts-react';
 
 class ChartExample extends Component {
     data = [
@@ -48,8 +48,8 @@ class ChartExample extends Component {
         this.state = {
             options: {
                 data: this.data,
-                title: {text: 'Beverage Expenses'},
-                subtitle: {text: 'per quarter'},
+                title: { text: 'Beverage Expenses' },
+                subtitle: { text: 'per quarter' },
                 padding: {
                     top: 40,
                     right: 40,
@@ -63,23 +63,22 @@ class ChartExample extends Component {
                         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
                     },
                 ],
-                legend: {spacing: 40},
+                legend: { spacing: 40 },
             },
         };
     }
 
     render() {
-        return &lt;AgChartsReact options={this.state.options}/>;
+        return <AgChartsReact options={this.state.options} />;
     }
 }
 
-render(&lt;ChartExample/>, document.querySelector('#root'));
-</snippet>
+render(<ChartExample />, document.querySelector('#root'));
+SNIPPET, 'jsx') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-<snippet>
-&lt;div id="root"&gt;&lt;/div&gt;
-</snippet>
+
+<?= createSnippet('<div id="root"></div>', 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

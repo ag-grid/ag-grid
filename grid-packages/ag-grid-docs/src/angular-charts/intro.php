@@ -12,11 +12,11 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-<snippet>
-import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
-import {AgChartsAngularModule} from 'ag-charts-angular';
-import {AppComponent} from './app.component';
+<?= createSnippet(<<<SNIPPET
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { AgChartsAngularModule } from 'ag-charts-angular';
+import { AppComponent } from './app.component';
 
 @NgModule({
     imports: [
@@ -28,15 +28,16 @@ import {AppComponent} from './app.component';
 })
 export class AppModule {
 }
-</snippet>
+SNIPPET, 'ts') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-<snippet>
-&lt;ag-charts-angular
-        style="height: 100%"
-        [options]="options"&gt;
-&lt;/ag-charts-angular&gt;
-</snippet>
+
+<?= createSnippet(<<<SNIPPET
+<ag-charts-angular
+    style="height: 100%"
+    [options]="options">
+</ag-charts-angular>
+SNIPPET, 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

@@ -12,16 +12,16 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-<snippet>
+<?= createSnippet(<<<SNIPPET
 import Vue from 'vue';
-import {AgChartsVue} from 'ag-charts-vue';
+import { AgChartsVue } from 'ag-charts-vue';
 
 const ChartExample = {
-    template: `&lt;ag-charts-vue :options="options">&lt;/ag-charts-vue>`,
+    template: `<ag-charts-vue :options="options"></ag-charts-vue>`,
     components: {
         'ag-charts-vue': AgChartsVue,
     },
-    data: function () {
+    data: function() {
         return {
             options: null,
             data: [
@@ -52,8 +52,8 @@ const ChartExample = {
     beforeMount() {
         this.options = {
             data: this.data,
-            title: {text: 'Beverage Expenses'},
-            subtitle: {text: 'per quarter'},
+            title: { text: 'Beverage Expenses' },
+            subtitle: { text: 'per quarter' },
             padding: {
                 top: 40,
                 right: 40,
@@ -67,14 +67,14 @@ const ChartExample = {
                     yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
                 },
             ],
-            legend: {spacing: 40},
+            legend: { spacing: 40 },
         };
     }
 };
-</snippet>
+SNIPPET, 'ts') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-<snippet>
+<?= createSnippet(<<<SNIPPET
 import Vue from 'vue';
 import { App } from './app';
 
@@ -82,7 +82,7 @@ new Vue({
   el: '#root',
   render: h => h(App)
 });
-</snippet>
+SNIPPET, 'ts') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
