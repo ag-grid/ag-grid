@@ -126,6 +126,10 @@
         margin-top: ag-param(widget-vertical-spacing);
     }
 
+    .ag-mini-filter {
+        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding) 0;
+    }
+
     .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
     }
