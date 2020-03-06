@@ -340,13 +340,25 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 //   last row of second block is 199 (100 * 2) -1;
                 const lastRowTopLevelIndex = (blockSize * (blockBefore.getBlockNumber() + 1)) - 1;
 
-                // this is the last loaded rownode in the cache that is before the row we are interested in.
+                // get the last top level node in the block before the wanted block. this will be the last
+                // loaded displayed top level node.
+                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+
+                // we want the index of the last displayed node, not just the top level node, so if the last top level node
+                // is open, we get the index of the last displayed child node.
+                let lastDisplayedNodeIndexInBlockBefore: number;
+                if (lastRowNode.expanded && lastRowNode.childrenCache) {
+                    const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
+                    lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+                } else {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
+                }
+
                 // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
                 // same as the difference between the displayed index
                 const indexDiff = topLevelIndex - lastRowTopLevelIndex;
 
-                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
-                return lastRowNode.rowIndex + indexDiff;
+                return lastDisplayedNodeIndexInBlockBefore + indexDiff;
 
             } else {
                 return topLevelIndex;
