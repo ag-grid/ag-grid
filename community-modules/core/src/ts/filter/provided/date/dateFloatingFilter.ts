@@ -76,7 +76,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (allowEditing) {
             if (model) {
                 const dateModel = model as DateFilterModel;
-                this.dateComp.setDate(_.parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+
+                this.dateComp.setDate(_.getDateFromString(dateModel.dateFrom));
             } else {
                 this.dateComp.setDate(null);
             }
@@ -89,7 +90,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private onDateChanged(): void {
         const filterValueDate: Date = this.dateComp.getDate();
-        const filterValueText: string = _.serializeDateToYyyyMmDd(filterValueDate, "-");
+        const filterValueText: string = `${_.serializeDateToYyyyMmDd(filterValueDate, "-")} ${_.getTimeFromDate(filterValueDate)}`;
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {

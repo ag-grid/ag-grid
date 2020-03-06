@@ -91,7 +91,7 @@ var columnDefs = [
     {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu: true},
     {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
     {
-        headerName: "Date", field: "date", width: 170, filter: 'agDateColumnFilter', filterParams: {
+        headerName: "Date", field: "date", width: 220, filter: 'agDateColumnFilter', filterParams: {
             comparator: function (filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
