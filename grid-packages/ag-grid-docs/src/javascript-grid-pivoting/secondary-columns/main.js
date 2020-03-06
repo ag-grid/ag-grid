@@ -26,11 +26,11 @@ var gridOptions = {
 
         // the pivot keys are the keys use for the pivot
         // don't change these, but you can use them for your information
-        console.log('Pivot Keys:');
-        console.log(colDef.pivotKeys);
-        // the value column is the value we are aggregating on
-        console.log('Pivot Value Keys:');
-        console.log(colDef.pivotValueColumn);
+        // console.log('Pivot Keys:');
+        // console.log(colDef.pivotKeys);
+        // // the value column is the value we are aggregating on
+        // console.log('Pivot Value Keys:');
+        // console.log(colDef.pivotValueColumn);
     },
 
     // this is a callback that gets called on each group definition
