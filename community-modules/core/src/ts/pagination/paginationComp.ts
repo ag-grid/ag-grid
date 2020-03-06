@@ -33,6 +33,10 @@ export class PaginationComp extends Component {
 
     private serverSideRowModel: IServerSideRowModel;
 
+    private previousAndFirstButtonsDisabled = false;
+    private nextButtonDisabled = false;
+    private lastButtonDisabled = false;
+
     constructor() {
         super();
     }
@@ -137,19 +141,27 @@ export class PaginationComp extends Component {
     }
 
     private onBtNext() {
-        this.paginationProxy.goToNextPage();
+        if (!this.nextButtonDisabled) {
+            this.paginationProxy.goToNextPage();
+        }
     }
 
     private onBtPrevious() {
-        this.paginationProxy.goToPreviousPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToPreviousPage();
+        }
     }
 
     private onBtFirst() {
-        this.paginationProxy.goToFirstPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     }
 
     private onBtLast() {
-        this.paginationProxy.goToLastPage();
+        if (!this.lastButtonDisabled) {
+            this.paginationProxy.goToLastPage();
+        }
     }
 
     private enableOrDisableButtons() {
@@ -157,18 +169,18 @@ export class PaginationComp extends Component {
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
 
-        const disablePreviousAndFirst = currentPage === 0;
-        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
-        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
+        this.previousAndFirstButtonsDisabled = currentPage === 0;
+        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
-        const disableNext = onLastPage || zeroPagesToDisplay;
-        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
+        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
 
-        const disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
+        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
     }
 
     private updateRowLabels() {
