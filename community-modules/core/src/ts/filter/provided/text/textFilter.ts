@@ -161,7 +161,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
         const fields = [this.eValue1, this.eValue2];
 
-        fields.forEach(field => field.setInputPlaceHolder(placeholder));
+        fields.forEach(field => field.setInputPlaceholder(placeholder));
     }
 
     protected setValueFromFloatingFilter(value: string): void {

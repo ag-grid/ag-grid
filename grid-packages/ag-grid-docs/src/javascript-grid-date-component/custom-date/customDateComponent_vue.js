@@ -3,7 +3,7 @@ import Vue from "vue";
 export default Vue.extend({
     template: `
         <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-            <input type="text" data-input style="width: 100%;" />
+            <input type="text" ref="eInput" data-input style="width: 100%;" />
             <a class="input-button" title="clear" data-clear>
                 <i class="fa fa-times"></i>
             </a>
@@ -23,6 +23,8 @@ export default Vue.extend({
             wrap: true
         });
 
+        this.eInput = this.$refs['eInput'];
+
         this.picker.calendarContainer.classList.add('ag-custom-component-popup');
     },
     methods: {
@@ -38,6 +40,10 @@ export default Vue.extend({
         setDate(date) {
             this.picker.setDate(date);
             this.date = date || null;
+        },
+
+        setInputPlaceholder(placeholder) {
+            this.eInput.setAttribute('placeholder', placeholder);
         }
     }
 });

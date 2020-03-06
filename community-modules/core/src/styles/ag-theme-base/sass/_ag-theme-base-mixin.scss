@@ -16,7 +16,7 @@
 @import "./parts/charts";
 
 $ag-compatibility-mode-set-by-user: global-variable-exists("ag-compatibility-mode");
-$ag-compatibility-mode: false !default;
+$ag-compatibility-mode: "variables" !default;
 
 @mixin ag-theme-base($params: ()) {
     @include ag-include-theme-once-only();

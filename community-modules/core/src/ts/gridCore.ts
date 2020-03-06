@@ -103,11 +103,6 @@ export class GridCore extends Component {
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        const { theme } = this.environment.getTheme();
-        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
-            console.warn(`ag-Grid: "${theme}" theme is deprecated and will be removed in the next major release (v23)`);
-        }
-
         const eGui = this.getGui();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {

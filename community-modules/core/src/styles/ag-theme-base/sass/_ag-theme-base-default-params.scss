@@ -43,8 +43,8 @@ $ag-theme-base-default-params: (
     // Color to draw around selected cell ranges
     range-selection-border-color: ag-derived(foreground-color),
 
-    // Background colour of selected cell ranges. Should be transparent in order to
-    // look good when multiple ranges overlap.
+    // Background colour of selected cell ranges. Choosing a semi-transparent color (opacity of 0.1 to 0.5 works
+    // well) will ensure that it looks good when multiple ranges overlap.
     range-selection-background-color: ag-derived(range-selection-border-color, $opacity: 0.2),
 
     // Background colour to apply to a cell range when it is copied from or pasted into

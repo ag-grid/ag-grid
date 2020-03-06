@@ -11,6 +11,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eDateInput') private eDateInput: AgInputTextField;
+
     private listener: () => void;
 
     constructor() {
@@ -19,7 +20,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public init(params: IDateParams): void {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eDateInput.setInputPlaceHolder(translate('dateFormatOoo', 'yyyy-mm-dd'));
+        this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
 
         if (_.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
             if (_.isBrowserIE()) {
@@ -39,6 +40,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public setDate(date: Date): void {
         this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date, "-"));
+    }
+
+    public setInputPlaceholder(placeholder: string): void {
+        this.eDateInput.setInputPlaceholder(placeholder);
     }
 
 }

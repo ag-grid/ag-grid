@@ -102,11 +102,11 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
         const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
 
-        this.eValueFrom1.setInputPlaceHolder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceHolder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
 
-        this.eValueFrom2.setInputPlaceHolder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceHolder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
     }
 
     public afterGuiAttached() {

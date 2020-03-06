@@ -44,6 +44,9 @@ interface IDateComp {
     /** Sets the date represented by this component */
     setDate(date:Date): void;
 
+    /** [Optional Method] - sets the input text placeholder */
+    setInputPlaceholder(placeholder: string): void;
+
     // optional methods
 
     // Gets called when the component is destroyed. If your custom component needs to do

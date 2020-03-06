@@ -268,7 +268,7 @@ export class SetFilter extends ProvidedFilter {
 
         virtualList.refresh();
 
-        eMiniFilter.setInputPlaceHolder(translate('searchOoo', 'Search...'));
+        eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
         eMiniFilter.getFocusableElement().focus();
 
     }

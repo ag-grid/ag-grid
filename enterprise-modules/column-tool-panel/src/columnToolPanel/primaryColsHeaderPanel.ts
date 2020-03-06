@@ -118,7 +118,7 @@ export class PrimaryColsHeaderPanel extends Component {
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        this.eFilterTextField.setInputPlaceHolder(translate('searchOoo', 'Search...'));
+        this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         _.setDisplayed(this.eFilterTextField.getGui(), showFilter);
         _.setDisplayed(this.eSelect.getGui(), showSelect);
