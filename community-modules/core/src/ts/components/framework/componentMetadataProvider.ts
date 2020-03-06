@@ -21,7 +21,7 @@ export class ComponentMetadataProvider {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],

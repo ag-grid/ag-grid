@@ -213,9 +213,22 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         };
     }
 
-    protected updateUiVisibility(): void {
+    private resetPlaceholder(): void {
+        const translate = this.translate.bind(this);
+        const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
+        const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
 
+        this.dateCompFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+
+        this.dateCompFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+    }
+
+    protected updateUiVisibility(): void {
         super.updateUiVisibility();
+
+        this.resetPlaceholder();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
         _.setDisplayed(this.ePanelFrom1, showFrom1);

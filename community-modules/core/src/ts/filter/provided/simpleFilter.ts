@@ -358,7 +358,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public addChangedListeners() {
         const listener = () => this.onUiChanged();
         this.eType1.onValueChange(listener);
-        this.eType1.onValueChange(listener);
+        this.eType2.onValueChange(listener);
         this.eJoinOperatorOr.onValueChange(listener);
         this.eJoinOperatorAnd.onValueChange(listener);
     }

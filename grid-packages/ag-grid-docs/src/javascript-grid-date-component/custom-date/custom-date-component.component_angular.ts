@@ -4,7 +4,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
     selector: 'app-loading-overlay',
     template: `
         <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
-            <input type="text" data-input style="width: 100%;" />
+            <input type="text" #eInput data-input style="width: 100%;" />
             <a class='input-button' title='clear' data-clear>
                 <i class='fa fa-times'></i>
             </a>
@@ -34,6 +34,7 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
 })
 export class CustomDateComponent {
     @ViewChild("flatpickrEl", {read: ElementRef}) flatpickrEl: ElementRef;
+    @ViewChild("eInput", {read: ElementRef}) eInput: ElementRef;
     private date: Date;
     private params: any;
     private picker: any;
@@ -68,5 +69,9 @@ export class CustomDateComponent {
     setDate(date: Date): void {
        this.date = date || null;
        this.picker.setDate(date);
+    }
+
+    setInputPlaceholder(placeholder: string): void {
+        this.eInput.nativeElement.setAttribute('placeholder', placeholder);
     }
 }

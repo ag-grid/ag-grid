@@ -20,7 +20,6 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     @RefSelector('eDateWrapper') private eDateWrapper: HTMLInputElement;
 
     private dateComp: DateCompWrapper;
-
     private params: IFloatingFilterParams;
 
     constructor() {
@@ -36,7 +35,6 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected conditionToString(condition: DateFilterModel): string {
-
         const isRange = condition.type == SimpleFilter.IN_RANGE;
 
         if (isRange) {

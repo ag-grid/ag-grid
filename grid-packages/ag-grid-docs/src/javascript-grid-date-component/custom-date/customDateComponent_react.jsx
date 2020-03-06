@@ -14,7 +14,7 @@ export default class CustomDateComponent extends Component {
         //Inlining styles to make simpler the component
         return (
             <div className="ag-input-wrapper custom-date-filter"  role="presentation" ref="flatpickr">
-                <input type="text" data-input style={{width: "100%"}} />
+                <input type="text" ref ="eInput" data-input style={{width: "100%"}} />
                 <a class='input-button' title='clear' data-clear>
                     <i class='fa fa-times'></i>
                 </a>
@@ -28,6 +28,8 @@ export default class CustomDateComponent extends Component {
             dateFormat: 'd/m/Y',
             wrap: true
         });
+
+        this.eInput = this.refs.eInput;
 
         this.picker.calendarContainer.classList.add('ag-custom-component-popup');
     }
@@ -46,6 +48,14 @@ export default class CustomDateComponent extends Component {
         //ag-grid will call us here when it needs this component to update the date that it holds.
         this.setState({date})
         this.picker.setDate(date);
+    }
+
+    //*********************************************************************************
+    //          AG-GRID OPTIONAL METHODS
+    //*********************************************************************************
+
+    setInputPlaceholder(placeholder) {
+        this.eInput.setAttribute('placeholder', placeholder);
     }
 
     //*********************************************************************************

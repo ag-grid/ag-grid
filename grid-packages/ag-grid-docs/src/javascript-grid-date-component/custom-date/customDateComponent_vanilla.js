@@ -49,3 +49,7 @@ CustomDateComponent.prototype.setDate = function (date) {
     this.picker.setDate(date);
     this.date = date;
 };
+
+CustomDateComponent.prototype.setInputPlaceholder = function(placeholder) {
+    this.eInput.setAttribute('placeholder', placeholder);
+}
