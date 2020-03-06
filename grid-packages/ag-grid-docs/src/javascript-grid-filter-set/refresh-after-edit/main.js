@@ -97,6 +97,9 @@ function onAddRow() {
     // col1 refreshes automatically
     gridOptions.api.getFilterInstance('col4').resetFilterValues();
     gridOptions.api.getFilterInstance('col5').resetFilterValues();
+    // get the grid to run filtering again, otherwise rows could be missing due
+    // to the previous filter state
+    gridOptions.api.onFilterChanged();
 }
 
 // setup the grid after the page has finished loading
