@@ -20,7 +20,6 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="specifying-group-columns">Specifying Group Columns</h2>
 
-
     <?php
         printVideoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=5s", "00:05");
     ?>
@@ -29,12 +28,14 @@ include '../documentation-main/documentation_header.php';
         To group rows by a particular column, mark the column you want to group with <code>rowGroup=true</code>.
         There is no limit on the number of columns that the grid can group by.
         For example, the following will group the rows in the grid by country and then sport:
-    <snippet>
-gridOptions.columnDefs = [
-    {headerName: "Country", field: "country", rowGroup: true},
-    {headerName: "Sport", field: "sport", rowGroup: true},
-];</snippet>
     </p>
+
+<snippet>
+gridOptions.columnDefs = [
+    { field: "country", rowGroup: true },
+    { field: "sport", rowGroup: true },
+];
+</snippet>
 
     <note>
         To allow a column to be grouped when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>

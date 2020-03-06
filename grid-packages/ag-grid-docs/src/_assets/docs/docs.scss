@@ -7,6 +7,7 @@
 @import "../common/footer.scss";
 @import "../common/roadshow.scss";
 @import "../common/note.scss";
+@import "../common/animated_example.scss";
 @import "./example-runner.scss";
 @import "./legacy.scss";
 @import "./algolia.scss";
@@ -415,7 +416,7 @@ body {
     h1 .anchorjs-link {
         display: none;
     }
-
+    
     #get-started-frameworks {
         margin-left: -1rem;
         margin-right: -1rem;

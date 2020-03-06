@@ -22,6 +22,10 @@
     %ag-text-input {
         min-height: ag-param(grid-size) * 4;
         border-radius: ag-param(border-radius);
+
+        @include ag-theme-rtl((
+            padding-left: ag-param(grid-size),
+        ));
     }
 
     .ag-tab {

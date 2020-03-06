@@ -48,7 +48,11 @@ include '../documentation-main/documentation_header.php';
         The chart settings panel allows users to change the chart type as well as the colour palette used in the
         chart as demonstrated below:
     </p>
-        <img alt="Chart Settings" src="chart-settings.gif" style="max-width: 100%">
+    
+    <div class="animated-example">
+        <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" />
+    </div>
+
     <p>
        <br>
        Notice that charts are organised into different groups and the current chart can be changed by selecting the icon
@@ -65,7 +69,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart data panel is used to dynamically change the data being charted as shown below:
     </p>
-    <img alt="Chart Data" src="chart-data.gif" style="max-width: 100%">
+
+    <div class="animated-example">
+        <img data-gifffer="chart-data.gif" data-gifffer-width="99%" />
+    </div>    
 
     <p>
         <br>
@@ -88,7 +95,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart format panel allows users to change the appearance of the chart as shown below:
     </p>
-    <img alt="Chart Format" src="chart-format.gif" style="max-width: 100%">
+    
+    <div class="animated-example">
+        <img data-gifffer="chart-format.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         <br>
@@ -108,7 +118,9 @@ include '../documentation-main/documentation_header.php';
         Unlinking a chart is achieved through the 'Unlink Chart' toolbar item as shown below:
     </p>
 
-    <img alt="Unlinking Charts" src="chart-unlinking.gif" style="max-width: 100%">
+    <div class="animated-example">
+        <img data-gifffer="chart-unlinking.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         <br>

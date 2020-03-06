@@ -36,6 +36,21 @@ var gridOptions = {
 
     animateRows: true,
     suppressAggFuncInHeader: true,
+
+    onGridReady: function() {
+        // generate data for example
+        var data = createRowData();
+
+        // setup the fake server with entire dataset
+        var fakeServer = new FakeServer(data);
+
+        // create datasource with a reference to the fake server
+        var datasource = new ServerSideDatasource(fakeServer);
+
+        // register the datasource with the grid
+        gridOptions.api.setServerSideDatasource(datasource);
+    }
+
     // debug: true,
 };
 
@@ -43,19 +58,6 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    // generate data for example
-    var data = createRowData();
-
-    // setup the fake server with entire dataset
-    var fakeServer = new FakeServer(data);
-
-    // create datasource with a reference to the fake server
-    var datasource = new ServerSideDatasource(fakeServer);
-
-    // register the datasource with the grid
-    gridOptions.api.setServerSideDatasource(datasource);
-
 });
 
 function ServerSideDatasource(server) {

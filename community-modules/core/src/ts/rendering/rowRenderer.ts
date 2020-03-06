@@ -701,8 +701,6 @@ export class RowRenderer extends BeanStub {
         // let realFromIndex = -1;
         rowsToRemove.forEach(indexToRemove => {
             const renderedRow = this.rowCompsByIndex[indexToRemove];
-            // to manage memory footprint we clear out any cached elements used by the AutoHeightCalculator
-            renderedRow.getRowNode().__autoHeightCellRendererElements = undefined;
             renderedRow.destroy();
             delete this.rowCompsByIndex[indexToRemove];
         });

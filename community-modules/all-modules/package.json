@@ -14,7 +14,7 @@
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community",
     "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
-    "test:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
+    "xtest:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
     "start-server": "http-server .",
     "e2e": "protractor protractor.conf.js",
     "update-webdriver": "webdriver-manager update --gecko false",

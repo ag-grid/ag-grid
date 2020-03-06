@@ -1,0 +1,32 @@
+.copy-code-button {
+	color: black;
+    background-color: rgb(255, 255, 255, 0.8);
+    border-radius: 6px;
+    display: block;
+    padding: 3px 8px;
+    font-size: .9em;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.copy-code-button:hover {
+	background-color: #62b9ff;
+	border-color: #62b9ff;
+	color: white;
+}
+
+.copy-code-button--success {
+	background-color: #397D02 !important;
+	border-color: #397D02 !important;
+	color: white !important;
+}
+
+.copy-code-button__text {
+    margin-right: 6px;
+    display: none;
+}
+
+.copy-code-button:hover .copy-code-button__text {
+    display: inline;
+}

@@ -34,10 +34,6 @@
         transition: background-color 0.5s;
     }
 
-    .ag-cell-highlight-animation {
-        transition: background-color 1s;
-    }
-
     .ag-cell-inline-editing {
         padding: ag-param(grid-size);
         height: ag-param(row-height) + ag-param(grid-size) * 3;
@@ -114,7 +110,6 @@
     }
 
     %ag-text-input {
-
         background: transparent;
         color: ag-param(foreground-color);
         font-family: inherit;
@@ -123,7 +118,6 @@
         padding-bottom: ag-param(grid-size);
 
         border-width: 0;
-
         border-bottom: 2px solid ag-param(border-color);
 
         &:focus {

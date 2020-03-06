@@ -1,0 +1,18 @@
+// animated examples are GIFs that are paused and played
+// using gifffer.
+
+div.animated-example {
+    img {
+        vertical-align: unset;            
+    }
+
+    button:focus, img:focus {
+        outline: none;
+    }
+
+    canvas {
+        opacity: 0.4;
+    }
+
+    margin-bottom: 25px;
+}

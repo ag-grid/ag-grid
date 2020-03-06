@@ -88,6 +88,7 @@ function docScripts() {
 <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-cookies.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/algoliasearch/3.24.9/algoliasearch.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.29.0/autocomplete.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gifffer/1.5.0/gifffer.min.js"></script>
 
 <script src="../documentation-main/documentation.js"></script>
 <script src="../dist/docs.js"></script>

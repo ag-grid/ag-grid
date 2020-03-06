@@ -47,7 +47,7 @@ $ag-compatibility-mode: false !default;
     @include ag-theme-base-part-column-drop();
     @include ag-theme-base-part-charts();
 
-    @if not ag-param(suppress-native-input-styling) {
+    @if not ag-param(suppress-native-widget-styling) {
         @include ag-native-inputs();
     }
 }

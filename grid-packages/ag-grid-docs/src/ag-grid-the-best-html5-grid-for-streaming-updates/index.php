@@ -132,7 +132,10 @@ include('../includes/mediaHeader.php');
                     <b>
                         Animated Gif - Grouping, Pivoting or Flat Under Load
                     </b>
-                    <img class="lazy-load" data-src="./flatGroupPivot.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
+
+                    <div class="animated-example" style="margin: 10px;" >
+                        <img data-gifffer="./flatGroupPivot.gif" data-gifffer-width="99%" />
+                    </div>
                 </p>
 
                 <p>
@@ -161,7 +164,10 @@ include('../includes/mediaHeader.php');
                     <b>
                         Animated Gif - Soring Under Load
                     </b>
-                    <img class="lazy-load" data-src="./sorting.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
+
+                    <div class="animated-example" style="margin: 10px;" >
+                        <img data-gifffer="./sorting.gif" />
+                    </div>
                 </p>
 
                 <p>
@@ -188,7 +194,10 @@ include('../includes/mediaHeader.php');
                     <b>
                         Animated Gif - Range Selection Under Load
                     </b>
-                    <img src="./rangeSelection.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
+
+                    <div class="animated-example" style="margin: 10px;" >
+                        <img data-gifffer="./rangeSelection.gif" />
+                    </div>
                 </p>
 
                 <p>

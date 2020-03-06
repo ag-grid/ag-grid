@@ -48,8 +48,6 @@ function ServerSideDatasource(server) {
             // get data for request from our fake server
             var response = server.getData(params.request);
 
-            console.log(response);
-
             // simulating real server call with a 500ms delay
             setTimeout(function () {
                 if (response.success) {

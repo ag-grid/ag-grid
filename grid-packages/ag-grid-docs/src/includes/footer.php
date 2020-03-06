@@ -68,4 +68,8 @@ Follow @ag_grid</a></li>
       families: ['Roboto:300,400,500,900']
     }
   });
+  window.onload = function() {
+    Gifffer();
+  }
+
 </script>

@@ -12,26 +12,31 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-<snippet>
-var data = [{
-    beverage: 'Coffee',
-    Q1: 450,
-    Q2: 560,
-    Q3: 600,
-    Q4: 700
-}, {
-    beverage: 'Tea',
-    Q1: 270,
-    Q2: 380,
-    Q3: 450,
-    Q4: 520
-}, {
-    beverage: 'Milk',
-    Q1: 180,
-    Q2: 170,
-    Q3: 190,
-    Q4: 200
-}];
+
+<?= createSnippet(<<<SNIPPET
+var data = [
+    {
+        beverage: 'Coffee',
+        Q1: 450,
+        Q2: 560,
+        Q3: 600,
+        Q4: 700
+    },
+    {
+        beverage: 'Tea',
+        Q1: 270,
+        Q2: 380,
+        Q3: 450,
+        Q4: 520
+    },
+    {
+        beverage: 'Milk',
+        Q1: 180,
+        Q2: 170,
+        Q3: 190,
+        Q4: 200
+    }
+];
 
 var options = {
     container: document.querySelector('#myChart'),
@@ -58,23 +63,25 @@ var options = {
     }
 };
 
-var chart = agCharts.AgChart.create(options);
-</snippet>
+agCharts.AgChart.create(options);
+SNIPPET) ?>
 </div>
 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-<snippet>
-&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
-&lt;head&gt;
-    &lt;title>ag-Charts Basic Example&lt;/title&gt;
-    &lt;script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js"&gt;&lt;/script&gt;
-    &lt;script src="main.js"&gt;&lt;/script&gt;
-&lt;/head>
-&lt;body>
-    &lt;div  id="myChart" style="height: 100%; width:500px;"&gt;&lt;/div&gt;
-    &lt;/body&gt;
-&lt;/html&gt;
-</snippet>
+
+<?= createSnippet(<<<SNIPPET
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>ag-Charts Basic Example</title>
+        <script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js">
+        </script>
+    </head>
+    <body>
+        <div id="myChart" style="height: 100%; width:500px;"></div>
+        <script src="main.js"></script>
+    </body>
+</html>
+SNIPPET, 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

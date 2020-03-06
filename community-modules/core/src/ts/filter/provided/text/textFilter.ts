@@ -91,7 +91,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         if (val && val.trim() === '') {
             val = null;
         }
- 
+
         return val;
     }
 

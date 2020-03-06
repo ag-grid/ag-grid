@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<?= grid_example('No Grouping', 'no-grouping', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= grid_example('No Grouping', 'no-grouping', 'generated', array("enterprise" => 1, "exampleHeight" => 580, "extras" => array('alasql'))) ?>
 
 <h2>Pagination with Groups</h2>
 

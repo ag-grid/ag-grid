@@ -921,7 +921,8 @@ months.forEach(function(month) {
         },
         valueParser: numberParser, valueFormatter: currencyFormatter,
         filterParams: {
-            resetButton: true
+            resetButton: true,
+            inRangeInclusive: true
         }
     });
 });

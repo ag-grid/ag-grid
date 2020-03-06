@@ -58,8 +58,9 @@ include('../includes/mediaHeader.php');
             matching the number of rows the user actually sees.
         </p>
 
-        <img src="./images/rowVirtualisation.gif" style="width: 100%; border:1px solid #aaa;" alt="Row Virtualisation"/>
-
+        <div class="animated-example" >
+            <img data-gifffer="./images/rowVirtualisation.gif" data-gifffer-width="99%" />
+        </div>
 
         <h2>Hack 2 - Column Virtualisation</h2>
 

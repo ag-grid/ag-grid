@@ -172,15 +172,6 @@ export class RowNode implements IEventEmitter {
      * the row height calculation and set rowHeightEstimated=false.*/
     public rowHeightEstimated: boolean;
 
-    /** set by the autoHeightCalculator to true when the row height has changed from an async cell renderer */
-    public __autoHeightChanged = false;
-
-    /** cell renderer elements required to recalculate auto row heights, e.g. through column resizing */
-    public __autoHeightCellRendererElements: {[colId: string]: {element: HTMLElement, async: boolean}};
-
-    /** a separate row height that is used in auto row height calculations to prevent unnecessary row redraws */
-    public __autoRowHeight: number;
-
     /** The top pixel for this row */
     public rowTop: number;
     /** The top pixel for this row last time, makes sense if data set was ordered or filtered,

@@ -121,9 +121,9 @@ gridOptions = {
         </li>
     </ul>
 
-    <p>
-        <img alt="User Created Charts" src="chart-showcase.gif" style="margin-bottom: 0px; width: 100%; border: lightgray solid 1px">
-    </p>
+    <div class="animated-example">
+        <img data-gifffer="chart-showcase.gif" data-gifffer-width="99%" />
+    </div>
 
     <p>
         The animation above highlights a number of charting features. For more details on each feature follow the links
@@ -196,11 +196,11 @@ gridOptions = {
         Typically users set <code>popupParent=document.body</code> to achieve this.
     </note>
 
-    <h2>Application Created Charts</h2>
+    <h2>Application-created Charts</h2>
 
     <p>
         Charts can be pre-defined or dynamically created from within applications, and as with
-        <a href="../javascript-grid-charts-integrated-overview/#user-created-charts">user created charts</a>, these charts also
+        <a href="../javascript-grid-charts-integrated-overview/#user-created-charts">user-created charts</a>, these charts also
         benefit from the integration provided with the grid.
     </p>
 

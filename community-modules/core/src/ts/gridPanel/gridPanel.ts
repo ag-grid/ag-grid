@@ -176,7 +176,6 @@ export class GridPanel extends Component {
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
 
-    public readonly redrawRowsDebounced: () => void;
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
     private bodyHeight: number;
@@ -193,7 +192,6 @@ export class GridPanel extends Component {
 
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
-        this.redrawRowsDebounced = _.debounce(this.redrawRowsAfterScroll.bind(this), 50);
         this.resetLastHorizontalScrollElementDebounced = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 

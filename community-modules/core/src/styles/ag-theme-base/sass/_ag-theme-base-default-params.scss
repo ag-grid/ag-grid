@@ -15,15 +15,13 @@ $ag-theme-base-default-params: (
     // Colour of text and icons in the header
     header-foreground-color: ag-derived(secondary-foreground-color),
 
-    // The disabled foreground colour / opacity is used for text and icons in elements that
-    // can't be interacted with because they are in a disabled state
+    // Color of elements that can't be interacted with because they are in a disabled state
     disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 
     // Background colour of the grid
     background-color: #fff,
 
-    // Background colour for all headers, including the grid header, panels, toolpanel subheadings etc
-    // Semi-transparent colours work well as the same header colour will well on any background
+    // Background colour for all headers, including the grid header, panels etc
     header-background-color: null,
 
     // Background colour for second level headings within UI components
@@ -38,7 +36,8 @@ $ag-theme-base-default-params: (
     // Background colour applied to every other row or null to use background-color for all rows
     odd-row-background-color: null,
 
-    // Background color when hovering over rows in the grid and in dropdown menus
+    // Background color when hovering over rows in the grid and in dropdown menus, or null for no rollover effect
+    // (note - if you want a rollover on one but not the other, set to null and use CSS to achieve the rollover)
     row-hover-color: null,
 
     // Color to draw around selected cell ranges
@@ -129,11 +128,11 @@ $ag-theme-base-default-params: (
     // INPUTS
     //
 
-    // Suppress styling of native inputs, e.g. e.g. <input type=checkbox>. If you want to style
+    // Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style
     // these yourself, set this to true. If you only want to disable styling for some kinds of
     // input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false))
     // which will emit styles for all kinds of input except checkboxes.
-    suppress-native-input-styling: false,
+    suppress-native-widget-styling: false,
 
     input-disabled-background-color: null,
     input-border-color: null,

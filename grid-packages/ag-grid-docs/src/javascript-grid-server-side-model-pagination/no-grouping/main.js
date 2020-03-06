@@ -43,12 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
           item.id = idSequence++;
         });
 
-        //TODO - left here at it reveals a defect
-        var dataMod = data.slice(0,25);
-        console.log(dataMod.length);
-
         // setup the fake server with entire dataset
-        var fakeServer = new FakeServer(dataMod);
+        var fakeServer = new FakeServer(data);
 
         // create datasource with a reference to the fake server
         var datasource = new ServerSideDatasource(fakeServer);
@@ -77,28 +73,4 @@ function ServerSideDatasource(server) {
             }, 200);
         }
     };
-}
-
-function FakeServer(allData) {
-    return {
-        getData: function(request) {
-            // take a slice of the total rows for requested block
-            var rowsForBlock = allData.slice(request.startRow, request.endRow);
-
-            // if on or after the last block, work out the last row, otherwise return -1
-            var lastRow = getLastRowIndex(request, rowsForBlock);
-
-            return {
-                success: true,
-                rows: rowsForBlock,
-                lastRow: lastRow,
-            };
-        },
-    };
-}
-
-function getLastRowIndex(request, results) {
-    if (!results || results.length === 0) return -1;
-    var currentLastRow = request.startRow + results.length + 1;
-    return currentLastRow <= request.endRow ? currentLastRow : -1;
 }

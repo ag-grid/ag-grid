@@ -9,6 +9,7 @@
 @import "../common/note.scss";
 @import "../common/roadshow.scss";
 @import "../common/mixins.scss";
+@import "../common/animated_example.scss";
 @import "./punch.scss";
 @import "./demo.scss";
 @import "../pages/media_pages";
@@ -455,5 +456,19 @@ body {
             @extend .col-sm-9, .ml-auto;
             @include roadshow;
         }
+    }
+}
+
+div.animated-example {
+    img {
+        vertical-align: unset;            
+    }
+
+    button:focus, img:focus {
+        outline: none;
+    }
+
+    canvas {
+        opacity: 0.4;
     }
 }
