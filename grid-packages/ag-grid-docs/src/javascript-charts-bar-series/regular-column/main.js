@@ -10,8 +10,7 @@ var options = {
     series: [{
         type: 'column',
         xKey: 'quarter',
-        yKeys: ['iphone'],
-        yNames: ['iPhone']
+        yKeys: ['iphone']
     }]
 };
 

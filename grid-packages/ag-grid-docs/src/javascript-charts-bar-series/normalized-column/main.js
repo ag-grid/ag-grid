@@ -14,18 +14,21 @@ var options = {
         yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
         normalizedTo: 100
     }],
-    axes: [{
-        type: 'number',
-        position: 'left',
-        label: {
-            formatter: function (params) {
-                return params.value + '%';
+    axes: [
+        {
+            type: 'number',
+            position: 'left',
+            label: {
+                formatter: function(params) {
+                    return params.value + '%';
+                }
             }
+        },
+        {
+            type: 'category',
+            position: 'bottom'
         }
-    }, {
-        type: 'category',
-        position: 'bottom'
-    }]
+    ]
 };
 
 agCharts.AgChart.create(options);

@@ -10,13 +10,16 @@ var options = {
         yKey: 'mm',
         showInLegend: false
     }],
-    axes: [{
-        type: 'number',
-        position: 'bottom'
-    }, {
-        type: 'number',
-        position: 'left'
-    }]
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom'
+        },
+        {
+            type: 'number',
+            position: 'left'
+        }
+    ]
 };
 
 agCharts.AgChart.create(options);

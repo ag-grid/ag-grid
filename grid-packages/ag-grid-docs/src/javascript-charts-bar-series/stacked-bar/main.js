@@ -13,13 +13,16 @@ var options = {
         yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
         yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
     }],
-    axes: [{
-        type: 'number',
-        position: 'bottom'
-    }, {
-        type: 'category',
-        position: 'left'
-    }]
+    axes: [
+        {
+            type: 'number',
+            position: 'bottom'
+        },
+        {
+            type: 'category',
+            position: 'left'
+        }
+    ]
 };
 
 agCharts.AgChart.create(options);

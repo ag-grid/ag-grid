@@ -7,13 +7,16 @@ var options = {
         xKey: 'x',
         yKey: 'y'
     }],
-    axes: [{
-        type: 'number',
-        position: 'left'
-    }, {
-        type: 'number',
-        position: 'bottom'
-    }],
+    axes: [
+        {
+            type: 'number',
+            position: 'left'
+        },
+        {
+            type: 'number',
+            position: 'bottom'
+        }
+    ],
     legend: {
         enabled: false
     }
@@ -29,6 +32,7 @@ function generateSpiralData() {
     var b = 1;
     var data = [];
     var step = 0.1;
+
     for (var th = 1; th < 50; th += step) {
         var r = (a + b * th);
         data.push({
@@ -36,5 +40,6 @@ function generateSpiralData() {
             y: r * Math.sin(th)
         });
     }
+
     return data;
 }

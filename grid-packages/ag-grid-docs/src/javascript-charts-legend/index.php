@@ -19,11 +19,11 @@ include '../documentation-main/documentation_header.php';
     A legend can be positioned to any side of a chart using the <code>position</code> config:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     position: 'right' // 'bottom', 'left', 'top'
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
     A legend is shown by default but can be hidden using the <code>enabled</code> config:
@@ -35,88 +35,87 @@ legend: {
 }
 </snippet>
 
-<h2>Example - Legend Position and Visibility</h2>
+<h3>Example: Legend Position and Visibility</h2>
 
 <p>
     Notice how when you click on one of the buttons in the example to change the position
     of the legend:
+
     <ul>
         <li>the layout of the legend items also changes</li>
         <li>
-            the layout of the chart changes as well, with series moving around a bit
-            and growing/shriking slighlty to accomodate the legend
+            the layout of the chart changes as well, with series moving around
+            and growing/shrinking slightly to accommodate the legend
         </li>
     </ul>
 </p>
 
 <?= chart_example('Legend Position and Visibility', 'legend-position', 'generated') ?>
 
-<h2>Vertical Legend Layout</h2>
+<h2>Vertical Layout</h2>
 
 <p>
     Whenever the size of a chart changes, the legend layout is triggered.
-    If the legend is vertical (positioned to the <code>right</code> or <code>left</code> of a chart),
+    If the legend is vertical (positioned to the <code>'right'</code> or <code>'left'</code> of a chart),
     the layout algorithm tries to use the minimum number of columns possible to render all legend items
     using current constraints. Notice how the number of columns in a legend increases as the height of
     a chart shrinks.
 </p>
 
-<h2>Example - Vertical Legend Layout</h2>
+<h3>Example: Vertical Legend Layout</h3>
 
 <?= chart_example('Vertical Legend Layout', 'legend-layout-vertical', 'generated') ?>
 
-<h2>Horizontal Legend Layout</h2>
+<h2>Horizontal Layout</h2>
 
 <p>
-    If the legend is horizontal (positioned to the <code>bottom</code> or <code>top</code> of a chart),
+    If the legend is horizontal (positioned to the <code>'bottom'</code> or <code>'top'</code> of a chart),
     the layout algorithm tries to use the minimum possible number of rows. If a chart is not wide enough,
-    the legend will keep subdividing its items into rows until everything fits.
+    the legend will keep subdividing its items into more rows until everything fits.
 </p>
 
-<h2>Example - Horizontal Legend Layout</h2>
+<h3>Example: Horizontal Legend Layout</h3>
 
 <?= chart_example('Horizontal Legend Layout', 'legend-layout-horizontal', 'generated') ?>
 
 <h2>Constraints</h2>
 
 <p>
-    A few things other than the width and height of a chart can affect legend's layout and that is the amout of spacing
+    In addition to the width and height of the chart, the legend's layout is also affected by the amount of spacing
     between and within the legend items. For example, <code>layoutHorizontalSpacing</code> controls the amount
     of spacing between adjacent horizontal legend items:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     layoutHorizontalSpacing: 16
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
-    <code>layoutVerticalSpacing</code> controls the amount of spacing between adjacent vertical legend items.
-    Notice how in this case the increased vertical spacing even forces the legend to use another column to fit
-    all of its items:
+    <code>layoutVerticalSpacing</code> controls the amount of spacing between adjacent vertical legend items:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     layoutVerticalSpacing: 8
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
     And the <code>itemSpacing</code> config is responsible for the amount of spacing within a legend item, between the marker
     and the label:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     itemSpacing: 8
 }
-</snippet>
+SNIPPET) ?>
 
-<h2>Example - Legend Constraints</h2>
+<h3>Example: Legend Constraints</h3>
 
-<?= chart_example('Legend Constraints', 'legend-contstraints', 'generated') ?>
+<?= chart_example('Legend Constraints', 'legend-constraints', 'generated') ?>
 
 <h2>Fonts</h2>
 
@@ -125,7 +124,7 @@ legend: {
     <code>fontWeight</code>, <code>fontFamily</code>, and <code>color</code> of the legend item labels:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     fontSize: 14,
     fontStyle: 'italic',
@@ -133,47 +132,52 @@ legend: {
     fontFamily: 'Papyrus',
     color: 'red'
 }
-</snippet>
+SNIPPET) ?>
 
 <h2>Markers</h2>
 
-<h4>Marker Size and Stroke</h4>
+<h3>Size and Stroke</h3>
 
 <p>
     All legend items use the same size and stroke width, regardless of the size and stroke width
-    used by the series they represent. It's possible to adjust the default size and stroke width
-    using the following configs:
+    used by the series they represent. It's possible to adjust the defaults using the following configs:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     markerSize: 20,
     strokeWidth: 3
 }
-</snippet>
+SNIPPET) ?>
 
-<h4>Marker Shape</h4>
+<h3>Shape</h3>
 
 <p>
     Normally, the legend mirrors the marker shapes used by the series, unless the series
-    in question doesn't support markers (for example, <code>column</code> series), in
-    which case the legend will use the <code>square</code> marker shape for that series.
+    in question doesn't support markers (for example <code>'column'</code> series), in
+    which case the legend will use the <code>'square'</code> marker shape for that series.
 </p>
 
 <p>
-    It's also possible to override the default behavior and make the legend use
-    the specified marker shape for all legend items, regardless of the shapes the series
-    are using:
+    It's also possible to override the default behaviour and make the legend use
+    a specified marker shape for all legend items, regardless of the shapes the series
+    are using themselves:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 legend: {
     markerShape: 'circle' // 'square', 'diamond', 'cross', 'plus', 'triangle'
 }
-</snippet>
+SNIPPET) ?>
 
-<note>
-    Markers are covered in more detail <a href="/javascript-charts-markers">here</a>.
-</note>
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.legend') ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn more about <a href="../javascript-charts-markers/">markers</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

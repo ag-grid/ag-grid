@@ -9,14 +9,13 @@ include '../documentation-main/documentation_header.php';
 <h1>Bar and Column Series</h1>
 
 <p class="lead">
-    Because Bar series are just transposed Column series and share the exact same configs,
+    Because bar series are just transposed column series and have the same configuration,
     this section covers both series at once.
 </p>
 
 <p>
-    Bar series are a good choice to show values of a discreet set of objects. For example,
-    item categories or specific items, time periods such as years or quarters, individuals,
-    countries, etc.
+    Bar series are a good choice to show values for a discrete set of objects, such as
+    item categories, specific items, or time periods such as years or quarters.
 </p>
 
 <h2>Column Series</h2>
@@ -30,20 +29,20 @@ include '../documentation-main/documentation_header.php';
 
 <note>
     Since <code>'column'</code> and <code>'bar'</code> series can be stacked or grouped,
-    they can have multiple <code>yKeys</code> &mdash; one key per each stack/group component.
+    they can have multiple <code>yKeys</code>, with one key for each stack/group component.
 </note>
 
 <p>
-    A minimal <code>'column'</code> series config therefore would look like this:
+    A minimal <code>'column'</code> series config would therefore look like this:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 series: [{
     type: 'column',
     xKey: 'quarter',
     yKeys: ['iphone']
 }]
-</snippet>
+SNIPPET) ?>
 
 <p>
     In the snippet above we are using the <code>'iphone'</code> as the only <code>yKey</code>,
@@ -53,47 +52,29 @@ series: [{
 
 <?= chart_example('Regular Column Series', 'regular-column', 'generated'); ?>
 
-<p>
-    Note that in the code of the example above we also:
-    <ul class="content">
-        <li>
-            Use the <code>yNames: ['iPhone']</code> series config which acts as a display name
-            for the actual <code>yKey</code> used. That's what the user will see in column tooltips
-            and the legend.
-        </li>
-        <li>
-            Configure the <code>title</code> and <code>subtitle</code> of the chart to communicate
-            what kind of data is being presented.
-        </li>
-    </ul>
-</p>
-
 <h3>Stacked Columns</h3>
 
 <p>
     If the goal is to show the quarterly revenue for each product category, multiple <code>yKeys</code>
     can be used. To go from a <a href="#regular-columns">regular column chart</a> above
-    to a stacked one below, all we did is added some more <code>yKeys</code> like so:
+    to a stacked one below, all we do is add some more <code>yKeys</code> like so:
 </p>
 
-<snippet language="ts">
-yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']
-</snippet>
+<?= createSnippet("yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services']") ?>
 
 <p>
-    And that simple change transformed our chart into this:
+    And that simple change transforms our chart into this:
 </p>
 
 <?= chart_example('Stacked Column Series', 'stacked-column', 'generated'); ?>
 
 <p>
-    Note that in the example code we also didn't forget to update <code>yNames</code> along with
-    <code>yKeys</code>, to make sure we have nice looking tooltip headers and legend entries.
+    Note that in the example code we also added <code>yNames</code> along with
+    <code>yKeys</code> which configure the display names to make sure we have nice looking tooltip headers and
+    legend entries.
 </p>
 
-<snippet language="ts">
-yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
-</snippet>
+<?= createSnippet("yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']") ?>
 
 <h3>Grouped Columns</h3>
 
@@ -103,12 +84,10 @@ yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services']
     and set the <code>grouped</code> property of the series to <code>true</code>:
 </p>
 
-<snippet language="ts">
-grouped: true
-</snippet>
+<?= createSnippet('grouped: true') ?>
 
 <p>
-    That will produce the following chart:
+    This will produce the following chart:
 </p>
 
 <?= chart_example('Grouped Column Series', 'grouped-column', 'generated'); ?>
@@ -121,9 +100,7 @@ grouped: true
     a certain value, for example 100%, we could add the following to our series config:
 </p>
 
-<snippet language="ts">
-normalizedTo: 100
-</snippet>
+<?= createSnippet('normalizedTo: 100') ?>
 
 <note>
     It's possible to use any non-zero value to normalize to.
@@ -131,52 +108,34 @@ normalizedTo: 100
 
 <?= chart_example('Normalized Column Series', 'normalized-column', 'generated'); ?>
 
-<p>
-    Notice how the example above additionally uses a label formatter to add <code>%</code>
-    suffix to axis labels:
-</p>
-
-<snippet language="ts">
-label: {
-    formatter: function (params) {
-        return params.value + '%';
-    }
-}
-</snippet>
-
 <h3>Column Labels</h3>
 
 <p>
     It's possible to add labels to columns, by adding the following to the series config:
 </p>
 
-<snippet language="ts">
-label: {}
-</snippet>
+<?= createSnippet('label: {}') ?>
 
 <p>
     That's it. The config can be empty like that. However, you might want to
-    format your labels. For example, by default the values are rounded to two
-    decimal places before they are used as labels. But for the example below
-    even that is too much, so we use a label formatter that returns the integer
-    part of the number only:
+    customise your labels. For example, by default the values are rounded to two
+    decimal places for the labels, but in the example below
+    even that is too much, so we use a label formatter that simply returns the integer
+    part of the number:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 label: {
     formatter: function (params) {
-        // for series datums that are not valid numbers,
+        // if the data contains values that are not valid numbers,
         // the formatter's `value` will be `undefined`
-        if (params.value !== undefined) {
-            return params.value.toFixed(0);
-        }
-        return '';
+        return params.value === undefined ? '' : params.value.toFixed(0);
     }
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
-    The above formatter allows to produce a nice looking chart where the labels
+    The above formatter produces an attractive chart where the labels
     don't stick out of their columns:
 </p>
 
@@ -202,22 +161,25 @@ label: {
 </p>
 
 <p>
-    To create a bar chart all one needs to do is to use <code>type: 'bar'</code>
+    To create a bar chart all you need to do is use <code>type: 'bar'</code>
     instead of <code>type: 'column'</code> in the series config and swap the axes
     &mdash; the <code>'category'</code> axis moves from the bottom to the left
     of a chart, and the <code>'number'</code> axis takes its place instead, moving
     from the left to the bottom:
 </p>
 
-<snippet language="ts">
-axes: [{
-    type: 'number',
-    position: 'bottom'
-}, {
-    type: 'category',
-    position: 'left'
-}]
-</snippet>
+<?= createSnippet(<<<SNIPPET
+axes: [
+    {
+        type: 'number',
+        position: 'bottom'
+    },
+    {
+        type: 'category',
+        position: 'left'
+    }
+]
+SNIPPET) ?>
 
 <p>
     With these simple changes we go from <a href="#stacked-columns">stacked columns</a>
@@ -230,5 +192,10 @@ axes: [{
 
 <?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "barSeriesConfig") ?>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-charts-area-series/">area series</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

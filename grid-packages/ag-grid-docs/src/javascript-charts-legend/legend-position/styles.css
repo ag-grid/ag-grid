@@ -15,7 +15,7 @@
     min-width: 20px;
 }
 
-button {
+.button--code {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 

@@ -31,13 +31,13 @@ include '../documentation-main/documentation_header.php';
     <code>xKey</code> and <code>yKey</code>:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 series: [{
     // type: 'line' <-- assumed
     xKey: 'year',
     yKey: 'spending'
 }]
-</snippet>
+SNIPPET) ?>
 
 <?= chart_example('Single Line Series', 'basic-line', 'generated'); ?>
 
@@ -45,7 +45,7 @@ series: [{
     The chart expects the data (<code>chart.data</code> property) to be an array of objects, where each object
     is a table row or a database record and each key is a column. To plot anything on a plane, we need at least
     two coordinates: <code>x</code> and <code>y</code>. The <code>xKey</code> and <code>yKey</code> line series
-    configs tell the series what keys should be used to fetch the values of these coordinates from each object
+    configs tell the series which keys should be used to fetch the values of these coordinates from each object
     in the <code>data</code> array.
 </p>
 
@@ -53,20 +53,21 @@ series: [{
 
 <p>
     If we have more than two fields inside each object in the <code>data</code> array, we can create
-    a multi-series line chart. For example, if our datums look like this:
+    a multi-series line chart. For example, if a datum looks like this:
 </p>
 
-<snippet language="ts">
+
+<?= createSnippet(<<<SNIPPET
 {
     quarter: 'Q1',
-    gas: 200,
+    petrol: 200,
     diesel: 100
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
     then we can use the same <code>quarter</code> key as <code>xKey</code> for both series
-    and <code>gas</code> and <code>diesel</code> keys for <code>yKey</code> of the first
+    and <code>petrol</code> and <code>diesel</code> keys for <code>yKey</code> of the first
     and second line series, respectively.
 </p>
 
@@ -75,15 +76,18 @@ series: [{
     <code>series</code> array:
 </p>
 
-<snippet language="ts">
-series: [{
-    xKey: 'quarter',
-    yKey: 'gas'
-}, {
-    xKey: 'quarter',
-    yKey: 'diesel'
-}]
-</snippet>
+<?= createSnippet(<<<SNIPPET
+series: [
+    {
+        xKey: 'quarter',
+        yKey: 'petrol'
+    },
+    {
+        xKey: 'quarter',
+        yKey: 'diesel'
+    }
+]
+SNIPPET) ?>
 
 <p>
     And we get a result like this:
@@ -91,28 +95,31 @@ series: [{
 
 <?= chart_example('Multiple Line Series', 'multi-line', 'generated'); ?>
 
-<h2>Legend and Tooltip information</h2>
+<h2>Legend and Tooltip Information</h2>
 
 <p>
-    By default the legend shows the actual name of the key used to fetch the series data,
-    and that name may not be very presentable. In our case, the <code>gas</code> and <code>diesel</code> keys
-    inside the data objects are not capitalized. We can provide a more descriptive and presentable name
-    to the <code>yName</code> config, and the legend will show that name instead.
+    By default the legend shows the keys used to fetch the series data, but those
+    may not be very presentable. In our case, the <code>petrol</code> and <code>diesel</code> keys
+    inside the data objects are not capitalised. We can provide a better display name
+    using the <code>yName</code> config, and the legend will show that instead.
 </p>
 
-<snippet language="ts">
-series: [{
-    xKey: 'quarter',
-    yKey: 'gas',
-    yName: 'Gas'
-}, {
-    xKey: 'quarter',
-    yKey: 'diesel',
-    yName: 'Diesel'
-}]
-</snippet>
+<?= createSnippet(<<<SNIPPET
+series: [
+    {
+        xKey: 'quarter',
+        yKey: 'petrol',
+        yName: 'Petrol'
+    },
+    {
+        xKey: 'quarter',
+        yKey: 'diesel',
+        yName: 'Diesel'
+    }
+]
+SNIPPET) ?>
 
-<?= chart_example('Legend and Tooltip information', 'legend-info', 'generated'); ?>
+<?= chart_example('Legend and Tooltip Information', 'legend-info', 'generated'); ?>
 
 <p>
     The provided <code>yName</code> will also show up in tooltip titles:
@@ -124,34 +131,34 @@ series: [{
     <img alt="Tooltip with title" src="title-tooltip.png" style="margin-bottom: 0px; height: 158px;">
 </p>
 
-<h2>Line and Marker Colors</h2>
+<h2>Line and Marker Colours</h2>
 
 <p>
     The chart above is not complicated, but it could still benefit from more visual separation.
-    Currently both series use the same colors. Let's change that by making diesel look more like diesel.
+    Currently both series use the same colours. Let's change that by making diesel look more like diesel.
     If we just add the following two configs to the second series:
 </p>
 
-<snippet language="ts">
+<?= createSnippet(<<<SNIPPET
 stroke: 'black',
 marker: {
     fill: 'gray',
     stroke: 'black'
 }
-</snippet>
+SNIPPET) ?>
 
 <p>
-    we'll get a result like this:
+    We'll get a result like this:
 </p>
 
-<?= chart_example('Line and Marker Colors', 'line-marker-colors', 'generated'); ?>
+<?= chart_example('Line and Marker Colours', 'line-marker-colors', 'generated'); ?>
 
 <h2>Missing Data</h2>
 
 <p>
-    In a perfect world all data would be 100% complete. Unfortunatelly, in the real one, data for certain
+    In a perfect world all data would be 100% complete. Unfortunately, in the real one, data for certain
     items or time periods might be missing or corrupted. But that shouldn't result in corrupted charts,
-    and ag-Charts support correct rendering of incomplete data:
+    and ag-Charts supports the correct rendering of incomplete data:
 </p>
 
 <?= chart_example('Line Series with Incomplete Data', 'gap-line', 'generated'); ?>
@@ -165,65 +172,59 @@ marker: {
 
 <h2>Continuous Data</h2>
 
-<?= chart_example('Continuous Data - Spiral Curve', 'two-number-axes', 'generated'); ?>
+<p>
+    By default, the bottom axis is a <code>'category'</code> axis, but this can be changed if you have continuous
+    data that you would like to plot. See the <a href='../javascript-charts-axis'>axes section</a> for more
+    information on configuring axes.
+</p>
+
+<?= chart_example('Continuous Data: Spiral Curve', 'two-number-axes', 'generated'); ?>
 
 <h2>Time-Series Data</h2>
 
 <p>
-    The following example shows how line series can be used to render time-series data.
-    In this case, we have two ambient temperature sensors that give us two independent data sets
-    with different number of readings taken at different intervals and irregular intervals at that:
+    The following example shows how line series can be used to render time-series data, using a <code>'time'</code>
+    axis. In this case, we have two ambient temperature sensors that give us two independent data sets,
+    with different numbers of readings taken at different times:
 </p>
 
-<?= chart_example('Time Data - Temperature Sensors', 'time-line', 'generated'); ?>
-
-<p>
-    Because we want to use a non-standard axis configuration (<code>'time'</code> axis on the bottom rather
-    than the <code>'category'</code> axis and temperature units for the <code>'number'</code> axis),
-    we have to be explicit about the <code>axes</code> config we want to use:
-</p>
-
-<snippet language="ts">
-axes: [{
-    type: 'time',
-    position: 'bottom',
-}, {
-    type: 'number',
-    position: 'left',
-    label: {
-        formatter: function (params) {
-            return params.value + ' C°';
-        }
-    }
-}]
-</snippet>
+<?= chart_example('Time Data: Temperature Sensors', 'time-line', 'generated'); ?>
 
 <p>
     Because we have two separate data sets, we are using the <code>series.data</code> property
     of each series, rather than the <code>data</code> property of the chart itself:
 </p>
 
-<snippet language="ts">
-series: [{
-    data: [{
-        time: new Date('01 Jan 2020 13:25:30 GMT'),
-        sensor: 25
-    }, {
-        time: new Date('01 Jan 2020 13:26:30 GMT'),
-        sensor: 24
-    }],
-    ...
-}, {
-    data: [{
-        time: Date.parse('01 Jan 2020 13:25:00 GMT'),
-        sensor: 21
-    }, {
-        time: Date.parse('01 Jan 2020 13:26:00 GMT'),
-        sensor: 22
-    }],
-    ...
-}]
-</snippet>
+<?= createSnippet(<<<SNIPPET
+series: [
+    {
+        data: [
+            {
+                time: new Date('01 Jan 2020 13:25:30 GMT'),
+                sensor: 25
+            },
+            {
+                time: new Date('01 Jan 2020 13:26:30 GMT'),
+                sensor: 24
+            }
+        ],
+        ...
+    },
+    {
+        data: [
+            {
+                time: Date.parse('01 Jan 2020 13:25:00 GMT'),
+                sensor: 21
+            },
+            {
+                time: Date.parse('01 Jan 2020 13:26:00 GMT'),
+                sensor: 22
+            }
+        ],
+        ...
+    }
+]
+SNIPPET) ?>
 
 <p>
     Notice that even though one data set has dates as <code>Date</code> objects and another
@@ -232,21 +233,17 @@ series: [{
 
 <p>
     The time axis automatically selects an appropriate label format depending on the time
-    span of the data to prevent the labels from overlapping. Though please keep in mind
-    that the axis can only do so much, and if you have a really small chart, the labels
-    might still overlap.
+    span of the data, making a best-effort attempt to prevent the labels from overlapping.
 </p>
 
 <h2>Real-Time Data</h2>
 
 <p>
-    To create a real-time chart the only thing one should do is to periodically update
-    the chart's or series' <code>data</code> property. In the example below we treat
-    the <code>data</code> array as a queue. Every second we remove the first element
-    from the start of the queue and add a new element to the end of the queue.
+    The chart will update whenever new data is supplied via
+    the chart's or series' <code>data</code> property.
 </p>
 
-<?= chart_example('Real-Time Chart - Core Voltage', 'real-time', 'generated'); ?>
+<?= chart_example('Real-Time Chart: Core Voltage', 'real-time', 'generated'); ?>
 
 <p>
     This example uses the <code>'time'</code> axis which is configured to show a tick
@@ -257,5 +254,11 @@ series: [{
 <h2>API Reference</h2>
 
 <?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "lineSeriesConfig") ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section to learn about <a href="../javascript-charts-bar-series/">bar and column series</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

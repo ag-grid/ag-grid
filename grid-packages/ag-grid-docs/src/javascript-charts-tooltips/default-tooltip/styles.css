@@ -15,10 +15,6 @@
     min-width: 20px;
 }
 
-button {
-    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
 #myChart {
     flex: 1;
 }

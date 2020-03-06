@@ -13,11 +13,8 @@ var options = {
         yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
         yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
         label: {
-            formatter: function (params) {
-                if (params.value !== undefined) {
-                    return params.value.toFixed(0);
-                }
-                return '';
+            formatter: function(params) {
+                return params.value === undefined ? '' : params.value.toFixed(0);
             }
         }
     }]

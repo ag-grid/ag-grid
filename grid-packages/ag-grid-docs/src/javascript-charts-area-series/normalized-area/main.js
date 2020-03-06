@@ -17,18 +17,21 @@ var options = {
             enabled: true
         }
     }],
-    axes: [{
-        type: 'number',
-        position: 'left',
-        label: {
-            formatter: function (params) {
-                return params.value + '%';
+    axes: [
+        {
+            type: 'number',
+            position: 'left',
+            label: {
+                formatter: function(params) {
+                    return params.value + '%';
+                }
             }
+        },
+        {
+            type: 'category',
+            position: 'bottom'
         }
-    }, {
-        type: 'category',
-        position: 'bottom'
-    }]
-}
+    ]
+};
 
 agCharts.AgChart.create(options);
