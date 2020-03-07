@@ -22,7 +22,7 @@ var gridOptions = {
     rowModelType: 'serverSide',
 
     // fetch 10 rows per at a time (default is 100)
-    cacheBlockSize: 100,
+    cacheBlockSize: 10,
 
     // enable pagination
     pagination: true,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
         // setup the fake server with entire dataset
-        var fakeServer = new FakeServer(data);
+        var fakeServer = new FakeServer(data.slice(0,25));
 
         // create datasource with a reference to the fake server
         var datasource = new ServerSideDatasource(fakeServer);

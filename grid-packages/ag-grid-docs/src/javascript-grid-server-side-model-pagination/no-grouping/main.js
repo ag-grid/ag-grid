@@ -23,10 +23,11 @@ var gridOptions = {
     // enable pagination
     pagination: true,
 
-    // fetch 10 rows per at a time (default is 100)
-    cacheBlockSize: 10,
-
+    // 10 rows per page
     paginationPageSize: 10,
+
+    // fetch 10 rows per block as page size is 10 (default is 100)
+    cacheBlockSize: 10,
 
     animateRows: true,
 };

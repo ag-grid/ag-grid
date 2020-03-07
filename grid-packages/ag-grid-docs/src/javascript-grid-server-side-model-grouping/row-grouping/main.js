@@ -1,6 +1,7 @@
 var columnDefs = [
     { field: "country", rowGroup: true, hide: true },
     { field: "sport", rowGroup: true, hide: true },
+    { field: "year", minWidth: 100},
     { field: "gold", aggFunc: 'sum' },
     { field: "silver", aggFunc: 'sum' },
     { field: "bronze", aggFunc: 'sum' }
@@ -10,7 +11,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 120,
         resizable: true,
         sortable: true
     },
@@ -18,17 +19,13 @@ var gridOptions = {
         flex: 1,
         minWidth: 280,
     },
+
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // fetch 100 rows at a time
-    cacheBlockSize: 100,
-
-    // only keep 10 blocks of rows
-    maxBlocksInCache: 10,
+    suppressAggFuncInHeader: true,
 
     animateRows: true,
-    suppressAggFuncInHeader: true,
     // debug: true,
 };
 

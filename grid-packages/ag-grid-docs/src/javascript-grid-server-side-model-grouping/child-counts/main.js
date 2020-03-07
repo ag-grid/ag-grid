@@ -21,12 +21,6 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // fetch 100 rows at a time
-    cacheBlockSize: 100,
-
-    // only keep 10 blocks of rows
-    maxBlocksInCache: 10,
-
     // fetch group child count from 'childCount' returned by the server
     getChildCount: function(data) {
         return data ? data.childCount: undefined;

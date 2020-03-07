@@ -23,12 +23,6 @@ var gridOptions = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // fetch 100 rows at a time
-    cacheBlockSize: 100,
-
-    // only keep 10 blocks of rows
-    maxBlocksInCache: 10,
-
     animateRows: true,
     suppressAggFuncInHeader: true,
     // debug: true,

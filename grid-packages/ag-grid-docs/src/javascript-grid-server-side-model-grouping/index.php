@@ -9,35 +9,37 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise"> Row Grouping </h1>
 
 <p class="lead">
-    This section covers Server-side Row Grouping using the Server-side Row Model.
+    This section covers Server-side Row Grouping.
+</p>
+
+<h2>Enabling Row Grouping</h2>
+
+<p>
+    Row Grouping is enabled in the grid via the <code>rowGroup</code> column definition attribute as shown below:
+</p>
+
+<snippet>
+{
+    field: "country",
+    rowGroup: true
+}
+</snippet>
+
+<p>
+    For more configuration details see the section on <a href="../javascript-grid-grouping">Row Grouping</a>.
+</p>
+
+<h2>Row Grouping on the Server</h2>
+
+<p>
+    The actual grouping of rows is performed on the server when using the Server-side Row Model. When the requires more
+    rows it makes a request via <code>getRows(params)</code> on the
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
+    metadata containing row grouping details.
 </p>
 
 <p>
-    Perhaps the most compelling reason to choose the Server-side Row Model is to achieve lazy-loading of Row Groups.
-    This section will continue where <a href="../javascript-grid-server-side-model-infinite/">Infinite Scroll</a> left
-    off, to cover a more complex scenario which includes Server-side Row Grouping, Aggregation and Sorting.
-</p>
-
-<h2>Group Caches</h2>
-
-<p>
-    The <a href="../javascript-grid-server-side-model-infinite/#server-side-cache/">Server-side Cache</a> has already
-    been covered, however in when performing Row Grouping it is important to understand that each group node contains
-    a cache. This is illustrated in the following diagram:
-</p>
-
-<p>
-    <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
-</p>
-
-<p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-   loaded via the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
-</p>
-
-<h2>Group Request Parameters</h2>
-
-<p>
-    The relevant <code>IServerSideGetRowsRequest</code> parameters for Row Grouping are as follows:
+    The properties relevant to row grouping in the request are shown below:
 </p>
 
 <snippet>
@@ -54,61 +56,56 @@ IServerSideGetRowsRequest {
 </snippet>
 
 <p>
-    Where <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping on, i.e. 'Country', 'Year',
-    and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
+    Note in the snippet above that <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping
+    on, i.e. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
 </p>
 
-
-<h2>Example - Pre-defined Grouping - Mocked Server</h2>
+<h2>Example - Server-side Row Grouping</h2>
 
 <p>
-    Below shows an example of pre-defined grouping using the olympic winners dataset.
-    It is pre-defined as we set the grid with specific columns for row grouping and
-    do not allow the user to change this. Then
-    the datasource knows that the grid will either be asking for the top level
-    country list OR the grid will be looking for winners
-    for a particular country.
+    The example below demonstrates server-side Row Grouping. Note the following:
 </p>
 
-<p>
-    In your application, your server-side would know where to get the data based
-    on what the user is looking for, eg it could go to a relational database
-    table to get the list of countries and then a web service to get the winners
-    for the country as the user expands the group (a web service to get the winners
-    per country is improbable, however the example demonstrates you do not need to
-    go to the same datastore for the different levels in the grid).
-</p>
-
-<p>
-    In the example, the work your server would do is mocked for demonstrations
-    purposes (as the online examples are self contained and do not contact any
-    servers).
-</p>
-
-<p>
-    The example demonstrates the following:
-</p>
-    <ul class="content">
-        <li><b>Grouping:</b> The data is grouped by country.</li>
-        <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
-            The columns are not set as value columns, and hence the user cannot change
-            the aggregation function via the column menu. The server just assumes if grouping,
-            then these columns should be aggregated using a sum function.
-        </li>
-        <li><b>Sorting:</b> The sorting is done on the server-side.
-            For example, sort by Athlete, then expand a group and you will
-            see Athlete is sorted. </li>
-    </ul>
+<ul class="content">
+    <li>
+        <b>Country</b> and <b>Sport</b> columns have <code>rowGroup=true</code> defined on their column definitions.
+    </li>
+    <li>
+        The <code>rowGroupCols</code> and <code>groupKeys</code> properties in the request are used by the server
+        to perform grouping.
+    </li>
+    <li>
+        Open the browsers dev console to view the request supplied to the datasource.
+    </li>
+</ul>
 
 <?= grid_example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <note>
-    When the grid sort changes, only impacted rows will get reloaded. For example if grouping by Country
-    and sort by Athlete changes, the top level Country groups will not get reloaded as sorting by Athlete
-    will not impact the top level groups.
-    To avoid this and always refresh top level groups regardless of which column was sorted,
-    set grid property <code>serverSideSortingAlwaysResets = true</code>.
+    <p>
+    The example above also demonstrates <a href="../javascript-grid-server-side-model-sorting/">Sorting</a> with groups.
+    When the grid sort changes, only impacted rows will get reloaded. For example if 'Sport' groups are expanded, sorting
+    on the 'Year' column won't cause the top level 'Country' groups to reload but sorting on the 'Gold' column will.
+    </p>
+    To avoid this and always refresh top level groups regardless of which column is sorted,
+    set the grid property <code>serverSideSortingAlwaysResets = true</code>.
 </note>
+
+
+<h2>Group Caches</h2>
+
+<p>
+    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache/">Server-side Cache</a> has already
+    been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
+    illustrated in the following diagram:</p>
+
+<p>
+    <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
+</p>
+
+<p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
+   loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a>.
+</p>
 
 <h2>Providing Child Counts</h2>
 
