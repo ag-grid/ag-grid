@@ -13,22 +13,149 @@ include '../documentation-main/documentation_header.php';
     the Server-side Row model.
 </p>
 
-<h2>Pivoting</h2>
+<h2>Enabling Pivoting</h2>
 
 <p>
-    Now that we have covered <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> we are
-    now going to add server-side pivoting. This will allow the user to 'Slice and Dice' the data, meaning the
-    user can decide what they want to group, aggregate and pivot on by dragging the columns around in the grid.
+    To pivot on a column <code>pivot=true</code> should be set on the column definition. Additionally the needs
+    to be in pivot mode which is set through the grid option <code>pivotMode=true</code>.
+</p>
+
+<p> In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:</p>
+
+<snippet>
+gridOptions.columnDefs = [
+    { field: "country", rowGroup: true },
+    { field: "year", pivot: true },
+    { field: "total" },
+];
+
+// pivoting will only take effect when pivot mode is enabled
+gridOptions.pivotMode = true;
+</snippet>
+
+<p>
+    For more configuration details see the section on <a href="../javascript-grid-pivoting">Pivoting</a>.
+</p>
+
+<h2>Pivoting on the Server</h2>
+
+<p>
+    The actual pivoting is performed on the server when using the Server-side Row Model. When the grid needs more
+    rows it makes a request via <code>getRows(params)</code> on the
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
+    metadata containing row grouping details.
 </p>
 
 <p>
-    When the user changes the status of the columns (ie the user changes how the data is grouped, aggregated
-    or pivoted) then the grid data is cleared out and loaded again from scratch using the new configuration.
+    The properties relevant to pivoting in the request are shown below:
 </p>
+
+<snippet>
+IServerSideGetRowsRequest {
+
+   // pivot columns, cols with 'pivot=true'
+   pivotCols: ColumnVO[];
+
+    // true if pivot mode is one, otherwise false
+   pivotMode: boolean;
+
+   ... // other params
+}
+</snippet>
+
+<p>
+    Note in the snippet above that <code>pivotCols</code> contains all the columns the grid is pivoting on,
+    and <code>pivotMode</code> is used to determine if pivoting is currently enabled in the grid.
+</p>
+
+<h2>Setting Secondary Columns</h2>
+
+<p>
+    New columns are essentially created from the data contained in the rows when pivoting which means new
+    <a href="../javascript-grid-column-definitions/#column-definitions">Column Definitions</a> need to be supplied to the
+    grid. This is done through the following column api method:
+</p>
+
+<snippet>
+    // supply pivot column definitions to the grid
+    columnApi.setSecondaryColumns(pivotColDefs);
+</snippet>
+
+<p>
+    Note from the snippet above that the <code>pivotColDefs</code> supplied can also be
+    <a href="../javascript-grid-grouping-headers/">Column Group Definitions</a>. This allows for any number of pivot
+    and value columns.
+</p>
+
+<h2>Example - Simple Pivot </h2>
+
+<p>
+    The example below demonstrates server-side Pivoting. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        Pivot mode is enabled through the grid option <code>pivotMode=true</code>.
+    </li>
+    <li>
+        A pivot is placed on the <b>Year</b> column via <code>pivot=true</code> defined on the column definition.
+    </li>
+    <li>
+        Rows are grouped by <b>Country</b> with <code>rowGroup=true</code> defined on the column definition.
+    </li>
+    <li>
+        Values in the <b>Total</b> column are aggregated as <code>aggFunc='sum'</code> is defined on the column definition.
+    </li>
+    <li>
+        The <code>pivotCols</code> and <code>pivotMode</code> properties in the request are used by the server
+        to perform pivoting.
+    </li>
+    <li>
+        New column definitions are created from the <code>pivotFields</code> returned from the server and supplied to the
+        grid using <code>columnApi.setSecondaryColumns(pivotColDefs)</code>.
+    </li>
+    <li>
+        Open the browsers dev console to view the request supplied to the datasource.
+    </li>
+</ul>
 
 <?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<?= grid_example('Complex Pivot', 'complex-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<h2>Example - Pivoting with Column Groups </h2>
+
+<p>
+    The example below demonstrates server-side Pivoting with multiple row groups when there multiple value columns ('gold', 'silver', 'bronze')
+    under the 'year' pivot column group. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        Pivot mode is enabled through the grid option <code>pivotMode=true</code>.
+    </li>
+    <li>
+        A pivot is placed on the <b>Year</b> column via <code>pivot=true</code> defined on the column definition.
+    </li>
+    <li>
+        Rows are grouped by <b>Country</b> and <b>Sport</b> with <code>rowGroup=true</code> defined on their column definitions.
+    </li>
+    <li>
+        The <b>Gold</b>, <b>Silver</b> and <b>Bronze</b> value columns have <code>aggFunc='sum'</code> defined on their
+        column definitions.
+    </li>
+    <li>
+        The <code>pivotCols</code> and <code>pivotMode</code> properties in the request are used by the server
+        to perform pivoting.
+    </li>
+    <li>
+        New column group definitions are created from the <code>pivotFields</code> returned from the server and supplied
+        to the grid using <code>columnApi.setSecondaryColumns(pivotColDefs)</code>.
+    </li>
+    <li>
+        Open the browsers dev console to view the request supplied to the datasource.
+    </li>
+</ul>
+
+<?= grid_example('Pivoting with Column Groups', 'pivoting-with-column-groups', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
 <h2>Example - Slice and Dice - Mocked Server</h2>
 <p>

@@ -1,14 +1,12 @@
-var columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "sport", rowGroup: true, hide: true },
-    { field: "year", minWidth: 100},
-    { field: "gold", aggFunc: 'sum' },
-    { field: "silver", aggFunc: 'sum' },
-    { field: "bronze", aggFunc: 'sum' }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "country", rowGroup: true, hide: true },
+        { field: "sport", rowGroup: true, hide: true },
+        { field: "year", minWidth: 100},
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 120,

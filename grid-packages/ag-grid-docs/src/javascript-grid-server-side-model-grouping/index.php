@@ -15,14 +15,16 @@ include '../documentation-main/documentation_header.php';
 <h2>Enabling Row Grouping</h2>
 
 <p>
-    Row Grouping is enabled in the grid via the <code>rowGroup</code> column definition attribute as shown below:
+    Row Grouping is enabled in the grid via the <code>rowGroup</code> column definition attribute. The example below
+    shows how to group rows by 'country':
 </p>
 
 <snippet>
-{
-    field: "country",
-    rowGroup: true
-}
+gridOptions.columnDefs = [
+    { field: "country", rowGroup: true },
+    { field: "sport" },
+    { field: "year" },
+]
 </snippet>
 
 <p>
@@ -32,10 +34,10 @@ include '../documentation-main/documentation_header.php';
 <h2>Row Grouping on the Server</h2>
 
 <p>
-    The actual grouping of rows is performed on the server when using the Server-side Row Model. When the requires more
-    rows it makes a request via <code>getRows(params)</code> on the
+    The actual grouping of rows is performed on the server when using the Server-side Row Model. When the grid needs
+    more rows it makes a request via <code>getRows(params)</code> on the
     <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
-    metadata containing row grouping details.
+    metadata containing pivoting details.
 </p>
 
 <p>

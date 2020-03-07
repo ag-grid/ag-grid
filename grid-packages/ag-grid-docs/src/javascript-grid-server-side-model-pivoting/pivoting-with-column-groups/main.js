@@ -1,15 +1,12 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", rowGroup: true, hide: true},
-    {headerName: "Sport", field: "sport", rowGroup: true, hide: true},
-    {headerName: "Year", field: "year", pivot: true},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum'}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    pivotMode: true,
+    columnDefs: [
+        { field: "country", rowGroup: true },
+        { field: "sport", rowGroup: true },
+        { field: "year", pivot: true}, // pivot on 'year'
+        { field: "gold", aggFunc: 'sum'},
+        { field: "silver", aggFunc: 'sum'},
+        { field: "bronze", aggFunc: 'sum'}
+    ],
     defaultColDef: {
         width: 150,
         resizable: true,
@@ -18,9 +15,14 @@ var gridOptions = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
+
+    // use the server-side row model
     rowModelType: 'serverSide',
+
+    // enable pivoting
+    pivotMode: true,
+
     animateRows: true,
-    cacheBlockSize: 40,
     // debug: true
 };
 
@@ -47,7 +49,7 @@ function ServerSideDatasource(server) {
         getRows: function(params) {
             var request = params.request;
 
-            console.log('[Datasource] - rows requested: ', request);
+            console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(request);
 

@@ -1,12 +1,9 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", rowGroup: true, hide: true},
-    {headerName: "Year", field: "year", pivot: true, hide: true},
-    {headerName: "Total", field: "total", aggFunc: 'sum', hide: true},
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    pivotMode: true,
+    columnDefs: [
+        { field: "country", rowGroup: true },
+        { field: "year", pivot: true }, // pivot on 'year'
+        { field: "total", aggFunc: 'sum' },
+    ],
     defaultColDef: {
         flex: 4,
         minWidth: 100,
@@ -16,9 +13,14 @@ var gridOptions = {
         flex: 5,
         minWidth: 200,
     },
+
+    // use the server-side row model
     rowModelType: 'serverSide',
+
+    // enable pivoting
+    pivotMode: true,
+
     animateRows: true,
-    cacheBlockSize: 20,
     // debug: true
 };
 
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function ServerSideDatasource(server) {
     return {
         getRows: function(params) {
-            console.log('[Datasource] - rows requested: ', params.request);
+            console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // get data for request from our fake server
             var response = server.getData(params.request);
