@@ -17,6 +17,7 @@ import {
     CellRangeParams
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { ChartTranslator } from './chartTranslator';
 
 export interface ColState {
     column?: Column;
@@ -43,6 +44,7 @@ export class ChartDataModel extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private referenceCellRange: CellRange;
     private dimensionCellRange?: CellRange;
@@ -394,7 +396,7 @@ export class ChartDataModel extends BeanStub {
 
         const defaultCategory = {
             colId: ChartDataModel.DEFAULT_CATEGORY,
-            displayName: '(None)',
+            displayName: this.chartTranslator.translate('defaultCategory'),
             selected: !hasSelectedDimension, // if no dimensions in range select the default
             order: 0
         };
