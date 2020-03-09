@@ -245,7 +245,7 @@ localeText = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
+<?= grid_example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "exampleHeight" => 650, "processVue" => true)) ?>
 
 <h2>Using <code>localeTextFunc</code></h2>
 
