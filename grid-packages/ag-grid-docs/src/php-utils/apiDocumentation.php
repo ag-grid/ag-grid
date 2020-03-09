@@ -9,7 +9,12 @@
         $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
 
         if (!$skipHeader) {
-            $displayName = $properties->meta->displayName ?? $title;
+            $displayName = $properties->meta->displayName;
+
+            if (!isset($displayName)) {
+                $displayName = $title;
+            }
+
             $headerTag = isset($prefix) ? "h3" : "h2";
 
             echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
@@ -138,5 +143,3 @@
 
         return $json;
     }
-
-?>
