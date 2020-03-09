@@ -73,6 +73,7 @@
     "merge2": "^1.2.0",
     "postcss-loader": "^3.0.0",
     "protractor": "^5.4.0",
+    "rimraf": "^3.0.2",
     "start-server-and-test": "^1.10.0",
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^2.0.1",
