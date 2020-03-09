@@ -1105,8 +1105,9 @@ function rowSelected(event) {
 }
 
 function onThemeChanged(initial) {
-    var newTheme = document.querySelector('#grid-theme').value;
+    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none'
     var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
+
     themedElements.forEach(function (el) {
         el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
     });
@@ -1119,6 +1120,7 @@ function onThemeChanged(initial) {
     }
 
     var isDark = newTheme && newTheme.indexOf('dark') >= 0;
+
     if (isDark) {
         document.body.classList.add('dark');
     } else {
@@ -1127,12 +1129,13 @@ function onThemeChanged(initial) {
 
     if (!initial) {
         var newUrl;
-        var attrRegex = /theme=ag-theme-[\w-]+/;
+        var attrRegex = /theme=(?:ag-theme-[\w-]+)?/;
+        var urlName = newTheme === 'ag-theme-none' ? '' : newTheme;
         if (attrRegex.test(location.href)) {
-            newUrl = location.href.replace(attrRegex, "theme=" + newTheme);
+            newUrl = location.href.replace(attrRegex, "theme=" + urlName);
         } else {
             var sep = location.href.indexOf("?") !== -1 ? "&" : "?";
-            newUrl = location.href + sep + "theme=" + newTheme;
+            newUrl = location.href + sep + "theme=" + urlName;
         }
         history.replaceState(null, "", newUrl);
     }

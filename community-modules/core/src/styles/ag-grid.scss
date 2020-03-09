@@ -700,6 +700,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
     height: 100%;
     width: 100%;
+    align-items: center;
+    overflow: hidden;
+}
+
+.ag-floating-filter-full-body > div {
+    flex: 1 1 auto;
 }
 
 .ag-floating-filter {

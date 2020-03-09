@@ -145,7 +145,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = `${this.column.getActualWidth()}px`;
     }
 
     private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp): void {

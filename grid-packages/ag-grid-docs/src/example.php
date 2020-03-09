@@ -47,14 +47,18 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
                 <script>
                     (function() {
                         var themeDropdown = document.querySelector('#grid-theme');
-                        var match = document.location.search.match(/[?&]theme=([^?&]+)/);
+                        var match = document.location.search.match(/[?&]theme=([\w-]+)?/);
                         if (match) {
-                            var theme = match[1];
-                            themeDropdown.value = match[1];
-                            if (!themeDropdown.querySelector('option[value="' + theme + '"]')) {
-                                themeDropdown.insertAdjacentHTML('beforeend', '<option>' + theme + '</option>');
-                            }
+                            var theme = match[1] || 'ag-theme-none';
                             themeDropdown.value = theme;
+                            if (theme !== 'ag-theme-none') {
+                                if (!themeDropdown.querySelector('option[value="' + theme + '"]')) {
+                                    themeDropdown.insertAdjacentHTML('beforeend', '<option>' + theme + '</option>');
+                                }
+                                themeDropdown.value = theme;
+                            } else {
+                                themeDropdown.value = '';
+                            }
                         }
                     })();
                 </script>
