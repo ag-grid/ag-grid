@@ -37,8 +37,8 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
 
                 <select onchange="onThemeChanged()" id="grid-theme">
                     <option value="">-none-</option>
-                    <option value="ag-theme-alpine" selected>Alpine (Beta)</option>
-                    <option value="ag-theme-alpine-dark">Alpine Dark (Beta)</option>
+                    <option value="ag-theme-alpine" selected>Alpine</option>
+                    <option value="ag-theme-alpine-dark">Alpine Dark</option>
                     <option value="ag-theme-balham">Balham</option>
                     <option value="ag-theme-balham-dark">Balham Dark</option>
                     <option value="ag-theme-material">Material</option>

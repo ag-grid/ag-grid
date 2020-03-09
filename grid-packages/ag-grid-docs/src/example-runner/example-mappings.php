@@ -24,7 +24,11 @@ if (USE_LOCAL) {
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
         "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
-        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css"
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
+        "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css"
     ));
     define('AG_GRID_SCRIPT_PATH', "$prefix/@ag-grid-community/all-modules/dist/ag-grid-community.js");
     define('AG_GRID_ENTERPRISE_SCRIPT_PATH', "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js");
