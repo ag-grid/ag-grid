@@ -31,9 +31,8 @@ export class SizeMonitor {
                     const height = element.clientHeight ? element.clientHeight : 0;
                     this.checkSize(entry, element, width, height);
                 });
-                this.requestAnimationFrameId = requestAnimationFrame(step);
             }
-            step();
+            setInterval(step, 100);
         }
 
         this.ready = true;
