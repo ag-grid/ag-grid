@@ -1,6 +1,6 @@
 <?php
-    function printVideoSection($url, $sectionId, $title){
-        echo "
+    function videoSection($url, $sectionId, $title) {
+        return "
             <section id='$sectionId' class='mb-3'>
                 <div class='card'>
                     <div class='card-header'>$title</div>
@@ -14,12 +14,11 @@
         ";
     }
 
-    function printVideoLink($url, $time){
-            echo "
-             <div class='youtube-bar'>
-                    <img src='../images/yt_icon_rgb.png' class='youtube-icon' alt='Example video'></img>
-                    <a class='youtube-text' href='$url' target='_blank'><span>Watch this section of our docs in our video tutorial [$time]</span></a>
-                </div>
-            ";
-        }
-?>
+    function videoLink($url, $time) {
+        return "
+            <div class='youtube-bar'>
+                <img src='../images/yt_icon_rgb.png' class='youtube-icon' alt='Example video'></img>
+                <a class='youtube-text' href='$url' target='_blank'><span>Watch this section of our docs in our video tutorial [$time]</span></a>
+            </div>
+        ";
+    }
