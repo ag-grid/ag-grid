@@ -144,9 +144,8 @@
     }
 
     .ag-column-drop-vertical-title-bar {
-        background-color: ag-param(background-color);
         padding: ag-param(grid-size) * 2;
-        @include ag-border(secondary, bottom);
+        padding-bottom: 0px;
     }
 
     .ag-column-drop-vertical-empty-message {
