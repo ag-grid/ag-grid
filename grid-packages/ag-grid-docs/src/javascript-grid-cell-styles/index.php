@@ -189,7 +189,7 @@ cellClassRules: {
             removed so be aware that classes will accumulate. If you want to remove
             old classes, then use cellClassRules.</li>
             <li><code>cellClassRules</code>: Rules that return true will have the class
-            applied the second time. Rules tha return false will have the class removed
+            applied the second time. Rules that return false will have the class removed
             second time.</li>
         </ul>
 
