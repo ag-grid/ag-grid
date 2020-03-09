@@ -153,6 +153,11 @@ SNIPPET) ?>
 
 <?= chart_example('Line and Marker Colours', 'line-marker-colors', 'generated'); ?>
 
+<p>
+    There are many other customisations you can make to the markers; see the
+    <a href="../javascript-charts-markers/">markers section</a> for more information.
+</p>
+
 <h2>Missing Data</h2>
 
 <p>
