@@ -217,10 +217,7 @@ colDef.valueGetter = function(params) {
         The following are the grid properties related to the value cache.
     </p>
 
-    <table class="table reference">
-        <?php include './valueCacheProperties.php' ?>
-        <?php printPropertiesRows($valueCacheProperties) ?>
-    </table>
+    <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'miscellaneous', ['valueCache', 'valueCacheNeverExpires']) ?>
 
     <h3>Expiring the Value Cache</h3>
 

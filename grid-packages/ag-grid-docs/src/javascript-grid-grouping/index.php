@@ -857,6 +857,14 @@ SNIPPET
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
     and for backwards compatibility for when we only supported this style of configuration.</note>
 
-<?php createDocumentationFromFile("apiReference.json") ?>
+<h2>Grid Grouping Properties</h2>
+
+<p>
+    Grouping has the following grid properties (set these as grid properties, i.e. on <code>gridOptions</code>, not on the columns):
+</p>
+
+<?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'rowGrouping') ?>
+
+<?php createDocumentationFromFile('apiReference.json') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
         the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
     </note>
 
-    <h2 id="customising-pagination">Example: Customising Pagination</h2> 
+    <h2 id="customising-pagination">Example: Customising Pagination</h2>
     <p>In this example the default pagination settings are changed. Note the following:</p>
 
     <ul class="content">
@@ -178,9 +178,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Pagination Properties</h2>
 
-    <?php include_once 'paginationProperties.php' ?>
-
-    <?php printPropertiesTable($paginationProperties) ?>
+    <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'pagination') ?>
 
     <p>The following methods compose the pagination API are all available from <code>gridOptions.api</code></p>
 

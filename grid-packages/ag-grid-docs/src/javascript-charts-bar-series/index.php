@@ -193,7 +193,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "barSeriesConfig") ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'barSeriesConfig') ?>
 
 <h2>Next Up</h2>
 

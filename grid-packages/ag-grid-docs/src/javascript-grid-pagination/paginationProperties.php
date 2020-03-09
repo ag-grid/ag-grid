@@ -1,40 +1,5 @@
 <?php
 
-$paginationProperties = [
-    ['pagination',
-        'True - <a href="../javascript-grid-pagination/">Pagination</a> is enabled.<br/>
-         False (Default) - <a href="../javascript-grid-pagination/">Pagination</a> is disabled.'
-    ],
-    [
-        'paginationPageSize',
-        'Number. How many rows to load per page. Default value = 100. If <code>paginationAutoPageSize</code>
-         is specified, this property is ignored.',
-        'See example <a href="../javascript-grid-pagination/#customising-pagination">Customising Pagination</a>.'
-    ]
-    ,
-    [
-        'paginationAutoPageSize',
-        'True - The number of rows to load per page is automatically adjusted by ag-Grid so each page
-         shows enough rows to just fill the area designated for the grid.<br/>
-         False (Default) - paginationPageSize is used.',
-        'See example <a href="../javascript-grid-pagination/#auto-page-size">Auto Page Size</a>.'
-    ],
-    [
-        'suppressPaginationPanel',
-        'True - The out of the box ag-Grid controls for navigation are hidden. This is useful if
-         <code>pagination=true</code> and you want to provide your own pagination controls.<br/>
-         False (Default) - when <code>pagination=true</code> It automatically shows at the bottom the necessary
-         controls so that the user can navigate through the different pages.',
-        'See example <a href="../javascript-grid-pagination/#custom-pagination-controls">Custom Pagination Controls</a>.'
-    ],
-    [
-        'paginateChildRows',
-        'Set to true to have pages split children of groups when Row Grouping or detail rows with Master Detail.
-        <a href="../javascript-grid-pagination/#childRows">Pagination & Child Rows</a>'
-    ]
-];
-
-
 $paginationApi = [
     ['paginationIsLastPageFound()',
         '<p>Returns true when last page known. This will always be true if you are using the Client-side Row Model

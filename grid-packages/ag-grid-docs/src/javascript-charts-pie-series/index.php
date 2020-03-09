@@ -197,7 +197,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile("../javascript-charts-api-explorer/config.json", "pieSeriesConfig") ?>
+<?php createDocumentationFromFile'../javascript-charts-api-explorer/config.json', 'pieSeriesConfig') ?>
 
 <h2>Next Up</h2>
 

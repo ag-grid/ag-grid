@@ -20,7 +20,8 @@ include '../documentation-main/documentation_header.php';
         These properties can be used to change the different heights used in the headers.
     </p>
     <?php include 'headerHeightProperties.php' ?>
-    <?php printPropertiesTable($headerHeightProperties) ?>
+
+    <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'headers') ?>
 
     <p>
         All these properties also have setter methods that can be called from the api and will change the header

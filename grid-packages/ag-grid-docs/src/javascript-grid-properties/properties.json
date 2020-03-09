@@ -1,0 +1,915 @@
+{
+    "columns": {
+        "meta": {
+            "displayName": "Columns"
+        },
+        "columnDefs": {
+            "description": "Array of <a href='../javascript-grid-column-definitions/'>Column Definitions</a>."
+        },
+        "defaultColDef": {
+            "description": "A <a href='../javascript-grid-column-definitions/#default-column-definitions'>default column</a> definition."
+        },
+        "defaultColGroupDef": {
+            "description": "A <a href='../javascript-grid-column-definitions/#default-column-definitions'>default column group</a> definition. All column group definitions will use these properties. Items defined in the actual column group  definition get precedence."
+        },
+        "columnTypes": {
+            "description": "An object map of <a href='../javascript-grid-column-definitions/#default-column-definitions'>custom column types</a> which contain groups of properties that column definitions can inherit."
+        },
+        "colResizeDefault": {
+            "description": "Set to <code>'shift'</code> to have shift-resize as the default resize operation (same as user holding down <code>Shift</code> while resizing)."
+        },
+        "suppressAutoSize": {
+            "default": false,
+            "description": "Suppresses <a href='../javascript-grid-resizing/#auto-size-columns'>auto-sizing columns</a> for columns. In other words, double clicking a column's header's edge will not auto-size."
+        },
+        "autoSizePadding": {
+            "default": 4,
+            "description": "Number of pixels to add to a column width after the <a href='../javascript-grid-resizing/#auto-size-columns'>auto-sizing</a> calculation. Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header."
+        },
+        "skipHeaderOnAutoSize": {
+            "default": false,
+            "description": "Set this to <code>true</code> to skip the <code>headerName</code> when <code>autoSize</code> is called by default.",
+            "example": {
+                "name": "Resizing Example",
+                "url": "../javascript-grid-resizing/#resizing-example"
+            }
+        },
+        "suppressColumnMoveAnimation": {
+            "default": false,
+            "description": "If <code>true</code>, the <code>ag-column-moving</code> class is not added to the grid while columns are moving. In the default <a href='../javascript-grid-styling/'>themes</a>, this results in no animation when moving columns."
+        },
+        "suppressMovableColumns": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress column moving, i.e. to make the columns fixed position."
+        },
+        "suppressFieldDotNotation": {
+            "default": false,
+            "description": "If <code>true</code>, then dots in field names (e.g. <code>address.firstline</code>) are not treated as deep references. Allows you to use dots in your field name if you prefer."
+        },
+        "unSortIcon": {
+            "default": false,
+            "description": "Set to <code>true</code> to show the 'no sort' icon.",
+            "example": {
+                "name": "Example Custom Sorting",
+                "url": "../javascript-grid-sorting/#example-custom-sorting"
+            }
+        },
+        "suppressMultiSort": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress multi-sort when the user shift-clicks a column header."
+        },
+        "suppressMenuHide": {
+            "default": false,
+            "description": "Set to <code>true</code> to always show the column menu button, rather than only showing when the mouse is over the column header."
+        },
+        "autoGroupColumnDef": {
+            "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included."
+        },
+        "suppressSetColumnStateEvents": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress column events being raised when <code>columnApi.setColumnState(state)</code> and <code>columnApi.resetColumnState()</code> are invoked."
+        },
+        "allowDragFromColumnsToolPanel": {
+            "default": false,
+            "description": "Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid."
+        }
+    },
+    "sortFilter": {
+        "meta": {
+            "displayName": "Sort and Filter"
+        },
+        "quickFilterText": {
+            "description": "Rows are filtered using this text as a <a href='../javascript-grid-filter-quick/'>quick filter</a>."
+        },
+        "cacheQuickFilter": {
+            "default": false,
+            "description": "Set to <code>true</code> to turn on the <a href='../javascript-grid-filter-quick/#quick-filter-cache'> quick filter cache</a>, used for a performance gain when using the quick filter."
+        },
+        "sortingOrder": {
+            "description": "Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>'asc'</code>, <code>'desc'</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.",
+            "example": {
+                "name": "Example Sorting Order and Animation",
+                "url": "../javascript-grid-sorting/#example-sorting-order-and-animation"
+            }
+        },
+        "accentedSort": {
+            "default": false,
+            "description": "Set to <code>true</code> to specify that the sort should take into account accented characters. If this feature is turned on the sort will perform slower.",
+            "example": {
+                "name": "Accented Sort",
+                "url": "../javascript-grid-sorting/#accentedSort"
+            }
+        },
+        "multiSortKey": {
+            "description": "Set to <code>'ctrl'</code> to have multi sorting work using the <code>Ctrl</code> or <code>Command</code> (for Apple) keys.",
+            "example": {
+                "name": "Multi Column Sorting",
+                "url": "../javascript-grid-sorting/#multi-column-sorting"
+            }
+        },
+        "suppressMaintainUnsortedOrder": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress sorting of un-sorted data to match original row data.",
+            "example": {
+                "name": "Big Data Small Transactions",
+                "url": "../javascript-grid-data-update/#big-data-small-transactions"
+            }
+        },
+        "excludeChildrenWhenTreeDataFiltering": {
+            "default": false,
+            "description": "Set to <code>true</code> to override the default tree data filtering behaviour to instead exclude child nodes from filter results.",
+            "example": {
+                "name": "Tree Data Filtering",
+                "url": "../javascript-grid-tree-data/#tree-data-filtering"
+            }
+        }
+    },
+    "selection": {
+        "meta": {
+            "displayName": "Selection"
+        },
+        "rowSelection": {
+            "options": [
+                "single",
+                "multiple"
+            ],
+            "description": "Type of <a href='../javascript-grid-selection/'>Row Selection</a>."
+        },
+        "rowMultiSelectWithClick": {
+            "default": false,
+            "description": "Set to <code>true</code> to allow multiple rows to be selected using single click.",
+            "example": {
+                "name": "Multi Select Single Click",
+                "url": "../javascript-grid-selection/#multi-select-single-click"
+            }
+        },
+        "rowDeselection": {
+            "default": false,
+            "description": "If <code>true</code> then rows will be deselected if you hold down <code>Ctrl</code> and click the row."
+        },
+        "suppressRowClickSelection": {
+            "default": false,
+            "description": "If <code>true</code>, <a href='../javascript-grid-selection/'>row selection</a> won't happen when rows are clicked. Use when you want checkbox selection exclusively."
+        },
+        "suppressCellSelection": {
+            "default": false,
+            "description": "If <code>true</code>, cells won't be selectable. This means cells will not get keyboard focus when you click on them."
+        },
+        "enableRangeSelection": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-range-selection/'>Range Selection</a>."
+        }
+    },
+    "rowDragging": {
+        "meta": {
+            "displayName": "Row Dragging"
+        },
+        "rowDragManaged": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-row-dragging/#managed-dragging'>Managed Row Dragging</a>."
+        },
+        "suppressRowDrag": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress <a href='../javascript-grid-row-dragging/'>Row Dragging</a>."
+        },
+        "suppressMoveWhenRowDragging": {
+            "default": false,
+            "description": "Set to <code>true</code> to suppress moving rows while dragging the <code>rowDrag</code> waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.",
+            "example": {
+                "name": "Row Dragging",
+                "url": "../javascript-grid-row-dragging/"
+            }
+        }
+    },
+    "editing": {
+        "meta": {
+            "displayName": "Editing"
+        },
+        "singleClickEdit": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-cell-editing/#singleClickEditing'>Single Click Editing</a> for cells, to start editing with a single click."
+        },
+        "suppressClickEdit": {
+            "default": false,
+            "description": "Set to <code>true</code> so that neither single nor double click starts editing.",
+            "example": {
+                "name": "Single Click, Double Click, No Click Editing",
+                "url": "../javascript-grid-cell-editing/#singleClickEditing"
+            }
+        },
+        "editType": {
+            "description": "Set to <code>'fullRow'</code> to enable <a href='../javascript-grid-cell-editing/#fullRowEdit'>Full Row Editing</a>. Otherwise leave blank to edit one cell at a time."
+        },
+        "enableCellChangeFlash": {
+            "default": false,
+            "description": "Set to <code>true</code> to have cells flash after data changes.",
+            "example": {
+                "name": "Flashing Data Changes",
+                "url": "../javascript-grid-data-update/#flashing"
+            }
+        },
+        "allowShowChangeAfterFilter": {
+            "default": false,
+            "description": "Set to <code>true</code> to have cells flash after data changes even when the change is due to filtering.",
+            "example": {
+                "name": "Flashing Data Changes",
+                "url": "../javascript-grid-data-update/#flashing"
+            }
+        },
+        "stopEditingWhenGridLosesFocus": {
+            "default": false,
+            "description": "Set this to <code>true</code> to <a href='../javascript-grid-cell-editing/#losingFocusStopsEditing'> stop cell editing when grid loses focus</a>. The default is the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only."
+        },
+        "enterMovesDown<br />enterMovesDownAfterEdit": {
+            "default": false,
+            "description": "Set both properties to <code>true</code> to have Excel-style behaviour for the <code>Enter</code> key, i.e. <a href='../javascript-grid-cell-editing/#enter-key-down'>enter key moves down</a>."
+        }
+    },
+    "headers": {
+        "meta": {
+            "displayName": "Headers"
+        },
+        "headerHeight": {
+            "default": 25,
+            "description": "The height in pixels for the row containing the column label header.",
+            "example": {
+                "name": "Header Height",
+                "url": "../javascript-grid-column-header/#headerHeight"
+            }
+        },
+        "groupHeaderHeight": {
+            "description": "The height for the rows containing header column groups. If not specified, it uses <code>headerHeight</code>.",
+            "example": {
+                "name": "Header Height",
+                "url": "../javascript-grid-column-header/#headerHeight"
+            }
+        },
+        "floatingFiltersHeight": {
+            "default": 20,
+            "description": "The height for the row containing the floating filters.",
+            "example": {
+                "name": "Header Height",
+                "url": "../javascript-grid-column-header/#headerHeight"
+            }
+        },
+        "pivotHeaderHeight": {
+            "description": "The height for the row containing the columns when in pivot mode. If not specified, it uses <code>headerHeight</code>.",
+            "example": {
+                "name": "Header Height",
+                "url": "../javascript-grid-column-header/#headerHeight"
+            }
+        },
+        "pivotGroupHeaderHeight": {
+            "description": "The height for the row containing header column groups when in pivot mode. If not specified, it uses <code>groupHeaderHeight</code>.",
+            "example": {
+                "name": "Header Height",
+                "url": "../javascript-grid-column-header/#headerHeight"
+            }
+        }
+    },
+    "rowGrouping": {
+        "meta": {
+            "displayName": "Row Grouping"
+        },
+        "groupUseEntireRow": {
+            "default": false,
+            "description": "Used when grouping. If <code>true</code>, a group row will span all columns across the entire width of the table. If <code>false</code>, the cells will be rendered as normal and you will have the opportunity to include a grouping column (normally the first on the left) to show the group.",
+            "example": {
+                "name": "Full Width Group Rows",
+                "url": "../javascript-grid-grouping/#fullWidthRows"
+            }
+        },
+        "groupDefaultExpanded": {
+            "default": 0,
+            "description": "If grouping, set to the number of levels to expand by default, e.g. <code>0</code> for none, <code>1</code> for first level only, etc. Set to <code>-1</code> to expand everything.",
+            "example": {
+                "name": "Removing Single Children",
+                "url": "../javascript-grid-grouping/#removeSingleChildren"
+            }
+        },
+        "autoGroupColumnDef": {
+            "type": "ColumnDef",
+            "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included.",
+            "example": {
+                "name": "Configuring the Auto Group Column",
+                "url": "../javascript-grid-grouping/#configuring-auto-column"
+            }
+        },
+        "groupSuppressAutoColumn": {
+            "default": false,
+            "description": "If <code>true</code>, the grid will not swap in the grouping column when grouping is enabled. Use this if you want complete control on the column displayed and don't want the grid's help, in other words if you already have a column in your column definitions that is responsible for displaying the groups.",
+            "example": {
+                "name": "Configuring the Auto Group Column",
+                "url": "../javascript-grid-grouping/#configuring-auto-column"
+            }
+        },
+        "groupMultiAutoColumn": {
+            "default": false,
+            "description": "If using auto column, set to <code>true</code> to have each group in its own separate column, e.g. if grouping by Country then Year, two auto columns will be created, one for Country and one for Year.",
+            "example": {
+                "name": "Multi Auto Column Group",
+                "url": "../javascript-grid-grouping/#multi-auto-column-group"
+            }
+        },
+        "groupSuppressRow": {
+            "default": false,
+            "description": "If <code>true</code>, the group row won't be displayed and the groups will be expanded by default with no ability to expand / contract the groups. Useful when you want to just 'group' the rows, but not add a parent group row to each group.",
+            "example": {
+                "name": "Suppress Group Row",
+                "url": "../javascript-grid-grouping/#suppress-group-row"
+            }
+        },
+        "groupSelectsChildren": {
+            "default": false,
+            "description": "When <code>true</code>, if you select a group, the children of the group will also be selected.",
+            "example": {
+                "name": "Group Selection",
+                "url": "../javascript-grid-selection/#groupSelection"
+            }
+        },
+        "groupIncludeFooter": {
+            "default": false,
+            "description": "If grouping, whether to show a group footer when the group is expanded. If <code>true</code>, then by default,  the footer will contain aggregate data (if any) when shown and the header will be blank. When closed, the header will contain  the aggregate data regardless of this setting (as the footer is hidden anyway). This is handy for 'total' rows, that are  displayed below the data when the group is open, and alongside the group when it is closed",
+            "example": {
+                "name": "Grouping Footers",
+                "url": "../javascript-grid-grouping/#grouping-footers"
+            }
+        },
+        "groupIncludeTotalFooter": {
+            "default": false,
+            "description": "Set to <code>true</code> to show a 'grand' total group footer across all groups.",
+            "example": {
+                "name": "Grouping Footers",
+                "url": "../javascript-grid-grouping/#grouping-footers"
+            }
+        },
+        "groupSuppressBlankHeader": {
+            "default": false,
+            "description": "If <code>true</code>, and showing footer, aggregate data will be displayed at both the header and footer levels always. This  stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand."
+        },
+        "groupSelectsFiltered": {
+            "default": false,
+            "description": "If using <code>groupSelectsChildren</code>, then only the children that pass the current filter will get selected.",
+            "example": {
+                "name": "Group Selection",
+                "url": "../javascript-grid-selection/#groupSelection"
+            }
+        },
+        "groupRemoveSingleChildren": {
+            "default": false,
+            "description": "Set to <code>true</code> to collapse groups that only have one child.",
+            "example": {
+                "name": "Remove Single Children",
+                "url": "../javascript-grid-grouping/#removeSingleChildren"
+            }
+        },
+        "groupRemoveLowestSingleChildren": {
+            "default": false,
+            "description": "Set to <code>true</code> to collapse lowest level groups that only have one child.",
+            "example": {
+                "name": "Remove Single Children",
+                "url": "../javascript-grid-grouping/#removeSingleChildren"
+            }
+        },
+        "groupHideOpenParents": {
+            "default": false,
+            "description": "Set to <code>true</code> to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.",
+            "example": {
+                "name": "Group Hide Open Parents",
+                "url": "../javascript-grid-grouping/#replacingChildren"
+            }
+        },
+        "rowGroupPanelShow": {
+            "default": "never",
+            "options": [
+                "never",
+                "always",
+                "onlyWhenGrouping"
+            ],
+            "description": "When to show the 'row group panel' (where you drag rows to group) at the top.",
+            "example": {
+                "name": "Tool Panel Example",
+                "url": "../javascript-grid-tool-panel/#toolPanelExample"
+            }
+        }
+    },
+    "rowPivoting": {
+        "meta": {
+            "displayName": "Row Pivoting"
+        },
+        "pivotMode": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable pivot mode.",
+            "example": {
+                "name": "Pivoting",
+                "url": "../javascript-grid-pivoting/"
+            }
+        },
+        "pivotPanelShow": {
+            "default": "never",
+            "options": [
+                "never",
+                "always",
+                "onlyWhenPivoting"
+            ],
+            "description": "When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if <code>pivotMode</code> is off."
+        },
+        "rememberGroupStateWhenNewData": {
+            "default": false,
+            "description": "When <code>true</code>, if you set new data into the grid and have groups open, the grid will keep groups open if they exist in the new dataset.",
+            "example": {
+                "name": "Keeping Group State",
+                "url": "../javascript-grid-grouping/#keeping-group-state"
+            }
+        },
+        "suppressAggFuncInHeader": {
+            "default": false,
+            "description": "When <code>true</code>, column headers won't include the <code>aggFunc</code>, e.g. <code>'sum(Bank Balance)</code>' will just be <code>'Bank Balance'</code>."
+        },
+        "suppressAggAtRootLevel": {
+            "default": false,
+            "description": "When <code>true</code>, the aggregations won't be computed for root node of the grid.",
+            "example": {
+                "name": "Big Data Small Transactions",
+                "url": "../javascript-grid-data-update/#big-data-small-transactions"
+            }
+        },
+        "aggregateOnlyChangedColumns": {
+            "default": false,
+            "description": "When using <a href='../javascript-grid-change-detection/#tree-path-selection'>change detection</a>, only the updated column with get re-aggregated."
+        },
+        "functionsReadOnly": {
+            "default": false,
+            "description": "If <code>true</code>, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection.",
+            "example": {
+                "name": "Read Only Functions",
+                "url": "../javascript-grid-tool-panel-columns/#read-only-functions"
+            }
+        },
+        "aggFuncs": {
+            "description": "A map of 'function name' to 'function' for custom aggregation functions.",
+            "example": {
+                "name": "Custom Aggregation Functions",
+                "url": "../javascript-grid-aggregation/#custom-aggregation-functions"
+            }
+        },
+        "suppressMakeVisibleAfterUnGroup": {
+            "default": false,
+            "description": "By default, when a column is un-grouped it is made visible. e.g. on main demo: 1) group by country by dragging (action of moving column out of grid means column is made <code>visible=false</code>); then 2) un-group by clicking 'x' on the country column in the column drop zone; the column is then made <code>visible=true</code>. This property stops the column becoming visible again when un-grouping."
+        },
+        "pivotColumnGroupTotals": {
+            "options": [
+                "before",
+                "after"
+            ],
+            "description": "When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups,in the position specified.",
+            "example": {
+                "name": "Pivot Column Group Totals",
+                "url": "../javascript-grid-pivoting/#pivotColumnGroupTotals"
+            }
+        },
+        "pivotRowTotals": {
+            "options": [
+                "before",
+                "after"
+            ],
+            "description": "When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.",
+            "example": {
+                "name": "Pivot Row Totals",
+                "url": "../javascript-grid-pivoting/#pivotRowTotals"
+            }
+        }
+    },
+    "rowModels": {
+        "meta": {
+            "displayName": "Data and Row Models"
+        },
+        "rowModelType": {
+            "default": "clientSide",
+            "options": [
+                "clientSide",
+                "infinite",
+                "viewport",
+                "serverSide"
+            ],
+            "description": "Sets the <a href='../javascript-grid-row-models/'>Row Model</a> type."
+        },
+        "rowData": {
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Set the data to be displayed as rows in the grid."
+        },
+        "deltaRowDataMode": {
+            "default": false,
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Enables <a href='../javascript-grid-data-update/#delta-row-data'>delta row data mode</a>, for compatibility with immutable stores."
+        },
+        "pinnedTopRowData": {
+            "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/'>Pinned Top Rows</a> in the grid."
+        },
+        "pinnedBottomRowData": {
+            "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/''>Pinned Bottom Rows</a> in the grid."
+        }
+    },
+    "scrolling": {
+        "meta": {
+            "displayName": "Scrolling"
+        },
+        "alwaysShowVerticalScroll": {
+            "default": false,
+            "description": "Set to <code>true</code> to always show the vertical scrollbar."
+        },
+        "suppressHorizontalScroll": {
+            "default": false,
+            "description": "Set to <code>true</code> to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls.",
+            "example": {
+                "name": "Aligned Grid as Footer",
+                "url": "../javascript-grid-aligned-grids/#aligned-grid-as-footer"
+            }
+        },
+        "suppressColumnVirtualisation": {
+            "default": false,
+            "description": "Set to <code>true</code> so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered."
+        },
+        "<span style='text-decoration: line-through'>suppressRowVirtualisation</span>": {
+            "description": "There is no such property as <code>suppressRowVirtualisation</code> - if you want to do this, then set the <code>rowBuffer</code> property to be very large, e.g. <code>9999</code>. <strong>Warning: lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.</strong>"
+        },
+        "suppressMaxRenderedRowRestriction": {
+            "default": false,
+            "description": "By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).<br /><strong>This is only relevant if you are manually setting <code>rowBuffer</code> to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.</strong>"
+        },
+        "suppressScrollOnNewData": {
+            "default": false,
+            "description": "When <code>true</code>, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data."
+        },
+        "suppressAnimationFrame": {
+            "default": false,
+            "description": "When <code>true</code>, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker."
+        }
+    },
+    "pagination": {
+        "meta": {
+            "displayName": "Pagination"
+        },
+        "pagination": {
+            "default": false,
+            "description": "Set whether <a href='../javascript-grid-pagination/'>Pagination</a> is enabled."
+        },
+        "paginationPageSize": {
+            "default": 100,
+            "description": "How many rows to load per page. If <code>paginationAutoPageSize</code> is specified, this property is ignored.",
+            "example": {
+                "name": "Customising Pagination",
+                "url": "../javascript-grid-pagination/#customising-pagination"
+            }
+        },
+        "paginationAutoPageSize": {
+            "default": false,
+            "description": "Set to <code>true</code> so that the number of rows to load per page is automatically adjusted by ag-Grid so each page shows enough rows to just fill the area designated for the grid. If <code>false</code>, <code>paginationPageSize</code> is used.",
+            "example": {
+                "name": "Auto Page Size",
+                "url": "../javascript-grid-pagination/#auto-page-size"
+            }
+        },
+        "suppressPaginationPanel": {
+            "default": false,
+            "description": "If <code>true</code>, the default ag-Grid controls for navigation are hidden. This is useful if <code>pagination=true</code> and you want to provide your own pagination controls. Otherwise, when <code>pagination=true</code> the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.",
+            "example": {
+                "name": "Custom Pagination Controls",
+                "url": "../javascript-grid-pagination/#custom-pagination-controls"
+            }
+        },
+        "paginateChildRows": {
+            "description": "Set to <code>true</code> to have pages split children of groups when using Row Grouping or detail rows with Master Detail.",
+            "example": {
+                "name": "Pagination & Child Rows",
+                "url": "../javascript-grid-pagination/#childRows"
+            }
+        }
+    },
+    "rowBlockLoading": {
+        "meta": {
+            "displayName": "Row Block Loading: Infinite & Enterprise Row Models"
+        },
+        "maxConcurrentDatasourceRequests": {
+            "default": 2,
+            "description": "How many concurrent data requests are allowed."
+        },
+        "maxBlocksInCache": {
+            "description": "How many pages to hold in the cache."
+        },
+        "cacheOverflowSize": {
+            "description": "How many rows to seek ahead when the data size is unknown."
+        },
+        "infiniteInitialRowCount": {
+            "description": "How many rows to initially allow scrolling to in the grid."
+        }
+    },
+    "viewportRowModel": {
+        "meta": {
+            "displayName": "Row Model: Viewport"
+        },
+        "viewportRowModelPageSize": {
+            "description": "When using <code>viewport</code> row model, sets the pages size for the viewport."
+        },
+        "viewportRowModelBufferSize": {
+            "description": "When using <code>viewport</code> row model, sets the buffer size for the viewport."
+        },
+        "viewportDatasource": {
+            "description": "To use the <code>viewport</code> row model you provide the grid with a <code>viewportDatasource</code>.",
+            "example": {
+                "name": "Viewport",
+                "url": "../javascript-grid-viewport/"
+            }
+        }
+    },
+    "fullWidthRenderers": {
+        "meta": {
+            "displayName": "Full Width Renderers"
+        },
+        "groupRowRenderer<br />groupRowRendererFramework<br />groupRowRendererParams": {
+            "description": "Sets the <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a> to use when <code>groupUseEntireRow=true</code>.",
+            "example": {
+                "name": "Row Grouping",
+                "url": "../javascript-grid-grouping/#groupingCallbacks"
+            }
+        },
+        "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
+            "description": "Sets the inner <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a> to use when <code>groupUseEntireRow=true</code>.",
+            "example": {
+                "name": "Row Grouping",
+                "url": "../javascript-grid-grouping/#groupingCallbacks"
+            }
+        },
+        "fullWidthCellRenderer<br />fullWidthCellRendererFramework<br />fullWidthCellRendererParams": {
+            "description": "Sets the <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a> to use for <a href='../javascript-grid-full-width-rows/'>Full Width Rows</a>."
+        }
+    },
+    "masterDetail": {
+        "meta": {
+            "displayName": "Master Detail"
+        },
+        "masterDetail": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable the Master Detail.",
+            "example": {
+                "name": "Master Detail",
+                "url": "../javascript-grid-master-detail"
+            }
+        },
+        "detailCellRendererParams": {
+            "description": "Specifies the params to be used by the default detail <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a>.",
+            "example": {
+                "name": "Master Detail",
+                "url": "../javascript-grid-master-detail"
+            }
+        },
+        "keepDetailRows": {
+            "default": false,
+            "description": "Set to <code>true</code> to keep detail rows for when they are displayed again."
+        },
+        "keepDetailRowsCount": {
+            "default": 10,
+            "description": "Sets the number of details rows to keep."
+        }
+    },
+    "renderingStyling": {
+        "meta": {
+            "displayName": "Rendering and Styling"
+        },
+        "icons": {
+            "description": "<a href='../javascript-grid-icons/'>Icons</a> to use inside the grid instead of the grid's default icons."
+        },
+        "rowHeight": {
+            "default": 25,
+            "description": "Default <a href='../javascript-grid-row-height/'>Row Height</a> in pixels."
+        },
+        "animateRows": {
+            "default": false,
+            "description": "Set to <code>true</code> to enable <a href='../javascript-grid-animation/#row-animations'>Row Animation</a>."
+        },
+        "rowStyle": {
+            "description": "The style to give a particular row.",
+            "example": {
+                "name": "Row Style",
+                "url": "../javascript-grid-row-styles/#row-style"
+            }
+        },
+        "rowClass": {
+            "description": "The class to give a particular row.",
+            "example": {
+                "name": "Row Class",
+                "url": "./javascript-grid-row-styles/#row-class"
+            }
+        },
+        "rowClassRules": {
+            "description": "Rules which can be applied to include certain CSS classes. See <a href='../javascript-grid-row-styles/#row-class-rules'>Row Class Rules</a>."
+        },
+        "excelStyles": {
+            "description": "The list of Excel styles to be used when <a href='../javascript-grid-excel/'>exporting to Excel</a>"
+        },
+        "scrollbarWidth": {
+            "description": "Tell the grid how wide the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations."
+        },
+        "suppressRowHoverHighlight": {
+            "default": false,
+            "description": "Set to <code>true</code> to not highlight rows by adding the <code>ag-row-hover</code> CSS class."
+        }
+    },
+    "localisation": {
+        "meta": {
+            "displayName": "Localisation"
+        },
+        "localeText<br />localeTextFunc": {
+            "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
+            "example": {
+                "name": "Internationalisation",
+                "url": "../javascript-grid-internationalisation/"
+            }
+        }
+    },
+    "overlays": {
+        "meta": {
+            "displayName": "Overlays"
+        },
+        "suppressLoadingOverlay": {
+            "default": false,
+            "description": "Disables the 'loading' <a href='../javascript-grid-overlays/'>overlay</a>."
+        },
+        "suppressNoRowsOverlay": {
+            "default": false,
+            "description": "Disables the 'no rows' <a href='../javascript-grid-overlays/'>overlay</a>."
+        },
+        "overlayLoadingTemplate": {
+            "description": "Provide a template for 'loading' <a href='../javascript-grid-overlays/'>overlay</a>."
+        },
+        "overlayNoRowsTemplate": {
+            "description": "Provide a template for 'no rows' <a href='../javascript-grid-overlays/'>overlay</a>."
+        },
+        "loadingOverlayComponent<br />loadingOverlayComponentFramework ": {
+            "description": "Provide a custom <a href='../javascript-grid-overlay-component/#loading-overlay-interface'>loading overlay component</a>."
+        },
+        "noRowsOverlayComponent<br />noRowsOverlayComponentFramework ": {
+            "description": "Provide a custom <a href='../javascript-grid-overlays/#no-rows-overlay-interface'>no rows overlay  component</a>."
+        }
+    },
+    "charts": {
+        "meta": {
+            "displayName": "Charts"
+        },
+        "enableCharts": {
+            "default": false,
+            "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
+        }
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
+        },
+        "popupParent": {
+            "description": "DOM element to use as <a href='../javascript-grid-context-menu/#popup-parent'>popup parent</a> for grid popups (context menu, column menu etc)."
+        },
+        "valueCache": {
+            "default": false,
+            "description": "Set to <code>true</code> to turn on the <a href='../javascript-grid-value-cache'>value cache</a>."
+        },
+        "valueCacheNeverExpires": {
+            "default": false,
+            "description": "Set to <code>true</code> to set <a href='../javascript-grid-value-cache'>value cache</a> to not expire after data updates."
+        },
+        "defaultExportParams": {
+            "description": "A default configuration object used to export to <a href='../javascript-grid-export/'>CSV</a> or <a href='../javascript-grid-excel/'>Excel</a>."
+        },
+        "suppressMiddleClickScrolls": {
+            "default": false,
+            "description": "If <code>true</code>, then middle clicks will result in <code>click</code> events for cell and row. Otherwise the browser will use middle click to scroll the grid.<br /><strong>Note:</strong> Not all browsers fire <code>click</code> events with the middle button. Most will fire only <code>mousedown</code> and <code>mouseup</code> events, which can be used to focus a cell, but will not work to call the <code>onCellClicked</code> function."
+        },
+        "suppressPreventDefaultOnMouseWheel": {
+            "default": false,
+            "description": "If <code>true</code>, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page."
+        },
+        "enableBrowserTooltips": {
+            "default": false,
+            "description": "Set to <code>true</code> to use the browser's default tooltip instead of using ag-Grid's Tooltip Component."
+        },
+        "tooltipShowDelay": {
+            "description": "The delay in milliseconds that it takes for tooltips to show up once an element is hovered.<br /> <strong>Note:</strong> This property does not work if <code>enableBrowserTooltips</code> is <code>true</code>."
+        },
+        "enableCellExpressions": {
+            "default": false,
+            "description": "Set to <code>true</code> to allow <a href='../javascript-grid-cell-expressions/#cell-expressions'>cell expressions</a>."
+        },
+        "domLayout": {
+            "default": "normal",
+            "options": [
+                "normal",
+                "autoHeight",
+                "print"
+            ],
+            "description": "Switch between layout options. See <a href='../javascript-grid-for-print/'>Printing</a> and <a href='../javascript-grid-width-and-height/#auto-height'>Auto Height</a>."
+        },
+        "ensureDomOrder": {
+            "default": false,
+            "description": "When <code>true</code>, the order of rows and columns in the DOM are consistent with what is on screen.",
+            "example": {
+                "name": "Accessibility - Row and Column Order",
+                "url": "../javascript-grid-accessibility/#dom-order"
+            }
+        },
+        "rowBuffer": {
+            "default": 20,
+            "description": "The number of rows rendered outside the scrollable viewable area the grid renders. Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically."
+        },
+        "alignedGrids": {
+            "description": "A list of grids to treat as <a href='../javascript-grid-aligned-grids/'>Aligned Grids</a>. If grids are aligned then the columns and horizontal scrolling will be kept in sync."
+        },
+        "suppressParentsInRowNodes": {
+            "default": false,
+            "description": "If <code>true</code>, rowNodes don't get their parents set. The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree. If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to <code>true</code>."
+        },
+        "suppressDragLeaveHidesColumns": {
+            "default": false,
+            "description": "If <code>true</code>, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden."
+        },
+        "suppressCopyRowsToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to only have the range selection, and not row selection, copied to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "copyHeadersToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to also include headers when copying to clipboard using <code>Ctrl + C</code> <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "clipboardDeliminator": {
+            "description": "Specify the deliminator to use when copying to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "suppressFocusAfterRefresh": {
+            "default": false,
+            "description": "Set to <code>true</code> to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
+        },
+        "layoutInterval": {
+            "default": 500,
+            "description": "The interval in milliseconds that the grid uses to periodically check its size and lay itself out again if the size has changed, such as when your browser changes size, or your application changes the size of the <code>div</code> element that the grid lives inside. To stop the periodic layout, set it to <code>-1</code>."
+        },
+        "enableRtl": {
+            "default": false,
+            "description": "Set to <code>true</code> to operate grid in <a href='../javascript-grid-rtl/'>RTL (Right to Left)</a> mode."
+        },
+        "enableCellTextSelection": {
+            "default": false,
+            "description": "Set to <code>true</code> to be able to select the text within cells.<br /><strong>Note:</strong> When this is set to <code>true</code>, the clipboard service is disabled."
+        },
+        "debug": {
+            "default": false,
+            "description": "Set this to <code>true</code> to enable debug information from ag-Grid and related components. Will result in additional logging being output, but very useful when investigating problems."
+        },
+        "context": {
+            "description": "Provides a <a href='../javascript-grid-context/'>context</a> object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application."
+        },
+        "suppressContextMenu": {
+            "default": false,
+            "description": "Set to true to not show <a href='../javascript-grid-context-menu'>context menu</a>. Use if you don't want to use the default 'right click' context menu."
+        },
+        "preventDefaultOnContextMenu": {
+            "default": false,
+            "description": "When using <code>suppressContextMenu</code>, you can use the <code>onCellContextMenu</code> function to provide your own code to handle cell <code>contextmenu</code> events. This flag is useful to prevent the browser from showing its default context menu."
+        },
+        "allowContextMenuWithControlKey": {
+            "description": "Allows <a href='../javascript-grid-context-menu'>context menu</a> to show, even when <code>Ctrl</code> key is held down."
+        },
+        "statusBar": {
+            "description": "Specifies the <a href='../javascript-grid-status-bar'>status bar</a> components to use in the status bar."
+        },
+        "suppressTouch": {
+            "default": false,
+            "description": "Disables <a href='../javascript-grid-touch'>touch support</a> (but does not remove the browser's efforts to simulate mouse events on touch)."
+        },
+        "suppressAsyncEvents": {
+            "default": false,
+            "description": "Disables the async nature of the events introduced in v10, and makes them synchronous. This property is only introduced for the purpose of supporting legacy code which has a dependency to sync events in earlier versions (v9 or earlier) of ag-Grid. <strong>It is strongly recommended that you don't change this property unless you have legacy issues.</strong>"
+        },
+        "suppressCsvExport": {
+            "default": false,
+            "description": "Prevents the user from exporting the grid to CSV."
+        },
+        "suppressExcelExport": {
+            "default": false,
+            "description": "Prevents the user from exporting the grid to Excel."
+        },
+        "batchUpdateWaitMillis": {
+            "description": "How many milliseconds to wait before executing a <a href='../javascript-grid-data-update/#batch-transactions'>batch of update transactions</a>."
+        },
+        "suppressPropertyNamesCheck": {
+            "default": false,
+            "description": "Disables showing a warning message in the console if using a <code>gridOptions</code> or <code>colDef</code> property that doesn't exist."
+        },
+        "suppressRowTransform": {
+            "default": false,
+            "description": "Uses CSS <code>top</code> instead of CSS <code>transform</code> for positioning rows. Useful if the transform function is causing issues such as used in <a href='../javascript-grid-row-spanning/'>row spanning</a>."
+        },
+        "serverSideSortingAlwaysResets": {
+            "default": false,
+            "description": "When <code>true</code>, a full reset will be performed when sorting using the <a href='../javascript-grid-server-side-model/'>Server-side Row Model</a>."
+        },
+        "suppressBrowserResizeObserver": {
+            "default": false,
+            "description": "The grid will check for <code>ResizeObserver</code> and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's <code>ResizeObserver</code>. Use this property to always use the grid's alternative implementation should such problems exist."
+        }
+    }
+}

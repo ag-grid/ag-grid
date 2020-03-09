@@ -563,10 +563,7 @@ var masterGridOptions = {
     to be reused the next time the row is shows. The properties are as follows:
 </p>
 
-<table class="table reference">
-    <?php include './masterDetailProperties.php' ?>
-    <?php printPropertiesRows($masterDetailProperties) ?>
-</table>
+<?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'masterDetail', ['keepDetailRows', 'keepDetailRowsCount']) ?>
 
 <p>
     The example below demonstrates keeping detail rows. Note the following:
