@@ -12,9 +12,17 @@
 
 // Define a derived parameter. Derived values are lazily evaluated. This function is
 // sugar for defining a data structure to record the derived value's parameters.
-@function ag-derived($reference-name,
-                     $times: null, $divide: null, $plus: null, $minus: null, $opacity: null,
-                     $lighten: null, $darken: null, $mix: null) {
+@function ag-derived(
+    $reference-name,
+    $times: null,
+    $divide: null,
+    $plus: null,
+    $minus: null,
+    $opacity: null,
+    $lighten: null,
+    $darken: null, 
+    $mix: null
+) {
     $derived: (
         "--ag-is-derived-value": true,
         "reference-name": $reference-name

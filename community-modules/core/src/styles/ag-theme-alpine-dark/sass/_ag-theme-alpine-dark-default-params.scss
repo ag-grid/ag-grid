@@ -10,6 +10,7 @@ $ag-theme-alpine-dark-default-params: (
     odd-row-background-color: #222628,
     control-panel-background-color: #222628,
     subheader-background-color: #000,
+    input-focus-box-shadow: 0 0 2px 0.1rem ag-derived(input-focus-border-color, null, null, null, null, 0.6),
 );
 
 $ag-theme-alpine-dark-default-params: map-merge($ag-theme-alpine-default-params, $ag-theme-alpine-dark-default-params);
