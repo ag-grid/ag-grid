@@ -1,13 +1,11 @@
-var columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "year", rowGroup: true, hide: true },
-    { field: "gold", aggFunc: 'sum' },
-    { field: "silver", aggFunc: 'sum' },
-    { field: "bronze", aggFunc: 'sum' }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "country", rowGroup: true, hide: true },
+        { field: "year", rowGroup: true, hide: true },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 150,
@@ -18,6 +16,7 @@ var gridOptions = {
         flex: 1,
         minWidth: 280,
     },
+
     // use the server-side row model
     rowModelType: 'serverSide',
 

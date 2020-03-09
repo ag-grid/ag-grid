@@ -431,10 +431,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         let shouldPurgeCache: boolean;
         if (grouping) {
             const groupColVo = this.cacheParams.rowGroupCols[level];
-            const groupField = groupColVo.field;
-
-            const rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
-            const sortingByGroup = changedColumnsInSort.indexOf(groupField) > -1;
+            const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
+            const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
 
             shouldPurgeCache = rowGroupBlock && sortingByGroup;
         } else {

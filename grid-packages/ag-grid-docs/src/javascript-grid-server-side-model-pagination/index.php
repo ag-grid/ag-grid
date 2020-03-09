@@ -141,7 +141,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Pagination Example', 'pagination-with-groups', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Pagination with Groups', 'pagination-with-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 555, "extras" => array('alasql'))) ?>
 
 <h2>Pagination with Child Rows</h2>
 
@@ -180,7 +180,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', array("enterprise" => 1, "exampleHeight" => 555, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 

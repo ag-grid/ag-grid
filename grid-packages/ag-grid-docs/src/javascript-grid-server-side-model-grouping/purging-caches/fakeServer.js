@@ -42,10 +42,10 @@ function FakeServer(allData) {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             var colsToSelect = [];
             var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToSelect.push(rowGroupCol.field);
+            colsToSelect.push(rowGroupCol.id);
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.field + ') AS ' + valueCol.field);
+                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
             return ' SELECT ' + colsToSelect.join(', ');
@@ -77,7 +77,7 @@ function FakeServer(allData) {
             var colsToGroupBy = [];
 
             var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToGroupBy.push(rowGroupCol.field);
+            colsToGroupBy.push(rowGroupCol.id);
 
             return ' GROUP BY ' + colsToGroupBy.join(', ');
         }

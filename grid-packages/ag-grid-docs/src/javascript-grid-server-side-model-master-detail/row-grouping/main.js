@@ -1,13 +1,11 @@
-var columnDefs = [
-    {field: 'country', rowGroup: true, hide: true},
-    {field: 'accountId', hide: true},
-    {field: 'name'},
-    {field: 'calls'},
-    {field: 'totalDuration'}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        {field: 'country', rowGroup: true, hide: true},
+        {field: 'accountId', hide: true},
+        {field: 'name'},
+        {field: 'calls'},
+        {field: 'totalDuration'}
+    ],
     defaultColDef: {
         flex: 1
     },

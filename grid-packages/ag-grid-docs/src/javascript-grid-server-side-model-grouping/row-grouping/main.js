@@ -1,6 +1,12 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, hide: true },
+        {
+            // demonstrating the use of valueGetters
+            colId: 'country',
+            valueGetter: 'data.country',
+            rowGroup: true,
+            hide: true,
+        },
         { field: "sport", rowGroup: true, hide: true },
         { field: "year", minWidth: 100},
         { field: "gold", aggFunc: 'sum' },
