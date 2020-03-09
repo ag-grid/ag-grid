@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageTitle = "Server-side Row Model - Row Grouping";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeywords = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Row Grouping </h1>
+<h1 class="heading-enterprise"> Server-side Row Grouping </h1>
 
 <p class="lead">
     This section covers Server-side Row Grouping.
@@ -20,11 +20,15 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-gridOptions.columnDefs = [
-    { field: "country", rowGroup: true },
-    { field: "sport" },
-    { field: "year" },
-]
+gridOptions: {
+    columnDefs: [
+        { field: "country", rowGroup: true },
+        { field: "sport" },
+        { field: "year" },
+    ],
+
+    // other options
+}
 </snippet>
 
 <p>
@@ -45,8 +49,8 @@ gridOptions.columnDefs = [
 </p>
 
 <snippet>
-IServerSideGetRowsRequest {
-
+// IServerSideGetRowsRequest
+{
     // row group columns
     rowGroupCols: ColumnVO[];
 
@@ -120,11 +124,15 @@ IServerSideGetRowsRequest {
 </p>
 
 <snippet>
-gridOptions.getChildCount = function(data) {
-    // in this example, the data has the child count
-    // stored in the attribute 'childCount'.
-    return data.childCount;
-};
+
+gridOptions: {
+    getChildCount = function(data) {
+        // here child count is stored in the 'childCount' property
+        return data.childCount;
+    },
+
+    // other options
+}
 </snippet>
 
 
@@ -251,7 +259,8 @@ function getRows(params) {
 </p>
 
 <snippet>
-row = {
+// sample contents of row data
+{
     // country field is complex object
     country: {
         name: 'Ireland',
@@ -266,7 +275,8 @@ row = {
 
     // other fields as normal
     ...
-};</snippet>
+}
+</snippet>
 
 <p>
     Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field

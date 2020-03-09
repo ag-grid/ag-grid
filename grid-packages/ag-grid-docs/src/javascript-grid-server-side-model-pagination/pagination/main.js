@@ -1,39 +1,57 @@
-var columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "athlete" },
-    { field: "gold", aggFunc: 'sum' },
-    { field: "silver", aggFunc: 'sum' },
-    { field: "bronze", aggFunc: 'sum' }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'id', maxWidth: 75 },
+        { field: 'athlete', minWidth: 175 },
+        { field: 'age' },
+        { field: 'year' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' }
+    ],
+
     defaultColDef: {
         flex: 1,
-        minWidth: 140,
-        resizable: true,
-        sortable: true
+        minWidth: 100,
+        resizable: true
     },
-    autoGroupColumnDef: {
-        flex: 1,
-        minWidth: 180,
-    },
+
     // use the server-side row model
     rowModelType: 'serverSide',
-
-    // fetch 10 rows per at a time (default is 100)
-    cacheBlockSize: 10,
 
     // enable pagination
     pagination: true,
 
-    // fit rows to height of page
-    paginationAutoPageSize: true,
+    // 10 rows per page (default is 100)
+    paginationPageSize: 10,
+
+    // fetch 10 rows per block as page size is 10 (default is 100)
+    cacheBlockSize: 10,
 
     animateRows: true,
-    suppressAggFuncInHeader: true,
-    // debug: true,
 };
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
+
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+        // add id to data
+        var idSequence = 1;
+        data.forEach( function(item) {
+          item.id = idSequence++;
+        });
+
+        // setup the fake server with entire dataset
+        var fakeServer = new FakeServer(data);
+
+        // create datasource with a reference to the fake server
+        var datasource = new ServerSideDatasource(fakeServer);
+
+        // register the datasource with the grid
+        gridOptions.api.setServerSideDatasource(datasource);
+    });
+});
 
 function ServerSideDatasource(server) {
     return {
@@ -55,21 +73,3 @@ function ServerSideDatasource(server) {
         }
     };
 }
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
-        // setup the fake server with entire dataset
-        var fakeServer = new FakeServer(data.slice(0,25));
-
-        // create datasource with a reference to the fake server
-        var datasource = new ServerSideDatasource(fakeServer);
-
-        // register the datasource with the grid
-        gridOptions.api.setServerSideDatasource(datasource);
-    });
-});
-

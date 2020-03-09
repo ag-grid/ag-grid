@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageTitle = "Server-side Row Model - Datasource";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeywords = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
@@ -162,26 +162,32 @@ interface IServerSideGetRowsParams {
 
 <snippet>
 interface IServerSideGetRowsRequest {
-    // row group columns
-    rowGroupCols: ColumnVO[];
+    // first row requested
+   startRow: number;
 
-    // value columns
-    valueCols: ColumnVO[];
+   // last row requested
+   endRow: number;
 
-    // pivot columns
-    pivotCols: ColumnVO[];
+   // row group columns
+   rowGroupCols: ColumnVO[];
 
-    // true if pivot mode is one, otherwise false
-    pivotMode: boolean;
+   // value columns
+   valueCols: ColumnVO[];
 
-    // what groups the user is viewing
-    groupKeys: string[];
+   // pivot columns
+   pivotCols: ColumnVO[];
 
-    // if filtering, what the filter model is
-    filterModel: any;
+   // true if pivot mode is one, otherwise false
+   pivotMode: boolean;
 
-    // if sorting, what the sort model is
-    sortModel: any;
+   // what groups the user is viewing
+   groupKeys: string[];
+
+   // if filtering, what the filter model is
+   filterModel: any;
+
+   // if sorting, what the sort model is
+   sortModel: any;
 }
 
 // we pass a VO (Value Object) of the column and not the column itself,

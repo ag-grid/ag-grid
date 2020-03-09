@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageTitle = "Server-side Row Model - Filtering";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeywords = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
@@ -21,16 +21,20 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-columnDefs: [
-    // sets the 'number' filter
-    {field: "country", filter: "agNumberColumnFilter"},
+gridOptions: {
+    columnDefs: [
+        // sets the 'number' filter
+        {field: "country", filter: "agNumberColumnFilter"},
 
-    // use the default 'set' filter
-    {field: "year", filter: true},
+        // use the default 'set' filter
+        {field: "year", filter: true},
 
-    // no filter (unspecified)
-    {field: "sport"}
-]
+        // no filter (unspecified)
+        {field: "sport"}
+    ],
+
+    // other options
+}
 </snippet>
 
 <p>
@@ -51,6 +55,7 @@ columnDefs: [
 </p>
 
 <snippet>
+// IServerSideGetRowsRequest
 {
     filterModel: {
         athlete: {
@@ -64,7 +69,9 @@ columnDefs: [
             filter: 2005,
             filterTo: null
         }
-    }
+    },
+
+    // other properties
 }
 </snippet>
 
@@ -115,13 +122,16 @@ columnDefs: [
 </p>
 
 <snippet>
+// IServerSideGetRowsRequest
 {
     filterModel: {
         country: {
             filterType: "set",
             values: ["Australia", "Belgium"]
         }
-    }
+    },
+
+    // other properties
 }
 </snippet>
 

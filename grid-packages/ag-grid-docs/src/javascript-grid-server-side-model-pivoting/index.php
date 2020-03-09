@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageTitle = "Server-side Row Model - Pivoting";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeywords = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Pivoting </h1>
+<h1 class="heading-enterprise"> Server-side Pivoting </h1>
 
 <p class="lead">
     In this section we add Server-side Pivoting to create an example with the ability to 'Slice and Dice' data using
@@ -23,14 +23,18 @@ include '../documentation-main/documentation_header.php';
 <p> In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:</p>
 
 <snippet>
-gridOptions.columnDefs = [
-    { field: "country", rowGroup: true },
-    { field: "year", pivot: true },
-    { field: "total" },
-];
+gridOptions: {
+    // pivot mode enabled
+    pivotMode: true,
 
-// pivoting will only take effect when pivot mode is enabled
-gridOptions.pivotMode = true;
+    columnDefs: [
+        { field: "country", rowGroup: true },
+        { field: "year", pivot: true }, // pivot enabled
+        { field: "total" }
+    ],
+
+    // other options
+}
 </snippet>
 
 <p>
@@ -51,15 +55,15 @@ gridOptions.pivotMode = true;
 </p>
 
 <snippet>
-IServerSideGetRowsRequest {
-
+// IServerSideGetRowsRequest
+{
    // pivot columns, cols with 'pivot=true'
    pivotCols: ColumnVO[];
 
     // true if pivot mode is one, otherwise false
    pivotMode: boolean;
 
-   ... // other params
+   ... // other properties
 }
 </snippet>
 
@@ -71,21 +75,36 @@ IServerSideGetRowsRequest {
 <h2>Setting Secondary Columns</h2>
 
 <p>
-    New columns are essentially created from the data contained in the rows when pivoting which means new
-    <a href="../javascript-grid-column-definitions/#column-definitions">Column Definitions</a> need to be supplied to the
-    grid. This is done through the following column api method:
+    Secondary columns are the columns that are created as part of the pivot function. You must provide
+    these to the grid in order for the grid to display the correct columns for the active pivot function.
+</p>
+
+<p>
+    For example, if you pivot on <code>Year</code>, you need to columns to the grid for each year contained in the
+    data, e.g. <code>2000, 2002, 2004 etc...</code>
+</p>
+
+<p>
+    Secondary columns are defined identically to primary columns, you provide a list of
+    <a href="../javascript-grid-column-definitions/">Column Definitions</a> passing a list of columns and / or column
+    groups using the following column api method:
 </p>
 
 <snippet>
-    // supply pivot column definitions to the grid
-    columnApi.setSecondaryColumns(pivotColDefs);
+columnApi.setSecondaryColumns(pivotColDefs);
 </snippet>
 
 <p>
-    Note from the snippet above that the <code>pivotColDefs</code> supplied can also be
-    <a href="../javascript-grid-grouping-headers/">Column Group Definitions</a>. This allows for any number of pivot
-    and value columns.
+    There is no limit or restriction as to the number of columns or groups you pass. However it's important that the
+    field (or value getter) that you set for the columns match.
 </p>
+
+<note>
+    Setting secondary columns will reset all secondary column state which means resized or reordered columns will be
+    reset. To avoid this applications should keep track of the previously supplied secondary columns and only update the
+    secondary columns in the grid if they have changed.
+</note>
+
 
 <h2>Example - Simple Pivot </h2>
 
@@ -121,7 +140,7 @@ IServerSideGetRowsRequest {
 
 <?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Example - Pivoting with Column Groups </h2>
+<h2>Example - Pivot Column Groups </h2>
 
 <p>
     The example below demonstrates server-side Pivoting with multiple row groups when there multiple value columns ('gold', 'silver', 'bronze')
@@ -155,9 +174,9 @@ IServerSideGetRowsRequest {
     </li>
 </ul>
 
-<?= grid_example('Pivoting with Column Groups', 'pivoting-with-column-groups', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
 
-<h2>Example - Slice and Dice - Mocked Server</h2>
+<h2>Example - Slice and Dice</h2>
 <p>
     A mock data store running inside the browser is used in the example below. The purpose of the mock server is to
     demonstrate the interaction between the grid and the server. For your application, your server will need to
@@ -203,65 +222,6 @@ IServerSideGetRowsRequest {
 </ul>
 
 <?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
-
-<h2>Pivoting Challenges</h2>
-
-<p>
-    Achieving pivot on the server-side is difficult. If you manage to implement it, you deserve lots of credit from
-    your team and possibly a few hugs (disclaimer, we are not responsible for any inappropriate hugs you try). Here
-    are some quick references on how you can achieve pivot in different relational databases:
-    All databases will either implement pivot (like Oracle) or require you to fake it (like MySQL).
-</p>
-    <ul class="content">
-        <li>Oracle: Oracle has native support for filtering which they call
-            <a href="http://www.oracle.com/technetwork/articles/sql/11g-pivot-097235.html">pivot feature</a>.
-        </li>
-        <li>
-            MySQL: MySQL does not support pivot, however it is possible to achieve by building SQL using
-            inner select statements. See the following on Stack Overflow:
-            <a href="https://stackoverflow.com/questions/7674786/mysql-pivot-table">MySQL Pivot Table</a> and
-            <a href="https://stackoverflow.com/questions/12598120/mysql-pivot-table-query-with-dynamic-columns">
-                MySQL Pivot Table Query with Dynamic Columns
-            </a>.
-        </li>
-    </ul>
-
-<p>
-    To understand <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and
-    <a href="../javascript-grid-pivoting/#secondary-columns">Secondary Columns</a> please refer to
-    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in Client-side Row Model</a>.
-    The concepts mean the same in both Client-side Row Model and the Server-side Row Model.
-</p>
-
-<p>
-    Secondary columns are the columns that are created as part of the pivot function. You must provide
-    these to the grid in order for the grid to display the correct columns for the active pivot function.
-    For example, if you pivot on <code>Year</code>, you need to tell the grid to create columns for
-    <code>2000, 2002, 2004, 2006, 2008, 2010</code> and <code>2012</code>.
-</p>
-
-<p>
-    Secondary columns are defined identically to primary columns, you provide a list of
-    <a href="../javascript-grid-column-definitions/">Column Definitions</a> to the grid. The columns are set
-    by calling <code>columnApi.setSecondaryColumns()</code> and passing a list of columns and / or column
-    groups. There is no limit or restriction as to the number of columns or groups you pass - the only
-    thing you should ensure is that the field (or value getter) that you set for the columns matches.
-</p>
-
-<p>
-    If you do pass in secondary columns with the server response, be aware that setting secondary columns
-    will reset all secondary column state. For example if resize or reorder the columns, then setting the
-    secondary columns again will reset this. In the example above, a hash function is applied to the secondary
-    columns to check if they are the same as the last time the server was asked to process a request. This
-    is the examples way to make sure the secondary columns are only set into the grid when they have actually
-    changed.
-</p>
-
-<p>
-    If you do not want pivot in your Server-side Row Model grid, then you can remove it from the tool
-    panel by setting <code>toolPanelSuppressPivotMode=true</code> and
-    <code>toolPanelSuppressValues=true</code>.
-</p>
 
 <h2>Next Up</h2>
 

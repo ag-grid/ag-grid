@@ -7,9 +7,9 @@ import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
 export interface IServerSideGetRowsRequest {
-    // columns that are currently row grouped
+    // first row requested
     startRow: number;
-    // columns that are currently row grouped
+    // last row requested
     endRow: number;
     // columns that are currently row grouped
     rowGroupCols: ColumnVO[];

@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "ag-Grid Row Models: The Server-side Row Model";
+$pageTitle = "Server-side Row Model - CRUD Operations";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeywords = "ag-Grid Server-side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> CRUD Operations </h1>
+<h1 class="heading-enterprise"> Server-side CRUD Operations </h1>
 
 <p class="lead">
     Learn how to perform CRUD operations using the Server-side Row Model.

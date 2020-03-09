@@ -12,6 +12,11 @@ function FakeServer(allData) {
                 rows: results,
                 lastRow: getLastRowIndex(request, results)
             };
+        },
+        getCountries: function() {
+            var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country asc';
+            var result = alasql(SQL, [allData]);
+            return result.map(Object.values);
         }
     };
 
@@ -24,62 +29,33 @@ function FakeServer(allData) {
     }
 
     function buildSql(request) {
-        var select= selectSql(request);
-        var from = ' FROM ?';
+        var select = 'SELECT * ';
+        var from = 'FROM ? ';
         var where = whereSql(request);
-        var groupBy = createGroupBySql(request);
         var orderBy = orderBySql(request);
         var limit = limitSql(request);
 
-        return select + from + where + groupBy + orderBy + limit;
-    }
-
-    function selectSql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var valueCols = request.valueCols;
-        var groupKeys = request.groupKeys;
-
-        if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var colsToSelect = [];
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToSelect.push(rowGroupCol.field);
-
-            valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.field + ') AS ' + valueCol.field);
-            });
-
-            return ' SELECT ' + colsToSelect.join(', ');
-        }
-
-        return ' SELECT *';
+        return select + from + where + orderBy + limit;
     }
 
     function whereSql(request) {
-        var rowGroups = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
+        var whereParts = [];
 
-        var whereClause = '';
-        if (groupKeys) {
-            for (var i = 0; i < groupKeys.length; i++) {
-                whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                var value = typeof groupKeys[i] === 'string' ? ' = "' + groupKeys[i] + '"' : ' = ' + groupKeys[i];
-                whereClause += rowGroups[i].id + value;
-            }
+        var filterModel = request.filterModel;
+        if (filterModel) {
+            var columnKeys = Object.keys(filterModel);
+            whereParts = columnKeys.map(function (columnKey) {
+                var filter = filterModel[columnKey];
+                if (filter.filterType === 'set') {
+                    return columnKey + ' IN (\'' + filter.values.join("', '") + '\')';
+                }
+                console.log('unsupported filter type: ' + filter.filterType);
+                return '';
+            });
         }
-        return whereClause;
-    }
 
-    function createGroupBySql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-
-        if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var colsToGroupBy = [];
-
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToGroupBy.push(rowGroupCol.field);
-
-            return ' GROUP BY ' + colsToGroupBy.join(', ');
+        if (whereParts.length > 0) {
+            return ' WHERE ' + whereParts.join(' AND ') + ' ';
         }
 
         return '';
@@ -93,7 +69,7 @@ function FakeServer(allData) {
             return s.colId + ' ' + s.sort;
         });
 
-        return ' ORDER BY ' + sorts.join(', ') + ' ';
+        return 'ORDER BY ' + sorts.join(', ') + ' ';
     }
 
     function limitSql(request) {
@@ -101,14 +77,32 @@ function FakeServer(allData) {
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
-    function isDoingGrouping(rowGroupCols, groupKeys) {
-        // we are not doing grouping if at the lowest level
-        return rowGroupCols.length > groupKeys.length;
-    }
-
     function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) return null;
+        if (!results || results.length === 0) {
+            return request.startRow;
+        }
         var currentLastRow = request.startRow + results.length;
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
+}
+
+function ServerSideDatasource(server) {
+    return {
+        getRows: function(params) {
+            console.log('[Datasource] - rows requested by grid: ', params.request);
+
+            // get data for request from our fake server
+            var response = server.getData(params.request);
+
+            // simulating real server call with a 500ms delay
+            setTimeout(function () {
+                if (response.success) {
+                    // supply rows for requested block to grid
+                    params.successCallback(response.rows, response.lastRow);
+                } else {
+                    params.failCallback();
+                }
+            }, 500);
+        }
+    };
 }
