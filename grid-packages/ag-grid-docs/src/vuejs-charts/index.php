@@ -40,7 +40,8 @@ include '../documentation-main/documentation_header.php';
 <?= createSnippet(<<<SNIPPET
 npm install -g @vue/cli
 vue create my-project
-SNIPPET, 'sh') ?>
+SNIPPET
+, 'sh') ?>
 
 <p>When prompted choose "default (babel, eslint)":</p>
 
@@ -51,7 +52,8 @@ SNIPPET, 'sh') ?>
 <?= createSnippet(<<<SNIPPET
 cd my-project
 npm run serve
-SNIPPET, 'sh') ?>
+SNIPPET
+, 'sh') ?>
 
 <p>
     If everything goes well, <code>npm run serve</code> has started the web server. You can open the default app at
@@ -79,7 +81,8 @@ SNIPPET, 'sh') ?>
 <template>
     <ag-charts-vue :options="options"></ag-charts-vue>
 </template>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
 
 <p>Next, let's declare the basic charts configuration. Edit <code>src/App.vue</code>:</p>
 
@@ -132,7 +135,8 @@ export default {
     }
 };
 </script>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -187,7 +191,8 @@ beforeMount() {
 +       }
     };
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
 
@@ -222,7 +227,8 @@ data = [
         Q4: 200
     },
 ];
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     This time, let's choose another series type to plot the data: stacked columns.
@@ -240,7 +246,8 @@ beforeMount() {
         }]
     };
 }
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -269,7 +276,8 @@ beforeMount() {
         }]
     };
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0; width: 100%">
 
@@ -295,7 +303,8 @@ beforeMount() {
         }]
     };
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0; width: 100%">
 

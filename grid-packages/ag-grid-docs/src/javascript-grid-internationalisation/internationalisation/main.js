@@ -185,6 +185,7 @@ var gridOptions = {
         data: 'laData',
         format: 'laFormat',
         categories: 'laCategories',
+        defaultCategory: '(laNone)',
         series: 'laSeries',
         xyValues: 'laX Y Values',
         paired: 'laPaired Mode',

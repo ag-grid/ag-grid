@@ -74,7 +74,8 @@ class ChartExample extends Component {
 }
 
 render(<ChartExample />, document.querySelector('#root'));
-SNIPPET, 'jsx') ?>
+SNIPPET
+, 'jsx') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 

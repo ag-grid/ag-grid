@@ -53,7 +53,8 @@ var data = [
         Q4: 200
     }
 ];
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>To render it we can use this simple chart factory configuration:</p>
 
@@ -66,7 +67,8 @@ AgChart.create({
         yKey: 'spending'
     }]
 });
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Here we pass in the <code>data</code> we want to render, the <code>container</code> element for the chart
@@ -121,7 +123,8 @@ AgChart.create({
 +       position: 'bottom'
 +   }
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
 
@@ -157,7 +160,8 @@ var data = [
         Q4: 200
     },
 ];
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     This time, let's choose another series type to plot the data: stacked columns.
@@ -174,7 +178,8 @@ AgChart.create({
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
     }]
 });
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -205,7 +210,8 @@ AgChart.create({
 +       label: {}
     }]
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0px; width: 100%">
 
@@ -228,7 +234,8 @@ AgChart.create({
         label: {}
     }]
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0px; width: 100%">
 

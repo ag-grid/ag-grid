@@ -24,7 +24,8 @@ marker: {
     fill: 'red',
     stroke: 'maroon'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Please see the <a href="#api-reference">API reference</a> for the list of all available options.
@@ -67,7 +68,8 @@ export class Heart extends Marker {
         path.closePath();
     }
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Inside the marker object, you have access to the <code>size</code> of the marker,
@@ -93,7 +95,8 @@ marker: {
     shape: Heart,
     size: 16
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     The final result is shown in the example below.

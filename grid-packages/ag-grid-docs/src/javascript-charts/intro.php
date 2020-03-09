@@ -64,7 +64,8 @@ var options = {
 };
 
 agCharts.AgChart.create(options);
-SNIPPET) ?>
+SNIPPET
+) ?>
 </div>
 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
@@ -81,7 +82,8 @@ SNIPPET) ?>
         <script src="main.js"></script>
     </body>
 </html>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

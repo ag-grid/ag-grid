@@ -42,7 +42,8 @@ series: [{
     xKey: 'quarter',
     yKeys: ['iphone']
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     In the snippet above we are using the <code>'iphone'</code> as the only <code>yKey</code>,
@@ -132,7 +133,8 @@ label: {
         return params.value === undefined ? '' : params.value.toFixed(0);
     }
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     The above formatter produces an attractive chart where the labels
@@ -179,7 +181,8 @@ axes: [
         position: 'left'
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     With these simple changes we go from <a href="#stacked-columns">stacked columns</a>
