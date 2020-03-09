@@ -23,7 +23,8 @@ include '../documentation-main/documentation_header.php';
 legend: {
     position: 'right' // 'bottom', 'left', 'top'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     A legend is shown by default but can be hidden using the <code>enabled</code> config:
@@ -90,7 +91,8 @@ legend: {
 legend: {
     layoutHorizontalSpacing: 16
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     <code>layoutVerticalSpacing</code> controls the amount of spacing between adjacent vertical legend items:
@@ -100,7 +102,8 @@ SNIPPET) ?>
 legend: {
     layoutVerticalSpacing: 8
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     And the <code>itemSpacing</code> config is responsible for the amount of spacing within a legend item, between the marker
@@ -111,7 +114,8 @@ SNIPPET) ?>
 legend: {
     itemSpacing: 8
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h3>Example: Legend Constraints</h3>
 
@@ -132,7 +136,8 @@ legend: {
     fontFamily: 'Papyrus',
     color: 'red'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h2>Markers</h2>
 
@@ -148,7 +153,8 @@ legend: {
     markerSize: 20,
     strokeWidth: 3
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h3>Shape</h3>
 
@@ -168,7 +174,8 @@ SNIPPET) ?>
 legend: {
     markerShape: 'circle' // 'square', 'diamond', 'cross', 'plus', 'triangle'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h2>API Reference</h2>
 

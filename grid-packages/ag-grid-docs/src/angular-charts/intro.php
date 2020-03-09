@@ -28,7 +28,8 @@ import { AppComponent } from './app.component';
 })
 export class AppModule {
 }
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
@@ -37,7 +38,8 @@ SNIPPET, 'ts') ?>
     style="height: 100%"
     [options]="options">
 </ag-charts-angular>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

@@ -53,7 +53,8 @@ var data = [
         Q4: 200
     }
 ];
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>We can create the chart pictured above using the following chart factory config:</p>
 
@@ -83,7 +84,8 @@ AgChart.create({
         spacing: 40
     }
 });
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <?= chart_example('Basic Column Chart', 'basic-column', 'generated') ?>
 

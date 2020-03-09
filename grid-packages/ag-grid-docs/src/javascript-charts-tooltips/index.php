@@ -19,7 +19,8 @@ include '../documentation-main/documentation_header.php';
     <div class="ag-chart-tooltip-title"></div>
     <div class="ag-chart-tooltip-content"></div>
 </div>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
 
 <p>
     The title element may or may not exist but the content element is always present.
@@ -57,7 +58,8 @@ data: [
     },
     ...
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Notice that when we set the <code>yNames</code> of the <code>'column'</code> series:
@@ -102,7 +104,8 @@ SNIPPET) ?>
 .my-tooltip .ag-chart-tooltip-content {
     background-color: gold;
 }
-SNIPPET, 'css') ?>
+SNIPPET
+, 'css') ?>
 
 <p>
     This limits the styling changes to this chart instance alone (or instances that use the same
@@ -148,7 +151,8 @@ series: [{
         '</div>';
     }
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     The tooltip renderer function receives the <code>params</code> object as a single parameter.

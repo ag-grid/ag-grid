@@ -71,7 +71,8 @@ const ChartExample = {
         };
     }
 };
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <?= createSnippet(<<<SNIPPET
@@ -82,7 +83,8 @@ new Vue({
   el: '#root',
   render: h => h(App)
 });
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

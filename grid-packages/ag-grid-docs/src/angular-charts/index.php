@@ -44,7 +44,8 @@ npm install -g @angular/cli
 ng new my-app --routing false
 cd my-app
 ng serve
-SNIPPET, 'sh') ?>
+SNIPPET
+, 'sh') ?>
 
 <p>
     If everything goes well, <code>ng serve</code> has started the web server. You can open your app at
@@ -59,7 +60,8 @@ SNIPPET, 'sh') ?>
 <?= createSnippet(<<<SNIPPET
 npm install --save ag-charts-community ag-charts-angular
 npm install # in certain circumstances npm will perform an "auto prune". This step ensures all expected dependencies are present
-SNIPPET, 'sh') ?>
+SNIPPET
+, 'sh') ?>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add
@@ -82,7 +84,8 @@ import { AppComponent } from './app.component';
 })
 export class AppModule {
 }
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>Next, let's declare the basic chart configuration. Edit <code>src/app.component.ts</code>:</p>
 
@@ -131,7 +134,8 @@ export class AppComponent {
         };
     }
 }
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -154,7 +158,8 @@ SNIPPET, 'ts') ?>
     style="height: 100%"
     [options]="options">
 </ag-charts-angular>
-SNIPPET, 'html') ?>
+SNIPPET
+, 'html') ?>
 
 <p>
     The <code>series</code> property is an array because it is possible to supply multiple series (including mixed
@@ -199,7 +204,8 @@ constructor() {
 +       }
     };
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
 
@@ -253,7 +259,8 @@ constructor() {
         }]
     };
 });
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -282,7 +289,8 @@ constructor() {
         }]
     };
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0; width: 100%">
 
@@ -306,7 +314,8 @@ constructor() {
         }]
     };
 });
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0; width: 100%">
 

@@ -242,7 +242,8 @@ localeText = {
     noDataToChart: 'laNo data available to be charted.',
     pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <?= grid_example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true, "processVue" => true)) ?>
 
@@ -277,6 +278,7 @@ var gridOptions = {
 
     ...
 };
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

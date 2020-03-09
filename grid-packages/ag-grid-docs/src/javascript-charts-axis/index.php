@@ -63,7 +63,8 @@ include '../documentation-main/documentation_header.php';
     type: 'category',
     position: 'bottom'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h2>Number Axis</h2>
 
@@ -88,7 +89,8 @@ SNIPPET) ?>
     type: 'number',
     position: 'left'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h2>Time Axis</h2>
 
@@ -112,7 +114,8 @@ SNIPPET) ?>
     type: 'time',
     position: 'bottom'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <h2>Title</h2>
 
@@ -214,7 +217,8 @@ SNIPPET) ?>
 formatter: function(params) {
     return params.value + '%';
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 
 <?= chart_example('Axis Label Formatter', 'axis-label-formatter', 'generated'); ?>

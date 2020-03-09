@@ -36,7 +36,8 @@ series: [{
     xKey: 'year',
     yKeys: ['ie']
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     In the snippet above we are using <code>'ie'</code> as the only <code>yKey</code>,
@@ -59,7 +60,8 @@ for this series type, as this stylisation is the most common.
 marker: {
     enabled: true
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     When markers are enabled, the tooltips will be shown on hover. In this case
@@ -106,7 +108,8 @@ series: [
         yKeys: ['chrome']
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <note>
     Since multiple area series can overlap, it is a good idea to make the fill translucent, for example using
@@ -149,7 +152,8 @@ series: [{
     xKey: 'year',
     yKeys: ['ie', 'firefox', 'safari', 'chrome']
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     This produces the following chart:

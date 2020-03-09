@@ -37,7 +37,8 @@ series: [{
     xKey: 'year',
     yKey: 'spending'
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <?= chart_example('Single Line Series', 'basic-line', 'generated'); ?>
 
@@ -63,7 +64,8 @@ SNIPPET) ?>
     petrol: 200,
     diesel: 100
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     then we can use the same <code>quarter</code> key as <code>xKey</code> for both series
@@ -87,7 +89,8 @@ series: [
         yKey: 'diesel'
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     And we get a result like this:
@@ -117,7 +120,8 @@ series: [
         yName: 'Diesel'
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <?= chart_example('Legend and Tooltip Information', 'legend-info', 'generated'); ?>
 
@@ -145,7 +149,8 @@ marker: {
     fill: 'gray',
     stroke: 'black'
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     We'll get a result like this:
@@ -229,7 +234,8 @@ series: [
         ...
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Notice that even though one data set has dates as <code>Date</code> objects and another

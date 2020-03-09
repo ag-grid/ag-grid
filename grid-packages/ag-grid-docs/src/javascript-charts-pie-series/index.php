@@ -31,7 +31,8 @@ series: [{
     type: 'pie',
     angleKey: 'value'
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     This results in the chart shown below. Note that <a href="../javascript-charts-tooltips/">tooltips</a> show the
@@ -53,7 +54,8 @@ series: [{
     angleKey: 'value',
 +   labelKey: 'label'
 }]
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <p>
     Now we get labels, a legend, and the tooltips will also show labels along with the values:
@@ -77,7 +79,8 @@ SNIPPET, 'diff') ?>
 label: {
     minAngle: 20
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     The label's callout can be configured to have a different <code>length</code>,
@@ -90,7 +93,8 @@ callout: {
     length: 20,
     strokeWidth: 3
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Please check the <a href="#api-reference">API reference</a> below
@@ -114,7 +118,8 @@ series: [{
     angleKey: 'share',
     radiusKey: 'satisfaction'
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     A pie chart where slices can have different radii is also known as a <strong>rose chart</strong>.
@@ -136,7 +141,8 @@ series: [{
     angleKey: 'share',
     innerRadiusOffset: -70
 }]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     The config specifies the offset value from the maximum pie radius which all pie
@@ -170,7 +176,8 @@ series: [
         ...
     }
 ]
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     In the snippet above we configure the <code>outerRadiusOffset</code> of the second (inner) series

@@ -45,7 +45,8 @@ include '../documentation-main/documentation_header.php';
 npx create-react-app my-app
 cd my-app
 npm start
-SNIPPET, 'sh') ?>
+SNIPPET
+, 'sh') ?>
 
 <div class="note">
     <a href="https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b" rel="nofollow">npx</a>
@@ -118,7 +119,8 @@ class ChartExample extends Component {
         return <AgChartsReact options={this.state.options} />;
     }
 }
-SNIPPET, 'jsx') ?>
+SNIPPET
+, 'jsx') ?>
 
 <p>
     Here we'll provide the <code>options</code> we want to use for our chart, including the <code>series</code> to use
@@ -180,7 +182,8 @@ constructor(props) {
         };
     }
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Line Chart" src="line-chart-legend.png" style="margin-bottom: 0; width: 100%">
 
@@ -216,7 +219,8 @@ data = [
         Q4: 200
     },
 ];
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     This time, let's choose another series type to plot the data: stacked columns.
@@ -237,7 +241,8 @@ constructor(props) {
         }]
     }
 }
-SNIPPET, 'ts') ?>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -270,7 +275,8 @@ constructor(props) {
         }]
     }
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-labels.png" style="margin-bottom: 0; width: 100%">
 
@@ -299,7 +305,8 @@ constructor(props) {
         }]
     }
 }
-SNIPPET, 'diff') ?>
+SNIPPET
+, 'diff') ?>
 
 <img alt="Column Chart" src="beverage-expenses-with-captions.png" style="margin-bottom: 0; width: 100%">
 

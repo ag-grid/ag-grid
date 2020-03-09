@@ -51,7 +51,8 @@ include '../documentation-main/documentation_header.php';
 xKey: 'height',
 yKey: 'weight',
 sizeKey: 'age'
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     Another config we should provide is the <code>size</code> of the marker.
@@ -67,7 +68,8 @@ marker: {
     minSize: 8, // defaults to 8
     size: 30    // defaults to 8
 }
-SNIPPET) ?>
+SNIPPET
+) ?>
 
 <p>
     So for example, if the <code>sizeKey</code> data ranges from <code>-100</code>
