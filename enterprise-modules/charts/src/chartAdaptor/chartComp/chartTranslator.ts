@@ -1,17 +1,18 @@
-import {Autowired, Bean, GridOptionsWrapper} from "@ag-grid-community/core";
+import { Autowired, Bean, GridOptionsWrapper } from "@ag-grid-community/core";
 
 @Bean("chartTranslator")
 export class ChartTranslator {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static DEFAULT_TRANSLATIONS: { [name: string]: string } = {
+    private static DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
         pivotChartTitle: 'Pivot Chart',
         rangeChartTitle: 'Range Chart',
         settings: 'Settings',
         data: 'Data',
         format: 'Format',
         categories: 'Categories',
+        defaultCategory: '(None)',
         series: 'Series',
         xyValues: 'X Y Values',
         paired: 'Paired Mode',
