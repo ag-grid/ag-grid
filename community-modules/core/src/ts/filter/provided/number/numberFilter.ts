@@ -161,7 +161,11 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         return NumberFilter.FILTER_TYPE;
     }
 
-    private stringToFloat(value: string): number {
+    private stringToFloat(value: string | number): number {
+        if (typeof value === "number") {
+            return value;
+        }
+
         let filterText = _.makeNull(value);
 
         if (filterText && filterText.trim() === '') {
