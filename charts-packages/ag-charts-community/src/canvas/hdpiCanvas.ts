@@ -163,14 +163,20 @@ export class HdpiCanvas {
         this._width = width;
         this._height = height;
 
-        requestAnimationFrame(() => {
-            const { element, context, pixelRatio } = this;
-            element.width = Math.round(width * pixelRatio);
-            element.height = Math.round(height * pixelRatio);
-            element.style.width = Math.round(width) + 'px';
-            element.style.height = Math.round(height) + 'px';
-            context.resetTransform();
-        });
+        // the canvas being resized is asynchronous. For the case where we
+        // need to do something after it is resized, return a promise
+        return new Promise( (resolve) => {
+            requestAnimationFrame(() => {
+                const { element, context, pixelRatio } = this;
+                element.width = Math.round(width * pixelRatio);
+                element.height = Math.round(height * pixelRatio);
+                element.style.width = Math.round(width) + 'px';
+                element.style.height = Math.round(height) + 'px';
+                context.resetTransform();
+
+                resolve();
+            });
+        } );
     }
 
     // 2D canvas context used for measuring text.

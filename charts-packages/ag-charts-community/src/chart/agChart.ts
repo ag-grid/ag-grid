@@ -561,7 +561,10 @@ function create(options: any, path?: string, component?: any) {
         const constructorParams = meta.constructorParams || [];
         const skipKeys = ['type'].concat(constructorParams);
         // TODO: Constructor params processing could be improved, but it's good enough for current params.
-        const constructorParamValues = constructorParams.map((param: any) => options[param]).filter((value: any) => value !== undefined);
+        const constructorParamValues = constructorParams
+            .map((param: any) => options[param])
+            .filter((value: any) => value !== undefined);
+
         component = component || new meta.constructor(...constructorParamValues);
 
         for (const key in options) {
