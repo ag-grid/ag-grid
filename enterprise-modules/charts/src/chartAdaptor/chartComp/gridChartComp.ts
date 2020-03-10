@@ -19,7 +19,8 @@ import {
     ColumnApi,
     ChartCreated,
     ChartDestroyed,
-    Events
+    Events,
+    PopupService
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
@@ -68,6 +69,7 @@ export class GridChartComp extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('popupService') private popupService: PopupService;
 
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
@@ -192,13 +194,15 @@ export class GridChartComp extends Component {
     private addDialog(): void {
         const title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
 
+        const { width, height } = this.getBestDialogSize();
+
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
             title,
-            width: 850,
-            height: 470,
+            width,
+            height,
             component: this,
             centered: true,
             closable: true
@@ -207,6 +211,28 @@ export class GridChartComp extends Component {
         this.getContext().wireBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
+    }
+
+    private getBestDialogSize(): { width: number, height: number } {
+        const popupParent = this.popupService.getPopupParent();
+        const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
+        const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
+        const ratio = 0.553;
+
+        let width = 850;
+        let height = 470;
+
+        if (width > maxWidth || height > maxHeight) {
+            width = Math.min(width, maxWidth);
+            height = Math.round(width * ratio);
+
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = Math.min(width, Math.round(height / ratio));
+            }
+        }
+
+        return { width, height };
     }
 
     private addMenu(): void {
