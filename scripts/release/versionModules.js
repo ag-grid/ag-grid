@@ -21,6 +21,13 @@ function main() {
     updateLernaJson();
 }
 
+function updateAngularProject(CWD, packageDirectory, directory) {
+    let angularJson = require(`${CWD}/${packageDirectory}/${directory}/angular.json`);
+
+    let currentSubProjectPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/projects/${angularJson.defaultProject}/package.json`;
+    updateFileWithNewVersions(currentSubProjectPackageJsonFile);
+}
+
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
@@ -30,6 +37,11 @@ function updatePackageBowserJsonFiles() {
                     // update all package.json files
                     let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
                     updateFileWithNewVersions(currentPackageJsonFile);
+
+                    // angular projects have "sub" projects which we need to update
+                    if (directory.includes("angular") && !directory.includes("example")) {
+                        updateAngularProject(CWD, packageDirectory, directory);
+                    }
 
                     // update all bower.json files, if they exist
                     let currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
@@ -103,7 +115,8 @@ function updateDependency(fileContents, property, dependencyVersion) {
 
     Object.entries(dependencyContents)
         .filter(([key, value]) => {
-            return key.startsWith('ag-grid') || key.startsWith('@ag-grid')
+            return key.startsWith('ag-grid') || key.startsWith('@ag-grid') ||
+                key.startsWith('ag-charts') || key.startsWith('@ag-charts')
         })
         .filter(([key, value]) => {
             return key !== 'ag-grid-testing'
