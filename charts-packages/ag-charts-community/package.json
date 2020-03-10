@@ -29,7 +29,7 @@
     "reactjs"
   ],
   "author": "Sean Landsman <sean@thelandsmans.com>",
-  "license": "Commercial",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
   },

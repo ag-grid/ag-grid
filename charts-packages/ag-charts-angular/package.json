@@ -1,12 +1,29 @@
 {
   "name": "ag-charts-angular",
-  "version": "22.1.1",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "build": "ng build",
     "test": "ng test  --watch false --browsers ChromeHeadless",
     "lint": "ng lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "angular-component",
+    "charts",
+    "data",
+    "chart",
+    "angular"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://www.ag-grid.com/",
   "private": false,
   "main": "./dist/ag-charts-angular/bundles/ag-charts-angular.umd.js",
   "module": "./dist/ag-charts-angular/fesm5/ag-charts-angular.js",
