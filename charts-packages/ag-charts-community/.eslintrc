@@ -24,8 +24,8 @@
   "settings": {
     "polyfills": [
       "Reflect",
-      "Object.assign", // not really, but ts transpiles ... into a method that checks for Object.assign
-      "document.registerElement" //  we do an existance check for this in our webcomponent - mute this accordingly
+      "Object.assign",
+      "Math.sign" // we do a check for it..so allow this
     ]
   }
 }
