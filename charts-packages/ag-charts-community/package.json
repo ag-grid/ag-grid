@@ -10,7 +10,8 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
-    "build": "npm run build-cjs && npm run build-es6"
+    "build": "npm run build-cjs && npm run build-es6",
+    "validate-es5": "eslint dist/cjs"
   },
   "repository": {
     "type": "git",
@@ -49,6 +50,9 @@
   "devDependencies": {
     "@types/jest": "^25.1.2",
     "canvas": "2.6.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-ie11": "^1.0.0",
     "jest": "^25.1.0",
     "jest-canvas-mock": "2.2.0",
     "raf": "3.4.1",
