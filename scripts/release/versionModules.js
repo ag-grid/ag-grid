@@ -3,17 +3,18 @@ const fs = require('fs');
 
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
-const PACKAGE_DIRS = ['grid-packages', 'charts-packages', 'community-modules', 'enterprise-modules', 'examples-grid', 'examples-charts'];
 const LERNA_JSON = 'lerna.json';
 
-if (process.argv.length !== 4) {
+if (process.argv.length !== 5) {
     console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version]");
     console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, newVersion, dependencyVersion] = process.argv;
+const [exec, scriptPath, newVersion, dependencyVersion, packageDirsRaw] = process.argv;
+
+const packageDirs = JSON.parse(packageDirsRaw);
 
 function main() {
     updatePackageBowserJsonFiles();
@@ -23,7 +24,7 @@ function main() {
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
-    PACKAGE_DIRS.forEach(packageDirectory => {
+    packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
             .forEach(directory => {
                     // update all package.json files

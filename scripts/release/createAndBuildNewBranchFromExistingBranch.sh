@@ -9,10 +9,14 @@ fi
 
 SOURCE_BRANCH=$1
 NEW_BRANCH=$2
-NEW_VERSION=$3
-PEER_VERSION=$4
 
-GEN_KEY_DEFAULT_LOCATION=~/aggrid/genKey/genKey.js
+NEW_GRID_VERSION=$3
+PEER_GRID_VERSION=$4
+
+NEW_CHARTS_VERSION=$5
+PEER_CHARTS_VERSION=$6
+
+GEN_KEY_DEFAULT_LOCATION=~/Documents/aggrid/aggrid/genkey/genKey.js
 
 echo "########################################################################"
 echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
@@ -28,22 +32,15 @@ fi
 
 echo "########################################################################"
 echo "####### Updating lerna.json, package.json and bower.json files #########"
-node scripts/release/versionModules.js $NEW_VERSION $PEER_VERSION
+node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]'
+node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]'
 
 echo "########################################################################"
-echo "################# Installing Root Dependencies #########################"
-npm install
+echo "################# Installing Dependencies & Building #########################"
+npm run updateAndRebuild
 
 echo "########################################################################"
-echo "################# Installing Package Dependencies #########################"
-./node_modules/.bin/lerna bootstrap --ignore ag-grid-charts-example
-
-echo "########################################################################"
-echo "###################### Building Packages #############################"
-./node_modules/.bin/lerna run build --ignore ag-grid-charts-example
-
-echo "########################################################################"
-echo "###################### Packaging Packages #############################"
+echo "###################### Packaging #############################"
 ./node_modules/.bin/lerna run package --ignore ag-grid-charts-example
 
 echo "########################################################################"
