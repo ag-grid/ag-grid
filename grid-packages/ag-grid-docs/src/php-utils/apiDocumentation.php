@@ -43,10 +43,10 @@
 
                 echo "</td><td>$definition->description";
 
-                $example = $definition->example;
+                $more = $definition->more;
 
-                if (isset($example->url)) {
-                    echo " See <a href='$example->url'>$example->name</a>.";
+                if (isset($more->url)) {
+                    echo " See <a href='$more->url'>$more->name</a>.";
                 }
 
                 if (isset($definition->default)) {

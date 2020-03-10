@@ -64,14 +64,14 @@
         },
         "pasteStart": {
             "description": "Paste operation has started.",
-            "example": {
+            "more": {
                 "name": "Clipboard Events",
                 "url": "../javascript-grid-clipboard/#events"
             }
         },
         "pasteEnd": {
             "description": "Paste operation has ended.",
-            "example": {
+            "more": {
                 "name": "Clipboard Events",
                 "url": "../javascript-grid-clipboard/#events"
             }
@@ -215,14 +215,14 @@
         },
         "cellKeyDown": {
             "description": "DOM event <code>keyDown</code> happened on a cell.",
-            "example": {
+            "more": {
                 "name": "Keyboard Events",
                 "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
             }
         },
         "cellKeyPress": {
             "description": "DOM event keyPress happened on a cell.",
-            "example": {
+            "more": {
                 "name": "Keyboard Events",
                 "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
             }

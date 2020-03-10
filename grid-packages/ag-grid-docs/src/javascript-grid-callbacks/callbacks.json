@@ -23,7 +23,7 @@
         },
         "groupRowAggNodes(nodes)": {
             "description": "Callback for grouping.",
-            "example": {
+            "more": {
                 "name": "Row Grouping",
                 "url": "../javascript-grid-grouping/#groupingCallbacks"
             }
@@ -51,7 +51,7 @@
         },
         "isRowSelectable(rowNode)": {
             "description": "Callback to be used to determine which rows are selectable. By default rows are selectable, so return <code>false</code> to make a row un-selectable.",
-            "example": {
+            "more": {
                 "name": "Specify Selectable Rows",
                 "url": "../javascript-grid-selection/#specify-selectable-rows"
             }
@@ -61,7 +61,7 @@
         },
         "postSort(rowNodes)": {
             "description": "Callback to perform additional sorting after the grid has sorted the rows.",
-            "example": {
+            "more": {
                 "name": "Post Sort",
                 "url": "../javascript-grid-sorting/#post-sort"
             }
@@ -101,28 +101,28 @@
         },
         "defaultGroupSortComparator(nodeA, nodeB)": {
             "description": "Allows default sorting of groups.",
-            "example": {
+            "more": {
                 "name": "Default Group Order",
                 "url": "../javascript-grid-grouping/#default-group-order"
             }
         },
         "suppressKeyboardEvent(params)": {
             "description": "Suppress the grid taking action for the relevant keyboard event.",
-            "example": {
+            "more": {
                 "name": "Suppress Grid Keyboard Events",
                 "url": "../javascript-grid-keyboard-navigation/#suppressKeyboardEvents"
             }
         },
         "processChartOptions(params)": {
             "description": "Callback to be used to with charts to override default chart options.",
-            "example": {
+            "more": {
                 "name": "Overriding Chart Options",
                 "url": "../javascript-grid-charts-customisation/#overriding-chart-options"
             }
         },
         "getChartToolbarItems(params)": {
             "description": "Callback to be used to customise the chart toolbar items.",
-            "example": {
+            "more": {
                 "name": "Configuring Toolbar Items",
                 "url": "../javascript-grid-charts-chart-toolbar/#configuring-toolbar-items"
             }

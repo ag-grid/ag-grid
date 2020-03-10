@@ -29,7 +29,7 @@
         "skipHeaderOnAutoSize": {
             "default": false,
             "description": "Set this to <code>true</code> to skip the <code>headerName</code> when <code>autoSize</code> is called by default.",
-            "example": {
+            "more": {
                 "name": "Resizing Example",
                 "url": "../javascript-grid-resizing/#resizing-example"
             }
@@ -49,7 +49,7 @@
         "unSortIcon": {
             "default": false,
             "description": "Set to <code>true</code> to show the 'no sort' icon.",
-            "example": {
+            "more": {
                 "name": "Example Custom Sorting",
                 "url": "../javascript-grid-sorting/#example-custom-sorting"
             }
@@ -87,7 +87,7 @@
         },
         "sortingOrder": {
             "description": "Array defining the order in which sorting occurs (if sorting is enabled). Values can be <code>'asc'</code>, <code>'desc'</code> or <code>null</code>. For example: <code>sortingOrder: ['asc', 'desc']</code>.",
-            "example": {
+            "more": {
                 "name": "Example Sorting Order and Animation",
                 "url": "../javascript-grid-sorting/#example-sorting-order-and-animation"
             }
@@ -95,14 +95,14 @@
         "accentedSort": {
             "default": false,
             "description": "Set to <code>true</code> to specify that the sort should take into account accented characters. If this feature is turned on the sort will perform slower.",
-            "example": {
+            "more": {
                 "name": "Accented Sort",
                 "url": "../javascript-grid-sorting/#accentedSort"
             }
         },
         "multiSortKey": {
             "description": "Set to <code>'ctrl'</code> to have multi sorting work using the <code>Ctrl</code> or <code>Command</code> (for Apple) keys.",
-            "example": {
+            "more": {
                 "name": "Multi Column Sorting",
                 "url": "../javascript-grid-sorting/#multi-column-sorting"
             }
@@ -110,7 +110,7 @@
         "suppressMaintainUnsortedOrder": {
             "default": false,
             "description": "Set to <code>true</code> to suppress sorting of un-sorted data to match original row data.",
-            "example": {
+            "more": {
                 "name": "Big Data Small Transactions",
                 "url": "../javascript-grid-data-update/#big-data-small-transactions"
             }
@@ -118,7 +118,7 @@
         "excludeChildrenWhenTreeDataFiltering": {
             "default": false,
             "description": "Set to <code>true</code> to override the default tree data filtering behaviour to instead exclude child nodes from filter results.",
-            "example": {
+            "more": {
                 "name": "Tree Data Filtering",
                 "url": "../javascript-grid-tree-data/#tree-data-filtering"
             }
@@ -138,7 +138,7 @@
         "rowMultiSelectWithClick": {
             "default": false,
             "description": "Set to <code>true</code> to allow multiple rows to be selected using single click.",
-            "example": {
+            "more": {
                 "name": "Multi Select Single Click",
                 "url": "../javascript-grid-selection/#multi-select-single-click"
             }
@@ -175,7 +175,7 @@
         "suppressMoveWhenRowDragging": {
             "default": false,
             "description": "Set to <code>true</code> to suppress moving rows while dragging the <code>rowDrag</code> waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.",
-            "example": {
+            "more": {
                 "name": "Row Dragging",
                 "url": "../javascript-grid-row-dragging/"
             }
@@ -192,7 +192,7 @@
         "suppressClickEdit": {
             "default": false,
             "description": "Set to <code>true</code> so that neither single nor double click starts editing.",
-            "example": {
+            "more": {
                 "name": "Single Click, Double Click, No Click Editing",
                 "url": "../javascript-grid-cell-editing/#singleClickEditing"
             }
@@ -203,7 +203,7 @@
         "enableCellChangeFlash": {
             "default": false,
             "description": "Set to <code>true</code> to have cells flash after data changes.",
-            "example": {
+            "more": {
                 "name": "Flashing Data Changes",
                 "url": "../javascript-grid-data-update/#flashing"
             }
@@ -211,7 +211,7 @@
         "allowShowChangeAfterFilter": {
             "default": false,
             "description": "Set to <code>true</code> to have cells flash after data changes even when the change is due to filtering.",
-            "example": {
+            "more": {
                 "name": "Flashing Data Changes",
                 "url": "../javascript-grid-data-update/#flashing"
             }
@@ -232,14 +232,14 @@
         "headerHeight": {
             "default": 25,
             "description": "The height in pixels for the row containing the column label header.",
-            "example": {
+            "more": {
                 "name": "Header Height",
                 "url": "../javascript-grid-column-header/#headerHeight"
             }
         },
         "groupHeaderHeight": {
             "description": "The height for the rows containing header column groups. If not specified, it uses <code>headerHeight</code>.",
-            "example": {
+            "more": {
                 "name": "Header Height",
                 "url": "../javascript-grid-column-header/#headerHeight"
             }
@@ -247,21 +247,21 @@
         "floatingFiltersHeight": {
             "default": 20,
             "description": "The height for the row containing the floating filters.",
-            "example": {
+            "more": {
                 "name": "Header Height",
                 "url": "../javascript-grid-column-header/#headerHeight"
             }
         },
         "pivotHeaderHeight": {
             "description": "The height for the row containing the columns when in pivot mode. If not specified, it uses <code>headerHeight</code>.",
-            "example": {
+            "more": {
                 "name": "Header Height",
                 "url": "../javascript-grid-column-header/#headerHeight"
             }
         },
         "pivotGroupHeaderHeight": {
             "description": "The height for the row containing header column groups when in pivot mode. If not specified, it uses <code>groupHeaderHeight</code>.",
-            "example": {
+            "more": {
                 "name": "Header Height",
                 "url": "../javascript-grid-column-header/#headerHeight"
             }
@@ -274,7 +274,7 @@
         "groupUseEntireRow": {
             "default": false,
             "description": "Used when grouping. If <code>true</code>, a group row will span all columns across the entire width of the table. If <code>false</code>, the cells will be rendered as normal and you will have the opportunity to include a grouping column (normally the first on the left) to show the group.",
-            "example": {
+            "more": {
                 "name": "Full Width Group Rows",
                 "url": "../javascript-grid-grouping/#fullWidthRows"
             }
@@ -282,7 +282,7 @@
         "groupDefaultExpanded": {
             "default": 0,
             "description": "If grouping, set to the number of levels to expand by default, e.g. <code>0</code> for none, <code>1</code> for first level only, etc. Set to <code>-1</code> to expand everything.",
-            "example": {
+            "more": {
                 "name": "Removing Single Children",
                 "url": "../javascript-grid-grouping/#removeSingleChildren"
             }
@@ -290,7 +290,7 @@
         "autoGroupColumnDef": {
             "type": "ColumnDef",
             "description": "Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping, this column is not included.",
-            "example": {
+            "more": {
                 "name": "Configuring the Auto Group Column",
                 "url": "../javascript-grid-grouping/#configuring-auto-column"
             }
@@ -298,7 +298,7 @@
         "groupSuppressAutoColumn": {
             "default": false,
             "description": "If <code>true</code>, the grid will not swap in the grouping column when grouping is enabled. Use this if you want complete control on the column displayed and don't want the grid's help, in other words if you already have a column in your column definitions that is responsible for displaying the groups.",
-            "example": {
+            "more": {
                 "name": "Configuring the Auto Group Column",
                 "url": "../javascript-grid-grouping/#configuring-auto-column"
             }
@@ -306,7 +306,7 @@
         "groupMultiAutoColumn": {
             "default": false,
             "description": "If using auto column, set to <code>true</code> to have each group in its own separate column, e.g. if grouping by Country then Year, two auto columns will be created, one for Country and one for Year.",
-            "example": {
+            "more": {
                 "name": "Multi Auto Column Group",
                 "url": "../javascript-grid-grouping/#multi-auto-column-group"
             }
@@ -314,7 +314,7 @@
         "groupSuppressRow": {
             "default": false,
             "description": "If <code>true</code>, the group row won't be displayed and the groups will be expanded by default with no ability to expand / contract the groups. Useful when you want to just 'group' the rows, but not add a parent group row to each group.",
-            "example": {
+            "more": {
                 "name": "Suppress Group Row",
                 "url": "../javascript-grid-grouping/#suppress-group-row"
             }
@@ -322,7 +322,7 @@
         "groupSelectsChildren": {
             "default": false,
             "description": "When <code>true</code>, if you select a group, the children of the group will also be selected.",
-            "example": {
+            "more": {
                 "name": "Group Selection",
                 "url": "../javascript-grid-selection/#groupSelection"
             }
@@ -330,7 +330,7 @@
         "groupIncludeFooter": {
             "default": false,
             "description": "If grouping, whether to show a group footer when the group is expanded. If <code>true</code>, then by default,  the footer will contain aggregate data (if any) when shown and the header will be blank. When closed, the header will contain  the aggregate data regardless of this setting (as the footer is hidden anyway). This is handy for 'total' rows, that are  displayed below the data when the group is open, and alongside the group when it is closed",
-            "example": {
+            "more": {
                 "name": "Grouping Footers",
                 "url": "../javascript-grid-grouping/#grouping-footers"
             }
@@ -338,7 +338,7 @@
         "groupIncludeTotalFooter": {
             "default": false,
             "description": "Set to <code>true</code> to show a 'grand' total group footer across all groups.",
-            "example": {
+            "more": {
                 "name": "Grouping Footers",
                 "url": "../javascript-grid-grouping/#grouping-footers"
             }
@@ -350,7 +350,7 @@
         "groupSelectsFiltered": {
             "default": false,
             "description": "If using <code>groupSelectsChildren</code>, then only the children that pass the current filter will get selected.",
-            "example": {
+            "more": {
                 "name": "Group Selection",
                 "url": "../javascript-grid-selection/#groupSelection"
             }
@@ -358,7 +358,7 @@
         "groupRemoveSingleChildren": {
             "default": false,
             "description": "Set to <code>true</code> to collapse groups that only have one child.",
-            "example": {
+            "more": {
                 "name": "Remove Single Children",
                 "url": "../javascript-grid-grouping/#removeSingleChildren"
             }
@@ -366,7 +366,7 @@
         "groupRemoveLowestSingleChildren": {
             "default": false,
             "description": "Set to <code>true</code> to collapse lowest level groups that only have one child.",
-            "example": {
+            "more": {
                 "name": "Remove Single Children",
                 "url": "../javascript-grid-grouping/#removeSingleChildren"
             }
@@ -374,7 +374,7 @@
         "groupHideOpenParents": {
             "default": false,
             "description": "Set to <code>true</code> to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.",
-            "example": {
+            "more": {
                 "name": "Group Hide Open Parents",
                 "url": "../javascript-grid-grouping/#replacingChildren"
             }
@@ -387,7 +387,7 @@
                 "onlyWhenGrouping"
             ],
             "description": "When to show the 'row group panel' (where you drag rows to group) at the top.",
-            "example": {
+            "more": {
                 "name": "Tool Panel Example",
                 "url": "../javascript-grid-tool-panel/#toolPanelExample"
             }
@@ -400,7 +400,7 @@
         "pivotMode": {
             "default": false,
             "description": "Set to <code>true</code> to enable pivot mode.",
-            "example": {
+            "more": {
                 "name": "Pivoting",
                 "url": "../javascript-grid-pivoting/"
             }
@@ -417,7 +417,7 @@
         "rememberGroupStateWhenNewData": {
             "default": false,
             "description": "When <code>true</code>, if you set new data into the grid and have groups open, the grid will keep groups open if they exist in the new dataset.",
-            "example": {
+            "more": {
                 "name": "Keeping Group State",
                 "url": "../javascript-grid-grouping/#keeping-group-state"
             }
@@ -429,7 +429,7 @@
         "suppressAggAtRootLevel": {
             "default": false,
             "description": "When <code>true</code>, the aggregations won't be computed for root node of the grid.",
-            "example": {
+            "more": {
                 "name": "Big Data Small Transactions",
                 "url": "../javascript-grid-data-update/#big-data-small-transactions"
             }
@@ -441,14 +441,14 @@
         "functionsReadOnly": {
             "default": false,
             "description": "If <code>true</code>, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection.",
-            "example": {
+            "more": {
                 "name": "Read Only Functions",
                 "url": "../javascript-grid-tool-panel-columns/#read-only-functions"
             }
         },
         "aggFuncs": {
             "description": "A map of 'function name' to 'function' for custom aggregation functions.",
-            "example": {
+            "more": {
                 "name": "Custom Aggregation Functions",
                 "url": "../javascript-grid-aggregation/#custom-aggregation-functions"
             }
@@ -463,7 +463,7 @@
                 "after"
             ],
             "description": "When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups,in the position specified.",
-            "example": {
+            "more": {
                 "name": "Pivot Column Group Totals",
                 "url": "../javascript-grid-pivoting/#pivotColumnGroupTotals"
             }
@@ -474,7 +474,7 @@
                 "after"
             ],
             "description": "When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.",
-            "example": {
+            "more": {
                 "name": "Pivot Row Totals",
                 "url": "../javascript-grid-pivoting/#pivotRowTotals"
             }
@@ -519,7 +519,7 @@
         "suppressHorizontalScroll": {
             "default": false,
             "description": "Set to <code>true</code> to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls.",
-            "example": {
+            "more": {
                 "name": "Aligned Grid as Footer",
                 "url": "../javascript-grid-aligned-grids/#aligned-grid-as-footer"
             }
@@ -555,7 +555,7 @@
         "paginationPageSize": {
             "default": 100,
             "description": "How many rows to load per page. If <code>paginationAutoPageSize</code> is specified, this property is ignored.",
-            "example": {
+            "more": {
                 "name": "Customising Pagination",
                 "url": "../javascript-grid-pagination/#customising-pagination"
             }
@@ -563,7 +563,7 @@
         "paginationAutoPageSize": {
             "default": false,
             "description": "Set to <code>true</code> so that the number of rows to load per page is automatically adjusted by ag-Grid so each page shows enough rows to just fill the area designated for the grid. If <code>false</code>, <code>paginationPageSize</code> is used.",
-            "example": {
+            "more": {
                 "name": "Auto Page Size",
                 "url": "../javascript-grid-pagination/#auto-page-size"
             }
@@ -571,14 +571,14 @@
         "suppressPaginationPanel": {
             "default": false,
             "description": "If <code>true</code>, the default ag-Grid controls for navigation are hidden. This is useful if <code>pagination=true</code> and you want to provide your own pagination controls. Otherwise, when <code>pagination=true</code> the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.",
-            "example": {
+            "more": {
                 "name": "Custom Pagination Controls",
                 "url": "../javascript-grid-pagination/#custom-pagination-controls"
             }
         },
         "paginateChildRows": {
             "description": "Set to <code>true</code> to have pages split children of groups when using Row Grouping or detail rows with Master Detail.",
-            "example": {
+            "more": {
                 "name": "Pagination & Child Rows",
                 "url": "../javascript-grid-pagination/#childRows"
             }
@@ -614,7 +614,7 @@
         },
         "viewportDatasource": {
             "description": "To use the <code>viewport</code> row model you provide the grid with a <code>viewportDatasource</code>.",
-            "example": {
+            "more": {
                 "name": "Viewport",
                 "url": "../javascript-grid-viewport/"
             }
@@ -626,14 +626,14 @@
         },
         "groupRowRenderer<br />groupRowRendererFramework<br />groupRowRendererParams": {
             "description": "Sets the <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a> to use when <code>groupUseEntireRow=true</code>.",
-            "example": {
+            "more": {
                 "name": "Row Grouping",
                 "url": "../javascript-grid-grouping/#groupingCallbacks"
             }
         },
         "groupRowInnerRenderer<br />groupRowInnerRendererFramework": {
             "description": "Sets the inner <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a> to use when <code>groupUseEntireRow=true</code>.",
-            "example": {
+            "more": {
                 "name": "Row Grouping",
                 "url": "../javascript-grid-grouping/#groupingCallbacks"
             }
@@ -649,14 +649,14 @@
         "masterDetail": {
             "default": false,
             "description": "Set to <code>true</code> to enable the Master Detail.",
-            "example": {
+            "more": {
                 "name": "Master Detail",
                 "url": "../javascript-grid-master-detail"
             }
         },
         "detailCellRendererParams": {
             "description": "Specifies the params to be used by the default detail <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a>.",
-            "example": {
+            "more": {
                 "name": "Master Detail",
                 "url": "../javascript-grid-master-detail"
             }
@@ -687,14 +687,14 @@
         },
         "rowStyle": {
             "description": "The style to give a particular row.",
-            "example": {
+            "more": {
                 "name": "Row Style",
                 "url": "../javascript-grid-row-styles/#row-style"
             }
         },
         "rowClass": {
             "description": "The class to give a particular row.",
-            "example": {
+            "more": {
                 "name": "Row Class",
                 "url": "./javascript-grid-row-styles/#row-class"
             }
@@ -719,7 +719,7 @@
         },
         "localeText<br />localeTextFunc": {
             "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
-            "example": {
+            "more": {
                 "name": "Internationalisation",
                 "url": "../javascript-grid-internationalisation/"
             }
@@ -808,7 +808,7 @@
         "ensureDomOrder": {
             "default": false,
             "description": "When <code>true</code>, the order of rows and columns in the DOM are consistent with what is on screen.",
-            "example": {
+            "more": {
                 "name": "Accessibility - Row and Column Order",
                 "url": "../javascript-grid-accessibility/#dom-order"
             }
