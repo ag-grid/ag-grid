@@ -71,9 +71,12 @@ by the server to fetch data from the server.
 </p>
 
 <p>
-Rows fetched from the server are supplied to the grid via <code>params.successCallback(rows,lastRowIndex)</code>.
-Note the <code>lastRowIndex</code> can be optionally supplied so the grid. This allows the grid to adjust the height of
-the scrollbar match the entire dataset contained on the server.
+    Rows fetched from the server are supplied to the grid via <code>params.successCallback(rows,lastRowIndex)</code>.
+    Note the <code>lastRowIndex</code> can be optionally supplied to the grid. If the server knows how many rows
+    are in the dataset, then <code>lastRowIndex</code> informs the grid of this number so the grid can adjust
+    the range of the vertical scrollbar to match the entire dataset contained on the server. Otherwise the
+    grid will assume the total number of rows is not known and the vertical scrollbar range will grow as
+    the user scrolls down (the default behaviour for infinite scroll).
 </p>
 
 <h2>Registering the Datasource</h2>

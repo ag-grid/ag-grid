@@ -16,7 +16,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The Server-side Row Model allows applications to work with very large datasets by delegating grid operations such
-    as grouping, sorting and pivoting to the server. This is demonstrated below:
+    as grouping, sorting and pivoting to the server. The data is then lazy loaded from the server in blocks as
+    the user browses through the data. This is demonstrated below:
 </p>
 
 <div class="animated-example">
@@ -32,7 +33,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     When designing a grid based application, one of the key considerations is how much data needs to be sent from
-    the server to the client? The answer to this question determines which Row Model should be selected for the grid.
+    the server to the client. The answer to this determines which Row Model should be selected for the grid.
 </p>
 
 <h4>Client-side Row Model</h4>
@@ -48,8 +49,13 @@ include '../documentation-main/documentation_header.php';
 <p><img src="in-memory-row-model.png" alt="in-memory-row-model" width="90%" /></p>
 
 <p>
-    The Client-side Row Model only renders the rows currently visible, so the upper limit of rows is governed by the
-    browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
+    Once the data is loaded into the grid using the Client-side Row Model, the grid can then do sorting, filtering,
+    grouping etc on the data inside the grid without requiring further assistance from the application.
+</p>
+<p>
+    The Client-side Row Model only renders the rows currently visible using
+    <a href="./javascript-grid-dom-virtualisation/">DOM Virtualization</a>, so the upper limit of rows is governed
+    by the browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
 </p>
 
 <h4>Server-side Row Model</h4>
@@ -57,7 +63,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     However many real world applications contain much larger data sets, often involving millions of records. In this
     case it simply isn't feasible to load all the data into the browser in one go. Instead data will somehow need
-    to be lazy-loaded as required and then purged to limit the memory footprint in the browser?
+    to be lazy-loaded as required and then purged to limit the memory footprint in the browser.
 </p>
 
 <p>
@@ -122,17 +128,30 @@ include '../documentation-main/documentation_header.php';
     </li>
 </ul>
 
-<note>
-    <p>
-        Also see our guides which provide reference implementations for numerous data sources:
-    <ul>
-        <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
-        <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
-        <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
-        <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
-    </ul>
-    </p>
-</note>
+<h2>Full Stack Examples</h2>
+
+<p>
+    All the examples in this documentation are standalone examples that can be run inside the documentation
+    and exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this,
+    all the examples have mocked servers (as the examples in the docs and Plunker are client side only).
+</p>
+
+<p>
+    To accompany the examples in the documentation, we also provide the following full stack examples for
+    reference. We advise using the examples in the documentation to learn about the Server-side Row Model
+    and then using the full stack examples as reference.
+</p>
+
+<p>
+    The full stack examples are as follows:
+</p>
+
+<ul>
+    <li><a href="../nodejs-server-side-operations/">Node.js connecting to MySQL</a></li>
+    <li><a href="../oracle-server-side-operations/">Java Server connecting to Oracle</a></li>
+    <li><a href="../graphql-server-side-operations/">GraphQL connecting to MySQL</a></li>
+    <li><a href="../spark-server-side-operations/">Java Server connecting to Apache Spark</a></li>
+</ul>
 
 <h2>Next Up</h2>
 

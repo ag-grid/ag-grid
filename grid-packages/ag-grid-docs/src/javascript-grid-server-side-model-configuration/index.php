@@ -89,7 +89,7 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <th>blockLoadDebounceMillis</th>
         <td>
-            <p>Prevents blocks loading until scrolling has stopped. When row count (i.e. lastRowIndex) is known.
+            <p>Prevents blocks loading until scrolling has stopped. When row count (i.e. lastRowIndex) is known,
                 setting his property in millis will enable skipping over blocks when scrolling.</p>
         </td>
     </tr>
