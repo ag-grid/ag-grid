@@ -358,6 +358,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const fontOptions = this.getDefaultFontOptions();
 
         return {
+            width: 850,
+            height: 470,
             background: {
                 fill: this.getBackgroundColor(),
                 visible: true,
