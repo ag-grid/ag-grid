@@ -5,14 +5,14 @@ const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
 const LERNA_JSON = 'lerna.json';
 
-if (process.argv.length !== 5) {
-    console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version]");
-    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0");
+if (process.argv.length < 5) {
+    console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [package directories] [charts version]");
+    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 '[\"charts-packages\", \"examples-charts\"]' 1.0.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, newVersion, dependencyVersion, packageDirsRaw] = process.argv;
+const [exec, scriptPath, gridNewVersion, gridDependencyVersion, packageDirsRaw, chartsDependencyVersion] = process.argv;
 
 const packageDirs = JSON.parse(packageDirsRaw);
 
@@ -56,7 +56,7 @@ function updateLernaJson() {
         const lernaFile = JSON.parse(contents);
 
         const copyOfFile = JSON.parse(JSON.stringify(lernaFile));
-        copyOfFile.version = newVersion;
+        copyOfFile.version = gridNewVersion;
 
         fs.writeFileSync(LERNA_JSON,
             JSON.stringify(copyOfFile, null, 2),
@@ -89,23 +89,23 @@ function updateFileWithNewVersions(currentFile, optional = false) {
 
 function updateVersion(packageJson) {
     const copyOfFile = JSON.parse(JSON.stringify(packageJson));
-    copyOfFile.version = newVersion;
+    copyOfFile.version = gridNewVersion;
     return copyOfFile;
 }
 
 function updateDependencies(fileContents) {
-    return updateDependency(fileContents, 'dependencies', dependencyVersion);
+    return updateDependency(fileContents, 'dependencies', gridDependencyVersion, chartsDependencyVersion);
 }
 
 function updateDevDependencies(fileContents) {
-    return updateDependency(fileContents, 'devDependencies', dependencyVersion);
+    return updateDependency(fileContents, 'devDependencies', gridDependencyVersion, chartsDependencyVersion);
 }
 
 function updatePeerDependencies(fileContents) {
-    return updateDependency(fileContents, 'peerDependencies', dependencyVersion);
+    return updateDependency(fileContents, 'peerDependencies', gridDependencyVersion, chartsDependencyVersion);
 }
 
-function updateDependency(fileContents, property, dependencyVersion) {
+function updateDependency(fileContents, property, gridDependencyVersion, chartsDependencyVersion) {
     if (!fileContents[property]) {
         return fileContents;
     }
@@ -113,16 +113,22 @@ function updateDependency(fileContents, property, dependencyVersion) {
     const copyOfFile = JSON.parse(JSON.stringify(fileContents));
     const dependencyContents = copyOfFile[property];
 
+    let gridDependenct = function (key) {
+        return key.startsWith('ag-grid') || key.startsWith('@ag-grid');
+    };
+    let chartDependency = function (key) {
+        return key.startsWith('ag-charts') || key.startsWith('@ag-charts');
+    };
     Object.entries(dependencyContents)
         .filter(([key, value]) => {
-            return key.startsWith('ag-grid') || key.startsWith('@ag-grid') ||
-                key.startsWith('ag-charts') || key.startsWith('@ag-charts')
+            return gridDependenct(key) ||
+                chartDependency(key)
         })
         .filter(([key, value]) => {
             return key !== 'ag-grid-testing'
         })
         .forEach(([key, value]) => {
-            dependencyContents[key] = dependencyVersion;
+            dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : gridDependencyVersion;
         });
 
     return copyOfFile;

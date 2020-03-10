@@ -38,7 +38,9 @@
     "last 2 versions",
     "not ie <= 10",
     "not ie_mob <= 11",
-    "not blackberry > 0"
+    "not blackberry > 0",
+    "not op_mini all",
+    "not operamobile >= 0"
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {},

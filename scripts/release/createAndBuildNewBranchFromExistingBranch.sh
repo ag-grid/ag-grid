@@ -32,7 +32,7 @@ fi
 
 echo "########################################################################"
 echo "####### Updating lerna.json, package.json and bower.json files #########"
-node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]'
+node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' $PEER_CHARTS_VERSION
 node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]'
 
 echo "########################################################################"
