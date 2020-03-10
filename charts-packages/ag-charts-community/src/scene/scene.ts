@@ -45,11 +45,13 @@ export class Scene {
     }
 
     resize(width: number, height: number) {
-        this.canvas.resize(width, height)
-            .then( () => {
-                // resizing a canvas clears the pixel content, so mark as dirty to ensure a re-rendering:
-                this.dirty = true;
-            });        
+        this.canvas.resize(
+            width, height, 
+
+            // resizing a canvas clears the pixel content so when resizing is done 
+            // mark as dirty to ensure a re-render
+            () => this.dirty = true
+        );
     }
 
     private _dirty = false;
