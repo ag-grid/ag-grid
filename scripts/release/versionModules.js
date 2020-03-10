@@ -3,32 +3,45 @@ const fs = require('fs');
 
 const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
-const PACKAGE_DIRS = ['grid-packages', 'charts-packages', 'community-modules', 'enterprise-modules', 'examples-grid', 'examples-charts'];
 const LERNA_JSON = 'lerna.json';
 
-if (process.argv.length !== 4) {
+if (process.argv.length !== 5) {
     console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version]");
     console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, newVersion, dependencyVersion] = process.argv;
+const [exec, scriptPath, newVersion, dependencyVersion, packageDirsRaw] = process.argv;
+
+const packageDirs = JSON.parse(packageDirsRaw);
 
 function main() {
     updatePackageBowserJsonFiles();
     updateLernaJson();
 }
 
+function updateAngularProject(CWD, packageDirectory, directory) {
+    let angularJson = require(`${CWD}/${packageDirectory}/${directory}/angular.json`);
+
+    let currentSubProjectPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/projects/${angularJson.defaultProject}/package.json`;
+    updateFileWithNewVersions(currentSubProjectPackageJsonFile);
+}
+
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
-    PACKAGE_DIRS.forEach(packageDirectory => {
+    packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
             .forEach(directory => {
                     // update all package.json files
                     let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
                     updateFileWithNewVersions(currentPackageJsonFile);
+
+                    // angular projects have "sub" projects which we need to update
+                    if (directory.includes("angular") && !directory.includes("example")) {
+                        updateAngularProject(CWD, packageDirectory, directory);
+                    }
 
                     // update all bower.json files, if they exist
                     let currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
@@ -102,7 +115,8 @@ function updateDependency(fileContents, property, dependencyVersion) {
 
     Object.entries(dependencyContents)
         .filter(([key, value]) => {
-            return key.startsWith('ag-grid') || key.startsWith('@ag-grid')
+            return key.startsWith('ag-grid') || key.startsWith('@ag-grid') ||
+                key.startsWith('ag-charts') || key.startsWith('@ag-charts')
         })
         .filter(([key, value]) => {
             return key !== 'ag-grid-testing'

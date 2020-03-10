@@ -595,7 +595,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             const individualGroupCols =
                 rowGroupCols.map(group => {
                     return {
-                        colId: group.field,
+                        colId: group.id,
                         sort: sortModel[autoGroupIndex].sort
                     };
                 });

@@ -1,14 +1,12 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    {field: 'accountId', cellRenderer: 'agGroupCellRenderer'},
-    {field: 'name'},
-    {field: 'country'},
-    {field: 'calls'},
-    {field: 'totalDuration'}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        {field: 'accountId', cellRenderer: 'agGroupCellRenderer'},
+        {field: 'name'},
+        {field: 'country'},
+        {field: 'calls'},
+        {field: 'totalDuration'}
+    ],
     defaultColDef: {
         flex: 1
     },

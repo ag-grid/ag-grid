@@ -45,7 +45,13 @@ export class Scene {
     }
 
     resize(width: number, height: number) {
-        this.canvas.resize(width, height);
+        this.canvas.resize(
+            width, height, 
+
+            // resizing a canvas clears the pixel content so when resizing is done 
+            // mark as dirty to ensure a re-render
+            () => this.dirty = true
+        );
     }
 
     private _dirty = false;
@@ -141,7 +147,9 @@ export class Scene {
     }
 
     readonly render = () => {
-        const { ctx, root } = this;
+        const { ctx, root } = this;        
+        
+        this.animationFrameId = 0;
 
         if (root && !root.visible) {
             this.dirty = false;

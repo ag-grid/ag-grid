@@ -61,9 +61,10 @@
         }
     }
 
+
     .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
     .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
-    .ag-cell-focus.ag-cell-range-single-cell.ag-cell-range-handle {
+    .ag-cell-range-single-cell.ag-cell-range-handle {
         border: 1px solid ag-param(range-selection-border-color);
         outline: initial;
     }

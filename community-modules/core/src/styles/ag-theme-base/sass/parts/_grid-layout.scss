@@ -69,6 +69,7 @@
 
     .ag-row {
         height: ag-param(row-height);
+        background-color: ag-param(background-color);
         color: ag-param(data-color);
         
         @if ag-param(row-border-color) and ag-param(borders-critical) {
@@ -108,7 +109,7 @@
     }
 
     @if ag-param(odd-row-background-color) {
-        .ag-row-odd {
+        .ag-row.ag-row-odd {
             background-color: ag-param(odd-row-background-color);
         }
     }

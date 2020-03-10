@@ -18,9 +18,7 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<?php
-    printVideoSection("https://www.youtube.com/embed/KS-wg5zfCXc", "javascript-demo", "Getting Started Video Tutorial");
-?>
+<?= videoSection("https://www.youtube.com/embed/KS-wg5zfCXc", "javascript-demo", "Getting Started Video Tutorial") ?>
 
 <h2>Getting Started</h2>
 

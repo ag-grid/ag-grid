@@ -7,7 +7,7 @@ gtm_data_layer('home');
 $version = 'latest';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html class="stretch-html" lang="en">
 <head>
 <?php
 $title = 'ag-Grid: Datagrid packed with features that your users need with the performance you expect.';

@@ -1,20 +1,18 @@
-var columnDefs = [
-    { field: 'athlete', type: 'text' },
-    { field: 'year',
-      filter: 'agNumberColumnFilter',
-      filterParams: {
-        resetButton: true,
-        debounceMs: 1000,
-        suppressAndOrCondition: true,
-      }
-    },
-    { field: 'gold', type: 'number' },
-    { field: 'silver', type: 'number' },
-    { field: 'bronze', type: 'number' }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'athlete', type: 'text' },
+        { field: 'year',
+            filter: 'agNumberColumnFilter',
+            filterParams: {
+                resetButton: true,
+                debounceMs: 1000,
+                suppressAndOrCondition: true,
+            }
+        },
+        { field: 'gold', type: 'number' },
+        { field: 'silver', type: 'number' },
+        { field: 'bronze', type: 'number' }
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 120,

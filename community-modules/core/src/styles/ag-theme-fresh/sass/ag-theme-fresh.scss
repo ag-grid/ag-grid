@@ -1,7 +1,12 @@
-@import "../../ag-theme-base/sass/legacy/ag-fresh-dark-blue-bootstrap-shared";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
 
+// LEGACY THEME FILE
+// Including this file emits CSS for the Fresh theme. We no longer officially support this theme.
+// See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md
 
-@include ag-theme-legacy-classic("ag-theme-fresh", (
+@import "./legacy/ag-theme-fresh-define-legacy-vars";
+
+@include ag-theme-classic-impl("ag-theme-fresh", (
     "foreground-color": #000,
     "background-color": #FFF,
     "odd-row-background-color": #f6f6f6,
@@ -19,11 +24,4 @@
     "row-border-color": null,
     "subheader-background-color": #ececec,
     "selected-row-background-color": #bde2e5
-)) {
-    .ag-icon {
-        color: #333;
-    }
-    .ag-header, .ag-column-drop-cell {
-      background-image: linear-gradient(white, lightgrey);
-    }
-};
+));

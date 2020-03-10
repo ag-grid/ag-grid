@@ -1,0 +1,13 @@
+{
+    "callbacks": {
+        "meta": {
+            "displayName": "Grid Grouping Callbacks"
+        },
+        "groupRowRenderer, groupRowRendererParams": {
+            "description": "If grouping, allows custom rendering of the group cell. Use this if you are not happy with the default presentation of the group. This is only used when <code>groupUseEntireRow</code> is <code>true</code>. This gives you full control of the row, so the grid will not provide any default expand / collapse or selection checkbox. See section on cellRendering for details on params."
+        },
+        "groupRowInnerRenderer": {
+            "description": "Similar to <code>groupRowRenderer</code>, except the grid will provide a default shell for row which includes an expand / collapse function. The <code>innerRenderer</code> is responsible for just the inside part of the row. There is no  <code>groupRowInnerRendererParams</code> as the <code>groupRowRendererParams</code> are reused for both."
+        }
+    }
+}

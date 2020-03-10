@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1>Column Headers</h1>
 
     <p class="lead">
@@ -19,14 +17,15 @@ include '../documentation-main/documentation_header.php';
     <p>
         These properties can be used to change the different heights used in the headers.
     </p>
-    <?php include 'headerHeightProperties.php' ?>
-    <?php printPropertiesTable($headerHeightProperties) ?>
+
+    <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'headers') ?>
 
     <p>
         All these properties also have setter methods that can be called from the api and will change the header
         heights dynamically.
     </p>
-    <?php printPropertiesTable($headerHeightApi) ?>
+
+    <?php createDocumentationFromFile('../javascript-grid-api/api.json', 'headers') ?>
 
     <h2 id="textOrientation">Text Orientation</h2>
 

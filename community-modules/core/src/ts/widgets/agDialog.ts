@@ -56,7 +56,6 @@ export class AgDialog extends AgPanel {
     private moveElement: HTMLElement;
     private moveElementDragListener: DragListenerParams;
     private resizable: ResizableStructure = {};
-    private isResizable: boolean = false;
     private movable = false;
     private isMoving = false;
     private isMaximizable: boolean = false;
@@ -303,6 +302,7 @@ export class AgDialog extends AgPanel {
         super.destroy();
         this.setResizable(false);
         this.setMovable(false);
+
         if (this.maximizeButtonComp) {
             this.maximizeButtonComp.destroy();
             this.maximizeButtonComp = undefined;
@@ -312,7 +312,6 @@ export class AgDialog extends AgPanel {
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
-        let isResizable = false;
         if (typeof resizable === 'boolean') {
             resizable = {
                 topLeft: resizable,
@@ -343,7 +342,6 @@ export class AgDialog extends AgPanel {
                 if (val) {
                     this.dragService.addDragSource(params);
                     el.style.pointerEvents = 'all';
-                    isResizable = true;
                 } else {
                     this.dragService.removeDragSource(params);
                     el.style.pointerEvents = 'none';
@@ -351,33 +349,30 @@ export class AgDialog extends AgPanel {
                 this.resizerMap[s].dragSource = val ? params : undefined;
             }
         });
-
-        this.isResizable = isResizable;
     }
 
     public setMovable(movable: boolean) {
-        if (movable !== this.movable) {
-            this.movable = movable;
+        if (movable === this.movable) { return; }
 
-            const params: DragListenerParams = this.moveElementDragListener || {
-                eElement: this.moveElement,
-                onDragStart: this.onMoveStart.bind(this),
-                onDragging: this.onMove.bind(this),
-                onDragStop: this.onMoveEnd.bind(this)
-            };
+        this.movable = movable;
 
-            if (movable) {
-                this.dragService.addDragSource(params);
-                this.moveElementDragListener = params;
-            } else {
-                this.dragService.removeDragSource(params);
-                this.moveElementDragListener = undefined;
-            }
+        const params: DragListenerParams = this.moveElementDragListener || {
+            eElement: this.moveElement,
+            onDragStart: this.onMoveStart.bind(this),
+            onDragging: this.onMove.bind(this),
+            onDragStop: this.onMoveEnd.bind(this)
+        };
+
+        if (movable) {
+            this.dragService.addDragSource(params);
+            this.moveElementDragListener = params;
+        } else {
+            this.dragService.removeDragSource(params);
+            this.moveElementDragListener = undefined;
         }
     }
 
     public setMaximizable(maximizable: boolean) {
-
         if (maximizable === false) {
             this.clearMaximizebleListeners();
 

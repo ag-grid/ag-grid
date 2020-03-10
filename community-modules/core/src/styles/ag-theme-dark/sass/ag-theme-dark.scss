@@ -1,7 +1,12 @@
-@import "../../ag-theme-base/sass/legacy/ag-fresh-dark-blue-bootstrap-shared";
+@import "../../ag-theme-classic/sass/ag-theme-classic";
 
+// LEGACY THEME FILE
+// Including this file emits CSS for the Dark theme. We no longer officially support this theme.
+// See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md
 
-@include ag-theme-legacy-classic("ag-theme-dark", (
+@import "./legacy/ag-theme-dark-define-legacy-vars";
+
+@include ag-theme-classic-impl("ag-theme-dark", (
     "foreground-color": #ccc,
     "background-color": #302e2e,
     "odd-row-background-color": #403e3e,
@@ -22,8 +27,4 @@
     "header-column-separator": true,
     "row-border-color": null,
     "selected-row-background-color": #4a708b
-)) {
-    .ag-icon {
-        color: #d6d5d5;
-    }
-};
+));

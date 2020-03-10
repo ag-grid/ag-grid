@@ -45,7 +45,7 @@ function FakeServer(allData) {
             colsToSelect.push(rowGroupCol.id);
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.field + ') AS ' + valueCol.field);
+                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
             return ' SELECT ' + colsToSelect.join(', ');

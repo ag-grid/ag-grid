@@ -32,7 +32,7 @@ export class SizeMonitor {
                     this.checkSize(entry, element, width, height);
                 });
             }
-            setInterval(step, 100);
+            window.setInterval(step, 100);
         }
 
         this.ready = true;
