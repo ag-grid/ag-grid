@@ -1,5 +1,6 @@
 // @ts-ignore Suppress tsc error: Property 'sign' does not exist on type 'Math'
-const sign: (x: number) => number = Math.sign ? Math.sign : x => {
+// const sign: (x: number) => number = Math.sign ? Math.sign : x => {
+const sign: (x: number) => number = x => {
     x = +x;
 
     if (x === 0 || isNaN(x)) {
