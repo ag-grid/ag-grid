@@ -26,7 +26,7 @@ Besides the standard set of features you'd expect from any grid:
 
 Here are some of the features that make ag-Grid stand out:
 
-* Grouping / Aggregation*
+* Grouping / Aggregation *
 * Custom Filtering
 * In-place Cell Editing
 * Records Lazy Loading *
