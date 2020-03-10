@@ -184,8 +184,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Pagination API</h2>
 
-    <?php include_once 'paginationProperties.php' ?>
-    <?php printPropertiesTable($paginationApi) ?>
+    <?php createDocumentationFromFile('../javascript-grid-api/api.json', 'pagination') ?>
 
     <h2>Pagination Callbacks</h2>
 

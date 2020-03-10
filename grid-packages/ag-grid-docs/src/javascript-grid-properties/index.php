@@ -5,6 +5,7 @@ $pageKeywords = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+
 <h1>Grid Properties</h1>
 
 <p class="lead">
