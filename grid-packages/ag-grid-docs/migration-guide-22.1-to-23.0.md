@@ -167,14 +167,7 @@ We have implemented a backwards compatibility mode to help you with the transiti
 
 ### Configuring backwards compatibility mode
 
-We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. Some apps may need to upgrade to use the new method for creating custom themes, either because:
-
-1. The backwards compatibility mode is causing issues for your app
-2. You want to use new theme features added in v23 or a later release that are not supported in the backwards compatibility mode
-
-We have implemented a backwards compatibility mode for users of Balham, Balham Dark and Material. If you are extending one of these themes by importing the main theme file, e.g. `ag-theme-balham.scss`, upon upgrading to v23 you should see a warning that `$ag-compatibility-mode` is not defined.
-
-Define the `$ag-compatibility-mode` *before* the line that imports the provided theme file. Here's an example of including the Balham theme in backwards compatibility mode, setting a legacy global variable, 
+We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. `ag-theme-balham.scss`, you will automatically be opted in to "variables" backwards compatibility mode.
 
 ```scss
 $ag-compatibility-mode: "variables"; // or "legacy"

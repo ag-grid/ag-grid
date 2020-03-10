@@ -4,12 +4,8 @@
 
 @function ag-theme-base-create-params-from-legacy-vars($defaults) {
 
-    @if not $ag-compatibility-mode-set-by-user {
-        // TODO confirm URL is still correct (move to master for release)?
-        @warn "$ag-compatibility-mode not set, defaulting to \"variables\" compatibility mode. See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md.";
-    }
-    @else if $ag-compatibility-mode and $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "legacy" {
-        @warn "Invalid value for $ag-compatibility-mode: \"#{$ag-compatibility-mode}\". Valid values are \"variables\" and \"deprecated\"";
+    @if $ag-compatibility-mode and $ag-compatibility-mode != "variables" and $ag-compatibility-mode != "legacy" {
+        @warn "Invalid value for $ag-compatibility-mode: \"#{$ag-compatibility-mode}\". Valid values are \"variables\" and \"legacy\"";
     }
     @if not $ag-compatibility-mode {
         @return $defaults;
