@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Vue Components";
-$pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 19 is out now.";
+$pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 23 is out now.";
 $pageKeywords = "VueJS Grid, Vue Grid, Vue Table";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

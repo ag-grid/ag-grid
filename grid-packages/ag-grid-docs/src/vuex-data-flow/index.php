@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "VueJS Vuex, Unidirectional data flow and Memory Footprint";
-$pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 19 is out now.";
+$pageDescription = "Worlds leading, feature rich Vue Grid. Designed to integrate seamlessly with Vue to deliver filtering, grouping, aggregation, pivoting and much more with the performance that you expect. Version 23 is out now.";
 $pageKeywords = "VueJS vuex data flow memory";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
