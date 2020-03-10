@@ -1,0 +1,128 @@
+{
+    "api": {
+        "meta": {
+            "displayName": "Column Keys",
+            "description": "Some of the API methods take Column Key (named <code>colKey</code>) which has type <code>Column | string</code>. This means you can pass either a <code>Column</code> object (that you receive from calling one of the other methods) or you pass in the Column ID (which is a <code>string</code>). The Column ID is a property of the column definition. If you do not provide the Column ID, the grid will create one for you (first by trying to use the field if it is unique, otherwise it will generate an ID)."
+        },
+        "sizeColumnsToFit(width)": {
+            "description": "Gets the grid to size the columns to the specified width in pixels, e.g. <code>sizeColumnsToFix(900)</code>. To have the grid fit the columns to the grid's width, use the Grid API <code>gridApi.sizeColumnsToFit()</code> instead."
+        },
+        "setColumnGroupOpened(group, newValue)": {
+            "description": "Call this if you want to open or close a column group."
+        },
+        "getColumnGroup(name)": {
+            "description": "Returns the column group with the given name."
+        },
+        "getDisplayNameForColumn(column)": {
+            "description": "Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if <code>headerValueGetter</code> is used, or if you are doing your own column management GUI, to know what to show as the column name."
+        },
+        "getDisplayNameForColumnGroup(columnGroup)": {
+            "description": "Returns the display name for a column group (when grouping columns)."
+        },
+        "getColumn(colKey)": {
+            "description": "Returns the column with the given <code>colKey</code>, which can either be the <code>colId</code> (a string) or the <code>colDef</code> (an object)."
+        },
+        "getColumnState()": {
+            "description": "Gets the state of the columns. Typically used when saving column state."
+        },
+        "setColumnState(columnState)": {
+            "description": "Sets the state of the columns from a previous state. Returns <code>false</code> if one or more columns could not be found."
+        },
+        "resetColumnState()": {
+            "description": "Sets the state back to match the originally provided column definitions."
+        },
+        "getColumnGroupState()": {
+            "description": "Gets the state of the column groups. Typically used when saving column group state."
+        },
+        "setColumnGroupState(columnState)": {
+            "description": "Sets the state of the column group state from a previous state."
+        },
+        "resetColumnGroupState()": {
+            "description": "Sets the state back to match the originally provided column definitions."
+        },
+        "isPinning()": {
+            "description": "Returns <code>true</code> if pinning left or right, otherwise <code>false</code>."
+        },
+        "isPinningLeft()": {
+            "description": "Returns <code>true</code> if pinning left, otherwise <code>false</code>."
+        },
+        "isPinningRight()": {
+            "description": "Returns <code>true</code> if pinning right, otherwise <code>false</code>."
+        },
+        "getDisplayedColAfter(col)": {
+            "description": "Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation."
+        },
+        "getDisplayedColBefore(col)": {
+            "description": "Same as <code>getVisibleColAfter</code> except gives column to the left."
+        },
+        "setColumnVisible(colKey, visible)": {
+            "description": "Sets the visibility of a column. Key can be the column ID or <code>Column</code> object."
+        },
+        "setColumnsVisible(colKeys, visible)": {
+            "description": "Same as <code>setColumnVisible</code>, but provide a list of column keys."
+        },
+        "setColumnPinned(colKey, pinned)": {
+            "description": "Sets the column pinned / unpinned. Key can be the column ID, field, <code>ColDef</code> object or <code>Column</code> object."
+        },
+        "setColumnsPinned(colKeys, pinned)": {
+            "description": "Same as <code>setColumnPinned</code>, but provide a list of column keys."
+        },
+        "autoSizeColumn(colKey)": {
+            "description": "Auto-sizes a column based on its contents."
+        },
+        "autoSizeColumns(colKeys)": {
+            "description": "Same as <code>autoSizeColumn</code>, but provide a list of column keys."
+        },
+        "getAllColumns()": {
+            "description": "Returns all the columns, regardless of visible or not."
+        },
+        "getAllGridColumns()": {
+            "description": "Returns all the grid columns, same as <code>getAllColumns()</code>, except a) it has the order of the columns that are presented in the grid and b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot."
+        },
+        "getPrimaryColumns()": {
+            "description": "Returns the grid's primary columns."
+        },
+        "getSecondaryColumns()": {
+            "description": "Returns the grid's secondary columns."
+        },
+        "getAllDisplayedVirtualColumns()": {
+            "description": "Same as <code>getAllGridColumns()</code>, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed."
+        },
+        "getDisplayedCenterColumns()<br />getDisplayedLeftColumns()<br />getDisplayedRightColumns()<br />getAllDisplayedColumns()": {
+            "description": "Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid."
+        },
+        "getLeftDisplayedColumnGroups()<br />getCenterDisplayedColumnGroups()<br />getRightDisplayedColumnGroups()<br />getAllDisplayedColumnGroups()": {
+            "description": "Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom."
+        },
+        "moveColumn(colKey, toIndex)": {
+            "description": "Moves a column to <code>toIndex</code>. The column is first removed, then added at the <code>toIndex</code> location, thus index locations will change to the right of the column after the removal."
+        },
+        "moveColumns(colKeys[], toIndex)": {
+            "description": "Same as <code>moveColumn</code> but works on list."
+        },
+        "moveColumnByIndex(fromIndex, toIndex)": {
+            "description": "Same as <code>moveColumn</code> but works on index locations."
+        },
+        "setColumnAggFunc(column, aggFunc)": {
+            "description": "Sets the agg function for a column. <code>aggFunc</code> can be one of <code>'min' | 'max' | 'sum'</>."
+        },
+        "setColumnWidth(column, newWidth, finished = true)": {
+            "description": "Sets the column width. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many <code>columnWidth</code> events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to <code>true</code>."
+        },
+        "getRowGroupColumns()<br />addRowGroupColumn(colKey)<br />addRowGroupColumns(colKeys)<br />removeRowGroupColumn(colKey)<br />removeRowGroupColumns(colKeys)<br />setRowGroupColumns(colKeys)<br />moveRowGroupColumn(fromIndex, toIndex)": {
+            "description": "Methods for management of column row groups."
+        },
+        "getPivotColumns()<br />setPivotColumns(colKeys)<br />removePivotColumn()<br />removePivotColumns(colKeys)<br />addPivotColumn(colKey)<br />addPivotColumns(colKeys)": {
+            "description": "Methods for management of column pivots."
+        },
+        "isPivotMode()<br />setPivotMode(mode)": {
+            "description": "Methods to get / set the pivot mode."
+        },
+        "getSecondaryPivotColumn(pivotKeys, valueColId)": {
+            "description": "Returns the pivot column for the given <code>pivotKeys</code> and <code>valueColId</code>. Useful to then call operations on the pivot column."
+        },
+        "getValueColumns()<br />removeValueColumn(colKey)<br />removeValueColumns(colKeys)<br />addValueColumn(colKey)<br />addValueColumns(colKeys)": {
+            "description": "Methods for management of value column aggregates (for aggregating when grouping or pivoting)."
+        }
+    }
+}
