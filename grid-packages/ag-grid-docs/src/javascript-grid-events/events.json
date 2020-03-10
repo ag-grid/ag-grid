@@ -178,7 +178,7 @@
             "description": "Fired when calling either of the API methods <code>expandAll()</code> or <code>collapseAll()</code>."
         },
         "paginationChanged": {
-            "description": "The displayed page for pagination has changed. For example, the data was filtered or sorted, or the user has moved to a different page."
+            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>"
         },
         "pinnedRowDataChanged": {
             "description": "The client has set new pinned row data into the grid."
