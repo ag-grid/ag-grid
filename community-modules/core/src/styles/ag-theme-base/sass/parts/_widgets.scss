@@ -184,7 +184,12 @@
         @include ag-theme-rtl(( margin-right: ag-param(cell-widget-spacing) ));
 
         color: ag-param(secondary-foreground-color);
-        display: block;
+    }
+
+    .ag-cell-wrapper > * {
+        height: ag-param(row-height) - 2px; // - 2px to remove effect of cell borders
+        display: flex;
+        align-items: center;
     }
 
     .ag-group-expanded,
