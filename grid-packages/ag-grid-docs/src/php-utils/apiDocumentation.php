@@ -87,30 +87,43 @@
     }
 
     function createCodeSample($type) {
-        $parameters = $type->parameters;
+        $arguments = isset($type->parameters) ? ['params' => $type->parameters] : $type->arguments;
         $returnType = $type->returnType;
         $returnTypeIsObject = is_object($returnType);
+        $argumentDefinitions = [];
 
-        $lines = [
-            "function(params: ParamsType): " . ($returnTypeIsObject ? 'ReturnType' : $returnType) . ";",
-            "",
-            "interface ParamsType {"
-        ];
-
-        foreach ($parameters as $name => $parameterType) {
-            $lines[] = "    $name: $parameterType;";
+        foreach ($arguments as $name => $argumentType) {
+            $type = is_object($argumentType) ? ucfirst($name) . 'Type' : $argumentType;
+            $argumentDefinitions[] = "$name: $type";
         }
 
-        $lines[] = "}";
+        $lines = [
+            'function(' . implode(",\n         ", $argumentDefinitions) . '): ' . ($returnTypeIsObject ? 'ReturnType' : $returnType) . ';',
+            '',
+        ];
+
+        foreach ($arguments as $name => $argumentType) {
+            if (!is_object($argumentType)) {
+                continue;
+            }
+
+            $lines[] = 'interface ' . ucfirst($name) . 'Type' . ' {';
+
+            foreach ($argumentType as $name => $type) {
+                $lines[] = "    $name: $type;";
+            }
+
+            array_push($lines, '}', '');
+        }
 
         if ($returnTypeIsObject) {
-            array_push($lines, "", "interface ReturnType {");
+            array_push($lines, '', 'interface ReturnType {');
 
             foreach ($returnType as $name => $parameterType) {
                 $lines[] = "    $name: $parameterType;";
             }
 
-            $lines[] = "}";
+            $lines[] = '}';
         }
 
         echo "<snippet class='language-ts reference__code'>" . implode("\n", $lines) . "</snippet>";
