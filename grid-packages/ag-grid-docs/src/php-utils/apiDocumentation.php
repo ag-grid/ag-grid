@@ -93,12 +93,12 @@
         $argumentDefinitions = [];
 
         foreach ($arguments as $name => $argumentType) {
-            $type = is_object($argumentType) ? ucfirst($name) . 'Type' : $argumentType;
+            $type = is_object($argumentType) ? 'I' . ucfirst($name) : $argumentType;
             $argumentDefinitions[] = "$name: $type";
         }
 
         $lines = [
-            'function(' . implode(",\n         ", $argumentDefinitions) . '): ' . ($returnTypeIsObject ? 'ReturnType' : $returnType) . ';',
+            'function(' . implode(",\n         ", $argumentDefinitions) . '): ' . ($returnTypeIsObject ? 'IReturn' : $returnType) . ';',
             '',
         ];
 
@@ -107,7 +107,7 @@
                 continue;
             }
 
-            $lines[] = 'interface ' . ucfirst($name) . 'Type' . ' {';
+            $lines[] = 'interface I' . ucfirst($name) . ' {';
 
             foreach ($argumentType as $name => $type) {
                 $lines[] = "    $name: $type;";
@@ -117,7 +117,7 @@
         }
 
         if ($returnTypeIsObject) {
-            array_push($lines, '', 'interface ReturnType {');
+            array_push($lines, '', 'interface IReturn {');
 
             foreach ($returnType as $name => $parameterType) {
                 $lines[] = "    $name: $parameterType;";

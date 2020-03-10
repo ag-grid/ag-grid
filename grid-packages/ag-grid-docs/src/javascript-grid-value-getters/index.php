@@ -61,10 +61,7 @@ colDef.valueGetter = function(params) {
         Below shows the column definition properties for value getters.
     </p>
 
-    <table class="table reference">
-        <?php include './valueGetterProperties.php' ?>
-        <?php printPropertiesRows($valueGetterProperties) ?>
-    </table>
+    <?php createDocumentationFromFile('../javascript-grid-column-properties/properties.json', 'columnsOnly', ['valueGetter(params)', 'headerValueGetter(params)', 'filterValueGetter(params)']) ?>
 
     <h3 id="example-value-getter">Example Value Getters</h3>
 

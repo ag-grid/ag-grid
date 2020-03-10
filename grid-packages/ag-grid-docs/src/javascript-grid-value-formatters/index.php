@@ -19,10 +19,7 @@ include '../documentation-main/documentation_header.php';
         Below shows the column definition properties for value formatters.
     </p>
 
-    <table class="table reference">
-        <?php include './valueFormatterProperties.php' ?>
-        <?php printPropertiesRows($valueFormatterProperties) ?>
-    </table>
+    <?php createDocumentationFromFile('../javascript-grid-column-properties/properties.json', 'columnsOnly', ['valueFormatter(params)', 'floatingCellFormatter(params)']) ?>
 
     <p>
         The interface for <code>valueFormatter</code> is as follows:
