@@ -16,8 +16,8 @@ include '../documentation-main/documentation_header.php';
 
 <snippet language="ts">
 interface ChartOptions {
-    width: number, // default: 800
-    height: number; // default: 400
+    width: number; // default: 850
+    height: number; // default: 470
     padding: PaddingOptions;
     background: BackgroundOptions;
 
