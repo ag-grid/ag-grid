@@ -6,7 +6,7 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "test": "jest",
+    "test": "npm run validate-es5 && jest",
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
