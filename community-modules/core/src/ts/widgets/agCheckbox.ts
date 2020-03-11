@@ -62,9 +62,11 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setValue(value: boolean | undefined, silent?: boolean): this {
+        this.refreshSelectedClass(value);
         if (value === this.getValue()) { return this; }
 
         this.setSelected(value, silent);
+
         return this;
     }
 
@@ -72,7 +74,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         return this.selected;
     }
 
-    protected setSelected(selected?: boolean, silent?: boolean): void {
+    private setSelected(selected?: boolean, silent?: boolean): void {
         if (this.isSelected() === selected) {
             return;
         }
@@ -92,6 +94,12 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
 
     private onCheckboxClick(e: MouseEvent) {
         this.selected = (e.target as HTMLInputElement).checked;
+        this.refreshSelectedClass(this.selected);
         this.dispatchChange(this.selected, e);
+    }
+
+    private refreshSelectedClass(value?: boolean | null) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     }
 }
