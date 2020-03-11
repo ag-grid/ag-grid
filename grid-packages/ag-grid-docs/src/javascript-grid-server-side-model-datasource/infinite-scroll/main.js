@@ -80,9 +80,9 @@ function createFakeServer(allData) {
 }
 
 function getLastRowIndex(request, results) {
-  if (!results || results.length === 0) return undefined;
-  var currentLastRow = request.startRow + results.length + 1;
+  if (!results) return undefined;
+  var currentLastRow = request.startRow + results.length;
 
   // if on or after the last block, work out the last row, otherwise return 'undefined'
-  return currentLastRow <= request.endRow ? currentLastRow : undefined;
+  return currentLastRow < request.endRow ? currentLastRow : undefined;
 }

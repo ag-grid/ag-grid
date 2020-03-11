@@ -10,7 +10,7 @@ var gridOptions = {
         {headerName: 'Year', field: 'year', type: 'numberColumn'},
 
         // using date and non-editable column types
-        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 200 },
+        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
         {
             headerName: 'Medals',
             groupId: 'medalsGroup',
@@ -30,7 +30,9 @@ var gridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'agTextColumnFilter'
+        filter: 'agTextColumnFilter',
+        // make columns resizable
+        resizable: true
     },
 
     // default ColGroupDef, get applied to every column group
@@ -40,7 +42,7 @@ var gridOptions = {
 
     // define specific column types
     columnTypes: {
-        numberColumn: {width: 83, filter: 'agNumberColumnFilter'},
+        numberColumn: {width: 130, filter: 'agNumberColumnFilter'},
         medalColumn: {width: 100, columnGroupShow: 'open', filter: false},
         nonEditableColumn: {editable: false},
         dateColumn: {

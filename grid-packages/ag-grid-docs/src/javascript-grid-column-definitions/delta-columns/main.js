@@ -56,12 +56,12 @@ function columnDefsWidths() {
         {
             colId: 'age',
             field: 'age',
-            width: 50
+            width: 80
         },
         {
             colId: 'year',
             field: 'year',
-            width: 50
+            width: 80
         }
     ];
 }
