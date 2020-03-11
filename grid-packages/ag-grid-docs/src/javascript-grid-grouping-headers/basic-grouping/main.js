@@ -2,15 +2,15 @@ var columnDefs = [
     {
         headerName: 'Athlete Details',
         children: [
-            {headerName: 'Athlete', field: 'athlete', width: 150, filter: 'agTextColumnFilter'},
+            {headerName: 'Athlete', field: 'athlete', width: 180, filter: 'agTextColumnFilter'},
             {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
-            {headerName: 'Country', field: 'country', width: 120}
+            {headerName: 'Country', field: 'country', width: 140}
         ]
     },
     {
         headerName: 'Sports Results',
         children: [
-            {headerName: 'Sport', field: 'sport', width: 110},
+            {headerName: 'Sport', field: 'sport', width: 140},
             {headerName: 'Total', columnGroupShow: 'closed', field: 'total', width: 100, filter: 'agNumberColumnFilter'},
             {headerName: 'Gold', columnGroupShow: 'open', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
             {headerName: 'Silver', columnGroupShow: 'open', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},

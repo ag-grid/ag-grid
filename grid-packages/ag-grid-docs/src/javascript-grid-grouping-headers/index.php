@@ -48,7 +48,7 @@ gridOptions.columnDefs = [
         Below shows an example of column group configuration.
     </p>
 
-    <?= grid_example('Basic Grouping', 'basic-grouping', 'generated') ?>
+    <?= grid_example('Basic Grouping', 'basic-grouping', 'generated', array("exampleHeight" => 550)) ?>
 
     <h2>Column Definitions vs Column Group Definitions</h2>
 
@@ -188,7 +188,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= grid_example('Marry Children', 'marry-children', 'generated') ?>
+    <?= grid_example('Marry Children', 'marry-children', 'generated', array("exampleHeight" => 560)) ?>
 
     <h2 id="advanced-grouping-example">Advanced Grouping Example</h2>
 
@@ -215,7 +215,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= grid_example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
+    <?= grid_example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"), "exampleHeight" => 680)) ?>
 
 
     <h2 id="group-changes">Group Changes</h2>
