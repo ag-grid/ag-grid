@@ -229,19 +229,23 @@
     },
     "export": {
         "meta": {
-            "displayName": "Export"
+            "displayName": "Export",
+            "page": {
+                "name": "Export",
+                "url": "../javascript-grid-export/"
+            }
         },
         "exportDataAsCsv(params)": {
-            "description": "Performs a CSV export of the grid's data."
+            "description": "Downloads a CSV export of the grid's data."
         },
         "getDataAsCsv(params)": {
-            "description": "Similar to <code>exportDataAsCsv</code>, except returns the result as a string rather than export it."
+            "description": "Similar to <code>exportDataAsCsv</code>, except returns the result as a string rather than download it."
         },
         "exportDataAsExcel(params)": {
-            "description": "Performs an Excel export of the grid's data."
+            "description": "Downloads an Excel export of the grid's data."
         },
         "getDataAsExcel(params)": {
-            "description": "Similar to <code>exportDataAsExcel</code>, except returns the result as a string rather than export it."
+            "description": "Similar to <code>exportDataAsExcel</code>, except returns the result as a string rather than download it. This forces <code>exportMode</code> to <code>'xml'</code>."
         }
     },
     "events": {

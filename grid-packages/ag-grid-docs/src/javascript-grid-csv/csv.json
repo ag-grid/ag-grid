@@ -1,0 +1,12 @@
+{
+    "exportProperties": {
+        "suppressQuotes": {
+            "default": false,
+            "description": "By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so <code>my\"value</code> becomes <code>\"my\"\"value\"</code>. Pass <code>true</code> to insert the value into the CSV file without escaping. In this case it is your responsibility to ensure that no cells contain the <code>columnSeparator</code> character."
+        },
+        "columnSeparator": {
+            "default": ",",
+            "description": "Delimiter to insert between cell values."
+        }
+    }
+}

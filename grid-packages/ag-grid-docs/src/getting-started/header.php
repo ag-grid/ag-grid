@@ -1,7 +1,6 @@
 <?php
 include_once '../example-runner/example-runners.php';
 include_once '../includes/html-helpers.php';
-include_once '../php-utils/printPropertiesTable.php';
 $DONT_USE_FONT_AWESOME=true;
 $version = 'latest';
 
@@ -35,7 +34,7 @@ meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 
 <body ng-app="documentation">
 <header id="nav" class="compact">
-<?php 
+<?php
     $navKey = "getting-started";
     include '../includes/navbar.php';
  ?>
@@ -43,7 +42,7 @@ meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 
 <div id="documentation">
     <div>
-<?php if (!defined('skipLeftNav')) { ?> 
+<?php if (!defined('skipLeftNav')) { ?>
     <aside id="side-nav">
       <div id="side-nav-container" class="collapse flat">
           <ul>

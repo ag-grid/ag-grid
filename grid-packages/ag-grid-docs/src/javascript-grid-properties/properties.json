@@ -759,6 +759,21 @@
             "description": "Set to <code>true</code> to <a href='../javascript-grid-charts-integrated-overview/#enabling-charts'>Enable Charts</a>."
         }
     },
+    "components": {
+        "meta": {
+            "displayName": "Components",
+            "page": {
+                "name": "Components",
+                "url": "../javascript-grid-components/"
+            }
+        },
+        "components": {
+            "description": "A map of component names to plain JavaScript components."
+        },
+        "frameworkComponents": {
+            "description": "A map of component names to framework (React, Angular etc) components."
+        }
+    },
     "miscellaneous": {
         "meta": {
             "displayName": "Miscellaneous"
