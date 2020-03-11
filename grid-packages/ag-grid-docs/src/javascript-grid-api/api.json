@@ -325,6 +325,29 @@
             "description": "Returns a JSON object with two properties:<ul class='content'><li><code>top</code>: The top pixel position of the current scroll in the grid</li><li><code>bottom</code>: The bottom pixel position of the current scroll in the grid</li></ul>"
         }
     },
+    "infiniteScrolling": {
+        "meta": {
+            "displayName": "Infinite Scrolling"
+        },
+        "refreshInfiniteCache()": {
+            "description": "Marks all the currently loaded blocks in the cache for reload. If you have 10 blocks in the cache, all 10 will be marked for reload. The old data will continue to be displayed until the new data is loaded."
+        },
+        "purgeInfiniteCache()": {
+            "description": "Purges the cache. The grid is then told to refresh. Only the blocks required to display the current data on screen are fetched (typically no more than 2). The grid will display nothing while the new blocks are loaded. Use this to immediately remove the old data from the user."
+        },
+        "getInfiniteRowCount()": {
+            "description": "The row count defines how many rows the grid allows scrolling to."
+        },
+        "isMaxRowFound()": {
+            "description": "The property <code>maxRowFound</code> is a boolean, <code>true</code> or <code>false</code>. When <code>false</code>, the grid will allow scrolling beyond the <code>rowCount</code> looking for more rows. When the last row is found, <code>maxRowFound</code> becomes <code>true</code>, and the grid will only scroll to the last available row as it has finished looking for more data."
+        },
+        "setInfiniteRowCount(rowCount, maxRowFound)": {
+            "description": "Sets the <code>rowCount</code> and <code>maxRowFound</code> properties. The second parameter, <code>maxRowFound</code>, is optional and if left out, only <code>rowCount</code> is set. Set <code>rowCount</code> to adjust the height of the vertical scroll. Set <code>maxRowFound</code> to enable / disable searching for more rows. Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode."
+        },
+        "getCacheBlockState()": {
+            "description": "Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working."
+        }
+    },
     "overlays": {
         "meta": {
             "displayName": "Overlays"

@@ -508,6 +508,56 @@
             "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/''>Pinned Bottom Rows</a> in the grid."
         }
     },
+    "serverSideRowModel": {
+        "meta": {
+            "displayName": "Row Model: Server-Side"
+        },
+        "cacheBlockSize": {
+            "default": 100,
+            "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time."
+        },
+        "maxBlocksInCache": {
+            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. If used, make sure you have enough blocks in the cache to display one whole view of the table (i.e. what's within the scrollable area), otherwise it won't work and an infinite loop of requesting blocks will happen."
+        },
+        "cacheOverflowSize": {
+            "default": 1,
+            "description": "When infinite scrolling is active, this says how many rows beyond the current last row the scrolls should allow to scroll. For example, if 200 rows already loaded from server, and <code>cacheOverflowSize</code> is <code>50</code>, the scroll will allow scrolling to row 250."
+        },
+        "maxConcurrentDatasourceRequests": {
+            "default": 1,
+            "description": "How many requests to hit the server with concurrently. If the max is reached, requests are queued."
+        },
+        "blockLoadDebounceMillis": {
+            "description": "Prevents blocks loading until scrolling has stopped for the specified number of milliseconds. When row count (i.e. lastRowIndex) is known, setting this property will enable skipping over blocks when scrolling."
+        },
+        "infiniteInitialRowCount": {
+            "description": "How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes and you want the scrollbar to cover many blocks before it has to start re-adjusting for the loading of additional data."
+        },
+        "purgeClosedRowNodes": {
+            "description": "When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
+        },
+        "serverSideSortingAlwaysResets": {
+            "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is <a href='../javascript-grid-server-side-model-grouping/'>Row Grouping</a>."
+        }
+    },
+    "viewportRowModel": {
+        "meta": {
+            "displayName": "Row Model: Viewport"
+        },
+        "viewportRowModelPageSize": {
+            "description": "When using <code>viewport</code> row model, sets the pages size for the viewport."
+        },
+        "viewportRowModelBufferSize": {
+            "description": "When using <code>viewport</code> row model, sets the buffer size for the viewport."
+        },
+        "viewportDatasource": {
+            "description": "To use the <code>viewport</code> row model you provide the grid with a <code>viewportDatasource</code>.",
+            "more": {
+                "name": "Viewport",
+                "url": "../javascript-grid-viewport/"
+            }
+        }
+    },
     "scrolling": {
         "meta": {
             "displayName": "Scrolling"
@@ -581,42 +631,6 @@
             "more": {
                 "name": "Pagination & Child Rows",
                 "url": "../javascript-grid-pagination/#childRows"
-            }
-        }
-    },
-    "rowBlockLoading": {
-        "meta": {
-            "displayName": "Row Block Loading: Infinite & Enterprise Row Models"
-        },
-        "maxConcurrentDatasourceRequests": {
-            "default": 2,
-            "description": "How many concurrent data requests are allowed."
-        },
-        "maxBlocksInCache": {
-            "description": "How many pages to hold in the cache."
-        },
-        "cacheOverflowSize": {
-            "description": "How many rows to seek ahead when the data size is unknown."
-        },
-        "infiniteInitialRowCount": {
-            "description": "How many rows to initially allow scrolling to in the grid."
-        }
-    },
-    "viewportRowModel": {
-        "meta": {
-            "displayName": "Row Model: Viewport"
-        },
-        "viewportRowModelPageSize": {
-            "description": "When using <code>viewport</code> row model, sets the pages size for the viewport."
-        },
-        "viewportRowModelBufferSize": {
-            "description": "When using <code>viewport</code> row model, sets the buffer size for the viewport."
-        },
-        "viewportDatasource": {
-            "description": "To use the <code>viewport</code> row model you provide the grid with a <code>viewportDatasource</code>.",
-            "more": {
-                "name": "Viewport",
-                "url": "../javascript-grid-viewport/"
             }
         }
     },

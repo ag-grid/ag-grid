@@ -50,72 +50,7 @@ include '../documentation-main/documentation_header.php';
     configurations:
 </p>
 
-<table class="table reference">
-    <tr>
-        <th>Property</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <th>cacheBlockSize</th>
-        <td>
-            <p>How many rows for each block in the cache, i.e. how many rows returned from the server at a time.
-               The default is 100 rows per block.
-            </p>
-        </td>
-    </tr>
-    <tr>
-        <th>maxBlocksInCache</th>
-        <td>
-            <p>How many blocks to cache in the client. Default is no limit, so every requested
-               block is kept. Use this if you have memory concerns, so blocks least recently viewed are purged.
-               If used, make sure you have enough blocks in the cache to display one whole view of the table
-               (ie what's within the scrollable area), otherwise it won't work and an infinite loop of
-               requesting blocks will happen.</p>
-        </td>
-    </tr>
-    <tr>
-        <th>cacheOverflowSize</th>
-        <td>
-            <p>When infinite scrolling is active, this says how many rows beyond the current last row
-                the scrolls should allow to scroll. For example, if 200 rows already loaded from server,
-                and overflowSize is 50, the scroll will allow scrolling to row 250. Default is 1.</p>
-        </td>
-    </tr>
-    <tr>
-        <th>maxConcurrentDatasourceRequests</th>
-        <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
-                Default is 1, thus by default, only one request will be active at any given time.</p></td>
-    </tr>
-    <tr>
-        <th>blockLoadDebounceMillis</th>
-        <td>
-            <p>Prevents blocks loading until scrolling has stopped. When row count (i.e. lastRowIndex) is known,
-                setting his property in millis will enable skipping over blocks when scrolling.</p>
-        </td>
-    </tr>
-    <tr>
-        <th>infiniteInitialRowCount</th>
-        <td>
-            <p>How many rows to initially allow the user to scroll to. This is handy if you expect large data sizes
-                and you want the scrollbar to cover many blocks before it has to start readjusting for the loading of
-                additional data.</p>
-        </td>
-    </tr>
-    <tr>
-        <th>purgeClosedRowNodes</th>
-        <td>
-            <p>When enabled, closing group row nodes will purges all caches beneath closed row nodes. This property only
-            applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
-        </td>
-    </tr>
-    <tr>
-        <th>serverSideSortingAlwaysResets</th>
-        <td>
-            <p>When enabled, always refreshes top level groups regardless of which column was sorted. This property only
-               applies when there is <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a>.</p>
-        </td>
-    </tr>
-</table>
+<?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'serverSideRowModel') ?>
 
 <h2>Cache Debugging</h2>
 
