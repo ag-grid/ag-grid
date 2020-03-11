@@ -12,7 +12,7 @@ if (process.argv.length < 5) {
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, gridDependencyVersion, packageDirsRaw, chartsDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, chartsDependencyVersion] = process.argv;
 
 const packageDirs = JSON.parse(packageDirsRaw);
 
@@ -94,18 +94,18 @@ function updateVersion(packageJson) {
 }
 
 function updateDependencies(fileContents) {
-    return updateDependency(fileContents, 'dependencies', gridDependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'dependencies', dependencyVersion, chartsDependencyVersion);
 }
 
 function updateDevDependencies(fileContents) {
-    return updateDependency(fileContents, 'devDependencies', gridDependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'devDependencies', dependencyVersion, chartsDependencyVersion);
 }
 
 function updatePeerDependencies(fileContents) {
-    return updateDependency(fileContents, 'peerDependencies', gridDependencyVersion, chartsDependencyVersion);
+    return updateDependency(fileContents, 'peerDependencies', dependencyVersion, chartsDependencyVersion);
 }
 
-function updateDependency(fileContents, property, gridDependencyVersion, chartsDependencyVersion) {
+function updateDependency(fileContents, property, dependencyVersion, chartsDependencyVersion) {
     if (!fileContents[property]) {
         return fileContents;
     }
@@ -128,7 +128,11 @@ function updateDependency(fileContents, property, gridDependencyVersion, chartsD
             return key !== 'ag-grid-testing'
         })
         .forEach(([key, value]) => {
-            dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : gridDependencyVersion;
+            if(chartsDependencyVersion) {
+                dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : dependencyVersion;
+            } else {
+                dependencyContents[key] = dependencyVersion;
+            }
         });
 
     return copyOfFile;
