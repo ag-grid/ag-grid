@@ -1,0 +1,103 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Autowired } from '../context/context';
+import { AgAbstractInputField } from './agAbstractInputField';
+var AgCheckbox = /** @class */ (function (_super) {
+    __extends(AgCheckbox, _super);
+    function AgCheckbox() {
+        var _this = _super.call(this) || this;
+        _this.className = 'ag-checkbox';
+        _this.displayTag = 'input';
+        _this.inputType = 'checkbox';
+        _this.labelAlignment = 'right';
+        _this.selected = false;
+        _this.readOnly = false;
+        _this.passive = false;
+        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
+        return _this;
+    }
+    AgCheckbox.prototype.addInputListeners = function () {
+        this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+    };
+    AgCheckbox.prototype.getNextValue = function () {
+        return this.selected === undefined ? true : !this.selected;
+    };
+    AgCheckbox.prototype.setPassive = function (passive) {
+        this.passive = passive;
+    };
+    AgCheckbox.prototype.isReadOnly = function () {
+        return this.readOnly;
+    };
+    AgCheckbox.prototype.setReadOnly = function (readOnly) {
+        this.eInput.disabled = readOnly;
+        this.readOnly = readOnly;
+    };
+    AgCheckbox.prototype.toggle = function () {
+        var nextValue = this.getNextValue();
+        if (this.passive) {
+            this.dispatchChange(nextValue);
+        }
+        else {
+            this.setValue(nextValue);
+        }
+    };
+    AgCheckbox.prototype.getValue = function () {
+        return this.isSelected();
+    };
+    AgCheckbox.prototype.setValue = function (value, silent) {
+        if (value === this.getValue()) {
+            return this;
+        }
+        this.setSelected(value, silent);
+        return this;
+    };
+    AgCheckbox.prototype.isSelected = function () {
+        return this.selected;
+    };
+    AgCheckbox.prototype.setSelected = function (selected, silent) {
+        if (this.isSelected() === selected) {
+            return;
+        }
+        this.selected = typeof selected === 'boolean' ? selected : undefined;
+        this.eInput.checked = this.selected;
+        this.eInput.indeterminate = this.selected === undefined;
+        if (!silent) {
+            this.dispatchChange(this.selected);
+        }
+    };
+    AgCheckbox.prototype.dispatchChange = function (selected, event) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
+    };
+    AgCheckbox.prototype.onCheckboxClick = function (e) {
+        this.selected = e.target.checked;
+        this.dispatchChange(this.selected, e);
+    };
+    __decorate([
+        Autowired('gridOptionsWrapper')
+    ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
+    return AgCheckbox;
+}(AgAbstractInputField));
+export { AgCheckbox };

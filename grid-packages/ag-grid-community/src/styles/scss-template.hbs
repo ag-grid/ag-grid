@@ -1,0 +1,7 @@
+$ag-theme-{{theme}}-icon-font-family: "{{fontName}}";
+$ag-theme-{{theme}}-icons-data: {{{src}}};
+$ag-theme-{{theme}}-icons-font-codes: (
+{{#each codepoints}}
+    {{@key}}: "\\{{this}}",
+{{/each}}
+);

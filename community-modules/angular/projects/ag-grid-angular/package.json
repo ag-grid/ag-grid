@@ -1,8 +1,8 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "22.1.1",
+  "version": "23.0.0",
   "peerDependencies": {
-    "@ag-grid-community/core": "^22.1.1",
+    "@ag-grid-community/core": "~23.0.0",
     "@angular/common": "^9.0.0",
     "@angular/core": "^9.0.0",
     "tslib": "^1.10.0"

@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-react",
-  "version": "22.1.2",
+  "version": "1.0.0",
   "description": "ag-Charts React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -30,7 +30,7 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
-    "ag-charts-community": "~22.1.1",
+    "ag-charts-community": "~1.0.0",
     "@types/jest": "24.0.18",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
@@ -61,7 +61,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "ag-charts-community": "~22.1.1",
+    "ag-charts-community": "~1.0.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
   },

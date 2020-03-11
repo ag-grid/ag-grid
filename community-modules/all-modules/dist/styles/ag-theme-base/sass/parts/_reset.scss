@@ -1,0 +1,24 @@
+
+@mixin ag-theme-base-part-reset {
+
+    *, *:focus, *:after, *:before {
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input, button, select, optgroup, textarea {
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+    }
+
+    input {
+        margin: 0
+    }
+
+    ::-ms-clear {
+        display: none;
+    }
+}
