@@ -348,7 +348,7 @@ cellEditorSelector: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
+<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 250]) ?>
 
 <h2 id="dynamic-parameters">Dynamic Parameters</h2>
 
@@ -389,7 +389,7 @@ cellEditorParams: function(params) {
     </ul>
 </p>
 
-<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="enter-key-down">Enter Key Navigation</h2>
 
@@ -424,7 +424,7 @@ cellEditorParams: function(params) {
     </ul>
 </p>
 
-<?= grid_example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
+<?= grid_example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', ['enterprise' => true, 'extras' => ['jquery', 'jqueryui', 'bootstrap']]) ?>
 
 <h2 id="fullRowEdit">Full Row Editing</h2>
 
@@ -506,7 +506,7 @@ cellEditorParams: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 

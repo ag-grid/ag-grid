@@ -185,7 +185,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<?= grid_example('Column Definition Example', 'column-definition', 'generated', array('grid' => array('height' => '100%'))) ?>
+<?= grid_example('Column Definition Example', 'column-definition', 'generated', ['grid' => ['height' => '100%']]) ?>
 
 <h2>Provided Column Types</h2>
 
@@ -296,7 +296,7 @@ Examples of state include column visibility, width, row groups and values.
 <p>The example below shows using the grid's <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<?= grid_example('Column State Example', 'column-state', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Column State Example', 'column-state', 'generated', ['enterprise' => true]) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
@@ -375,7 +375,7 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= grid_example('Column Changes', 'column-changes', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Column Changes', 'column-changes', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="delta-columns">Delta Columns</h2>
 
@@ -461,6 +461,6 @@ Examples of state include column visibility, width, row groups and values.
     </ul>
 </p>
 
-<?= grid_example('Delta Columns', 'delta-columns', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Delta Columns', 'delta-columns', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

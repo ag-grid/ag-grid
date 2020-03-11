@@ -101,7 +101,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('For Print Complex', 'for-print-complex', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('For Print Complex', 'for-print-complex', 'generated', ['enterprise' => true]) ?>
 
     <h2>Animations & Redraw</h2>
 

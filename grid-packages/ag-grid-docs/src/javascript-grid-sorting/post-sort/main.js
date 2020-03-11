@@ -1,22 +1,22 @@
 var columnDefs = [
-    {field: "athlete"},
-    {field: "age", width: 100},
-    {field: "country", sort: 'asc'},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
+    { field: "athlete" },
+    { field: "age", width: 100 },
+    { field: "country", sort: 'asc' },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true
     },
-    columnDefs: columnDefs,
     postSort: function(rowNodes) {
       // here we put Ireland rows on top while preserving the sort order
 
@@ -31,7 +31,7 @@ var gridOptions = {
       var nextInsertPos = 0;
       for (var i = 0; i < rowNodes.length; i++) {
         if (isIreland(rowNodes[i])) {
-          move(nextInsertPos, i)
+          move(nextInsertPos, i);
           nextInsertPos++;
         }
       }

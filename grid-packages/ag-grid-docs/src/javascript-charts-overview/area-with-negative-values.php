@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     <a href='./simple-area.php'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled.
 </p>
 
-<?= chart_example('Area With Negative Values', 'area-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Area With Negative Values', 'area-with-negative-values', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./100--stacked-area.php">❮&nbsp;&nbsp;100% Stacked Area</a>

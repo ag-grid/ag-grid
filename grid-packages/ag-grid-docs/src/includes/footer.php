@@ -36,13 +36,13 @@
                 <li><a class="twitter-follow-button"
   href="https://twitter.com/ag_grid">
 Follow @ag_grid</a></li>
-                
+
             </ul>
         </div>
     </div>
 
     <div id="copy">
-        <div>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</div> 
+        <div>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</div>
         <div>&copy; ag-Grid Ltd. 2015-2019</div>
     </div>
 </footer>
@@ -57,7 +57,7 @@ Follow @ag_grid</a></li>
     This website uses cookies to ensure you get the best experience on our website. This enables us to understand how you use the site and track any patterns with regards how you are using our website. By using our website you consent to all cookies in accordance with our Cookie Policy.</font></p>
 
   <a style="margin-left: 20px!important" class="btn btn-primary" id="cookie-accept">OK</a>
-  <a style="margin-left:-25px!important" href="/cookies.php" class="btn btn-primary" id="read-more" style="margin:0px!important">Read More</a> 
+  <a style="margin-left:-25px!important" href="/cookies.php" class="btn btn-primary" id="read-more" style="margin:0px!important">Read More</a>
 
 
 
@@ -69,7 +69,6 @@ Follow @ag_grid</a></li>
     }
   });
   window.onload = function() {
-    Gifffer();
+    window.Gifffer && window.Gifffer();
   }
-
 </script>

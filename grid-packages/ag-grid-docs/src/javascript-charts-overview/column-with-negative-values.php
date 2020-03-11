@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Column and bar charts can also be used to represent negative values alongside positive ones.
 </p>
 
-<?= chart_example('Column With Negative Values', 'column-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Column With Negative Values', 'column-with-negative-values', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./100--stacked-column.php">❮&nbsp;&nbsp;100% Stacked Column</a>

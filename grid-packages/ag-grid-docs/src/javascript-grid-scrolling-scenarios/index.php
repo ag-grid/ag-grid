@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
             page, 5 rows on the second page).</li>
     </ul>
 
-    <?= grid_example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', ['enterprise' => true]) ?>
 
 
     <h2>Expanding Groups &amp; Vertical Scroll Location</h2>
@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
         children of the group are visible.
     </p>
 
-    <?= grid_example('Row Group Scroll', 'row-group-scroll', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('Row Group Scroll', 'row-group-scroll', 'vanilla', ['enterprise' => true]) ?>
 
 
 

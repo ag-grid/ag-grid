@@ -60,7 +60,7 @@ include '../documentation-main/documentation_header.php';
     <li>Heading groups are exported as part of the csv.</li>
 </ul>
 
-<?= grid_example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Selecting data to export', 'data-selection', 'generated', ['enterprise' => true]) ?>
 
 <h2>
     What Gets Exported
@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
     <li>Heading groups are exported as part of the csv.</li>
 </ul>
 
-<?= grid_example('Formatting exported data', 'formatting', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Formatting exported data', 'formatting', 'generated', ['enterprise' => true]) ?>
 
 <h2>Custom Headers and Footers</h2>
 

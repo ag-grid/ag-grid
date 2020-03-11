@@ -73,7 +73,7 @@ function generateGalleryPages(galleryConfig) {
     ${config.description}
 </p>
 
-<?= chart_example('${name}', '${toKebabCase(name)}', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('${name}', '${toKebabCase(name)}', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     ${navigation.join('\n    ')}

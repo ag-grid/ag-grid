@@ -124,7 +124,7 @@ SNIPPET
     In the example, try applying some sorts and filters, and see how this impacts the different operations.
 </p>
 
-<?= grid_example('Using For-Each', 'using-for-each', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Using For-Each', 'using-for-each', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="for-each-node">Accessing Displayed Rows</h2>
 

@@ -64,13 +64,14 @@ function phpArrayToJSON(string) {
     }
 
     const replaced = string
-        .replace(/^, /, '')
-        .replace(/'/g, '"')
-        .replace(/array\((("\w+"(, )?)+)\)/, '[$1]')
-        .replace(/array/g, '')
-        .replace(/\(/g, '{')
-        .replace(/\)/g, '}')
-        .replace(/=>/g, ':');
+        .replace(/^, /, '') // remove leading comma
+        .replace(/'/g, '"') // standardise quotes
+        .replace(/\s*=>/g, ':') // transform keys
+        .replace(/\[(("\w+"(, )?)+)\]/g, '<<<$1>>>') // mark unkeyed array to avoid it being converted to object
+        .replace(/\[/g, '{') // convert keyed arrays to objects
+        .replace(/\]/g, '}')
+        .replace(/<<</g, '[') // convert unkeyed arrays back
+        .replace(/>>>/g, ']');
 
     try {
         return JSON.parse(replaced);

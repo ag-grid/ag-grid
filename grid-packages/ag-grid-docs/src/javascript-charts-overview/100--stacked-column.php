@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     100% stacked column charts show the relative percentage of multiple series in <a href='./stacked-column.php'>stacked columns</a>, where each stacked column always totals to 100%.
 </p>
 
-<?= chart_example('100% Stacked Column', '100--stacked-column', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('100% Stacked Column', '100--stacked-column', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./stacked-column.php">❮&nbsp;&nbsp;Stacked Column</a>

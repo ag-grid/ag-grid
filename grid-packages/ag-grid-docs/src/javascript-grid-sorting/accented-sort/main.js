@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Accented", field: "accented", width: 150}
+    { field: "accented", width: 150 }
 ];
 
 var gridOptions = {

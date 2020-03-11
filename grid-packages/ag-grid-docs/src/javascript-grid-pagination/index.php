@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
 </p>
 
-<?= grid_example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Client Paging', 'client-paging', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="clientPagination">Supported Row Models</h2>
 
@@ -48,7 +48,7 @@ other row models check the relevant documentation for <a href="../javascript-gri
     automatically changes. To view this, open the example up in a new tab and resize your browser.
 </p>
 
-<?= grid_example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Auto Page Size', 'auto-page-size', 'generated', ['enterprise' => true]) ?>
 
 <note>
     Each pagination page must have the same number of rows.
@@ -70,7 +70,7 @@ other row models check the relevant documentation for <a href="../javascript-gri
         <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
 </ul>
 
-<?= grid_example('Custom Paging', 'custom-paging', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Custom Paging', 'custom-paging', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
@@ -86,7 +86,7 @@ the pagination state.</p>
 <p>The example also sets property <code>suppressScrollOnNewData=true</code>, which tells the grid to NOT
 scroll to the top when the page changes.</p>
 
-<?= grid_example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Custom Controls', 'custom-controls', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="childRows">Pagination & Child Rows</h2>
 
@@ -124,7 +124,7 @@ scroll to the top when the page changes.</p>
     </li>
 </ul>
 
-<?= grid_example('Grouping Normal', 'grouping-normal', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Grouping Normal', 'grouping-normal', 'generated', ['enterprise' => true]) ?>
 
 <h3>Mode 2: Paginate All Rows, Including Children</h3>
 
@@ -159,7 +159,7 @@ scroll to the top when the page changes.</p>
     </li>
 </ul>
 
-<?= grid_example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Grouping Paginate Child Rows', 'grouping-paginate-child-rows', 'generated', ['enterprise' => true]) ?>
 
 <h3>Fallback to Mode 2</h3>
 

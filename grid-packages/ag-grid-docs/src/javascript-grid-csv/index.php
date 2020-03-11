@@ -61,6 +61,6 @@ include '../documentation-main/documentation_header.php';
         visible in Excel.</li>
 </ul>
 
-<?= grid_example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "exampleHeight" => 400)) ?>
+<?= grid_example('CSV Export Options', 'csv-export', 'generated', ['enterprise' => true, 'exampleHeight' => 400]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

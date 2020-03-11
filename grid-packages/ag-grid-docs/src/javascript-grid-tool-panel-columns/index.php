@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Tool Panel Simple', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Tool Panel Simple', 'simple', 'generated', ['enterprise' => true]) ?>
 
     <note>
         Remember to mark the column definitions with <code>enableRowGroup</code> for grouping, <code>enablePivot</code>
@@ -199,7 +199,7 @@ interface IColumnToolPanel {
         </ul>
     </p>
 
-    <?= grid_example('Section Visibility', 'section-visibility', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Section Visibility', 'section-visibility', 'generated', ['enterprise' => true]) ?>
 
     <h2>Styling Columns</h2>
 
@@ -249,7 +249,7 @@ colDefs = {
         name dependent on where it appears using the <code>location</code> parameter.</li>
     </ul>
 
-    <?= grid_example('Tool Panel Styling', 'styling', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Tool Panel Styling', 'styling', 'generated', ['enterprise' => true]) ?>
 
     <h2>Read Only Functions</h2>
 
@@ -259,7 +259,7 @@ colDefs = {
         so they can see which columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <?= grid_example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Read Only Example', 'read-only', 'generated', ['enterprise' => true]) ?>
 
 <h2>Expand / Collapse Column Groups</h2>
 
@@ -317,7 +317,7 @@ interface IColumnToolPanel {
             using <code>collapseColumnGroups(['competitionGroupId'])</code>.</li>
     </ul>
 
-    <?= grid_example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Expand / Collapse Column Groups', 'expand-collapse', 'generated', ['enterprise' => true]) ?>
 
     <h2>Custom Column Layout</h2>
 
@@ -401,7 +401,7 @@ columnsToolPanel.setColumnLayout(customToolPanelColumnDefs);
         </li>
     </ul>
 
-    <?= grid_example('Custom Column Layout', 'custom-layout', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Custom Column Layout', 'custom-layout', 'generated', ['enterprise' => true]) ?>
 
     <h2>Next Up</h2>
 

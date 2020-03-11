@@ -105,6 +105,6 @@ interface BarTooltipRendererParams {
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= grid_example('Bar/Column Chart Customisations', 'custom-bar-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Bar/Column Chart Customisations', 'custom-bar-chart', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

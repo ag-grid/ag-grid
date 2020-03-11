@@ -187,7 +187,7 @@ interface ITooltipParams {
     </li>
 </ul>
 
-<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true]) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 

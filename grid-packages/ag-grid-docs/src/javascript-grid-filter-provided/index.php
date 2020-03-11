@@ -13,8 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-   The grid provides four filters out of the box; three <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> (Text, Number and Date), and an advanced 
-   <a href="../javascript-grid-filter-set/">Set Filter</a> which is available in the enterprise version of the grid.    
+   The grid provides four filters out of the box; three <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> (Text, Number and Date), and an advanced
+   <a href="../javascript-grid-filter-set/">Set Filter</a> which is available in the enterprise version of the grid.
 </p>
 
 <p>
@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
     <li><a href="../javascript-grid-filter-text">Text</a></li>
     <li><a href="../javascript-grid-filter-number">Number</a></li>
     <li><a href="../javascript-grid-filter-date">Date</a></li>
-    <li><a href="../javascript-grid-filter-set/">Set Filter</a><span class="enterprise-icon">e</span></li>  
+    <li><a href="../javascript-grid-filter-set/">Set Filter</a><span class="enterprise-icon">e</span></li>
 </ul>
 
 <p>
@@ -177,7 +177,7 @@ include '../documentation-main/documentation_header.php';
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', ['enterprise' => true]) ?>
 
 
 

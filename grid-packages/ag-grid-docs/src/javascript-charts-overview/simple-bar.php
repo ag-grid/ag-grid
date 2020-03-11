@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited.
 </p>
 
-<?= chart_example('Simple Bar', 'simple-bar', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Simple Bar', 'simple-bar', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__right" href="./grouped-bar.php">Grouped Bar&nbsp;&nbsp;❯</a>

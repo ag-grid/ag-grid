@@ -40,4 +40,4 @@
     <a href="https://github.com/ag-grid/ag-grid-react-example">React Example</a>.
 </p>
 
-<?= grid_example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'react')) ?>
+<?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'react']) ?>

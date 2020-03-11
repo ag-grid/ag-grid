@@ -1,23 +1,22 @@
 var columnDefs = [
-    {field: "athlete"},
-    {field: "age", width: 100},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
+    { field: "athlete" },
+    { field: "age", width: 100 },
+    { field: "country" },
+    { field: "year", width: 100 },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
     multiSortKey: 'ctrl',
     onGridReady: function(params) {
         var defaultSortModel = [

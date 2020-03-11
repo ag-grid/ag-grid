@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         selects the buttons.
     </p>
 
-    <?= grid_example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>
+    <?= grid_example('Width & Height', 'width-and-height', 'multi', ['exampleHeight' => 600]) ?>
 
     <h2 id="auto-height">Grid Auto Height</h2>
 
@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
         Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
     </note>
 
-    <?= grid_example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
+    <?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'noStyle' => 1]) ?>
 
     <h2>DOM Layout</h2>
 

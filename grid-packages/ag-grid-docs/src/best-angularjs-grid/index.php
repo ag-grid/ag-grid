@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
     <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
 </ul>
 
-<p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need to do. 
+<p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need to do.
  Any grid you create will be an enterprise grid once you load the library.</p>
 
 <h4>CommonJS</h4>
@@ -169,7 +169,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', ['exampleHeight' => 130, 'extras' => ['angularjs1']]) ?>
 
 
 <h2>Events & Digest Cycle</h2>
@@ -195,7 +195,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', ['extras' => ['angularjs1']]) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
@@ -233,7 +233,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </ul>
 </p>
 
-<?= grid_example('Components', 'components', 'vanilla', array("exampleHeight" => 400, 'extras' => array('angularjs1', 'ui-bootstrap'))) ?>
+<?= grid_example('Components', 'components', 'vanilla', ['exampleHeight' => 400, 'extras' => ['angularjs1', 'ui-bootstrap']]) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS
@@ -288,7 +288,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
 </ul>
 
-<?= grid_example('Angular compiling', 'compiling', 'vanilla', array('extras' => array('angularjs1'))) ?>
+<?= grid_example('Angular compiling', 'compiling', 'vanilla', ['extras' => ['angularjs1']]) ?>
 
 <note>
     When scrolling the example above up and down, the cells rendered using Angular are blank
@@ -329,7 +329,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 </note>
 
-<?= grid_example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
+<?= grid_example('Cell Templates', 'cell-templates', 'vanilla', ['enterprise' => true, 'extras' => ['angularjs1']]) ?>
 
 <h2 id="next-steps">Next Steps</h2>
 

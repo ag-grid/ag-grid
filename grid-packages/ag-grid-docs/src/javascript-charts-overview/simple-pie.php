@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories.
 </p>
 
-<?= chart_example('Simple Pie', 'simple-pie', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Simple Pie', 'simple-pie', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./column-with-negative-values.php">❮&nbsp;&nbsp;Column With Negative Values</a>

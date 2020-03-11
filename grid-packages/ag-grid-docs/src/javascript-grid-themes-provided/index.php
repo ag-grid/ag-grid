@@ -8,22 +8,18 @@ include '../documentation-main/documentation_header.php';
 
     <h1>Provided Themes</h1>
 
-
     <p class="lead">
-        Provided Themes are themes that come provided with the grid. The quickest way to get a nice style
-        onto a grid is to apply a provided theme.
+        The grid comes with a few Provided Themes, and the quickest way to get a nice style onto a grid is to apply one of them.
     </p>
 
     <p>
-        The themes can be used without any modification, or can tweaked by <a href="#customizing-sass-variables">
-            altering the SASS variables
-        </a>.
+        The themes can be used without any modification, or can be <a href="#customising-themes">customised</a>.
     </p>
 
     <h2>Themes Summary</h2>
 
     <p>
-        The themes are as follows:
+        The themes are as follows. Click the theme name to load the demo page with this theme.
     </p>
 
     <table class="properties">
@@ -41,10 +37,13 @@ include '../documentation-main/documentation_header.php';
             <th>Description</th>
         </tr>
         <tr>
-            <td class="theme-name-cell"><code>ag-theme-alpine<br/>ag-theme-alpine-dark</code></td>
+            <td class="theme-name-cell">
+                <a href="/example.php?theme=ag-theme-alpine" target="_blank">ag-theme-alpine</a><br/>
+                <a href="/example.php?theme=ag-theme-alpine-dark" target="_blank">ag-theme-alpine-dark</a>
+            </td>
             <td>
                 <p>
-                    Modern looking themes with high contrast, generous padding and two accent colors.
+                    Modern looking themes with high contrast, and generous padding.
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
@@ -53,7 +52,10 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <td class="theme-name-cell"><code>ag-theme-balham<br/>ag-theme-balham-dark</code></td>
+            <td class="theme-name-cell">
+                <a href="/example.php?theme=ag-theme-balham" target="_blank">ag-theme-balham</a><br/>
+                <a href="/example.php?theme=ag-theme-balham-dark" target="_blank">ag-theme-balham-dark</a>
+            </td>
             <td>
                 <p>
                     Themes for professional data-heavy applications.
@@ -66,7 +68,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <td class="theme-name-cell"><code>ag-theme-material</code></td>
+            <td class="theme-name-cell">
+                <a href="/example.php?theme=ag-theme-material" target="_blank">ag-theme-material</a>
+            </td>
             <td>
                 <p>
                     A theme designed according to the Google Material Language Specs.
@@ -95,1110 +99,292 @@ include '../documentation-main/documentation_header.php';
     </snippet>
 
     <p>
-        The following is an example of using the dark balham theme:
+        Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to
+        load Roboto is through Google's CDN:
     </p>
 
     <snippet language="html">
-        &lt;div id="myGrid" class="ag-theme-balham-dark"&gt;&lt;/div&gt;
+        &lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;
+        &lt;div id="myGrid" class="ag-theme-material"&gt;&lt;/div&gt;
     </snippet>
 
-  <h1>Alpine Themes</h1>
+    <h1>Customising themes</h1>
+
     <p>
-        The Alpine theme comes in two versions: 1) light and 2) dark. Below shows examples of each type.
+        In order to customise a theme, you need to set up your project to be able to compile Sass files. The recommended way to process your project's Scss
+        files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. We provide a
+        <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">general webpack example</a> appropriate Vanilla JS and React
+        projects, and an <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">angular example</a> using Angular CLI.
     </p>
 
-    <p>Example Alpine Light (ag-theme-alpine)</p>
+    <p>
+        To customise a theme, include the theme mixin file and then call the mixin passing parameters to customise it. Then add CSS rules for advanced customisation:
+    </p>
 
-    <?= grid_example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true )) ?>
+    <snippet language="scss">
+@import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin";
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        // use theme parameters where possible
+        alpine-active-color: deeppink
+    ));
 
-    <p>Example Alpine Dark (ag-theme-alpine-dark)</p>
+    .ag-header {
+        // or write CSS selectors to make customisations beyond what the parameters support
+        text-shadow: deeppink;
+    }
+}
+    </snippet>
 
-    <?= grid_example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true )) ?>
+    <h2>Important theme parameters</h2>
 
-    <h3>Customizing the Alpine Theme</h3>
+    <p>There is a full list of theme parameters below, but a few important ones are:</p>
 
-    <p>In addition to the basic set of Sass variables, the Alpine theme exposes the following Sass variables which you can override to change the theme look:
+    <ul>
+        <li><code>grid-size</code> is the main control for affecting how tightly data and UI elements are packed together.
+            All padding and spacing in the grid is defined as a multiple of grid-size,
+            so increasing it will make most components larger by increasing their internal white
+            space while leaving the size of text and icons unchanged.</li>
+        <li><code>borders</code> controls whether borders are drawn around the grid. There are more <code>border-*</code> variables to provide fine-grained control over which borders are drawn and their color.</li>
+        <li><code>row-height</code> height in pixels of a grid row.</li>
+        <li><code>header-height</code> height in pixels of a header row.</li>
+        <li>The provided themes have theme-specific variables to set the color of many elements at once. These are shortcuts for setting several other variables.</li>
+        <ul>
+            <li><code>alpine-active-color</code> (Alpine only) sets the colour of checked checkboxes, range selections, row selections, selected tab underlines, and input focus outlines</li>
+            <li><code>balham-active-color</code> (Balham only) sets the colour of checked checkboxes, range selections, row selections, and input focus outlines</li>
+            <li><code>material-primary-color</code> and <code>material-accent-color</code> (Material only) set the colours used for the primary and accent colour roles specified in the <a href="https://material.io/design/color/">Material Design color system</a>. Currently primary color is used for buttons, range selections, selected tab underlines and input focus underlines, and accent color is used for checked checkboxes.</li>
+        </ul>
+    </ul>
 
-<snippet>
-$ag-alpine-blue: #2196f3;
-$ag-alpine-orange: #ff9800;
-$ag-alpine-purple: #e040fb;
-$ag-alpine-green: #76ff03;
+    <h2>Customising row and header heights</h2>
 
-$ag-alpine-black: #181d1f;
-$ag-alpine-white: #fff;
+    <p>
+        The grid uses <a href="/javascript-grid-dom-virtualisation/">DOM virtualisation</a> for rendering large amounts of data,
+        which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
+        layout. The grid uses several strategies to work out the right size:
+    </p>
 
-$ag-alpine-gray-1: #222628;
-$ag-alpine-gray-2: #585652;
-$ag-alpine-gray-3: #68686e;
-$ag-alpine-gray-4: #babfc7;
-$ag-alpine-gray-5: #fcfdfe;
+    <ol>
+        <li>Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our <a href="https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js">theme customisation examples</a> demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).</li>
+        <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name. This ensures that teh grid will us the correct fallback sizes.</li>
+        <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
+    </ol>
 
-$ag-alpine-light-pink: #fce4ec;
-$ag-alpine-dim-green: #43a047;
-$ag-alpine-dim-red: #e53935;
-$ag-alpine-deep-teal: #16a085;
+    <h2>Full list of theme parameters</h2>
 
-////////////////////////////////////////
-// Colors
-////////////////////////////////////////
+    <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the <code>ag-defined</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
 
-// Used as an active state across the grid - focus forms, caret, etc.
-$ag-color-primary: $ag-alpine-blue !default;
-// color used for the grid selection and selection checkboxes.
-$ag-color-secondary: $ag-alpine-orange !default;
-// background
-$ag-background-color: $ag-alpine-white !default;
+<snippet language="scss">
+// Colour of text and icons in primary UI elements like menus
+foreground-color: #000,
 
-// text
-$ag-color-foreground: $ag-alpine-black !default;
+// Colour of text in grid cells
+data-color: ag-derived(foreground-color),
 
-// used for panels and popups
-$ag-color-background-alt: $ag-alpine-gray-5 !default;
+// Colour of text and icons in UI elements that need to be slightly less emphasised to avoid distracting attention from data
+secondary-foreground-color: ag-derived(foreground-color),
 
-// borders between the grid elements (body, panel, header, etc.)
-$ag-color-border-primary: $ag-alpine-gray-4 !default;
+// Colour of text and icons in the header
+header-foreground-color: ag-derived(secondary-foreground-color),
 
-// borders between body cells
-$ag-color-border-secondary: transparentize($ag-alpine-gray-4, 0.5) !default;
+// Color of elements that can't be interacted with because they are in a disabled state
+disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 
-$ag-color-icon: $ag-alpine-gray-3 !default;
+// Background colour of the grid
+background-color: #fff,
 
-// range selection
-$ag-color-selected: lighten($ag-color-secondary, 40) !default;
-$ag-color-background-range-selection: lighten($ag-color-secondary, 44) !default;
-$ag-color-background-range-selected-1: darken($ag-color-background-range-selection, 10) !default;
-$ag-color-background-range-selected-2: darken($ag-color-background-range-selection, 20) !default;
-$ag-color-background-range-selected-3: darken($ag-color-background-range-selection, 30) !default;
-$ag-color-background-range-selected-4: darken($ag-color-background-range-selection, 40) !default;
+// Background colour for all headers, including the grid header, panels etc
+header-background-color: null,
 
-$ag-color-row-hover: transparentize($ag-color-primary, 0.9) !default;
+// Background colour for second level headings within UI components
+subheader-background-color: null,
 
-// shadows of popups, menus, etc
-$ag-color-chrome-shadow: $ag-alpine-gray-4 !default;
+// Background for areas of the interface that contain UI controls, like tool panels and the chart settings menu
+control-panel-background-color: null,
 
-// dropdown arrow
-$ag-url-data-image-dropdown-arrow: url($ag-black-dropdown-arrow) !default;
-$ag-url-hover-data-image-dropdown-arrow: url($ag-blue-dropdown-arrow) !default;
-$ag-url-pressed-data-image-dropdown-arrow: url($ag-white-dropdown-arrow) !default;
+// Background color of selected rows in the grid and in dropdown menus
+selected-row-background-color: ag-derived(background-color, $mix: foreground-color 25%),
 
-// color for the reset / cancel buttons
-$ag-color-form-element-secondary: $ag-alpine-gray-3;
-$ag-color-border-form-element: $ag-alpine-gray-4 !default;
-$ag-color-background-form-element-disabled: transparentize($ag-alpine-gray-4, 0.8) !default;
+// Background colour applied to every other row or null to use background-color for all rows
+odd-row-background-color: null,
 
-// inactive color for the switch
-$ag-color-background-toggle-button: $ag-alpine-gray-4 !default;
+// Background color when hovering over rows in the grid and in dropdown menus, or null for no rollover effect (note - if you want a rollover on one but not the other, set to null and use CSS to achieve the rollover)
+row-hover-color: null,
 
-// chart selections
-$ag-color-background-chart-range-selection-category: $ag-alpine-green !default;
-$ag-color-background-chart-range-selection: $ag-alpine-blue !default;
+// Color to draw around selected cell ranges
+range-selection-border-color: ag-derived(foreground-color),
 
-// chips in grouping and aggregation
-$ag-color-background-chip: transparentize($ag-alpine-gray-4, 0.8) !default;
+// Background colour of selected cell ranges. Choosing a semi-transparent color (opacity of 0.1 to 0.5 works well) will ensure that it looks good when multiple ranges overlap.
+range-selection-background-color: ag-derived(range-selection-border-color, $opacity: 0.2),
 
-// delta changes
-$ag-color-cell-data-changed: $ag-alpine-light-pink !default;
-$ag-color-value-change-delta-up: $ag-alpine-dim-green !default;
-$ag-color-value-change-delta-down: $ag-alpine-dim-red !default;
-$ag-color-value-change-value-highlight-background: transparentize($ag-alpine-deep-teal, 0.5) !default;
+// Background colour to apply to a cell range when it is copied from or pasted into
+range-selection-highlight-color: ag-derived(range-selection-border-color),
 
-////////////////////////////////////////
-//Fonts
-////////////////////////////////////////
+// Colour and thickness of the border drawn under selected tabs, including menus and tool panels
+selected-tab-underline-color: ag-derived(range-selection-border-color),
+selected-tab-underline-width: 0,
+selected-tab-underline-transition-speed: null,
 
-// Primary
-$ag-font-family-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif !default;
-$ag-size-font-default: 14px !default;
-$ag-weight-font-default: 400 !default;
-$ag-font-default: $ag-weight-font-default $ag-size-font-default $ag-font-family-default;
+// Background colour for cells that provide categories to the current range chart
+range-selection-chart-category-background-color: rgba(#00FF84, 0.1),
 
-// Secondary (used mostly in headers)
-$ag-font-family-secondary: $ag-font-family-default !default;
-$ag-size-font-secondary: 13px !default;
-$ag-weight-font-secondary: 700 !default;
-$ag-font-secondary: $ag-weight-font-secondary $ag-size-font-secondary $ag-font-family-secondary;
+// Background colour for cells that provide data to the current range chart
+range-selection-chart-background-color: rgba(#0058FF, 0.1),
 
-// Form elements
-$ag-font-family-form-element: $ag-font-family-default !default;
-$ag-size-font-form-element: 13px !default;
-$ag-weight-font-form-element: 400 !default;
-$ag-font-form-element: $ag-weight-font-form-element $ag-size-font-form-element $ag-font-family-form-element;
+// Rollover colour for header cells
+header-cell-hover-background-color: null,
 
-// Chrome UI (menu, tool panel, etc)
-$ag-font-family-chrome: $ag-font-family-default !default;
-$ag-size-font-chrome: 13px !default;
-$ag-weight-font-chrome: 400 !default;
-$ag-font-chrome: $ag-weight-font-chrome $ag-size-font-chrome $ag-font-family-chrome;
+// Colour applied to header cells when the column is being dragged to a new position
+header-cell-moving-background-color: ag-derived(header-cell-hover-background-color),
 
-// tooltip and status bar are chrome but smaller
-$ag-size-font-tooltip: $ag-size-font-chrome - 1 !default;
-$ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
+// Colour to apply when a cell value changes and enableCellChangeFlash is enabled
+value-change-value-highlight-background-color: rgba(#16A085, 0.5),
+
+// Colours to apply when a value increases or decreases in an agAnimateShowChangeCellRenderer cell
+value-change-delta-up-color: #43a047,
+value-change-delta-down-color: #e53935,
+
+// Colour for the "chip" that repersents a column that has been dragged onto a drop zone
+chip-background-color: null,
+
+//
+// BORDERS
+//
+
+// Draw borders around most UI elements
+borders: true,
+
+// Draw the few borders that are critical to UX, e.g. between headers and rows.
+borders-critical: ag-derived(borders),
+
+// Draw decorative borders separating UI elements within components
+borders-secondary: ag-derived(borders),
+
+// Draw borders around sidebar tabs so that the active tab appears connected to the current tool panel
+borders-side-button: ag-derived(borders),
+
+border-radius: 0px,
+
+// Colour for border around major UI components like the grid itself, headers, footers and tool panels
+border-color: ag-derived(background-color, $mix: foreground-color 25%),
+
+// Colour for borders used to separate elements within a major UI component
+secondary-border-color: ag-derived(border-color),
+
+// Colour of the border between grid rows, or null to display no border
+row-border-color: ag-derived(secondary-border-color),
+
+// Default border for cells. This can be used to specify the border-style and border-color properties e.g. `dashed red` but the border-width is fixed at 1px.
+cell-horizontal-border: solid transparent,
+
+// Separator between columns in the header. Displays between all header cells For best UX, use either this or header-column-resize-handle but not both
+header-column-separator: false,
+    header-column-separator-height: 100%,
+    header-column-separator-width: 1px,
+    header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
+
+// Visible marker for resizeable columns. Displays in the same position as the column separator, but only when the column is resizeable. For best UX, use either this or header-column-separator but not both
+header-column-resize-handle: false,
+    header-column-resize-handle-height: 50%,
+    header-column-resize-handle-width: 1px,
+    header-column-resize-handle-color: ag-derived(border-color, $opacity: 0.5),
+
+//
+// INPUTS
+//
+
+// Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
+suppress-native-widget-styling: false,
+
+input-disabled-background-color: null,
+input-border-color: null,
+
+checkbox-background-color: null,
+checkbox-border-radius: ag-derived(border-radius),
+checkbox-checked-color: ag-derived(foreground-color),
+checkbox-unchecked-color: ag-derived(foreground-color),
+checkbox-indeterminate-color: ag-derived(checkbox-unchecked-color),
+
+toggle-button-off-border-color: ag-derived(checkbox-unchecked-color),
+toggle-button-off-background-color: ag-derived(checkbox-unchecked-color),
+toggle-button-on-border-color: ag-derived(checkbox-checked-color),
+toggle-button-on-background-color: ag-derived(checkbox-checked-color),
+toggle-button-switch-background-color: ag-derived(background-color),
+toggle-button-switch-border-color: ag-derived(toggle-button-off-border-color),
+toggle-button-border-width: 1px,
+toggle-button-height: ag-derived(icon-size),
+toggle-button-width: ag-derived(toggle-button-height, $times: 2),
+
+input-focus-box-shadow: null,
+input-focus-border-color: null,
+
+// CHART SETTINGS
+
+// Color of border around selected chart style
+minichart-selected-chart-color: ag-derived(checkbox-checked-color),
+// Color of dot representing selected page of chart styles
+minichart-selected-page-color: ag-derived(checkbox-checked-color),
+
+
+//
+// SIZING / PADDING / SPACING
+//
+
+// grid-size is the main control for affecting how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
+grid-size: 4px,
+
+// The size of square icons and icon-buttons
+icon-size: 12px,
+
+// These 4 variables set the padding around and spacing between widgets in "widget containers" which are parts of the UI that contain many related widgets, like the set filter menu, charts settings tabs etc.
+widget-container-horizontal-padding: ag-derived(grid-size, $times: 1.5),
+widget-container-vertical-padding: ag-derived(grid-size, $times: 1.5),
+widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
+widget-vertical-spacing: ag-derived(grid-size),
+
+// Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from $ag-row-height / $ag-header-height
+cell-horizontal-padding: ag-derived(grid-size, $times: 3),
+
+// Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)
+cell-widget-spacing: ag-derived(cell-horizontal-padding),
+
+// Height of grid rows
+row-height: ag-derived(grid-size, $times: 6, $plus: 1),
+
+// Height of header rows
+header-height: ag-derived(row-height),
+
+// Height of items in lists (example of lists are dropdown select inputs and column menu set filters)
+list-item-height: ag-derived(grid-size, $times: 5),
+
+// How much to indent child columns in the column tool panel relative to their parent
+column-select-indent-size: ag-derived(grid-size, $plus: icon-size),
+
+// How much to indent child rows in the grid relative to their parent row
+row-group-indent-size: ag-derived(cell-widget-spacing, $plus: icon-size),
+
+// How much to indent child columns in the filters tool panel relative to their parent
+filter-tool-panel-group-indent: 16px,
+
+// Cause tabs to stretch across the full width of the tab panel header
+full-width-tabs: false,
+
+// Fonts
+font-family: ("Helvetica Neue", sans-serif),
+font-size: 14px,
+icon-font-family: $ag-theme-base-icon-font-family,
+icons-data: $ag-theme-base-icons-data,
+icons-font-codes: $ag-theme-base-icons-font-codes,
+
+// cards are elements that float above the UI
+card-radius: ag-derived(border-radius),
+
+// the default card shadow applies to simple cards like column drag indicators and text editors
+card-shadow: none,
+
+// override the shadow for popups - cards that contain complex UI, like menus and charts
+popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3)
 </snippet>
 
-    <h1>Balham Themes</h1>
-
-    <p>
-        The Balham theme comes in two versions: 1) light and 2) dark. Below shows examples of each type.
-    </p>
-
-    <p>Example Balham Light (ag-theme-balham)</p>
-
-<?= grid_example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true )) ?>
-
-    <p>Example Balham Dark (ag-theme-balham-dark)</p>
-
-<?= grid_example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true )) ?>
-
-    <h3>Change the Theme Accent Color</h3>
-
-    <p>
-        In addition to the finer grained Scss color variables available for the rest of the themes, the Balham
-        theme has a 'catch all' Sass variable named '$ag-active' that determines the color of the selected checkboxes,
-        selected rows and icons in the column menu.
-    </p>
-
-    <snippet>
-        // Set the colors to blue and amber
-        $ag-active: #E91E63; // pink-500 from https://www.materialui.co/colors
-        // Import the ag-Grid balham theme
-        @import "~ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham";</snippet>
-
-    <p>
-        The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle.
-    </p>
-
-
-
-    <h1>Material Design Theme</h1>
-
-    <p>
-        To comply with the <a href="https://material.io/guidelines/components/data-tables.html#">material design data table guidelines</a>,
-        the theme uses different spacing and icon set compared to the other themes.
-    </p>
-
-    <p> The example below shows the grid with a rich set of features enabled.</p>
-
-    <?= grid_example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
-
-    <h3>Include the Roboto Font</h3>
-
-    <p>The material design guidelines require the Roboto font to be used throughout the interface. The easiest way to include it in the document is by loading it from the Google CDN.
-        Put the following code in the HEAD element of your document: </p>
-
-    <snippet>
-        &lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</snippet>
-
-
-    <h3>Change the Theme Primary / Secondary Colors through Scss</h3>
-
-    <p>
-        The material theme uses Scss internally, exposing several variables which control its appearance.
-        The ones you are likely looking into changing are the primary and secondary colors. The default ones are
-        <a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the indigo-pink Angular Material theme.
-    </p>
-
-    <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
-
-    <snippet>
-        // Set the colors to blue and amber
-        $ag-primary-color: #2196F3; // blue-500
-        $ag-accent-color: #FFD740; // amber-A200
-
-        // Import the ag-Grid material theme
-        @import "~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material";</snippet>
-
-    <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
-
-    <p>
-        The recommended way to process your project's Scss files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle.
-        A working example for Angular 2 based on angular-cli can be found in <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">the ag-grid-material repository</a>.
-    </p>
-
-    <h3>Change the row height / header height / icon size </h3>
-
-    <p>
-        The material design guidelines specify the size of the icons, height of the headers and the rows. We recommend keeping them to the default values for "true" material look.
-        However, In case you wish to change the sizing, you should do that both in the grid configuration
-        and by overriding the <code>$ag-grid-size</code> and <code>$ag-icon-size</code>.
-        A working example that showcases this using webpack can be found <a href="https://github.com/ag-grid/ag-grid-material/tree/master/custom-sizing">ag-grid-material GitHub repository</a>.
-    </p>
-
-    <h3>Integrate with Other Material Component Libraries</h3>
-
-    <p>
-        You can customize the various UI bits of the grid by providing custom cell renderers or editor components.
-        A working example that integrates Angular Material's input, checkbox, select and datepicker can be found in the <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">ag-grid-material GitHub repository</a>.
-    </p>
-
-
-
-    <h1 id="customizing-sass-variables">Customizing Themes</h1>
-
-    <p>
-        The provided themes are built using <a href="http://sass-lang.com">Sass</a>.
-        This means that you can change the looks of the theme you use using Sass,
-        by overriding the theme variables value and referencing the Sass source files afterwards.
-    </p>
-
-    <p>Some of the things you can change in the theme include:</p>
-
-    <ul class="content">
-        <li>Changing the text / header / tool panel foreground and background colors</li>
-        <li>Changing the icons size and color</li>
-        <li>Changing the cell / row spacing*</li>
-    </ul>
-
-    <note>
-        * If you are going to change the <strong>row or header height</strong>, you should also modify the respective options in the JavaScript grid configuration.
-        This is a redundant step we are looking into removing in the future.
-    </note>
-
-    <p>
-        For a live example, see: <a href="https://github.com/ag-grid/ag-grid-customise-theme">Theme Customization Example Repository</a>.
-    </p>
-
-    <p>Following is a list of Sass variables, their default values, and a short explanation of their purpose.</p>
-    <style>
-        .nav.nav-tabs .nav-link {
-            color: #fff;
-        }
-        .nav.nav-tabs .nav-link.active {
-            color: #000;
-        }
-        .col {
-            border: 1px solid transparent;
-            border-right-color: lightgrey;
-            border-bottom-color: lightgray;
-            font-size: 0.8rem;
-        }
-    </style>
-    <ul class="nav nav-tabs bg-primary pl-2 pt-2" id="theme-tabpanel" role="tablist">
-        <li class="nav-item mr-2">
-            <a class="nav-link active" id="base-tab" data-toggle="tab" href="#base" role="tab" aria-controls="base" aria-selected="true">Base Variables</a>
-        </li>
-        <li class="nav-item mr-2">
-            <a class="nav-link" id="balham-tab" data-toggle="tab" href="#balham" role="tab" aria-controls="balham" aria-selected="false">Balham Theme</a>
-        </li>
-        <li class="nav-item mr-2">
-            <a class="nav-link" id="material-tab" data-toggle="tab" href="#material" role="tab" aria-controls="material" aria-selected="false">Material Theme</a>
-        </li>
-    </ul>
-    <div class="tab-content border border-top-0" id="theme-content" style="max-height: 34rem; overflow: hidden;">
-        <div class="container tab-pane show active" id="base" role="tabpanel" aria-labelledby="base-tab" style="max-height: 34rem; overflow-y: auto;">
-            <div class="row">
-                <div class="col text-center font-weight-bold p-2">Variable Name</div>
-                <div class="col text-center font-weight-bold p-2">Default Value</div>
-                <div class="col text-center font-weight-bold p-2">Description</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-opacity</div>
-                <div class="col p-2">1</div>
-                <div class="col p-2">The foreground opacity.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color-opacity</div>
-                <div class="col p-2">1</div>
-                <div class="col p-2">The header font color opacity.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color-opacity</div>
-                <div class="col p-2">0.5</div>
-                <div class="col p-2">The opacity of the disabled / empty text elements.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The icon color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">alt-icon-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The secondary icon, used on icons with two colors (eg. checkbox background).</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The default color of the text.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The header font color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color of the disabled / empty text elements.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">menu-option-active-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the context / column menu items when hovered.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">input-disabled-background-color</div>
-                <div class="col p-2">#ebebeb</div>
-                <div class="col p-2">The color of disabled input field</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">card-background</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color for the context menu and the column menu.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">border-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color used for all borders.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">scroll-spacer-border</div>
-                <div class="col p-2">1px solid <code>border-color</code></div>
-                <div class="col p-2">The border that separates the pinned columns from the scrollable area within the horizontal scrollbar</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">primary-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The main color associated with selected cells and other items (eg. cell border color, sidbar selected tab border).</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">accent-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color for the checked checkboxes.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The default background color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">odd-row-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The odd row background color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">editor-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of cells being edited.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The header background color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-cell-hover-background-color</div>
-                <div class="col p-2">$ag-header-background-color</div>
-                <div class="col p-2">The header background color while hovering</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-cell-moving-background-color</div>
-                <div class="col p-2">#bebebe</div>
-                <div class="col p-2">The header background color while being moved.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-foreground-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The header text color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-background-image</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The header background gradient - you can also refer to an an image with `url(...)`.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">panel-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the column menu.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tool-panel-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The tool panel background color</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">chip-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the column labels used in the grouping / pivoting.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">range-selection-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the selected cells.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">hover-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the row when hovered.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">selected-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of selected rows.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-data-changed-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color used when the cell flashes when data is changed.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">focused-cell-border-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The border color of the focused cell.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tab-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the tab in the column menu</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-highlight-border</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The border used to mark cells as being copied.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-horizontal-border</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The border delimiter between cells.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-1</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The selection background color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-2</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The selection background color when it overlaps with another selection (range) 1 level.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-3</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The selection background color when it overlaps with another selection (range) 2 levels.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-4</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The selection background color when it overlaps with another selection (range) 3 levels.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-up-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color used when the cell value increases.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-down-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color used when the cell value decreases.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-value-highlight-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color used when the cell value changes.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-floating-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The background color of the pinned rows.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-stub-background-color</div>
-                <div class="col p-2"><code>&lt;no default&gt;</code></div>
-                <div class="col p-2">The color of row stub background (see: <a href="/javascript-grid-row-node/">Row Node</a>)</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">grid-size</div>
-                <div class="col p-2">4px</div>
-                <div class="col p-2">The basic unit used for the grid spacing and dimensions. Changing this makes the grid UI more / less compact.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-size</div>
-                <div class="col p-2">12px</div>
-                <div class="col p-2">The icon width and height (icons are square).</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-height</div>
-                <div class="col p-2"><code>grid-size</code> * 6 + 1</div>
-                <div class="col p-2">The header row height - if you change this, you also have to change the value of the `headerHeight` in the grid options. We are looking into removing this redundant step in the future.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-height</div>
-                <div class="col p-2"><code>grid-size</code> * 6 + 1</div>
-                <div class="col p-2">The row height - if you change this, you also have to change the value of the `rowHeight` in the grid options. We are looking into removing this redundant step in the future.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-horizontal-padding</div>
-                <div class="col p-2"><code>grid-size</code> * 3</div>
-                <div class="col p-2">The cell horizontal padding.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">virtual-item-height</div>
-                <div class="col p-2"><code>grid-size</code> * 5</div>
-                <div class="col p-2">The height of virtual items (eg. Set Filter items).</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-icon-size</div>
-                <div class="col p-2">14px</div>
-                <div class="col p-2">The header icon height.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-family</div>
-                <div class="col p-2">'Helvetica Neue', sans-serif</div>
-                <div class="col p-2">The grid font family.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-size</div>
-                <div class="col p-2">14px</div>
-                <div class="col p-2">The grid font size.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-weight</div>
-                <div class="col p-2">400</div>
-                <div class="col p-2">The grid font weight</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-family</div>
-                <div class="col p-2"><code>font-family</code></div>
-                <div class="col p-2">The font family used in the header.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-size</div>
-                <div class="col p-2">14px</div>
-                <div class="col p-2">The header font size.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-weight</div>
-                <div class="col p-2">400</div>
-                <div class="col p-2">The header font weight.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">card-shadow</div>
-                <div class="col p-2">none</div>
-                <div class="col p-2">Box shadow value for the context menu and the column menu.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">card-radius</div>
-                <div class="col p-2">0</div>
-                <div class="col p-2">Border radius for the context menu and the column menu.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-border-width</div>
-                <div class="col p-2">0</div>
-                <div class="col p-2">the row border width.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">toolpanel-indent-size</div>
-                <div class="col p-2"><code>grid-size</code> * <code>icon-size</code></div>
-                <div class="col p-2">The indent used for the tool panel hierarchy.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-background-color</div>
-                <div class="col p-2">#535353</div>
-                <div class="col p-2">The tooltip background color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-foreground-color</div>
-                <div class="col p-2">#ffffff</div>
-                <div class="col p-2">The tooltip foreground color.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-radius</div>
-                <div class="col p-2">2px</div>
-                <div class="col p-2">The tooltip boder radius.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-padding</div>
-                <div class="col p-2">5px</div>
-                <div class="col p-2">The tooltip padding.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-width</div>
-                <div class="col p-2">1px</div>
-                <div class="col p-2">The tooltip border width.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-style</div>
-                <div class="col p-2">solid</div>
-                <div class="col p-2">The tooltip border style.</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-color</div>
-                <div class="col p-2">#ebebeb</div>
-                <div class="col p-2">The tooltip border color</div>
-            </div>
-        </div>
-        <div class="container tab-pane" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem; overflow-y: auto;">
-            <div class="row">
-                <div class="col text-center font-weight-bold p-2">Variable Name</div>
-                <div class="col text-center font-weight-bold p-2">Default Value</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-opacity</div>
-                <div class="col p-2">0.87</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color-opacity</div>
-                <div class="col p-2">0.54</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color-opacity</div>
-                <div class="col p-2">0.38</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">grid-size</div>
-                <div class="col p-2">4px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-size</div>
-                <div class="col p-2">16px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-height</div>
-                <div class="col p-2"><code>grid-size</code> * 7</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">default-background</div>
-                <div class="col p-2">#FFFFF;</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">chrome-background</div>
-                <div class="col p-2"><code>lighten(flat-clouds, 3)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">active</div>
-                <div class="col p-2">#0091EA</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-color</div>
-                <div class="col p-2">#000000;</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">border-color</div>
-                <div class="col p-2"><code>flat-silver</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-color</div>
-                <div class="col p-2"><code>flat-gray-4</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">alt-background</div>
-                <div class="col p-2"><code>flat-clouds</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">odd-row-background-color</div>
-                <div class="col p-2">#fcfdfe</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-cell-moving-background-color</div>
-                <div class="col p-2"><code>default-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-color</div>
-                <div class="col p-2"><code>rgba(foreground-color, foreground-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color</div>
-                <div class="col p-2"><code>rgba(foreground-color, secondary-foreground-color-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color</div>
-                <div class="col p-2"><code>rgba(foreground-color, disabled-foreground-color-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">input-disabled-background-color</div>
-                <div class="col p-2">#ebebeb</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">primary-color</div>
-                <div class="col p-2"><code>active</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">accent-color</div>
-                <div class="col p-2"><code>active</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">range-selection-background-color</div>
-                <div class="col p-2"><code>transparentize(active, 0.8)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-1</div>
-                <div class="col p-2"><code>opacify(range-selection-background-color, 0.1)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-2</div>
-                <div class="col p-2"><code>opacify(range-selection-background-color, 0.2)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-3</div>
-                <div class="col p-2"><code>opacify(range-selection-background-color, 0.3)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">ag-range-selected-color-4</div>
-                <div class="col p-2"><code>opacify(range-selection-background-color, 0.4)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">range-selection-highlight-color</div>
-                <div class="col p-2"><code>active</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">selected-color</div>
-                <div class="col p-2"><code>lighten(active, 40)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">alt-icon-color</div>
-                <div class="col p-2"><code>default-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">background-color</div>
-                <div class="col p-2"><code>default-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">editor-background-color</div>
-                <div class="col p-2"><code>chrome-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">panel-background-color</div>
-                <div class="col p-2"><code>chrome-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tool-panel-background-color</div>
-                <div class="col p-2"><code>chrome-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-background-color</div>
-                <div class="col p-2"><code>chrome-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-foreground-color</div>
-                <div class="col p-2"><code>secondary-foreground-color</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">hover-color</div>
-                <div class="col p-2"><code>alt-background</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">chip-background-color</div>
-                <div class="col p-2"><code>darken(alt-background, 5)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-stub-background-color</div>
-                <div class="col p-2">inherit</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-floating-background-color</div>
-                <div class="col p-2">inherit</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-data-changed-color</div>
-                <div class="col p-2">#fce4ec</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-up-color</div>
-                <div class="col p-2">#43a047</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-down-color</div>
-                <div class="col p-2">#e53935</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-value-highlight-background-color</div>
-                <div class="col p-2"><code>transparentize(#16A085, 0.5)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-height</div>
-                <div class="col p-2"><code>grid-size * 8</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">virtual-item-height</div>
-                <div class="col p-2"><code>grid-size * 7</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-border-width</div>
-                <div class="col p-2">1px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">toolpanel-indent-size</div>
-                <div class="col p-2"><code>$ag-grid-size</code> + <code>$ag-icon-size</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-group-indent-size</div>
-                <div class="col p-2"><code>$ag-grid-size</code> * 3 + <code>$ag-icon-size</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-horizontal-padding</div>
-                <div class="col p-2"><code>grid-size</code> * 3</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-icon-size</div>
-                <div class="col p-2">14px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">border-radius</div>
-                <div class="col p-2">2px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-family</div>
-                <div class="col p-2">-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-size</div>
-                <div class="col p-2">12px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-weight</div>
-                <div class="col p-2">400</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-family</div>
-                <div class="col p-2"><code>font-family</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-size</div>
-                <div class="col p-2">12px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-weight</div>
-                <div class="col p-2">600</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-background-color</div>
-                <div class="col p-2"><code>lighten($ag-flat-gray-2, 5%)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-foreground-color</div>
-                <div class="col p-2"><code>foreground-color</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-radius</div>
-                <div class="col p-2"><code>border-radius</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tooltip-border-color</div>
-                <div class="col p-2"><code>tooltip-foreground-color</code></div>
-            </div>
-        </div>
-        <div class="container tab-pane" id="material" role="tabpanel" aria-labelledby="material-tab" style="max-height: 34rem; overflow-y: auto;">
-            <div class="row">
-                <div class="col text-center font-weight-bold p-2">Variable Name</div>
-                <div class="col text-center font-weight-bold p-2">Default Value</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-grey-0 <code>(color accessor)</code></div>
-                <div class="col p-2">#ffffff</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-grey-50 <code>(color accessor)</code></div>
-                <div class="col p-2">#fafafa</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-grey-100 <code>(color accessor)</code></div>
-                <div class="col p-2">#f5f5f5</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-grey-200 <code>(color accessor)</code></div>
-                <div class="col p-2">#eeeeee</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-grey-300 <code>(color accessor)</code></div>
-                <div class="col p-2">#e2e2e2</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-indigo-500 <code>(color accessor)</code></div>
-                <div class="col p-2">#3f51b5</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-pink-A200 <code>(color accessor)</code></div>
-                <div class="col p-2">#ff4081</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-pink-50 <code>(color accessor)</code></div>
-                <div class="col p-2">#fce4ec</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">mat-indigo-50 <code>(color accessor)</code></div>
-                <div class="col p-2">#e8eaf6</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-opacity</div>
-                <div class="col p-2">0.87</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color-opacity</div>
-                <div class="col p-2">0.54</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color-opacity</div>
-                <div class="col p-2">0.38</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">grid-size</div>
-                <div class="col p-2">8px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-size</div>
-                <div class="col p-2">18px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-height</div>
-                <div class="col p-2"><code>grid-size</code> * 7</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-height</div>
-                <div class="col p-2"><code>grid-size</code> * 6</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-border-width</div>
-                <div class="col p-2">1px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">toolpanel-indent-size</div>
-                <div class="col p-2"><code>grid-size</code> + <code>icon-size</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">row-group-indent-size</div>
-                <div class="col p-2"><code>grid-size</code> * 3 + <code>icon-size</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-horizontal-padding</div>
-                <div class="col p-2"><code>grid-size</code> * 3</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">virtual-item-height</div>
-                <div class="col p-2"><code>grid-size</code> * 5</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-icon-size</div>
-                <div class="col p-2">14px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-family</div>
-                <div class="col p-2">"Roboto", sans-serif</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-size</div>
-                <div class="col p-2">13px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">font-weight</div>
-                <div class="col p-2">400</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-family</div>
-                <div class="col p-2">"Roboto", sans-serif</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-size</div>
-                <div class="col p-2">12px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-font-weight</div>
-                <div class="col p-2">700</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">foreground-color</div>
-                <div class="col p-2"><code>rgba(#000, foreground-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">secondary-foreground-color</div>
-                <div class="col p-2"><code>rgba(#000, secondary-foreground-color-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">disabled-foreground-color</div>
-                <div class="col p-2"><code>rgba(#000, $ag-disabled-foreground-color-opacity)</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-background-color</div>
-                <div class="col p-2">$ag-background-color</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-cell-hover-background-color</div>
-                <div class="col p-2">darken(<code>$ag-header-background-color</code>, 5%)</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-cell-moving-background-color</div>
-                <div class="col p-2"><code>$ag-header-cell-hover-background-color</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">header-foreground-color</div>
-                <div class="col p-2"><code>$ag-secondary-foreground-color</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">border-color</div>
-                <div class="col p-2"><code>mat-indigo-300</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">primary-color</div>
-                <div class="col p-2"><code>mat-indigo-500</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">accent-color</div>
-                <div class="col p-2"><code>mat-pink-A200</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">icon-color</div>
-                <div class="col p-2">#333</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">background-color</div>
-                <div class="col p-2"><code>mat-grey-0</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">editor-background-color</div>
-                <div class="col p-2"><code>mat-grey-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">panel-background-color</div>
-                <div class="col p-2"><code>mat-grey-200</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">tool-panel-background-color</div>
-                <div class="col p-2"><code>mat-grey-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">chip-background-color</div>
-                <div class="col p-2"><code>mat-grey-300</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">range-selection-background-color</div>
-                <div class="col p-2"><code>mat-indigo-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">range-selection-highlight-color</div>
-                <div class="col p-2"><code>mat-pink-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">hover-color</div>
-                <div class="col p-2"><code>mat-grey-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">selected-color</div>
-                <div class="col p-2"><code>mat-grey-200</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">cell-data-changed-color</div>
-                <div class="col p-2"><code>mat-pink-50</code></div>
-            </div>
-            <div class="row">
-                <div class="col p-2">card-shadow</div>
-                <div class="col p-2">0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">card-radius</div>
-                <div class="col p-2">2px</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-up-color</div>
-                <div class="col p-2">#43a047</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-delta-down-color: </div>
-                <div class="col p-2">#e53935</div>
-            </div>
-            <div class="row">
-                <div class="col p-2">value-change-value-highlight-background-color</div>
-                <div class="col p-2">#00acc1</div>
-            </div>
-        </div>
-    </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

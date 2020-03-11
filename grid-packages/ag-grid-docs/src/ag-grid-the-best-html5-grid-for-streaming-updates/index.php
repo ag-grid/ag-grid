@@ -50,7 +50,7 @@ include('../includes/mediaHeader.php');
             starts up with a load test for processing 1,000 updates every second.
         </p>
 
-        <?= grid_example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla', array('enterprise' => true)) ?>
+        <?= grid_example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla', ['enterprise' => true]) ?>
 
         <h2>Test Results</h2>
 
@@ -329,7 +329,7 @@ include('../includes/mediaHeader.php');
         </div>
     </div>
 
-<?php 
+<?php
     include '../blog-authors/niall.php';
 ?>
 

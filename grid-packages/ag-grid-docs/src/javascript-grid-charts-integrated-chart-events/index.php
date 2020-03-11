@@ -116,7 +116,7 @@ interface ChartDestroyed {
 
 <p>The following example demonstrates when the described events occur by writing to the console whenever they are triggered.</p>
 
-<?= grid_example('Events', 'events', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Events', 'events', 'generated', ['enterprise' => true]) ?>
 
 <h2>Next Up</h2>
 

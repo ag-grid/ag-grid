@@ -86,8 +86,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
     provided UMD bundles. If you'd like to create a custom UMD bundle please see the section following the examples on
     how to do so.</p>
 
-<?= grid_example('Using Modules', 'module-grid', 'multi', array("enterprise" => 1, "showResult" => false)) ?>
-<?//= example('Using Modules', 'module-grid', 'multi', array("exampleHeight" => 170)) ?>
+<?= grid_example('Using Modules', 'module-grid', 'multi', ['enterprise' => true, 'showResult' => false]) ?>
 
 <note>Full working examples of this can be found on <a
             href="https://github.com/seanlandsman/ag-grid-module-bundling">Github</a>.</note>
@@ -177,13 +176,13 @@ module.exports = {
 <li><code>entry</code>: We specify the <code>main.js</code> entry file we created that will determine what to include in our bundle.</li>
 <li><code>output</code>: We specify a library name of <code>agGrid</code> as the property to export when the bundle is included - this can however be any name you choose.</li>
 </ul>
-    
+
 <p>You can then build your bundle as follows:</p>
-    
+
 <snippet>webpack --config config/webpack.prod.js</snippet>
-    
+
 <p>Which will result in a file called <code>dist/bundle.umd.js</code> being created, which we can then use as follows:</p>
-    
+
 <snippet language="html">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;

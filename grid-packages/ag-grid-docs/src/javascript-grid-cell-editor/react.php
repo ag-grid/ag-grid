@@ -41,4 +41,4 @@
 <h3>Example: Cell Editing using React Components</h3>
 <p> Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.  </p>
 
-<?= grid_example('React Editor Components', 'component-editor', 'generated', array('enterprise' => 1, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('React Editor Components', 'component-editor', 'generated', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'react', 'extras' => ['bootstrap']]) ?>

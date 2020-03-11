@@ -1,22 +1,20 @@
-var columnDefs = [
-    {field: 'athlete', width: 150},
-    {field: 'age'},
-    {field: 'country', width: 150},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
-];
-
 var gridOptions = {
-    suppressDragLeaveHidesColumns: true,
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
+    ],
     defaultColDef: {
-        width: 100
-    }
+        width: 150
+    },
+    suppressDragLeaveHidesColumns: true,
 };
 
 function onMedalsFirst() {

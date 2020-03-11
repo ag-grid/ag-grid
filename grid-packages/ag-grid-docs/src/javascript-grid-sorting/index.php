@@ -234,6 +234,6 @@ gridOptions.postSort(rowNodes) {
         The following example uses this configuration to perform a post sort on the rows.
     </p>
 
-    <?= grid_example('Post Sort', 'post-sort', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

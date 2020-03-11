@@ -401,7 +401,7 @@ getContextMenuItems = (params) => {
             state is preserved via our Redux file store!</li>
     </ul>
 
-    <?= grid_example('Redux File View', 'redux-file-view', 'react', array("enterprise" => 1, "extras" => array( "fontawesome" ))) ?>
+    <?= grid_example('Redux File View', 'redux-file-view', 'react', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
 
     <h2 id="conclusion">Conclusion</h2>
 
