@@ -7,7 +7,8 @@ import {
     EventService,
     GridOptionsWrapper,
     ModuleNames,
-    PostConstruct
+    PostConstruct,
+    _
 } from "@ag-grid-community/core";
 import {RowGroupDropZonePanel} from "./rowGroupDropZonePanel";
 import {PivotDropZonePanel} from "./pivotDropZonePanel";
@@ -36,10 +37,10 @@ export class GridHeaderDropZones extends Component {
     }
 
     private createNorthPanel(): HTMLElement {
-
         const topPanelGui = document.createElement('div');
-
         const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+
+        _.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);

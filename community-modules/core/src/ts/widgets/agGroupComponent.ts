@@ -70,7 +70,7 @@ export class AgGroupComponent extends Component {
         const cssIdentifier = params.cssIdentifier || 'default';
         const direction: Direction = params.direction || 'vertical';
         return `<div class="ag-group ag-${cssIdentifier}-group">
-            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar" ref="eTitleBar">
+            <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" ref="eTitleBar">
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon"></span>
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon"></span>
                 <span ref="eTitle" class="ag-group-title ag-${cssIdentifier}-group-title"></span>
