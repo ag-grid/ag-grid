@@ -195,9 +195,9 @@ class ReactRunner {
 
     getSource(framework: string, file: string): string {
         if (file === 'index.html') {
-            return `/example-runner/chart-${framework}.php?${this.resultUrl}&&plunkerView=true&section=example-runner&example=chart-vanilla-boilerplate`;
+            return `${this.config.sourcePrefix}/example-runner/chart-${framework}.php?${this.resultUrl}&&plunkerView=true&section=example-runner&example=chart-vanilla-boilerplate`;
         }
-        return `/example-runner/chart-${framework}-boilerplate/${this.config.sourcePrefix}/${file}?plunkerView=true`;
+        return `${this.config.sourcePrefix}/example-runner/chart-${framework}-boilerplate/${file}?plunkerView=true`;
     }
 
     setAndPersistType(type: string) {
