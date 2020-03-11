@@ -11,7 +11,7 @@ function checkFileExists {
 
 checkFileExists ~/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/aggrid/.creds
+checkFileExists ~/Documents/aggrid/aggrid/.creds
 
 while true; do
     echo    ""
