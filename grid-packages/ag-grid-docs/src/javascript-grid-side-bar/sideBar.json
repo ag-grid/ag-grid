@@ -1,0 +1,65 @@
+{
+    "sideBarProperties": {
+        "toolPanels": {
+            "description": "A list of all the panels to place in the side bar. The panels will be displayed in the provided order from top to bottom."
+        },
+        "defaultToolPanel": {
+            "description": "The panel (identified by ID) to open by default. If none specified, the side bar is initially displayed closed."
+        },
+        "hiddenByDefault": {
+            "default": false,
+            "description": "To hide the side bar by default, set this to <code>true</code>. If left undefined the side bar will be shown."
+        },
+        "position": {
+            "default": "right",
+            "options": [
+                "left",
+                "right"
+            ],
+            "description": "Sets the side bar position relative to the grid."
+        }
+    },
+    "toolPanelProperties": {
+        "id": {
+            "description": "The unique ID for this panel. Used in the API and elsewhere to refer to the panel."
+        },
+        "labelKey": {
+            "description": "The key used for <a href='../javascript-grid-internationalisation/'>internationalisation</a> for displaying the label. The label is displayed in the tab button."
+        },
+        "labelDefault": {
+            "description": "The default label if <code>labelKey</code> is missing or does not map to valid text through internationalisation."
+        },
+        "iconKey": {
+            "description": "The <a href='../javascript-grid-icons/'>key of the icon</a> to be used as a graphical aid beside the label in the side bar."
+        },
+        "toolPanel<br />toolPanelFramework<br />toolPanelParams": {
+            "description": "The tool panel component to use as the panel. The provided panels use components <code>agColumnsToolPanel</code> and <code>agFiltersToolPanel</code>. To provide your own custom panel component, you reference it by name here."
+        }
+    },
+    "toolPanelApi": {
+        "setSideBarVisible(visible)": {
+            "description": "Show/hide the entire side bar, including any visible panel and the tab buttons."
+        },
+        "isSideBarVisible()": {
+            "description": "Returns <code>true</code> if the side bar is visible."
+        },
+        "openToolPanel(id)": {
+            "description": "Opens a particular tool panel. Provide the ID of the tool panel to open."
+        },
+        "closeToolPanel()": {
+            "description": "Closes the currently open tool panel (if any)."
+        },
+        "getOpenedToolPanel()": {
+            "description": "Returns the ID of the currently shown tool panel if any, otherwise <code>null</code>."
+        },
+        "setSideBar(config)": {
+            "description": "Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config."
+        },
+        "getSideBar()": {
+            "description": "Returns the current side bar configuration. If a shortcut was used, returns the detailed long form.'"
+        },
+        "setSideBarPosition(position)": {
+            "description": "Sets the side bar position relative to the grid. Possible values are <code>'left'</code> or <code>'right'</code>, where <code>'right'</code> is the default option."
+        }
+    }
+}

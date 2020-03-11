@@ -237,11 +237,7 @@ function createExampleGenerator(prefix, importType) {
             'app.module.ts': appModuleTS,
         }, 'app');
 
-        // vue is still new - only process examples marked as tested and good to go
-        // when all examples have been tested this check can be removed
-        if (options.processVue || options.processVue === undefined) {
-            writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
-        }
+        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
