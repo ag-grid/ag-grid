@@ -281,7 +281,7 @@ sortUnSort: 'none'
     (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
 </p>
 
-<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
+<?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome']]) ?>
 
 <h2>SVG Icons</h2>
 

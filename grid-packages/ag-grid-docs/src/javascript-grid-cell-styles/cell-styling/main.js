@@ -1,14 +1,20 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, valueParser: numberParser,
+    { field: "athlete" },
+    {
+        field: "age",
+        width: 90,
+        valueParser: numberParser,
         cellClassRules: {
             'rag-green': 'x < 20',
             'rag-amber': 'x >= 20 && x < 25',
             'rag-red': 'x >= 25'
         }
     },
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", valueParser: numberParser,
+    { field: "country" },
+    {
+        field: "year",
+        width: 90,
+        valueParser: numberParser,
         cellClassRules: {
             'rag-green-outer': function(params) { return params.value === 2008},
             'rag-amber-outer': function(params) { return params.value === 2004},
@@ -18,18 +24,24 @@ var columnDefs = [
             return '<span class="rag-element">'+params.value+'</span>';
         }
     },
-    {headerName: "Date", field: "date",
-        cellClass: 'rag-amber'
+    { field: "date", cellClass: 'rag-amber' },
+    {
+        field: "sport",
+        cellClass: function(params) {
+            return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
+        }
     },
-    {headerName: "Sport", field: "sport",
-        cellClass: function(params) { return params.value === 'Swimming' ? 'rag-green' : 'rag-amber'; }
-    },
-    {headerName: "Gold", field: "gold", valueParser: numberParser,
+    {
+        field: "gold",
+        valueParser: numberParser,
         cellStyle: {
             // you can use either came case or dashes, the grid converts to whats needed
             backgroundColor: '#aaffaa' // light green
-        }},
-    {headerName: "Silver", field: "silver", valueParser: numberParser,
+        }
+    },
+    {
+        field: "silver",
+        valueParser: numberParser,
         // when cellStyle is a func, we can have the style change
         // dependent on the data, eg different colors for different values
         cellStyle: function(params) {
@@ -38,7 +50,9 @@ var columnDefs = [
                 backgroundColor: color
             }
         }},
-    {headerName: "Bronze", field: "bronze", valueParser: numberParser,
+    {
+        field: "bronze",
+        valueParser: numberParser,
         // same as above, but demonstrating dashes in the style, grid takes care of converting to/from camel case
         cellStyle: function(params) {
             var color = numberToColor(params.value);
@@ -46,8 +60,8 @@ var columnDefs = [
                 // dash here
                 'background-color': color
             }
-        }},
-    {headerName: "Total", field: "total"}
+        }
+    }
 ];
 
 function numberToColor(val) {
@@ -75,9 +89,8 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         editable: true,
-        width: 100
-    },
-    rowData: null
+        width: 170
+    }
 };
 
 // setup the grid after the page has finished loading

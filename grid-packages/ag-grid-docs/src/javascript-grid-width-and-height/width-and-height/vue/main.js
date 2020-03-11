@@ -3,7 +3,7 @@ import {AgGridVue} from "@ag-grid-community/vue";
 
 import {AllCommunityModules} from "@ag-grid-community/all-modules";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
@@ -14,7 +14,7 @@ const VueExample = {
                 <button @click="fillExact">Exactly 400 x 400 pixels</button>
             </div>
             <div style="height: calc(100% - 25px);">
-                <ag-grid-vue :style="{width, height}" class="ag-theme-balham"
+                <ag-grid-vue :style="{width, height}" class="ag-theme-alpine"
                              @grid-ready="onGridReady"
                              :columnDefs="columnDefs"
                              :rowData="rowData"
@@ -36,16 +36,16 @@ const VueExample = {
     },
     beforeMount() {
         this.columnDefs = [
-            {headerName: "Athlete", field: "athlete", width: 150},
-            {headerName: "Age", field: "age", width: 90},
-            {headerName: "Country", field: "country", width: 120},
-            {headerName: "Year", field: "year", width: 90},
-            {headerName: "Date", field: "date", width: 110},
-            {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Gold", field: "gold", width: 100},
-            {headerName: "Silver", field: "silver", width: 100},
-            {headerName: "Bronze", field: "bronze", width: 100},
-            {headerName: "Total", field: "total", width: 100}
+            { field: "athlete", width: 150 },
+            { field: "age", width: 90 },
+            { field: "country", width: 150 },
+            { field: "year", width: 90 },
+            { field: "date", width: 150 },
+            { field: "sport", width: 150 },
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 }
         ];
     },
     mounted() {

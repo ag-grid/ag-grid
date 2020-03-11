@@ -1,9 +1,9 @@
 var columnDefs = [
     {
-        headerName: "Athlete", field: "athlete", rowGroupIndex: 1, hide: true
+        field: "athlete", rowGroup: true, hide: true
     },
     {
-        headerName: "Age", field: "age", width: 90, enableValue: true,
+        field: "age", width: 90, enableValue: true,
         icons: {
             // not very useful, but demonstrates you can just have strings
             sortAscending: 'U',
@@ -11,18 +11,17 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Country", field: "country", width: 120, rowGroupIndex: 0,
+        field: "country", width: 150, rowGroupIndex: 0,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         }
     },
+    { field: "year", width: 90, enableRowGroup: true },
+    { field: "date" },
     {
-        headerName: "Year", field: "year", width: 90, enableRowGroup: true
-    },
-    {headerName: "Date", field: "date", width: 110},
-    {
-        headerName: "Sport", field: "sport", width: 110,
+        field: "sport",
+        width: 110,
         icons: {
             sortAscending: function () {
                 return 'ASC';
@@ -32,14 +31,15 @@ var columnDefs = [
             }
         }
     },
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    { field: "gold", width: 100},
+    { field: "silver", width: 100},
+    { field: "bronze", width: 100},
+    { field: "total", width: 100}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        width: 150,
         sortable: true,
         resizable: true,
         filter: true
@@ -64,7 +64,7 @@ var gridOptions = {
             checkbox: true
         },
         headerCheckboxSelection: true,
-        width: 250
+        width: 300
     },
     // override all the defaults with font awesome
     icons: {

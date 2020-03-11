@@ -1,11 +1,3 @@
-  // specify the columns
-var columnDefs = [
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
-];
-
-// specify the data
 var rowData = [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
@@ -14,7 +6,11 @@ var rowData = [
 
 // let the grid know which columns and what data to use
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "make"},
+        { field: "model"},
+        { field: "price"}
+    ],
     rowData: rowData,
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();

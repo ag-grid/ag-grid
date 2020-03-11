@@ -61,26 +61,31 @@ function setFixedHeight() {
 var columnDefs = [
     {
         headerName: 'Core',
-        children: [{headerName: 'ID', field: 'id'}, {headerName: 'Make', field: 'make'}, {headerName: 'Price', field: 'price', filter: 'agNumberColumnFilter'}]
+        children: [
+            { headerName: 'ID', field: 'id' },
+            { field: 'make' },
+            { field: 'price', filter: 'agNumberColumnFilter' }
+        ]
     },
     {
         headerName: 'Extra',
         children: [
-            {headerName: 'Val 1', field: 'val1', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 2', field: 'val2', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 3', field: 'val3', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 4', field: 'val4', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 5', field: 'val5', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 6', field: 'val6', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 7', field: 'val7', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 8', field: 'val8', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 9', field: 'val9', filter: 'agNumberColumnFilter'},
-            {headerName: 'Val 10', field: 'val10', filter: 'agNumberColumnFilter'}
+            { field: 'val1', filter: 'agNumberColumnFilter' },
+            { field: 'val2', filter: 'agNumberColumnFilter' },
+            { field: 'val3', filter: 'agNumberColumnFilter' },
+            { field: 'val4', filter: 'agNumberColumnFilter' },
+            { field: 'val5', filter: 'agNumberColumnFilter' },
+            { field: 'val6', filter: 'agNumberColumnFilter' },
+            { field: 'val7', filter: 'agNumberColumnFilter' },
+            { field: 'val8', filter: 'agNumberColumnFilter' },
+            { field: 'val9', filter: 'agNumberColumnFilter' },
+            { field: 'val10', filter: 'agNumberColumnFilter' }
         ]
     }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
         enableRowGroup: true,
         enablePivot: true,
@@ -90,7 +95,6 @@ var gridOptions = {
         resizable: true
     },
     rowData: getData(5),
-    columnDefs: columnDefs,
     statusBar: {
         items: [
             { component: 'agAggregationComponent' }

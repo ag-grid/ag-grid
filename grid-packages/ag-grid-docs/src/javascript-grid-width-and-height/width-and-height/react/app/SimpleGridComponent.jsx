@@ -4,7 +4,7 @@ import {AgGridReact} from '@ag-grid-community/react';
 import {AllCommunityModules} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 export default class extends Component {
     constructor(props) {
@@ -39,16 +39,16 @@ export default class extends Component {
 
     createColumnDefs() {
         return [
-            {headerName: 'Athlete', field: 'athlete', width: 150},
-            {headerName: 'Age', field: 'age', width: 90},
-            {headerName: 'Country', field: 'country', width: 120},
-            {headerName: 'Year', field: 'year', width: 90},
-            {headerName: 'Date', field: 'date', width: 110},
-            {headerName: 'Sport', field: 'sport', width: 110},
-            {headerName: 'Gold', field: 'gold', width: 100},
-            {headerName: 'Silver', field: 'silver', width: 100},
-            {headerName: 'Bronze', field: 'bronze', width: 100},
-            {headerName: 'Total', field: 'total', width: 100}
+            { field: "athlete", width: 150 },
+            { field: "age", width: 90 },
+            { field: "country", width: 150 },
+            { field: "year", width: 90 },
+            { field: "date", width: 150 },
+            { field: "sport", width: 150 },
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 },
         ];
     }
 
@@ -87,7 +87,7 @@ export default class extends Component {
                     <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
                     <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
                 </div>
-                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-balham">
+                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-alpine">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}
