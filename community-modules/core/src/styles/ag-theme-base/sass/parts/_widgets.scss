@@ -186,7 +186,7 @@
         color: ag-param(secondary-foreground-color);
     }
 
-    .ag-cell-wrapper > *:not(.ag-cell-value) {
+    .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
         height: ag-param(row-height) - 2px; // - 2px to remove effect of cell borders
         display: flex;
         align-items: center;
