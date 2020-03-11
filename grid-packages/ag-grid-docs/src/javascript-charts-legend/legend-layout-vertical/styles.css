@@ -12,6 +12,7 @@
     display: inline-flex;
     align-items: center;
     width: calc(100% - 40px);
+    height: 18px;
     padding: 5px 10px;
     margin: 5px;
     border: 1px solid lightgray;
@@ -23,6 +24,7 @@
 .slider input {
     height: 1.8em;
     flex: 1;
+    padding: 0; /* IE11 */
 }
 
 #sliderValue {

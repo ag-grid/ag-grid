@@ -37,7 +37,7 @@ function updateLegendLayoutHorizontalSpacing(event) {
 
     chart.legend.layoutHorizontalSpacing = +event.target.value;
 
-    document.getElementById('sliderValue').innerHTML = value;
+    document.getElementById('hSpacingValue').innerHTML = value;
 }
 
 function updateLegendLayoutVerticalSpacing(event) {
@@ -45,7 +45,7 @@ function updateLegendLayoutVerticalSpacing(event) {
 
     chart.legend.layoutVerticalSpacing = +event.target.value;
 
-    document.getElementById('sliderValue').innerHTML = value;
+    document.getElementById('vSpacingValue').innerHTML = value;
 }
 
 function updateLegendItemSpacing(event) {
@@ -53,5 +53,5 @@ function updateLegendItemSpacing(event) {
 
     chart.legend.itemSpacing = +event.target.value;
 
-    document.getElementById('sliderValue').innerHTML = value;
+    document.getElementById('itemSpacingValue').innerHTML = value;
 }
