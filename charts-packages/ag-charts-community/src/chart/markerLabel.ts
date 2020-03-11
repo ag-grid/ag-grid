@@ -2,6 +2,7 @@ import { Group } from "../scene/group";
 import { Text, FontStyle, FontWeight } from "../scene/shape/text";
 import { Square } from "./marker/square";
 import { Marker } from "./marker/marker";
+import { HdpiCanvas } from "../canvas/hdpiCanvas";
 
 export class MarkerLabel extends Group {
 
@@ -17,7 +18,8 @@ export class MarkerLabel extends Group {
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
         label.fill = 'black';
-        label.y = 2; // for better looking vertical alignment of labels to markers
+        // For better looking vertical alignment of labels to markers.
+        label.y = HdpiCanvas.has.textMetrics ? 1 : 0;
 
         this.append([this.marker, label]);
         this.update();
