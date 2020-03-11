@@ -35,7 +35,7 @@ include_once '../php-utils/printPropertiesTable.php';
 
     <?php
         include_once './csvProperties.php';
-        printPropertiesTable($exportProperties);    
+        printPropertiesTable($exportProperties);
     ?>
 
     <h2>Appending header and footer content</h2>
@@ -51,7 +51,7 @@ include_once '../php-utils/printPropertiesTable.php';
         inserted into the CSV file without any processing. You are responsible for formatting the
         string according to the CSV standard.
     </p>
-    
+
     <h2>Example: CSV Export Options</h2>
 
     <ul>
@@ -65,7 +65,7 @@ include_once '../php-utils/printPropertiesTable.php';
             visible in Excel.</li>
     </ul>
 
-    <?= grid_example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 400)) ?>
+    <?= grid_example('CSV Export Options', 'csv-export', 'generated', array("enterprise" => 1, "exampleHeight" => 400)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

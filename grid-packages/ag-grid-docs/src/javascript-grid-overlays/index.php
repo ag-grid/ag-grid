@@ -65,7 +65,7 @@ gridOptions.api.hideOverlay()</snippet>
         The example also shows the api methods in action, so you can show / hide the panels at your will.
     </p>
 
-    <?= grid_example('Overlays', 'overlays', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Overlays', 'overlays', 'generated') ?>
 
     <note>It is also possible to provide your own custom Overlay Components - please see <a href="../javascript-grid-overlay-component">
             Overlay Component</a> for more information.</note>

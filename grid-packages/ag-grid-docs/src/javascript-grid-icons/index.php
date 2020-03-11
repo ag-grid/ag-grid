@@ -16,8 +16,8 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         <p>
-            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could 
-            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is 
+            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could
+            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is
             the best way to allow icon theming.
         </p>
 
@@ -36,12 +36,12 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Change Individual Icons (CSS)</h2>
 
-<p>You can change individual icons by overriding the background images for the respective CSS selector. 
+<p>You can change individual icons by overriding the background images for the respective CSS selector.
 The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
 
 <snippet>
-/* 
- * The override should be placed after the import of the theme. 
+/*
+ * The override should be placed after the import of the theme.
  * Alternatively, you can aso increase the selector's specificity.
  */
 .ag-theme-balham .ag-icon-pin {
@@ -60,14 +60,14 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 <snippet>
 // styles.scss
-// This is an example of the application scss file; 
-// Popular framework project scaffolders like angular-cli support 
-// generating sass enabled projects. 
+// This is an example of the application scss file;
+// Popular framework project scaffolders like angular-cli support
+// generating sass enabled projects.
 // For example, the `ng new` command accepts `--style scss`.
 
 // import the Sass files from the ag-Grid npm package. //
 // The "~" path prefix below relies on Webpack's sass-loader -
-// https://github.com/webpack-contrib/sass-loader. 
+// https://github.com/webpack-contrib/sass-loader.
 
 $ag-icon-font-family: "Font Awesome 5 Free";
 
@@ -281,16 +281,16 @@ sortUnSort: 'none'
     (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
 </p>
 
-<?= grid_example('Icons', 'icons', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome') )) ?>
+<?= grid_example('Icons', 'icons', 'generated', array('enterprise' => true, 'extras' => array('fontawesome') )) ?>
 
 <h2>SVG Icons</h2>
 
 <p>
-    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customizing-sass-variables">Customizing Themes</a>, 
+    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customizing-sass-variables">Customizing Themes</a>,
     you are also able to replace the WebFont with SVG Icons.
 
     To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.
-    You can see the example <code>styles.scss</code> file in our custom theme with SVG icons example here: 
+    You can see the example <code>styles.scss</code> file in our custom theme with SVG icons example here:
     <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
 </p>
 
@@ -299,7 +299,7 @@ sortUnSort: 'none'
 </p>
 <note>
     <p>
-        SVG Icons will not use the <code>$ag-icon-color</code>, <code>$ag-alt-icon-color</code> and <code>$ag-accent-color</code> 
+        SVG Icons will not use the <code>$ag-icon-color</code>, <code>$ag-alt-icon-color</code> and <code>$ag-accent-color</code>
         variables to colorize icons. This means you will need to add the colors you want to the SVG icons code.
     </p>
 </note>

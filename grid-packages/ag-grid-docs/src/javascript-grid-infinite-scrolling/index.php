@@ -227,7 +227,7 @@ interface IGetRowsParams {
     <h3>Sorting & Filtering</h3>
 
     <p>
-        The grid cannot do sorting or filtering for you, as it does not have all of the data. 
+        The grid cannot do sorting or filtering for you, as it does not have all of the data.
         Sorting or filtering must be done on the Server-side. For this reason, if the sort or filter
         changes, the grid will use the datasource to get the data again and provide the sort and filter
         state to you.
@@ -240,7 +240,7 @@ interface IGetRowsParams {
         Notice that the grid will load more data when you bring the scroll all the way to the bottom.
     </p>
 
-    <?= grid_example('Simple Example', 'simple', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Simple Example', 'simple', 'generated') ?>
 
     <h3>Selection</h3>
 
@@ -297,7 +297,7 @@ gridOptions.getRowNodeId: function(item) {
         filtering, ag-Grid-Enterprise is not required for infinite scrolling.
     </note>
 
-    <?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -322,7 +322,7 @@ gridOptions.getRowNodeId: function(item) {
             return data.country === 'United States';
         }</snippet>
     <p>
-        <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', array("processVue" => true)) ?>
+        <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
 
     <p>
         Note that in the above example we have also included an optional checkbox to help highlight which rows
@@ -336,7 +336,7 @@ gridOptions.getRowNodeId: function(item) {
         and creates a datasource Class. The example also just creates (makes up) data on the fly.
     </p>
 
-    <?= grid_example('Made Up Data', 'made-up-data', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Made Up Data', 'made-up-data', 'generated') ?>
 
     <h3>Loading Spinner</h3>
 
@@ -556,7 +556,7 @@ loadingSpinnerColumn = {
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
-    <?= grid_example('Insert And Remove Example', 'insert-remove', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Insert And Remove Example', 'insert-remove', 'generated') ?>
 
     <h2 id="changing-columns">Changing Columns</h2>
 
@@ -585,7 +585,7 @@ loadingSpinnerColumn = {
         </ul>
     </p>
 
-    <?= grid_example('Changing Columns', 'changing-columns', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Changing Columns', 'changing-columns', 'generated') ?>
 
     <h2 id="pagination">Pagination</h2>
 
@@ -634,7 +634,7 @@ loadingSpinnerColumn = {
         sided call is needed.
     </p>
 
-    <?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -643,7 +643,7 @@ loadingSpinnerColumn = {
         every time a new page is navigated to.
     </p>
 
-    <?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Overlays</h2>
 

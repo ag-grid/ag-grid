@@ -90,7 +90,7 @@ interface RowSpanParams {
         </li>
     </ul>
 
-    <?= grid_example('Row Spanning Simple', 'row-spanning-simple', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Spanning Simple', 'row-spanning-simple', 'generated') ?>
 
     <h2>Row Spanning Complex Example</h2>
 
@@ -106,7 +106,7 @@ interface RowSpanParams {
         <li>Column <b>Show</b> has a custom cell renderer to make use of the extra space.</li>
     </ul>
 
-    <?= grid_example('Row Spanning Complex', 'row-spanning-complex', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Spanning Complex', 'row-spanning-complex', 'generated') ?>
 
     <h2>Constraints with Row Spanning</h2>
 

@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
         described above.
     </p>
 
-    <?= grid_example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Example: Suppress Multi Range Selection</h3>
 
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
         one range selection even if the <b>Ctrl</b> key is held down.
     </p>
 
-    <?= grid_example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Ranges with Pinning and Floating</h2>
 
@@ -216,7 +216,7 @@ interface AddCellRangeParams {
         copying from the clipboard.
     </p>
 
-    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Advanced Range Selection', 'range-selection-advanced', 'generated', array("enterprise" => 1)) ?>
 
 
 </div>

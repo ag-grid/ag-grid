@@ -97,7 +97,7 @@ gridOptionsSecond = {
             widths from the top grid.</li>
     </p>
 
-    <?= grid_example('Aligned Grid as Footer', 'aligned-floating-footer', 'multi', array("processVue" => true)) ?>
+    <?= grid_example('Aligned Grid as Footer', 'aligned-floating-footer', 'multi') ?>
 
     <note style="font-style: italic;">
         * The property <code>suppressHorizontalScroll</code> does not work with the browser Edge.

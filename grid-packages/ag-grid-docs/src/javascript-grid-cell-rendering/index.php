@@ -147,7 +147,7 @@ var colDef3 = function(params) {
         of view again before they have a chance to be rendered will be skipped.</li>
 </ul>
 
-<?= grid_example('Rendering Order', 'rendering-order', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Rendering Order', 'rendering-order', 'generated', array("enterprise" => 1)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

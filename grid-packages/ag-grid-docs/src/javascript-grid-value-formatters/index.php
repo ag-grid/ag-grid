@@ -78,7 +78,7 @@ colDef.valueFormatter = function(params) {
         The example below shows value formatters in action.
     </p>
 
-    <?= grid_example('Value Formatters', 'value-formatters', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Value Formatters', 'value-formatters', 'generated') ?>
 
 
     <h2>Floating Cell Formatter</h2>

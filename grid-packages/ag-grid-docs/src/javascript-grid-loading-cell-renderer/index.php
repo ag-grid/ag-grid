@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Loading Cell Renderer</h1>
 
 <p class="lead">
-    Loading cell renderers allow you to add your own loading renderers to ag-Grid. Use these when the provided 
+    Loading cell renderers allow you to add your own loading renderers to ag-Grid. Use these when the provided
     loading renderers do not meet your requirements.
 </p>
 
@@ -59,6 +59,6 @@ interface ILoadingCellRendererParams {
     <li><b>Custom Loading Cell Renderer Parameters</b> are supplied using <code>gridOptions.loadingCellRendererParams</code>.</li>
 </ul>
 
-<?= grid_example('Custom Loading Cell Renderer', 'custom-loading-cell-renderer', 'generated', array('enterprise' => true, 'processVue' => true, 'extras' => array('fontawesome')) ) ?>
+<?= grid_example('Custom Loading Cell Renderer', 'custom-loading-cell-renderer', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

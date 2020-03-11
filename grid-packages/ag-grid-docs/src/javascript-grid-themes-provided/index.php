@@ -109,11 +109,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>Example Alpine Light (ag-theme-alpine)</p>
 
-    <?= grid_example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= grid_example('Alpine Theme', 'theme-alpine', 'generated', array( 'enterprise' => true )) ?>
 
     <p>Example Alpine Dark (ag-theme-alpine-dark)</p>
 
-    <?= grid_example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+    <?= grid_example('Alpine Theme (dark)', 'theme-alpine-dark', 'generated', array( 'enterprise' => true )) ?>
 
     <h3>Customizing the Alpine Theme</h3>
 
@@ -122,7 +122,7 @@ include '../documentation-main/documentation_header.php';
 <snippet>
 $ag-alpine-blue: #2196f3;
 $ag-alpine-orange: #ff9800;
-$ag-alpine-purple: #e040fb; 
+$ag-alpine-purple: #e040fb;
 $ag-alpine-green: #76ff03;
 
 $ag-alpine-black: #181d1f;
@@ -244,11 +244,11 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
     <p>Example Balham Light (ag-theme-balham)</p>
 
-<?= grid_example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+<?= grid_example('Balham Theme', 'theme-balham', 'generated', array( 'enterprise' => true )) ?>
 
     <p>Example Balham Dark (ag-theme-balham-dark)</p>
 
-<?= grid_example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true, 'processVue' => true )) ?>
+<?= grid_example('Balham Theme (dark)', 'theme-balham-dark', 'generated', array( 'enterprise' => true )) ?>
 
     <h3>Change the Theme Accent Color</h3>
 
@@ -279,7 +279,7 @@ $ag-size-font-status-bar: $ag-size-font-chrome - 1 !default;
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
 
-    <?= grid_example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'processVue' => true, 'extras' => array("roboto") )) ?>
+    <?= grid_example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
 
     <h3>Include the Roboto Font</h3>
 

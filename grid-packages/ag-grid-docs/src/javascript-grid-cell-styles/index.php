@@ -228,7 +228,7 @@ cellClassRules: {
             Editing will update the cellStyle.</li>
         </ul>
 
-    <?= grid_example('Cell Styling', 'cell-styling', 'generated', array('enterprise' => false, "processVue" => true)) ?>
+    <?= grid_example('Cell Styling', 'cell-styling', 'generated', array('enterprise' => false)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

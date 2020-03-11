@@ -48,7 +48,7 @@ gridOptions.columnDefs = [
         Below shows an example of column group configuration.
     </p>
 
-    <?= grid_example('Basic Grouping', 'basic-grouping', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Basic Grouping', 'basic-grouping', 'generated') ?>
 
     <h2>Column Definitions vs Column Group Definitions</h2>
 
@@ -150,8 +150,8 @@ gridOptions.columnDefs = [
     <h2>Align the Header Group Label To The right</h2>
 
 <p>
-The labels in the grouping headers are positioned with <code>display: flex</code>. 
-To make the group headers right-aligned, add the following rule set in your application, after the grid's stylesheets. 
+The labels in the grouping headers are positioned with <code>display: flex</code>.
+To make the group headers right-aligned, add the following rule set in your application, after the grid's stylesheets.
 Change the theme class to the one you use.
 </p>
 
@@ -188,7 +188,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= grid_example('Marry Children', 'marry-children', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Marry Children', 'marry-children', 'generated') ?>
 
     <h2 id="advanced-grouping-example">Advanced Grouping Example</h2>
 
@@ -215,7 +215,7 @@ Change the theme class to the one you use.
         </li>
     </ul>
 
-    <?= grid_example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"), "processVue" => true)) ?>
+    <?= grid_example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
 
 
     <h2 id="group-changes">Group Changes</h2>
@@ -241,7 +241,7 @@ Change the theme class to the one you use.
     </ul>
     </p>
 
-    <?= grid_example('Group Changes', 'group-changes', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Group Changes', 'group-changes', 'generated') ?>
 
     <p>
         The example above shows adding and removing groups. It is also possible to add and remove columns
@@ -265,7 +265,7 @@ Change the theme class to the one you use.
         </ul>
     </p>
 
-    <?= grid_example('Group Changes 2', 'group-changes-2', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Group Changes 2', 'group-changes-2', 'generated') ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

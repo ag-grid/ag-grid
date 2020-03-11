@@ -114,7 +114,7 @@ interface RefreshCellsParams {
         </li>
     </ul>
 
-    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Refresh Cells', 'refresh-cells', 'generated') ?>
 
     <note>
         You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
@@ -180,7 +180,7 @@ interface RedrawRowsParams {
 
     </ul>
 
-    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated') ?>
 
 
 

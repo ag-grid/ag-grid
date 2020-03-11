@@ -214,7 +214,7 @@ filterParams: {
             the values are not loaded again.</li>
         </ul>
 
-    <?= grid_example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Sorting And Formatting Set Filter Values List</h2>
 
@@ -234,7 +234,7 @@ filterParams: {
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Set Filter Values with Live Data</h2>
 
@@ -333,7 +333,7 @@ filterParams: {
             </li>
         </ul>
 
-    <?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1)) ?>
 
 
     <h2>New Rows Action and Values Example</h2>
@@ -365,7 +365,7 @@ filterParams: {
         no longer exist in the new set.
     </note>
 
-    <?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Set Filter Model</h2>
 
@@ -455,6 +455,6 @@ gridOptions.api.onFilterChanged();
         end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
-    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

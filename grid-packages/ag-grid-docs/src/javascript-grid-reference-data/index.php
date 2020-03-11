@@ -151,7 +151,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= grid_example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
 
@@ -182,6 +182,6 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= grid_example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

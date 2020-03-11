@@ -92,7 +92,7 @@ colDef.valueGetter = function(params) {
 
     </ul>
 
-    <?= grid_example('Value Getters', 'value-getters', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Value Getters', 'value-getters', 'generated') ?>
 
     <h3>Header Value Getters</h3>
 
@@ -295,7 +295,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -346,7 +346,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1)) ?>
 
 
 

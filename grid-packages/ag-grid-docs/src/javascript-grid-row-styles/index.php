@@ -44,7 +44,7 @@ gridOptions.getRowStyle = function(params) {
 }</snippet>
 
     <h2 id="row-class">Row Class</h2>
-    <p> You can add CSS classes to each row in the following ways: 
+    <p> You can add CSS classes to each row in the following ways:
     </p>
     <ul class="content">
         <li><code>rowClass</code>: Property to set CSS class for all rows. Provide either a string (class name) or array of string (array
@@ -150,7 +150,7 @@ gridOptions.rowClassRules: {
             and <code>api.updateRowData</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
     </ul>
 
-    <?= grid_example('Row Class Rules', 'row-class-rules', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Class Rules', 'row-class-rules', 'generated') ?>
 
     <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
 
@@ -177,6 +177,6 @@ gridOptions.rowClassRules: {
         </li>
     </ul>
 
-    <?= grid_example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Highlight Rows And Columns', 'highlight-rows-and-columns', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

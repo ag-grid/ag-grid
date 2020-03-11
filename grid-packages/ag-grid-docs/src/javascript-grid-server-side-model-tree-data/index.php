@@ -112,7 +112,7 @@ var gridOptions = {
         <li>Group keys are returned from the callback: <code>gridOptions.getServerSideGroupKey()</code>.</li>
     </ul>
 
-<?= grid_example('Tree Data', 'tree-data', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Tree Data', 'tree-data', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
     The examples on this page use simple method for expanding group nodes, however a better approach is covered in the
@@ -142,7 +142,7 @@ var gridOptions = {
 </ul>
 
 
-<?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Next Up</h2>
 

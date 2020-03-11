@@ -80,7 +80,7 @@ gridOptions: {
     <li>Open the browsers dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
 </ul>
 
-<?= grid_example('Server-side Sorting', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Server-side Sorting', 'sorting', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 
 <note>

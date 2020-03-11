@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1)) ?>
 
     <h2>1. Value Change Detection</h2>
 
@@ -201,7 +201,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         Notice above that the group column is also editable (eg you can change one of the rows from group 'A'
@@ -286,7 +286,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= grid_example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Aggregation Path Selection</h2>
 
@@ -370,7 +370,7 @@ colDef = {
         </ul>
 
 
-    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1)) ?>
 
 
     <h2>Change Detection and Pivot</h2>
@@ -427,6 +427,6 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+    <?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', array("enterprise" => 1)) ?>
 
     <h3>String Configuration</h3>
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+    <?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1)) ?>
 
     <h3>SideBarDef Configuration</h3>
 
@@ -141,7 +141,7 @@ sideBar = {
         The snippet above is demonstrated in the following example:
     </p>
 
-<?= grid_example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
@@ -244,7 +244,7 @@ sideBar = {
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Providing Parameters to Tool Panels</h2>
 
@@ -312,7 +312,7 @@ sideBar = {
     </li>
 </ul>
 
-<?= grid_example('Side Bar API', 'api', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Side Bar API', 'api', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Next Up</h2>
 
