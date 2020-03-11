@@ -247,7 +247,7 @@ myInput.addEventListener("keydown", function (event) {
         </li>
     </ul>
 
-    <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="suppressKeyboardEvents">Suppress Grid Keyboard Events</h2>
 
@@ -320,6 +320,6 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
         </li>
     </ul>
 
-    <?= grid_example('Suppress Keys', 'suppress-keys', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Suppress Keys', 'suppress-keys', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

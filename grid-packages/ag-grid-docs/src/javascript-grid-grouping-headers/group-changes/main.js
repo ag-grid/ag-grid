@@ -12,7 +12,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 100,
+        width: 150,
         sortable: true,
         resizable: true,
         filter: true

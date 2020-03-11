@@ -200,7 +200,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Value Cache', 'value-cache', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('Value Cache', 'value-cache', 'vanilla', ['enterprise' => true]) ?>
 
     <note>
         Note that the example still works fast when the value cache is turned off. This emphasises
@@ -295,7 +295,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', ['enterprise' => true]) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -346,7 +346,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true]) ?>
 
 
 

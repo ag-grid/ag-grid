@@ -5,40 +5,36 @@ var columnDefs = [
         children: [
             {headerName: "Athlete 1", field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             {
-                headerName: "Group B",
-                groupId: "GroupB",
-                children: [
-                    {headerName: "Age 2", field: "age", width: 90, filter: 'agNumberColumnFilter'},
-                    {
-                        headerName: "Group C",
-                        groupId: "GroupC",
+
+                        headerName: "Group B",
+                        groupId: "GroupB",
                         children: [
                             {headerName: "Country 1", field: "country", width: 120},
                             {
-                                headerName: "Group D",
-                                groupId: "GroupD",
+                                headerName: "Group C",
+                                groupId: "GroupC",
                                 children: [
                                     {headerName: "Sport 1", field: "sport", width: 110},
                                     {
-                                        headerName: "Group E",
-                                        groupId: "GroupE",
+                                        headerName: "Group D",
+                                        groupId: "GroupD",
                                         children: [
                                             {headerName: "Total 1", field: "total", width: 100, filter: 'agNumberColumnFilter'},
                                             {
-                                                headerName: "Group F",
-                                                groupId: "GroupF",
+                                                headerName: "Group E",
+                                                groupId: "GroupE",
                                                 openByDefault: true,
                                                 children: [
                                                     {headerName: "Gold 1", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
                                                     {
-                                                        headerName: "Group G",
-                                                        groupId: "GroupG",
+                                                        headerName: "Group F",
+                                                        groupId: "GroupF",
                                                         openByDefault: true,
                                                         children: [
                                                             {headerName: "Silver 1", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
                                                             {
-                                                                headerName: "Group H",
-                                                                groupId: "GroupH",
+                                                                headerName: "Group G",
+                                                                groupId: "GroupG",
                                                                 children: [
                                                                     {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'}
                                                                 ]
@@ -62,8 +58,6 @@ var columnDefs = [
                 ]
             },
             {headerName: "Athlete 2", columnGroupShow: 'open', field: "athlete", width: 150, filter: 'agTextColumnFilter'}
-        ]
-    }
 ];
 
 var gridOptions = {

@@ -131,7 +131,7 @@ pivotGroupHeaderHeight:100,
         </li>
     </ul>
 
-    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -141,7 +141,7 @@ pivotGroupHeaderHeight:100,
         descriptions at the top of the page
     </p>
 
-    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
 
     <h2 id="customHeader">Custom Header</h2>
     <p>
@@ -274,10 +274,10 @@ pivotGroupHeaderHeight:100,
 <ul class="content">
     <li>suppressMenu is specified in: Athlete, Country, Date and Bronze columns</li>
     <li>sortable=false is specified in: Age, Year, Sport, Silver and Total columns</li>
-    <li>Gold is the only column that doesn't have sortable=false or suppressSort</li>
+    <li>Gold is the only column that doesn't have sortable=false or suppressMenu</li>
 </ul>
 
-<?= grid_example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
+<?= grid_example('Header template', 'header-template', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
 
 

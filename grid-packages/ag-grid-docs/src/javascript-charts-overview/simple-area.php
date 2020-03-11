@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Area charts plot series using a line with the area below the line filled. They are useful to show changes over time, and are easy to interpret.
 </p>
 
-<?= chart_example('Simple Area', 'simple-area', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Simple Area', 'simple-area', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./bubble-with-negative-values.php">❮&nbsp;&nbsp;Bubble With Negative Values</a>

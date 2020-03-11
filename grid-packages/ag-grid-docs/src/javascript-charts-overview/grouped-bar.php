@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Grouped bar charts (also known as clustered bar charts) show multiple series with the <a href='./simple-bar.php'>bars</a> grouped by category, to allow for easier comparisons across different series.
 </p>
 
-<?= chart_example('Grouped Bar', 'grouped-bar', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Grouped Bar', 'grouped-bar', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-bar.php">❮&nbsp;&nbsp;Simple Bar</a>

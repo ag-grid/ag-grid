@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     As well as the series themselves, many other aspects of the charts can be customised and formatted to your liking, including the background, padding, titles, axes, and legend.
 </p>
 
-<?= chart_example('Chart Customisation', 'chart-customisation', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Chart Customisation', 'chart-customisation', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./combination-of-different-series-types.php">❮&nbsp;&nbsp;Combination of Different Series Types</a>

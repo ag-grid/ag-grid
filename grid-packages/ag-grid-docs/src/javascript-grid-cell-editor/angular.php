@@ -44,4 +44,4 @@
     events.
 </p>
 
-<?= grid_example('Angular Editor Components', 'component-editor', 'generated', array("enterprise" => 1, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('Angular Editor Components', 'component-editor', 'generated', ['enterprise' => true, 'exampleHeight' => 370, 'onlyShow' => 'angular', 'extras' => ['bootstrap']]) ?>

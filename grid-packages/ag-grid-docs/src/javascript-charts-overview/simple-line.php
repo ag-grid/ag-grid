@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Line charts represent each series as a separate line. They are useful to show change or trends over time, and are able to better present more data points than <a href='./simple-bar.php'>bar</a> or <a href='./simple-column.php'>column</a> charts.
 </p>
 
-<?= chart_example('Simple Line', 'simple-line', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Simple Line', 'simple-line', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-doughnut.php">❮&nbsp;&nbsp;Simple Doughnut</a>

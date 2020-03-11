@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 
-<?= grid_example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Click Selection', 'click-selection', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Checkbox Example', 'checkbox', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 
 <h2>Providing Node ID's</h2>

@@ -26,7 +26,7 @@ function createNormalColDefs() {
 var gridOptions = {
     defaultColDef: {
         resizable: true,
-        width: 100
+        width: 160
     },
     debug: true,
     columnDefs: createNormalColDefs(),

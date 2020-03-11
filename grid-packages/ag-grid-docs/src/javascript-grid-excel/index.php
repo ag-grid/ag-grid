@@ -246,7 +246,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true]) ?>
 
 <h2>Example: Styling Row Groups</h2>
 
@@ -254,7 +254,7 @@ SNIPPET
     If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
     <code>colDef.cellClass</code> and <code>processRowGroupCallback</code>:</p>
 
-<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 300)) ?>
+<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 300]) ?>
 
 <h2>Dealing With Errors In Excel</h2>
 
@@ -292,6 +292,6 @@ SNIPPET
     it shows 39923. You need to add the formatting inside Excel</li>
 </ul>
 
-<?= grid_example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
+<?= grid_example('Excel Data Types', 'excel-data-types', 'generated', ['enterprise' => true, 'exampleHeight' => 200]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

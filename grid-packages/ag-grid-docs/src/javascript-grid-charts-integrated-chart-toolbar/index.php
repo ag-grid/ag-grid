@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         The chart settings panel allows users to change the chart type as well as the colour palette used in the
         chart as demonstrated below:
     </p>
-    
+
     <div class="animated-example">
         <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" />
     </div>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
 
     <div class="animated-example">
         <img data-gifffer="chart-data.gif" data-gifffer-width="99%" />
-    </div>    
+    </div>
 
     <p>
         <br>
@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The chart format panel allows users to change the appearance of the chart as shown below:
     </p>
-    
+
     <div class="animated-example">
         <img data-gifffer="chart-format.gif" data-gifffer-width="99%" />
     </div>
@@ -185,7 +185,7 @@ type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUn
     <li><b>Unlink Toolbar Item</b> - has been removed from the toolbar.</li>
 </ul>
 
-<?= grid_example('Custom Toolbar', 'custom-toolbar', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Custom Toolbar', 'custom-toolbar', 'generated', ['enterprise' => true]) ?>
 
     <h2>Next Up</h2>
 

@@ -106,7 +106,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Filtering with the Set Filter</h2>
 
@@ -191,11 +191,11 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <!--<h2>Set Filter with Complex Object</h2>-->
 <!---->
-<?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
+<?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Next Up</h2>
 

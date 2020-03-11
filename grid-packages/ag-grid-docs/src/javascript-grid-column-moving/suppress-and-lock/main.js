@@ -12,11 +12,11 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    suppressDragLeaveHidesColumns: true,
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100
-    }
+        width: 150
+    },
+    suppressDragLeaveHidesColumns: true,
 };
 
 // setup the grid after the page has finished loading

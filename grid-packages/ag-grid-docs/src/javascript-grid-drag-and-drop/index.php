@@ -154,9 +154,9 @@ include '../documentation-main/documentation_header.php';
     <h2>Custom Drag Component</h2>
 
     <p>
-        Drag and drop is a complex application-level requirement. As such, a component (the grid) can't propose 
-        a drag and drop solution that is appropriate for all applications. For this reason, if the application has 
-        drag and drop requirements, you would likely want to implement a custom 
+        Drag and drop is a complex application-level requirement. As such, a component (the grid) can't propose
+        a drag and drop solution that is appropriate for all applications. For this reason, if the application has
+        drag and drop requirements, you would likely want to implement a custom
         <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a> specifically for your needs.
     </p>
 
@@ -173,7 +173,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Custom Drag Component', 'custom-drag-comp', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Custom Drag Component', 'custom-drag-comp', 'generated', ['enterprise' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

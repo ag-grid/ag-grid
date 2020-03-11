@@ -1,8 +1,7 @@
 var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', pinned: 'left'},
-    {headerName: 'Age', field: 'age', pinned: 'left'},
+    { field: 'athlete', pinned: 'left' },
+    { field: 'age', pinned: 'left' },
     {
-        headerName: 'Country',
         field: 'country',
         colSpan: function(params) {
             var country = params.data.country;
@@ -18,19 +17,19 @@ var columnDefs = [
             }
         }
     },
-    {headerName: 'Year', field: 'year'},
-    {headerName: 'Date', field: 'date'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100,
+        width: 150,
         resizable: true
     }
 };

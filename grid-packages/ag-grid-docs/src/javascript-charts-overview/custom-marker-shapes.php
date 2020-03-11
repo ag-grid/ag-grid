@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     The library provides a variety of different marker shapes that can be used. In addition, you can provide your own shapes by extending the <code>Marker</code> class, as shown with the heart-shaped marker below.
 </p>
 
-<?= chart_example('Custom Marker Shapes', 'custom-marker-shapes', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Custom Marker Shapes', 'custom-marker-shapes', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./chart-customisation.php">❮&nbsp;&nbsp;Chart Customisation</a>

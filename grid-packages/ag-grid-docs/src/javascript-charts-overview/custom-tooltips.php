@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     The tooltips used in the charts can be fully customised, using your own HTML and CSS to achieve the look you want.
 </p>
 
-<?= chart_example('Custom Tooltips', 'custom-tooltips', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Custom Tooltips', 'custom-tooltips', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./custom-marker-shapes.php">❮&nbsp;&nbsp;Custom Marker Shapes</a>

@@ -107,7 +107,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated') ?>
+    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated', ['exampleHeight' => 795]) ?>
 
     <h2>Column Spanning Constraints</h2>
 

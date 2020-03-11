@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Stacked column charts allow part-to-whole comparisons, with series stacked on top of each other in the vertical <a href='./simple-column.php'>columns</a>.
 </p>
 
-<?= chart_example('Stacked Column', 'stacked-column', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Stacked Column', 'stacked-column', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./grouped-column.php">❮&nbsp;&nbsp;Grouped Column</a>
