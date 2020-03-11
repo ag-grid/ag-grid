@@ -157,7 +157,7 @@ interface CellPosition {
         to go up and down rather than right and left.
     </p>
 
-    <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
 
 
     <h2>Tabbing into the Grid</h2>

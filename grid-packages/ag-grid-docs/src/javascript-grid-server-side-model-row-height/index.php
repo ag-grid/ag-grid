@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<?= grid_example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Server-side Row Model.
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Auto Row Height Example', 'auto-row-height', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <note>
     Purging the cache and auto row heights do not work together for the Server-side Row Model.

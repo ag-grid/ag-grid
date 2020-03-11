@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filter Tool Panel', 'simple', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Suppress Options</h2>
 
@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Suppress Options', 'suppress-options', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Suppress Options', 'suppress-options', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Filter Instances</h2>
 
@@ -150,7 +150,7 @@ interface IFiltersToolPanel {
         <li>Clicking <b>Collapse All</b> collapses all filter groups using: <code>collapseFilterGroups()</code>.</li>
     </ul>
 
-    <?= grid_example('Expand / Collapse Groups', 'expand-collapse-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Expand / Collapse Groups', 'expand-collapse-groups', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Expand / Collapse Filters</h2>
 
@@ -208,7 +208,7 @@ interface IFiltersToolPanel {
         <li>Clicking <b>Collapse All</b> collapses all filters using: <code>collapseFilters()</code>.</li>
     </ul>
 
-    <?= grid_example('Expand / Collapse Filters', 'expand-collapse-filters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Expand / Collapse Filters', 'expand-collapse-filters', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Custom Filters Layout</h2>
 
@@ -292,7 +292,7 @@ filtersToolPanel.setFilterLayout(customToolPanelColumnDefs);
         </li>
     </ul>
 
-    <?= grid_example('Custom Filters Layout', 'custom-layout', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Custom Filters Layout', 'custom-layout', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Next Up</h2>
 

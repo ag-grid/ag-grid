@@ -199,13 +199,9 @@ function createExampleGenerator(prefix, importType) {
         let mainApp;
 
         try {
-            // vue is still new - only process examples marked as tested and good to go
-            // when all examples have been tested this check can be removed
-            if (options.processVue || options.processVue === undefined) {
-                const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
+            const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
 
-                mainApp = format(source, 'babel');
-            }
+            mainApp = format(source, 'babel');
         } catch (e) {
             console.error(`Failed to process Vue example in ${examplePath}`, e);
             throw e;

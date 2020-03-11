@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
     Remember Filtering works with all frameworks eg Angular and React as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated') ?>
 
 <h2>Simple Filter Parts</h2>
 
@@ -583,7 +583,7 @@ export interface IFilterOptionDef {
     </li>
 </ul>
 
-<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated') ?>
 
 
 <h2>Blank Cells (Date and Number Filters)</h2>
@@ -638,7 +638,7 @@ filterParams = {
     any column you filter on will it's header change background color.
 </p>
 
-<?= grid_example('Style Header', 'style-header-on-filter', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Style Header', 'style-header-on-filter', 'generated') ?>
 
 
 

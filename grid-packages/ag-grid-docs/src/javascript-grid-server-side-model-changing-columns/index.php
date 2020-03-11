@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= grid_example('Changing Columns', 'changing-columns', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Changing Columns', 'changing-columns', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h2>Next Up</h2>
 

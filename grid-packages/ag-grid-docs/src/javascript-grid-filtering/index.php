@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Provided Simple', 'provided-simple', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Provided Simple', 'provided-simple', 'generated') ?>
 
     <h2>Configuring Filters to Columns</h2>
 
@@ -127,7 +127,7 @@ gridOptions = {
 
     <p>
         Below shows configuring the text filter on an Athlete column and providing extra filter parameters
-        (what <code>resetButton</code> and <code>applyButton</code> do are explained in 
+        (what <code>resetButton</code> and <code>applyButton</code> do are explained in
         <a href="../javascript-grid-filter-provided/#apply-clear-and-reset-buttons">Apply, Clear and Reset Buttons</a>).
     </p>
 

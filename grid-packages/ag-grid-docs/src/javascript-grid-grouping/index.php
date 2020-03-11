@@ -56,7 +56,7 @@ SNIPPET
     by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
 </ul>
 
-<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
 
@@ -76,7 +76,7 @@ SNIPPET
         This is done by setting <code>colDef.hide = true</code>.</li>
 </ul>
 
-<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -127,7 +127,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Filtering on Group Columns</h2>
 
@@ -169,7 +169,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', array("enterprise" => 1)) ?>
 
 <p>
     Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
@@ -191,7 +191,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Group Cell Rendering</h2>
 
@@ -260,7 +260,7 @@ SNIPPET
     Year is grouped first and Country is grouped second.
 </p>
 
-<?= grid_example('Row Group Index', 'row-group-index', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Row Group Index', 'row-group-index', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="replacingChildren">Hide Open Parents</h2>
 
@@ -299,7 +299,7 @@ SNIPPET
     the grouped column - eg for Country, it will filter on Country.
 </p>
 
-<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
@@ -349,7 +349,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
@@ -366,7 +366,7 @@ SNIPPET
     Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
 </p>
 
-<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Full Width Groups Rendering</h2>
 
@@ -492,7 +492,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 
@@ -535,7 +535,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Default Group Order', 'default-group-order', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Default Group Order', 'default-group-order', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
@@ -553,7 +553,7 @@ SNIPPET
     <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
 </ul>
 
-<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1)) ?>
 
 <p>
     If you do not want rows with null or undefined to be left out of groups, but want
@@ -626,7 +626,7 @@ colDef = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="grouping-footers">Grouping Footers</h2>
 
@@ -682,7 +682,7 @@ SNIPPET
     <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
 </ul>
 
-<?= grid_example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
 <note>
     Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
@@ -715,7 +715,7 @@ SNIPPET
     as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
 </p>
 
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', array("enterprise" => 1)) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -840,18 +840,18 @@ SNIPPET
 
 <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', array("enterprise" => 1)) ?>
 
 <p>The following example shows how to display all the groups in a single column</p>
 
-<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', array("enterprise" => 1)) ?>
 
 <p>
     The last example of explicitly setting groups shows an alternative for Hide Open Parents.
     The example below demonstrates hiding open parents using explicit group columns.
 </p>
 
-<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', array("enterprise" => 1)) ?>
 
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases

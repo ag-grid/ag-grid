@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Simple Full Width', 'simple-full-width', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Simple Full Width', 'simple-full-width', 'generated') ?>
 
 <note>
     You may be wondering, what is full width rows useful for? It's usage is very
@@ -118,6 +118,6 @@ include '../documentation-main/documentation_header.php';
         the full width and normal rows.</li>
 </ul>
 
-<?= grid_example('Basic Full Width', 'basic-full-width', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Basic Full Width', 'basic-full-width', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

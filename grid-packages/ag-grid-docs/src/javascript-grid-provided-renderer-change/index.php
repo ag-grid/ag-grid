@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Animation Renderers', 'animation-renderers', 'generated') ?>
 
     <note>
         We hope you like the animation cell renderers. However you can also take inspiration from them,

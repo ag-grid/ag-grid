@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
 
     <p class="lead">
-        ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today.  
+        ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today.
         This page provides guidance on how to address accessibility concerns in your grid implementations.
     </p>
 
@@ -195,7 +195,7 @@ gridOptions.rowBuffer = 9999</snippet>
         </li>
     </ul>
 
-    <?= grid_example('Accessibility', 'accessibility', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Accessibility', 'accessibility', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)

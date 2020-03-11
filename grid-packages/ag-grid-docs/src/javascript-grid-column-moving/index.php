@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Column Moving Simple', 'moving-simple', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Column Moving Simple', 'moving-simple', 'generated') ?>
 
 <h2>Moving Animation</h2>
 
@@ -108,7 +108,7 @@ include '../documentation-main/documentation_header.php';
     <ul class="content">
         <li>
             The column 'Age' is locked as first column in the scrollable area of the grid. It is not possible
-            to move this column, or have other columns moved over it to impact it's position. As a result the 'Age' column marks the beggining of the scrollable area regardless it's position. 
+            to move this column, or have other columns moved over it to impact it's position. As a result the 'Age' column marks the beggining of the scrollable area regardless it's position.
         </li>
         <li>
             The column 'Athlete' has moving suppressed. It is not possible to move
@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Column Suppress & Lock', 'suppress-and-lock', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Column Suppress & Lock', 'suppress-and-lock', 'generated') ?>
 
 <h2>Advanced Locked Position Example</h2>
 
@@ -167,7 +167,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Advanced Lock', 'advanced-lock', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Advanced Lock', 'advanced-lock', 'generated') ?>
 
 <h2>Lock Visible</h2>
 
@@ -219,7 +219,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1)) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

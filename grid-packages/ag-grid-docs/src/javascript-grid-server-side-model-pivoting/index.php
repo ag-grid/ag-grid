@@ -138,7 +138,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h2>Example - Pivot Column Groups </h2>
 
@@ -174,7 +174,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h2>Example - Slice and Dice</h2>
 <p>
@@ -221,7 +221,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Next Up</h2>
 

@@ -93,7 +93,7 @@ var detailGridOptions = {
     <li><b>cellRenderer: 'agGroupCellRenderer'</b> - is used to provide expand / collapse icons on the master rows.</li>
 </ul>
 
-<?= grid_example('Infinite Scrolling with Master / Detail', 'infinite-scrolling', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Infinite Scrolling with Master / Detail', 'infinite-scrolling', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h2>Combining Row Grouping with Master Detail</h2>
 
@@ -127,7 +127,7 @@ columnDefs = [
     <li><b>autoGroupColumnDef</b> - is used to specify which column in the master row should be included in the group hierarchy.</li>
 </ul>
 
-<?= grid_example('Row Grouping with Master Detail', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Row Grouping with Master Detail', 'row-grouping', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h3>Expanding Master Rows</h3>
 
@@ -212,7 +212,7 @@ masterGridOptions.getRowHeight = function (params) {
     <li><b>node.detail</b> - is used to identify 'detail' row nodes.</li>
 </ul>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
 <h2>Lazy Loading Detail Rows</h2>
 

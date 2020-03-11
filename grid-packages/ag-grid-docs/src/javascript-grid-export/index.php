@@ -9,22 +9,22 @@ include_once '../php-utils/printPropertiesTable.php';
 
     <h1>Export</h1>
 
-    <p class="lead">        
+    <p class="lead">
         This page covers the export options that are common to both CSV and Excel.
     </p>
 
     <p>
-        The grid provides APIs to export data to CSV and Excel. You can download a file to the 
+        The grid provides APIs to export data to CSV and Excel. You can download a file to the
         user's computer or generate a string to be uploaded to a server. For more detail on the specific
         options for each format see:
     </p>
 
     <ul>
-        <li><a href="../javascript-grid-csv/">CSV Export</a></li>      
-        <li><a href="../javascript-grid-excel/">Excel Export</a><span class="enterprise-icon">e</span></li>          
+        <li><a href="../javascript-grid-csv/">CSV Export</a></li>
+        <li><a href="../javascript-grid-excel/">Excel Export</a><span class="enterprise-icon">e</span></li>
     </ul>
 
-    <h2>Selecting Data to Export</h2>        
+    <h2>Selecting Data to Export</h2>
 
     <p>
         Data can be exported using one of the following API methods:
@@ -63,7 +63,7 @@ include_once '../php-utils/printPropertiesTable.php';
         <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
-    <?= grid_example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Selecting data to export', 'data-selection', 'generated', array("enterprise" => 1)) ?>
 
     <h2>
         What Gets Exported
@@ -97,7 +97,7 @@ include_once '../php-utils/printPropertiesTable.php';
         If you want to disable export, you can set the properties <code>suppressCsvExport = true</code> and
         <code>suppressExcelExport = true</code> in your <code>gridOptions</code>.
     </note>
-            
+
     <h2>Example: Formatting Exported Data</h2>
 
     <p>
@@ -110,7 +110,7 @@ include_once '../php-utils/printPropertiesTable.php';
         <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
-    <?= grid_example('Formatting exported data', 'formatting', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Formatting exported data', 'formatting', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Custom Headers and Footers</h2>
 
@@ -136,7 +136,7 @@ export interface ExcelData {
     <p>See the styles section of the <a href="../javascript-grid-excel/">Excel Export</a> page for
     more information how the <code>styleId</code> property is interpreted. The CSV exporter will
     ignore style information.</p>
-    
+
     <p>The CSV exporter can accept a multi-line string for <code>customHeader</code> and <code>customFooter</code>,
     see the <a href="../javascript-grid-csv/">CSV Export</a> page for more information.</p>
 

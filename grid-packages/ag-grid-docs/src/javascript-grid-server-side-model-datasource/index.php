@@ -105,7 +105,7 @@ gridOptions.api.setServerSideDatasource(myDatasource);
     <li>Open the browsers dev console to view the contents of the requests made by the grid for more rows.</li>
 </ul>
 
-<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Datasource Interface</h2>
 

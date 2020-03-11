@@ -76,23 +76,23 @@ interface IViewportDatasource {
     // Passes methods to be used to tell viewPort of data loads / changes.
     init(params: IViewportDatasourceParams): void;
 
-    // Tell the viewport what the scroll position of the grid is, so it knows what 
+    // Tell the viewport what the scroll position of the grid is, so it knows what
     // rows it has to get
     setViewportRange(firstRow: number, lastRow: number): void;
 
-    // Gets called once when viewPort is no longer used. If you need to do any 
+    // Gets called once when viewPort is no longer used. If you need to do any
     // cleanup, do it here.
     destroy?(): void;
 }
-        
+
 interface IViewportDatasourceParams {
 
-    // datasource calls this method when the total row count changes. 
+    // datasource calls this method when the total row count changes.
     // This in turn sets the height of the grids vertical scroll.
     // Set 'keepRenderedRows = true' to prevent unwanted row redraws.
     setRowCount: (count:number, keepRenderedRows?: boolean) =&gt; void;
 
-    // datasource calls this when new data arrives. The grid then updates 
+    // datasource calls this when new data arrives. The grid then updates
     // the provided rows. The rows are mapped [rowIndex]=&gt;rowData].
     setRowData: (rowData:{[key:number]:any}) =&gt; void;
 
@@ -269,7 +269,7 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-<?= grid_example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true, "processVue" => true )) ?>
+<?= grid_example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true )) ?>
 
     <h2>Example Viewport with Pagination</h2>
 
@@ -296,7 +296,7 @@ interface IViewportDatasourceParams {
             </li>
         </ul>
 
-    <?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', array('enterprise' => true, "processVue" => true)) ?>
+    <?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', array('enterprise' => true)) ?>
 
     <!--
     This was example put in by niall for trying to figure out how to have unlimited number of rows in grid

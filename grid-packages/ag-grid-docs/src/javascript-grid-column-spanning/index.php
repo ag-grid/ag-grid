@@ -85,7 +85,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <?= grid_example('Column Spanning Simple', 'column-spanning-simple', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Spanning Simple', 'column-spanning-simple', 'generated') ?>
 
     <h2>Column Spanning Complex Example</h2>
 
@@ -107,7 +107,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated') ?>
 
     <h2>Column Spanning Constraints</h2>
 

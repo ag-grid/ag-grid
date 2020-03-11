@@ -40,7 +40,7 @@ colDef = {
 
     <h2>Example Pinning</h2>
 
-    <?= grid_example('Column Pinning', 'column-pinning', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Pinning', 'column-pinning', 'generated') ?>
 
     <note>
         If you pin too many columns, so that the pinned columns take up the whole width of the grid,
@@ -99,7 +99,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= grid_example('Lock Pinned', 'lock-pinned', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Lock Pinned', 'lock-pinned', 'generated') ?>
 
 
 

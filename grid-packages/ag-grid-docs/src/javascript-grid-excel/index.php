@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
             <li>The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.</li>
             <li>The cells of the column header groups are merged in the same manner as the group headers in ag-Grid.</li>
         </ol>
-        
+
         <h2>API</h2>
 
         <ul class="content">
@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
 
         <?php
             include_once './excelProperties.php';
-            printPropertiesTable($excelProperties);    
+            printPropertiesTable($excelProperties);
         ?>
 
         <h2>Defining styles</h2>
@@ -86,7 +86,7 @@ include '../documentation-main/documentation_header.php';
                         False means that text either spills or gets truncated at the cell boundary (depending on whether the adjacent cell(s) have content). </li>
                 </ul>
             </li>
-            <li><code>borders</code> (optional): All the 4 borders must be specified (explained in next section): 
+            <li><code>borders</code> (optional): All the 4 borders must be specified (explained in next section):
                 <ul class="content">
                     <li>borderBottom</li>
                     <li>borderLeft</li>
@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
                     <li>borderRight</li>
                 </ul>
             </li>
-            <li><code>font</code> (optional):  The color must be declared: 
+            <li><code>font</code> (optional):  The color must be declared:
                 <ul class="content">
                     <li>bold. Boolean</li>
                     <li>color. A color in hexadecimal format</li>
@@ -253,7 +253,7 @@ var gridOptions = {
             </li>
         </ul>
 
-        <?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+        <?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
 
         <h2>Example - Styling Row Groups</h2>
 
@@ -261,8 +261,8 @@ var gridOptions = {
             If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
             <code>colDef.cellClass</code> and <code>processRowGroupCallback</code>:</p>
 
-        <?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 300)) ?>
-        
+        <?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 300)) ?>
+
         <h2>Dealing With Errors In Excel</h2>
 
         <p>
@@ -285,7 +285,7 @@ var gridOptions = {
             so Solid is a valid pattern, but SOLID or solid are not</li>
         </ul>
 
-        <h2>Example - Data types</h2> 
+        <h2>Example - Data types</h2>
 
         <p>
             The following example demonstrates how to use other data types for your export. Note that:
@@ -299,7 +299,7 @@ var gridOptions = {
             it shows 39923. You need to add the formatting inside Excel</li>
         </ul>
 
-        <?= grid_example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "processVue" => true, "exampleHeight" => 200)) ?>
+        <?= grid_example('Excel Data Types', 'excel-data-types', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
 
     </article>
 
