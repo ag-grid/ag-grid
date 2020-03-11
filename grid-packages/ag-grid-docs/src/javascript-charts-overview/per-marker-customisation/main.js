@@ -1,6 +1,15 @@
 var minSize = 5;
 var maxSize = 100;
 
+function find(arr, predicate) {
+    for (var i = 0, ln = arr.length; i < ln; i++) {
+        var value = arr[i];
+        if (predicate(value, i, arr)) {
+            return value;
+        }
+    }
+}
+
 function calculateColour(size) {
     var colours = {
         0.1: '#33CC00',
@@ -17,11 +26,11 @@ function calculateColour(size) {
 
     var position = (size - minSize) / (maxSize - minSize);
 
-    var matchingKey = Object
+    var keys = Object
         .keys(colours)
         .map(function(key) { return parseFloat(key); })
-        .sort()
-        .find(function(key) { return key > position; });
+        .sort();
+    var matchingKey = find(keys, function(key) { return key > position; });
 
     return colours[matchingKey];
 }
