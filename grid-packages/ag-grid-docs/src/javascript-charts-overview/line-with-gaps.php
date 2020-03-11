@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     When data is missing in some line series compared to others, these gaps in the data are reflected in the lines.
 </p>
 
-<?= chart_example('Line With Gaps', 'line-with-gaps', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Line With Gaps', 'line-with-gaps', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-line.php">❮&nbsp;&nbsp;Simple Line</a>

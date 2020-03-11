@@ -269,7 +269,7 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-<?= grid_example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true )) ?>
+<?= grid_example('Viewport Example', 'viewport', 'generated', ['enterprise'=> true]) ?>
 
     <h2>Example Viewport with Pagination</h2>
 
@@ -296,15 +296,7 @@ interface IViewportDatasourceParams {
             </li>
         </ul>
 
-    <?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', array('enterprise' => true)) ?>
-
-    <!--
-    This was example put in by niall for trying to figure out how to have unlimited number of rows in grid
-        <h1>Very Large Data Set</h1>
-
-        example('Viewport Big Data', 'viewport-big-data', 'generated', array( 'enterprise'=> true ))
-
-    -->
+    <?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', ['enterprise' => true]) ?>
 
 </div>
 

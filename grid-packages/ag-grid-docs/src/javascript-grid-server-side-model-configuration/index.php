@@ -163,7 +163,7 @@ gridOptions.debug = true;
     <li><code>debug=true</code> - open the browsers dev console to view the cache status and block details.</li>
 </ul>
 
-<?= grid_example('Block Loading Debounce', 'block-load-debounce', 'generated', array("enterprise" => 1)) ?>
+<?= grid_example('Block Loading Debounce', 'block-load-debounce', 'generated', ['enterprise' => true]) ?>
 
 <h2>Next Up</h2>
 

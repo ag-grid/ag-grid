@@ -91,5 +91,5 @@ laterOnInYourApplicationSomewhere() {
     Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and
     lifecycle events.
 </p>
-<?= grid_example('Angular Filter Component', 'filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 445, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('Angular Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'angular', 'extras' => ['bootstrap']]) ?>
 

@@ -267,7 +267,7 @@ interface IFloatingFilterParams {
     <li>All the other columns have the standard 500ms debounce</i></li>
 </ul>
 
-<?= grid_example('Custom Complex Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
+<?= grid_example('Custom Complex Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', ['extras' => ['jquery', 'jqueryui']]) ?>
 
 <?php include './angular.php'; ?>
 <?php include './react.php'; ?>

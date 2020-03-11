@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     The axes of scatter and bubble charts can be extended to plot positive and negative values.
 </p>
 
-<?= chart_example('Bubble With Negative Values', 'bubble-with-negative-values', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Bubble With Negative Values', 'bubble-with-negative-values', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-bubble.php">❮&nbsp;&nbsp;Simple Bubble</a>

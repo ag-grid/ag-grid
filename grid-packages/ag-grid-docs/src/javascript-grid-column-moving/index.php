@@ -219,7 +219,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1, "exampleHeight" => 550)) ?>
+<?= grid_example('Lock Visible', 'lock-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

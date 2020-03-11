@@ -40,7 +40,7 @@ colDef = {
 
     <h2>Example Pinning</h2>
 
-    <?= grid_example('Column Pinning', 'column-pinning', 'generated', array("exampleHeight" => 570)) ?>
+    <?= grid_example('Column Pinning', 'column-pinning', 'generated', ['exampleHeight' => 570]) ?>
 
     <note>
         If you pin too many columns, so that the pinned columns take up the whole width of the grid,

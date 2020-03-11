@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Charts will re-render immediately when new data is provided. This example demonstrates the performance of a chart with new data introduced every 50 milliseconds.
 </p>
 
-<?= chart_example('Real-Time Data Updates', 'real-time-data-updates', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Real-Time Data Updates', 'real-time-data-updates', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./time-axis-with-irregular-intervals.php">❮&nbsp;&nbsp;Time Axis With Irregular Intervals</a>

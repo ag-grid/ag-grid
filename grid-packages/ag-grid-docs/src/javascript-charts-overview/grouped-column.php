@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Grouped column charts (also known as clustered column charts) present multiple series with the <a href='./simple-column.php'>columns</a> grouped by category, to allow for easier comparisons across different series.
 </p>
 
-<?= chart_example('Grouped Column', 'grouped-column', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Grouped Column', 'grouped-column', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-column.php">❮&nbsp;&nbsp;Simple Column</a>

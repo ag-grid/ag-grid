@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         This example is best viewed by opening it in a new tab (click the link on the top right of the example).
     </p>
 
-    <?= grid_example("Monthly Sales", "monthly-sales", "vanilla", array("enterprise" => true, "extras" => array("fontawesome", "bootstrap"))) ?>
+    <?= grid_example('Monthly Sales', 'monthly-sales', 'vanilla', ['enterprise' => true, 'extras' => ['fontawesome', 'bootstrap']]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

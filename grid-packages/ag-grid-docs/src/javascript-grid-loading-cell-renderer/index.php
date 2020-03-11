@@ -59,6 +59,6 @@ interface ILoadingCellRendererParams {
     <li><b>Custom Loading Cell Renderer Parameters</b> are supplied using <code>gridOptions.loadingCellRendererParams</code>.</li>
 </ul>
 
-<?= grid_example('Custom Loading Cell Renderer', 'custom-loading-cell-renderer', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+<?= grid_example('Custom Loading Cell Renderer', 'custom-loading-cell-renderer', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']] ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

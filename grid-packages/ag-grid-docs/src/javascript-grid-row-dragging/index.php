@@ -363,7 +363,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true]) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 
@@ -401,7 +401,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome'))) ?>
+        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
 
 
     <h3>Example Highlighted Tree Data</h3>
@@ -440,7 +440,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome'))) ?>
+        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
 
     <h2>Dragging Multiple Rows</h2>
 

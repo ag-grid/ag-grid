@@ -78,7 +78,7 @@ customElements.define('partial-match-filter', PartialMatchFilter);
 // then reference the Component in your colDef like this
 colDef = {
 
-    // we use cellRendererFramework instead of cellRenderer 
+    // we use cellRendererFramework instead of cellRenderer
     filterFramework: 'partial-match-filter'
 
     // specify all the other fields as normal
@@ -153,7 +153,7 @@ laterOnInYourApplicationSomewhere() {
     // get reference to the ag-Grid Filter component
     let agGridFilter = this.gridOptions.api.getFilterInstance("name");
     // assume filter on name column
-    let agGridFilter = api.getFilterInstance('name'); 
+    let agGridFilter = api.getFilterInstance('name');
 
     // get Polymer instance from the ag-Grid instance
     let polymerFilterInstance = getFrameworkComponentInstance();
@@ -168,5 +168,5 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Polymer Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<?= grid_example('Polymer Filter Component', 'polymer-filter', 'as-is', array("noPlunker" => 1, "usePath" => "/", "exampleHeight" => 360)) ?>
+<?= grid_example('Polymer Filter Component', 'polymer-filter', 'as-is', ['noPlunker' => true, 'usePath' => '/', 'exampleHeight' => 360]) ?>
 

@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals.
 </p>
 
-<?= chart_example('Time Axis With Irregular Intervals', 'time-axis-with-irregular-intervals', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Time Axis With Irregular Intervals', 'time-axis-with-irregular-intervals', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./area-with-negative-values.php">❮&nbsp;&nbsp;Area With Negative Values</a>

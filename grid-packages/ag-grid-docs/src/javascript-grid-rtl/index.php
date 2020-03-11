@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
         is using ag-Grid Enterprise - hence the tool panel and context menu's are active.
     </p>
 
-    <?= grid_example('RTL Complex', 'rtl-complex', 'vanilla', array("enterprise" => 1)) ?>
+    <?= grid_example('RTL Complex', 'rtl-complex', 'vanilla', ['enterprise' => true]) ?>
 
     <h2>How it Works</h2>
 

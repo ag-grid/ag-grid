@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Different types of data series can be combined together in the same chart. This example shows how a <a href='./simple-line.php'>line series</a> might be combined with a <a href='./grouped-column.php'>grouped column series</a>.
 </p>
 
-<?= chart_example('Combination of Different Series Types', 'combination-of-different-series-types', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Combination of Different Series Types', 'combination-of-different-series-types', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./real-time-data-updates.php">❮&nbsp;&nbsp;Real-Time Data Updates</a>

@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     100% stacked bar charts show the relative percentage of multiple series in <a href='./stacked-bar.php'>stacked bars</a>, where each stacked bar always totals to 100%.
 </p>
 
-<?= chart_example('100% Stacked Bar', '100--stacked-bar', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('100% Stacked Bar', '100--stacked-bar', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./stacked-bar.php">❮&nbsp;&nbsp;Stacked Bar</a>
