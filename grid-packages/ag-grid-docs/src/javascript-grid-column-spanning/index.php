@@ -103,7 +103,7 @@ interface ColSpanParams {
         <li>
             The dataset has meta-data inside it, the <code>data.section</code> attribute. This
             meta-data, provided by the application, is used in the grid configuration in order
-            to set the column spans and the backgrond colors.
+            to set the column spans and the background colors.
         </li>
     </ul>
 
