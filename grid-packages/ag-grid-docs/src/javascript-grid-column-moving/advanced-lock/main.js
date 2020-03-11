@@ -1,26 +1,38 @@
 var columnDefs = [
-    {lockPosition: true, valueGetter: 'node.rowIndex', cellClass: 'locked-col', width: 40, suppressNavigable: true},
-    {lockPosition: true, cellRenderer: controlsCellRenderer, cellClass: 'locked-col', suppressNavigable: true},
-    {field: 'athlete', width: 150},
-    {field: 'age'},
-    {field: 'country', width: 150},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    {
+        lockPosition: true,
+        valueGetter: 'node.rowIndex',
+        cellClass: 'locked-col',
+        width: 60,
+        suppressNavigable: true
+    },
+    {
+        lockPosition: true,
+        cellRenderer: controlsCellRenderer,
+        cellClass: 'locked-col',
+        width: 120,
+        suppressNavigable: true
+    },
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 var gridOptions = {
-    suppressDragLeaveHidesColumns: true,
     columnDefs: columnDefs,
-    onColumnPinned: onColumnPinned,
     defaultColDef: {
-        width: 100,
+        width: 150,
         resizable: true
-    }
+    },
+    onColumnPinned: onColumnPinned,
+    suppressDragLeaveHidesColumns: true,
 };
 
 function onColumnPinned(event) {

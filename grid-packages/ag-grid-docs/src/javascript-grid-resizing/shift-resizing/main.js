@@ -1,10 +1,10 @@
 var columnDefs = [
     {field: "athlete", width: 150},
     {field: "age", width: 90},
-    {field: "country", width: 120},
+    {field: "country", width: 150},
     {field: "year", width: 90},
     {field: "date", width: 110},
-    {field: "sport", width: 110},
+    {field: "sport", width: 150},
     {field: "gold", width: 100},
     {field: "silver", width: 100},
     {field: "bronze", width: 100},
