@@ -65,7 +65,7 @@ gridOptions: {
     active sorts in the grid. The column id and sort type can then be used by the server to perform the actual sorting.
 </p>
 
-<h2>Example - Server-side Sorting</h2>
+<h2>Example: Server-side Sorting</h2>
 
 <p>
     The example below demonstrates server-side sorting. Notice the following:

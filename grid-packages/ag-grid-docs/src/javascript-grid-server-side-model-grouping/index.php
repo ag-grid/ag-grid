@@ -66,7 +66,7 @@ gridOptions: {
     on, i.e. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
 </p>
 
-<h2>Example - Server-side Row Grouping</h2>
+<h2>Example: Server-side Row Grouping</h2>
 
 <p>
     The example below demonstrates server-side Row Grouping. Note the following:

@@ -123,7 +123,7 @@ cellEditorParams: {
        the data when editing.
     </p>
 
-    <h2 id="example-reference-data-with-value-handlers">Example - Value Handlers</h2>
+    <h2 id="example-reference-data-with-value-handlers">Example: Value Handlers</h2>
 
     <p>
         The following example demonstrates how <code>Value Handlers</code> can be combined to work with reference data:
@@ -153,7 +153,7 @@ cellEditorParams: {
 
     <?= grid_example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
+    <h2 id="example-reference-data-with-ref-data-prop">Example: 'refData' Property</h2>
 
     <p>
         The following example demonstrates how the <code>refData</code> property simplifies working with reference data:

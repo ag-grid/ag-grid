@@ -200,7 +200,7 @@ myInput.addEventListener("keydown", function (event) {
 }, true);
 </snippet>
 
-    <h3>Example - Tabbing into the Grid</h3>
+    <h3>Example: Tabbing into the Grid</h3>
 
     <p>
         In the following example there is an input box provided to test tabbing into the grid. Notice the following:

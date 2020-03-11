@@ -82,7 +82,7 @@ var detailGridOptions = {
 }</snippet>
 
 
-<h2>Example - Simple Master / Detail</h2>
+<h2>Example: Simple Master / Detail</h2>
 
 <p>
     Below shows a simple Master / Detail setup. From the example you can notice the following:
@@ -145,7 +145,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     will only operate on the specific detail grid.
 </p>
 
-<h2>Example - Editing Cells with Master / Detail</h2>
+<h2>Example: Editing Cells with Master / Detail</h2>
 
 <p>
     This example shows how to control cell editing when using Master / Detail. This examples demonstrates
@@ -187,7 +187,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     <code>embedFullWidthRows</code> property.
 </p>
 
-<h2>Example - Details scrolls horizontally with Master</h2>
+<h2>Example: Details scrolls horizontally with Master</h2>
 
 <p>
     In the example below, notice that horizontal scrolling from within the detail grid also scrolls the master:
@@ -256,7 +256,7 @@ detailCellRendererParams: {
     The following examples demonstrate both approaches.
 </p>
 
-<h2>Example - Customising via String Template</h2>
+<h2>Example: Customising via String Template</h2>
 
 <p>
     This examples demonstrates a static string template which is supplied to the <code>detailCellRendererParams.template</code>
@@ -265,7 +265,7 @@ detailCellRendererParams: {
 
 <?= grid_example('Customising via String Template', 'string-template-customisation', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Customising via Template Callback</h2>
+<h2>Example: Customising via Template Callback</h2>
 
 <p>
     A template callback function is supplied to the <code>detailCellRendererParams.template</code> property to customise
@@ -297,7 +297,7 @@ detailCellRendererParams: {
     The following examples demonstrate custom Cell Renderer components for the detail row with and without a grid.
 </p>
 
-<h2>Example - Custom Detail Cell Renderer with a Grid</h2>
+<h2>Example: Custom Detail Cell Renderer with a Grid</h2>
 
 <p>
     By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
@@ -343,7 +343,7 @@ onGridReady(params) {
 <?= grid_example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("enterprise" => 1)) ?>
 
 
-<h2>Example - Custom Detail Cell Renderer with a Form</h2>
+<h2>Example: Custom Detail Cell Renderer with a Form</h2>
 
 <?php
         printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=560s", "09:20");
@@ -411,7 +411,7 @@ masterGridOptions.isRowMaster = function (dataItem) {
     otherwise it will return <code>false</code>.
 </p>
 
-<h3>Example - Dynamically Specify Master Nodes</h3>
+<h3>Example: Dynamically Specify Master Nodes</h3>
 
 <p>
     The following example only shows detail rows when there are corresponding child records.
@@ -467,7 +467,7 @@ var gridOptionsLevel3Detail = {
 </snippet>
 
 
-<h3>Example - Nesting Master / Detail</h3>
+<h3>Example: Nesting Master / Detail</h3>
 <p>
     Below shows a contrived master detail setup to help illustrate how nesting can be achieved.
     The example has very little data - this is on purpose to focus on the nesting.
@@ -527,14 +527,14 @@ masterGridOptions.getRowHeight = function (params) {
     The following examples demonstrate both approaches:
 </p>
 
-<h3>Example - Fixed Detail Row Height</h3>
+<h3>Example: Fixed Detail Row Height</h3>
 <p>
     The following demonstrates a fixed detail row height:
 </p>
 
 <?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', array("enterprise" => 1)) ?>
 
-<h3>Example - Dynamic Detail Row Height</h3>
+<h3>Example: Dynamic Detail Row Height</h3>
 <p>
     The following example demonstrates dynamic detail row heights:
 </p>
@@ -552,7 +552,7 @@ masterGridOptions.getRowHeight = function (params) {
     each grid will filter and sort independently.
 </p>
 
-<h3>Example - Filtering with Sort</h3>
+<h3>Example: Filtering with Sort</h3>
 
 <p>
     Below shows a simple Master / Detail setup which has filtering and sorting enabled in both master and detail grids.
@@ -594,7 +594,7 @@ var masterGridOptions = {
     be invoked later or asynchronously once the data for the detail row is available.
 </p>
 
-<h3>Example - Lazy Load Detail Rows</h3>
+<h3>Example: Lazy Load Detail Rows</h3>
 
 <p>
     Below shows a simple Master / Detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
@@ -721,7 +721,7 @@ var masterGridOptions = {
     the master grid.
 </note>
 
-<h2>Example - Exporting Master / Detail Data</h2>
+<h2>Example: Exporting Master / Detail Data</h2>
 
 <p>
     The example below demonstrate how both master and detail data can be exported.

@@ -433,7 +433,7 @@ gridApi.onFilterChanged()</snippet>
     </p>
 
     <snippet>
-// Example - Interacting with Set Filter
+// Example: Interacting with Set Filter
 
 // Get filter instance
 var instance = gridOptions.api.getFilterInstance('athlete');

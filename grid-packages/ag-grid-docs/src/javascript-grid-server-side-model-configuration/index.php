@@ -142,7 +142,7 @@ gridOptions.debug = true;
 
 <p> This can be very useful when debugging issues on the server.</p>
 
-<h2>Example - Block Loading Debounce</h2>
+<h2>Example: Block Loading Debounce</h2>
 
 <p>
     The example below demonstrates a number of the configurations listed in this section and shows how adding a debounce

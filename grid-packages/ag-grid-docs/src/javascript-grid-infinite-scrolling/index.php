@@ -233,7 +233,7 @@ interface IGetRowsParams {
         state to you.
     </p>
 
-    <h3>Simple Example - No Sorting or Filtering</h3>
+    <h3>Simple Example: No Sorting or Filtering</h3>
 
     <p>
         The example below makes use of infinite scrolling and caching.
@@ -267,7 +267,7 @@ gridOptions.getRowNodeId: function(item) {
         Once you have <code>getRowNodeId()</code> implemented, selection will persist across sorts and filters.
     </p>
 
-    <h3>Example - Sorting, Filtering and Selection</h3>
+    <h3>Example: Sorting, Filtering and Selection</h3>
 
     <p>
         The following example extends the example above by adding Server-side sorting, filtering and
@@ -508,7 +508,7 @@ loadingSpinnerColumn = {
         your application. It will make your life easier if you update the data on the server and refresh the block cache.
     </note>
 
-    <h3 id="example-using-cache-api-methods">Example - Using Cache API Methods</h3>
+    <h3 id="example-using-cache-api-methods">Example: Using Cache API Methods</h3>
 
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items

@@ -225,7 +225,7 @@ SNIPPET
     you can provide an ExcelStyle with id and name "header". If you do so, the headers
 </p>
 
-<h2>Example - Export With Styles </h2>
+<h2>Example: Export With Styles </h2>
 
 <ul class="content">
     <li>Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns</li>
@@ -248,7 +248,7 @@ SNIPPET
 
 <?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Styling Row Groups</h2>
+<h2>Example: Styling Row Groups</h2>
 
 <p>By default, row groups are exported with the names of each node in the hierarchy combined together, like <span style="white-space: nowrap">"-> Parent -> Child"</span>.
     If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
@@ -278,7 +278,7 @@ SNIPPET
     so Solid is a valid pattern, but SOLID or solid are not</li>
 </ul>
 
-<h2>Example - Data types</h2>
+<h2>Example: Data types</h2>
 
 <p>
     The following example demonstrates how to use other data types for your export. Note that:

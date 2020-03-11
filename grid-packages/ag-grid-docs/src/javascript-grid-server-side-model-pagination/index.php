@@ -69,7 +69,7 @@ gridOptions: {
         Implementing the Server-side Datasource</a> for more details.
 </p>
 
-<h2>Example - Server-side Pagination</h2>
+<h2>Example: Server-side Pagination</h2>
 
 <p>
     The example below demonstrates server-side Pagination. Note the following:

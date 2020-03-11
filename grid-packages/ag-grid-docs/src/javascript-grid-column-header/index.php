@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
         and also provide the adequate header heights using the appropriate grid property.
     </p>
 
-    <h3>Example - Header Height and Text Orientation</h3>
+    <h3>Example: Header Height and Text Orientation</h3>
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
@@ -243,7 +243,7 @@ pivotGroupHeaderHeight:100,
     looking to change the icons, check our <a href="../javascript-grid-icons">icon docs</a>
 </note>
 
-<h3>Example - Simple Header Templates</h3>
+<h3>Example: Simple Header Templates</h3>
 
 <p>
     In the following example you can see how we are reusing the default grid template to change the layout of

@@ -156,7 +156,7 @@ gridApi.onFilterChanged();</snippet>
         server.
     </p>
 
-    <h3>Example - Get / Set All Filter Models</h3>
+    <h3>Example: Get / Set All Filter Models</h3>
 
     <p>
         The example below shows getting and setting all the filter models in action. The 'save' and 'restore' buttons

@@ -79,7 +79,7 @@ var detailGridOptions = {
 <note>Note that the nested detail grid can be configured to use any Row Model.</note>
 
 
-<h2>Example - Infinite Scrolling with Master / Detail</h2>
+<h2>Example: Infinite Scrolling with Master / Detail</h2>
 
 <p>
     This example shows a simple Master / Detail setup which includes the infinite scrolling capabilities provided
@@ -114,7 +114,7 @@ columnDefs = [
 ]
 </snippet>
 
-<h2>Example - Row Grouping with Master Detail</h2>
+<h2>Example: Row Grouping with Master Detail</h2>
 
 <p>
     Below shows Row Grouping combined with Master / Detail. From the example you can notice the following:
@@ -201,7 +201,7 @@ masterGridOptions.getRowHeight = function (params) {
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
-<h2>Example - Dynamic Detail Row Height</h2>
+<h2>Example: Dynamic Detail Row Height</h2>
 
 <p>
     The following example shows how the detail row height can be dynamically sized to fit the number of records.

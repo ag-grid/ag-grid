@@ -56,7 +56,7 @@ gridOptions.columnDefs = [
 ];</snippet>
     </p>
 
-    <h2>Example - Simple Pivot</h2>
+    <h2>Example: Simple Pivot</h2>
 
     <p>
         The example below shows a simple pivot on the year column using the Gold, Silver and Bronze columns

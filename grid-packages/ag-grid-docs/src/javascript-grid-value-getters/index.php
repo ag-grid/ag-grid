@@ -166,7 +166,7 @@ colDef.valueGetter = function(params) {
         </p>
     </note>
 
-    <h3>Example - Value Cache</h3>
+    <h3>Example: Value Cache</h3>
 
     <p>
         Below shows a grid demonstrating the value cache. The column on the right has a value getter
@@ -238,7 +238,7 @@ colDef.valueGetter = function(params) {
     </ul>
     <note>* Assuming your framework allows binding properties and this is what you are using.</note>
 
-    <h3>Example - Expiring through Editing</h3>
+    <h3>Example: Expiring through Editing</h3>
 
     <p>
         The first example above didn't have any editing, so there was no concern for expiring the value cache.
@@ -323,7 +323,7 @@ colDef.valueGetter = function(params) {
         want to control exactly when the value cache is expired.
     </p>
 
-    <h3>Example - Never Expire</h3>
+    <h3>Example: Never Expire</h3>
 
     <p>
         This example is again almost identical to the example above. The difference here is the value cache

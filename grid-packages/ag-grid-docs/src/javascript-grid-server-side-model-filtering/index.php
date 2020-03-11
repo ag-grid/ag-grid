@@ -84,7 +84,7 @@ gridOptions: {
     <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
 </p>
 
-<h2>Example - Simple Column Filters</h2>
+<h2>Example: Simple Column Filters</h2>
 
 <p>
     The example below demonstrates server-side filtering using
@@ -170,7 +170,7 @@ gridOptions: {
     For more details on setting values refer to the <a href="../javascript-grid-filter-set/">Set Filter</a> documentation.
 </p>
 
-<h2>Example - Set Filter</h2>
+<h2>Example: Set Filter</h2>
 
 <p>
     The example below demonstrates server-side filtering using the Set Filter. Notice the following:

@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
     sense. When you select a group, the group row only will be marked as selected.
 </p>
 
-<h2>Example - Click Selection</h2>
+<h2>Example: Click Selection</h2>
 
 <p>
     The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </note>
 
-<h2>Example - Checkbox Selection</h2>
+<h2>Example: Checkbox Selection</h2>
 
 <p>
     Below shows another example using checkbox selection. The example shows:

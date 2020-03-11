@@ -296,7 +296,7 @@ interface RowNodeTransaction {
     transaction updates.
 </p>
 
-<h3 id="example-updating-with-transaction">Example - Updating with Transaction</h3>
+<h3 id="example-updating-with-transaction">Example: Updating with Transaction</h3>
 
 <p>
     The example uses the <code>updateRowData</code> method in different ways and prints
@@ -332,7 +332,7 @@ interface RowNodeTransaction {
 
 <?= grid_example('Updating with Transaction', 'updating-with-transaction', 'generated') ?>
 
-<h3 id="example-updating-with-transaction-and-groups">Example - Updating with Transaction and Groups</h3>
+<h3 id="example-updating-with-transaction-and-groups">Example: Updating with Transaction and Groups</h3>
 
 <p>
     When using transactions and grouping, the groups are kept intact as you add, remove and update
@@ -413,7 +413,7 @@ interface RowNodeTransaction {
             </li>
         </ul>
 
-    <h3>Example - Immutable Store</h3>
+    <h3>Example: Immutable Store</h3>
 
     <p>
         The example below shows the immutable store in action. The example keeps a store of data
@@ -464,7 +464,7 @@ interface RowNodeTransaction {
     <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1)) ?>
 
 
-    <h3>Example - Immutable Store - Updates via Feed</h3>
+    <h3>Example: Immutable Store - Updates via Feed</h3>
 
     <p>
         Finally, lets go bananas with delta updates. Below is a simplistic trading hierarchy

@@ -51,7 +51,7 @@ colDef = {
 
     <p>
         Below is a very similar example to <a href="../javascript-grid-value-getters/#example-value-getter">
-            "Example - Getters, Setters, Formatters, Parsers"</a>.
+            "Example: Getters, Setters, Formatters, Parsers"</a>.
         The difference is that expressions are used instead of functions. For example, where a
         <code>valueGetter</code> is used, a string is provided instead of a function.
     </p>

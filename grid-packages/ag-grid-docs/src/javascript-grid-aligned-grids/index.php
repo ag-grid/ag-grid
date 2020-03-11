@@ -39,7 +39,7 @@ gridOptionsSecond = {
     ...
 }</snippet>
 
-    <h2 id="demonstration-example">Example - Aligned Grids</h2>
+    <h2 id="demonstration-example">Example: Aligned Grids</h2>
 
     <p>
         Below shows two grids, both aligned with the other (so any column change to one will be
@@ -80,7 +80,7 @@ gridOptionsSecond = {
         the same set of columns.
     </p>
 
-    <h2 id="aligned-grid-as-footer">Example - Aligned Grid as Footer</h2>
+    <h2 id="aligned-grid-as-footer">Example: Aligned Grid as Footer</h2>
 
     <p>
         So why would you want to align grids like this? It's great for aligning grids that have
@@ -108,7 +108,7 @@ gridOptionsSecond = {
         <a href="https://plnkr.co/edit/MHgT6Rrp9LpOu7jddzVr?p=preview">Plunker</a>.
     </note>
 
-    <h2 id="split-column-groups">Example - Align Column Groups</h2>
+    <h2 id="split-column-groups">Example: Align Column Groups</h2>
 
     <p>
         It is possible that you have column groups that are split because of pinning or the

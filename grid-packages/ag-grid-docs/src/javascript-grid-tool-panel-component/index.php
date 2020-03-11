@@ -82,7 +82,7 @@ gridOptions: {
         <a href="../javascript-grid-side-bar/#sidebardef-configuration">Side Bar Configuration</a> section.
     </p>
 
-    <h2>Example - 'Custom Stats' Tool Panel Component</h2>
+    <h2>Example: 'Custom Stats' Tool Panel Component</h2>
 
     <p>
         The example below provides a 'Custom Stats' Tool Panel to demonstrates how to create and register a Custom Tool

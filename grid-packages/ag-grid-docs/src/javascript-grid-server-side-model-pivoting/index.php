@@ -106,7 +106,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
 </note>
 
 
-<h2>Example - Simple Pivot </h2>
+<h2>Example: Simple Pivot </h2>
 
 <p>
     The example below demonstrates server-side Pivoting. Note the following:
@@ -140,7 +140,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
 
 <?= grid_example('Simple Pivot', 'simple-pivot', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
-<h2>Example - Pivot Column Groups </h2>
+<h2>Example: Pivot Column Groups </h2>
 
 <p>
     The example below demonstrates server-side Pivoting with multiple row groups when there multiple value columns ('gold', 'silver', 'bronze')
@@ -176,7 +176,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
 
 <?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', array("enterprise" => 1, "extras" => array('alasql'))) ?>
 
-<h2>Example - Slice and Dice</h2>
+<h2>Example: Slice and Dice</h2>
 <p>
     A mock data store running inside the browser is used in the example below. The purpose of the mock server is to
     demonstrate the interaction between the grid and the server. For your application, your server will need to

@@ -122,7 +122,7 @@ autoGroupColumnDef: {
         When doing tree data, you should only have one column for display the group.
     </note>
 
-    <h2>Example - Organisational Hierarchy</h2>
+    <h2>Example: Organisational Hierarchy</h2>
 
     <p>
        The following example combines all the steps above to show a simplified organisational hierarchy:
@@ -211,7 +211,7 @@ var rowData = [
         demonstrates how the Set Filter works with Tree Data.
     </p>
 
-    <h2>Example - File Browser</h2>
+    <h2>Example: File Browser</h2>
 
     <p>
         The following example presents a more complex example which includes Aggregation and Filtering:

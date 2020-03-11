@@ -177,7 +177,7 @@ gridOptions.rowBuffer = 9999</snippet>
         to constrain the amount of visible rows.
     </p>
 
-    <h2 id="example-accessibility">Example - Accessibility</h2>
+    <h2 id="example-accessibility">Example: Accessibility</h2>
 
     <p>
         The example below presents a simple grid layout with the following properties enabled:
