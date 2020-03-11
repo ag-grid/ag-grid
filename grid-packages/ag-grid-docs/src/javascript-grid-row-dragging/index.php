@@ -363,7 +363,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 
@@ -401,7 +401,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
+        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome']]) ?>
 
 
     <h3>Example Highlighted Tree Data</h3>

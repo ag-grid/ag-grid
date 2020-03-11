@@ -10,7 +10,7 @@ var columnDefs = [
         }
     },
     { field: "country" },
-    { field: "year" },
+    { field: "year", width: 100 },
     { field: "date" },
     { field: "sport" },
     { field: "gold" },
@@ -20,7 +20,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true,
         filter: true
     },

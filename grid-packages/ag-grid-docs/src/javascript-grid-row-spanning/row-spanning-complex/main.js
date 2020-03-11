@@ -44,16 +44,16 @@ var rowData = [
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        resizable: true,
+        width: 170
+    },
+    rowData: rowData,
     components: {
         showCellRenderer: createShowCellRenderer()
     },
-    defaultColDef: {
-        resizable: true,
-        width: 100
-    },
     suppressRowTransform: true,
-    columnDefs: columnDefs,
-    rowData: rowData
 };
 
 // setup the grid after the page has finished loading

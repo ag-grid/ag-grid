@@ -120,11 +120,34 @@ var rowData = [
     }
 ];
 
-var columnDefs = [
-    {headerName: 'Name', field: 'name', cellRenderer: countryCellRenderer},
-    {headerName: 'Continent', field: 'continent', width: 150},
-    {headerName: 'Language', field: 'language', width: 150}
-];
+var gridOptions = {
+    columnDefs: [
+        { field: 'name', cellRenderer: countryCellRenderer},
+        { field: 'continent'},
+        { field: 'language'}
+    ],
+    defaultColDef: {
+        flex: 1,
+        sortable: true,
+        resizable: true,
+        filter: true
+    },
+    components: {
+        fullWidthCellRenderer: FullWidthCellRenderer
+    },
+    rowData: rowData,
+    getRowHeight: function (params) {
+        // return 100px height for full width rows
+        if (isFullWidth(params.data)) {
+            return 100;
+        }
+    },
+    isFullWidthCell: function (rowNode) {
+        return isFullWidth(rowNode.data);
+    },
+    // see ag-Grid docs cellRenderer for details on how to build cellRenderers
+    fullWidthCellRenderer: 'fullWidthCellRenderer'
+};
 
 function countryCellRenderer(params) {
     var flag =
@@ -133,32 +156,6 @@ function countryCellRenderer(params) {
         '.png">';
     return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
 }
-
-var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    rowData: rowData,
-    getRowHeight: function (params) {
-        // return 100px height for full width rows
-        if (isFullWidth(params.data)) {
-            return 100;
-        }
-    },
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
-    },
-    components: {
-        fullWidthCellRenderer: FullWidthCellRenderer
-    },
-    isFullWidthCell: function (rowNode) {
-        return isFullWidth(rowNode.data);
-    },
-    // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRenderer: 'fullWidthCellRenderer'
-};
 
 function isFullWidth(data) {
     // return true when country is Peru, France or Italy

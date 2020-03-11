@@ -469,26 +469,24 @@ var immutableStore = [
     }
 ];
 
-var columnDefs = [
-    {field: "athlete", rowDrag: true},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"}
-];
-
 var gridOptions = {
-    // this tells the grid we are doing updates when setting new data
-    deltaRowDataMode: true,
+    columnDefs: columnDefs = [
+        { field: "athlete", rowDrag: true },
+        { field: "country" },
+        { field: "year", width: 100 },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" }
+    ],
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true,
         filter: true
     },
-    columnDefs: columnDefs,
+    // this tells the grid we are doing updates when setting new data
+    deltaRowDataMode: true,
     animateRows: true,
     onRowDragMove: onRowDragMove,
     getRowNodeId: getRowNodeId,

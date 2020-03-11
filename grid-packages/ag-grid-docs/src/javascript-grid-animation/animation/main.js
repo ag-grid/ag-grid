@@ -1,20 +1,17 @@
 var countDownDirection = true;
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: "sum"},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: "sum"},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: "sum"},
-    {headerName: "Total", field: "total", width: 100, aggFunc: "sum"}
+    { field: "athlete", minWidth: 150 },
+    { field: "country", minWidth: 150 },
+    { field: "year", minWidth: 120},
+    { field: "gold", aggFunc: "sum"},
+    { field: "silver", aggFunc: "sum"},
+    { field: "bronze", aggFunc: "sum"}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        flex: 1,
         sortable: true,
         filter: true
     },
@@ -26,6 +23,7 @@ var gridOptions = {
         // to get 'athlete' showing in the leaf level in this column
         cellRenderer: "agGroupCellRenderer",
         headerName: "Athlete",
+        minWidth: 200,
         field: "athlete"
     }
 };
@@ -126,15 +124,13 @@ function getActions() {
             setTitleFormatted("api", "clearFilterAndSort", "");
         },
         function (api, columnApi) {
-            columnApi.setRowGroupColumns(["country", "year", "sport"]);
+            columnApi.setRowGroupColumns(["country", "year"]);
             columnApi.setColumnVisible("athlete", false);
-            api.sizeColumnsToFit();
-            setTitleFormatted("api", "setGrouping", "country, year, sport");
+            setTitleFormatted("api", "setGrouping", "country, year");
         },
         function (api, columnApi) {
-            columnApi.moveColumns(["gold", "silver", "bronze", "total"], 1);
-            api.sizeColumnsToFit();
-            setTitleFormatted("api", "moveColumns", "gold, silver, bronze, total");
+            columnApi.moveColumns(["gold", "silver", "bronze"], 1);
+            setTitleFormatted("api", "moveColumns", "gold, silver, bronze");
         },
         function (api) {
             var topLevelNodes = api.getModel().getTopLevelNodes();
@@ -159,12 +155,11 @@ function getActions() {
         function (api, columnApi) {
             columnApi.setRowGroupColumns([]);
             columnApi.setColumnVisible("athlete", true);
-            api.sizeColumnsToFit();
             setTitleFormatted("api", "removeGrouping", "");
         },
         function (api, columnApi) {
-            columnApi.moveColumns(["gold", "silver", "bronze", "total"], 6);
-            setTitleFormatted("api", "moveColumns", "gold, silver, bronze, total");
+            columnApi.moveColumns(["gold", "silver", "bronze"], 3);
+            setTitleFormatted("api", "moveColumns", "gold, silver, bronze");
         },
         function (api) {
             api
@@ -196,10 +191,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     agGrid.simpleHttpRequest({url: "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json"}).then(function (data) {
         gridOptions.api.setRowData(data);
-        setTimeout(function () {
-            gridOptions.api.sizeColumnsToFit();
-        }, 1000);
-
         startInterval(gridOptions.api, gridOptions.columnApi);
     });
 });
@@ -218,10 +209,6 @@ function initApiGrid() {
 
     agGrid.simpleHttpRequest({url: "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json"}).then(function (data) {
         gridOptions.api.setRowData(data);
-        setTimeout(function () {
-            gridOptions.api.sizeColumnsToFit();
-        }, 1000);
-
         startInterval(gridOptions.api, gridOptions.columnApi);
     });
 }

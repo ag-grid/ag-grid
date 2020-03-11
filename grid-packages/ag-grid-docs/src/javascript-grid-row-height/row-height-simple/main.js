@@ -1,25 +1,23 @@
-var columnDefs = [
-    {headerName: 'Height', field: 'rowHeight'},
-    {headerName: 'Athlete', field: 'athlete', width: 180},
-    {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Total', field: 'total', width: 100}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'rowHeight' },
+        { field: 'athlete' },
+        { field: 'age', width: 80 },
+        { field: 'country' },
+        { field: 'year', width: 90 },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
+    ],
     defaultColDef: {
+        width: 150,
         sortable: true,
         resizable: true,
         filter: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
     // call back function, to tell the grid what height
     // each row should be
     getRowHeight: function(params) {

@@ -1,21 +1,16 @@
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
-];
-
 var swimmingHeight, groupHeight;
 
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null,
+    columnDefs: [
+        { field: "country", rowGroup: true},
+        { field: "athlete" },
+        { field: "date"},
+        { field: "sport"},
+        { field: "gold"},
+        { field: "silver"},
+        { field: "bronze"},
+        { field: "total"}
+    ],
     animateRows: true,
     getRowHeight: function(params) {
         if (params.node.group) {

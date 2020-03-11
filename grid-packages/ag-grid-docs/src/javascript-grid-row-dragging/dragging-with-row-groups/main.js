@@ -371,30 +371,29 @@ var olympicWinnersData = [
         "bronze": 0,
         "total": 3
     }
-]
-
-var columnDefs = [
-    {field: "athlete", rowDrag: function(params) {
-        // only rows that are NOT groups should be draggable
-        return !params.node.group;
-    }},
-    {field: "country", rowGroup: true},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"}
 ];
 
 var gridOptions = {
-    // this tells the grid we are doing updates when setting new data
+    columnDefs: [
+        {   field: "athlete",
+            rowDrag: function(params) {
+                // only rows that are NOT groups should be draggable
+                return !params.node.group;
+            }
+        },
+        { field: "country", rowGroup: true },
+        { field: "year", width: 100 },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" }
+    ],
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true,
         filter: true
     },
-    columnDefs: columnDefs,
     animateRows: true,
     groupDefaultExpanded: 1,
     onRowDragMove: onRowDragMove,

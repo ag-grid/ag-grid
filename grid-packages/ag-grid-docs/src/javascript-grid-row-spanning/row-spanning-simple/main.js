@@ -18,9 +18,9 @@ var columnDefs = [
         },
         width: 200
     },
-    {field: 'age'},
+    {field: 'age', width: 100},
     {field: 'country'},
-    {field: 'year'},
+    {field: 'year', width: 100},
     {field: 'date'},
     {field: 'sport'},
     {field: 'gold'},
@@ -30,12 +30,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
-        width: 100,
+        width: 170,
         resizable: true
     },
     suppressRowTransform: true,
-    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

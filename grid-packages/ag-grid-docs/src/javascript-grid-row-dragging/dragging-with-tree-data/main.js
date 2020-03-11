@@ -1,16 +1,3 @@
-// specify the columns
-var columnDefs = [
-    {
-        field: 'dateModified'
-    },
-    {
-        field: 'size',
-        valueFormatter: function(params) {
-            return params.value ? params.value + ' MB' : '';
-        }
-    }
-];
-
 // specify the data
 var rowData = [
     {id: 1, filePath: ['Documents'], type: 'folder'},
@@ -31,14 +18,23 @@ var rowData = [
 ];
 
 var gridOptions = {
+    columnDefs: [
+        { field: 'dateModified'},
+        {
+            field: 'size',
+            valueFormatter: function(params) {
+                return params.value ? params.value + ' MB' : '';
+            }
+        }
+    ],
     defaultColDef: {
+        flex: 1,
         resizable: true
     },
+    rowData: rowData,
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
-    columnDefs: columnDefs,
-    rowData: rowData,
     treeData: true,
     animateRows: true,
     groupDefaultExpanded: -1,
@@ -51,7 +47,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         rowDrag: true,
         headerName: 'Files',
-        width: 250,
+        minWidth: 300,
         cellRendererParams: {
             suppressCount: true,
             innerRenderer: 'fileCellRenderer'
