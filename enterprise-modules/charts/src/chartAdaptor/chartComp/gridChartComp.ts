@@ -220,8 +220,8 @@ export class GridChartComp extends Component {
         const ratio = 0.553;
 
         const chart = this.chartProxy.getChart() as any;
-        let width = chart.width;
-        let height = chart.height;
+        let width = this.params.insideDialog ? 850 : chart.width;
+        let height = this.params.insideDialog ? 470 : chart.height;
 
         if (width > maxWidth || height > maxHeight) {
             width = Math.min(width, maxWidth);
