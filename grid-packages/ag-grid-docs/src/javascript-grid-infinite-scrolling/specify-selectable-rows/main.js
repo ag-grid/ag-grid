@@ -1,25 +1,27 @@
-var columnDefs = [
-    // this row shows the row index, doesn't use any data from the row
-    {headerName: "ID", width: 50,
-        // it is important to have node.id here, so that when the id changes (which happens
-        // when the row is loaded) then the cell is refreshed.
-        valueGetter: 'node.id',
-        cellRenderer: 'loadingRenderer'
-    },
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 150, checkboxSelection: true},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
-];
-
 var gridOptions = {
+    columnDefs: [
+        // this row shows the row index, doesn't use any data from the row
+        {headerName: "ID", maxWidth: 100,
+            // it is important to have node.id here, so that when the id changes (which happens
+            // when the row is loaded) then the cell is refreshed.
+            valueGetter: 'node.id',
+            cellRenderer: 'loadingRenderer'
+        },
+        { field: "athlete", minWidth: 200 },
+        { field: "age" },
+        { field: "country", minWidth: 200, checkboxSelection: true },
+        { field: "year" },
+        { field: "date",  minWidth: 150 },
+        { field: "sport", minWidth: 150 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
+
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         resizable: true
     },
     components:{
@@ -38,7 +40,6 @@ var gridOptions = {
     isRowSelectable: function(rowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     },
-    columnDefs: columnDefs,
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100
