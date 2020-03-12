@@ -65,7 +65,7 @@ interface ChartRef {
         </li>
     </ul>
 
-    <?= grid_example('Provided Container', 'provided-container', 'generated', array("exampleHeight" => 650, "enterprise" => true)) ?>
+    <?= grid_example('Provided Container', 'provided-container', 'generated', ['exampleHeight' => 650, 'enterprise' => true]) ?>
 
     <h2>Next Up</h2>
 

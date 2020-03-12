@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
     sense. When you select a group, the group row only will be marked as selected.
 </p>
 
-<h2>Example - Click Selection</h2>
+<h2>Example: Click Selection</h2>
 
 <p>
     The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 
-<?= grid_example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Click Selection', 'click-selection', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </note>
 
-<h2>Example - Checkbox Selection</h2>
+<h2>Example: Checkbox Selection</h2>
 
 <p>
     Below shows another example using checkbox selection. The example shows:
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Checkbox Example', 'checkbox', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 
 <h2>Providing Node ID's</h2>

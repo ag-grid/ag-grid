@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
     <p>In this example we're using Components to render custom pinned row values for Athlete and Age (color blue and italics
     respectively).</p>
 
-    <?= grid_example('Row Pinning', 'row-pinning', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Pinning', 'row-pinning', 'generated', ['exampleHeight' => 580]) ?>
 
     <h2>Non Supported Items</h2>
 

@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Bubble charts are a specialised type of <a href='./simple-scatter.php'>scatter charts</a> that can represent a third variable through the size of each marker (or bubble).
 </p>
 
-<?= chart_example('Simple Bubble', 'simple-bubble', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Simple Bubble', 'simple-bubble', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-scatter.php">❮&nbsp;&nbsp;Simple Scatter</a>

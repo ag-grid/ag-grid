@@ -72,7 +72,7 @@ gridOptions.api.forEachNode(function(rowNode) {
         will be returned from the server.</li>
 </ul>
 
-<?= grid_example('Updating Row Data', 'updating-row-data', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Updating Row Data', 'updating-row-data', 'generated', ['enterprise' => true, 'extras' => ['lodash']]) ?>
 
 
 <h2>CRUD</h2>
@@ -93,6 +93,6 @@ gridOptions.api.forEachNode(function(rowNode) {
         <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
     </ul>
 
-<?= grid_example('Server-side Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Server-side Row Model & CRUD', 'crud', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

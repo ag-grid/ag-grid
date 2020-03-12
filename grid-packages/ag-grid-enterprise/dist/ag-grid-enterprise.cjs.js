@@ -3920,6 +3920,7 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        agGridCommunity._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });
@@ -16149,7 +16150,8 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
         label.fill = 'black';
-        label.y = 2; // for better looking vertical alignment of labels to markers
+        // For better looking vertical alignment of labels to markers.
+        label.y = HdpiCanvas.has.textMetrics ? 1 : 0;
         _this.append([_this.marker, label]);
         _this.update();
         return _this;

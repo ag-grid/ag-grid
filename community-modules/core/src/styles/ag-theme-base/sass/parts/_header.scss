@@ -80,6 +80,7 @@
             display: block;
             width: ag-param(header-column-separator-width);
             height: ag-param(header-column-separator-height);
+            top: calc(50% - #{ag-param(header-column-separator-height) / 2});
             background-color: ag-param(header-column-separator-color);
 
             @include ag-theme-rtl(( right: 0 ));
@@ -100,6 +101,7 @@
             left: calc(50% - #{ag-param(header-column-resize-handle-width) / 2});
             width: ag-param(header-column-resize-handle-width);
             height: ag-param(header-column-resize-handle-height);
+            top: calc(50% - #{ag-param(header-column-resize-handle-height) / 2});
             background-color: ag-param(header-column-resize-handle-color);
         }
     }
@@ -112,9 +114,7 @@
         @include ag-card();
         overflow: hidden;
         padding: 3px;
-        position: absolute;
         text-overflow: ellipsis;
-        user-select: none;
         z-index: 10;
         @include ag-border(secondary);
         color: ag-param(secondary-foreground-color);

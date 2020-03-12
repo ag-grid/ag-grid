@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
         and also provide the adequate header heights using the appropriate grid property.
     </p>
 
-    <h3>Example - Header Height and Text Orientation</h3>
+    <h3>Example: Header Height and Text Orientation</h3>
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
@@ -131,7 +131,7 @@ pivotGroupHeaderHeight:100,
         </li>
     </ul>
 
-    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -141,7 +141,7 @@ pivotGroupHeaderHeight:100,
         descriptions at the top of the page
     </p>
 
-    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
 
     <h2 id="customHeader">Custom Header</h2>
     <p>
@@ -243,7 +243,7 @@ pivotGroupHeaderHeight:100,
     looking to change the icons, check our <a href="../javascript-grid-icons">icon docs</a>
 </note>
 
-<h3>Example - Simple Header Templates</h3>
+<h3>Example: Simple Header Templates</h3>
 
 <p>
     In the following example you can see how we are reusing the default grid template to change the layout of
@@ -274,10 +274,10 @@ pivotGroupHeaderHeight:100,
 <ul class="content">
     <li>suppressMenu is specified in: Athlete, Country, Date and Bronze columns</li>
     <li>sortable=false is specified in: Age, Year, Sport, Silver and Total columns</li>
-    <li>Gold is the only column that doesn't have sortable=false or suppressSort</li>
+    <li>Gold is the only column that doesn't have sortable=false or suppressMenu</li>
 </ul>
 
-<?= grid_example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
+<?= grid_example('Header template', 'header-template', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
 
 

@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Using labels in a <a href='./simple-bar.php'>bar chart</a> can be useful to highlight the values of each bar.
 </p>
 
-<?= chart_example('Bar With Labels', 'bar-with-labels', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Bar With Labels', 'bar-with-labels', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./100--stacked-bar.php">❮&nbsp;&nbsp;100% Stacked Bar</a>

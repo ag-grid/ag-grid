@@ -17,7 +17,7 @@ var gridOptions = {
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        width: 100,
+        width: 140,
         sortable: true,
         resizable: true,
         filter: true

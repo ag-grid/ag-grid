@@ -72,7 +72,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated') ?>
 
     <p> The logic for managed dragging is simple and has the following constraints:</p>
         <ul class="content">
@@ -118,13 +118,13 @@ colDef = {
             <li>Applying a sort or a filter to the grid will also suppress the drag icons.</li>
         </ul>
 
-    <?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
 
     <h2>Custom Row Drag Text</h2>
 
     <p>
-        When a RowDrag starts, a "floating" DOM element is created to indicate which row is being dragged. By default 
-        this DOM element will contain the same value as the cell that started the rowDrag. It's possible to override that 
+        When a RowDrag starts, a "floating" DOM element is created to indicate which row is being dragged. By default
+        this DOM element will contain the same value as the cell that started the rowDrag. It's possible to override that
         text using the <code>colDef.rowDragText</code> callback.
     </p>
 
@@ -149,13 +149,13 @@ colDef.rowDragText = function(params) {
     </p>
     <ul class="content">
         <li>
-            When you drag row of the year 2012, the <code>rowDragText</code> callback will add 
+            When you drag row of the year 2012, the <code>rowDragText</code> callback will add
             <strong>(London Olympics)</strong> to the floating Drag element.
         </li>
     </ul>
 
 
-    <?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated') ?>
 
     <h2>Unmanaged Dragging</h2>
 
@@ -277,7 +277,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-    <?= grid_example('Row Drag Events', 'dragging-events', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Drag Events', 'dragging-events', 'generated') ?>
 
     <h2>Simple Unmanaged Example</h2>
 
@@ -307,7 +307,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-    <?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated') ?>
 
     <p>
         The simple example doesn't add anything that managed dragging gives (the first
@@ -363,7 +363,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 
@@ -401,7 +401,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'processVue'=> true, 'extras' => array('fontawesome')) ) ?>
+        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome']]) ?>
 
 
     <h3>Example Highlighted Tree Data</h3>
@@ -440,7 +440,7 @@ colDef.rowDragText = function(params) {
             </li>
         </ul>
 
-        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'processVue'=>true, 'extras' => array('fontawesome')) ) ?>
+        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
 
     <h2>Dragging Multiple Rows</h2>
 

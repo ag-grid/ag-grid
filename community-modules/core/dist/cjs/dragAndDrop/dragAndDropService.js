@@ -311,7 +311,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
-    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper"><div class="ag-dnd-ghost">' +
+    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label"></div>' +
         '</div></div>';

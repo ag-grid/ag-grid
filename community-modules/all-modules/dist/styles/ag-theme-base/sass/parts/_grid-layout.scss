@@ -122,7 +122,7 @@
         @include ag-border(critical, left);
     }
 
-    .ag-row-hover {
+    .ag-row.ag-row-hover {
         background-color: ag-param(row-hover-color);
     }
 

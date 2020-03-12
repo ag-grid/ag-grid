@@ -1,30 +1,27 @@
 var columnDefs = [
     {
-        headerName: 'Athlete',
         field: 'athlete',
-        width: 150,
         pinnedRowCellRenderer: 'customPinnedRowRenderer',
         pinnedRowCellRendererParams: {
             style: {'color': 'blue'}
         }
     },
     {
-        headerName: 'Age',
         field: 'age',
-        width: 90,
         pinnedRowCellRenderer: 'customPinnedRowRenderer',
         pinnedRowCellRendererParams: {
             style: {'font-style': 'italic'}
         }
     },
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110}
+    { field: 'country' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'sport' }
 ];
 
 var gridOptions = {
     defaultColDef: {
+        width: 200,
         sortable: true,
         filter: true,
         resizable: true
@@ -39,9 +36,6 @@ var gridOptions = {
     // no rows to pin to start with
     pinnedTopRowData: createData(1, 'Top'),
     pinnedBottomRowData: createData(1, 'Bottom'),
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    },
     components: {
         customPinnedRowRenderer: CustomPinnedRowRenderer
     }

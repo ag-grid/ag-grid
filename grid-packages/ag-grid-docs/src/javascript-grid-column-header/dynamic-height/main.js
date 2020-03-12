@@ -10,7 +10,7 @@ var columnDefs = [
             {
                 headerName: 'Gold',
                 field: 'gold',
-                width: 60,
+                width: 120,
                 enableValue: true,
                 suppressMenu: true,
                 filter: 'agNumberColumnFilter',
@@ -19,7 +19,7 @@ var columnDefs = [
             {
                 headerName: 'Silver',
                 field: 'silver',
-                width: 60,
+                width: 120,
                 enableValue: true,
                 suppressMenu: true,
                 filter: 'agNumberColumnFilter',
@@ -28,7 +28,7 @@ var columnDefs = [
             {
                 headerName: 'Bronze',
                 field: 'bronze',
-                width: 60,
+                width: 120,
                 enableValue: true,
                 suppressMenu: true,
                 filter: 'agNumberColumnFilter',
@@ -37,7 +37,7 @@ var columnDefs = [
             {
                 headerName: 'Total',
                 field: 'total',
-                width: 60,
+                width: 120,
                 enableValue: true,
                 suppressMenu: true,
                 filter: 'agNumberColumnFilter',

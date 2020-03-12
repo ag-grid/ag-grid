@@ -1,36 +1,34 @@
-var columnDefs = [
-    {headerName: 'Participant',
-        children: [
-            {field: "athlete", width: 150},
-            {field: "age", width: 90}
-        ]
-    },
-    {
-        headerName: 'Details',
-        children: [
-            {field: "country", width: 120},
-            {field: "year", width: 90},
-            {field: "date", width: 110},
-            {field: "sport", width: 110}
-        ]
-    },
-    {
-        headerName: 'Medals',
-        children: [
-            {field: "gold", width: 100},
-            {field: "silver", width: 100},
-            {field: "bronze", width: 100},
-            {field: "total", width: 100}
-        ]
-    }
-];
-
 var gridOptions = {
+    columnDefs: [
+        {headerName: 'Participant',
+            children: [
+                { field: "athlete" },
+                { field: "age", width: 90 }
+            ]
+        },
+        {
+            headerName: 'Details',
+            children: [
+                { field: "country" },
+                { field: "year", width: 90 },
+                { field: "date" },
+                { field: "sport" }
+            ]
+        },
+        {
+            headerName: 'Medals',
+            children: [
+                { field: "gold" },
+                { field: "silver" },
+                { field: "bronze" },
+                { field: "total" }
+            ]
+        }
+    ],
     defaultColDef: {
+        width: 150,
         resizable: true
     },
-    columnDefs: columnDefs,
-    rowData: null
 };
 
 // setup the grid after the page has finished loading

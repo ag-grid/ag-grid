@@ -2,7 +2,6 @@
 include_once "../php-utils/videoHelper.php";
 include_once '../example-runner/example-runners.php';
 include_once '../includes/html-helpers.php';
-include_once '../php-utils/printPropertiesTable.php';
 include_once '../php-utils/apiDocumentation.php';
 include_once '../php-utils/snippets.php';
 $DONT_USE_FONT_AWESOME = true;

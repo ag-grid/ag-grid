@@ -142,6 +142,11 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
         }
+        else if (colDef.filterFramework) {
+            // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
+            // Note: We could combine this with another part of the 'if' statement, however explicitly
+            // having this section makes the code easier to read.
+        }
         else if (colDef.filter === true) {
             var setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';

@@ -11,4 +11,4 @@
     The below example show how to create a custom floating filter reusing the out of the box number filter with Vue.
 </p>
 
-<?= grid_example('Vue Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, "processVue" => true, 'onlyShow' => 'vue', 'extras' => array("bootstrap"))) ?>
+<?= grid_example('Vue Floating Filter Component', 'floating-filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 370, 'onlyShow' => 'vue', 'extras' => ['bootstrap']]) ?>

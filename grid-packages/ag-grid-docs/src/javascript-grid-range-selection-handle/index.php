@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         The example below demonstrates simple range selection with a range handle.
     </p>
 
-    <?= grid_example('Range Handle', 'range-selection-handle', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Range Handle', 'range-selection-handle', 'generated', ['enterprise' => true]) ?>
 
 
 </div>

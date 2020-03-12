@@ -1,35 +1,19 @@
-var columnDefs = [
-    {
-        headerName: 'Row #',
-        field: 'rowNumber',
-        cellClass: 'cell-wrap-text',
-        width: 70
-    },
-    {
-        field: 'autoA',
-        cellClass: 'cell-wrap-text',
-        autoHeight: true
-    },
-    {
-        field: 'autoB',
-        cellClass: 'cell-wrap-text',
-        autoHeight: true
-    },
-    {
-        field: 'autoC',
-        cellClass: 'cell-wrap-text',
-        autoHeight: true
-    }
-];
 
 var gridOptions = {
+    columnDefs: [
+        { headerName: 'Row #', field: 'rowNumber', maxWidth: 100 },
+        { field: 'autoA' },
+        { field: 'autoB' },
+        { field: 'autoC' }
+    ],
     defaultColDef: {
-        width: 240,
+        flex: 1,
+        cellClass: 'cell-wrap-text',
+        autoHeight: true,
         sortable: true,
-        resizable: true
+        resizable: true,
     },
     rowHeight: 275,
-    columnDefs: columnDefs,
     onColumnResized: onColumnResized,
     onGridReady: function(params) {
         // in this example, the CSS styles are loaded AFTER the grid is created,

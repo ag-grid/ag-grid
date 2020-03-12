@@ -24,7 +24,8 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     getValue(): boolean;
     setValue(value: boolean | undefined, silent?: boolean): this;
     protected isSelected(): boolean;
-    protected setSelected(selected?: boolean, silent?: boolean): void;
+    private setSelected;
     private dispatchChange;
     private onCheckboxClick;
+    private refreshSelectedClass;
 }

@@ -12913,6 +12913,7 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.isSelected();
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
+        this.refreshSelectedClass(value);
         if (value === this.getValue()) {
             return this;
         }
@@ -12938,7 +12939,12 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
+        this.refreshSelectedClass(this.selected);
         this.dispatchChange(this.selected, e);
+    };
+    AgCheckbox.prototype.refreshSelectedClass = function (value) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
     __decorate$j([
         Autowired('gridOptionsWrapper')
@@ -16639,7 +16645,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
-    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper"><div class="ag-dnd-ghost">' +
+    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label"></div>' +
         '</div></div>';
@@ -22670,6 +22676,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
         }
+        else if (colDef.filterFramework) ;
         else if (colDef.filter === true) {
             var setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
@@ -32934,7 +32941,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.getTemplate = function (params) {
         var cssIdentifier = params.cssIdentifier || 'default';
         var direction = params.direction || 'vertical';
-        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
+        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
     };
     AgGroupComponent.prototype.postConstruct = function () {
         if (this.items.length) {

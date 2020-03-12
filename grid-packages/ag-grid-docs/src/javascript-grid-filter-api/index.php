@@ -102,7 +102,7 @@ gridApi.onFilterChanged();</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= grid_example('Filter API', 'filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filter API', 'filter-api', 'generated', ['enterprise' => true]) ?>
 
     <h2>Reset Individual Filters</h2>
 
@@ -156,7 +156,7 @@ gridApi.onFilterChanged();</snippet>
         server.
     </p>
 
-    <h3>Example - Get / Set All Filter Models</h3>
+    <h3>Example: Get / Set All Filter Models</h3>
 
     <p>
         The example below shows getting and setting all the filter models in action. The 'save' and 'restore' buttons
@@ -168,7 +168,7 @@ gridApi.onFilterChanged();</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= grid_example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

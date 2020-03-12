@@ -6,115 +6,107 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="heading-enterprise">Side Bar</h1>
+<h1 class="heading-enterprise">Side Bar</h1>
 
-    <p class="lead">
-        This section covers how to configure the Side Bar which contains Tool Panels.
-    </p>
+<p class="lead">
+    This section covers how to configure the Side Bar which contains Tool Panels.
+</p>
 
-    <h2>Configuring the Side Bar</h2>
+<h2>Configuring the Side Bar</h2>
 
-    <p>
-        The side bar is configured using the grid property <code>sideBar</code>. The property takes multiple
-        forms to allow easy configuration or more advanced configuration. The different forms
-        for the <code>sideBar</code> property are as follows:
-    </p>
+<p>
+    The side bar is configured using the grid property <code>sideBar</code>. The property takes multiple
+    forms to allow easy configuration or more advanced configuration. The different forms
+    for the <code>sideBar</code> property are as follows:
+</p>
 
-    <table class="table reference">
-        <tr>
-            <th>Type</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <td>undefined</td>
-            <td>No side bar provided.</td>
-        </tr>
-        <tr>
-            <td>boolean</td>
-            <td>Set to <code>true</code> to display the side bar with default configuration.</td>
-        </tr>
-        <tr>
-            <td>string</td>
-            <td>Set to 'columns' or 'filters' to display side bar with just one of
-                Columns or Filters tool panels.</td>
-        </tr>
-        <tr>
-            <td>SideBarDef<br/>(long form)</td>
-            <td>An object of type <code>SideBarDef</code> (explained below) to allow detailed configuration
-            of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the
-                columns or filters panel) or to include custom tool panels.</td>
-        </tr>
-    </table>
+<table class="table reference">
+    <tr>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>undefined</td>
+        <td>No side bar provided.</td>
+    </tr>
+    <tr>
+        <td>boolean</td>
+        <td>Set to <code>true</code> to display the side bar with default configuration.</td>
+    </tr>
+    <tr>
+        <td>string</td>
+        <td>Set to 'columns' or 'filters' to display side bar with just one of
+            Columns or Filters tool panels.</td>
+    </tr>
+    <tr>
+        <td>SideBarDef<br/>(long form)</td>
+        <td>An object of type <code>SideBarDef</code> (explained below) to allow detailed configuration
+        of the side bar. Use this to configure the provided tool panels (e.g. pass parameters to the
+            columns or filters panel) or to include custom tool panels.</td>
+    </tr>
+</table>
 
-    <h3>Boolean Configuration</h3>
+<h3>Boolean Configuration</h3>
 
-    <p>
-        The default side bar contains the Columns and Filters tool panels. To use the default side bar,
-        set the grid property <code>sideBar=true</code>. The Columns panel will be open by default.
-    </p>
+<p>
+    The default side bar contains the Columns and Filters tool panels. To use the default side bar,
+    set the grid property <code>sideBar=true</code>. The Columns panel will be open by default.
+</p>
 
-    <p>
-        The default configuration doesn't allow customisation of the tool panels. More detailed configurations
-        are explained below.
-    </p>
+<p>
+    The default configuration doesn't allow customisation of the tool panels. More detailed configurations
+    are explained below.
+</p>
 
-    <p>
-        In the following example note the following:
-        <ul>
-            <li>The grid property <code>sideBar</code> is set to <code>true</code>.</li>
-            <li>The side bar is displayed with tool panels Columns and Filters.</li>
-            <li>The Columns panel is displayed by default.</li>
-        </ul>
-    </p>
+<p>
+    In the following example note the following:
+    <ul>
+        <li>The grid property <code>sideBar</code> is set to <code>true</code>.</li>
+        <li>The side bar is displayed with tool panels Columns and Filters.</li>
+        <li>The Columns panel is displayed by default.</li>
+    </ul>
+</p>
 
-    <?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Boolean Configuration', 'booleanConfiguration', 'generated', ['enterprise' => true]) ?>
 
-    <h3>String Configuration</h3>
+<h3>String Configuration</h3>
 
-    <p>
-        To display just one of the provided tool panels, set either <code>sideBar='columns'</code>
-        or <code>sideBar='filters'</code>. This will display the desired item with default configuration.
-    </p>
+<p>
+    To display just one of the provided tool panels, set either <code>sideBar='columns'</code>
+    or <code>sideBar='filters'</code>. This will display the desired item with default configuration.
+</p>
 
-    <p>
-        The example below demonstrates using the string configuration. Note the following:
-        <ul>
-            <li>The grid property <code>sideBar</code> is set to <code>'filters'</code>.</li>
-            <li>The side bar is displayed showing only the Filters panel.</li>
-        </ul>
-    </p>
+<p>
+    The example below demonstrates using the string configuration. Note the following:
+    <ul>
+        <li>The grid property <code>sideBar</code> is set to <code>'filters'</code>.</li>
+        <li>The side bar is displayed showing only the Filters panel.</li>
+    </ul>
+</p>
 
-    <?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Side Bar - Only filters', 'onlyFilters', 'generated', ['enterprise' => true]) ?>
 
-    <h3>SideBarDef Configuration</h3>
+<h3>SideBarDef Configuration</h3>
 
-    <p>
-        The previous configurations are shortcuts for the full fledged configuration using a <code>SideBarDef</code> object.
-        For full control over the configuration, you must provide a <code>SideBarDef</code> object.
-        The properties of <code>SideBarDef</code> are as follows:
-    <table class="table reference">
+<p>
+    The previous configurations are shortcuts for the full fledged configuration using a <code>SideBarDef</code> object.
+    For full control over the configuration, you must provide a <code>SideBarDef</code> object.
+    The properties of <code>SideBarDef</code> are as follows:
+</p>
 
-        <?php include './toolPanelProperties.php' ?>
-        <?php printPropertiesRows($toolPanelProperties) ?>
+<?php createDocumentationFromFile('sideBar.json', 'sideBarProperties') ?>
 
-    </table>
-    </p>
+<p>
+    Each panel has the following properties:
+</p>
 
-    <p>
-    Each panel has the following properties
-    <table class="table reference">
+<?php createDocumentationFromFile('sideBar.json', 'toolPanelProperties') ?>
 
-            <?php include './toolPanelProperties.php' ?>
-            <?php printPropertiesRows($toolPanelComponentProperties) ?>
+<p>
+    The following snippet shows configuring the tool panel using a <code>SideBarDef</code> object:
+</p>
 
-        </table>
-    </p>
-
-    <p>
-        The following snippet shows configuring the tool panel using a <code>SideBarDef</code> object:
-    </p>
-
-<snippet>
+<?= createSnippet(<<<SNIPPET
 sideBar = {
     toolPanels: [
         {
@@ -135,28 +127,29 @@ sideBar = {
     position: 'left',
     defaultToolPanel: 'filters'
 }
-</snippet>
+SNIPPET
+) ?>
 
-    <p>
-        The snippet above is demonstrated in the following example:
-    </p>
+<p>
+    The snippet above is demonstrated in the following example:
+</p>
 
-<?= grid_example('SideBarDef', 'sideBarDef', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('SideBarDef', 'sideBarDef', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="shortcuts">Configuration Shortcuts</h2>
 
-    <p>
-        The <code>boolean</code> and <code>string</code> configurations are shortcuts for more detailed configurations.
-        When you use a shortcut the grid replaces it with the equivalent long form of the configuration
-        by building the equivalent <code>SideBarDef</code>.
-    </p>
+<p>
+    The <code>boolean</code> and <code>string</code> configurations are shortcuts for more detailed configurations.
+    When you use a shortcut the grid replaces it with the equivalent long form of the configuration
+    by building the equivalent <code>SideBarDef</code>.
+</p>
 
-    <p>
-        The following code snippet shows an example of the <code>boolean</code> shortcut and the equivalent
-        <code>SideBarDef</code> long form.
-    </p>
+<p>
+    The following code snippet shows an example of the <code>boolean</code> shortcut and the equivalent
+    <code>SideBarDef</code> long form.
+</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 // shortcut
 sideBar = true;
 
@@ -180,14 +173,15 @@ sideBar = {
     ],
     defaultToolPanel: 'columns',
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     The following code snippet shows an example of the <code>string</code> shortcut and the equivalent
     <code>SideBarDef</code> long form.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // shortcut
 sideBar = 'filters';
 
@@ -204,13 +198,14 @@ sideBar = {
     ],
     defaultToolPanel: 'filters',
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     You can also use shortcuts inside the <code>toolPanel.items</code> array for specifying the Columns and Filters items.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // shortcut
 sideBar = {
     toolPanels: ['columns', 'filters']
@@ -235,7 +230,8 @@ sideBar = {
         }
     ]
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Side Bar Customisation</h2>
 
@@ -244,7 +240,7 @@ sideBar = {
     The example below shows changing the label and icon for the columns and filters tab.
 </p>
 
-<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Side Bar Fine tuning', 'fineTuning', 'generated', ['enterprise' => true]) ?>
 
 <h2>Providing Parameters to Tool Panels</h2>
 
@@ -255,7 +251,7 @@ sideBar = {
     <a href="../javascript-grid-tool-panel-columns/">columns tool panel</a>.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 sideBar = {
     toolPanels: [{
         id: 'columns',
@@ -269,7 +265,8 @@ sideBar = {
         }
     }]
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     This example configures the columns tool panel. See the
@@ -283,12 +280,7 @@ sideBar = {
     The list below details all the API methods relevant to the tool panel.
 </p>
 
-<table class="table reference">
-
-    <?php include './toolPanelApi.php' ?>
-    <?php printPropertiesRows($toolPanelApi) ?>
-
-</table>
+<?php createDocumentationFromFile('sideBar.json', 'toolPanelApi') ?>
 
 <p>
     The example below demonstrates different usages of the tool panel API methods.
@@ -312,13 +304,12 @@ sideBar = {
     </li>
 </ul>
 
-<?= grid_example('Side Bar API', 'api', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true]) ?>
 
 <h2>Next Up</h2>
 
 <p>
     Now that we covered the Side bar, continue to the next section to learn about the <a href="../javascript-grid-tool-panel-columns/">Columns Tool Panel</a>.
 </p>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

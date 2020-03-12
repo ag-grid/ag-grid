@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 import { Group } from "../scene/group";
 import { Text } from "../scene/shape/text";
 import { Square } from "./marker/square";
+import { HdpiCanvas } from "../canvas/hdpiCanvas";
 var MarkerLabel = /** @class */ (function (_super) {
     __extends(MarkerLabel, _super);
     function MarkerLabel() {
@@ -27,7 +28,8 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
         label.fill = 'black';
-        label.y = 2; // for better looking vertical alignment of labels to markers
+        // For better looking vertical alignment of labels to markers.
+        label.y = HdpiCanvas.has.textMetrics ? 1 : 0;
         _this.append([_this.marker, label]);
         _this.update();
         return _this;

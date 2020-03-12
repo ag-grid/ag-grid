@@ -6240,7 +6240,8 @@
             label.fontSize = 12;
             label.fontFamily = 'Verdana, sans-serif';
             label.fill = 'black';
-            label.y = 2; // for better looking vertical alignment of labels to markers
+            // For better looking vertical alignment of labels to markers.
+            label.y = HdpiCanvas.has.textMetrics ? 1 : 0;
             _this.append([_this.marker, label]);
             _this.update();
             return _this;

@@ -64,13 +64,14 @@ function phpArrayToJSON(string) {
     }
 
     const replaced = string
-        .replace(/^, /, '')
-        .replace(/'/g, '"')
-        .replace(/array\((("\w+"(, )?)+)\)/, '[$1]')
-        .replace(/array/g, '')
-        .replace(/\(/g, '{')
-        .replace(/\)/g, '}')
-        .replace(/=>/g, ':');
+        .replace(/^, /, '') // remove leading comma
+        .replace(/'/g, '"') // standardise quotes
+        .replace(/\s*=>/g, ':') // transform keys
+        .replace(/\[(("\w+"(, )?)+)\]/g, '<<<$1>>>') // mark unkeyed array to avoid it being converted to object
+        .replace(/\[/g, '{') // convert keyed arrays to objects
+        .replace(/\]/g, '}')
+        .replace(/<<</g, '[') // convert unkeyed arrays back
+        .replace(/>>>/g, ']');
 
     try {
         return JSON.parse(replaced);
@@ -199,13 +200,9 @@ function createExampleGenerator(prefix, importType) {
         let mainApp;
 
         try {
-            // vue is still new - only process examples marked as tested and good to go
-            // when all examples have been tested this check can be removed
-            if (options.processVue || options.processVue === undefined) {
-                const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
+            const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
 
-                mainApp = format(source, 'babel');
-            }
+            mainApp = format(source, 'babel');
         } catch (e) {
             console.error(`Failed to process Vue example in ${examplePath}`, e);
             throw e;
@@ -241,11 +238,7 @@ function createExampleGenerator(prefix, importType) {
             'app.module.ts': appModuleTS,
         }, 'app');
 
-        // vue is still new - only process examples marked as tested and good to go
-        // when all examples have been tested this check can be removed
-        if (options.processVue || options.processVue === undefined) {
-            writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
-        }
+        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 

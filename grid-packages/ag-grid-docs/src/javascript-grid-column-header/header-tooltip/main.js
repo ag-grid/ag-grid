@@ -14,7 +14,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100
+        width: 150
     }
 };
 

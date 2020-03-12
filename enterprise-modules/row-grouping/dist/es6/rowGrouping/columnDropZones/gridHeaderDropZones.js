@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, Constants, Events, PostConstruct } from "@ag-grid-community/core";
+import { Autowired, Component, Constants, Events, PostConstruct, _ } from "@ag-grid-community/core";
 import { RowGroupDropZonePanel } from "./rowGroupDropZonePanel";
 import { PivotDropZonePanel } from "./pivotDropZonePanel";
 var GridHeaderDropZones = /** @class */ (function (_super) {
@@ -35,6 +35,7 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        _.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });

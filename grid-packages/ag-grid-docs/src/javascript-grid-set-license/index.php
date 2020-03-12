@@ -414,9 +414,9 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 </snippet>
 
     <h3>Invalid License</h3>
-    <p>If you have an enterprise grid running with an invalid license (no license, expired license) your console log will 
+    <p>If you have an enterprise grid running with an invalid license (no license, expired license) your console log will
         display a series of warnings and the grid will show a watermark for 5 seconds.</p>
-    
-    <?= grid_example('Invalid License', 'forceWatermark', 'vanilla', array("enterprise" => true)) ?>
+
+    <?= grid_example('Invalid License', 'forceWatermark', 'vanilla', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

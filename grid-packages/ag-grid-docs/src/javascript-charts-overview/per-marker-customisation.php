@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     As well as customising all markers for a particular series, you can also customise each marker in the series individually, based on the datum that the marker represents. For example, the colour of the markers below is set based on the magnitude.
 </p>
 
-<?= chart_example('Per-Marker Customisation', 'per-marker-customisation', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Per-Marker Customisation', 'per-marker-customisation', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./custom-tooltips.php">❮&nbsp;&nbsp;Custom Tooltips</a>

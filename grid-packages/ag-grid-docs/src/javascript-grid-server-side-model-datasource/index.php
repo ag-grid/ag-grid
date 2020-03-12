@@ -90,7 +90,7 @@ var myDatasource = createDatasource();
 gridOptions.api.setServerSideDatasource(myDatasource);
 </snippet>
 
-<h2>Example - Infinite Scroll</h2>
+<h2>Example: Infinite Scroll</h2>
 
 <p>
     The example below demonstrates lazy loading of data with an infinite scroll. Notice the following:
@@ -105,7 +105,7 @@ gridOptions.api.setServerSideDatasource(myDatasource);
     <li>Open the browsers dev console to view the contents of the requests made by the grid for more rows.</li>
 </ul>
 
-<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', ['enterprise' => true]) ?>
 
 <h2>Datasource Interface</h2>
 

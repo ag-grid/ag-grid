@@ -82,13 +82,13 @@ gridOptions: {
         <a href="../javascript-grid-side-bar/#sidebardef-configuration">Side Bar Configuration</a> section.
     </p>
 
-    <h2>Example - 'Custom Stats' Tool Panel Component</h2>
+    <h2>Example: 'Custom Stats' Tool Panel Component</h2>
 
     <p>
         The example below provides a 'Custom Stats' Tool Panel to demonstrates how to create and register a Custom Tool
         Panel Component with the grid and include it the Side Bar:
     </p>
 
-<?= grid_example('Custom Stats', 'custom-stats', 'generated', array('enterprise' => true, "processVue" => true, 'extras' => array('fontawesome')) ) ?>
+<?= grid_example('Custom Stats', 'custom-stats', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']] ) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

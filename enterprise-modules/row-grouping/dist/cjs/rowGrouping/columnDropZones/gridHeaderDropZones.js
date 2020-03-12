@@ -37,6 +37,7 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        core_1._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new rowGroupDropZonePanel_1.RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });

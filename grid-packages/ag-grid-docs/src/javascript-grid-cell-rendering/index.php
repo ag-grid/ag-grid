@@ -123,7 +123,7 @@ var colDef3 = function(params) {
     </li>
 </ul>
 
-<?= grid_example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
+<?= grid_example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 250]) ?>
 
 <h2>Example: Rendering Order</h2>
 
@@ -147,7 +147,7 @@ var colDef3 = function(params) {
         of view again before they have a chance to be rendered will be skipped.</li>
 </ul>
 
-<?= grid_example('Rendering Order', 'rendering-order', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Rendering Order', 'rendering-order', 'generated', ['enterprise' => true]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

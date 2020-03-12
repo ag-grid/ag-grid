@@ -4,12 +4,12 @@ import {HttpClient} from '@angular/common/http';
 import {AllCommunityModules} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
     template: `
-        <div style='height: 100%'>
+        <div style='height: 95%'>
             <div style="margin-bottom: 5px;">
                 <button (click)="fillLarge()">Fill 100%</button>
                 <button (click)="fillMedium()">Fill 60%</button>
@@ -19,11 +19,11 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
                 <ag-grid-angular
                         style="width: 100%; height: calc(100% - 25px);"
                         #agGrid
-                        class="ag-theme-balham"
+                        class="ag-theme-alpine"
                         [rowData]="rowData"
                         [columnDefs]="columnDefs"
                         [modules]="modules"
-                        (firstDataRendered)="onFirstDataRendered($event)">
+                >
                 </ag-grid-angular>
             </div>
         </div>
@@ -43,16 +43,16 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
-            {headerName: "Athlete", field: "athlete", width: 150},
-            {headerName: "Age", field: "age", width: 90},
-            {headerName: "Country", field: "country", width: 120},
-            {headerName: "Year", field: "year", width: 90},
-            {headerName: "Date", field: "date", width: 110},
-            {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Gold", field: "gold", width: 100},
-            {headerName: "Silver", field: "silver", width: 100},
-            {headerName: "Bronze", field: "bronze", width: 100},
-            {headerName: "Total", field: "total", width: 100}
+            { field: "athlete", width: 150 },
+            { field: "age", width: 90 },
+            { field: "country", width: 150 },
+            { field: "year", width: 90 },
+            { field: "date", width: 150 },
+            { field: "sport", width: 150 },
+            { field: "gold", width: 100 },
+            { field: "silver", width: 100 },
+            { field: "bronze", width: 100 },
+            { field: "total", width: 100 },
         ];
     }
 
@@ -60,10 +60,6 @@ export class AppComponent {
         this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json').subscribe(data => {
             this.rowData = data;
         });
-    }
-
-    onFirstDataRendered(params) {
-        params.api.sizeColumnsToFit();
     }
 
     fillLarge() {

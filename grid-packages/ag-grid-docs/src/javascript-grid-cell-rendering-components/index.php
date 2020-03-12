@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     symbol instead of the medal count.
 </p>
 
-<?= grid_example('Simple Cell Renderer', 'simple-javascript', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
+<?= grid_example('Simple Cell Renderer', 'simple-javascript', 'vanilla', ['showResult' => true, 'exampleHeight' => 460]) ?>
 
 <h2>Cell Renderer Component</h2>
 
@@ -123,7 +123,7 @@ MyCellRenderer.prototype.destroy = function() {
     if (this.eButton) {
         // check that the button element exists as destroy() can be called before getGui()
         this.eButton.removeEventListener('click', this.eventListener);
-    }    
+    }
 };
 </snippet>
 
@@ -223,7 +223,7 @@ In other words, <code>new()</code>, <code>init()</code> and
 </p>
 
 <note>
-    When implementing <code>destroy()</code> it is important to check that any elements created in <code>getGui()</code> exist, as when scrolling quickly 
+    When implementing <code>destroy()</code> it is important to check that any elements created in <code>getGui()</code> exist, as when scrolling quickly
     <code>destroy()</code> can get called first. Calling <code>getGui()</code> unnecessarily would negatively affect scroll performance.
 </note>
 

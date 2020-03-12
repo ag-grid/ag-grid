@@ -299,7 +299,7 @@ cellDefs.forEach(function(cellDef) {
     </li>
 </ul>
 
-<?= grid_example('Cell Editing', 'cell-editing', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Cell Editing', 'cell-editing', 'generated') ?>
 
 <h2>Many Editors One Column</h2>
 
@@ -348,7 +348,7 @@ cellEditorSelector: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
+<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 250]) ?>
 
 <h2 id="dynamic-parameters">Dynamic Parameters</h2>
 
@@ -389,7 +389,7 @@ cellEditorParams: function(params) {
     </ul>
 </p>
 
-<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="enter-key-down">Enter Key Navigation</h2>
 
@@ -413,7 +413,7 @@ cellEditorParams: function(params) {
     The example below demonstrates the focus moving down when <b>Enter</b> is pressed.
 </p>
 
-<?= grid_example('Enter Key Navigation', 'enter-key-navigation', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
 
 <h2>Example: Datepicker Cell Editing</h2>
 
@@ -424,7 +424,7 @@ cellEditorParams: function(params) {
     </ul>
 </p>
 
-<?= grid_example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("processVue" => true, "enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
+<?= grid_example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', ['enterprise' => true, 'extras' => ['jquery', 'jqueryui', 'bootstrap']]) ?>
 
 <h2 id="fullRowEdit">Full Row Editing</h2>
 
@@ -506,7 +506,7 @@ cellEditorParams: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', array("processVue" => true, "enterprise" => 1)) ?>
+<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', ['enterprise' => true]) ?>
 
 <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
@@ -539,14 +539,14 @@ cellEditorParams: function(params) {
 
 <p>The grid below has <code>singleClickEdit = true</code> so that editing will start on a cell when you single-click on it.</p>
 
-<?= grid_example('Single Click Editing', 'single-click-editing', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Single Click Editing', 'single-click-editing', 'generated') ?>
 
 <p>
     The grid below has <code>suppressClickEdit = true</code> so that clicking doesn't started editing. The grid configures a cellRenderer
     with a button to start editing.
 </p>
 
-<?= grid_example('No Click Editing', 'single-click-editing-renderer', 'generated', array("processVue" => true)) ?>
+<?= grid_example('No Click Editing', 'single-click-editing-renderer', 'generated') ?>
 
 <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
@@ -582,7 +582,7 @@ cellEditorParams: function(params) {
             anywhere on the popup editor, but once you click outside the editor, the popup closes.
         </li>
     </ul>
-<?= grid_example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated') ?>
 
 <note>Cell Editing can also be performed via Cell Editor Components; please see <a href="../javascript-grid-cell-editor">
         Cell Editor Components</a> for more information.</note>

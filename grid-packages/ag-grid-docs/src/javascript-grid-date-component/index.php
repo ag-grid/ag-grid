@@ -73,11 +73,11 @@ interface IDateParams {
 <p>
     The example below shows how to register a custom date component that contains an extra floating calendar picker rendered
     from the filter field. The problem with this approach is that we have no control over how third party components and therefore
-    no way to implement a preventDefault when the user clicks on the Calendar Picker (for more info see: 
+    no way to implement a preventDefault when the user clicks on the Calendar Picker (for more info see:
     <a href="/javascript-grid-floating-filter-component/#custom-filters-containing-a-floating-element">Custom Filters Containing a Floating Element</a>).
     Our way of fixing this problem is to add the <code>ag-custom-component-popup</code> class to the floating calendar.
 </p>
 
-<?= grid_example('Custom Date Component', 'custom-date', 'generated', array("processVue" => true, "extras" => array("fontawesome", "flatpickr"))) ?>
+<?= grid_example('Custom Date Component', 'custom-date', 'generated', ['extras' => ['fontawesome', 'flatpickr']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

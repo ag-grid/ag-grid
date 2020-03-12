@@ -79,7 +79,7 @@ var detailGridOptions = {
 <note>Note that the nested detail grid can be configured to use any Row Model.</note>
 
 
-<h2>Example - Infinite Scrolling with Master / Detail</h2>
+<h2>Example: Infinite Scrolling with Master / Detail</h2>
 
 <p>
     This example shows a simple Master / Detail setup which includes the infinite scrolling capabilities provided
@@ -93,7 +93,7 @@ var detailGridOptions = {
     <li><b>cellRenderer: 'agGroupCellRenderer'</b> - is used to provide expand / collapse icons on the master rows.</li>
 </ul>
 
-<?= grid_example('Infinite Scrolling with Master / Detail', 'infinite-scrolling', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('lodash'))) ?>
+<?= grid_example('Infinite Scrolling with Master / Detail', 'infinite-scrolling', 'generated', ['enterprise' => true, 'extras' => ['lodash']]) ?>
 
 <h2>Combining Row Grouping with Master Detail</h2>
 
@@ -114,7 +114,7 @@ columnDefs = [
 ]
 </snippet>
 
-<h2>Example - Row Grouping with Master Detail</h2>
+<h2>Example: Row Grouping with Master Detail</h2>
 
 <p>
     Below shows Row Grouping combined with Master / Detail. From the example you can notice the following:
@@ -127,7 +127,7 @@ columnDefs = [
     <li><b>autoGroupColumnDef</b> - is used to specify which column in the master row should be included in the group hierarchy.</li>
 </ul>
 
-<?= grid_example('Row Grouping with Master Detail', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Row Grouping with Master Detail', 'row-grouping', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h3>Expanding Master Rows</h3>
 
@@ -201,7 +201,7 @@ masterGridOptions.getRowHeight = function (params) {
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
-<h2>Example - Dynamic Detail Row Height</h2>
+<h2>Example: Dynamic Detail Row Height</h2>
 
 <p>
     The following example shows how the detail row height can be dynamically sized to fit the number of records.
@@ -212,7 +212,7 @@ masterGridOptions.getRowHeight = function (params) {
     <li><b>node.detail</b> - is used to identify 'detail' row nodes.</li>
 </ul>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Lazy Loading Detail Rows</h2>
 

@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         All columns can be resized by dragging the top right portion of the column.
     </p>
-    
+
     <h2>Enable Sizing</h2>
 
     <p>
@@ -129,7 +129,7 @@ gridOptions: {
         after you press the button.
     </p>
 
-    <?= grid_example('Column Resizing', 'column-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Resizing', 'column-resizing', 'generated') ?>
 
     <h2>Sizing Columns By Default</h2>
 
@@ -146,14 +146,14 @@ gridOptions: {
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= grid_example('Default Resizing', 'default-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Default Resizing', 'default-resizing', 'generated') ?>
 
     <h2>Column Flex</h1>
 
     <p>
         It's often required that one or more columns fill the entire available space in
         the grid. For this scenario, it is possible to use the <code>flex</code> config.
-        Some columns could be set with a regular <code>width</code> config, while other 
+        Some columns could be set with a regular <code>width</code> config, while other
         columns would have a flex config.
     </p>
 
@@ -161,19 +161,19 @@ gridOptions: {
         Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to
         their flex value. For example, suppose the grid has a total width of 450px and it has three columns:
         the first with <code>width: 150</code>; the second with <code>flex: 1</code>; and third
-        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code> 
+        with <code>flex: 2</code>. The first column will be 150px wide, leaving 300px remaining. The column with <code>flex: 2</code>
         has twice the size with <code>flex: 1</code>. So final sizes will be: 150px, 100px, 200px.
     </p>
 
     <note>
         The flex config does <strong>not</strong> work with the <code>width</code> config
-        in same column. If you need to provide a minimum width for a column. 
+        in same column. If you need to provide a minimum width for a column.
         You should use flex and the <code>minWidth</code> config. Flex will also take <code>maxWidth</code>
         into account.
     </note>
 
     <note>
-        If you manually resize a column with flex either via API or dragging the resize handle, 
+        If you manually resize a column with flex either via API or dragging the resize handle,
         flex will be automatically disabled for that column.
     </note>
 
@@ -189,7 +189,7 @@ gridOptions: {
             by its minWidth/maxWidth rules, in which case it should take up the remaining available space.</li>
     </ul>
 
-    <?= grid_example('Column Flex', 'flex-columns', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Flex', 'flex-columns', 'generated') ?>
 
     <h2 id="shift-resizing">Shift Resizing</h2>
 
@@ -217,7 +217,7 @@ gridOptions: {
     </ul>
     </p>
 
-    <?= grid_example('Shift Resizing', 'shift-resizing', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Shift Resizing', 'shift-resizing', 'generated') ?>
     <h2>Resizing Groups</h2>
 
     <p>
@@ -232,7 +232,7 @@ gridOptions: {
                 in the groups have <code>resizable=false</code>.</li>
         </ul>
 
-    <?= grid_example('Resizing Groups', 'resizing-groups', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Resizing Groups', 'resizing-groups', 'generated') ?>
 
 <h2 id="resize-after-data">Resizing Columns When Data Is Renderered</h2>
 <p>There are two scenarios main where scenarios where you might want to resize columns based on grid data:</p>

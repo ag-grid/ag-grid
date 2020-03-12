@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
         so it will be picked up as a change from the frameworks change detection.
     </note>
 
-    <h2>Example - Change Detection and Value Getters</h2>
+    <h2>Example: Change Detection and Value Getters</h2>
 
     <p>
         The example below shows the impact of change detection on value getters. The grid is
@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', ['enterprise' => true]) ?>
 
     <h2>1. Value Change Detection</h2>
 
@@ -172,7 +172,7 @@ colDef = {
         those values change, then the summed value should also change.
     </p>
 
-    <h3>Example - Re-Aggregation of Groups</h3>
+    <h3>Example: Re-Aggregation of Groups</h3>
 
     <p>
         The example below shows change detection impacting the result of groups. The grid is doing
@@ -201,7 +201,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', ['enterprise' => true]) ?>
 
     <p>
         Notice above that the group column is also editable (eg you can change one of the rows from group 'A'
@@ -257,7 +257,7 @@ colDef = {
         with the rows that were updated.
     </p>
 
-    <h3>Example - Change Detection and Filter / Sort / Group</h3>
+    <h3>Example: Change Detection and Filter / Sort / Group</h3>
 
     <p>
         The following example is the same as the example above
@@ -286,7 +286,7 @@ colDef = {
             </li>
         </ul>
 
-    <?= grid_example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', ['enterprise' => true]) ?>
 
     <h2>Aggregation Path Selection</h2>
 
@@ -324,7 +324,7 @@ colDef = {
         only the changed column and not all columns after a single cell is updated.
     </p>
 
-    <h2>Example - Tree Path & Column Path Selection</h2>
+    <h2>Example: Tree Path & Column Path Selection</h2>
 
     <p>
         Consider the example below and you edit a cell value under under the groups "Bottom" -> "Group B2"
@@ -370,7 +370,7 @@ colDef = {
         </ul>
 
 
-    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', ['enterprise' => true]) ?>
 
 
     <h2>Change Detection and Pivot</h2>
@@ -427,6 +427,6 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

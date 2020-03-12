@@ -66,7 +66,7 @@ gridOptions: {
     on, i.e. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
 </p>
 
-<h2>Example - Server-side Row Grouping</h2>
+<h2>Example: Server-side Row Grouping</h2>
 
 <p>
     The example below demonstrates server-side Row Grouping. Note the following:
@@ -85,7 +85,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Row Grouping', 'row-grouping', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Row Grouping', 'row-grouping', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <note>
     <p>
@@ -136,7 +136,7 @@ gridOptions: {
 </snippet>
 
 
-<?= grid_example('Child Counts', 'child-counts', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 
 <h2>Purging Groups</h2>
@@ -192,7 +192,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Purging Caches', 'purging-caches', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Preserving Group State</h2>
 
@@ -244,7 +244,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Complex Columns</h2>
 
@@ -283,7 +283,7 @@ function getRows(params) {
     with dot notation, ie <code>year.name</code>
 </p>
 
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Next Up</h2>
 

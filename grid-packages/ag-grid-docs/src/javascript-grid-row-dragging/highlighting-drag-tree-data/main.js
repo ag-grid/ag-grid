@@ -1,22 +1,3 @@
-// specify the columns
-var columnDefs = [
-    {
-        field: 'dateModified',
-        cellClassRules: {
-            'hover-over': function(params) { return params.node === potentialParent; }
-        }
-    },
-    {
-        field: 'size',
-        valueFormatter: function(params) {
-            return params.value ? params.value + ' MB' : '';
-        },
-        cellClassRules: {
-            'hover-over': function(params) { return params.node === potentialParent; }
-        }
-    }
-];
-
 // specify the data
 var rowData = [
     { id: 1, filePath: ['Documents'], type: 'folder' },
@@ -37,13 +18,30 @@ var rowData = [
 ];
 
 var gridOptions = {
+    columnDefs: [
+        {
+            field: 'dateModified',
+            cellClassRules: {
+                'hover-over': function(params) { return params.node === potentialParent; }
+            }
+        },
+        {
+            field: 'size',
+            valueFormatter: function(params) {
+                return params.value ? params.value + ' MB' : '';
+            },
+            cellClassRules: {
+                'hover-over': function(params) { return params.node === potentialParent; }
+            }
+        }
+    ],
     defaultColDef: {
+        flex: 1,
         resizable: true
     },
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
-    columnDefs: columnDefs,
     rowData: rowData,
     treeData: true,
     animateRows: true,
@@ -57,7 +55,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         rowDrag: true,
         headerName: 'Files',
-        width: 250,
+        minWidth: 300,
         cellRendererParams: {
             suppressCount: true,
             innerRenderer: 'fileCellRenderer'

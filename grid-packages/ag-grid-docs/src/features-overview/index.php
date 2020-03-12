@@ -6,7 +6,6 @@ $pageGroup = "basics";
 
 include_once '../example-runner/example-runners.php';
 include_once '../includes/html-helpers.php';
-include_once '../php-utils/printPropertiesTable.php';
 $DONT_USE_FONT_AWESOME=true;
 $version = "latest";
 ?>
@@ -30,7 +29,7 @@ meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
 
 <body>
 <header id="nav" class="compact">
-<?php 
+<?php
     $navKey = "features-overview";
     include '../includes/navbar.php';
  ?>

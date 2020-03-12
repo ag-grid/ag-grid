@@ -15071,6 +15071,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgCheckbox", function() { return AgCheckbox; });
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(19);
 /* harmony import */ var _agAbstractInputField__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(53);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v23.0.0
@@ -15096,6 +15097,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 var AgCheckbox = /** @class */ (function (_super) {
@@ -15141,6 +15143,7 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.isSelected();
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
+        this.refreshSelectedClass(value);
         if (value === this.getValue()) {
             return this;
         }
@@ -15166,7 +15169,12 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
+        this.refreshSelectedClass(this.selected);
         this.dispatchChange(this.selected, e);
+    };
+    AgCheckbox.prototype.refreshSelectedClass = function (value) {
+        _utils__WEBPACK_IMPORTED_MODULE_2__["_"].addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        _utils__WEBPACK_IMPORTED_MODULE_2__["_"].addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('gridOptionsWrapper')
@@ -23871,7 +23879,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
-    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper"><div class="ag-dnd-ghost">' +
+    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
         '  <div class="ag-dnd-ghost-label"></div>' +
         '</div></div>';
@@ -26125,6 +26133,11 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
+        }
+        else if (colDef.filterFramework) {
+            // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
+            // Note: We could combine this with another part of the 'if' statement, however explicitly
+            // having this section makes the code easier to read.
         }
         else if (colDef.filter === true) {
             var setFilterModuleLoaded = _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_10__["ModuleRegistry"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_9__["ModuleNames"].SetFilterModule);
@@ -36674,7 +36687,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.getTemplate = function (params) {
         var cssIdentifier = params.cssIdentifier || 'default';
         var direction = params.direction || 'vertical';
-        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
+        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
     };
     AgGroupComponent.prototype.postConstruct = function () {
         if (this.items.length) {
@@ -55422,6 +55435,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scene_group__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(232);
 /* harmony import */ var _scene_shape_text__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(219);
 /* harmony import */ var _marker_square__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(252);
+/* harmony import */ var _canvas_hdpiCanvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(226);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -55438,6 +55452,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 
 
+
 var MarkerLabel = /** @class */ (function (_super) {
     __extends(MarkerLabel, _super);
     function MarkerLabel() {
@@ -55451,7 +55466,8 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
         label.fill = 'black';
-        label.y = 2; // for better looking vertical alignment of labels to markers
+        // For better looking vertical alignment of labels to markers.
+        label.y = _canvas_hdpiCanvas__WEBPACK_IMPORTED_MODULE_3__["HdpiCanvas"].has.textMetrics ? 1 : 0;
         _this.append([_this.marker, label]);
         _this.update();
         return _this;
@@ -73596,6 +73612,7 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["_"].addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new _rowGroupDropZonePanel__WEBPACK_IMPORTED_MODULE_1__["RowGroupDropZonePanel"](true);
         this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });

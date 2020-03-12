@@ -1,23 +1,33 @@
 var columnDefs = [
-    {headerName: 'Athlete (locked as pinned)', field: "athlete", width: 200, pinned: 'left', lockPinned: true, cellClass: 'lock-pinned'},
-    {headerName: 'Athlete (locked as not pinnable)', field: "age", width: 220, lockPinned: true, cellClass: 'lock-pinned'},
-    {field: "country", width: 120},
-    {field: "year", width: 90},
-    {field: "date", width: 110},
-    {field: "sport", width: 110},
-    {field: "gold", width: 100},
-    {field: "silver", width: 100},
-    {field: "bronze", width: 100},
-    {field: "total", width: 100}
+    {
+        headerName: 'Athlete (locked as pinned)',
+        field: "athlete",
+        width: 240,
+        pinned: 'left',
+        lockPinned: true,
+        cellClass: 'lock-pinned'
+    },
+    {   headerName: 'Athlete (locked as not pinnable)',
+        field: "age",
+        width: 260,
+        lockPinned: true,
+        cellClass: 'lock-pinned'
+    },
+    { field: "country", width: 150 },
+    { field: "year", width: 90 },
+    { field: "date", width: 150 },
+    { field: "sport", width: 150 },
+    { field: "gold" },
+    { field: "silver"},
+    { field: "bronze"},
+    { field: "total"}
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
         resizable: true
-    },
-    columnDefs: columnDefs,
-    debug: true,
-    rowData: null
+    }
 };
 
 // setup the grid after the page has finished loading

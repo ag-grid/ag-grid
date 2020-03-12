@@ -30,7 +30,7 @@ function getColumnDefs() {
         var colDef = {
             headerName: letter,
             field: letter,
-            width: 100
+            width: 150
         };
         if (letter === 'A') {
             colDef.pinned = 'left';

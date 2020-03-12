@@ -1083,10 +1083,11 @@
       margin-right: 12px; }
     .ag-theme-dark .ag-rtl .ag-row-drag, .ag-theme-dark .ag-rtl .ag-selection-checkbox, .ag-theme-dark .ag-rtl .ag-group-expanded, .ag-theme-dark .ag-rtl .ag-group-contracted {
       margin-left: 12px; }
-  .ag-theme-dark .ag-cell-wrapper > * {
+  .ag-theme-dark .ag-cell-wrapper > *:not(.ag-cell-value):not(.ag-group-value) {
     height: 23px;
     display: flex;
-    align-items: center; }
+    align-items: center;
+    flex: none; }
   .ag-theme-dark .ag-group-expanded,
   .ag-theme-dark .ag-group-contracted {
     cursor: pointer; }
@@ -1487,7 +1488,7 @@
     border-left: solid 1px darkgrey; }
   .ag-theme-dark .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
     border-right: solid 1px darkgrey; }
-  .ag-theme-dark .ag-row-selected {
+  .ag-theme-dark .ag-row.ag-row-selected {
     background-color: #4a708b; }
   .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.4); }
@@ -1838,6 +1839,7 @@
     display: block;
     width: 1px;
     height: 100%;
+    top: calc(50% - 50%);
     background-color: rgba(169, 169, 169, 0.5); }
     .ag-theme-dark .ag-ltr .ag-header-cell::after, .ag-theme-dark .ag-ltr .ag-header-group-cell::after {
       right: 0; }
@@ -1855,9 +1857,7 @@
     padding: 4px;
     overflow: hidden;
     padding: 3px;
-    position: absolute;
     text-overflow: ellipsis;
-    user-select: none;
     z-index: 10;
     border: solid 1px darkgrey;
     color: #ccc;
@@ -2079,7 +2079,7 @@
       border-left: solid 1px darkgrey; }
     .ag-theme-dark .ag-rtl .ag-chart-menu-panel {
       border-right: solid 1px darkgrey; }
-  .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input) {
+  .ag-theme-dark .ag-checkbox-input-wrapper {
     font-family: "agGridClassic";
     font-size: 12px;
     line-height: 12px;
@@ -2090,29 +2090,44 @@
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-appearance: none;
     width: 12px;
     height: 12px;
     border-radius: 0px;
     display: inline-block;
     vertical-align: middle;
     flex: none; }
-    .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input):focus, .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input):active {
+    .ag-theme-dark .ag-checkbox-input-wrapper input, .ag-theme-dark .ag-checkbox-input-wrapper input {
+      -webkit-appearance: none;
+      opacity: 0;
+      width: 100%;
+      height: 100%; }
+    .ag-theme-dark .ag-checkbox-input-wrapper:focus, .ag-theme-dark .ag-checkbox-input-wrapper:active {
       outline: none; }
-    .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input):disabled {
+    .ag-theme-dark .ag-checkbox-input-wrapper:disabled {
       opacity: 0.5; }
-    .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input)::after {
+    .ag-theme-dark .ag-checkbox-input-wrapper::after {
       content: "";
-      color: #ccc; }
-    .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input):checked::after {
+      color: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none; }
+    .ag-theme-dark .ag-checkbox-input-wrapper.ag-checked::after {
       content: "";
-      color: #ccc; }
-    .ag-theme-dark input[type='checkbox']:not(.ag-toggle-button-input):indeterminate::after {
+      color: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none; }
+    .ag-theme-dark .ag-checkbox-input-wrapper.ag-indeterminate::after {
       content: "";
-      color: #ccc; }
-  .ag-theme-dark input[type='checkbox'].ag-toggle-button-input {
+      color: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none; }
+  .ag-theme-dark .ag-toggle-button-input-wrapper {
     box-sizing: border-box;
-    -webkit-appearance: none;
     width: 24px;
     height: 12px;
     background-color: #ccc;
@@ -2120,14 +2135,18 @@
     position: relative;
     flex: none;
     border: 1px solid #ccc; }
-    .ag-theme-dark input[type='checkbox'].ag-toggle-button-input:focus {
+    .ag-theme-dark .ag-toggle-button-input-wrapper input {
+      opacity: 0;
+      height: 100%;
+      width: 100%; }
+    .ag-theme-dark .ag-toggle-button-input-wrapper:focus {
       outline: none; }
-    .ag-theme-dark input[type='checkbox'].ag-toggle-button-input:disabled {
+    .ag-theme-dark .ag-toggle-button-input-wrapper:disabled {
       opacity: 0.5; }
-    .ag-theme-dark input[type='checkbox'].ag-toggle-button-input:checked {
+    .ag-theme-dark .ag-toggle-button-input-wrapper.ag-checked {
       background-color: #ccc;
       border-color: #ccc; }
-    .ag-theme-dark input[type='checkbox'].ag-toggle-button-input::before {
+    .ag-theme-dark .ag-toggle-button-input-wrapper::before {
       content: ' ';
       position: absolute;
       top: -1px;
@@ -2140,10 +2159,10 @@
       border-radius: 6px;
       transition: transform 100ms;
       border: 1px solid #ccc; }
-    .ag-theme-dark input[type='checkbox'].ag-toggle-button-input:checked::before {
+    .ag-theme-dark .ag-toggle-button-input-wrapper.ag-checked::before {
       transform: translateX(12px);
       border-color: #ccc; }
-  .ag-theme-dark input[type='radio'] {
+  .ag-theme-dark .ag-radio-button-input-wrapper {
     font-family: "agGridClassic";
     font-size: 12px;
     line-height: 12px;
@@ -2154,7 +2173,6 @@
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    -webkit-appearance: none;
     width: 12px;
     height: 12px;
     border-radius: 0px;
@@ -2162,16 +2180,29 @@
     vertical-align: middle;
     flex: none;
     border-radius: 12px; }
-    .ag-theme-dark input[type='radio']:focus, .ag-theme-dark input[type='radio']:active {
+    .ag-theme-dark .ag-radio-button-input-wrapper input, .ag-theme-dark .ag-radio-button-input-wrapper input {
+      -webkit-appearance: none;
+      opacity: 0;
+      width: 100%;
+      height: 100%; }
+    .ag-theme-dark .ag-radio-button-input-wrapper:focus, .ag-theme-dark .ag-radio-button-input-wrapper:active {
       outline: none; }
-    .ag-theme-dark input[type='radio']:disabled {
+    .ag-theme-dark .ag-radio-button-input-wrapper:disabled {
       opacity: 0.5; }
-    .ag-theme-dark input[type='radio']::after {
+    .ag-theme-dark .ag-radio-button-input-wrapper::after {
       content: "";
-      color: #ccc; }
-    .ag-theme-dark input[type='radio']:checked::after {
+      color: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none; }
+    .ag-theme-dark .ag-radio-button-input-wrapper.ag-checked::after {
       content: "";
-      color: #ccc; }
+      color: #ccc;
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none; }
   .ag-theme-dark input[type='range'] {
     -webkit-appearance: none;
     width: 100%;

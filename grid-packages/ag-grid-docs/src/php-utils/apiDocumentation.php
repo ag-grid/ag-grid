@@ -9,7 +9,8 @@
         $newPrefix = isset($prefix) ? "$prefix.$title" : $title;
 
         if (!$skipHeader) {
-            $displayName = $properties->meta->displayName;
+            $meta = $properties->meta;
+            $displayName = $meta->displayName;
 
             if (!isset($displayName)) {
                 $displayName = $title;
@@ -19,10 +20,16 @@
 
             echo "<$headerTag id='$newPrefix'>$displayName</$headerTag>";
 
-            $description = $properties->meta->description;
+            $description = $meta->description;
 
             if (isset($description)) {
                 echo "<p>$description</p>";
+            }
+
+            $page = $meta->page;
+
+            if (isset($page)) {
+                echo "<p>See <a href='$page->url'>$page->name</a> for more information.</p>";
             }
         }
 

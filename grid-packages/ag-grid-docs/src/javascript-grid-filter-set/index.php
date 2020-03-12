@@ -171,7 +171,7 @@ include '../documentation-main/documentation_header.php';
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, 'modules' => array('clientside', 'setfilter'))) ?>
+    <?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter']]) ?>
 
     <h2>Asynchronous Values</h2>
 
@@ -214,7 +214,7 @@ filterParams: {
             the values are not loaded again.</li>
         </ul>
 
-    <?= grid_example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true]) ?>
 
     <h2>Sorting And Formatting Set Filter Values List</h2>
 
@@ -234,7 +234,7 @@ filterParams: {
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter Comparator', 'set-filter-comparator', 'generated', ['enterprise' => true]) ?>
 
     <h2>Set Filter Values with Live Data</h2>
 
@@ -333,7 +333,7 @@ filterParams: {
             </li>
         </ul>
 
-    <?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', ['enterprise' => true]) ?>
 
 
     <h2>New Rows Action and Values Example</h2>
@@ -365,7 +365,7 @@ filterParams: {
         no longer exist in the new set.
     </note>
 
-    <?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', ['enterprise' => true]) ?>
 
     <h2>Set Filter Model</h2>
 
@@ -433,7 +433,7 @@ gridApi.onFilterChanged()</snippet>
     </p>
 
     <snippet>
-// Example - Interacting with Set Filter
+// Example: Interacting with Set Filter
 
 // Get filter instance
 var instance = gridOptions.api.getFilterInstance('athlete');
@@ -455,6 +455,6 @@ gridOptions.api.onFilterChanged();
         end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
-    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

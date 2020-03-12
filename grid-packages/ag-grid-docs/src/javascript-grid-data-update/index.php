@@ -107,7 +107,7 @@ include '../documentation-main/documentation_header.php';
         edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
-    <?= grid_example('Updating Row Nodes', 'updating-row-nodes', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Updating Row Nodes', 'updating-row-nodes', 'generated') ?>
 
     <h2 id="bulk-updating">Full CRUD & Bulk Updating</h2>
 
@@ -296,7 +296,7 @@ interface RowNodeTransaction {
     transaction updates.
 </p>
 
-<h3 id="example-updating-with-transaction">Example - Updating with Transaction</h3>
+<h3 id="example-updating-with-transaction">Example: Updating with Transaction</h3>
 
 <p>
     The example uses the <code>updateRowData</code> method in different ways and prints
@@ -330,9 +330,9 @@ interface RowNodeTransaction {
     </li>
 </ul>
 
-<?= grid_example('Updating with Transaction', 'updating-with-transaction', 'generated', array("processVue" => true)) ?>
+<?= grid_example('Updating with Transaction', 'updating-with-transaction', 'generated') ?>
 
-<h3 id="example-updating-with-transaction-and-groups">Example - Updating with Transaction and Groups</h3>
+<h3 id="example-updating-with-transaction-and-groups">Example: Updating with Transaction and Groups</h3>
 
 <p>
     When using transactions and grouping, the groups are kept intact as you add, remove and update
@@ -357,7 +357,7 @@ interface RowNodeTransaction {
         are always added to the top as they are ordered 'latest first'</li>
 </ul>
 
-<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
 
 
 
@@ -413,7 +413,7 @@ interface RowNodeTransaction {
             </li>
         </ul>
 
-    <h3>Example - Immutable Store</h3>
+    <h3>Example: Immutable Store</h3>
 
     <p>
         The example below shows the immutable store in action. The example keeps a store of data
@@ -461,10 +461,10 @@ interface RowNodeTransaction {
         any order in the provided data.
     </note>
 
-    <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true]) ?>
 
 
-    <h3>Example - Immutable Store - Updates via Feed</h3>
+    <h3>Example: Immutable Store - Updates via Feed</h3>
 
     <p>
         Finally, lets go bananas with delta updates. Below is a simplistic trading hierarchy
@@ -502,7 +502,7 @@ interface RowNodeTransaction {
         even though the grid data is constantly updating.
     </p>
 
-    <?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="batch-transactions">Bulk Method 4 - Batch Transactions</h2>
 
@@ -518,7 +518,7 @@ interface RowNodeTransaction {
         other updates you subsequently provide using <code>batchUpdateRowData()</code>, after 50ms.
     </p>
 
-    <?= grid_example('Batch Transaction', 'batch-transaction', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Batch Transaction', 'batch-transaction', 'generated', ['enterprise' => true]) ?>
 
     <p>
         To help understand the interface into <code>updateRowData()</code> and <code>batchUpdateRowData()</code>,
@@ -588,7 +588,7 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         </ul>
     </p>
 
-    <?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true]) ?>
 
     <p>
         Note that the example above also uses the following properties to gain performance:
@@ -680,7 +680,7 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
         </ul>
     </p>
 
-    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Flashing Data Changes', 'flashing-data-changes', 'generated', ['enterprise' => true]) ?>
 
     <h3>How Flashing Works</h3>
 

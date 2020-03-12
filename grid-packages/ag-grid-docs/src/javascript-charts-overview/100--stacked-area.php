@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     100% stacked area charts show the relative percentage of multiple series in <a href='./stacked-area.php'>stacked areas</a>, where the cumulative area always totals to 100%.
 </p>
 
-<?= chart_example('100% Stacked Area', '100--stacked-area', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('100% Stacked Area', '100--stacked-area', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./stacked-area.php">❮&nbsp;&nbsp;Stacked Area</a>

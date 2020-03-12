@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("../scene/group");
 var text_1 = require("../scene/shape/text");
 var square_1 = require("./marker/square");
+var hdpiCanvas_1 = require("../canvas/hdpiCanvas");
 var MarkerLabel = /** @class */ (function (_super) {
     __extends(MarkerLabel, _super);
     function MarkerLabel() {
@@ -29,7 +30,8 @@ var MarkerLabel = /** @class */ (function (_super) {
         label.fontSize = 12;
         label.fontFamily = 'Verdana, sans-serif';
         label.fill = 'black';
-        label.y = 2; // for better looking vertical alignment of labels to markers
+        // For better looking vertical alignment of labels to markers.
+        label.y = hdpiCanvas_1.HdpiCanvas.has.textMetrics ? 1 : 0;
         _this.append([_this.marker, label]);
         _this.update();
         return _this;

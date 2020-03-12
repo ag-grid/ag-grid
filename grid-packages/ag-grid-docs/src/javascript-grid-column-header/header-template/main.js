@@ -3,7 +3,7 @@ var columnDefs = [
     {headerName: "Age", field: "age", sortable: false},
     {headerName: "Country", field: "country", suppressMenu: true},
     {headerName: "Year", field: "year", sortable: false},
-    {headerName: "Date", field: "date", suppressMenu: true},
+    {headerName: "Date", field: "date", suppressMenu: true, sortable: false},
     {headerName: "Sport", field: "sport", sortable: false},
     {headerName: "Gold", field: "gold"},
     {headerName: "Silver", field: "silver", sortable: false},
@@ -19,7 +19,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
         filter: true,
-        width: 100,
+        width: 150,
         headerComponentParams : {
             menuIcon: 'fa-bars',
             template:

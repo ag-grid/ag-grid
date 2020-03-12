@@ -1,0 +1,23 @@
+{
+    "exportProperties": {
+        "columnWidth": {
+            "description": "Override the default column width. Can be a number (width in pixels) or a function that returns a number. If a function is provided, it will be called with a <code>params</code> argument with the following attributes: <code>column, index</code>."
+        },
+        "exportMode": {
+            "description": "Defaults to <code>'xlsx'</code> and uses the Open Office XML standards. It can be set to <code>'xml'</code> to use Excel's <a href=\"https://docs.microsoft.com/en-us/previous-versions/office/developer/office-xp/aa140066(v=office.10)?redirectedfrom=MSDN\">legacy XML format</a>."
+        },
+        "headerRowHeight": {
+            "description": "The height in pixels of header rows. If not specified it will take the <code>rowHeight</code> value."
+        },
+        "rowHeight": {
+            "description": "The height in pixels of all rows. If not specified it will take the Excel default value."
+        },
+        "sheetName": {
+            "description": "The name of the sheet in Excel where the grid will be exported. If not specified defaults to 'ag-grid'.<br /><strong>Note: 31 characters max</strong>."
+        },
+        "suppressTextAsCDATA": {
+            "default": false,
+            "description": "When <code>exportMode='xml'</code> the default behaviour is to wrap text in CDATA sections. Pass <code>true</code> and text content will be encoded with XML character entities like <code>&amp;lt;</code> and <code>&amp;gt;</code>."
+        }
+    }
+}

@@ -56,7 +56,7 @@ gridOptions.columnDefs = [
 ];</snippet>
     </p>
 
-    <h2>Example - Simple Pivot</h2>
+    <h2>Example: Simple Pivot</h2>
 
     <p>
         The example below shows a simple pivot on the year column using the Gold, Silver and Bronze columns
@@ -68,7 +68,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-    <?= grid_example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true]) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -102,7 +102,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-    <?= grid_example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', ['enterprise' => true]) ?>
 
     <p>
         Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot
@@ -169,7 +169,7 @@ gridOptions.columnDefs = [
         Storing and restoring column state view the <code>columnApi.getColumnState()</code> and
         <code>columnApi.setColumnState()</code> methods work solely on primary columns.
     </p>
-    
+
     <h2>Looking up Secondary Columns</h2>
 
     <p>
@@ -217,7 +217,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         tool panel.
     </p>
 
-    <?= grid_example('Filtering With Pivot', 'filter', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true]) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -232,7 +232,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         underneath the hood.
     </p>
 
-    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true]) ?>
 
 
     <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
@@ -269,7 +269,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
 
-    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="pivotRowTotals">Pivot Row Totals</h2>
 
@@ -295,7 +295,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li>Expanding pivot column groups reveals the in the last position as 'after' is used.</li>
     </ul>
 
-    <?= grid_example('Pivot Row Totals', 'row-totals', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Pivot Row Totals', 'row-totals', 'generated', ['enterprise' => true]) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 
@@ -311,10 +311,10 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         needs to be stored separately.
     </p>
 
-    <?= grid_example('Saving & Restoring Column State', 'state', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Saving & Restoring Column State', 'state', 'generated', ['enterprise' => true]) ?>
 
     <h2>Pivot API</h2>
-    
+
     <p>
         Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
     </p>
@@ -324,7 +324,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         is what will be exported.
     </p>
 
-    <?= grid_example('Pivot API', 'api', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Pivot API', 'api', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
@@ -360,7 +360,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as the field attribute is needed by the grid to pull out the value.
     </p>
 
-    <?= grid_example('Secondary Columns', 'secondary-columns', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Secondary Columns', 'secondary-columns', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="hideOpenParents">Hide Open Parents</h2>
 
@@ -376,7 +376,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li><code>groupDefaultExpanded=2: </code> So that all the groups are opened by default</li>
         </ul>
 
-    <?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1, "processVue" => true)) ?>
+    <?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="change-detection">Change Detection and Pivot</h2>
 

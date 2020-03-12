@@ -83,7 +83,7 @@ var gridOptions = {
 <p>Order is important here - the order of the components provided will determine the order in which they're rendered, from
     left to right.</p>
 
-<?= grid_example('Status Bar Panel', 'custom-component', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Status Bar Panel', 'custom-component', 'generated', ['enterprise' => true]) ?>
 
 <h2>Initialisation of Status Bar Components</h2>
 <p>Please refer to the documentation <a href="../javascript-grid-status-bar/#initialisation-of-status-bar-components">here.</a></p>
@@ -114,10 +114,10 @@ if (statusBarComponent) {
     The example below shows using <code>getStatusPanel</code>:
 </p>
 
-<?= grid_example('Get Status Bar Panel Instance', 'component-instance', 'generated', array("enterprise" => 1, 'processVue' => true)) ?>
+<?= grid_example('Get Status Bar Panel Instance', 'component-instance', 'generated', ['enterprise' => true]) ?>
 
 
-<?php 
+<?php
 
-include '../documentation-main/documentation_footer.php'; 
+include '../documentation-main/documentation_footer.php';
 ?>

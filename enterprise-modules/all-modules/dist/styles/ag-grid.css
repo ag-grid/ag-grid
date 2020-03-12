@@ -61,6 +61,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   cursor: -webkit-grab;
   cursor: grab; }
 
+.ag-column-drop-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex; }
+
 .ag-column-drop-horizontal-half-width {
   display: inline-block;
   width: 50% !important; }
@@ -424,6 +429,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   z-index: 2;
   height: 100%;
   width: 8px;
+  top: 0;
   cursor: col-resize; }
   .ag-ltr .ag-header-cell-resize {
     right: -4px; }
@@ -684,7 +690,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-align: center;
   align-items: center;
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  overflow: hidden; }
   .ag-cell-wrapper.ag-row-group {
     -webkit-box-align: start;
     -ms-flex-align: start;
@@ -822,10 +829,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   position: absolute; }
 
 .ag-dnd-ghost {
-  position: absolute;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -1237,6 +1244,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   flex-wrap: nowrap;
   text-overflow: ellipsis;
   white-space: nowrap; }
+  .ag-column-select-column > *,
+  .ag-column-select-column-group > * {
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none; }
 
 .ag-column-select-checkbox {
   display: -webkit-box;
@@ -1409,7 +1421,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center; }
+  align-items: center;
+  cursor: default; }
 
 .ag-group-toolbar {
   display: -webkit-box;
@@ -1453,6 +1466,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-column-group-icons {
   display: block; }
+  .ag-column-group-icons > * {
+    cursor: pointer; }
 
 .ag-group-item-alignment-stretch .ag-group-item {
   -webkit-box-align: stretch;

@@ -103,6 +103,6 @@ colDef = {
     </li>
 </ul>
 
-<?= grid_example('Value Setters', 'example-setters', 'generated', array('processVue' => true)) ?>
+<?= grid_example('Value Setters', 'example-setters', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

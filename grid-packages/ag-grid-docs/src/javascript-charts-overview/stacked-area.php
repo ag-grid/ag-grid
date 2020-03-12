@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Stacked area charts plot multiple <a href='./simple-area.php'>area</a> series stacked on top of each other, showing how part-to-whole relationships change over time.
 </p>
 
-<?= chart_example('Stacked Area', 'stacked-area', 'generated', array('exampleHeight' => '60vh')) ?>
+<?= chart_example('Stacked Area', 'stacked-area', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-area.php">❮&nbsp;&nbsp;Simple Area</a>

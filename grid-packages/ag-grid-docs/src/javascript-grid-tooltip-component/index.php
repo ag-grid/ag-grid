@@ -80,7 +80,7 @@ interface ITooltipParams {
 
 <p>
     If you don't want to use the grid's tooltip component, you can use the <code>enableBrowserTooltips</code> config to use
-    the browser's default tooltip. 
+    the browser's default tooltip.
 
     Note: That will use the element's title attribute to display the tooltip.
 </p>
@@ -102,7 +102,7 @@ interface ITooltipParams {
     <li>Tooltips are displayed instantly by setting <code>tooltipShowDelay</code> to 0.</li>
 </ul>
 
-<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated', array('processVue' => true) ) ?>
+<?= grid_example('Custom Tooltip Component', 'custom-tooltip-component', 'generated') ?>
 
 <h2>Showing Blank Values</h2>
 
@@ -148,10 +148,10 @@ interface ITooltipParams {
 
 <p>
     When we want to display a header tooltip, we set the headerTooltip config as a string,
-    and that string will be displayed as the tooltip. But when working with custom tooltips we set 
-    use <code>colDef.tooltipComponent</code> to assign the column's tooltip component and the 
+    and that string will be displayed as the tooltip. But when working with custom tooltips we set
+    use <code>colDef.tooltipComponent</code> to assign the column's tooltip component and the
     <code>headerTooltip</code> value will passed to the <code>params</code> object. <br>
-    Note: If <code>headerTooltip</code> or <code>tooltipValueGetter</code> are not present, the 
+    Note: If <code>headerTooltip</code> or <code>tooltipValueGetter</code> are not present, the
     tooltip will not be rendered.
 </p>
 
@@ -168,7 +168,7 @@ interface ITooltipParams {
         The column <b>Athlete Col 2</b> uses <code>tooltipComponent</code> so the the value in <code>headerTooltip</code>
         is passed to the tooltipComponent </code>params</code> to be used.
     </li>
-    <li>The <code>tooltipComponent</code> detect that it's being rendered by a header because the <code>params</code> object 
+    <li>The <code>tooltipComponent</code> detect that it's being rendered by a header because the <code>params</code> object
     does not contain a <code>rowIndex</code> value.
 </ul>
 
@@ -187,7 +187,7 @@ interface ITooltipParams {
     </li>
 </ul>
 
-<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', array("enterprise" => 1, 'processVue' => true) ) ?>
+<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true]) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 
@@ -195,6 +195,6 @@ interface ITooltipParams {
     The example below demonstrates how to use the default browser tooltips.
 </p>
 
-<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'vanilla', array('processVue' => true) ) ?>
+<?= grid_example('Default Browser Tooltip', 'default-tooltip', 'vanilla') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

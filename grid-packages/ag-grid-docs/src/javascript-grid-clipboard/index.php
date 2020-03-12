@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
         <note> This is not an enterprise config and can be at any time to enable cell text selection. </note>
     </p>
 
-    <?= grid_example('Using enableCellTextSelection', 'cellTextSelection', 'generated', array( "processVue" => true)) ?>
+    <?= grid_example('Using enableCellTextSelection', 'cellTextSelection', 'generated') ?>
 
     <h2 id="events">Clipboard Events</h2>
 
@@ -182,7 +182,7 @@ include '../documentation-main/documentation_header.php';
         <code>suppressCopyRowsToClipboard:true</code>
     </p>
 
-    <?= grid_example('Clipboard example', 'simple', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+    <?= grid_example('Clipboard example', 'simple', 'generated', ['enterprise' => true]) ?>
 
     <h2>Controlling Clipboard Copy</h2>
 
@@ -198,7 +198,7 @@ include '../documentation-main/documentation_header.php';
         demonstrates the callback by just printing the data to the console.
     </p>
 
-    <?= grid_example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+    <?= grid_example('Controlling Clipboard Copy', 'custom', 'generated', ['enterprise' => true]) ?>
 
     <h2>Processing Clipboard Data</h2>
 
@@ -287,7 +287,7 @@ export interface ProcessHeaderForExportParams {
         </ul>
     </p>
 
-    <?= grid_example('Example Process', 'process', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+    <?= grid_example('Example Process', 'process', 'generated', ['enterprise' => true]) ?>
 
     <h3>Processing Whole Paste Operation</h3>
 
@@ -333,7 +333,7 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= grid_example('Example Process All', 'process-all', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+    <?= grid_example('Example Process All', 'process-all', 'generated', ['enterprise' => true]) ?>
 
     <h2>Changing the Deliminator</h2>
 
@@ -368,6 +368,6 @@ export interface ProcessDataFromClipboardParams {
         </li>
     </ul>
 
-    <?= grid_example('Complex Example', 'complex', 'generated', array("enterprise" => true, "processVue" => true)) ?>
+    <?= grid_example('Complex Example', 'complex', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

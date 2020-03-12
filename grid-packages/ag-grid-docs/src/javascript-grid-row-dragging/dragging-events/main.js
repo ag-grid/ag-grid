@@ -1,21 +1,19 @@
-var columnDefs = [
-    {field: "athlete", rowDrag: true},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "athlete", rowDrag: true },
+        { field: "country" },
+        { field: "year", width: 100 },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" }
+    ],
     defaultColDef: {
-        width: 150,
+        width: 170,
         sortable: true,
         filter: true
     },
-    columnDefs: columnDefs,
     animateRows: true,
     onRowDragEnter: onRowDragEnter,
     onRowDragEnd: onRowDragEnd,

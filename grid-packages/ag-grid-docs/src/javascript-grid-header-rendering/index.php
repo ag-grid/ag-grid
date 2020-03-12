@@ -290,7 +290,7 @@ colDef = {
     }
 }</snippet>
 
-    <h3 id="example-header-component">Example - Header Component</h3>
+    <h3 id="example-header-component">Example: Header Component</h3>
 
     <p>
         The example below shows a header component in action. The following can be observed
@@ -304,7 +304,7 @@ colDef = {
         <li>The header component uses additional parameters to allowing configuring the menu icon.</li>
     </ul>
 
-    <?= grid_example('Header component', 'header-component', 'generated', array("processVue" => true, "extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'vanilla')) ?>
+    <?= grid_example('Header component', 'header-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true, 'onlyShow' => 'vanilla']) ?>
 
     <?php include './angular.php'; ?>
 
@@ -421,8 +421,8 @@ columnGroup.addEventListener('expandedChanged', listener);
 // don't forget to remove the listener in your destroy method
 columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
-    <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
+    <h3 id="example-header-group-cells">Example: Header Group Cells</h3>
 
-    <?= grid_example('Header Group', 'header-group-component', 'generated', array("processVue" => true, "extras" => array("fontawesome"), "showResult" => true)) ?>
+    <?= grid_example('Header Group', 'header-group-component', 'generated', ['extras' => ['fontawesome'], 'showResult' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

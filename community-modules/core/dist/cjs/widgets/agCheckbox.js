@@ -27,6 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var agAbstractInputField_1 = require("./agAbstractInputField");
+var utils_1 = require("../utils");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -70,6 +71,7 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.isSelected();
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
+        this.refreshSelectedClass(value);
         if (value === this.getValue()) {
             return this;
         }
@@ -95,7 +97,12 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
+        this.refreshSelectedClass(this.selected);
         this.dispatchChange(this.selected, e);
+    };
+    AgCheckbox.prototype.refreshSelectedClass = function (value) {
+        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        utils_1._.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper')

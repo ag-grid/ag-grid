@@ -97,6 +97,6 @@ interface LineTooltipRendererParams {
     to demonstrate each option rather than to produce a chart that looks nice!
 </p>
 
-<?= grid_example('Line Chart Customisations', 'custom-line-chart', 'generated', array("enterprise" => true)) ?>
+<?= grid_example('Line Chart Customisations', 'custom-line-chart', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

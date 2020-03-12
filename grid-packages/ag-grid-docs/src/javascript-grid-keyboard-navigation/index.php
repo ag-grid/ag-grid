@@ -157,7 +157,7 @@ interface CellPosition {
         to go up and down rather than right and left.
     </p>
 
-    <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated', array('processVue' => true)) ?>
+    <?= grid_example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
 
 
     <h2>Tabbing into the Grid</h2>
@@ -200,7 +200,7 @@ myInput.addEventListener("keydown", function (event) {
 }, true);
 </snippet>
 
-    <h3>Example - Tabbing into the Grid</h3>
+    <h3>Example: Tabbing into the Grid</h3>
 
     <p>
         In the following example there is an input box provided to test tabbing into the grid. Notice the following:
@@ -247,7 +247,7 @@ myInput.addEventListener("keydown", function (event) {
         </li>
     </ul>
 
-    <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Keyboard Events', 'keyboard-events', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="suppressKeyboardEvents">Suppress Grid Keyboard Events</h2>
 
@@ -320,6 +320,6 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
         </li>
     </ul>
 
-    <?= grid_example('Suppress Keys', 'suppress-keys', 'generated', array("enterprise" => 1)) ?>
+    <?= grid_example('Suppress Keys', 'suppress-keys', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

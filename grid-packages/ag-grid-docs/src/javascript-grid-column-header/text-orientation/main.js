@@ -30,8 +30,7 @@ var gridOptions = {
     headerHeight: 150,
     floatingFiltersHeight:50,
     pivotGroupHeaderHeight:50,
-    pivotHeaderHeight:100,
-    sideBar: true
+    pivotHeaderHeight:100
 };
 
 // setup the grid after the page has finished loading

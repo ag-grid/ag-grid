@@ -56,7 +56,7 @@ function onBtExtraCols() {
 var gridOptions = {
     defaultColDef: {
         resizable: true,
-        width: 100
+        width: 150
     },
     debug: true,
     columnDefs: createNormalColDefs(),

@@ -85,7 +85,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <?= grid_example('Column Spanning Simple', 'column-spanning-simple', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Spanning Simple', 'column-spanning-simple', 'generated') ?>
 
     <h2>Column Spanning Complex Example</h2>
 
@@ -103,11 +103,11 @@ interface ColSpanParams {
         <li>
             The dataset has meta-data inside it, the <code>data.section</code> attribute. This
             meta-data, provided by the application, is used in the grid configuration in order
-            to set the column spans and the backgrond colors.
+            to set the column spans and the background colors.
         </li>
     </ul>
 
-    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated', array("processVue" => true)) ?>
+    <?= grid_example('Column Spanning Complex', 'column-spanning-complex', 'generated', ['exampleHeight' => 795]) ?>
 
     <h2>Column Spanning Constraints</h2>
 

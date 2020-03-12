@@ -84,7 +84,7 @@ gridOptions: {
     <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
 </p>
 
-<h2>Example - Simple Column Filters</h2>
+<h2>Example: Simple Column Filters</h2>
 
 <p>
     The example below demonstrates server-side filtering using
@@ -106,7 +106,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Simple Column Filters', 'simple-column-filters', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Filtering with the Set Filter</h2>
 
@@ -170,7 +170,7 @@ gridOptions: {
     For more details on setting values refer to the <a href="../javascript-grid-filter-set/">Set Filter</a> documentation.
 </p>
 
-<h2>Example - Set Filter</h2>
+<h2>Example: Set Filter</h2>
 
 <p>
     The example below demonstrates server-side filtering using the Set Filter. Notice the following:
@@ -191,11 +191,11 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <!--<h2>Set Filter with Complex Object</h2>-->
 <!---->
-<?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', array("enterprise" => 1, "processVue" => true, "extras" => array('alasql'))) ?>
+<?//= grid_example('Set Filter with Complex Object', 'set-filter-complex-object', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
 
 <h2>Next Up</h2>
 
