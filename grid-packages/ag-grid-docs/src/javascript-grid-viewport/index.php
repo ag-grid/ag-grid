@@ -271,7 +271,7 @@ SNIPPET
     position and pushes data to the client based on the viewport position.
 </p>
 
-<?= grid_example('Viewport Example', 'viewport', 'generated', ['enterprise'=> true]) ?>
+<?= grid_example('Viewport Example', 'viewport', 'generated', ['enterprise'=> true, 'exampleHeight' => 600]) ?>
 
 <h2>Example Viewport with Pagination</h2>
 
@@ -298,6 +298,6 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Pagination Viewport Example', 'pagination-viewport', 'generated', ['enterprise' => true,  'exampleHeight' => 570]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
