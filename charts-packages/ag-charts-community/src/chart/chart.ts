@@ -27,7 +27,6 @@ const defaultTooltipCss = `
     color: black;
     background: rgb(244, 244, 244);
     border-radius: 5px;
-    overflow: hidden;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
@@ -42,11 +41,15 @@ const defaultTooltipCss = `
     border-top-right-radius: 5px;
     color: white;
     background-color: #888888;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .ag-chart-tooltip-content {
     padding: 7px;
     line-height: 1.7em;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 `;
 
