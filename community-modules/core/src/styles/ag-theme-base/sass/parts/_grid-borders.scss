@@ -14,7 +14,7 @@
         @include ag-border(critical, right);
     }
     
-    .ag-row.ag-row-selected {
+    .ag-row-selected {
         background-color: ag-param(selected-row-background-color);
     }
 
