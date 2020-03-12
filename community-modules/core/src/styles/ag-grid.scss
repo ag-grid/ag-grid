@@ -791,11 +791,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     pointer-events: all;
 }
 
-// in auto-height mode with no rows, add padding to prevent grid being too small
-.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 30px;
-}
-
 /**
  ****************************
  * Popup
