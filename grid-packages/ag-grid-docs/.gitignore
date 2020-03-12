@@ -7,6 +7,7 @@ ag-grid-docs.iml
 *.map
 .idea
 
+
 src/jira_reports/jira_config.json
 src/jira_reports/prod/
 

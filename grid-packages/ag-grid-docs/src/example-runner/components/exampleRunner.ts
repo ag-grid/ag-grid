@@ -86,9 +86,9 @@ class ExampleRunnerController {
     $onInit() {
         this.iframeStyle = {};
 
-        this.showImportsDropdown = this.config.showImportsDropdown === undefined ? true : this.config.showImportsDropdown;
-
         const options = this.config.options;
+
+        this.showImportsDropdown = options.showImportsDropdown === undefined ? true : options.showImportsDropdown;
 
         if (options.exampleHeight) {
             this.iframeStyle.height = isNaN(options.exampleHeight) ? options.exampleHeight : options.exampleHeight + "px";

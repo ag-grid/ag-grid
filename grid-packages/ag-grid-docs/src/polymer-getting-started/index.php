@@ -241,7 +241,7 @@ this.columnDefs = [
 
 <img src="../images/js-gs-filtering.png" alt="filtering" style="display: block;margin: auto;height: 170px;">
 
-<?= grid_example('Polymer 3 Grid', 'simple-grid', 'as-is', ['noPlunker' => true, 'usePath' => '/', 'exampleHeight' => 175]) ?>
+<?= grid_example('Polymer 3 Grid', 'simple-grid', 'as-is', ['showImportsDropdown' => false, 'noPlunker' => true, 'usePath' => '/', 'exampleHeight' => 175]) ?>
 
 <h2>Summary</h2>
 
