@@ -17,10 +17,13 @@ export function toAssignment(property: any): string {
     const value = property.value.replace(/function\s*\(([^\)]+)\)/, '($1) =>');
 
     return `this.${property.name} = ${value}`;
-};
+}
 
-export function getImport(filename: string) {
-    const componentName = filename.split('.')[0];
+export function getImport(filename: string, tokenReplace, replaceValue) {
+    let componentName = filename.split('.')[0];
+    if(tokenReplace) {
+        componentName = componentName.replace(tokenReplace, replaceValue);
+    }
     return `import ${toTitleCase(componentName)} from './${filename}';`;
 }
 

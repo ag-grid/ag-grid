@@ -30,7 +30,7 @@
         <?php } else { ?> 
             <ul>
                 <li>
-                    <a href="<?php print($rootFolder) ?>"> ag-Grid Archive Documentation <?php print($version) ?> <?php print($latest_hash) ?></a>
+                    <a href="<?php print($rootFolder) ?>"> ag-Grid Archive Documentation <?php print($version) ?> <?php print($latest_hash) ?> <?php print($latest_hash_timestamp) ?></a>
                 </li>
             </ul>
         <?php } ?> 

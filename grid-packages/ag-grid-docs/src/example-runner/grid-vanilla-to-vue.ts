@@ -74,7 +74,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     }
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(getImport));
+        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;
@@ -113,7 +113,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     }
 
     if (componentFileNames) {
-        imports.push(...componentFileNames.map(getImport));
+        imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
     }
 
     return imports;

@@ -7,6 +7,7 @@ include_once '../php-utils/snippets.php';
 $DONT_USE_FONT_AWESOME = true;
 $version = 'latest';
 $latest_hash = '';
+$latest_hash_timestamp = '';
 $rootFolder = strcmp($version, 'latest') == 0 ? '/' : '/archive/' . $version . '/';
 
 function enterprise_feature($name)

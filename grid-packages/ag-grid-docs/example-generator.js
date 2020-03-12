@@ -34,10 +34,10 @@ function emptyDirectory(directory) {
     }
 };
 
-function copyFilesSync(files, dest, tokenToRemove) {
+function copyFilesSync(files, dest, tokenToReplace, replaceValue = '') {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
-        const destinationFile = path.join(dest, tokenToRemove ? filename.replace(tokenToRemove, '') : filename);
+        const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
         const extension = path.extname(sourceFile).slice(1);
         const parsers = {
             js: 'babel',
@@ -54,8 +54,9 @@ function copyFilesSync(files, dest, tokenToRemove) {
 
 // childMessageRenderer_react.jsx -> childMessageRenderer.jsx
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
-function extractComponentFileNames(scripts, token) {
-    return scripts.map(script => path.basename(script).replace(token, ''));
+// childMessageRenderer_vue.js -> childMessageRendererVue.js
+function extractComponentFileNames(scripts, token, replaceValue='') {
+    return scripts.map(script => path.basename(script).replace(token, replaceValue));
 }
 
 function phpArrayToJSON(string) {
@@ -200,7 +201,7 @@ function createExampleGenerator(prefix, importType) {
         let mainApp;
 
         try {
-            const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue'), importType);
+            const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'), importType);
 
             mainApp = format(source, 'babel');
         } catch (e) {
@@ -208,7 +209,7 @@ function createExampleGenerator(prefix, importType) {
             throw e;
         }
 
-        const writeExampleFiles = (framework, frameworkScripts, files, subdirectory) => {
+        const writeExampleFiles = (framework, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(_gen, framework);
 
             fs.mkdirSync(basePath, { recursive: true });
@@ -228,7 +229,7 @@ function createExampleGenerator(prefix, importType) {
 
             copyFilesSync(stylesheets, basePath);
             copyFilesSync(scripts, basePath);
-            copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`);
+            copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
         };
 
         writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
@@ -238,7 +239,9 @@ function createExampleGenerator(prefix, importType) {
             'app.module.ts': appModuleTS,
         }, 'app');
 
-        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp });
+        // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
+        // from index.html will still including other non-component files
+        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp }, undefined, 'Vue');
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
