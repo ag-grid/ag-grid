@@ -1,10 +1,3 @@
-var columnDefs = [
-    // these are the row groups, so they are all hidden (they are showd in the group column)
-    {headerName: 'Symbol', field: 'symbol'},
-    {headerName: 'Price', field: 'price'},
-    {headerName: 'Group', field: 'group'}
-];
-
 function getInitialData() {
     var data = [];
     for (var i = 0; i < 10; i++) {
@@ -151,17 +144,22 @@ function reverseItems() {
 }
 
 var gridOptions = {
+    columnDefs: [
+        {headerName: 'Symbol', field: 'symbol'},
+        {headerName: 'Price', field: 'price'},
+        {headerName: 'Group', field: 'group'}
+    ],
+    defaultColDef: {
+        width: 250,
+        sortable: true,
+        resizable: true,
+    },
     deltaRowDataMode: true,
     statusBar: {
         items: [
             { component: 'agAggregationComponent' }
         ]
     },
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
     animateRows: true,
     rowSelection: 'multiple',
     autoGroupColumnDef: {

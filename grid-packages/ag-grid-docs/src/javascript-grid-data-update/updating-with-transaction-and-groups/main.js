@@ -1,11 +1,3 @@
-var columnDefs = [
-    {field: 'category', rowGroupIndex: 1, hide: true},
-    {field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
-    {field: 'zombies'},
-    {field: 'style'},
-    {field: 'clothes'}
-];
-
 function poundFormatter(params) {
     return (
         '£' +
@@ -44,10 +36,27 @@ function createNewRowData(category) {
 }
 
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        {field: 'category', rowGroupIndex: 1, hide: true},
+        {field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
+        {field: 'zombies'},
+        {field: 'style'},
+        {field: 'clothes'}
+    ],
     defaultColDef: {
+        flex: 1,
         width: 100,
         sortable: true
+    },
+    autoGroupColumnDef: {
+        headerName: 'Group',
+        minWidth: 250,
+        field: 'model',
+        rowGroupIndex: 1,
+        cellRenderer:'agGroupCellRenderer',
+        cellRendererParams: {
+            checkbox: true
+        }
     },
     groupDefaultExpanded: 1,
     rowData: getInitialRowData(),
@@ -75,16 +84,6 @@ var gridOptions = {
         } else {
             // no extra classes for leaf rows
             return null;
-        }
-    },
-    autoGroupColumnDef: {
-        headerName: 'Group',
-        width: 200,
-        field: 'model',
-        rowGroupIndex: 1,
-        cellRenderer:'agGroupCellRenderer',
-        cellRendererParams: {
-            checkbox: true
         }
     }
 };

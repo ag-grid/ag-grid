@@ -357,7 +357,7 @@ interface RowNodeTransaction {
         are always added to the top as they are ordered 'latest first'</li>
 </ul>
 
-<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
 
 
 
@@ -461,7 +461,7 @@ interface RowNodeTransaction {
         any order in the provided data.
     </note>
 
-    <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
 
 
     <h3>Example: Immutable Store - Updates via Feed</h3>
@@ -502,7 +502,7 @@ interface RowNodeTransaction {
         even though the grid data is constantly updating.
     </p>
 
-    <?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
     <h2 id="batch-transactions">Bulk Method 4 - Batch Transactions</h2>
 
