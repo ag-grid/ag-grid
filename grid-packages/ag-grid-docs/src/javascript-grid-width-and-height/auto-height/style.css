@@ -1,8 +1,8 @@
-.ag-floating-top .ag-row {
+.ag-floating-top .ag-row-pinned.ag-row {
     background-color: #00e5ff;
 }
 
-.ag-floating-bottom .ag-row {
+.ag-floating-bottom .ag-row-pinned.ag-row {
     background-color: #00e5ff;
 }
 

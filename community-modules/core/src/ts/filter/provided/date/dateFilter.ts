@@ -62,15 +62,18 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         // NOTE: The conversion of string to date also removes the timezone - ie when user picks
         //       a date form the UI, it will have timezone info in it. This is lost when creating
         //       the model. Then when we recreate the date again here, it's without timezone.
+        const from = _.getDateFromString(filterModel.dateFrom);
+        const to = _.getDateFromString(filterModel.dateTo);
+
         return {
-            from: _.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
-            to: _.parseYyyyMmDdToDate(filterModel.dateTo, "-")
+            from,
+            to
         };
     }
 
     protected setValueFromFloatingFilter(value: string): void {
         if (value != null) {
-            const dateFrom = _.parseYyyyMmDdToDate(value, "-");
+            const dateFrom = _.getDateFromString(value);
             this.dateCompFrom1.setDate(dateFrom);
         } else {
             this.dateCompFrom1.setDate(null);
@@ -87,8 +90,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         const dateFromString = model ? model.dateFrom : null;
         const dateToString = model ? model.dateTo : null;
 
-        const dateFrom = _.parseYyyyMmDdToDate(dateFromString, "-");
-        const dateTo = _.parseYyyyMmDdToDate(dateToString, "-");
+        const dateFrom = _.getDateFromString(dateFromString);
+        const dateTo = _.getDateFromString(dateToString);
 
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
@@ -197,17 +200,18 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
-
         const positionOne = position === ConditionPosition.One;
-
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
-        const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         const dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+
+        const dateFrom = dateCompFrom.getDate();
+        const dateTo = dateCompTo.getDate();
 
         return {
-            dateTo: _.serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
-            dateFrom: _.serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            dateFrom: `${_.serializeDateToYyyyMmDd(dateFrom, "-")} ${_.getTimeFromDate(dateFrom)}`,
+            dateTo: `${_.serializeDateToYyyyMmDd(dateTo, "-")} ${_.getTimeFromDate(dateTo)}`,
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };

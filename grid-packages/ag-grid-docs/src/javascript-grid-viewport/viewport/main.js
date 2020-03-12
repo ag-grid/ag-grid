@@ -2,13 +2,12 @@ var columnDefs = [
     // this col shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        width: 50,
+        maxWidth: 100,
         cellRenderer: 'rowIdRenderer'
     },
-    {headerName: 'Code', field: 'code', width: 70},
-    {headerName: 'Name', field: 'name', width: 300},
+    { field: 'code', maxWidth: 120},
+    { field: 'name', minWidth: 250},
     {
-        headerName: 'Bid',
         field: 'bid',
         width: 100,
         cellClass: 'cell-number',
@@ -16,7 +15,6 @@ var columnDefs = [
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Mid',
         field: 'mid',
         width: 100,
         cellClass: 'cell-number',
@@ -24,7 +22,6 @@ var columnDefs = [
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Ask',
         field: 'ask',
         width: 100,
         cellClass: 'cell-number',
@@ -32,7 +29,6 @@ var columnDefs = [
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Volume',
         field: 'volume',
         width: 80,
         cellClass: 'cell-number',
@@ -41,11 +37,12 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         resizable: true
     },
-    debug: true,
-    columnDefs: columnDefs,
     rowSelection: 'multiple',
     rowModelType: 'viewport',
     // implement this so that we can do selection
@@ -57,7 +54,8 @@ var gridOptions = {
         rowIdRenderer: function (params) {
             return '' + params.rowIndex;
         }
-    }
+    },
+    // debug: true
 };
 
 function numberFormatter(params) {

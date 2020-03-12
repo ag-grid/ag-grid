@@ -6,15 +6,15 @@
         @include ag-theme-rtl(( border-right-width: 1px ));
     }
 
-    .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+    .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
         @include ag-border(critical, left);
     }
     
-    .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+    .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
         @include ag-border(critical, right);
     }
     
-    .ag-row.ag-row-selected {
+    .ag-row-selected {
         background-color: ag-param(selected-row-background-color);
     }
 

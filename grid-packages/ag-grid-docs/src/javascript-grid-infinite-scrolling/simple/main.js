@@ -1,26 +1,27 @@
-var columnDefs = [
-    // this row shows the row index, doesn't use any data from the row
-    {headerName: "ID", width: 50,
-        // it is important to have node.id here, so that when the id changes (which happens
-        // when the row is loaded) then the cell is refreshed.
-        valueGetter: 'node.id',
-        cellRenderer: 'loadingRenderer'
-    },
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
-];
-
 var gridOptions = {
+    columnDefs: [
+        // this row shows the row index, doesn't use any data from the row
+        {headerName: "ID", maxWidth: 100,
+            // it is important to have node.id here, so that when the id changes (which happens
+            // when the row is loaded) then the cell is refreshed.
+            valueGetter: 'node.id',
+            cellRenderer: 'loadingRenderer'
+        },
+        { field: "athlete", minWidth: 150 },
+        { field: "age" },
+        { field: "country", minWidth: 150 },
+        { field: "year" },
+        { field: "date",  minWidth: 150 },
+        { field: "sport", minWidth: 150 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
+    ],
     defaultColDef: {
-        resizable: true
+        flex: 1,
+        resizable: true,
+        minWidth: 100
     },
     components:{
         loadingRenderer: function(params) {
@@ -31,11 +32,9 @@ var gridOptions = {
             }
         }
     },
-    debug: true,
     rowBuffer: 0,
     rowSelection: 'multiple',
     rowDeselection: true,
-    columnDefs: columnDefs,
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100
@@ -53,7 +52,9 @@ var gridOptions = {
     // how many pages to store in cache. default is undefined, which allows an infinite sized cache,
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
-    maxBlocksInCache: 10
+    maxBlocksInCache: 10,
+
+    // debug: true,
 };
 
 // setup the grid after the page has finished loading
@@ -64,8 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
         var dataSource = {
             rowCount: null, // behave as infinite scroll
+
             getRows: function (params) {
                 console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+
                 // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
                 // To make the demo look real, wait for 500ms before returning
                 setTimeout( function() {

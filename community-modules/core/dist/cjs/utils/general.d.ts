@@ -114,6 +114,9 @@ export declare class Utils {
     static flatten(arrayOfArrays: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null;
+    static getTimeFromDate(date: Date): string | null;
+    static normalizeTime(time: string): string;
+    static getDateFromString(fullDate: string): Date | null;
     static padStart(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static createArrayOfNumbers(first: number, last: number): number[];

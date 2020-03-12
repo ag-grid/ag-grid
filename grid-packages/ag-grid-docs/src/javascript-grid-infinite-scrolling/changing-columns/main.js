@@ -1,19 +1,17 @@
-var columnDefs = [
-    {field: 'athlete', colId: 'athlete'},
-    {field: 'age', colId: 'age'},
-    {field: 'country', colId: 'country'},
-    {field: 'year', colId: 'year'},
-    {field: 'sport', colId: 'sport'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        {field: 'athlete', colId: 'athlete', minWidth: 180},
+        {field: 'age', colId: 'age'},
+        {field: 'country', colId: 'country', minWidth: 180},
+        {field: 'year', colId: 'year'},
+        {field: 'sport', colId: 'sport', minWidth: 180}
+    ],
     defaultColDef: {
+        flex: 1,
         sortable: true,
         resizable: true,
         filter: true,
-        width: 100
     },
-    columnDefs: columnDefs,
     rowModelType: 'infinite'
 };
 

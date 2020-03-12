@@ -66,17 +66,20 @@ include '../documentation-main/documentation_header.php';
     <h2 id="what-to-style-via-themes">What to Style via Themes</h2>
 
     <p>
-        In general, themes can change how elements look, but not how they work or where they are positioned.
+        Browsers use the same mechanism - CSS - for controlling how elements work (e.g. scrolling and whether they respond to mouse events),
+        where elements appear, and how elements look. Our "structural stylesheet" (ag-grid.scss) sets CSS rules that control how the grid
+        works, and the code depends on those rules not being overridden. There is nothing that we can do to prevent themes overriding critical
+        rules, so as a theme author you need to be careful not to break the grid. Here's a guide:
     </p>
 
     <ul>
         <li>Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change
-            by the theme.
+            in a theme.
         <li>Setting a component to <code>display: flex</code> and changing flex child layout properties like
             <code>align-items</code>, <code>align-self</code> and <code>flex-direction</code> is probably OK
-            if you're trying to change how something looks, e.g. to align some items vertically; but if you're trying
-            to change how the grid works e.g. turning a scrolling container into an auto-sizing container, you
-            are likely to break Grid features.
+            if you're trying to change how something looks on a small scale, e.g. to change the align of some
+            text or icons within a container; but if you're trying to change how the grid works e.g. turning a
+            scrolling container into an auto-sizing container, you are likely to break Grid features.
         <li>The style properties <code>position</code>, <code>overflow</code> and <code>pointer-events</code>
             are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break
             functionality now or in future minor releases.

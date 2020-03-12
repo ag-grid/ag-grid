@@ -175,7 +175,7 @@ $ag-theme-base-default-params: (
     widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
     widget-vertical-spacing: ag-derived(grid-size),
 
-    // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from $ag-row-height / $ag-header-height
+    // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
 
     // Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)
@@ -205,9 +205,13 @@ $ag-theme-base-default-params: (
     // Fonts
     font-family: ("Helvetica Neue", sans-serif),
     font-size: 14px,
-    icon-font-family: $ag-theme-base-icon-font-family,
-    icons-data: $ag-theme-base-icons-data,
-    icons-font-codes: $ag-theme-base-icons-font-codes,
+
+    // The name of the font family you're using
+    icon-font-family: $ag-theme-base-icon-font-family, // this var exported by ag-theme-base-font-vars.scss
+
+    // A URI (data: URI or web URL) to load the icon font from. NOTE: if your icon font is already loaded in the app's HTML page, set this to null to avoid embedding unnecessry font data in the compiled theme.
+    icons-data: $ag-theme-base-icons-data,             // this var exported by ag-theme-base-font-vars.scss
+    icons-font-codes: $ag-theme-base-icons-font-codes, // this var exported by ag-theme-base-font-vars.scss
 
     // cards are elements that float above the UI
     card-radius: ag-derived(border-radius),

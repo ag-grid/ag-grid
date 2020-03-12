@@ -5,10 +5,9 @@ var columnDefs = [
         valueGetter: 'node.id',
         cellRenderer: 'loadingRenderer'
     },
-    {headerName: 'Make', field: 'make'},
-    {headerName: 'Model', field: 'model'},
+    { field: 'make'},
+    { field: 'model'},
     {
-        headerName: 'Price',
         field: 'price',
         valueFormatter: function(params) {
             if (typeof params.value === 'number') {

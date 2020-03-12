@@ -12,25 +12,42 @@ function getStyleTags($styles)
     return join("\n    ", array_map(function($style) { return "<link rel=\"stylesheet\" href=\"$style\">"; }, $styles)) . "\n";
 }
 
+function isFrameworkComponent($haystack) {
+    // only applies to Vue for now - no need for the others as they don't have a ".js" extension
+    $fw_extensions = array('Vue.js');
+    foreach ($fw_extensions as $fw_extension) {
+        if (endsWith($haystack, $fw_extension)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function endsWith($haystack, $needle)
 {
     return substr($haystack, -strlen($needle)) === $needle;
 }
 
 // helpers in the example render, shared between angular, react & vue
-function getNonGeneratedScriptTags($scripts, $skipMain = FALSE)
+function getNonGeneratedScriptTags($scripts, $skipMain = FALSE, $skipFwComponents = FALSE)
 {
     $mainJsScript = null;
     $scriptNames = [];
     $mainJsName = 'main.js';
 
     foreach ($scripts as $script) {
-        if (endsWith($script, 'main.js')) {
+        if (endsWith($script, $mainJsName)) {
             if (!$skipMain) {
                 $mainJsScript = $script;
             }
 
             continue;
+        }
+
+        if ($skipFwComponents) {
+            if (isFrameworkComponent($script)) {
+                continue;
+            }
         }
 
         $scriptNames[] = $script;

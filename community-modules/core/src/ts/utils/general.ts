@@ -56,9 +56,8 @@ export class Utils {
      * @param {string} key
      */
     static doOnce(func: () => void, key: string) {
-        if (this.doOnceFlags[key]) {
-            return;
-        }
+        if (this.doOnceFlags[key]) { return; }
+
         func();
         this.doOnceFlags[key] = true;
     }
@@ -87,6 +86,7 @@ export class Utils {
             if (typeof Utils.supports[eventName] === 'boolean') {
                 return Utils.supports[eventName];
             }
+
             let el = document.createElement(tags[eventName] || 'div');
             eventName = 'on' + eventName;
 
@@ -111,10 +111,10 @@ export class Utils {
      * @returns {boolean}
      */
     static isLeftClick(mouseEvent: MouseEvent): boolean {
-        if ("buttons" in mouseEvent) {
-            return mouseEvent.buttons == 1;
-        }
+        if ("buttons" in mouseEvent) { return mouseEvent.buttons == 1; }
+
         const button = (mouseEvent as any).which || (mouseEvent as any).button;
+
         return button == 1;
     }
 
@@ -128,9 +128,8 @@ export class Utils {
      */
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
         // by default, we wait 4 pixels before starting the drag
-        if (pixelCount === 0) {
-            return false;
-        }
+        if (pixelCount === 0) { return false; }
+
         const diffX = Math.abs(e1.clientX - e2.clientX);
         const diffY = Math.abs(e1.clientY - e2.clientY);
 
@@ -146,18 +145,12 @@ export class Utils {
 
     static shallowCompare(arr1: any[], arr2: any[]): boolean {
         // if both are missing, then they are the same
-        if (this.missing(arr1) && this.missing(arr2)) {
-            return true;
-        }
+        if (this.missing(arr1) && this.missing(arr2)) { return true; }
 
         // if one is present, but other is missing, then they are different
-        if (this.missing(arr1) || this.missing(arr2)) {
-            return false;
-        }
+        if (this.missing(arr1) || this.missing(arr2)) { return false; }
 
-        if (arr1.length !== arr2.length) {
-            return false;
-        }
+        if (arr1.length !== arr2.length) { return false; }
 
         for (let i = 0; i < arr1.length; i++) {
             if (arr1[i] !== arr2[i]) {
@@ -193,28 +186,26 @@ export class Utils {
     static includes = <T>(array: T[], value: T): boolean => array.indexOf(value) > -1;
 
     static getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
-        if (!field || !data) {
-            return;
-        }
+        if (!field || !data) { return; }
 
         // if no '.', then it's not a deep value
         if (!fieldContainsDots) {
             return data[field];
-        } else {
-            // otherwise it is a deep value, so need to dig for it
-            const fields = field.split('.');
-            let currentObject = data;
-
-            for (let i = 0; i < fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-
-                if (this.missing(currentObject)) {
-                    return null;
-                }
-            }
-
-            return currentObject;
         }
+
+        // otherwise it is a deep value, so need to dig for it
+        const fields = field.split('.');
+        let currentObject = data;
+
+        for (let i = 0; i < fields.length; i++) {
+            currentObject = currentObject[fields[i]];
+
+            if (this.missing(currentObject)) {
+                return null;
+            }
+        }
+
+        return currentObject;
     }
 
     static getElementSize(el: HTMLElement): {
@@ -318,6 +309,7 @@ export class Utils {
         } else {
             value = null;
         }
+
         return value;
     }
 
@@ -435,9 +427,8 @@ export class Utils {
     }
 
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void {
-        if (!map) {
-            return;
-        }
+        if (!map) { return; }
+
         for (let i = 0; i < map.length; i++) {
             const attr = map[i];
             callback(attr.name, attr.value);
@@ -445,9 +436,7 @@ export class Utils {
     }
 
     static iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
-        if (!object || this.missing(object)) {
-            return;
-        }
+        if (!object || this.missing(object)) { return; }
 
         if (Array.isArray(object)) {
             object.forEach((value, index) => callback(`${index}`, value));
@@ -459,11 +448,13 @@ export class Utils {
     static cloneObject<T>(object: T): T {
         const copy = {} as T;
         const keys = Object.keys(object);
+
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
             const value = (object as any)[key];
             (copy as any)[key] = value;
         }
+
         return copy;
     }
 
@@ -496,25 +487,23 @@ export class Utils {
 
     static getAllKeysInObjects(objects: any[]): string[] {
         const allValues: any = {};
+
         objects.forEach(obj => {
             if (obj) {
                 Object.keys(obj).forEach(key => allValues[key] = null);
             }
         });
+
         return Object.keys(allValues);
     }
 
     static mergeDeep(dest: any, source: any, copyUndefined = true): void {
-        if (!this.exists(source)) {
-            return;
-        }
+        if (!this.exists(source)) { return; }
 
         this.iterateObject(source, (key: string, newValue: any) => {
             const oldValue: any = dest[key];
 
-            if (oldValue === newValue) {
-                return;
-            }
+            if (oldValue === newValue) { return; }
 
             if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
                 Utils.mergeDeep(oldValue, newValue);
@@ -542,17 +531,14 @@ export class Utils {
 
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
         try {
-            if (!yyyyMmDd) {
-                return null;
-            }
-            if (yyyyMmDd.indexOf(separator) === -1) {
-                return null;
-            }
+            if (!yyyyMmDd) { return null; }
+
+            if (yyyyMmDd.indexOf(separator) === -1) { return null; }
 
             const fields: string[] = yyyyMmDd.split(separator);
-            if (fields.length != 3) {
-                return null;
-            }
+
+            if (fields.length != 3) { return null;  }
+
             return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
         } catch (e) {
             return null;
@@ -560,49 +546,103 @@ export class Utils {
     }
 
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null {
-        if (!date) {
-            return null;
-        }
+        if (!date) { return null; }
+
         return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
     }
 
-    static padStart(num: number, totalStringSize: number): string {
-        let asString: string = num + "";
-        while (asString.length < totalStringSize) {
-            asString = "0" + asString;
+    static getTimeFromDate(date: Date): string | null {
+        if (!date) { return null; }
+
+        return `${this.padStart(date.getHours(), 2)}:${this.padStart(date.getMinutes(), 2)}:${this.padStart(date.getSeconds(), 2)}`;
+    }
+
+    static normalizeTime(time: string): string {
+        if (!time) { return '00:00:00'; }
+
+        let hoursStr = '00';
+        let minutesStr = '00';
+        let secondsStr = '00';
+
+        const [ hours, minutes, seconds ] = time.split(':').map(Number);
+
+        if (hours >= 0 && hours <= 24) {
+            hoursStr = _.padStart(hours, 2);
         }
+
+        if (minutes >= 0 && minutes <= 59) {
+            minutesStr = _.padStart(minutes, 2);
+        }
+
+        if (seconds >= 0 && seconds <= 59) {
+            secondsStr = _.padStart(seconds, 2);
+        }
+
+        return `${hoursStr}:${minutesStr}:${secondsStr}`;
+    }
+
+    static getDateFromString(fullDate: string): Date | null {
+        if (!fullDate) {
+            return null;
+        }
+
+        const [ dateStr, timeStr ] = fullDate.split(' ');
+        const date = _.parseYyyyMmDdToDate(dateStr, '-');
+
+        if (!date) {
+            return null;
+        }
+
+        if (!timeStr || timeStr === '00:00:00') {
+            return date;
+        }
+
+        const [ hours, minutes, seconds ] = _.normalizeTime(timeStr).split(':').map(Number);
+
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        date.setSeconds(seconds);
+
+        return date;
+    }
+
+    static padStart(num: number, totalStringSize: number): string {
+        let asString: string = `${num}`;
+
+        while (asString.length < totalStringSize) {
+            asString = `0${asString}`;
+        }
+
         return asString;
     }
 
     static pushAll(target: any[], source: any[]): void {
-        if (this.missing(source) || this.missing(target)) {
-            return;
-        }
+        if (this.missing(source) || this.missing(target)) { return; }
+
         source.forEach(func => target.push(func));
     }
 
     static createArrayOfNumbers(first: number, last: number): number[] {
         const result: number[] = [];
+
         for (let i = first; i <= last; i++) {
             result.push(i);
         }
+
         return result;
     }
 
     static getFunctionParameters(func: any) {
         const fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
         const result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
-        if (result === null) {
-            return [];
-        } else {
-            return result;
-        }
+
+        if (result === null) { return []; }
+
+        return result;
     }
 
     static find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
-        if (collection === null || collection === undefined) {
-            return null;
-        }
+        if (collection === null || collection === undefined) { return null; }
 
         if (!Array.isArray(collection)) {
             const objToArray = this.values(collection);
@@ -614,6 +654,7 @@ export class Utils {
         let firstMatchingItem: T | null = null;
         for (let i = 0; i < collectionAsArray.length; i++) {
             const item: T = collectionAsArray[i];
+
             if (typeof predicate === 'string') {
                 if ((item as any)[predicate] === value) {
                     firstMatchingItem = item;
@@ -627,6 +668,7 @@ export class Utils {
                 }
             }
         }
+
         return firstMatchingItem;
     }
 
@@ -634,9 +676,9 @@ export class Utils {
         return array.map(item => {
             if (item === undefined || item === null || !item.toString) {
                 return null;
-            } else {
-                return item.toString();
             }
+
+            return item.toString();
         });
     }
 
@@ -657,8 +699,9 @@ export class Utils {
      */
     static isNode(o: any): boolean {
         return (
-            typeof Node === "function" ? o instanceof Node :
-                o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+            typeof Node === "function"
+                ? o instanceof Node
+                : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
         );
     }
 
@@ -671,8 +714,9 @@ export class Utils {
      */
     static isElement(o: any): boolean {
         return (
-            typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
-                o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+            typeof HTMLElement === "function"
+                ? o instanceof HTMLElement //DOM2
+                : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
         );
     }
 
@@ -688,9 +732,11 @@ export class Utils {
     static copyNodeList(nodeList: NodeList): Node[] {
         const childCount = nodeList ? nodeList.length : 0;
         const res: Node[] = [];
+
         for (let i = 0; i < childCount; i++) {
             res.push(nodeList[i]);
         }
+
         return res;
     }
 
@@ -703,14 +749,10 @@ export class Utils {
         // starts editing again with a blank value (two 'key down' events are fired). to
         // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
         // https://ag-grid.atlassian.net/browse/AG-605
-        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) {
-            return false;
-        }
+        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) { return false; }
 
         // no allowed printable chars have alt or ctrl key combinations
-        if (event.altKey || event.ctrlKey) {
-            return false;
-        }
+        if (event.altKey || event.ctrlKey) { return false; }
 
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
@@ -722,11 +764,11 @@ export class Utils {
             const numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
 
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
-        } else {
-            // otherwise, for older browsers, we test against a list of characters, which doesn't include
-            // accents for non-English, but don't care much, as most users are on modern browsers
-            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
         }
+
+        // otherwise, for older browsers, we test against a list of characters, which doesn't include
+        // accents for non-English, but don't care much, as most users are on modern browsers
+        return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
     }
 
     /**
@@ -750,9 +792,7 @@ export class Utils {
         const colDefFunc = column.getColDef().suppressKeyboardEvent;
 
         // if no callbacks provided by user, then do nothing
-        if (!gridOptionsFunc && !colDefFunc) {
-            return false;
-        }
+        if (!gridOptionsFunc && !colDefFunc) { return false; }
 
         const params: SuppressKeyboardEventParams = {
             event: keyboardEvent,
@@ -776,10 +816,10 @@ export class Utils {
         if (gridOptionsFunc) {
             // if gridOption func, return the result
             return gridOptionsFunc(params);
-        } else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
         }
+
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
     }
 
     static getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, event: Event): CellComp {
@@ -861,6 +901,7 @@ export class Utils {
                 }
             }
         }
+
         return false;
     }
 
@@ -887,9 +928,7 @@ export class Utils {
     }
 
     static callIfPresent(func: Function): void {
-        if (func) {
-            func();
-        }
+        if (func) { func(); }
     }
 
     /**
@@ -900,6 +939,7 @@ export class Utils {
      */
     static loadTemplate(template: string): HTMLElement {
         const tempDiv = document.createElement("div");
+
         tempDiv.innerHTML = template;
         return tempDiv.firstChild as HTMLElement;
     }
@@ -933,7 +973,6 @@ export class Utils {
      */
     static radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null) {
         const parent = element.parentElement;
-
         let sibling = parent.firstChild as HTMLElement;
 
         while (sibling) {
@@ -948,9 +987,7 @@ export class Utils {
     }
 
     static addCssClass(element: HTMLElement, className: string) {
-        if (!className || className.length === 0) {
-            return;
-        }
+        if (!className || className.length === 0) { return; }
 
         if (className.indexOf(' ') >= 0) {
             className.split(' ').forEach(value => this.addCssClass(element, value));
@@ -989,7 +1026,9 @@ export class Utils {
         if (element.classList) {
             // for modern browsers
             return element.classList.contains(className);
-        } else if (element.className) {
+        }
+
+        if (element.className) {
             // for older browsers, check against the string of class names
             // if only one class, can check for exact match
             const onlyClass = element.className === className;
@@ -999,20 +1038,22 @@ export class Utils {
             // the padding above then breaks when it's the first or last class names
             const startsWithClass = element.className.indexOf(className + ' ') === 0;
             const endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
+
             return onlyClass || contains || startsWithClass || endsWithClass;
-        } else {
-            // if item is not a node
-            return false;
         }
+
+        // if item is not a node
+        return false;
     }
 
     static getElementAttribute(element: any, attributeName: string): string | null {
         if (element.attributes && element.attributes[attributeName]) {
             const attribute = element.attributes[attributeName];
+
             return attribute.value;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     static offsetHeight(element: HTMLElement) {
@@ -1028,12 +1069,12 @@ export class Utils {
     }
 
     static removeRepeatsFromArray<T>(array: T[], object: T) {
-        if (!array) {
-            return;
-        }
+        if (!array) { return; }
+
         for (let index = array.length - 2; index >= 0; index--) {
             const thisOneMatches = array[index] === object;
             const nextOneMatches = array[index + 1] === object;
+
             if (thisOneMatches && nextOneMatches) {
                 array.splice(index + 1, 1);
             }
@@ -1042,6 +1083,7 @@ export class Utils {
 
     static removeFromArray<T>(array: T[], object: T) {
         const index = array.indexOf(object);
+
         if (index >= 0) {
             array.splice(index, 1);
         }
@@ -1056,10 +1098,9 @@ export class Utils {
     }
 
     static insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
-        if (this.missing(dest) || this.missing(src)) {
-            return;
-        }
+        if (this.missing(dest) || this.missing(src)) { return; }
         // put items in backwards, otherwise inserted items end up in reverse order
+
         for (let i = src.length - 1; i >= 0; i--) {
             const item = src[i];
             this.insertIntoArray(dest, item, toIndex);
@@ -1083,12 +1124,17 @@ export class Utils {
         const valueAMissing = valueA === null || valueA === undefined;
         const valueBMissing = valueB === null || valueB === undefined;
 
+        function doQuickCompare(a: string, b: string): number {
+            return (a > b ? 1 : (a < b ? -1 : 0));
+        }
+
         // this is for aggregations sum and avg, where the result can be a number that is wrapped.
         // if we didn't do this, then the toString() value would be used, which would result in
         // the strings getting used instead of the numbers.
         if (valueA && valueA.toNumber) {
             valueA = valueA.toNumber();
         }
+
         if (valueB && valueB.toNumber) {
             valueB = valueB.toNumber();
         }
@@ -1096,9 +1142,11 @@ export class Utils {
         if (valueAMissing && valueBMissing) {
             return 0;
         }
+
         if (valueAMissing) {
             return -1;
         }
+
         if (valueBMissing) {
             return 1;
         }
@@ -1106,15 +1154,15 @@ export class Utils {
         if (typeof valueA === "string") {
             if (!accentedCompare) {
                 return doQuickCompare(valueA, valueB);
-            } else {
-                try {
-                    // using local compare also allows chinese comparisons
-                    return valueA.localeCompare(valueB);
-                } catch (e) {
-                    // if something wrong with localeCompare, eg not supported
-                    // by browser, then just continue with the quick one
-                    return doQuickCompare(valueA, valueB);
-                }
+            }
+
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            } catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue with the quick one
+                return doQuickCompare(valueA, valueB);
             }
         }
 
@@ -1122,13 +1170,9 @@ export class Utils {
             return -1;
         } else if (valueA > valueB) {
             return 1;
-        } else {
-            return 0;
         }
 
-        function doQuickCompare(a: string, b: string): number {
-            return (a > b ? 1 : (a < b ? -1 : 0));
-        }
+        return 0;
     }
 
     static last<T>(arr: T[]): T | undefined {
@@ -1141,18 +1185,22 @@ export class Utils {
         if (this.missing(array1) && this.missing(array2)) {
             return true;
         }
+
         if ((this.missing(array1) || this.missing(array2)) ||
             (!array1 || !array2)) {
             return false;
         }
+
         if (array1.length !== array2.length) {
             return false;
         }
+
         for (let i = 0; i < array1.length; i++) {
             if (array1[i] !== array2[i]) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -1183,16 +1231,20 @@ export class Utils {
         for (let i = 0; i < orderedChildren.length; i++) {
             const correctCellAtIndex = orderedChildren[i];
             const actualCellAtIndex = eContainer.children[i];
+
             if (actualCellAtIndex !== correctCellAtIndex) {
                 eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
             }
         }
     }
 
-    static insertTemplateWithDomOrder(eContainer: HTMLElement,
+    static insertTemplateWithDomOrder(
+        eContainer: HTMLElement,
         htmlTemplate: string,
-        eChildBefore: HTMLElement): HTMLElement {
+        eChildBefore: HTMLElement
+    ): HTMLElement {
         let res: HTMLElement;
+
         if (eChildBefore) {
             // if previous element exists, just slot in after the previous element
             eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
@@ -1227,23 +1279,21 @@ export class Utils {
     static toStringOrNull(value: any): string | null {
         if (this.exists(value) && value.toString) {
             return value.toString();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     static formatSize(size: number | string) {
         if (typeof size === "number") {
-            return size + "px";
-        } else {
-            return size;
+            return `${size}px`;
         }
+
+        return size;
     }
 
     static formatNumberTwoDecimalPlacesAndCommas(value: number | null): string {
-        if (typeof value !== 'number') {
-            return '';
-        }
+        if (typeof value !== 'number') { return ''; }
 
         // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
         return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
@@ -1289,9 +1339,8 @@ export class Utils {
      * @returns {string}
      */
     static formatNumberCommas(value: number): string {
-        if (typeof value !== 'number') {
-            return '';
-        }
+        if (typeof value !== 'number') { return ''; }
+
         return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
 
@@ -1308,7 +1357,6 @@ export class Utils {
     //
     // If you change the list below, copy/paste the new content into the docs page javascript-grid-icons
     //
-
     static iconNameClassMap: { [key: string]: string; } = {
         // header column group shown when expanded (click to contract)
         columnGroupOpened: 'expanded',
@@ -1436,13 +1484,14 @@ export class Utils {
      */
     static createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement {
         const iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
+
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
-        } else {
-            const eResult = document.createElement('span');
-            eResult.appendChild(iconContents);
-            return eResult;
         }
+
+        const eResult = document.createElement('span');
+        eResult.appendChild(iconContents);
+        return eResult;
     }
 
     static createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement {
@@ -1466,6 +1515,7 @@ export class Utils {
         // now if user provided, use it
         if (userProvidedIcon) {
             let rendererResult: any;
+
             if (typeof userProvidedIcon === 'function') {
                 rendererResult = userProvidedIcon();
             } else if (typeof userProvidedIcon === 'string') {
@@ -1473,6 +1523,7 @@ export class Utils {
             } else {
                 throw new Error('icon from grid options needs to be a string or a function');
             }
+
             if (typeof rendererResult === 'string') {
                 return this.loadTemplate(rendererResult);
             } else if (this.isNodeOrElement(rendererResult)) {
@@ -1483,6 +1534,7 @@ export class Utils {
         } else {
             const span = document.createElement('span');
             let cssClass = this.iconNameClassMap[iconName];
+
             if (!cssClass) {
                 if (!forceCreate) {
                     console.warn(`ag-Grid: Did not find icon ${iconName}`);
@@ -1491,8 +1543,9 @@ export class Utils {
                     cssClass = iconName;
                 }
             }
-            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
+
             return span;
         }
     }
@@ -1517,15 +1570,14 @@ export class Utils {
     }
 
     static getMaxDivHeight(): number {
-        if (!document.body) {
-            return -1;
-        }
+        if (!document.body) { return -1; }
 
         let res = 1000000;
         // FF reports the height back but still renders blank after ~6M px
         const testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
         const div = this.loadTemplate("<div/>");
         document.body.appendChild(div);
+
         while (true) {
             const test = res * 2;
             div.style.height = test + 'px';
@@ -1660,6 +1712,7 @@ export class Utils {
         if (this.isIE === undefined) {
             this.isIE = /*@cc_on!@*/false || !!(document as any).documentMode; // At least IE6
         }
+
         return this.isIE;
     }
 
@@ -1667,6 +1720,7 @@ export class Utils {
         if (this.isEdge === undefined) {
             this.isEdge = !this.isBrowserIE() && !!(window as any).StyleMedia;
         }
+
         return this.isEdge;
     }
 
@@ -1689,6 +1743,7 @@ export class Utils {
             this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
                 (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
         }
+
         return this.isChrome;
     }
 
@@ -1697,6 +1752,7 @@ export class Utils {
             const win = window as any;
             this.isFirefox = typeof win.InstallTrigger !== 'undefined';
         }
+
         return this.isFirefox;
     }
 
@@ -1708,6 +1764,7 @@ export class Utils {
                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
                 !window.MSStream;
         }
+
         return this.isIOS;
     }
 
@@ -1719,11 +1776,13 @@ export class Utils {
      */
     static getTarget(event: Event): Element {
         const eventNoType = event as any;
+
         return eventNoType.target || eventNoType.srcElement;
     }
 
     static isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
         let counter = 0;
+
         while (element) {
             if (this.containsClass(element, cls)) {
                 return true;
@@ -1736,10 +1795,10 @@ export class Utils {
     }
 
     static isElementInEventPath(element: HTMLElement, event: Event): boolean {
-        if (!event || !element) {
-            return false;
-        }
+        if (!event || !element) { return false; }
+
         const path = _.getEventPath(event);
+
         return path.indexOf(element) >= 0;
     }
 
@@ -1750,10 +1809,12 @@ export class Utils {
     static createEventPath(event: Event): EventTarget[] {
         const res: EventTarget[] = [];
         let pointer: any = _.getTarget(event);
+
         while (pointer) {
             res.push(pointer);
             pointer = pointer.parentElement;
         }
+
         return res;
     }
 
@@ -1777,30 +1838,37 @@ export class Utils {
      */
     static getEventPath(event: Event): EventTarget[] {
         const eventNoType = event as any;
+
         if (eventNoType.deepPath) {
             // IE supports deep path
             return eventNoType.deepPath();
-        } else if (eventNoType.path) {
+        }
+
+        if (eventNoType.path) {
             // Chrome supports path
             return eventNoType.path;
-        } else if (eventNoType.composedPath) {
+        }
+
+        if (eventNoType.composedPath) {
             // Firefox supports composePath
             return eventNoType.composedPath();
-        } else if (eventNoType.__agGridEventPath) {
+        }
+
+        if (eventNoType.__agGridEventPath) {
             // Firefox supports composePath
             return eventNoType.__agGridEventPath;
-        } else {
-            // and finally, if none of the above worked,
-            // we create the path ourselves
-            return this.createEventPath(event);
         }
+
+        // and finally, if none of the above worked,
+        // we create the path ourselves
+        return this.createEventPath(event);
     }
 
     static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void {
-        if (list) {
-            const arrayCopy = list.slice(0);
-            arrayCopy.forEach(callback);
-        }
+        if (!list) { return; }
+
+        const arrayCopy = list.slice(0);
+        arrayCopy.forEach(callback);
     }
 
     /**
@@ -1883,9 +1951,8 @@ export class Utils {
      * @return {string}
      */
     static camelCaseToHyphen(str: string): string | null {
-        if (str === null || str === undefined) {
-            return null;
-        }
+        if (str === null || str === undefined) { return null; }
+    
         return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase());
     }
 
@@ -1912,9 +1979,7 @@ export class Utils {
      * @return {string} A string like "color: black; top: 25px;" for html
      */
     static cssStyleObjectToMarkup(stylesToUse: any): string {
-        if (!stylesToUse) {
-            return '';
-        }
+        if (!stylesToUse) { return ''; }
 
         const resParts: string[] = [];
         this.iterateObject(stylesToUse, (styleKey: string, styleValue: string) => {
@@ -1932,16 +1997,13 @@ export class Utils {
      * @return {boolean}
      */
     static isNumeric(value: any): boolean {
-        if (value === '') {
-            return false;
-        }
+        if (value === '') { return false; }
+
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
     static escape(toEscape: string | null): string | null {
-        if (toEscape === null || toEscape === undefined || !toEscape.replace) {
-            return toEscape;
-        }
+        if (toEscape === null || toEscape === undefined || !toEscape.replace) { return toEscape; }
 
         return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
     }
@@ -2066,12 +2128,15 @@ export class Utils {
         if ('detail' in event) {
             sY = event.detail;
         }
+
         if ('wheelDelta' in event) {
             sY = -event.wheelDelta / 120;
         }
+
         if ('wheelDeltaY' in event) {
             sY = -event.wheelDeltaY / 120;
         }
+
         if ('wheelDeltaX' in event) {
             sX = -event.wheelDeltaX / 120;
         }
@@ -2088,6 +2153,7 @@ export class Utils {
         if ('deltaY' in event) {
             pY = event.deltaY;
         }
+
         if ('deltaX' in event) {
             pX = event.deltaX;
         }
@@ -2206,19 +2272,20 @@ export class Utils {
         if (left == null && right == null) {
             return true;
         }
+
         if (left == null && right) {
             return false;
         }
+
         if (left && right == null) {
             return false;
         }
+
         return left === right;
     }
 
     static get(source: any, expression: string, defaultValue: any): any {
-        if (source == null) {
-            return defaultValue;
-        }
+        if (source == null) { return defaultValue; }
 
         const keys = expression.split(".");
         let objectToRead = source;
@@ -2237,9 +2304,7 @@ export class Utils {
     }
 
     static set(target: any, expression: string, value: any) {
-        if (target == null) {
-            return;
-        }
+        if (target == null) { return; }
 
         const keys = expression.split(".");
         let objectToUpdate = target;
@@ -2278,9 +2343,7 @@ export class Utils {
      * @return {string}
      */
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
-        if (!camelCase || camelCase == null) {
-            return null;
-        }
+        if (!camelCase || camelCase == null) { return null;}
 
         const rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
         const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
@@ -2297,8 +2360,10 @@ export class Utils {
      */
     static message(msg: string): void {
         const eMessage = document.createElement('div');
-        eMessage.innerHTML = msg;
         let eBox = document.querySelector('#__ag__message');
+
+        eMessage.innerHTML = msg;
+
         if (!eBox) {
             const template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
             eBox = this.loadTemplate(template);
@@ -2318,9 +2383,7 @@ export class Utils {
      * @param {Object} rowNodeOrder
      */
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number; }): void {
-        if (!rowNodes) {
-            return;
-        }
+        if (!rowNodes) { return; }
 
         const comparator = (nodeA: RowNode, nodeB: RowNode) => {
             const positionA = rowNodeOrder[nodeA.id];
@@ -2336,7 +2399,9 @@ export class Utils {
                 // when comparing two nodes the user has provided, they always
                 // have indexes
                 return positionA - positionB;
-            } else if (bothNodesAreFillerNodes) {
+            }
+
+            if (bothNodesAreFillerNodes) {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
@@ -2347,7 +2412,9 @@ export class Utils {
                 // as string ordering of numbers is wrong, so using id based on creation order
                 // as least gives better looking order.
                 return nodeA.__objectId - nodeB.__objectId;
-            } else if (aHasIndex) {
+            }
+
+            if (aHasIndex) {
                 return 1;
             }
 
@@ -2358,9 +2425,11 @@ export class Utils {
         let rowNodeA: RowNode;
         let rowNodeB: RowNode;
         let atLeastOneOutOfOrder = false;
+
         for (let i = 0; i < rowNodes.length - 1; i++) {
             rowNodeA = rowNodes[i];
             rowNodeB = rowNodes[i + 1];
+
             if (comparator(rowNodeA, rowNodeB) > 0) {
                 atLeastOneOutOfOrder = true;
                 break;
@@ -2372,9 +2441,11 @@ export class Utils {
         }
     }
 
-    public static fuzzyCheckStrings(inputValues: string[],
+    public static fuzzyCheckStrings(
+        inputValues: string[],
         validValues: string[],
-        allSuggestions: string[]): { [p: string]: string[]; } {
+        allSuggestions: string[]
+    ): { [p: string]: string[]; } {
         const fuzzyMatches: { [p: string]: string[]; } = {};
         const invalidInputs: string[] = inputValues.filter(inputValue =>
             !validValues.some(
@@ -2442,9 +2513,7 @@ export class Utils {
     }
 
     static string_distances(str1: string, str2: string): number {
-        if (str1.length === 0 && str2.length === 0) {
-            return 0;
-        }
+        if (str1.length === 0 && str2.length === 0) { return 0; }
 
         const pairs1 = _.get_bigrams(str1);
         const pairs2 = _.get_bigrams(str2);
@@ -2475,6 +2544,7 @@ export class Utils {
 
         let weight = 0;
         let lastIndex = 0;
+
         for (let i = 0; i < a.length; i++) {
             const idx = b.indexOf(a[i]);
             if (idx === -1) {

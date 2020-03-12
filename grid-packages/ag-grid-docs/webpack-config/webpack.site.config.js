@@ -73,7 +73,7 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            prependData: '$ag-compatibility-mode: false;',
+                            prependData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;',
                         },
                     },
                 ]

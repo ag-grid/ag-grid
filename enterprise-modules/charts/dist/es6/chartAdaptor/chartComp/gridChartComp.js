@@ -147,8 +147,8 @@ var GridChartComp = /** @class */ (function (_super) {
         var maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         var ratio = 0.553;
         var chart = this.chartProxy.getChart();
-        var width = chart.width;
-        var height = chart.height;
+        var width = this.params.insideDialog ? 850 : chart.width;
+        var height = this.params.insideDialog ? 470 : chart.height;
         if (width > maxWidth || height > maxHeight) {
             width = Math.min(width, maxWidth);
             height = Math.round(width * ratio);

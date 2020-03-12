@@ -1753,13 +1753,13 @@
     top: 0; }
   .ag-theme-balham-dark .ag-row-highlight-below::after {
     bottom: 0px; }
-  .ag-theme-balham-dark .ag-row.ag-row-odd {
+  .ag-theme-balham-dark .ag-row-odd {
     background-color: #262c2e; }
   .ag-theme-balham-dark .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
     border-right: solid 1px #424242; }
   .ag-theme-balham-dark .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
     border-left: solid 1px #424242; }
-  .ag-theme-balham-dark .ag-row.ag-row-hover {
+  .ag-theme-balham-dark .ag-row-hover {
     background-color: #3d4749; }
   .ag-theme-balham-dark .ag-ltr .ag-numeric-cell {
     text-align: right; }
@@ -1842,11 +1842,11 @@
     border-right-width: 1px; }
   .ag-theme-balham-dark .ag-rtl .ag-cell {
     border-left-width: 1px; }
-  .ag-theme-balham-dark .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+  .ag-theme-balham-dark .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
     border-left: solid 1px #424242; }
-  .ag-theme-balham-dark .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+  .ag-theme-balham-dark .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
     border-right: solid 1px #424242; }
-  .ag-theme-balham-dark .ag-row.ag-row-selected {
+  .ag-theme-balham-dark .ag-row-selected {
     background-color: #005880; }
   .ag-theme-balham-dark .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(0, 176, 255, 0.2); }
@@ -2462,7 +2462,7 @@
       opacity: 0;
       width: 100%;
       height: 100%; }
-    .ag-theme-balham-dark .ag-checkbox-input-wrapper:focus, .ag-theme-balham-dark .ag-checkbox-input-wrapper:active {
+    .ag-theme-balham-dark .ag-checkbox-input-wrapper:focus-within, .ag-theme-balham-dark .ag-checkbox-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
     .ag-theme-balham-dark .ag-checkbox-input-wrapper:disabled {
@@ -2501,7 +2501,7 @@
       opacity: 0;
       height: 100%;
       width: 100%; }
-    .ag-theme-balham-dark .ag-toggle-button-input-wrapper:focus {
+    .ag-theme-balham-dark .ag-toggle-button-input-wrapper:focus-within {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
     .ag-theme-balham-dark .ag-toggle-button-input-wrapper:disabled {
@@ -2549,7 +2549,7 @@
       opacity: 0;
       width: 100%;
       height: 100%; }
-    .ag-theme-balham-dark .ag-radio-button-input-wrapper:focus, .ag-theme-balham-dark .ag-radio-button-input-wrapper:active {
+    .ag-theme-balham-dark .ag-radio-button-input-wrapper:focus-within, .ag-theme-balham-dark .ag-radio-button-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
     .ag-theme-balham-dark .ag-radio-button-input-wrapper:disabled {

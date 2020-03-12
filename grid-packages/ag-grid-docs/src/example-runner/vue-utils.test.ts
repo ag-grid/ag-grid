@@ -77,10 +77,10 @@ describe('toAssignment', () => {
 
 describe('getImport', () => {
     it('returns import statement', () => {
-        const filename = 'partialMatchFilter.js';
-        const importStatement = getImport(filename);
+        const filename = 'partialMatchFilterVue.js';
+        const importStatement = getImport(filename, 'Vue', '');
 
-        expect(importStatement).toBe("import PartialMatchFilter from './partialMatchFilter.js';");
+        expect(importStatement).toBe("import PartialMatchFilter from './partialMatchFilterVue.js';");
     });
 });
 

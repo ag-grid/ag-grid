@@ -1,13 +1,4 @@
-@import "./ag-theme-balham-dark-mixin";
-
-// LEGACY THEME FILE
-// This mixin is for backwards compatibility with older apps that use global variables.
-// Including this file emits CSS for the Balham Dark theme. New apps should @import ag-theme-balham-dark-mixin.scss
-// and @include ag-theme-balham-dark($params), instead of using this file.
-
-@import "./legacy/ag-theme-balham-dark-define-legacy-vars";
-
-.ag-theme-balham-dark {
-    @include ag-theme-balham-dark(ag-theme-base-create-params-from-legacy-vars($ag-theme-balham-dark-default-params));
-    @include ag-v22-to-v23-compatibility-mode();
+@if not global-variable-exists("ag-suppress-all-theme-deprecation-warnings") {
+    @warn "You are importing ag-theme-balham-dark/sass/ag-theme-balham-dark.scss. This import path is deprecated and will be removed in a future major version release. To continue using the Balham Dark theme, please update your imports to either ag-theme-balham-dark/sass/legacy/ag-theme-balham-dark-v22-compat.scss (if you want to continue using v22 global variables for configuration), or ag-theme-balham/sass/ag-theme-balham-dark-mixin.scss (if you want to transition to the new theme configuration system). See https://github.com/ag-grid/ag-grid/blob/latest/grid-packages/ag-grid-docs/migration-guide-22.1-to-23.0.md";
 }
+@import "./legacy/ag-theme-balham-dark-v22-compat.scss";

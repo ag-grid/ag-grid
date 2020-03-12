@@ -2,22 +2,22 @@ var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 function getColumnDefs() {
     var columnDefs = [
-        {checkboxSelection: true, headerName: '', width: 34},
-        {headerName: '', width: 50, valueGetter: 'node.rowIndex'},
+        {checkboxSelection: true, headerName: '', width: 60},
+        {headerName: '#', width: 80, valueGetter: 'node.rowIndex'},
     ];
 
 
     ALPHABET.forEach(function(letter) {
-        columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 110});
+        columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 150});
     });
     return columnDefs;
 }
 
 var gridOptions = {
+    columnDefs: getColumnDefs(),
     defaultColDef: {
         resizable: true
     },
-    columnDefs: getColumnDefs(),
     rowModelType: 'infinite',
     rowSelection: 'multiple',
     maxBlocksInCache: 2,

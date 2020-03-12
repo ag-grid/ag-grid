@@ -3,6 +3,7 @@ const fs = require('fs');
 const archiver = require('archiver');
 
 const LATEST_HASH = require('child_process').execSync('cat .git/refs/heads/latest').toString().trim();
+const LATEST_HASH_TIMESTAMP = require('child_process').execSync(`git show -s --format=%ci ${LATEST_HASH}`).toString().trim();
 
 if (process.argv.length !== 3) {
     console.log("Usage: node scripts/release/createDocsArchiveBundle.js [Version Number]");
@@ -41,7 +42,7 @@ function preProcessRootIndex(fileContents) {
         </html>`
 }
 
-function preDocHeader(fileContents, latestHash) {
+function preDocHeader(fileContents, latestHash, latestHashTimestamp) {
     // replace $version with archive version (determines root - ie /archive/<version> instead of just /)
     let re = /\$version.*=.*'latest'/;
     const {index} = re.exec(fileContents);
@@ -52,10 +53,14 @@ function preDocHeader(fileContents, latestHash) {
     fileContents=`${fileContents.substr(0, startIndex)}${newVersion}${fileContents.substr(endIndex, fileContents.length)}`;
 
     // insert latest hash - useful to determine which changes should be in a given archive
-    re = /\$latest_hash.*=.*''/;
     startIndex = fileContents.indexOf("''", index) + 1;
     endIndex = fileContents.indexOf("'", startIndex);
     fileContents=`${fileContents.substr(0, startIndex)}${latestHash}${fileContents.substr(endIndex, fileContents.length)}`;
+
+    // insert latest hash timestamp - useful to determine which changes should be in a given archive
+    startIndex = fileContents.indexOf("''", index) + 1;
+    endIndex = fileContents.indexOf("'", startIndex);
+    fileContents=`${fileContents.substr(0, startIndex)}${latestHashTimestamp}${fileContents.substr(endIndex, fileContents.length)}`;
 
     return fileContents;
 }
@@ -93,7 +98,7 @@ walker.on("file", (root, fileStats, next) => {
     if (isRootIndexPhp(fullFileName)) {
         fileContents = preProcessRootIndex(fs.readFileSync(fullFileName, 'utf8'));
     } else if (isDocHeaderPhp(fullFileName, fileStats)) {
-        fileContents = preDocHeader(fs.readFileSync(fullFileName, 'utf8'), LATEST_HASH);
+        fileContents = preDocHeader(fs.readFileSync(fullFileName, 'utf8'), LATEST_HASH, LATEST_HASH_TIMESTAMP);
     } else {
         fileContents = fs.createReadStream(fullFileName);
     }

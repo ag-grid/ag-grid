@@ -235,8 +235,6 @@ var ChartProxy = /** @class */ (function () {
         var _a = this.getPredefinedPalette(), fills = _a.fills, strokes = _a.strokes;
         var fontOptions = this.getDefaultFontOptions();
         return {
-            width: 850,
-            height: 470,
             background: {
                 fill: this.getBackgroundColor(),
                 visible: true,

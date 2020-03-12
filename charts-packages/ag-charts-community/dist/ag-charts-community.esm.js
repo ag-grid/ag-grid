@@ -1447,8 +1447,8 @@ var HdpiCanvas = /** @class */ (function () {
             element.style.width = Math.round(width) + 'px';
             element.style.height = Math.round(height) + 'px';
             context.resetTransform();
-            // the canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise        
+            // The canvas being resized is asynchronous. For the case where we
+            // need to do something after it is resized, return a promise.
             callbackWhenDone && callbackWhenDone();
         });
     };
@@ -1501,8 +1501,11 @@ var HdpiCanvas = /** @class */ (function () {
                 return this._has;
             }
             return this._has = Object.freeze({
-                textMetrics: this.textMeasuringContext.measureText('test')
-                    .actualBoundingBoxDescent !== undefined,
+                textMetrics: this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined
+                    // Firefox implemented advanced TextMetrics object in v74:
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
+                    // but it's buggy, so we'll keed using the SVG for text measurement in Firefox for now.
+                    && !/Firefox\/\d+(.\d)+/.test(window.navigator.userAgent),
                 getTransform: this.textMeasuringContext.getTransform !== undefined
             });
         },
@@ -5771,7 +5774,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.resize = function (width, height) {
         var _this = this;
         this.canvas.resize(width, height, 
-        // resizing a canvas clears the pixel content so when resizing is done 
+        // resizing a canvas clears the pixel content so when resizing is done
         // mark as dirty to ensure a re-render
         function () { return _this.dirty = true; });
     };
@@ -7266,7 +7269,7 @@ var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    overflow: hidden;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n";
 var Chart = /** @class */ (function (_super) {
     __extends$p(Chart, _super);
     function Chart(document) {

@@ -158,8 +158,8 @@ var HdpiCanvas = /** @class */ (function () {
             element.style.width = Math.round(width) + 'px';
             element.style.height = Math.round(height) + 'px';
             context.resetTransform();
-            // the canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise        
+            // The canvas being resized is asynchronous. For the case where we
+            // need to do something after it is resized, return a promise.
             callbackWhenDone && callbackWhenDone();
         });
     };
@@ -212,8 +212,11 @@ var HdpiCanvas = /** @class */ (function () {
                 return this._has;
             }
             return this._has = Object.freeze({
-                textMetrics: this.textMeasuringContext.measureText('test')
-                    .actualBoundingBoxDescent !== undefined,
+                textMetrics: this.textMeasuringContext.measureText('test').actualBoundingBoxDescent !== undefined
+                    // Firefox implemented advanced TextMetrics object in v74:
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1102584
+                    // but it's buggy, so we'll keed using the SVG for text measurement in Firefox for now.
+                    && !/Firefox\/\d+(.\d)+/.test(window.navigator.userAgent),
                 getTransform: this.textMeasuringContext.getTransform !== undefined
             });
         },

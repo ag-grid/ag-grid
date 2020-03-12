@@ -77,7 +77,7 @@ var Scene = /** @class */ (function () {
     Scene.prototype.resize = function (width, height) {
         var _this = this;
         this.canvas.resize(width, height, 
-        // resizing a canvas clears the pixel content so when resizing is done 
+        // resizing a canvas clears the pixel content so when resizing is done
         // mark as dirty to ensure a re-render
         function () { return _this.dirty = true; });
     };

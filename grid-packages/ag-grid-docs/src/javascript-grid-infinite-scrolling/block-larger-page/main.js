@@ -117,7 +117,7 @@ var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {
         headerName: 'ID',
-        width: 50,
+        maxWidth: 100,
         valueGetter: 'node.id',
         cellRenderer: 'loadingRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
@@ -125,39 +125,41 @@ var columnDefs = [
         sortable: false,
         suppressMenu: true
     },
-    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},
+    {headerName: 'Athlete', field: 'athlete', suppressMenu: true},
     {
-        headerName: 'Age',
         field: 'age',
-        width: 90,
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan']
         }
     },
     {
-        headerName: 'Country',
         field: 'country',
-        width: 120,
         filter: 'agSetColumnFilter',
         filterParams: {values: countries()}
     },
     {
-        headerName: 'Year',
         field: 'year',
-        width: 90,
         filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110, suppressMenu: true},
-    {headerName: 'Gold', field: 'gold', width: 100, suppressMenu: true},
-    {headerName: 'Silver', field: 'silver', width: 100, suppressMenu: true},
-    {headerName: 'Bronze', field: 'bronze', width: 100, suppressMenu: true},
-    {headerName: 'Total', field: 'total', width: 100, suppressMenu: true}
+    { field: 'date' },
+    { field: 'sport', suppressMenu: true },
+    { field: 'gold', suppressMenu: true },
+    { field: 'silver', suppressMenu: true },
+    { field: 'bronze', suppressMenu: true },
+    { field: 'total', suppressMenu: true }
+
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true
+    },
     components:{
         loadingRenderer:function(params) {
             if (params.value !== undefined) {
@@ -167,15 +169,9 @@ var gridOptions = {
             }
         }
     },
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
     floatingFilter: true,
-    debug: true,
     rowSelection: 'multiple',
     rowDeselection: true,
-    columnDefs: columnDefs,
     rowModelType: 'infinite',
     paginationPageSize: 100,
     cacheOverflowSize: 2,
@@ -184,6 +180,7 @@ var gridOptions = {
     maxBlocksInCache: 2,
     pagination: true,
     paginationAutoPageSize: true,
+    // debug: true,
     getRowNodeId: function(item) {
         return item.id;
     }

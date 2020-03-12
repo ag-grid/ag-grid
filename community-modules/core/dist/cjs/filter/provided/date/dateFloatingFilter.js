@@ -75,7 +75,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(utils_1._.parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+                this.dateComp.setDate(utils_1._.getDateFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -90,7 +90,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = utils_1._.serializeDateToYyyyMmDd(filterValueDate, "-");
+        var filterValueText = utils_1._.serializeDateToYyyyMmDd(filterValueDate, "-") + " " + utils_1._.getTimeFromDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;

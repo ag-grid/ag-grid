@@ -75,12 +75,14 @@
 }
 
 @mixin ag-icons-font-face() {
-    @at-root {
-        @font-face {
-            font-family: '#{ag-param(icon-font-family)}';
-            src: ag-param(icons-data);
-            font-weight: normal;
-            font-style: normal;
+    @if ag-param(icons-data) {
+        @at-root {
+            @font-face {
+                font-family: '#{ag-param(icon-font-family)}';
+                src: ag-param(icons-data);
+                font-weight: normal;
+                font-style: normal;
+            }
         }
     }
 }

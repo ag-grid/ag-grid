@@ -1958,16 +1958,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   justify-content: space-between; }
 
 .ag-chart-empty-text {
-  display: none;
+  display: flex;
   position: absolute;
   top: 0;
   width: 100%;
   height: 100%;
   align-items: center;
   justify-content: center; }
-
-.ag-chart-empty .ag-chart-empty-text {
-  display: flex; }
 
 .ag-chart-docked-container {
   min-width: 0;

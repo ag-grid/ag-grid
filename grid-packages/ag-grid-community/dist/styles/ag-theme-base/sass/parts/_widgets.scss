@@ -493,7 +493,7 @@
     vertical-align: middle;
     flex: none;
     
-    &:focus, &:active {
+    &:focus-within, &:active {
         outline: none;
         box-shadow: ag-param(input-focus-box-shadow);
     }
@@ -575,7 +575,7 @@
         width: 100%;
     }
 
-    &:focus {
+    &:focus-within {
         outline: none;
         box-shadow: ag-param(input-focus-box-shadow);
     }

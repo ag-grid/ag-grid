@@ -1393,7 +1393,7 @@
     top: 0; }
   .ag-theme-fresh .ag-row-highlight-below::after {
     bottom: 0px; }
-  .ag-theme-fresh .ag-row.ag-row-odd {
+  .ag-theme-fresh .ag-row-odd {
     background-color: #f6f6f6; }
   .ag-theme-fresh .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
     border-right: solid 1px darkgrey; }
@@ -1480,11 +1480,11 @@
     border-right-width: 1px; }
   .ag-theme-fresh .ag-rtl .ag-cell {
     border-left-width: 1px; }
-  .ag-theme-fresh .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+  .ag-theme-fresh .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
     border-left: solid 1px darkgrey; }
-  .ag-theme-fresh .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+  .ag-theme-fresh .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell):not(.ag-cell-focus) {
     border-right: solid 1px darkgrey; }
-  .ag-theme-fresh .ag-row.ag-row-selected {
+  .ag-theme-fresh .ag-row-selected {
     background-color: #bde2e5; }
   .ag-theme-fresh .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.2); }
@@ -2095,7 +2095,7 @@
       opacity: 0;
       width: 100%;
       height: 100%; }
-    .ag-theme-fresh .ag-checkbox-input-wrapper:focus, .ag-theme-fresh .ag-checkbox-input-wrapper:active {
+    .ag-theme-fresh .ag-checkbox-input-wrapper:focus-within, .ag-theme-fresh .ag-checkbox-input-wrapper:active {
       outline: none; }
     .ag-theme-fresh .ag-checkbox-input-wrapper:disabled {
       opacity: 0.5; }
@@ -2133,7 +2133,7 @@
       opacity: 0;
       height: 100%;
       width: 100%; }
-    .ag-theme-fresh .ag-toggle-button-input-wrapper:focus {
+    .ag-theme-fresh .ag-toggle-button-input-wrapper:focus-within {
       outline: none; }
     .ag-theme-fresh .ag-toggle-button-input-wrapper:disabled {
       opacity: 0.5; }
@@ -2179,7 +2179,7 @@
       opacity: 0;
       width: 100%;
       height: 100%; }
-    .ag-theme-fresh .ag-radio-button-input-wrapper:focus, .ag-theme-fresh .ag-radio-button-input-wrapper:active {
+    .ag-theme-fresh .ag-radio-button-input-wrapper:focus-within, .ag-theme-fresh .ag-radio-button-input-wrapper:active {
       outline: none; }
     .ag-theme-fresh .ag-radio-button-input-wrapper:disabled {
       opacity: 0.5; }

@@ -1,5 +1,5 @@
 import { html, PolymerElement } from "../node_modules/@polymer/polymer/polymer-element.js";
-import "../node_modules/@ag-grid-community/core/index.js";
+import "../node_modules/@ag-grid-community/polymer/index.js";
 
 class AgGridPolymerExample extends PolymerElement {
   static get template() {

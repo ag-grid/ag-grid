@@ -109,7 +109,7 @@
     }
 
     @if ag-param(odd-row-background-color) {
-        .ag-row.ag-row-odd {
+        .ag-row-odd {
             background-color: ag-param(odd-row-background-color);
         }
     }
@@ -122,7 +122,7 @@
         @include ag-border(critical, left);
     }
 
-    .ag-row.ag-row-hover {
+    .ag-row-hover {
         background-color: ag-param(row-hover-color);
     }
 
