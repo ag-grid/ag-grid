@@ -1,16 +1,11 @@
 var colDefAthlete = {headerName: 'Athlete', field: 'athlete'};
 var colDefSport = {headerName: 'Sport', field: 'sport'};
-
 var colDefAge = {headerName: 'Age', field: 'age'};
 var colDefYear = {headerName: 'Year', field: 'year'};
-
 var colDefDate = {headerName: 'Date', field: 'date', comparator: dateComparator};
-
 var colDefGold = {headerName: 'Gold', field: 'gold'};
 var colDefSilver = {headerName: 'Silver', field: 'silver'};
 var colDefBronze = {headerName: 'Bronze', field: 'bronze'};
-
-var columnDefs = [colDefAthlete, colDefSport, colDefAge, colDefYear, colDefDate];
 
 var gridOptions = {
     defaultColDef: {
@@ -22,7 +17,7 @@ var gridOptions = {
         resizable: true,
         filter: true
     },
-    columnDefs: columnDefs,
+    columnDefs: [colDefAthlete, colDefSport, colDefAge, colDefYear, colDefDate],
     animateRows: true,
     sideBar: {
         toolPanels: [
@@ -60,18 +55,23 @@ var gridOptions = {
 
 function onBtApply(reverse) {
     var cols = [];
+
     if (getBooleanValue('#athlete')) {
         cols.push(colDefAthlete);
     }
+
     if (getBooleanValue('#sport')) {
         cols.push(colDefSport);
     }
+
     if (getBooleanValue('#age')) {
         cols.push(colDefAge);
     }
+
     if (getBooleanValue('#year')) {
         cols.push(colDefYear);
     }
+
     if (getBooleanValue('#date')) {
         cols.push(colDefDate);
     }
@@ -79,15 +79,17 @@ function onBtApply(reverse) {
     if (getBooleanValue('#gold')) {
         cols.push(colDefGold);
     }
+
     if (getBooleanValue('#silver')) {
         cols.push(colDefSilver);
     }
+
     if (getBooleanValue('#bronze')) {
         cols.push(colDefBronze);
     }
 
     if (reverse) {
-        cols = cols.reverse();
+        cols.reverse();
     }
 
     gridOptions.api.setColumnDefs(cols);
@@ -97,7 +99,6 @@ function getBooleanValue(cssSelector) {
     return document.querySelector(cssSelector).checked === true;
 }
 
-
 function dateComparator(date1, date2) {
     var date1Number = monthToComparableNumber(date1);
     var date2Number = monthToComparableNumber(date2);
@@ -105,9 +106,11 @@ function dateComparator(date1, date2) {
     if (date1Number === null && date2Number === null) {
         return 0;
     }
+
     if (date1Number === null) {
         return -1;
     }
+
     if (date2Number === null) {
         return 1;
     }
@@ -125,8 +128,7 @@ function monthToComparableNumber(date) {
     var monthNumber = date.substring(3, 5);
     var dayNumber = date.substring(0, 2);
 
-    var result = (yearNumber * 10000) + (monthNumber * 100) + dayNumber;
-    return result;
+    return (yearNumber * 10000) + (monthNumber * 100) + dayNumber;
 }
 
 // setup the grid after the page has finished loading

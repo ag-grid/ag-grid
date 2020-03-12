@@ -205,10 +205,20 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
 
         if (funcName) {
             return `window.${funcName} = ${body}`;
+
         }
 
         // probably a var
         return body;
+    }).sort((a, b) => {
+        const aIsAssignedToWindow = a.startsWith('window.');
+        const bIsAssignedToWindow = b.startsWith('window.');
+
+        if (aIsAssignedToWindow && bIsAssignedToWindow) { return 0; }
+        if (aIsAssignedToWindow) { return -1; }
+        if (bIsAssignedToWindow) { return 1; }
+
+        return 0;
     });
 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions];
