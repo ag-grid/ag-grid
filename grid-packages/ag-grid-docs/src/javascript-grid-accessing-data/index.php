@@ -124,7 +124,7 @@ SNIPPET
     In the example, try applying some sorts and filters, and see how this impacts the different operations.
 </p>
 
-<?= grid_example('Using For-Each', 'using-for-each', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Using For-Each', 'using-for-each', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
 <h2 id="for-each-node">Accessing Displayed Rows</h2>
 
@@ -166,6 +166,6 @@ SNIPPET
         one page.</li>
 </ul>
 
-<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
+<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated', ['exampleHeight' => 600]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
