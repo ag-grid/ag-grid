@@ -92,14 +92,18 @@ export class AppModule {}
 
 <div class="note">The <code>withComponents</code> call is necessary for the grid to be able to use Angular components as cells / headers - you can ignore it for now.</div>
 
-<p>The next step is to add the ag-Grid styles - import them in <code>styles.scss</code>:</p>
+<p>The next step is to add the ag-Grid styles - replace the content of <code>styles.scss</code> with the following code:</p>
 
 <snippet language="scss">
-@import "~ag-grid-community/dist/styles/ag-grid.css";
-@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+
+.ag-theme-alpine {
+    @include ag-theme-alpine();
+}
 </snippet>
 
-<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+<p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
 The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <p>Next, let's declare the basic grid configuration. Edit <code>src/app.component.ts</code>:</p>
@@ -137,7 +141,7 @@ each column entry specifies the header label and the data field to be displayed 
 <snippet language="html">
 &lt;ag-grid-angular
     style="width: 500px; height: 500px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData"
     [columnDefs]="columnDefs"
     &gt;
@@ -145,7 +149,7 @@ each column entry specifies the header label and the data field to be displayed 
 </snippet>
 
 <p>This is the ag-grid component definition, with two property bindings - <code>rowData</code> and <code>columnDefs</code>. The component also accepts the standard DOM <code>style</code> and <code>class</code>.
-We have set the class to <code>ag-theme-balham</code>, which defines the grid theme.
+We have set the class to <code>ag-theme-alpine</code>, which defines the grid theme.
 As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.
 </p>
 
@@ -245,7 +249,7 @@ export class AppComponent implements OnInit {
 <snippet language="html">
 &lt;ag-grid-angular
     style="width: 500px; height: 500px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     &gt;
@@ -298,7 +302,7 @@ export class AppComponent implements OnInit {
 <snippet language="html">
 &lt;ag-grid-angular
     style="width: 500px; height: 500px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -317,7 +321,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular
     #agGrid
     style="width: 500px; height: 500px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -368,7 +372,7 @@ export class AppComponent implements OnInit {
 &lt;ag-grid-angular
     #agGrid
     style="width: 500px; height: 500px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData | async"
     [columnDefs]="columnDefs"
     rowSelection="multiple"
@@ -504,34 +508,37 @@ export class AppComponent implements OnInit {
 <p>Add the the <code>autoGroupColumnDef</code> property to the template too:</p>
 
 <snippet language="diff">
-class="ag-theme-balham"
+class="ag-theme-alpine"
 +[autoGroupColumnDef]="autoGroupColumnDef"
 </snippet>
 
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded.
 Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
 
-<div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially.
+<div class="note"> Don't worry if this step feels a bit overwhelming - the grouping feature is very powerful and supports complex interaction scenarios which you might not need initially.
 The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
 <h2 id="customize-the-theme-look">Customize the Theme Look</h2>
 
-<p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p>
+<p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's parameters.</p>
 
-<p>By default, ag-Grid ships a <a href="https://www.ag-grid.com/javascript-grid-styling/">set of pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project,
-override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
-
-<p>Thankfully, Angular CLI has done most of the heavy lifting for us. Remember that  we bootstrapped our project with <code>--style scss</code>? Everything we need to do now is to change the paths in <code>src/styles.scss</code>:</p>
+<p>Open <code>style.scss</code> and add some parameters:</p>
 
 <snippet language="scss">
 @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-@import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        odd-row-background-color: #CFD8DC
+    ));
+}
 </snippet>
 
-<p>Let's do something simpler, though. We can override the alternating row background color to grayish blue. Add the following line:</p>
+<p>You can find a <a href="/javascript-grid-themes-provided/">full list of theme parameters here</a>.</p>
 
 <snippet language="diff">
-+$ag-odd-row-background-color: #CFD8DC;
+
 </snippet>
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!

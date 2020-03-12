@@ -17,8 +17,8 @@ include '../documentation-main/documentation_header.php';
     <note>
         <p>
             In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could
-            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is
-            the best way to allow icon theming.
+            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is more flexible
+            and performs better.
         </p>
 
         <p>
@@ -56,76 +56,76 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 <h2>Replace the icons by changing the icons font (Scss)</h2>
 
-<p>If you are using Sass/Scss in your project, you can include the ag-grid theme source file and customize its properties by overriding the default variables. </p>
+<p>If you are using a <a href="/javascript-grid-styling/">custom theme</a> in your project, you can include use theme parameters to change the icon font.
+    We <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">provide an example</a>
+    that does this, and the relevant code looks like this:
 
 <snippet>
-// styles.scss
-// This is an example of the application scss file;
-// Popular framework project scaffolders like angular-cli support
-// generating sass enabled projects.
-// For example, the `ng new` command accepts `--style scss`.
-
-// import the Sass files from the ag-Grid npm package. //
-// The "~" path prefix below relies on Webpack's sass-loader -
-// https://github.com/webpack-contrib/sass-loader.
-
-$ag-icon-font-family: "Font Awesome 5 Free";
-
-$ag-icon-aggregation: "\f247";
-$ag-icon-arrows: "\f0b2";
-$ag-icon-asc: "\f062";
-$ag-icon-cancel: "\f057";
-$ag-icon-chart: "\f080";
-$ag-icon-checkbox-checked: "\f14a";
-$ag-icon-checkbox-indeterminate: "\f146";
-$ag-icon-checkbox-unchecked: "\f0c8";
-$ag-icon-color-picker: "\f576";
-$ag-icon-columns: "\f0db";
-$ag-icon-contracted: "\f146";
-$ag-icon-copy: "\f0c5";
-$ag-icon-cross: "\f00d";
-$ag-icon-desc: "\f063";
-$ag-icon-expanded: "\f0fe";
-$ag-icon-eye-slash: "\f070";
-$ag-icon-eye: "\f06e";
-$ag-icon-filter: "\f0b0";
-$ag-icon-first: "\f100";
-$ag-icon-grip: "\f58e";
-$ag-icon-group: "\f5fd";
-$ag-icon-last: "\f101";
-$ag-icon-left: "\f060";
-$ag-icon-linked: "\f0c1";
-$ag-icon-loading: "\f110";
-$ag-icon-maximize: "\f2d0";
-$ag-icon-menu: "\f0c9";
-$ag-icon-minimize: "\f2d1";
-$ag-icon-next: "\f105";
-$ag-icon-none: "\f338";
-$ag-icon-not-allowed: "\f05e";
-$ag-icon-paste: "\f0ea";
-$ag-icon-pin: "\f276";
-$ag-icon-pivot: "\f074";
-$ag-icon-previous: "\f104";
-$ag-icon-radio-button-off: "\f111";
-$ag-icon-radio-button-on: "\f058";
-$ag-icon-right: "\f061";
-$ag-icon-save: "\f0c7";
-$ag-icon-small-down: "\f107";
-$ag-icon-small-left: "\f104";
-$ag-icon-small-right: "\f105";
-$ag-icon-small-up: "\f106";
-$ag-icon-tick: "\f00c";
-$ag-icon-tree-closed: "\f105";
-$ag-icon-tree-indeterminate: "\f068";
-$ag-icon-tree-open: "\f107";
-$ag-icon-unlinked: "\f127";
-
 @import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-balham.scss";
+@import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
 
-.ag-icon {
-    font-weight: bold;
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        "icon-font-family": "Font Awesome 5 Free",
+        "icons-data": null, // prevent default font frombeing embedded
+        "icons-font-codes": (
+            "aggregation": "\f247",
+            "arrows": "\f0b2",
+            "asc": "\f062",
+            "cancel": "\f057",
+            "chart": "\f080",
+            "checkbox-checked": "\f14a",
+            "checkbox-indeterminate": "\f146",
+            "checkbox-unchecked": "\f0c8",
+            "color-picker": "\f576",
+            "columns": "\f0db",
+            "contracted": "\f146",
+            "copy": "\f0c5",
+            "cross": "\f00d",
+            "desc": "\f063",
+            "expanded": "\f0fe",
+            "eye-slash": "\f070",
+            "eye": "\f06e",
+            "filter": "\f0b0",
+            "first": "\f100",
+            "grip": "\f58e",
+            "group": "\f5fd",
+            "last": "\f101",
+            "left": "\f060",
+            "linked": "\f0c1",
+            "loading": "\f110",
+            "maximize": "\f2d0",
+            "menu": "\f0c9",
+            "minimize": "\f2d1",
+            "next": "\f105",
+            "none": "\f338",
+            "not-allowed": "\f05e",
+            "paste": "\f0ea",
+            "pin": "\f276",
+            "pivot": "\f074",
+            "previous": "\f104",
+            "radio-button-off": "\f111",
+            "radio-button-on": "\f058",
+            "right": "\f061",
+            "save": "\f0c7",
+            "small-down": "\f107",
+            "small-left": "\f104",
+            "small-right": "\f105",
+            "small-up": "\f106",
+            "tick": "\f00c",
+            "tree-closed": "\f105",
+            "tree-indeterminate": "\f068",
+            "tree-open": "\f107",
+            "unlinked": "\f127",
+        )
+    ));
+
+    .ag-icon {
+        // required because Font Awesome uses bold for its icons
+        font-weight: bold;
+    }
 }
+
 </snippet>
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
@@ -299,8 +299,8 @@ sortUnSort: 'none'
 </p>
 <note>
     <p>
-        SVG Icons will not use the <code>$ag-icon-color</code>, <code>$ag-alt-icon-color</code> and <code>$ag-accent-color</code>
-        variables to colorize icons. This means you will need to add the colors you want to the SVG icons code.
+        SVG Icons can not have their colour changed in CSS, so themes are not able to set the icon color. This means you will need to
+        add the colors you want to the SVG image itself.
     </p>
 </note>
 
