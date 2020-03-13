@@ -91,7 +91,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             const value = eInput.getValue();
 
-            if (value.length) {
+            if (value && value.length) {
                 inputEl.setSelectionRange(length, length);
             }
         }
