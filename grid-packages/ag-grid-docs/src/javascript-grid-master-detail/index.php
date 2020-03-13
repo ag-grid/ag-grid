@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <? enterprise_feature("Master Detail"); ?>
-
 <?php
-        printVideoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial");
+//        printVideoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial");
     ?>
 
 <p>
@@ -31,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Enabling Master Detail</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=7s", "00:07");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=7s", "00:07");
     ?>
 
 <p>
@@ -98,7 +97,7 @@ var detailGridOptions = {
 <h2>Accessing Detail Grid API</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=132s", "02:12");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=132s", "02:12");
     ?>
 
 <p>
@@ -173,7 +172,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <h2>Syncing Detail scrolling with Master</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=249s", "04:09");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=249s", "04:09");
     ?>
 
 <p>
@@ -198,7 +197,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <h2>Overriding the Default Detail Cell Renderer</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=273s", "04:33");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=273s", "04:33");
     ?>
 
     <p>
@@ -278,7 +277,7 @@ detailCellRendererParams: {
 <h2>Providing a Custom Detail Cell Renderer</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=358s", "05:58");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=358s", "05:58");
     ?>
 
 <p>
@@ -346,7 +345,7 @@ onGridReady(params) {
 <h2>Example: Custom Detail Cell Renderer with a Form</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=560s", "09:20");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=560s", "09:20");
     ?>
 
 <p>
@@ -358,7 +357,7 @@ onGridReady(params) {
 <h2 id="grid-per-row">Configure Grid per Row</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=626s", "10:26");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=626s", "10:26");
     ?>
 
 <p>
@@ -387,7 +386,7 @@ onGridReady(params) {
 <h2>Dynamically Specify Master Nodes</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=702s", "11:42");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=702s", "11:42");
     ?>
 
 <p>
@@ -422,7 +421,7 @@ masterGridOptions.isRowMaster = function (dataItem) {
 <h2>Nesting Master / Detail</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=770s", "12:50");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=770s", "12:50");
     ?>
 
 <p>
@@ -479,7 +478,7 @@ var gridOptionsLevel3Detail = {
 <h2>Detail Row Height</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=840s", "14:00");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=840s", "14:00");
     ?>
 
 <p>
@@ -544,7 +543,7 @@ masterGridOptions.getRowHeight = function (params) {
 <h2>Filtering and Sorting</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=941s", "15:41");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=941s", "15:41");
     ?>
 
 <p>
@@ -563,7 +562,7 @@ masterGridOptions.getRowHeight = function (params) {
 <h2>Lazy Load Detail Rows</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=970s", "16:10");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=970s", "16:10");
     ?>
 
 <p>
@@ -606,7 +605,7 @@ var masterGridOptions = {
 <h2 id="keeping-row-details">Keeping Detail Rows</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1017s", "16:57");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1017s", "16:57");
     ?>
 
 <p>
@@ -652,7 +651,7 @@ var masterGridOptions = {
 <h2>Changing Data & Refresh</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1118s", "18:38");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1118s", "18:38");
     ?>
 
 <p>
@@ -690,7 +689,7 @@ var masterGridOptions = {
 <h2>Exporting Master / Detail Data</h2>
 
 <?php
-        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1183s", "19:43");
+//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1183s", "19:43");
     ?>
 
 <p>
