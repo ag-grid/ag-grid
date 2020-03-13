@@ -721,6 +721,8 @@
     border-radius: 3px;
     box-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     padding: 6px; }
+  .ag-theme-alpine-dark .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px; }
   .ag-theme-alpine-dark .ag-loading {
     padding-left: 18px;
     display: flex;
@@ -1719,4 +1721,6 @@
   .ag-theme-alpine-dark .ag-set-filter-list {
     padding-top: 3px;
     padding-bottom: 3px; }
+  .ag-theme-alpine-dark .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 60px; }
 

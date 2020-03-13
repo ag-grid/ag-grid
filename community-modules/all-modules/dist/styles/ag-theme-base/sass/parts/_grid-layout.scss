@@ -190,6 +190,11 @@
         @include ag-card();
     }
 
+    // in auto-height mode with no rows, add padding to prevent grid being too small
+    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+        padding-top: 30px;
+    }
+
     .ag-loading {
         padding-left: ag-param(cell-horizontal-padding);
         display: flex;

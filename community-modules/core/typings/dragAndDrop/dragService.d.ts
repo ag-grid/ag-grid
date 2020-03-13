@@ -22,7 +22,7 @@ export declare class DragService {
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart;
     private onMouseDown;
-    private addMoveAndEndEvents;
+    private addTemporaryEvents;
     private isEventNearStartEvent;
     private getFirstActiveTouch;
     private onCommonMove;

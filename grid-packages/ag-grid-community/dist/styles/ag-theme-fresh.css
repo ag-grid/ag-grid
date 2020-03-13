@@ -1450,6 +1450,8 @@
     border-radius: 0px;
     box-shadow: none;
     padding: 4px; }
+  .ag-theme-fresh .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px; }
   .ag-theme-fresh .ag-loading {
     padding-left: 12px;
     display: flex;

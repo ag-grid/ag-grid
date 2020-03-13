@@ -1436,6 +1436,8 @@
     border-radius: 0px;
     box-shadow: none;
     padding: 4px; }
+  .ag-theme-bootstrap .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px; }
   .ag-theme-bootstrap .ag-loading {
     padding-left: 12px;
     display: flex;

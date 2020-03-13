@@ -159,4 +159,8 @@
     .ag-filter-toolpanel-group-level-0-header {
         height: ag-param(grid-size) * 7;
     }
+
+    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+        padding-top: 60px;
+    }
 }

@@ -632,6 +632,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     }
 }
 
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    align-items: center;
+}
+
 .ag-cell-auto-height {
     height: 100%;
 }
@@ -789,11 +793,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-overlay-loading-wrapper {
     // prevent interaction with grid while it's loading
     pointer-events: all;
-}
-
-// in auto-height mode with no rows, add padding to prevent grid being too small
-.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 30px;
 }
 
 /**
@@ -1347,12 +1346,12 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     flex: 1 1 auto;
     width: 100%;
     min-width: 0;
+}
 
-    &[type='date'] {
-        // Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
-        // flex container, but it will grow. So we give it a very small width and it will grow to the right size
-        width: 1px;
-    }
+.ag-floating-filter-input .ag-input-field-input[type='date'] {
+    // Fix a bug in Blink rendering engine where date input will not shrink from its default size in a
+    // flex container, but it will grow. So we give it a very small width and it will grow to the right size
+    width: 1px;
 }
 
 .ag-range-field {

@@ -28721,7 +28721,7 @@ var DragService = /** @class */ (function () {
             { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
         ];
         // temporally add these listeners, for the duration of the drag
-        this.addMoveAndEndEvents(events);
+        this.addTemporaryEvents(events);
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onCommonMove(touch, this.touchStart, params.eElement);
@@ -28730,21 +28730,17 @@ var DragService = /** @class */ (function () {
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
-        // we ignore when shift key is pressed. this is for the range selection, as when
-        // user shift-clicks a cell, this should not be interpreted as the start of a drag.
-        // if (mouseEvent.shiftKey) { return; }
-        if (params.skipMouseEvent) {
-            if (params.skipMouseEvent(mouseEvent)) {
-                return;
-            }
+        var e = mouseEvent;
+        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+            return;
         }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (mouseEvent._alreadyProcessedByDragService) {
+        if (e._alreadyProcessedByDragService) {
             return;
         }
-        mouseEvent._alreadyProcessedByDragService = true;
+        e._alreadyProcessedByDragService = true;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -28756,19 +28752,21 @@ var DragService = /** @class */ (function () {
         this.setNoSelectToBody(true);
         var mouseMoveEvent = function (e, el) { return _this.onMouseMove(e, params.eElement); };
         var mouseUpEvent = function (e, el) { return _this.onMouseUp(e, params.eElement); };
+        var contextEvent = function (e) { return e.preventDefault(); };
         var target = eDocument;
         var events = [
             { target: target, type: 'mousemove', listener: mouseMoveEvent },
             { target: target, type: 'mouseup', listener: mouseUpEvent },
+            { target: target, type: 'contextmenu', listener: contextEvent }
         ];
         // temporally add these listeners, for the duration of the drag
-        this.addMoveAndEndEvents(events);
+        this.addTemporaryEvents(events);
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
             this.onMouseMove(mouseEvent, params.eElement);
         }
     };
-    DragService.prototype.addMoveAndEndEvents = function (events) {
+    DragService.prototype.addTemporaryEvents = function (events) {
         events.forEach(function (currentEvent) {
             var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
             target.addEventListener(type, listener, options);

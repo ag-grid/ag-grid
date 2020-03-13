@@ -117,7 +117,7 @@ export class DragService {
             {target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
         ];
         // temporally add these listeners, for the duration of the drag
-        this.addMoveAndEndEvents(events);
+        this.addTemporaryEvents(events);
 
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
@@ -127,18 +127,18 @@ export class DragService {
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
-        // we ignore when shift key is pressed. this is for the range selection, as when
-        // user shift-clicks a cell, this should not be interpreted as the start of a drag.
-        // if (mouseEvent.shiftKey) { return; }
-        if (params.skipMouseEvent) {
-            if (params.skipMouseEvent(mouseEvent)) { return; }
+        const e = mouseEvent as any;
+
+        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+            return;
         }
 
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if ((mouseEvent as any)._alreadyProcessedByDragService) { return; }
-        (mouseEvent as any)._alreadyProcessedByDragService = true;
+        if (e._alreadyProcessedByDragService) { return; }
+
+        e._alreadyProcessedByDragService = true;
 
         // only interested in left button clicks
         if (mouseEvent.button !== 0) { return; }
@@ -153,13 +153,15 @@ export class DragService {
         this.setNoSelectToBody(true);
         const mouseMoveEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseMove(e, params.eElement);
         const mouseUpEvent = (e: MouseEvent, el: HTMLElement) => this.onMouseUp(e, params.eElement);
+        const contextEvent = (e: MouseEvent) => e.preventDefault();
         const target = eDocument;
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },
+            { target, type: 'contextmenu', listener: contextEvent }
         ];
         // temporally add these listeners, for the duration of the drag
-        this.addMoveAndEndEvents(events);
+        this.addTemporaryEvents(events);
 
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
@@ -167,7 +169,7 @@ export class DragService {
         }
     }
 
-    private addMoveAndEndEvents(
+    private addTemporaryEvents(
         events: {
             target: HTMLElement | Document,
             type: string,

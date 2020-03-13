@@ -1480,6 +1480,8 @@
     border-radius: 2px;
     box-shadow: none;
     padding: 4px; }
+  .ag-theme-balham .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px; }
   .ag-theme-balham .ag-loading {
     padding-left: 12px;
     display: flex;

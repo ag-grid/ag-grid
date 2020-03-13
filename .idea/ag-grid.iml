@@ -113,7 +113,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/framework-examples" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/javascript-grid-cell-editor/polymer-editor/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/javascript-grid-cell-rendering-components/polymer-dynamic/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/src/polymer-getting-started/simple-grid/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/node_modules.nosync" />

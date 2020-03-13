@@ -1444,6 +1444,8 @@
     border-radius: 2px;
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     padding: 8px; }
+  .ag-theme-material .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 30px; }
   .ag-theme-material .ag-loading {
     padding-left: 24px;
     display: flex;
@@ -2346,4 +2348,6 @@
     height: 32px; }
   .ag-theme-material .ag-filter-toolpanel-group-level-0-header {
     height: 56px; }
+  .ag-theme-material .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+    padding-top: 60px; }
 

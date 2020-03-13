@@ -1839,18 +1839,16 @@ var Utils = /** @class */ (function () {
         if (!fieldContainsDots) {
             return data[field];
         }
-        else {
-            // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i < fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-                if (this.missing(currentObject)) {
-                    return null;
-                }
+        // otherwise it is a deep value, so need to dig for it
+        var fields = field.split('.');
+        var currentObject = data;
+        for (var i = 0; i < fields.length; i++) {
+            currentObject = currentObject[fields[i]];
+            if (this.missing(currentObject)) {
+                return null;
             }
-            return currentObject;
         }
+        return currentObject;
     };
     Utils.getElementSize = function (el) {
         var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
@@ -2144,8 +2142,51 @@ var Utils = /** @class */ (function () {
         }
         return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
     };
+    Utils.getTimeFromDate = function (date) {
+        if (!date) {
+            return null;
+        }
+        return this.padStart(date.getHours(), 2) + ":" + this.padStart(date.getMinutes(), 2) + ":" + this.padStart(date.getSeconds(), 2);
+    };
+    Utils.normalizeTime = function (time) {
+        if (!time) {
+            return '00:00:00';
+        }
+        var hoursStr = '00';
+        var minutesStr = '00';
+        var secondsStr = '00';
+        var _a = time.split(':').map(Number), hours = _a[0], minutes = _a[1], seconds = _a[2];
+        if (hours >= 0 && hours <= 24) {
+            hoursStr = _.padStart(hours, 2);
+        }
+        if (minutes >= 0 && minutes <= 59) {
+            minutesStr = _.padStart(minutes, 2);
+        }
+        if (seconds >= 0 && seconds <= 59) {
+            secondsStr = _.padStart(seconds, 2);
+        }
+        return hoursStr + ":" + minutesStr + ":" + secondsStr;
+    };
+    Utils.getDateFromString = function (fullDate) {
+        if (!fullDate) {
+            return null;
+        }
+        var _a = fullDate.split(' '), dateStr = _a[0], timeStr = _a[1];
+        var date = _.parseYyyyMmDdToDate(dateStr, '-');
+        if (!date) {
+            return null;
+        }
+        if (!timeStr || timeStr === '00:00:00') {
+            return date;
+        }
+        var _b = _.normalizeTime(timeStr).split(':').map(Number), hours = _b[0], minutes = _b[1], seconds = _b[2];
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        date.setSeconds(seconds);
+        return date;
+    };
     Utils.padStart = function (num, totalStringSize) {
-        var asString = num + "";
+        var asString = "" + num;
         while (asString.length < totalStringSize) {
             asString = "0" + asString;
         }
@@ -2170,9 +2211,7 @@ var Utils = /** @class */ (function () {
         if (result === null) {
             return [];
         }
-        else {
-            return result;
-        }
+        return result;
     };
     Utils.find = function (collection, predicate, value) {
         if (collection === null || collection === undefined) {
@@ -2207,9 +2246,7 @@ var Utils = /** @class */ (function () {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             }
-            else {
-                return item.toString();
-            }
+            return item.toString();
         });
     };
     Utils.findIndex = function (collection, predicate) {
@@ -2227,8 +2264,9 @@ var Utils = /** @class */ (function () {
      * @return {boolean}
      */
     Utils.isNode = function (o) {
-        return (typeof Node === "function" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
+        return (typeof Node === "function"
+            ? o instanceof Node
+            : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
     };
     //
     /**
@@ -2238,8 +2276,9 @@ var Utils = /** @class */ (function () {
      * @returns {boolean}
      */
     Utils.isElement = function (o) {
-        return (typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
+        return (typeof HTMLElement === "function"
+            ? o instanceof HTMLElement //DOM2
+            : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
     };
     Utils.isNodeOrElement = function (o) {
         return this.isNode(o) || this.isElement(o);
@@ -2281,11 +2320,9 @@ var Utils = /** @class */ (function () {
             var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         }
-        else {
-            // otherwise, for older browsers, we test against a list of characters, which doesn't include
-            // accents for non-English, but don't care much, as most users are on modern browsers
-            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
-        }
+        // otherwise, for older browsers, we test against a list of characters, which doesn't include
+        // accents for non-English, but don't care much, as most users are on modern browsers
+        return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
     };
     /**
      * Allows user to tell the grid to skip specific keyboard events
@@ -2326,10 +2363,8 @@ var Utils = /** @class */ (function () {
             // if gridOption func, return the result
             return gridOptionsFunc(params);
         }
-        else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
-        }
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
     };
     Utils.getCellCompForEvent = function (gridOptionsWrapper, event) {
         var sourceElement = this.getTarget(event);
@@ -2519,7 +2554,7 @@ var Utils = /** @class */ (function () {
             // for modern browsers
             return element.classList.contains(className);
         }
-        else if (element.className) {
+        if (element.className) {
             // for older browsers, check against the string of class names
             // if only one class, can check for exact match
             var onlyClass = element.className === className;
@@ -2531,19 +2566,15 @@ var Utils = /** @class */ (function () {
             var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
             return onlyClass || contains || startsWithClass || endsWithClass;
         }
-        else {
-            // if item is not a node
-            return false;
-        }
+        // if item is not a node
+        return false;
     };
     Utils.getElementAttribute = function (element, attributeName) {
         if (element.attributes && element.attributes[attributeName]) {
             var attribute = element.attributes[attributeName];
             return attribute.value;
         }
-        else {
-            return null;
-        }
+        return null;
     };
     Utils.offsetHeight = function (element) {
         return element && element.clientHeight ? element.clientHeight : 0;
@@ -2605,6 +2636,9 @@ var Utils = /** @class */ (function () {
         if (accentedCompare === void 0) { accentedCompare = false; }
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
+        function doQuickCompare(a, b) {
+            return (a > b ? 1 : (a < b ? -1 : 0));
+        }
         // this is for aggregations sum and avg, where the result can be a number that is wrapped.
         // if we didn't do this, then the toString() value would be used, which would result in
         // the strings getting used instead of the numbers.
@@ -2627,16 +2661,14 @@ var Utils = /** @class */ (function () {
             if (!accentedCompare) {
                 return doQuickCompare(valueA, valueB);
             }
-            else {
-                try {
-                    // using local compare also allows chinese comparisons
-                    return valueA.localeCompare(valueB);
-                }
-                catch (e) {
-                    // if something wrong with localeCompare, eg not supported
-                    // by browser, then just continue with the quick one
-                    return doQuickCompare(valueA, valueB);
-                }
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            }
+            catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue with the quick one
+                return doQuickCompare(valueA, valueB);
             }
         }
         if (valueA < valueB) {
@@ -2645,12 +2677,7 @@ var Utils = /** @class */ (function () {
         else if (valueA > valueB) {
             return 1;
         }
-        else {
-            return 0;
-        }
-        function doQuickCompare(a, b) {
-            return (a > b ? 1 : (a < b ? -1 : 0));
-        }
+        return 0;
     };
     Utils.last = function (arr) {
         if (!arr || !arr.length) {
@@ -2743,17 +2770,13 @@ var Utils = /** @class */ (function () {
         if (this.exists(value) && value.toString) {
             return value.toString();
         }
-        else {
-            return null;
-        }
+        return null;
     };
     Utils.formatSize = function (size) {
         if (typeof size === "number") {
             return size + "px";
         }
-        else {
-            return size;
-        }
+        return size;
     };
     Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
         if (typeof value !== 'number') {
@@ -2821,11 +2844,9 @@ var Utils = /** @class */ (function () {
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
         }
-        else {
-            var eResult = document.createElement('span');
-            eResult.appendChild(iconContents);
-            return eResult;
-        }
+        var eResult = document.createElement('span');
+        eResult.appendChild(iconContents);
+        return eResult;
     };
     Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, forceCreate) {
         var userProvidedIcon = null;
@@ -2875,7 +2896,7 @@ var Utils = /** @class */ (function () {
                     cssClass = iconName;
                 }
             }
-            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
             return span;
         }
@@ -3127,29 +3148,28 @@ var Utils = /** @class */ (function () {
             // IE supports deep path
             return eventNoType.deepPath();
         }
-        else if (eventNoType.path) {
+        if (eventNoType.path) {
             // Chrome supports path
             return eventNoType.path;
         }
-        else if (eventNoType.composedPath) {
+        if (eventNoType.composedPath) {
             // Firefox supports composePath
             return eventNoType.composedPath();
         }
-        else if (eventNoType.__agGridEventPath) {
+        if (eventNoType.__agGridEventPath) {
             // Firefox supports composePath
             return eventNoType.__agGridEventPath;
         }
-        else {
-            // and finally, if none of the above worked,
-            // we create the path ourselves
-            return this.createEventPath(event);
-        }
+        // and finally, if none of the above worked,
+        // we create the path ourselves
+        return this.createEventPath(event);
     };
     Utils.forEachSnapshotFirst = function (list, callback) {
-        if (list) {
-            var arrayCopy = list.slice(0);
-            arrayCopy.forEach(callback);
+        if (!list) {
+            return;
         }
+        var arrayCopy = list.slice(0);
+        arrayCopy.forEach(callback);
     };
     /**
      * Gets the document body width
@@ -3588,8 +3608,8 @@ var Utils = /** @class */ (function () {
      */
     Utils.message = function (msg) {
         var eMessage = document.createElement('div');
-        eMessage.innerHTML = msg;
         var eBox = document.querySelector('#__ag__message');
+        eMessage.innerHTML = msg;
         if (!eBox) {
             var template = "<div id=\"__ag__message\" style=\"display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;\"></div>";
             eBox = this.loadTemplate(template);
@@ -3623,7 +3643,7 @@ var Utils = /** @class */ (function () {
                 // have indexes
                 return positionA - positionB;
             }
-            else if (bothNodesAreFillerNodes) {
+            if (bothNodesAreFillerNodes) {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
@@ -3635,7 +3655,7 @@ var Utils = /** @class */ (function () {
                 // as least gives better looking order.
                 return nodeA.__objectId - nodeB.__objectId;
             }
-            else if (aHasIndex) {
+            if (aHasIndex) {
                 return 1;
             }
             return -1;
@@ -12160,14 +12180,16 @@ var DateFilter = /** @class */ (function (_super) {
         // NOTE: The conversion of string to date also removes the timezone - ie when user picks
         //       a date form the UI, it will have timezone info in it. This is lost when creating
         //       the model. Then when we recreate the date again here, it's without timezone.
+        var from = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(filterModel.dateFrom);
+        var to = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(filterModel.dateTo);
         return {
-            from: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
-            to: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(filterModel.dateTo, "-")
+            from: from,
+            to: to
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
         if (value != null) {
-            var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(value, "-");
+            var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(value);
             this.dateCompFrom1.setDate(dateFrom);
         }
         else {
@@ -12181,8 +12203,8 @@ var DateFilter = /** @class */ (function (_super) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__["ConditionPosition"].One;
         var dateFromString = model ? model.dateFrom : null;
         var dateToString = model ? model.dateTo : null;
-        var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(dateFromString, "-");
-        var dateTo = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(dateToString, "-");
+        var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(dateFromString);
+        var dateTo = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(dateToString);
         var compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         var compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         compFrom.setDate(dateFrom);
@@ -12270,11 +12292,13 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.createCondition = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__["ConditionPosition"].One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         var dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+        var dateFrom = dateCompFrom.getDate();
+        var dateTo = dateCompTo.getDate();
         return {
-            dateTo: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
-            dateFrom: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            dateFrom: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(dateFrom, "-") + " " + _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getTimeFromDate(dateFrom),
+            dateTo: _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(dateTo, "-") + " " + _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getTimeFromDate(dateTo),
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
@@ -17093,7 +17117,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(_utils__WEBPACK_IMPORTED_MODULE_2__["_"].parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+                this.dateComp.setDate(_utils__WEBPACK_IMPORTED_MODULE_2__["_"].getDateFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -17108,7 +17132,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(filterValueDate, "-");
+        var filterValueText = _utils__WEBPACK_IMPORTED_MODULE_2__["_"].serializeDateToYyyyMmDd(filterValueDate, "-") + " " + _utils__WEBPACK_IMPORTED_MODULE_2__["_"].getTimeFromDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;

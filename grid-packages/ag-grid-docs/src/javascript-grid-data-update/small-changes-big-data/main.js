@@ -1,13 +1,15 @@
 var columnDefs = [
     { field: "city", enableRowGroup: true, rowGroup: true, hide: true, },
     { field: 'laptop', enableRowGroup: true, rowGroup: true, hide: true, },
-    { field: 'distro', headerName: 'Linux Distro',
-        width: 150,
+    {
+        field: 'distro',
+        headerName: 'Linux Distro',
         sort: 'asc',
         comparator: myComparator
     },
-    { field: 'value', enableCellChangeFlash: true,
-        width: 150,
+    {
+        field: 'value',
+        enableCellChangeFlash: true,
         aggFunc: myAggFunc,
         filter: getMyFilter()
     }
@@ -94,12 +96,6 @@ function isFirstColumn(params) {
     return displayedColumns[0] === params.column;
 }
 
-var defaultColDef = {
-    filter: true,
-    sortable: true,
-    resizable: true
-};
-
 function getRowNodeId(data) {
     return data.id;
 }
@@ -178,8 +174,13 @@ function timeSetRowData(name, api) {
 }
 
 var gridOptions = {
-    defaultColDef: defaultColDef,
     columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        filter: true,
+        sortable: true,
+        resizable: true
+    },
     getRowNodeId: getRowNodeId,
     deltaRowDataMode: true,
     rowSelection: 'multiple',

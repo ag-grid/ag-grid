@@ -697,6 +697,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
     -ms-flex-align: start;
     align-items: flex-start; }
 
+.ag-full-width-row .ag-cell-wrapper.ag-row-group {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center; }
+
 .ag-cell-auto-height {
   height: 100%; }
 
@@ -878,9 +883,6 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 
 .ag-overlay-loading-wrapper {
   pointer-events: all; }
-
-.ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-  padding-top: 30px; }
 
 /**
  ****************************
@@ -1508,8 +1510,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   flex: 1 1 auto;
   width: 100%;
   min-width: 0; }
-  .ag-input-field-input[type='date'] {
-    width: 1px; }
+
+.ag-floating-filter-input .ag-input-field-input[type='date'] {
+  width: 1px; }
 
 .ag-range-field {
   display: -webkit-box;

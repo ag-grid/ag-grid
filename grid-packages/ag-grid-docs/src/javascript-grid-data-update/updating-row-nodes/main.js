@@ -1,11 +1,3 @@
-
-// this example has items declared globally. bad javascript. but keeps the example simple.
-var columnDefs = [
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price", filter: 'agNumberColumnFilter'}
-];
-
 var rowData = [
     {id: 'aa', make: "Toyota", model: "Celica", price: 35000},
     {id: 'bb', make: "Ford", model: "Mondeo", price: 32000},
@@ -17,14 +9,19 @@ var rowData = [
 ];
 
 var gridOptions = {
+    columnDefs: [
+        { field: "make" },
+        { field: "model" },
+        { field: "price", filter: 'agNumberColumnFilter' }
+    ],
     defaultColDef: {
+        flex: 1,
         editable: true,
         sortable: true,
         filter: true
     },
     animateRows: true,
     getRowNodeId: function(data) { return data.id; },
-    columnDefs: columnDefs,
     rowData: rowData
 };
 

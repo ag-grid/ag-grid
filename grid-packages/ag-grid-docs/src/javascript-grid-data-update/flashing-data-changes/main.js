@@ -1,12 +1,3 @@
-var columnDefs = [
-    {headerName: 'A', field: 'a'},
-    {headerName: 'B', field: 'b'},
-    {headerName: 'C', field: 'c'},
-    {headerName: 'D', field: 'd'},
-    {headerName: 'E', field: 'e'},
-    {headerName: 'F', field: 'f'}
-];
-
 function createRowData() {
     var rowData = [];
 
@@ -31,15 +22,23 @@ function formatNumber(number) {
 }
 
 var gridOptions = {
+    columnDefs: [
+        {headerName: 'A', field: 'a'},
+        {headerName: 'B', field: 'b'},
+        {headerName: 'C', field: 'c'},
+        {headerName: 'D', field: 'd'},
+        {headerName: 'E', field: 'e'},
+        {headerName: 'F', field: 'f'}
+    ],
     defaultColDef: {
-        valueFormatter: function (params) {
-            return formatNumber(params.value);
-        },
+        flex: 1,
         cellClass: 'align-right',
         enableCellChangeFlash: true,
-        resizable: true
+        resizable: true,
+        valueFormatter: function (params) {
+            return formatNumber(params.value);
+        }
     },
-    columnDefs: columnDefs,
     rowData: createRowData()
 };
 
@@ -78,5 +77,4 @@ function onFlashTwoRows() {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });

@@ -1,12 +1,3 @@
-var columnDefs = [
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"},
-    {headerName: "Zombies", field: "zombies"},
-    {headerName: "Style", field: "style"},
-    {headerName: "Clothes", field: "clothes"}
-];
-
 var rowData = [
     {make: "Toyota", model: "Celica", price: 35000, zombies: 'Elly', style: 'Smooth', clothes: 'Jeans'},
     {make: "Ford", model: "Mondeo", price: 32000, zombies: 'Shane', style: 'Filthy', clothes: 'Shorts'},
@@ -14,10 +5,20 @@ var rowData = [
 ];
 
 var gridOptions = {
-    animateRows: true,
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "make" },
+        { field: "model" },
+        { field: "price" },
+        { field: "zombies" },
+        { field: "style" },
+        { field: "clothes" }
+    ],
+    defaultColDef: {
+      flex: 1,
+    },
     rowData: rowData,
-    rowSelection: 'multiple'
+    rowSelection: 'multiple',
+    animateRows: true,
 };
 
 var newCount = 1;
