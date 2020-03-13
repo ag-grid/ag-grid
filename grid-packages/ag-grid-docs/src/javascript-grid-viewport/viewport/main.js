@@ -349,8 +349,11 @@ function createMockServer() {
             if (rowsInClient[i]) {
                 continue;
             }
-            // otherwise send the row
-            rowDataMap[i] = this.allData[i];
+            // otherwise send the row. we send a copy of the row to mimic
+            // going over network, so any further changes to the row in
+            // the mock server is not reflected in the grid's copy
+            var copyOfData = Object.assign({}, this.allData[i]);
+            rowDataMap[i] = copyOfData;
             // and record that the client has this row
             rowsInClient[i] = true;
         }
