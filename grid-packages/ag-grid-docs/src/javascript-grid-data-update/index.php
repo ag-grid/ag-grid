@@ -518,7 +518,7 @@ interface RowNodeTransaction {
         other updates you subsequently provide using <code>batchUpdateRowData()</code>, after 50ms.
     </p>
 
-    <?= grid_example('Batch Transaction', 'batch-transaction', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Batch Transaction', 'batch-transaction', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
     <p>
         To help understand the interface into <code>updateRowData()</code> and <code>batchUpdateRowData()</code>,

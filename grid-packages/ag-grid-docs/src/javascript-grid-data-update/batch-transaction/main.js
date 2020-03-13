@@ -30,15 +30,15 @@ var columnDefs = [
         {headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
 
         // all the other columns (visible and not grouped)
-        {headerName: 'Current', field: 'current', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Previous', field: 'previous', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'PL 1', field: 'pl1', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'PL 2', field: 'pl2', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Gain-DX', field: 'gainDx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'SX / PX', field: 'sxPx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: '99 Out', field: '_99Out', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Submitter ID', field: 'submitterID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
+        {headerName: 'Current', field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'Previous', field: 'previous', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'PL 1', field: 'pl1', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'PL 2', field: 'pl2', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'Gain-DX', field: 'gainDx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'SX / PX', field: 'sxPx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: '99 Out', field: '_99Out', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'Submitter ID', field: 'submitterID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
     ];
 
 // a list of the data, that we modify as we go. if you are using an immutable
@@ -122,7 +122,7 @@ var gridOptions = {
         resizable: true
     },
     autoGroupColumnDef: {
-        width: 200
+        width: 250
     },
     onGridReady: function(params) {
         createRowData();

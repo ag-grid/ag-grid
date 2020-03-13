@@ -1,30 +1,31 @@
 const columnDefs = [
-    {headerName: "Code", field: "code", width: 70},
-    {headerName: "Name", field: "name", width: 300},
+    { field: 'code', maxWidth: 90 },
+    { field: 'name', minWidth: 200 },
     {
-        headerName: "Bid", field: "bid", width: 100,
+        field: 'bid',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: "Mid", field: "mid", width: 100,
+        field: 'mid',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: "Ask", field: "ask", width: 100,
+        field: 'ask',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: "Volume", field: "volume", width: 80,
+        field: 'volume',
         cellClass: 'cell-number',
         cellRenderer:'agAnimateSlideCellRenderer'
     }
 ];
+
 
 function numberFormatter(params) {
     if (typeof params.value === 'number') {
@@ -36,6 +37,8 @@ function numberFormatter(params) {
 
 const gridOptions = {
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         resizable: true
     },
     enableRangeSelection: true,
@@ -64,7 +67,6 @@ const gridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });
 
 
