@@ -487,8 +487,6 @@ export class RowNode implements IEventEmitter {
         const column = this.columnController.getPrimaryColumn(colKey);
         const oldValue = this.valueService.getValue(column, this);
 
-        if (newValue === oldValue) { return; }
-
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
     }
