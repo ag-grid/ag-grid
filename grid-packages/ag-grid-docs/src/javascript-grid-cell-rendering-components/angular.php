@@ -55,4 +55,4 @@
     Using more complex Angular Components in the Cell Renderers - specifically how you can use nested <code>NgModule</code>'s
     within the grid.
 </p>
-<?= grid_example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', ['exampleHeight' => 370, 'showResult' => true, 'extras' => ['bootstrap']]); ?>
+<?= grid_example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', ['showImportsDropdown' => false, 'exampleHeight' => 370, 'showResult' => true, 'extras' => ['bootstrap']]); ?>

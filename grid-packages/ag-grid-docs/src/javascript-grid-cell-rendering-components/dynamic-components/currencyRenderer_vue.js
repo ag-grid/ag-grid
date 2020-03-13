@@ -19,7 +19,7 @@ export default Vue.extend({
     },
     methods: {
         formatValueToCurrency(currency, value) {
-            return `${currency}${value}`
+            return `${currency}${value.toFixed(2)}`
         },
         refresh(params) {
             if(params.value !== this.params.value) {

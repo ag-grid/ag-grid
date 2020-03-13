@@ -12,13 +12,16 @@ var gridOptions = {
     columnDefs: columnDefs,
     components: {
         'medalCellRenderer': MedalCellRenderer
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
 // cell renderer class
 function MedalCellRenderer() {}
 
-// init method gets the details of the cell to be rendere
+// init method gets the details of the cell to be renderer
 MedalCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('span');
     var text = '';

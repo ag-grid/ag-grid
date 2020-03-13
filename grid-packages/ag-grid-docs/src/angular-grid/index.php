@@ -34,7 +34,7 @@ include './intro.php';
     <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
     <li><a href="#enable-selection">Enable Selection</li></a>
     <li><a href="#grouping(enterprise)">Grouping(Enterprise)</li></a>
-    <li><a href="#customize-the-theme-look">Customize the Theme Look</li></a>
+    <li><a href="#customise-the-theme-look">Customise the Theme Look</li></a>
     <li><a href="#summary">Summary</li></a>
     <li><a href="#next-steps">Next Steps</li></a>
 </ol>
@@ -58,7 +58,7 @@ ng serve
 
 npm install -g @angular/cling new my-app --style scss --routing false cd my-app ng serve
 
-<div class="note">We are passing <code>--style scss</code> to the app scaffolding command so that we may customize the grid theme look through Sass variables.</div>
+<div class="note">We are passing <code>--style scss</code> to the app scaffolding command so that we may customise the grid theme look through Sass variables.</div>
 
 <p>If everything goes well, <code>ng serve</code> has started the web server. You can open your app at  <a href="http://localhost:4200" onclick="window.open(event.target.href); return false;">localhost:4200</a>.</p>
 
@@ -104,7 +104,7 @@ export class AppModule {}
 </snippet>
 
 <p>The code above imports the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
-The grid ships several different themes; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
+The grid ships several different themes; pick one that matches your project design. You can customise it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <p>Next, let's declare the basic grid configuration. Edit <code>src/app.component.ts</code>:</p>
 
@@ -518,7 +518,7 @@ Notice that grouping works with checkboxes as well - the <code>groupSelectsChild
 <div class="note"> Don't worry if this step feels a bit overwhelming - the grouping feature is very powerful and supports complex interaction scenarios which you might not need initially.
 The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
-<h2 id="customize-the-theme-look">Customize the Theme Look</h2>
+<h2 id="customise-the-theme-look">Customise the Theme Look</h2>
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's parameters.</p>
 
@@ -543,7 +543,7 @@ The grouping documentation section contains plenty of real-world runnable exampl
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
-header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p>
+header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">theme parameter list</a> is available in the themes documentation section.</p>
 
 <h2 id="summary">Summary</h2>
 
@@ -558,7 +558,7 @@ While doing so, we learned how to configure the grid, how to access its API obje
     <p>
         Want to see some full examples of customising ag-Grid using Angular components? See this blog
         written by Max Koretskyi (aka Angular in Depth Wizard)
-        <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">Learn to customize Angular grid in less than 10 minutes</a>.
+        <a href="https://blog.ag-grid.com/learn-to-customize-angular-grid-in-less-than-10-minutes/" target="_blank">Learn to customise Angular grid in less than 10 minutes</a>.
     </p>
 
     <p>

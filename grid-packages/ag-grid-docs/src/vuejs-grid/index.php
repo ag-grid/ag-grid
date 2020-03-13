@@ -471,7 +471,7 @@ Notice that grouping works with checkboxes as well - the <code>groupSelectsChild
 <div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially.
 The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
 
-<h2 id="vue_theme_look">Customize the Theme Look</h2>
+<h2 id="vue_theme_look">Customise the Theme Look</h2>
 
 <p>The last thing which we are going to do is to change the grid look and feel by modifying some of the theme's Sass variables.</p>
 
@@ -490,7 +490,7 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
-header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customizing-sass-variables">Sass variable list</a> is available in the themes documentation section.</p>
+header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">Sass variable list</a> is available in the themes documentation section.</p>
 
 <h2>Summary</h2>
 

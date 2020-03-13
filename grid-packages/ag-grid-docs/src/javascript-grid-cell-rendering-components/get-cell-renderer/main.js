@@ -12,6 +12,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     components: {
         'medalCellRenderer': MedalCellRenderer
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

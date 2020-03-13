@@ -111,7 +111,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 <p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
 </p>
 
-The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customize it further with Sass variables, a technique which we will cover further down the road.</p>
+The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customise it further with Sass variables, a technique which we will cover further down the road.</p>
 
 <snippet language="jsx">
 constructor(props) {
@@ -340,7 +340,7 @@ rowData={this.state.rowData}
 
 <p>There we go! The grid now groups the data by <code>make</code>, while listing the <code>model</code> field value when expanded. Notice that grouping works with checkboxes as well - the <code>groupSelectsChildren</code> property adds a group-level checkbox that selects/deselects all items in the group.</p>
 <div class="note"> Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and supports complex interaction scenarios which you might not need initially. The grouping documentation section contains plenty of real-world runnable examples that can get you started for your particular  case.</div>
-<h2 id="customize-the-theme-look">Customize the Theme Look</h2>
+<h2 id="customise-the-theme-look">Customise the Theme Look</h2>
 <p>The last thing which we are going to do is to change the grid look and feel by customising a theme.</p>
 <p>By default, ag-Grid ships a set of <a href="https://www.ag-grid.com/javascript-grid-styling/"> pre-built theme stylesheets</a>. If we want to tweak the colors and the fonts of theme, we should add a Sass preprocessor to our project, override the theme variable values, and refer the ag-grid Sass files instead of the pre-built stylesheets so that the variable overrides are applied.</p>
 <p>Adding Sass Preprocessor to create-react-app is well documented - follow the steps <a href="https://github.com/facebook/create-react-app/blob/master/grid-packages/react-scripts/template/README.md#adding-a-css-preprocessor-sass-less-etc">outlined in the respective help section</a>.</p>
@@ -367,7 +367,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 <p>If everything is configured correctly, the second row of the grid will be blue. Congratulations!
   You now know now bend the grid look to your will - there are a few dozens more theme parameters variables that let you control the font family and size, border color,
-  header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customizing-sass-variables">full list of theme parameters</a> is available in the themes documentation section.</p>
+  header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">full list of theme parameters</a> is available in the themes documentation section.</p>
 
   <h2 id="summary">Summary</h2>
 
