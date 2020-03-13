@@ -60,9 +60,6 @@ var gridOptions = {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         },
-        cellRendererParams: {
-            checkbox: true
-        },
         headerCheckboxSelection: true,
         width: 300
     },
@@ -93,12 +90,6 @@ var gridOptions = {
         menuRemoveRowGroup: 'R',
         clipboardCopy: '>>',
         clipboardPaste: '>>',
-        checkboxChecked: '<i class="far fa-check-square"/>',
-        checkboxUnchecked: '<i class="far fa-square"/>',
-        checkboxIndeterminate: '<i class="far fa-circle"/>',
-        checkboxCheckedReadOnly: '<i class="far fa-check-square" style="color: lightgray"/>',
-        checkboxUncheckedReadOnly: '<i class="far fa-square" style="color: lightgray" />',
-        checkboxIndeterminateReadOnly: '<i class="far fa-circle" style="color: lightgray"/>',
         rowDrag: '<i class="fa fa-circle"/>'
     },
     rowSelection: 'multiple'

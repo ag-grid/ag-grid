@@ -34,30 +34,30 @@ function cloneObject(obj) {
 }
 
 var columnDefs = [
-    {headerName: "First Name", field: "first_name", width: 100, editable: true},
-    {headerName: "Last Name", field: "last_name", width: 100, editable: true},
+    {headerName: "First Name", field: "first_name", width: 120, editable: true},
+    {headerName: "Last Name", field: "last_name", width: 120, editable: true},
     {
         headerName: "Gender",
         field: "gender",
-        width: 90,
+        width: 100,
         cellEditor: 'mySimpleCellEditor'
     },
     {
         headerName: "Age",
         field: "age",
-        width: 70,
+        width: 80,
         cellEditor: 'mySimpleCellEditor'
     },
     {
         headerName: "Mood",
         field: "mood",
-        width: 70,
+        width: 90,
         cellEditor: 'mySimpleCellEditor'
     },
     {
         headerName: "Country",
         field: "country",
-        width: 100,
+        width: 110,
         cellEditor: 'mySimpleCellEditor'
     },
     {

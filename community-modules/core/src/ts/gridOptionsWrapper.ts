@@ -179,6 +179,17 @@ export class GridOptionsWrapper {
             console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
+        const warnOfDeprecaredIcon = (name: string) => {
+            if (this.gridOptions.icons && this.gridOptions.icons[name]) {
+                console.warn(`gridOptions.icons.${name} is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/`);
+            }
+        };
+        warnOfDeprecaredIcon('radioButtonOff');
+        warnOfDeprecaredIcon('radioButtonOn');
+        warnOfDeprecaredIcon('checkboxChecked');
+        warnOfDeprecaredIcon('checkboxUnchecked');
+        warnOfDeprecaredIcon('checkboxIndeterminate');
+
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     }
 

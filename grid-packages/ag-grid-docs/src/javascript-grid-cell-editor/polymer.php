@@ -33,5 +33,5 @@
     Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
 </p>
 
-<?= grid_example('Polymer Editor Components', 'polymer-editor', 'as-is', ['noPlunker' => true, 'usePath' => '/', 'exampleHeight' => 450]) ?>
+<?= grid_example('Polymer Editor Components', 'polymer-editor', 'as-is', ['showImportsDropdown' => false, 'noPlunker' => true, 'usePath' => '/', 'exampleHeight' => 450]) ?>
 

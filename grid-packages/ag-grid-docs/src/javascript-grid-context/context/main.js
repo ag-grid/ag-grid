@@ -75,18 +75,16 @@ var rowData = [
 ];
 
 var columnDefs = [
-    {headerName: 'Product', field: 'product', width: 150},
-    {headerName: 'Currency', field: 'price.currency', width: 150},
+    {headerName: 'Product', field: 'product' },
+    {headerName: 'Currency', field: 'price.currency' },
     {
         headerName: 'Price Local',
         field: 'price',
         cellStyle: {'text-align': 'right'},
         cellRenderer: 'currencyCellRenderer',
-        width: 150
     },
     {
         headerName: 'Report Price',
-        width: 150,
         field: 'price',
         cellStyle: {'text-align': 'right'},
         cellRenderer: 'currencyCellRenderer',
@@ -103,11 +101,15 @@ function currencyChanged() {
 }
 
 var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        resizable: true
+    },
+    rowData: rowData,
     context: {
         reportingCurrency: 'EUR'
     },
-    columnDefs: columnDefs,
-    rowData: rowData,
     components:{
         currencyCellRenderer:getCurrencyCellRenderer()
     }

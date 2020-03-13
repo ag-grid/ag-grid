@@ -23,28 +23,28 @@ var nextBatchId = 101;
 
 var columnDefs = [
         // these are the row groups, so they are all hidden (they are showd in the group column)
-        {headerName: 'Product', field: 'product', enableRowGroup: true, enablePivot: true, rowGroupIndex: 0, hide: true},
-        {headerName: 'Portfolio', field: 'portfolio', enableRowGroup: true, enablePivot: true, rowGroupIndex: 1, hide: true},
-        {headerName: 'Book', field: 'book', enableRowGroup: true, enablePivot: true, rowGroupIndex: 2, hide: true},
-        {headerName: 'Trade', field: 'trade', width: 100},
+        { field: 'product', enableRowGroup: true, enablePivot: true, rowGroupIndex: 0, hide: true},
+        { field: 'portfolio', enableRowGroup: true, enablePivot: true, rowGroupIndex: 1, hide: true},
+        { field: 'book', enableRowGroup: true, enablePivot: true, rowGroupIndex: 2, hide: true},
+        { field: 'trade', width: 100},
 
         // some string values, that do not get aggregated
-        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true, enablePivot: true},
-        {headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
-        {headerName: 'Comment', field: 'comment', editable: true},
+        { field: 'dealType', enableRowGroup: true, enablePivot: true},
+        { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
+        { field: 'comment', editable: true},
 
         // all the other columns (visible and not grouped)
-        {headerName: 'Batch', field: 'batch', width: 100, cellClass: 'number', aggFunc: 'max', enableValue: true, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Current', field: 'current', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Previous', field: 'previous', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Change', valueGetter: changeValueGetter, width: 150,  aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'PL 1', field: 'pl1', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'PL 2', field: 'pl2', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Gain-DX', field: 'gainDx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'SX / PX', field: 'sxPx', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: '99 Out', field: '_99Out', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Submitter ID', field: 'submitterID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
-        {headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 150, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
+        { field: 'batch', width: 100, cellClass: 'number', aggFunc: 'max', enableValue: true, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { field: 'previous', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'Change', valueGetter: changeValueGetter, width: 200,  aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'PL 1', field: 'pl1', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'PL 2', field: 'pl2', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'Gain-DX', field: 'gainDx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'SX / PX', field: 'sxPx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: '99 Out', field: '_99Out', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'Submitter ID', field: 'submitterID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        { headerName: 'Submitted Deal ID', field: 'submitterDealID', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'}
     ];
 
 // simple value getter, however we can see how many times it gets called. this
@@ -127,36 +127,38 @@ function createTradeId() {
 }
 
 
-    var gridOptions = {
-        deltaRowDataMode: true,
-        columnDefs: columnDefs,
-        rowData: globalRowData,
-        statusBar: {
-            items: [
-                { component: 'agAggregationComponent' }
-            ]
-        },
-        animateRows: true,
-        enableRangeSelection: true,
-        rowGroupPanelShow: 'always',
-        pivotPanelShow: 'always',
-        suppressAggFuncInHeader: true,
-        getRowNodeId: function(data) { return data.trade; },
-        defaultColDef: {
-            width: 120,
-            sortable: true,
-            resizable: true
-        },
-        autoGroupColumnDef: {
-            width: 200
-        },
-        onGridReady: function(params) {
-            // kick off the feed
-            timeoutTarget(params.api);
-            createRowData();
-            params.api.setRowData(globalRowData)
-        }
-    };
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        width: 120,
+        sortable: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        width: 250
+    },
+    deltaRowDataMode: true,
+    rowData: globalRowData,
+    statusBar: {
+        items: [
+            { component: 'agAggregationComponent' }
+        ]
+    },
+    animateRows: true,
+    enableRangeSelection: true,
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
+    suppressAggFuncInHeader: true,
+    getRowNodeId: function(data) {
+        return data.trade;
+    },
+    onGridReady: function(params) {
+        // kick off the feed
+        timeoutTarget(params.api);
+        createRowData();
+        params.api.setRowData(globalRowData)
+    }
+};
 
 function updateUsingTransaction(gridApi) {
 

@@ -16,7 +16,10 @@ var gridOptions = {
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function isNumeric(n) {

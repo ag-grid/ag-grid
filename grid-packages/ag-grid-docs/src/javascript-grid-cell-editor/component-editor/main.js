@@ -67,6 +67,9 @@ var gridOptions = {
         moodRenderer: MoodRenderer,
         moodEditor: MoodEditor,
         numericEditor: NumericEditor
+    },
+    onGridReady: function (params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
@@ -74,5 +77,5 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
+    // gridOptions.api.sizeColumnsToFit();
 });
