@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <? enterprise_feature("Master Detail"); ?>
-<?php
-//        printVideoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial");
-    ?>
+
+<?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
 
 <p>
     With the Master Detail grid configuration, the top level grid is referred to as the 'master grid' and the nested grid
@@ -29,9 +28,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Enabling Master Detail</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=7s", "00:07");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=7s", "00:07") ?>
 
 <p>
     To enable Master / Detail, you should set the following grid options:
@@ -96,9 +93,7 @@ var detailGridOptions = {
 
 <h2>Accessing Detail Grid API</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=132s", "02:12");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=132s", "02:12") ?>
 
 <p>
     You can access the API of all detail grids via the master grid. The API for each detail grid
@@ -171,9 +166,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <h2>Syncing Detail scrolling with Master</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=249s", "04:09");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=249s", "04:09") ?>
 
 <p>
     By default, detail grids scroll independently to the master grid. This happens because the Master Detail is
@@ -196,9 +189,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <h2>Overriding the Default Detail Cell Renderer</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=273s", "04:33");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=273s", "04:33") ?>
 
     <p>
         The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
@@ -276,9 +267,7 @@ detailCellRendererParams: {
 
 <h2>Providing a Custom Detail Cell Renderer</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=358s", "05:58");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=358s", "05:58") ?>
 
 <p>
     The previous section described how to override the detail template used in the default Cell Renderer, however it is also
@@ -344,9 +333,7 @@ onGridReady(params) {
 
 <h2>Example: Custom Detail Cell Renderer with a Form</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=560s", "09:20");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=560s", "09:20") ?>
 
 <p>
     This example demonstrates a custom Cell Renderer Component that uses a form rather than a grid:
@@ -356,9 +343,7 @@ onGridReady(params) {
 
 <h2 id="grid-per-row">Configure Grid per Row</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=626s", "10:26");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=626s", "10:26") ?>
 
 <p>
     The property <code>detailCellRendererParams</code> can be a function to allow providing
@@ -385,9 +370,7 @@ onGridReady(params) {
 
 <h2>Dynamically Specify Master Nodes</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=702s", "11:42");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=702s", "11:42") ?>
 
 <p>
     It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
@@ -420,9 +403,7 @@ masterGridOptions.isRowMaster = function (dataItem) {
 
 <h2>Nesting Master / Detail</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=770s", "12:50");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=770s", "12:50") ?>
 
 <p>
     It is possible to nest Master / Detail grids. There are no special configurations required to achieve this,
@@ -477,9 +458,7 @@ var gridOptionsLevel3Detail = {
 
 <h2>Detail Row Height</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=840s", "14:00");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=840s", "14:00") ?>
 
 <p>
     The height of detail rows can be configured in one of the following two ways:
@@ -542,9 +521,7 @@ masterGridOptions.getRowHeight = function (params) {
 
 <h2>Filtering and Sorting</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=941s", "15:41");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=941s", "15:41") ?>
 
 <p>
     There are no specific configurations for filtering and sorting with Master / Detail but as there are multiple grids
@@ -561,9 +538,7 @@ masterGridOptions.getRowHeight = function (params) {
 
 <h2>Lazy Load Detail Rows</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=970s", "16:10");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=970s", "16:10") ?>
 
 <p>
     It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
@@ -604,9 +579,7 @@ var masterGridOptions = {
 
 <h2 id="keeping-row-details">Keeping Detail Rows</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1017s", "16:57");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1017s", "16:57") ?>
 
 <p>
     When a master row is expanded a detail row is created. When the master row is collapsed, the detail row is
@@ -650,9 +623,7 @@ var masterGridOptions = {
 
 <h2>Changing Data & Refresh</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1118s", "18:38");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1118s", "18:38") ?>
 
 <p>
     By default when updating data using <a href="../javascript-grid-data-update/#transactions">transactions</a> then
@@ -688,9 +659,7 @@ var masterGridOptions = {
 
 <h2>Exporting Master / Detail Data</h2>
 
-<?php
-//        printVideoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1183s", "19:43");
-    ?>
+<?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1183s", "19:43") ?>
 
 <p>
     By default, exporting the master grid will just export the master rows. If you want to export detail rows, you can
