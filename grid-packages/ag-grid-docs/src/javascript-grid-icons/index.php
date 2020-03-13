@@ -12,27 +12,7 @@ include '../documentation-main/documentation_header.php';
         This sections details how to provide your own icons for the grid and style grid icons for your application requirements.
     </p>
 
-    <note>
-        <p>
-            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could
-            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is more flexible
-            and performs better.
-        </p>
-
-        <p>
-            For backwards compatibility you can still provide icons using the <code>icons</code> grid option.<br>
-            If you need to reintroduce SVG icons, see this section: <a href="#svg-icons">SVG Icons</a>
-        </p>
-
-        <p>
-            If you have created your own theme and want to include the stock icons, this is easiest
-            done by adding the WebFont from the theme you like: <br>
-            <code>dist/styles/webfont/agGridBalhamFont.css</code> - WebFont used by theme balham and balham-dark <br>
-            <code>dist/styles/webfont/agGridMaterialFont.css</code> - WebFont used by theme material<br>
-        </p>
-    </note>
-
-<h2>Change Individual Icons (CSS)</h2>
+<h2>Change individual icons using CSS</h2>
 
 <p>You can change individual icons by overriding the background images for the respective CSS selector.
 The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
@@ -52,13 +32,13 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 }
 </snippet>
 
-<h2>Replace the icons by changing the icons font (Scss)</h2>
+<h2>Replace the icons by changing the icon font</h2>
 
 <p>If you are using a <a href="/javascript-grid-styling/">custom theme</a> in your project, you can include use theme parameters to change the icon font.
     We <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">provide an example</a>
     that does this, and the relevant code looks like this:
 
-<snippet>
+    <snippet>
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
 
@@ -126,11 +106,25 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 </snippet>
 
-<p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
+<p>Alternatively, if you are swapping one theme's icon set for another, you do not need to define an icon map because all theme fonts use the same map. This example shows the use of Alpine with the Material font:
 
-<h2>Changing checkbox and radio button icons</h2>
+<snippet>
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
 
-<p>As of version 23, checkboxes and radio buttons are native browser inputs styled using CSS. This means that you can change the appearance of the checkbox with Sass, but not using the JavaScript <code>gridOptions</code> technique. Using Sass, you can either change the icon font (set the <code>checkbox-*</code> and <code>radio-button-*</code> entries in the icon font codes map) or add CSS rules to override the appearance of the checkbox.</p>
+// load Material font
+@import "~ag-grid-community/src/styles/webfont/agGridMaterialFont.scss";
+
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        "icon-font-family": "agGridMaterial", // use Material font
+        "icons-data": null, // prevent default font from being embedded
+    ));
+}
+
+</snippet>
+
+<p>A working project with Sass / Webpack set up to customise an icon set is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
 
 <h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
 
@@ -251,6 +245,7 @@ sortDescending
 // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
 sortUnSort
 </snippet>
+
 <p>
     Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
 </p>
@@ -266,6 +261,12 @@ sortUnSort
             <b>Function:</b> A function that returns either a String or a DOM node or element.
         </li>
     </ul>
+
+<h2>Changing checkbox and radio button icons</h2>
+
+<p>As of version 23, checkboxes and radio buttons are native browser inputs styled using CSS. This means that you can change the appearance of the checkbox with Sass, but not using the JavaScript <code>gridOptions</code> technique. Using Sass, you can either change the icon font (set the <code>checkbox-*</code> and <code>radio-button-*</code> entries in the icon font codes map) or add CSS rules to override the appearance of the checkbox.</p>
+
+<h2>Example</h2>
 
 <p>
     The example below shows a mixture of different methods for providing icons. The grouping is done with images,
