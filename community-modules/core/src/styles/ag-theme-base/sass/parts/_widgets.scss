@@ -506,6 +506,11 @@
 @mixin ag-checkbox {
     @include ag-check-button-base();
 
+    // IMPORTANT!
+    // We document these styles at /javascript-grid-icons/ and advise users who want to change
+    // checkbox icons to style: `.ag-checkbox-input-wrapper.ag-checked::after`. Do not change
+    // these styles without also updating the icons examples.
+
     &::after {
         content: ag-icon-char(checkbox-unchecked);
         color: ag-param(checkbox-unchecked-color);
