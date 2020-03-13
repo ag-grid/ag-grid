@@ -87,20 +87,31 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <p>
-        To use a theme, add the theme class name to the <code>div</code> element where the ag-Grid directive is attached.
-    </p>
-
-    <p>
-        The following is an example of using the balham theme:
+        To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is an example of using the balham theme:
     </p>
 
     <snippet language="html">
         &lt;div id="myGrid" class="ag-theme-balham"&gt;&lt;/div&gt;
     </snippet>
 
+    <p>You need to ensure that the CSS for your theme is loaded.</p>
+
+    <ul>
+        <li>Some pre-built bundles, whether <a href="/javascript-grid-download/">downloaded from our website</a> or included in the <code>ag-grid-community</code> <a href="/javascript-grid-npm/">NPM package</a>, already embed the styles. If you are using one of these files you do not need to separately load CSS.</li>
+        <li>If you're not using a JS bundle with styles embedded, you need to include the theme's styles in the HTML page with a <code>&lt;link&gt;</code> tag. There are a few ways to do this:</li>
+        <ul>
+            <li>If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can <code>require()</code> the correct CSS file from node_modules. This is the recommended approach.</li>
+            <li>You can copy (manually or as part of your app's build) a CSS file from node_modules and serve it with your app.</li>
+            <li>You can the theme from a free CDN by adding this code to your page <code>&lt;link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules@22.0.0/dist/styles/ag-theme-balham.css"&gt;</code> (note: this is useful for testing but not recommended for production as your app will be unavailable if the unpkg servers are down)</li>
+        </ul>
+    </ul>
+
     <p>
-        Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to
-        load Roboto is through Google's CDN:
+        If you're using a <a href="/javascript-grid-download/">prebuilt bundle</a> then CSS <em>may</em> already be embedded in the JavaScript code. If you're using <a href="/javascript-grid-modules/">modules</a> or a build without embedded styles, you'll need to 
+    </p>
+
+    <p>
+        Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
     </p>
 
     <snippet language="html">
@@ -108,7 +119,7 @@ include '../documentation-main/documentation_header.php';
         &lt;div id="myGrid" class="ag-theme-material"&gt;&lt;/div&gt;
     </snippet>
 
-    <h1>Customising themes</h1>
+    <h1 id="customising-themes">Customising themes</h1>
 
     <p>
         In order to customise a theme, you need to set up your project to be able to compile Sass files. The recommended way to process your project's Scss

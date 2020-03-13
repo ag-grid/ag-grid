@@ -286,7 +286,7 @@ sortUnSort: 'none'
 <h2>SVG Icons</h2>
 
 <p>
-    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customizing-sass-variables">Customizing Themes</a>,
+    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customising-themes">Customising Themes</a>,
     you are also able to replace the WebFont with SVG Icons.
 
     To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.

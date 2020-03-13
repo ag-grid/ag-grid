@@ -12,10 +12,8 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         The grid is styled using CSS. A set of CSS rules styling the grid is referred to as a theme.
         The grid comes bundled with <a href="../javascript-grid-themes-provided/">Provided Themes</a>
-        or you can create you own theme by applying your own style to the grid.
+        or you can create you own theme by applying CSS styles to the grid.
     </p>
-
-    <h2>When to Create a Theme</h2>
 
     <p>
         You have the following options when choosing a theme:
@@ -23,11 +21,13 @@ include '../documentation-main/documentation_header.php';
 
     <ol class="content">
         <li>
-            Use one of the provided themes e.g. <code>ag-theme-balham</code>.
+            Use one of the <a href="../javascript-grid-themes-provided/#customising-themes">provided themes</a> e.g. <code>ag-theme-balham</code>. This is the simplest approach.
         </li>
         <li>
-            Use one of the provided themes and tweak using the provided
-            <a href="../javascript-grid-themes-provided/#customizing-sass-variables">Sass variables</a>.
+            Customise one of the provided themes using
+            <a href="../javascript-grid-themes-provided/#customising-themes">theme parameters and CSS rules</a>.
+            This requires configuring your project to build Sass files, and allows you to change elements of the look
+            and feel like colours, padding, and borders.
         </li>
         <li>
             Create your own theme from scratch. This is the most complex approach and you are more
@@ -35,13 +35,15 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ol>
 
+    <h2>When to create a custom theme</h2>
+
     <p>
         You should only create your own theme when options 1 and 2 above don't suit, as it is
         the most difficult.
         If you do decide to create your own theme, then you can use one of the provided themes and
         use that as a template. They can be found on GitHub <a href="https://github.com/ag-grid/ag-grid/tree/master/packages/ag-grid-community/src/styles">here</a>.
         <p>
-        This section does not provide an example of building a theme as a number of themes
+        This section does not provide an example of building a the me as a number of themes
         are already provided with the grid - these can be used as a basis for any additional themes you may wish to create.
         </p>
         <h3>Important</h3><p>If you create your own theme, it's name has to follow the <code>ag-theme-</code>&lt;theme name&gt; naming convention, otherwise 
