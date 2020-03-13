@@ -2,7 +2,7 @@ import {Component} from "@angular/core";
 import {GridOptions, Module, AllCommunityModules} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";

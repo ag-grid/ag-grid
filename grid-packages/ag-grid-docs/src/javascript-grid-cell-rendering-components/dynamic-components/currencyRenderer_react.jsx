@@ -10,14 +10,14 @@ export default class CurrencyRenderer extends Component {
     }
 
     formatValueToCurrency(currency, value) {
-        return `${currency}${value}`
+        return `${currency}${value.toFixed(2)}`
     }
 
     // noinspection JSUnusedGlobalSymbols
     refresh(params) {
         if(params.value !== this.state.value) {
             this.setState({
-                value: params.value.toFixed(2)
+                value: params.value
             })
         }
         return true;

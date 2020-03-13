@@ -11,11 +11,11 @@ class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css">
           
             <button on-click="refreshRowData" style="margin-bottom: 15px">Refresh Data</button>
             <ag-grid-polymer style="width: 100%; height: 420px; "
-                             class="ag-theme-balham"
+                             class="ag-theme-alpine"
                              gridOptions="{{gridOptions}}"
                              on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
     `;

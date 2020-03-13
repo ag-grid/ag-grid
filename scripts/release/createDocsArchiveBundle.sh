@@ -14,6 +14,7 @@ VERSION=""${RAW_VERSION//./}""
 
 echo "Building Docs Release"
 cd grid-packages/ag-grid-docs
+rm -rf dist
 npx gulp release-archive
 cd ../../
 

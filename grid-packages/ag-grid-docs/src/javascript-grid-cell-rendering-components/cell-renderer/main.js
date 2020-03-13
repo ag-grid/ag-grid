@@ -141,6 +141,9 @@ var gridOptions = {
         daysFrostRenderer: DaysFrostRenderer,
         daysSunshineRenderer: daysSunshineRenderer,
         rainPerTenMmRenderer: rainPerTenMmRenderer
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
