@@ -31,7 +31,7 @@ var gridOptions = {
     floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
-    onGridReady(params) {
+    onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
 };

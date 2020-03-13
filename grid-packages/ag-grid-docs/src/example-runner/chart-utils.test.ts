@@ -36,8 +36,6 @@ describe('wrapOptionsUpdateCode', () => {
         const propertyDefinition = wrapOptionsUpdateCode(functionDefinition);
         const expected = 'foo(bar) { const options = cloneDeep(this.options); options.axes[0].gridStyle = [{ lineDash: [1, 3] }]; this.options = options; }';
 
-        console.log(propertyDefinition);
-
         expect(standardiseWhitespace(propertyDefinition)).toBe(expected);
     });
 });
