@@ -7,11 +7,11 @@ class AgGridPolymerExample extends PolymerElement {
     static get template() {
         return html`
             <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-grid.css">
-            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css">
+            <link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css">
 
             <button style="margin-bottom: 10px" on-click="onClicked">Filter Instance Method</button>
             <ag-grid-polymer style="width: 100%; height: 300px; "
-                             class="ag-theme-balham"
+                             class="ag-theme-alpine"
                              gridOptions="{{gridOptions}}"
                              on-first-data-rendered="{{firstDataRendered}}"></ag-grid-polymer>
     `;

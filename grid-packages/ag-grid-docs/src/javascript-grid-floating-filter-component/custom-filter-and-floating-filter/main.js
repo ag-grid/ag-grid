@@ -1,20 +1,20 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", width: 100, floatingFilterComponent:'customNumberFloatingFilter',
+    {headerName: "Athlete", field: "athlete", filter: 'agTextColumnFilter'},
+    {headerName: "Gold", field: "gold", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'
     },
-    {headerName: "Silver", field: "silver", width: 100, floatingFilterComponent:'customNumberFloatingFilter',
+    {headerName: "Silver", field: "silver", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, floatingFilterComponent:'customNumberFloatingFilter',
+    {headerName: "Bronze", field: "bronze", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'},
-    {headerName: "Total", field: "total", width: 100, floatingFilterComponent:'customNumberFloatingFilter',
+    {headerName: "Total", field: "total", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'}
@@ -30,7 +30,10 @@ var gridOptions = {
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    onGridReady(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function isNumeric(n) {
