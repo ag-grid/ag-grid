@@ -7,6 +7,12 @@
         }
     }
 
+    .ag-range-field {
+        .ag-input-wrapper {
+            height: 100%;
+        }
+    }
+
     .ag-toggle-button {
         flex: none;
         width: unset;
@@ -687,7 +693,7 @@
 @mixin ag-range {
     -webkit-appearance: none;
     width: 100%;
-    height: ag-param(icon-size);
+    height: 100%;
     background: none;
     overflow: visible;
 
@@ -701,6 +707,8 @@
 
     &::-ms-track {
         @include ag-internal-range-track;
+        color: transparent;
+        width: calc(100% - 2px);
     }
 
     &::-webkit-slider-thumb {
@@ -710,7 +718,6 @@
 
     &::-ms-thumb {
         @include ag-internal-range-thumb;
-        // height: 8.4px;
     }
     &::-moz-ag-range-thumb {
         @include ag-internal-range-thumb;
