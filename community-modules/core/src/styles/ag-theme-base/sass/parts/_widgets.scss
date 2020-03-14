@@ -123,6 +123,7 @@
         .ag-picker-field-wrapper {
             background-color: ag-param(background-color);
             min-height: ag-param(list-item-height);
+            height: ag-param(list-item-height);
             cursor: default;
         }
         .ag-picker-field-display {
@@ -132,7 +133,6 @@
             text-overflow: ellipsis;
         }
         .ag-picker-field-icon {
-            height: 100%;
             display: flex;
             align-items: center;
         }
@@ -269,11 +269,6 @@
             box-shadow: ag-param(input-focus-box-shadow);
         }
     }
-
-    .ag-picker-field-display {
-        width: ag-param(icon-size);
-        height: ag-param(icon-size);
-    }
     
     .ag-picker-field-button {
         background-color: ag-param(background-color);
@@ -282,6 +277,10 @@
 
     .ag-dialog.ag-color-dialog {
         border-radius: 5px;
+    }
+
+    .ag-color-picker .ag-picker-field-display {
+        height: ag-param(icon-size);
     }
 
     .ag-color-panel {
