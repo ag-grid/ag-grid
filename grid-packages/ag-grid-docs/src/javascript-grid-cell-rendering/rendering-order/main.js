@@ -42,7 +42,7 @@ function showOrderCellRenderer() {
 
 function getRowData() {
     // 1000 blank rows for the grid
-    return new Array(1000).fill(null);
+    return Array.apply(null, Array(1000));
 }
 
 document.addEventListener("DOMContentLoaded", function() {
