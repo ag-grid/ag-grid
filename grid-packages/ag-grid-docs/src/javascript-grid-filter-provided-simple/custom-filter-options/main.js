@@ -1,7 +1,6 @@
 var columnDefs = [
     {
         field: "athlete",
-        width: 150,
         filterParams: {
             filterOptions: [
                 'contains',
@@ -9,7 +8,7 @@ var columnDefs = [
                     displayKey: 'startsA',
                     displayName: 'Starts With "A"',
                     test: function(filterValue, cellValue) {
-                        return cellValue != null && cellValue.indexOf('a')==0;
+                        return cellValue != null && cellValue.indexOf('a') == 0;
                     },
                     hideFilterInput: true
                 },
@@ -17,7 +16,7 @@ var columnDefs = [
                     displayKey: 'startsB',
                     displayName: 'Starts With "N"',
                     test: function(filterValue, cellValue) {
-                        return cellValue != null && cellValue.indexOf('n')==0;
+                        return cellValue != null && cellValue.indexOf('n') == 0;
                     },
                     hideFilterInput: true
                 }
@@ -26,7 +25,7 @@ var columnDefs = [
     },
     {
         field: "age",
-        width: 90,
+        minWidth: 120,
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: [
@@ -61,7 +60,6 @@ var columnDefs = [
     },
     {
         field: "date",
-        width: 145,
         filter:'agDateColumnFilter',
         filterParams: {
             filterOptions: [
@@ -82,7 +80,6 @@ var columnDefs = [
                         return cellDate.getTime() === filterValue.getTime();
                     }
                 },
-
             ],
             comparator: function (filterLocalDateAtMidnight, cellValue){
                 var dateAsString = cellValue;
@@ -107,7 +104,6 @@ var columnDefs = [
     },
     {
         field: "country",
-        width: 120,
         filterParams: {
             filterOptions: [
                 // 'equals',
@@ -123,15 +119,17 @@ var columnDefs = [
             ]
         }
     },
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: false}
+    { field: "gold", filter: 'agNumberColumnFilter' },
+    { field: "silver", filter: 'agNumberColumnFilter' },
+    { field: "bronze", filter: 'agNumberColumnFilter' },
+    { field: "total", filter: false },
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         sortable: true,
         filter: true
     },

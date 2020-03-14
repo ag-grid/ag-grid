@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
     Remember Filtering works with all frameworks eg Angular and React as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated') ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560]) ?>
 
 <h2>Simple Filter Parts</h2>
 
@@ -623,7 +623,7 @@ filterParams = {
     </li>
 </ul>
 
-<?= grid_example('Null Filtering', 'null-filtering', 'vanilla') ?>
+<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310]) ?>
 
 
 <h2>Style Header on Filter</h2>
@@ -638,7 +638,7 @@ filterParams = {
     any column you filter on will it's header change background color.
 </p>
 
-<?= grid_example('Style Header', 'style-header-on-filter', 'generated') ?>
+<?= grid_example('Style Header', 'style-header-on-filter', 'generated', ['exampleHeight' => 520]) ?>
 
 
 

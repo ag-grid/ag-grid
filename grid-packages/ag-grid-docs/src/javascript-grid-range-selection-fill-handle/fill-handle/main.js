@@ -1,23 +1,23 @@
-var columnDefs = [
-    {field: "athlete", width: 150},
-    {field: "age", width: 90},
-    {field: "country", width: 120},
-    {field: "year", width: 90},
-    {field: "sport", width: 110},
-    {field: "gold", width: 100},
-    {field: "silver", width: 100},
-    {field: "bronze", width: 100},
-    {field: "total", width: 100}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "athlete", minWidth: 150 },
+        { field: "age", maxWidth: 90 },
+        { field: "country", minWidth: 150 },
+        { field: "year", maxWidth: 90 },
+        { field: "date", minWidth: 150 },
+        { field: "sport", minWidth: 150 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         editable: true
     },
-    columnDefs: columnDefs,
     enableRangeSelection: true,
     enableFillHandle: true,
-    rowData: null
 };
 
 // setup the grid after the page has finished loading
