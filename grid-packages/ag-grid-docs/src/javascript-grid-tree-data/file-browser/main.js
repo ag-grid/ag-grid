@@ -227,10 +227,23 @@ function getRowsToUpdate(node, parentPath) {
     return node.data ? res.concat([node.data]) : res;
 }
 
-function getFileIcon(filename) {
-    return filename.endsWith('.mp3') || filename.endsWith('.wav')
+function getFileIcon(name) {
+    return endsWith(name, '.mp3') || endsWith(name, '.wav')
         ? 'far fa-file-audio'
-        : filename.endsWith('.xls') ? 'far fa-file-excel' : filename.endsWith('.txt') ? 'far fa-file' : filename.endsWith('.pdf') ? 'far fa-file-pdf' : 'far fa-folder';
+        : endsWith(name, '.xls')
+            ? 'far fa-file-excel'
+            : endsWith(name, '.txt')
+                ? 'far fa-file'
+                : endsWith(name, '.pdf')
+                    ? 'far fa-file-pdf'
+                    : 'far fa-folder';
+}
+
+function endsWith(str, match) {
+    var len;
+    if (str == null || !str.length || match == null || !match.length) { return false; }
+    len = str.length;
+    return str.substring(len - match.length, len)
 }
 
 // wait for the document to be loaded, otherwise
