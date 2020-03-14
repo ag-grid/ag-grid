@@ -1,27 +1,25 @@
-
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'athlete', minWidth: 180 },
+        { field: 'age' },
+        { field: 'country', minWidth: 150 },
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
     defaultColDef: {
-        width: 100,
+        flex: 1,
+        minWidth: 100,
+        resizable: true,
         headerCheckboxSelection: isFirstColumn,
         checkboxSelection: isFirstColumn,
-        resizable: true
     },
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
-    columnDefs: columnDefs
 };
 
 function isFirstColumn(params) {

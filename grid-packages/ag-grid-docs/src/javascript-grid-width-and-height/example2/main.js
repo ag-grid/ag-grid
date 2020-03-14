@@ -1,16 +1,3 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', minWidth: 150},
-    {headerName: 'Age', field: 'age', minWidth: 50},
-    {headerName: 'Country', field: 'country', minWidth: 120},
-    {headerName: 'Year', field: 'year', minWidth: 90},
-    {headerName: 'Date', field: 'date', minWidth: 110},
-    {headerName: 'Sport', field: 'sport', minWidth: 110},
-    {headerName: 'Gold', field: 'gold', minWidth: 100},
-    {headerName: 'Silver', field: 'silver', minWidth: 100},
-    {headerName: 'Bronze', field: 'bronze', minWidth: 100},
-    {headerName: 'Total', field: 'total', minWidth: 100}
-];
-
 var rowData = [
     {athlete: 'Michael Phelps', age: 23, country: 'United States', year: 2008, date: '24/08/2008', sport: 'Swimming', gold: 8, silver: 0, bronze: 0, total: 8},
     {athlete: 'Michael Phelps', age: 19, country: 'United States', year: 2004, date: '29/08/2004', sport: 'Swimming', gold: 6, silver: 0, bronze: 2, total: 8},
@@ -26,8 +13,21 @@ var minRowHeight = 25;
 var currentRowHeight;
 
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
+    columnDefs: [
+        { field: 'athlete', minWidth: 150},
+        { field: 'age', minWidth: 90},
+        { field: 'country', minWidth: 150},
+        { field: 'year', minWidth: 90},
+        { field: 'date', minWidth: 150},
+        { field: 'sport', minWidth: 150},
+        { field: 'gold', minWidth: 100},
+        { field: 'silver', minWidth: 100},
+        { field: 'bronze', minWidth: 100},
+        { field: 'total', minWidth: 100}
+    ],
+    defaultColDef: {
+        resizable: true
+    },
     onGridReady: function(params) {
         minRowHeight = params.api.getSizesForCurrentTheme().rowHeight;
         currentRowHeight = minRowHeight;

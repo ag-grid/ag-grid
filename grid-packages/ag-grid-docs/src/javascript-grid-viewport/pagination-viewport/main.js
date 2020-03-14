@@ -2,37 +2,33 @@ var columnDefs = [
     // this col shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        maxWidth: 100,
+        maxWidth: 80,
         cellRenderer: function (params) {
             return '' + params.rowIndex;
         }
     },
-    { field: 'code', maxWidth: 120},
-    { field: 'name', minWidth: 250},
+    { field: 'code', maxWidth: 90 },
+    { field: 'name', minWidth: 220 },
     {
         field: 'bid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'mid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'ask',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'volume',
-        width: 80,
         cellClass: 'cell-number',
         cellRenderer: 'agAnimateSlideCellRenderer'
     }
@@ -42,7 +38,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 140,
         resizable: true
     },
     enableRangeSelection: true,

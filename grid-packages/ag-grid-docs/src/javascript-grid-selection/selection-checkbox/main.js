@@ -1,34 +1,39 @@
-var columnDefs = [
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Age", field: "age", width: 90, aggFunc: 'sum',
-        checkboxSelection: function(params) {
-            return params.node.group === true;
-        }
-    },
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null,
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
-    suppressRowClickSelection: true,
-    suppressAggFuncInHeader: true,
-    autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
+    columnDefs: [
+        { field: "country", rowGroup: true, hide: true },
+        { field: "sport",rowGroup: true, hide: true },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' },
+        { field: "age",
+            minWidth: 120,
+            checkboxSelection: function(params) {
+                return params.node.group === true;
+            },
+            aggFunc: 'sum',
+        },
+        { field: "year", maxWidth: 120 },
+        { field: "date", minWidth: 150 },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+    },
+    autoGroupColumnDef: {
+        headerName: "Athlete",
+        field: "athlete",
+        minWidth: 250,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: function(params) {
                 return params.node.group === true;
             }
         }
-    }
+    },
+    rowSelection: 'multiple',
+    groupSelectsChildren: true,
+    suppressRowClickSelection: true,
+    suppressAggFuncInHeader: true,
 };
 
 // setup the grid after the page has finished loading

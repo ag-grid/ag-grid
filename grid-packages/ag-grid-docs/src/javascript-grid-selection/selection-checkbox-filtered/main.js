@@ -1,32 +1,35 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0},
-    {headerName: "Sport", field: "sport", width: 110, rowGroupIndex: 1},
-    {headerName: "Age", field: "age", width: 90, aggFunc: 'sum'},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", rowGroup: true, hide: true },
+        { field: "sport",rowGroup: true, hide: true },
+        { field: "age", minWidth: 120, aggFunc: 'sum' },
+        { field: "year", maxWidth: 120 },
+        { field: "date", minWidth: 150 },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' },
+        { field: "total", aggFunc: 'sum' },
+    ],
     defaultColDef: {
-        filter: true
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
     },
-    columnDefs: columnDefs,
-    rowData: null,
+    autoGroupColumnDef: {
+        headerName: "Athlete",
+        field: "athlete",
+        minWidth: 250,
+        cellRenderer:'agGroupCellRenderer',
+        cellRendererParams: {
+            checkbox: true
+        },
+    },
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     groupSelectsFiltered: true,
     suppressAggFuncInHeader: true,
-    suppressRowClickSelection: true,
-     autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
-        cellRenderer:'agGroupCellRenderer',
-        cellRendererParams: {
-            checkbox: true
-        }
-    }
+    suppressRowClickSelection: true
 };
 
 function filterSwimming() {

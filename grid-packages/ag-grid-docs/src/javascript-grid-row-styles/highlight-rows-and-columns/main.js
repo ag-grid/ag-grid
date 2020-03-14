@@ -3,14 +3,14 @@ var gridOptions = {
         {headerName: 'Participant',
             children: [
                 { field: "athlete" },
-                { field: "age", width: 90 }
+                { field: "age", maxWidth: 90 }
             ]
         },
         {
             headerName: 'Details',
             children: [
                 { field: "country" },
-                { field: "year", width: 90 },
+                { field: "year", maxWidth: 90 },
                 { field: "date" },
                 { field: "sport" }
             ]
@@ -26,7 +26,8 @@ var gridOptions = {
         }
     ],
     defaultColDef: {
-        width: 150,
+        flex: 1,
+        minWidth: 150,
         resizable: true
     },
 };

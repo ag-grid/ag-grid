@@ -2,7 +2,7 @@ var columnDefs = [
     { field: "athlete" },
     {
         field: "age",
-        width: 90,
+        maxWidth: 90,
         valueParser: numberParser,
         cellClassRules: {
             'rag-green': 'x < 20',
@@ -13,7 +13,7 @@ var columnDefs = [
     { field: "country" },
     {
         field: "year",
-        width: 90,
+        maxWidth: 90,
         valueParser: numberParser,
         cellClassRules: {
             'rag-green-outer': function(params) { return params.value === 2008},
@@ -88,8 +88,9 @@ function numberParser(params) {
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         editable: true,
-        width: 170
     }
 };
 

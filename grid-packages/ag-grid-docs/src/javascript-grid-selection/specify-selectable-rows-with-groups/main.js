@@ -1,40 +1,37 @@
-var columnDefs = [
-  {headerName: "Year", field: "year", width: 90},
-  {headerName: "Gold", field: "gold", width: 140, aggFunc: 'sum'},
-  {headerName: "Silver", field: "silver", width: 140, aggFunc: 'sum'},
-  {headerName: "Bronze", field: "bronze", width: 140, aggFunc: 'sum'},
-  {headerName: "Total", field: "total", width: 140, aggFunc: 'sum'},
-  {headerName: "Age", field: "age", width: 120, aggFunc: 'sum'},
-  {headerName: "Country", field: "country", width: 180, rowGroupIndex: 0},
-  {headerName: "Date", field: "date", width: 110},
-  {headerName: "Sport", field: "sport", width: 110}
-];
-
 var gridOptions = {
+  columnDefs: [
+    { field: "country", rowGroup: true, hide: true },
+    { field: "year", maxWidth: 100 },
+    { field: "gold", aggFunc: 'sum' },
+    { field: "silver", aggFunc: 'sum' },
+    { field: "bronze", aggFunc: 'sum' },
+    { field: "date" },
+    { field: "sport" },
+  ],
   defaultColDef: {
-    sortable: true, 
-    filter: true
+    flex: 1,
+    minWidth: 150,
+    sortable: true,
+    filter: true,
   },
-  columnDefs: columnDefs,
-  rowData: null,
+  autoGroupColumnDef: {
+    headerName: "Athlete",
+    field: "athlete",
+    minWidth: 250,
+    cellRenderer:'agGroupCellRenderer',
+    cellRendererParams: {
+      checkbox: true
+    },
+  },
   rowSelection: 'multiple',
   rowDeselection: true,
-  isRowSelectable: function(node) {
-    return node.data ? (node.data.year === 2008 || node.data.year === 2004) : false;
-  },
   groupSelectsChildren: true,
   groupSelectsFiltered: true,
   suppressRowClickSelection: true,
   groupDefaultExpanded: -1,
-  autoGroupColumnDef: {
-    headerName: "Athlete",
-    field: "athlete",
-    width: 250,
-    cellRenderer:'agGroupCellRenderer',
-    cellRendererParams: {
-      checkbox: true
-    }
-  }
+  isRowSelectable: function(node) {
+    return node.data ? (node.data.year === 2008 || node.data.year === 2004) : false;
+  },
 };
 
 function filterBy2004() {
