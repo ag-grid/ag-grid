@@ -243,7 +243,7 @@ function endsWith(str, match) {
     var len;
     if (str == null || !str.length || match == null || !match.length) { return false; }
     len = str.length;
-    return str.substring(len - match.length, len)
+    return str.substring(len - match.length, len) === match;
 }
 
 // wait for the document to be loaded, otherwise
