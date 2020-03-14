@@ -195,7 +195,7 @@ export class ChartMenu extends Component {
         const tab = this.tabs.indexOf(tabName);
 
         if (!this.menuPanel) {
-            this.createMenuPanel(tab).then(() => this.showContainer());
+            this.createMenuPanel(tab).then(this.showContainer.bind(this));
         } else {
             this.showContainer();
         }
