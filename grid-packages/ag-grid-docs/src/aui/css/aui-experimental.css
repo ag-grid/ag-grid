@@ -1878,7 +1878,7 @@ form.aui .textarea[data-aui-notification-success] {
 .aui-sidebar .aui-sidebar-handle,
 .aui-sidebar-submenu .aui-sidebar-handle {
   background: #fff url(images/icons/sidebar/icon-handle.png) center center no-repeat;
-  cursor: col-resize;
+  cursor: ew-resize;
   height: 100%;
   position: absolute;
   right: -10px;
