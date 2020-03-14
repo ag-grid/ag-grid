@@ -86,12 +86,15 @@ function getPersonFilter() {
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: getPersonFilter(), suppressMenu: true},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
-    {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu: true},
-    {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu: true},
+    { field: "athlete", filter: getPersonFilter(), suppressMenu: true },
+    { field: "age", maxWidth: 110, filter: 'agNumberColumnFilter', suppressMenu: true },
+    { field: "country", filter: 'agSetColumnFilter', suppressMenu: true },
+    { field: "year", maxWidth: 120, filter: 'agNumberColumnFilter', suppressMenu: true },
     {
-        headerName: "Date", field: "date", width: 220, filter: 'agDateColumnFilter', filterParams: {
+        field: "date",
+        minWidth: 215,
+        filter: 'agDateColumnFilter',
+        filterParams: {
             comparator: function (filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
@@ -111,42 +114,44 @@ var columnDefs = [
                 }
             },
             browserDatePicker: true
-        }, suppressMenu: true
+        },
+        suppressMenu: true
     },
-    {headerName: "Sport", field: "sport", width: 110, suppressMenu: true, filter: 'agTextColumnFilter'},
+    { field: "sport", suppressMenu: true, filter: 'agTextColumnFilter' },
     {
-        headerName: "Gold",
         field: "gold",
-        width: 100,
         filter: 'agNumberColumnFilter',
-        filterParams: {applyButton: true},
+        filterParams: {
+            applyButton: true
+        },
         suppressMenu: true
     },
     {
-        headerName: "Silver",
         field: "silver",
-        width: 100,
         filter: 'agNumberColumnFilter',
-        floatingFilterComponentParams: {suppressFilterButton: true}
+        floatingFilterComponentParams: {
+            suppressFilterButton: true
+        }
     },
     {
-        headerName: "Bronze",
         field: "bronze",
-        width: 100,
         filter: 'agNumberColumnFilter',
-        floatingFilterComponentParams: {suppressFilterButton: true}
+        floatingFilterComponentParams: {
+            suppressFilterButton: true
+        }
     },
-    {headerName: "Total", field: "total", width: 100, filter: false}
+    { field: "total", filter: false }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 160,
+        filter: true,
         sortable: true,
-        filter: true
     },
     floatingFilter: true,
-    columnDefs: columnDefs,
-    rowData: null
 };
 
 function irelandAndUk() {
