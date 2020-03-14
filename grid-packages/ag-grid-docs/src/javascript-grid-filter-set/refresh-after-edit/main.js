@@ -1,30 +1,26 @@
-var rowData = [
-    {col1: 'A', col2: 'A', col3: 'A', col4: 'A', col5: 'A', col6: 'A'},
-    {col1: 'A', col2: 'A', col3: 'A', col4: 'A', col5: 'A', col6: 'A'},
-    {col1: 'B', col2: 'B', col3: 'B', col4: 'B', col5: 'B', col6: 'B'},
-    {col1: 'B', col2: 'B', col3: 'B', col4: 'B', col5: 'B', col6: 'B'}
-];
-
-var columnDefs = [
-    {field: 'col1'},
-    {field: 'col2', filterParams: {suppressSyncValuesAfterDataChange: true}},
-    {field: 'col3', filterParams: {suppressSyncValuesAfterDataChange: true}},
-    {field: 'col4', filterParams: {suppressSyncValuesAfterDataChange: true}},
-    {field: 'col5', filterParams: {suppressSyncValuesAfterDataChange: true}}
-];
-
 var gridOptions = {
+    rowData: [
+        {col1: 'A', col2: 'A', col3: 'A', col4: 'A', col5: 'A', col6: 'A'},
+        {col1: 'A', col2: 'A', col3: 'A', col4: 'A', col5: 'A', col6: 'A'},
+        {col1: 'B', col2: 'B', col3: 'B', col4: 'B', col5: 'B', col6: 'B'},
+        {col1: 'B', col2: 'B', col3: 'B', col4: 'B', col5: 'B', col6: 'B'}
+    ],
+    columnDefs: [
+        {field: 'col1'},
+        {field: 'col2', filterParams: {suppressSyncValuesAfterDataChange: true}},
+        {field: 'col3', filterParams: {suppressSyncValuesAfterDataChange: true}},
+        {field: 'col4', filterParams: {suppressSyncValuesAfterDataChange: true}},
+        {field: 'col5', filterParams: {suppressSyncValuesAfterDataChange: true}}
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 140,
+        filter: true,
         editable: true,
         resizable: true,
-        filter: true,
-        width: 100
     },
-    columnDefs: columnDefs,
-    rowData: rowData,
     sideBar: {
-        toolPanels: ['filters'],
-        defaultToolPanel: 'filters'
+        toolPanels: ['filters']
     },
     onCellValueChanged: onCellValueChanged,
     onGridReady: function(params) {

@@ -24,40 +24,60 @@ function randomData() {
     return newData;
 }
 var columnDefs = [
-    {headerName: "Fruit - Normal", field: "fruit", width: 150, filter: 'agSetColumnFilter',
+    {
+        headerName: "Fruit - Normal",
+        field: "fruit",
+        filter: 'agSetColumnFilter',
         filterParams: {} // all default values
     },
-    {headerName: "Animal - Keep", field: "animal", width: 150, filter: 'agSetColumnFilter',
+    {
+        headerName: "Animal - Keep",
+        field: "animal",
+        filter: 'agSetColumnFilter',
         filterParams: {
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Color - Values (Sorted)", field: "color", width: 250, filter: 'agSetColumnFilter',
+    {
+        headerName: "Color - Values (Sorted)",
+        field: "color",
+        minWidth: 240,
+        filter: 'agSetColumnFilter',
         filterParams: {
             values: colorValues
         }
     },
-    {headerName: "Color - Values (As provided)", field: "color", width: 250, filter: 'agSetColumnFilter',
+    {
+        headerName: "Color - Values (As provided)",
+        field: "color",
+        minWidth: 260,
+        filter: 'agSetColumnFilter',
         filterParams: {
             values: colorValues,
             suppressSorting: true
         }
     },
-    {headerName: "Location - Values + Keep", field: "location", width: 250, filter: 'agSetColumnFilter',
+    {
+        headerName: "Location - Values + Keep",
+        field: "location",
+        minWidth: 250,
+        filter: 'agSetColumnFilter',
         filterParams: {
             values: locationValues,
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Value", field: "value", width: 150, filter: 'agNumberColumnFilter'}
+    { field: "value", filter: 'agNumberColumnFilter' }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        filter: true
-    },
     columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 180,
+        filter: true,
+        resizable: true,
+    },
     rowData: randomData()
 };
 

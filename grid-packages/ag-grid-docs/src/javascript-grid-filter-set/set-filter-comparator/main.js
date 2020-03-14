@@ -1,3 +1,50 @@
+var gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                textFormatter: replaceAccents
+            }
+        },
+        {
+            headerName: 'Age (With Comparator)',
+            field: 'age',
+            minWidth: 240,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: getAllAges(),
+                comparator: function(a, b) {
+                    var numA = parseInt(a);
+                    var numB = parseInt(b);
+                    if (numA > numB) {
+                        return 1;
+                    } else if (numA < numB) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        },
+        {
+            headerName: 'Age (No Comparator)',
+            field: 'age',
+            minWidth: 220,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                values: getAllAges()
+            }
+        },
+        { field: 'country' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        filter: true,
+        resizable: true,
+    }
+};
+
 function getAllAges() {
     var allAges = [];
     for (var i = 0; i < 100; i++) {
@@ -21,57 +68,6 @@ function replaceAccents(s) {
     r = r.replace(new RegExp('\\W', 'g'), '');
     return r;
 }
-
-var columnDefs = [
-    {
-        headerName: 'Athlete',
-        field: 'athlete',
-        width: 150,
-        filter: 'agSetColumnFilter',
-        filterParams: {
-            textFormatter: replaceAccents
-        }
-    },
-    {
-        headerName: 'Age - Comparator',
-        field: 'age',
-        width: 200,
-        filter: 'agSetColumnFilter',
-        filterParams: {
-            values: getAllAges(),
-            comparator: function(a, b) {
-                var numA = parseInt(a);
-                var numB = parseInt(b);
-                if (numA > numB) {
-                    return 1;
-                } else if (numA < numB) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-        }
-    },
-    {
-        headerName: 'Age - No Comparator',
-        field: 'age',
-        width: 200,
-        filter: 'agSetColumnFilter',
-        filterParams: {
-            values: getAllAges()
-        }
-    },
-    {headerName: 'Country', field: 'country', width: 140}
-];
-
-var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    rowData: null
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

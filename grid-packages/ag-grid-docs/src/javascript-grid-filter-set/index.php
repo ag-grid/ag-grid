@@ -171,7 +171,7 @@ include '../documentation-main/documentation_header.php';
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter']]) ?>
+    <?= grid_example('Set Filter', 'set-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter']]) ?>
 
     <h2>Asynchronous Values</h2>
 
@@ -214,7 +214,7 @@ filterParams: {
             the values are not loaded again.</li>
         </ul>
 
-    <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510]) ?>
 
     <h2>Sorting And Formatting Set Filter Values List</h2>
 
@@ -455,6 +455,6 @@ gridOptions.api.onFilterChanged();
         end of the interaction a call to <code>gridOptions.api.onFilterChanged()</code> is performed.
     </p>
 
-    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
