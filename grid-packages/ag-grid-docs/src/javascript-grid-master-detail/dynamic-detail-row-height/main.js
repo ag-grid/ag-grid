@@ -34,7 +34,8 @@ var gridOptions = {
         if (params.node && params.node.detail) {
             var offset = 80;
             var allDetailRowHeight = params.data.callRecords.length  * params.api.getSizesForCurrentTheme().rowHeight;
-            return allDetailRowHeight + params.api.getHeaderHeight() + offset;
+            var gridSizes = params.api.getSizesForCurrentTheme();
+            return allDetailRowHeight + gridSizes.headerHeight + offset;
         }
     },
     onFirstDataRendered: onFirstDataRendered

@@ -1,25 +1,26 @@
-var columnDefs = [
-    { headerName: "Athlete", field: "athlete", width: 150 },
-    { headerName: "Age", field: "age", width: 90 },
-    { headerName: "Country", field: "country", width: 120 },
-    { headerName: "Year", field: "year", width: 90 },
-    { headerName: "Date", field: "date", width: 110 },
-    { headerName: "Sport", field: "sport", width: 110 },
-    { headerName: "Gold", field: "gold", width: 100 },
-    { headerName: "Silver", field: "silver", width: 100 },
-    { headerName: "Bronze", field: "bronze", width: 100 },
-    { headerName: "Total", field: "total", width: 100 }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "athlete", minWidth: 150 },
+        { field: "age", maxWidth: 90 },
+        { field: "country", minWidth: 150 },
+        { field: "year", maxWidth: 90 },
+        { field: "date", minWidth: 150 },
+        { field: "sport", minWidth: 150 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+    },
     rowSelection: 'single',
     onSelectionChanged: onSelectionChanged
 };
 
 function onSelectionChanged() {
     var selectedRows = gridOptions.api.getSelectedRows();
-
     document.querySelector('#selectedRows').innerHTML = selectedRows.length === 1 ? selectedRows[0].athlete : '';
 }
 

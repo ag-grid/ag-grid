@@ -1,0 +1,19 @@
+
+.ag-theme-alpine .ag-checkbox-input-wrapper {
+    background: none;
+}
+
+.ag-theme-alpine .ag-checkbox-input-wrapper::after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: "\f00d";
+    color: red;
+}
+.ag-theme-alpine .ag-checkbox-input-wrapper.ag-checked::after {
+    content: "\f00c";
+    color: green;
+}
+.ag-theme-alpine .ag-checkbox-input-wrapper.ag-indeterminate::after {
+    content: "\f068";
+    color: gray;
+}

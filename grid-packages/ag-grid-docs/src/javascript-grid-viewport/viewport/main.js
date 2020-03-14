@@ -2,35 +2,31 @@ var columnDefs = [
     // this col shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        maxWidth: 100,
+        maxWidth: 80,
         cellRenderer: 'rowIdRenderer'
     },
-    { field: 'code', maxWidth: 120},
-    { field: 'name', minWidth: 250},
+    { field: 'code', maxWidth: 90 },
+    { field: 'name', minWidth: 220 },
     {
         field: 'bid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'mid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'ask',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'volume',
-        width: 80,
         cellClass: 'cell-number',
         cellRenderer: 'agAnimateSlideCellRenderer'
     }
@@ -40,7 +36,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 140,
         resizable: true
     },
     rowSelection: 'multiple',
@@ -349,8 +345,11 @@ function createMockServer() {
             if (rowsInClient[i]) {
                 continue;
             }
-            // otherwise send the row
-            rowDataMap[i] = this.allData[i];
+            // otherwise send the row. we send a copy of the row to mimic
+            // going over network, so any further changes to the row in
+            // the mock server is not reflected in the grid's copy
+            var copyOfData = Object.assign({}, this.allData[i]);
+            rowDataMap[i] = copyOfData;
             // and record that the client has this row
             rowsInClient[i] = true;
         }

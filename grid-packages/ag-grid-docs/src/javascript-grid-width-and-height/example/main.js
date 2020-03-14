@@ -1,19 +1,19 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', minWidth: 150},
-    {headerName: 'Age', field: 'age', minWidth: 90},
-    {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year'},
-    {headerName: 'Date', field: 'date'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null,
+    columnDefs: [
+        { field: 'athlete', minWidth: 150},
+        { field: 'age', maxWidth: 90},
+        { field: 'country', minWidth: 150},
+        { field: 'year', maxWidth: 90},
+        { field: 'date', minWidth: 150},
+        { field: 'sport', minWidth: 150},
+        { field: 'gold', minWidth: 100},
+        { field: 'silver', minWidth: 100},
+        { field: 'bronze', minWidth: 100},
+        { field: 'total', minWidth: 100}
+    ],
+    defaultColDef: {
+        resizable: true
+    },
     onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     }

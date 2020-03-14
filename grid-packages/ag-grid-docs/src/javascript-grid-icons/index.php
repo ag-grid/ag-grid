@@ -6,35 +6,13 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
 <h1>Icons</h1>
 
     <p class="lead">
         This sections details how to provide your own icons for the grid and style grid icons for your application requirements.
     </p>
 
-    <note>
-        <p>
-            In v21 of ag-Grid we changed how icons are set in the grid. Previous to v21 the icons were svg files that you could
-            override via the <code>icons-path</code> variable in SASS files. v21 uses WebFonts and CSS for the icons which is more flexible
-            and performs better.
-        </p>
-
-        <p>
-            For backwards compatibility you can still provide icons using the <code>icons</code> grid option.<br>
-            If you need to reintroduce SVG icons, see this section: <a href="#svg-icons">SVG Icons</a>
-        </p>
-
-        <p>
-            If you have created your own theme and want to include the stock icons, this is easiest
-            done by adding the WebFont from the theme you like: <br>
-            <code>dist/styles/webfont/agGridBalhamFont.css</code> - WebFont used by theme balham and balham-dark <br>
-            <code>dist/styles/webfont/agGridMaterialFont.css</code> - WebFont used by theme material<br>
-        </p>
-    </note>
-
-<h2>Change Individual Icons (CSS)</h2>
+<h2>Change individual icons using CSS</h2>
 
 <p>You can change individual icons by overriding the background images for the respective CSS selector.
 The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
@@ -54,13 +32,13 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 }
 </snippet>
 
-<h2>Replace the icons by changing the icons font (Scss)</h2>
+<h2>Replace the icons by changing the icon font</h2>
 
 <p>If you are using a <a href="/javascript-grid-styling/">custom theme</a> in your project, you can include use theme parameters to change the icon font.
     We <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">provide an example</a>
     that does this, and the relevant code looks like this:
 
-<snippet>
+    <snippet>
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
 
@@ -128,7 +106,25 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 </snippet>
 
-<p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
+<p>Alternatively, if you are swapping one theme's icon set for another, you do not need to define an icon map because all theme fonts use the same map. This example shows the use of Alpine with the Material font:
+
+<snippet>
+@import "~ag-grid-community/src/styles/ag-grid.scss";
+@import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
+
+// load Material font
+@import "~ag-grid-community/src/styles/webfont/agGridMaterialFont.scss";
+
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        "icon-font-family": "agGridMaterial", // use Material font
+        "icons-data": null, // prevent default font from being embedded
+    ));
+}
+
+</snippet>
+
+<p>A working project with Sass / Webpack set up to customise an icon set is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag grid customising theme repository</a>.
 
 <h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
 
@@ -147,115 +143,109 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 <snippet>
 
 // header column group shown when expanded (click to contract)
-columnGroupOpened: 'expanded',
+columnGroupOpened
 // header column group shown when contracted (click to expand)
-columnGroupClosed: 'contracted',
+columnGroupClosed
 // tool panel column group contracted (click to expand)
-columnSelectClosed: 'tree-closed',
+columnSelectClosed
 // tool panel column group expanded (click to contract)
-columnSelectOpen: 'tree-open',
+columnSelectOpen
 // column tool panel header expand/collapse all button, shown when some children are expanded and
 //     others are collapsed
-columnSelectIndeterminate: 'tree-indeterminate',
+columnSelectIndeterminate
 // shown on ghost icon while dragging column to the side of the grid to pin
-columnMovePin: 'pin',
+columnMovePin
 // shown on ghost icon while dragging over part of the page that is not a drop zone
-columnMoveHide: 'eye-slash',
+columnMoveHide
 // shown on ghost icon while dragging columns to reorder
-columnMoveMove: 'arrows',
+columnMoveMove
 // animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
-columnMoveLeft: 'left',
+columnMoveLeft
 // animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
-columnMoveRight: 'right',
+columnMoveRight
 // shown on ghost icon while dragging over Row Groups drop zone
-columnMoveGroup: 'group',
+columnMoveGroup
 // shown on ghost icon while dragging over Values drop zone
-columnMoveValue: 'aggregation',
+columnMoveValue
 // shown on ghost icon while dragging over pivot drop zone
-columnMovePivot: 'pivot',
+columnMovePivot
 // shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
 //     string column over aggregation drop zone
-dropNotAllowed: 'not-allowed',
+dropNotAllowed
 // shown on row group when contracted (click to expand)
-groupContracted: 'tree-closed',
+groupContracted
 // shown on row group when expanded (click to contract)
-groupExpanded: 'tree-open',
+groupExpanded
 // context menu chart item
-chart: 'chart',
+chart
 // chart window title bar
-close: 'cross',
+close
 // X (remove) on column 'pill' after adding it to a drop zone list
-cancel: 'cancel',
+cancel
 // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
-check: 'tick',
-// state icons for checkboxes
-checkboxChecked: 'checkbox-checked',
-checkboxUnchecked: 'checkbox-unchecked',
-checkboxIndeterminate: 'checkbox-indeterminate',
+check
 // "go to first" button in pagination controls
-first: 'first',
+first
 // "go to previous" button in pagination controls
-previous: 'previous',
+previous
 // "go to next" button in pagination controls
-next: 'next',
+next
 // "go to last" button in pagination controls
-last: 'last',
+last
 // shown on top right of chart when chart is linked to range data (click to unlink)
-linked: 'linked',
+linked
 // shown on top right of chart when chart is not linked to range data (click to link)
-unlinked: 'unlinked',
+unlinked
 // "Choose colour" button on chart settings tab
-colorPicker: 'color-picker',
-// on and off state for radio buttons
-radioButtonOn: 'radio-button-on',
-radioButtonOff: 'radio-button-off',
+colorPicker
 // rotating spinner shown by the loading cell renderer
-groupLoading: 'loading',
+groupLoading
 // button to launch enterprise column menu
-menu: 'menu',
+menu
 // filter tool panel tab
-filter: 'filter',
+filter
 // column tool panel tab
-columns: 'columns',
+columns
 // button in chart regular size window title bar (click to maximise)
-maximize: 'maximize',
+maximize
 // button in chart maximised window title bar (click to make regular size)
-minimize: 'minimize',
+minimize
 // "Pin column" item in column header menu
-menuPin: 'pin',
+menuPin
 // "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
-menuValue: 'aggregation',
+menuValue
 // "Group by {column-name}" item in column header menu
-menuAddRowGroup: 'group',
+menuAddRowGroup
 // "Un-Group by {column-name}" item in column header menu
-menuRemoveRowGroup: 'group',
+menuRemoveRowGroup
 // context menu copy item
-clipboardCopy: 'copy',
+clipboardCopy
 // context menu paste item
-clipboardPaste: 'paste',
+clipboardPaste
 // identifies the pivot drop zone
-pivotPanel: 'pivot',
+pivotPanel
 // "Row groups" drop zone in column tool panel
-rowGroupPanel: 'group',
+rowGroupPanel
 // columns tool panel Values drop zone
-valuePanel: 'aggregation',
+valuePanel
 // drag handle used to pick up draggable columns
-columnDrag: 'grip',
+columnDrag
 // drag handle used to pick up draggable rows
-rowDrag: 'grip',
+rowDrag
 // context menu export item
-save: 'save',
+save
 // version of small-right used in RTL mode
-smallLeft: 'small-left',
+smallLeft
 // separater between column 'pills' when you add multiple columns to the header drop zone
-smallRight: 'small-right',
+smallRight
 // show on column header when column is sorted ascending
-sortAscending: 'asc',
+sortAscending
 // show on column header when column is sorted descending
-sortDescending: 'desc',
+sortDescending
 // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-sortUnSort: 'none'
+sortUnSort
 </snippet>
+
 <p>
     Setting the icons on the column definitions is identical, except group icons are not used in column definitions.
 </p>
@@ -272,13 +262,15 @@ sortUnSort: 'none'
         </li>
     </ul>
 
+<h2>Changing checkbox and radio button icons</h2>
+
+<p>As of version 23, checkboxes and radio buttons are native browser inputs styled using CSS. This means that you can change the appearance of the checkbox with Sass, but not using the JavaScript <code>gridOptions</code> technique. Using Sass, you can either change the icon font (set the <code>checkbox-*</code> and <code>radio-button-*</code> entries in the icon font codes map) or add CSS rules to override the appearance of the checkbox.</p>
+
+<h2>Example</h2>
+
 <p>
     The example below shows a mixture of different methods for providing icons. The grouping is done with images,
     and the header icons use a mix of Font Awesome and strings.
-</p>
-
-<p>
-    (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
 </p>
 
 <?= grid_example('Icons', 'icons', 'generated', ['enterprise' => true, 'exampleHeight' => 660, 'extras' => ['fontawesome']]) ?>
@@ -349,9 +341,9 @@ sortUnSort: 'none'
             'checkbox-unchecked', 'color-picker', 'column',
             'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
             'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
-            'grip', 'group', 'indeterminate', 'last', 'left', 'linked',
-            'loading', 'maximize', 'menu', 'minimize', 'minus', 'next',
-            'none', 'not-allowed', 'paste', 'pin', 'pivot', 'plus',
+            'grip', 'group', 'last', 'left', 'linked',
+            'loading', 'maximize', 'menu', 'minimize', 'next',
+            'none', 'not-allowed', 'paste', 'pin', 'pivot',
             'previous', 'radio-button-off', 'radio-button-on', 'right',
             'save', 'small-down', 'small-left', 'small-right', 'small-up',
             'tick', 'tree-closed', 'tree-indeterminate', 'tree-open', 'unlinked'
@@ -395,7 +387,7 @@ sortUnSort: 'none'
     }
 
     window.addEventListener("load", function() {
-        var themes = ['balham', 'material', 'base'];
+        var themes = ['alpine', 'balham', 'material', 'base'];
 
         themes.forEach(function(theme) {
             addIconsToContainer(theme);
@@ -404,7 +396,10 @@ sortUnSort: 'none'
 </script>
     <ul class="nav nav-tabs bg-primary pl-2 pt-2" id="icon-tabpanel" role="tablist">
         <li class="nav-item mr-2">
-            <a class="nav-link active" id="balham-tab" data-toggle="tab" href="#balham" role="tab" aria-controls="balham" aria-selected="true">Balham Icons</a>
+            <a class="nav-link active" id="alpine-tab" data-toggle="tab" href="#alpine" role="tab" aria-controls="alpine" aria-selected="true">Alpine Icons</a>
+        </li>
+        <li class="nav-item mr-2">
+            <a class="nav-link" id="balham-tab" data-toggle="tab" href="#balham" role="tab" aria-controls="balham" aria-selected="true">Balham Icons</a>
         </li>
         <li class="nav-item mr-2">
             <a class="nav-link" id="material-tab" data-toggle="tab" href="#material" role="tab" aria-controls="material" aria-selected="false">Material Icons</a>
@@ -414,6 +409,12 @@ sortUnSort: 'none'
         </li>
     </ul>
     <div class="tab-content border border-top-0" id="icon-content" style="max-height: 34rem; overflow: hidden;">
+        <div class="tab-pane show active container px-0" id="alpine" role="tabpanel" aria-labelledby="alpine-tab" style="max-height: 34rem;position: relative;">
+            <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/alpine/alpine-icons.zip">Download All</a></div>
+        </div>
+        <div class="tab-pane show active container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
+            <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
+        </div>
         <div class="tab-pane show active container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
             <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
         </div>

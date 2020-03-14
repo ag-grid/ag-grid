@@ -1,25 +1,27 @@
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country", headerCheckboxSelection: true, checkboxSelection: true},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
-];
-
 var gridOptions = {
-    defaultColDef : {
-        width: 200,
+    columnDefs: [
+        { field: "athlete" },
+        { field: "age", maxWidth: 100 },
+        {
+            field: "country",
+            minWidth: 180,
+            headerCheckboxSelection: true,
+            checkboxSelection: true
+        },
+        { field: "year", maxWidth: 120 },
+        { field: "date", minWidth: 150 },
+        { field: "sport" },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         sortable: true,
         resizable: true,
-        filter: true
+        filter: true,
     },
-    columnDefs: columnDefs,
-    rowData: null,
     rowSelection: 'multiple',
     rowDeselection: true,
     suppressMenuHide: true,

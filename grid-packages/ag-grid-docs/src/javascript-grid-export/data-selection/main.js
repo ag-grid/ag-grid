@@ -6,14 +6,14 @@ var columnDefs = [
                 headerName: 'When and Where',
                 children: [
                     {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-                    {headerName: 'Year', field: 'year', width: 75, rowGroup: true}
+                    {headerName: 'Year', field: 'year', width: 85, rowGroup: true}
                 ]
             },
             {
                 headerName: 'Athlete',
                 children: [
                     {headerName: 'Name', field: 'athlete', width: 150},
-                    {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""'},
+                    {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""', width: 140},
                     {
                         headerName: 'Age',
                         field: 'age',
@@ -31,9 +31,9 @@ var columnDefs = [
             {
                 headerName: 'Medal Types',
                 children: [
-                    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
-                    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'},
-                    {headerName: 'Total', field: 'total', width: 100, aggFunc: 'sum'}
+                    {headerName: 'Silver', field: 'silver', width: 130, aggFunc: 'sum'},
+                    {headerName: 'Bronze', field: 'bronze', width: 140, aggFunc: 'sum'},
+                    {headerName: 'Total', field: 'total', width: 130, aggFunc: 'sum'}
                 ]
             }
         ]

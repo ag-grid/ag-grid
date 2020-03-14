@@ -1,34 +1,26 @@
 const columnDefs = [
-    {headerName: 'Code', field: 'code', width: 70},
-    {headerName: 'Name', field: 'name', width: 300},
+    { field: 'code', maxWidth: 90 },
+    { field: 'name', minWidth: 200 },
     {
-        headerName: 'Bid',
         field: 'bid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Mid',
         field: 'mid',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Ask',
         field: 'ask',
-        width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
         cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
-        headerName: 'Volume',
         field: 'volume',
-        width: 80,
         cellClass: 'cell-number',
         cellRenderer:'agAnimateSlideCellRenderer'
     }
@@ -43,12 +35,13 @@ function numberFormatter(params) {
 }
 
 const gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         resizable: true
     },
     enableRangeSelection: true,
-    columnDefs: columnDefs,
-
     deltaRowDataMode: true,
     // implement this so that we can do selection
     getRowNodeId: data => data.code,
@@ -73,7 +66,6 @@ const gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });
 
 

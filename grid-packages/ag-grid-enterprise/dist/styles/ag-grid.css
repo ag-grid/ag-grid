@@ -233,7 +233,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   .ag-body-horizontal-scroll-viewport,
   .ag-virtual-list-viewport {
     height: auto !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     display: block !important; }
   .ag-row {
     page-break-inside: avoid; } }

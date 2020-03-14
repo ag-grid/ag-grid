@@ -273,9 +273,6 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.setDataValue = function (colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
         var oldValue = this.valueService.getValue(column, this);
-        if (newValue === oldValue) {
-            return;
-        }
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
     };

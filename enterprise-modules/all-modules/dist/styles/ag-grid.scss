@@ -176,9 +176,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     .ag-center-cols-clipper,
     .ag-body-horizontal-scroll-viewport,
     .ag-virtual-list-viewport {
-        // 100% height elements with overflow hidden cause printing issues in IE and Edge
+        // Need auto height because 100% height elements with overflow hidden cause printing issues in IE and Edge
         height: auto !important;
-        overflow: visible !important;
+        // Overflow hidden, because otherwise scroll bars print in IE
+        overflow: hidden !important;
         // flex elements cause printing issues in Firefox
         // https://bugzilla.mozilla.org/show_bug.cgi?id=939897
         display: block !important;

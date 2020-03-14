@@ -522,7 +522,7 @@ cell renderers.</p>
     sided call is needed.
 </p>
 
-<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615]) ?>
 
 <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 

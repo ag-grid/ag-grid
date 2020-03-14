@@ -2748,11 +2748,6 @@ var Utils = /** @class */ (function () {
         cancel: 'cancel',
         // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
         check: 'tick',
-        // the following checkbox-* items are for checkboxes on themes that don't use a
-        //     native <input type="radio">
-        checkboxChecked: 'checkbox-checked',
-        checkboxUnchecked: 'checkbox-unchecked',
-        checkboxIndeterminate: 'checkbox-indeterminate',
         // "go to first" button in pagination controls
         first: 'first',
         // "go to previous" button in pagination controls
@@ -2767,10 +2762,6 @@ var Utils = /** @class */ (function () {
         unlinked: 'unlinked',
         // "Choose colour" button on chart settings tab
         colorPicker: 'color-picker',
-        // the following radio-button-* items are for radio buttons on themes that don't use a
-        //     native <input type="radio">
-        radioButtonOn: 'radio-button-on',
-        radioButtonOff: 'radio-button-off',
         // rotating spinner shown by the loading cell renderer
         groupLoading: 'loading',
         // button to launch enterprise column menu
@@ -8470,6 +8461,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.gridOptions.columnApi = null;
     };
     GridOptionsWrapper.prototype.init = function () {
+        var _this = this;
         if (!(this.gridOptions.suppressPropertyNamesCheck === true)) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
@@ -8510,6 +8502,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
+        var warnOfDeprecaredIcon = function (name) {
+            if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {
+                console.warn("gridOptions.icons." + name + " is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/");
+            }
+        };
+        warnOfDeprecaredIcon('radioButtonOff');
+        warnOfDeprecaredIcon('radioButtonOn');
+        warnOfDeprecaredIcon('checkboxChecked');
+        warnOfDeprecaredIcon('checkboxUnchecked');
+        warnOfDeprecaredIcon('checkboxIndeterminate');
         this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
@@ -12357,9 +12359,6 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.setDataValue = function (colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
         var oldValue = this.valueService.getValue(column, this);
-        if (newValue === oldValue) {
-            return;
-        }
         this.valueService.setValue(this, column, newValue);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
     };

@@ -111,6 +111,10 @@ $-ag-params: null !default;
             }
         }
     }
+    @if map-get($params, "icons-font-codes") and map-get($defaults, "icons-font-codes") {
+        $merged-codes: map-merge(map-get($defaults, "icons-font-codes"), map-get($params, "icons-font-codes"));
+        $params: map-merge($params, ("icons-font-codes": $merged-codes));
+    }
     $params: map-merge($defaults, $params);
     $params: map-merge($params, ("--ag-already-validated": true));
     $-ag-params: $params !global;

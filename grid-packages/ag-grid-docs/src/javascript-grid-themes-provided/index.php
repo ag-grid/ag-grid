@@ -168,22 +168,22 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <h2>Customising row and header heights</h2>
-
+    
     <p>
         The grid uses <a href="/javascript-grid-dom-virtualisation/">DOM virtualisation</a> for rendering large amounts of data,
         which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
         layout. The grid uses several strategies to work out the right size:
     </p>
-
+    
     <ol>
         <li>Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our <a href="https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js">theme customisation examples</a> demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).</li>
-        <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name. This ensures that teh grid will us the correct fallback sizes.</li>
-        <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
-    </ol>
-
-    <h2>Full list of theme parameters</h2>
-
-    <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the <code>ag-defined</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
+            <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name. This ensures that teh grid will us the correct fallback sizes.</li>
+            <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
+        </ol>
+        
+        <h2 id="base-theme-parameters">Full list of theme parameters</h2>
+        
+        <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the <code>ag-defined</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
 
 <snippet language="scss">
 // Colour of text and icons in primary UI elements like menus

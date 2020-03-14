@@ -1,30 +1,30 @@
-var columnDefs = [
-    {
-        headerName: 'Athlete',
-        field: 'athlete',
-        headerCheckboxSelection: true,
-        headerCheckboxSelectionFilteredOnly: true,
-        checkboxSelection: true
-    },
-    {headerName: 'Age', field: 'age'},
-    {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year'},
-    {headerName: 'Date', field: 'date'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Athlete',
+            field: 'athlete',
+            minWidth: 180,
+            headerCheckboxSelection: true,
+            headerCheckboxSelectionFilteredOnly: true,
+            checkboxSelection: true
+        },
+        { field: 'age' },
+        { field: 'country', minWidth: 150 },
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         resizable: true,
-        width: 100
     },
     suppressRowClickSelection: true,
     rowSelection: 'multiple',
-    columnDefs: columnDefs
 };
 
 function onQuickFilterChanged() {

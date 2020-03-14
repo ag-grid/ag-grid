@@ -104,6 +104,10 @@
             top: calc(50% - #{ag-param(header-column-resize-handle-height) / 2});
             background-color: ag-param(header-column-resize-handle-color);
         }
+
+        .ag-pinned-right-header .ag-header-cell-resize::after {
+            margin-left: 2px;
+        }
     }
 
     .ag-header-select-all {

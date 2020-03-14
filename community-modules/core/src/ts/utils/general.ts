@@ -1400,11 +1400,6 @@ export class Utils {
         cancel: 'cancel',
         // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
         check: 'tick',
-        // the following checkbox-* items are for checkboxes on themes that don't use a
-        //     native <input type="radio">
-        checkboxChecked: 'checkbox-checked',
-        checkboxUnchecked: 'checkbox-unchecked',
-        checkboxIndeterminate: 'checkbox-indeterminate',
         // "go to first" button in pagination controls
         first: 'first',
         // "go to previous" button in pagination controls
@@ -1419,10 +1414,6 @@ export class Utils {
         unlinked: 'unlinked',
         // "Choose colour" button on chart settings tab
         colorPicker: 'color-picker',
-        // the following radio-button-* items are for radio buttons on themes that don't use a
-        //     native <input type="radio">
-        radioButtonOn: 'radio-button-on',
-        radioButtonOff: 'radio-button-off',
         // rotating spinner shown by the loading cell renderer
         groupLoading: 'loading',
         // button to launch enterprise column menu

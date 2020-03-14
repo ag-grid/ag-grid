@@ -255,7 +255,7 @@ function createExampleGenerator(prefix, importType) {
             const generatedFiles = glob.sync(path.join(_gen, '**/*.{html,js,jsx,ts}'));
 
             generatedFiles.forEach(file => {
-                let content = getFileContents(file).replace(/ag-theme-balham/g, `ag-theme-${themeOverride}`);
+                let content = getFileContents(file).replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
                 fs.writeFileSync(file, content, 'utf8');
             });
         }
