@@ -43,8 +43,15 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setReadOnly(readOnly: boolean): void {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
+    }
+
+    public setDisabled(disabled: boolean): this {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+
+        return super.setDisabled(disabled);
     }
 
     public toggle(): void {
