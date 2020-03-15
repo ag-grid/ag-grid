@@ -47,6 +47,7 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowSelection: 'multiple',
+    rowDeselection: true,
     pinnedTopRowData: [
         {
             athlete: 'Floating Top Athlete',
@@ -103,12 +104,39 @@ function getParams() {
     };
 }
 
+function validateSelection(params) {
+    var message = '';
+    var errorDiv = document.querySelector('.example-error');
+    var messageDiv = errorDiv.querySelector('.message');
+
+    if (params.onlySelected || params.onlySelectedAllPages) {
+        message += params.onlySelected ? 'onlySelected' : 'onlySelectedAllPages';
+        message += ' is checked, please selected a row.'
+
+        if (!gridOptions.api.getSelectedNodes().length) {
+            errorDiv.classList.remove('inactive');
+            messageDiv.innerHTML = message;
+            window.setTimeout(function() {
+                errorDiv.classList.add('inactive');
+                messageDiv.innerHTML = '';
+            }, 2000);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function onBtnExportDataAsCsv() {
-    gridOptions.api.exportDataAsCsv(getParams());
+    var params = getParams();
+    if (validateSelection(params)) { return; }
+    gridOptions.api.exportDataAsCsv(params);
 }
 
 function onBtnExportDataAsExcel() {
-    gridOptions.api.exportDataAsExcel(getParams());
+    var params = getParams();
+    if (validateSelection(params)) { return; }
+    gridOptions.api.exportDataAsExcel(params);
 }
 
 // setup the grid after the page has finished loading
