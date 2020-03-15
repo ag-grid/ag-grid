@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
         { field: 'athlete', minWidth: 150},
-        { field: 'age', maxWidth: 90},
-        { field: 'country', minWidth: 150},
-        { field: 'year', maxWidth: 90},
-        { field: 'date', minWidth: 150},
-        { field: 'sport', minWidth: 150},
-        { field: 'gold', minWidth: 100},
-        { field: 'silver', minWidth: 100},
-        { field: 'bronze', minWidth: 100},
-        { field: 'total', minWidth: 100}
+        { field: 'age', minWidth: 70, maxWidth: 90},
+        { field: 'country', minWidth: 130},
+        { field: 'year', minWidth: 70, maxWidth: 90},
+        { field: 'date', minWidth: 120},
+        { field: 'sport', minWidth: 120},
+        { field: 'gold', minWidth: 80},
+        { field: 'silver', minWidth: 80},
+        { field: 'bronze', minWidth: 80},
+        { field: 'total', minWidth: 80}
     ],
     defaultColDef: {
         resizable: true
