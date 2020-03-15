@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 class="first-h1">Change Detection</h1>
 
     <p class="lead">
@@ -73,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
     <h2>1. Value Change Detection</h2>
 
@@ -183,14 +181,14 @@ colDef = {
     <ul class="content">
         <li>
             Column 'Group' is marked as a <a href="../javascript-grid-grouping/">Row Group</a>
-            and columns A to F are marked as <a href="../javascript-grid-aggregation/">Aggregation</a>
+            and columns A to D are marked as <a href="../javascript-grid-aggregation/">Aggregation</a>
             columns so that their values are summed into the group level.
         </li>
         <li>
-            Column 'Total' has a valueGetter which gives a sum of all columns A to F.
+            Column 'Total' has a valueGetter which gives a sum of all columns A to D.
         </li>
         <li>
-            Columns A to F are editable. If you edit a cells value, then the aggregate value at the group
+            Columns A to D are editable. If you edit a cells value, then the aggregate value at the group
             level is also updated to reflect the change. This is because the grid is recalculating the
             aggregations as a result of the change.
         </li>
@@ -201,7 +199,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Change Detection with Groups', 'change-detection-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
     <p>
         Notice above that the group column is also editable (eg you can change one of the rows from group 'A'
@@ -370,7 +368,7 @@ colDef = {
         </ul>
 
 
-    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
 
     <h2>Change Detection and Pivot</h2>
@@ -427,6 +425,6 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Change Detection Pivot', 'change-detection-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

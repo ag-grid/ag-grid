@@ -87,7 +87,7 @@ function getPersonFilter() {
 
 var columnDefs = [
     { field: "athlete", filter: getPersonFilter(), suppressMenu: true },
-    { field: "age", maxWidth: 110, filter: 'agNumberColumnFilter', suppressMenu: true },
+    { field: "age", filter: 'agNumberColumnFilter', suppressMenu: true },
     { field: "country", filter: 'agSetColumnFilter', suppressMenu: true },
     { field: "year", maxWidth: 120, filter: 'agNumberColumnFilter', suppressMenu: true },
     {
@@ -147,7 +147,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 160,
+        minWidth: 150,
         filter: true,
         sortable: true,
     },

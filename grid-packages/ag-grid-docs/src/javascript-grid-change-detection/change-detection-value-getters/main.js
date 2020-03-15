@@ -1,18 +1,37 @@
-var columnDefs = [
-    {headerName: 'A', field: 'a', type: 'valueColumn'},
-    {headerName: 'B', field: 'b', type: 'valueColumn'},
-    {headerName: 'C', field: 'c', type: 'valueColumn'},
-    {headerName: 'D', field: 'd', type: 'valueColumn'},
-    {headerName: 'E', field: 'e', type: 'valueColumn'},
-    {headerName: 'F', field: 'f', type: 'valueColumn'},
-    {
-        headerName: 'Total',
-        valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',
-        editable: false,
-        aggFunc: 'sum',
-        cellClass: 'total-col'
-    }
-];
+var gridOptions = {
+    columnDefs: [
+        { field: 'a', type: 'valueColumn' },
+        { field: 'b', type: 'valueColumn' },
+        { field: 'c', type: 'valueColumn' },
+        { field: 'd', type: 'valueColumn' },
+        { field: 'e', type: 'valueColumn' },
+        { field: 'f', type: 'valueColumn' },
+        {
+            headerName: 'Total',
+            valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',
+            editable: false,
+            aggFunc: 'sum',
+            cellClass: 'total-col'
+        }
+    ],
+    defaultColDef: {
+        flex: 1,
+        sortable: true
+    },
+    columnTypes: {
+        valueColumn: {
+            editable: true,
+            aggFunc: 'sum',
+            valueParser: 'Number(newValue)',
+            filter: 'agNumberColumnFilter'
+        }
+    },
+    rowData: getRowData(),
+    groupDefaultExpanded: 1,
+    suppressAggFuncInHeader: true,
+    enableCellChangeFlash: true,
+    animateRows: true,
+};
 
 function getRowData() {
     var rowData = [];
@@ -29,24 +48,6 @@ function getRowData() {
     }
     return rowData;
 }
-
-var gridOptions = {
-    defaultColDef: {
-        sortable: true
-    },
-    columnTypes: {
-        valueColumn: {editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'agNumberColumnFilter'}
-    },
-    columnDefs: columnDefs,
-    rowData: getRowData(),
-    groupDefaultExpanded: 1,
-    suppressAggFuncInHeader: true,
-    enableCellChangeFlash: true,
-    animateRows: true,
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

@@ -1,24 +1,67 @@
-var columnDefs = [
-    {field: 'topGroup', rowGroup: true, hide: true},
-    {field: 'group', rowGroup: true, hide: true},
-    {headerName: 'ID', field: 'id', cellClass: 'number-cell'},
-    {headerName: 'A', field: 'a', type: 'valueColumn'},
-    {headerName: 'B', field: 'b', type: 'valueColumn'},
-    {headerName: 'C', field: 'c', type: 'valueColumn'},
-    {headerName: 'D', field: 'd', type: 'valueColumn'},
-    {headerName: 'E', field: 'e', type: 'valueColumn'},
-    {headerName: 'F', field: 'f', type: 'valueColumn'},
-    {
-        headerName: 'Total',
-        type: 'totalColumn',
-        // we use getValue() instead of data.a so that it gets the aggregated values at the group level
-        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'
-    }
-];
-
 var rowIdCounter = 0;
-
 var callCount = 0;
+
+var gridOptions = {
+    columnDefs: [
+        { field: 'topGroup', rowGroup: true, hide: true },
+        { field: 'group', rowGroup: true, hide: true },
+        { headerName: 'ID', field: 'id', cellClass: 'number-cell', maxWidth: 70 },
+        { field: 'a', type: 'valueColumn' },
+        { field: 'b', type: 'valueColumn' },
+        { field: 'c', type: 'valueColumn' },
+        { field: 'd', type: 'valueColumn' },
+        {
+            headerName: 'Total',
+            type: 'totalColumn',
+            minWidth: 120,
+            // we use getValue() instead of data.a so that it gets the aggregated values at the group level
+            valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d")'
+        }
+    ],
+    defaultColDef: {
+        flex: 1,
+        sortable: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 180
+    },
+    columnTypes: {
+        valueColumn: {
+            editable: true,
+            aggFunc: 'sum',
+            cellClass: 'number-cell',
+            cellRenderer:'agAnimateShowChangeCellRenderer',
+            filter: 'agNumberColumnFilter',
+            valueParser: numberValueParser
+        },
+        totalColumn: {cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
+    },
+    // set this to true, so only the column in question gets updated
+    aggregateOnlyChangedColumns: true,
+    aggFuncs: {
+        sum: function(values) {
+            var result = 0;
+            if (values) {
+                values.forEach(function(value) {
+                    if (typeof value === 'number') {
+                        result += value;
+                    }
+                });
+            }
+            callCount++;
+            console.log(callCount + ' aggregation: sum([' + values.join(',') + ']) = ' + result);
+            return result;
+        }
+    },
+    groupDefaultExpanded: 1,
+    rowData: createRowData(),
+    suppressAggFuncInHeader: true,
+    animateRows: true,
+    getRowNodeId: function(rowData) {
+        return rowData.id;
+    }
+};
 
 function createRowData() {
     var result = [];
@@ -39,9 +82,7 @@ function createRowItem(i, j, k) {
         a: (j * k * 863) % 100,
         b: (j * k * 811) % 100,
         c: (j * k * 743) % 100,
-        d: (j * k * 677) % 100,
-        e: (j * k * 619) % 100,
-        f: (j * k * 571) % 100
+        d: (j * k * 677) % 100
     };
     if (i === 1) {
         rowDataItem.topGroup = 'Top';
@@ -59,53 +100,6 @@ function numberValueParser(params) {
     return Number(params.newValue);
 }
 
-var gridOptions = {
-    // set this to true, so only the column in question gets updated
-    aggregateOnlyChangedColumns: true,
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    aggFuncs: {
-        sum: function(values) {
-            var result = 0;
-            if (values) {
-                values.forEach(function(value) {
-                    if (typeof value === 'number') {
-                        result += value;
-                    }
-                });
-            }
-            callCount++;
-            console.log(callCount + ' aggregation: sum([' + values.join(',') + ']) = ' + result);
-            return result;
-        }
-    },
-    columnTypes: {
-        valueColumn: {
-            editable: true,
-            aggFunc: 'sum',
-            cellClass: 'number-cell',
-            cellRenderer:'agAnimateShowChangeCellRenderer',
-            filter: 'agNumberColumnFilter',
-            valueParser: numberValueParser
-        },
-        totalColumn: {cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
-    },
-    autoGroupColumnDef: {minWidth: 150},
-    groupDefaultExpanded: 1,
-    rowData: createRowData(),
-    suppressAggFuncInHeader: true,
-    animateRows: true,
-    getRowNodeId: function(rowData) {
-        return rowData.id;
-    },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
-
 function updateOneRecord() {
     var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions.api);
 
@@ -117,7 +111,7 @@ function updateOneRecord() {
 }
 
 function pickRandomColumn() {
-    var letters = ['a', 'b', 'c', 'd', 'e', 'f'];
+    var letters = ['a', 'b', 'c', 'd'];
     var randomIndex = Math.floor(Math.random() * letters.length);
     return letters[randomIndex];
 }

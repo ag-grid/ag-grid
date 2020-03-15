@@ -1,11 +1,31 @@
-var columnDefs = [
-    {headerName: 'Student ID', field: 'student'},
-    {headerName: 'Year Group', field: 'yearGroup', rowGroup: true},
-    {headerName: 'Age', field: 'age'},
-    {headerName: 'Course', field: 'course', pivot: true},
-    {headerName: 'Age Range', field: 'ageRange', valueGetter: ageRangeValueGetter, pivot: true},
-    {headerName: 'Points', field: 'points', aggFunc: 'sum'}
-];
+var gridOptions = {
+    columnDefs: [
+        {headerName: 'Student ID', field: 'student'},
+        {headerName: 'Year Group', field: 'yearGroup', rowGroup: true},
+        {headerName: 'Age', field: 'age'},
+        {headerName: 'Course', field: 'course', pivot: true},
+        {headerName: 'Age Range', field: 'ageRange', valueGetter: ageRangeValueGetter, pivot: true},
+        {headerName: 'Points', field: 'points', aggFunc: 'sum'}
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true,
+        cellRenderer:'agAnimateShowChangeCellRenderer',
+    },
+    rowData: getRowData(),
+    pivotMode: true,
+    groupDefaultExpanded: 1,
+    // enableCellChangeFlash: true,
+    animateRows: true,
+    getRowNodeId: function(data) {
+        return data.student;
+    },
+    onGridReady:function(params) {
+        document.getElementById('pivot-mode').checked = true;
+    }
+};
 
 function ageRangeValueGetter(params) {
     var age = params.getValue('age');
@@ -168,27 +188,6 @@ function moveCourse() {
     console.log('moving ' + item);
     gridOptions.api.updateRowData(transaction);
 }
-
-var gridOptions = {
-    defaultColDef: {
-        cellRenderer:'agAnimateShowChangeCellRenderer',
-        width: 120,
-        sortable: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    rowData: getRowData(),
-    pivotMode: true,
-    groupDefaultExpanded: 1,
-    // enableCellChangeFlash: true,
-    animateRows: true,
-    getRowNodeId: function(data) {
-        return data.student;
-    },
-    onGridReady:function(params) {
-        document.getElementById('pivot-mode').checked = true;
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
