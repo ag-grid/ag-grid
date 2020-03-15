@@ -1,39 +1,42 @@
 var columnDefs = [
-
-    // the first two columns are for displaying groups
-    {headerName: "Country",
+    {
+        headerName: 'Country',
+        minWidth: 200,
         // this tells the grid what values to put into the cell
         showRowGroup: 'country',
         // this tells the grid what to use to render the cell
-        cellRenderer:'agGroupCellRenderer'
+        cellRenderer: 'agGroupCellRenderer',
     },
-    {headerName: "Year", showRowGroup: 'year', cellRenderer:'agGroupCellRenderer'},
-
+    {
+        headerName: 'Year',
+        minWidth: 200,
+        showRowGroup: 'year',
+        cellRenderer: 'agGroupCellRenderer'
+    },
     // these are the two columns we use to group by. we also hide them, so there
     // is no duplication with the values above
-    {field: 'country', rowGroup: true, hide: true},
-    {field: 'year', rowGroup: true, hide: true},
+    { field: 'country', rowGroup: true, hide: true },
+    { field: 'year', rowGroup: true, hide: true },
 
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"}
+    { field: 'athlete', minWidth: 220 },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
     columnDefs: columnDefs,
-    animateRows: true,
-    enableRangeSelection: true,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true,
+    },
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    }
+    enableRangeSelection: true,
+    animateRows: true
 };
 
 // setup the grid after the page has finished loading

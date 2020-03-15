@@ -1,8 +1,6 @@
 var gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-
-        // groupHideOpenParents and restrictToOneGroup also works with valueGetter's.
         { headerName: 'Year', valueGetter: 'data.year', rowGroup: true, hide: true },
 
         { field: 'athlete', minWidth: 200 },

@@ -715,7 +715,7 @@ SNIPPET
     as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
 </p>
 
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -759,7 +759,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540]) ?>
 
 <note>
     Filtering does not impact what groups get removed. For example if you have a group with two
@@ -844,14 +844,14 @@ SNIPPET
 
 <p>The following example shows how to display all the groups in a single column</p>
 
-<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505]) ?>
 
 <p>
     The last example of explicitly setting groups shows an alternative for Hide Open Parents.
     The example below demonstrates hiding open parents using explicit group columns.
 </p>
 
-<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
