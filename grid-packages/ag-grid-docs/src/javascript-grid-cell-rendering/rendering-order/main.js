@@ -22,8 +22,9 @@ var gridOptions = {
         { field: "20" }
     ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 80,
         cellRenderer: showOrderCellRenderer,
-        width: 80
     },
     rowData: getRowData(),
     rowSelection: 'single',

@@ -1,28 +1,28 @@
 ///// left table
 var columnDefsLeft = [
-    {headerName: "Function", field: 'function', width: 150},
-    {headerName: "Value", field: 'value', width: 100},
-    {headerName: "Times 10", valueGetter: 'getValue("value") * 10', width: 100}
+    { headerName: "Function", field: 'function', minWidth: 150 },
+    { headerName: "Value", field: 'value' },
+    { headerName: "Times 10", valueGetter: 'getValue("value") * 10' }
 ];
 
 var rowDataLeft = [
-    {function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber'},
-    {function: 'Number x 2', value: '=ctx.theNumber * 2'},
-    {function: 'Today\'s Date', value: '=new Date().toLocaleDateString()'},
-    {function: 'Sum A', value: '=ctx.sum("a")'},
-    {function: 'Sum B', value: '=ctx.sum("b")'}
+    { function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber' },
+    { function: 'Number x 2', value: '=ctx.theNumber * 2' },
+    { function: 'Today\'s Date', value: '=new Date().toLocaleDateString()' },
+    { function: 'Sum A', value: '=ctx.sum("a")' },
+    { function: 'Sum B', value: '=ctx.sum("b")' }
 ];
 
 var gridOptionsLeft = {
-    enableCellExpressions: true,
     columnDefs: columnDefsLeft,
+    defaultColDef: {
+        flex: 1
+    },
+    enableCellExpressions: true,
     rowData: rowDataLeft,
     context: {
         theNumber: 4
     },
-    onGridReady: function(event) {
-        event.api.sizeColumnsToFit();
-    }
 };
 
 ///// Right table
@@ -43,10 +43,10 @@ var rowDataRight = [
 
 var gridOptionsRight = {
     columnDefs: columnDefsRight,
+    defaultColDef: {
+        flex: 1
+    },
     rowData: rowDataRight,
-    onGridReady: function(event) {
-        event.api.sizeColumnsToFit();
-    }
 };
 
 gridOptionsLeft.context.sum = function(field) {
@@ -60,7 +60,7 @@ gridOptionsLeft.context.sum = function(field) {
 // tell Left grid to refresh when number changes
 function onNewNumber(value) {
     gridOptionsLeft.context.theNumber = new Number(value);
-    gridOptionsLeft.api.refreshView();
+    gridOptionsLeft.api.redrawRows();
 }
 
 // we want to convert the strings to numbers
@@ -73,7 +73,7 @@ function numberNewValueHandler(params) {
 
 // we want to tell the Left grid to refresh when the Right grid values change
 function cellValueChanged() {
-    gridOptionsLeft.api.refreshView();
+    gridOptionsLeft.api.redrawRows();
 }
 
 // setup the grid after the page has finished loading

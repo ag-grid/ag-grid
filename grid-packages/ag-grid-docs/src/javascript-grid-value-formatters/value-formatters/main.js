@@ -1,11 +1,19 @@
-var columnDefs = [
-    {headerName: "A", field: 'a'},
-    {headerName: "B", field: 'b'},
-    {headerName: "£A", field: 'a', valueFormatter: currencyFormatter},
-    {headerName: "£B", field: 'b', valueFormatter: currencyFormatter},
-    {headerName: "(A)", field: 'a', valueFormatter: bracketsFormatter},
-    {headerName: "(B)", field: 'b', valueFormatter: bracketsFormatter},
-];
+var gridOptions = {
+    columnDefs: [
+        { headerName: "A", field: 'a' },
+        { headerName: "B", field: 'b' },
+        { headerName: "£A", field: 'a', valueFormatter: currencyFormatter },
+        { headerName: "£B", field: 'b', valueFormatter: currencyFormatter },
+        { headerName: "(A)", field: 'a', valueFormatter: bracketsFormatter },
+        { headerName: "(B)", field: 'b', valueFormatter: bracketsFormatter },
+    ],
+    defaultColDef: {
+        flex: 1,
+        cellClass: 'number-cell',
+        resizable: true,
+    },
+    rowData: createRowData()
+};
 
 function bracketsFormatter(params) {
     return '(' + params.value + ')';
@@ -33,18 +41,6 @@ function createRowData() {
 
     return rowData;
 }
-
-var gridOptions = {
-    defaultColDef: {
-        cellClass: 'number-cell',
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    rowData: createRowData(),
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

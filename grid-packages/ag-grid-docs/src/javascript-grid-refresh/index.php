@@ -180,7 +180,7 @@ interface RedrawRowsParams {
 
     </ul>
 
-    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated') ?>
+    <?= grid_example('Redraw Rows', 'redraw-rows', 'generated', ['exampleHeight' => 615]) ?>
 
 
 

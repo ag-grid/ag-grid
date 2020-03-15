@@ -1,12 +1,25 @@
-var columnDefs = [
-    {headerName: 'A', field: 'a'},
-    {headerName: 'B', field: 'b'},
-    {headerName: 'C', field: 'c'},
-    {headerName: 'D', field: 'd'},
-    {headerName: 'E', field: 'e'},
-    {headerName: 'F', field: 'f'}
-];
+var colorIndex = 0;
+var colors = ['#000000','#000066','#006600','#660000'];
 
+var gridOptions = {
+    columnDefs: [
+        {headerName: 'A', field: 'a'},
+        {headerName: 'B', field: 'b'},
+        {headerName: 'C', field: 'c'},
+        {headerName: 'D', field: 'd'},
+        {headerName: 'E', field: 'e'},
+        {headerName: 'F', field: 'f'}
+    ],
+    defaultColDef: {
+        flex: 1,
+    },
+    rowData: createData(12),
+    getRowStyle: function() {
+        return {
+            backgroundColor: colors[colorIndex]
+        }
+    }
+};
 
 function createData(count) {
     var result = [];
@@ -23,24 +36,6 @@ function createData(count) {
     return result;
 }
 
-var colorIndex = 0;
-var colors = ['#000000','#000066','#006600','#660000'];
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: createData(16),
-    getRowStyle: function() {
-        return {
-            backgroundColor: colors[colorIndex]
-        }
-    },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
-
-
-
 function progressColor() {
     colorIndex++;
     if (colorIndex === colors.length) {
@@ -56,7 +51,7 @@ function redrawAllRows() {
 function redrawTopRows() {
     progressColor();
     var rows = [];
-    for (var i = 0; i<8; i++) {
+    for (var i = 0; i<6; i++) {
         var row = gridOptions.api.getDisplayedRowAtIndex(i);
         rows.push(row);
     }

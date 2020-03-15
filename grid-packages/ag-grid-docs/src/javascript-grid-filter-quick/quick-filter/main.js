@@ -1,28 +1,40 @@
-var columnDefs = [
-    // simple column, easy to understand
-    {headerName: 'A', field: 'a'},
-    // the grid works with embedded fields
-    {headerName: 'B', field: 'b.name'},
-    // or use value getter, all works with quick filter
-    {headerName: 'C', valueGetter: "'zz' + data.c.name"},
-    // or use the object value, so value passed around is an object
-    {
-        headerName: 'D',
-        field: 'd',
-        cellRenderer: 'boldRenderer',
-        // this is needed to avoid toString=[object,object] result with objects
-        getQuickFilterText: function(params) {
-            return params.value.name;
+var gridOptions = {
+    columnDefs: [
+        // simple column, easy to understand
+        {headerName: 'A', field: 'a'},
+        // the grid works with embedded fields
+        {headerName: 'B', field: 'b.name'},
+        // or use value getter, all works with quick filter
+        {headerName: 'C', valueGetter: "'zz' + data.c.name"},
+        // or use the object value, so value passed around is an object
+        {
+            headerName: 'D',
+            field: 'd',
+            cellRenderer: 'boldRenderer',
+            // this is needed to avoid toString=[object,object] result with objects
+            getQuickFilterText: function(params) {
+                return params.value.name;
+            }
+        },
+        // this fails filter - it's working with a complex object, so the quick filter
+        // text gets [object,object]
+        {
+            headerName: 'E',
+            field: 'e',
+            cellRenderer: 'boldRenderer'
         }
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
     },
-    // this fails filter - it's working with a complex object, so the quick filter
-    // text gets [object,object]
-    {
-        headerName: 'E',
-        field: 'e',
-        cellRenderer: 'boldRenderer'
+    rowData: createRowData(),
+    components:{
+        boldRenderer: function(params) {
+            return '<b>' + params.value.name + '</b>';
+        }
     }
-];
+};
 
 function createRowData() {
     var rowData = [];
@@ -49,19 +61,6 @@ function createRowData() {
     }
     return rowData;
 }
-
-var gridOptions = {
-    defaultColDef: {
-        editable: true
-    },
-    columnDefs: columnDefs,
-    rowData: createRowData(),
-    components:{
-        boldRenderer: function(params) {
-            return '<b>' + params.value.name + '</b>';
-        }
-    }
-};
 
 function onFilterTextBoxChanged() {
     gridOptions.api.setQuickFilter(document.getElementById('filter-text-box').value);

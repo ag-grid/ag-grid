@@ -1,14 +1,17 @@
 var callCount = 1;
 
 var columnDefs = [
-    {headerName: "Q1", field: "q1", type: 'quarterFigure'},
-    {headerName: "Q2", field: "q2", type: 'quarterFigure'},
-    {headerName: "Q3", field: "q3", type: 'quarterFigure'},
-    {headerName: "Q4", field: "q4", type: 'quarterFigure'},
-    {headerName: "Year", field: "year", rowGroup: true, hide: true},
+    { field: "q1", type: 'quarterFigure' },
+    { field: "q2", type: 'quarterFigure' },
+    { field: "q3", type: 'quarterFigure' },
+    { field: "q4", type: 'quarterFigure' },
+    { field: "year", rowGroup: true, hide: true },
     {
-        headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+        headerName: "Total",
+        colId: "total",
+        cellClass: 'number-cell total-col',
         aggFunc: "sum",
+        valueFormatter: formatNumber,
         valueGetter: function (params) {
             var q1 = params.getValue('q1');
             var q2 = params.getValue('q2');
@@ -21,6 +24,39 @@ var columnDefs = [
         }
     }
 ];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 140
+    },
+    // we set the value cache in the function createGrid below
+    // valueCache = true / false;
+    columnTypes: {
+        quarterFigure: {
+            cellClass: 'number-cell', aggFunc: 'sum',
+            valueFormatter: formatNumber,
+            valueParser: function numberParser(params) {
+                return Number(params.newValue);
+            }
+        }
+    },
+    rowData: createRowData(),
+    suppressAggFuncInHeader: true,
+    enableCellChangeFlash: true,
+    enableRangeSelection: true,
+    groupDefaultExpanded: 1,
+    getRowNodeId: function (data) {
+        return data.id;
+    },
+    onCellValueChanged: function () {
+        console.log('onCellValueChanged');
+    }
+};
 
 function createRowData() {
     var rowData = [];
@@ -47,35 +83,6 @@ function formatNumber(params) {
     return Math.floor(number).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
 
-var gridOptions = {
-    // we set the value cache in the function createGrid below
-    // valueCache = true / false;
-    columnTypes: {
-        quarterFigure: {
-            cellClass: 'number-cell', aggFunc: 'sum',
-            valueFormatter: formatNumber,
-            valueParser: function numberParser(params) {
-                return Number(params.newValue);
-            }
-        }
-    },
-    defaultColDef: {
-        resizable: true
-    },
-    getRowNodeId: function (data) {
-        return data.id;
-    },
-    suppressAggFuncInHeader: true,
-    enableCellChangeFlash: true,
-    columnDefs: columnDefs,
-    rowData: createRowData(),
-    enableRangeSelection: true,
-    groupDefaultExpanded: 1,
-    onCellValueChanged: function () {
-        console.log('onCellValueChanged');
-    }
-};
-
 function onValueCache(valueCacheOn) {
     destroyOldGridIfExists();
     createGrid(valueCacheOn);
@@ -96,9 +103,6 @@ function createGrid(valueCacheOn) {
     // then similar to all the other examples, create the grid
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.onFirstDataRendered = function (params) {
-        params.api.sizeColumnsToFit();
-    }
 }
 
 // setup the grid after the page has finished loading
