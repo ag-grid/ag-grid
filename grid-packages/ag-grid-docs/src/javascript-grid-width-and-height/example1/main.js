@@ -44,7 +44,7 @@ function onGridSizeChanged(params) {
     params.columnApi.setColumnsVisible(columnsToHide, false);
 
     // fill out any available space to ensure there are no gaps
-    // params.api.sizeColumnsToFit();
+    params.api.sizeColumnsToFit();
 }
 
 // setup the grid after the page has finished loading
