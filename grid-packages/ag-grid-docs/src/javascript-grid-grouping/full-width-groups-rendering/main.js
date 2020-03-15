@@ -1,16 +1,21 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', width: 200},
-    {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Gold', field: 'gold', width: 100, type: 'number'},
-    {headerName: 'Silver', field: 'silver', width: 100, type: 'number'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, type: 'number'},
-    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-    {headerName: 'Year', field: 'year', width: 90, filter: true},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'age' },
+        { field: 'gold', type: 'number' },
+        { field: 'silver', type: 'number' },
+        { field: 'bronze', type: 'number' },
+        { field: 'year', filter: true },
+        { field: 'date' },
+        { field: 'sport', minWidth: 200 },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true,
+    },
     columnTypes: {
         'number': {
             editable: true,
@@ -21,8 +26,6 @@ var gridOptions = {
             aggFunc: 'sum'
         }
     },
-    columnDefs: columnDefs,
-    rowData: null,
     groupUseEntireRow: true,
     components: {
         groupRowInnerRenderer: GroupRowInnerRenderer

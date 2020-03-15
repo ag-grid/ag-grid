@@ -12,14 +12,30 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'sport', minWidth: 200 },
+        { field: 'athlete', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+        { field: 'age' },
+        { field: 'date', minWidth: 140 },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         sortable: true,
-        filter: true
+        resizable: true,
     },
-    columnDefs: columnDefs,
-    animateRows: true,
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     enableRangeSelection: true,
-    rowData: null
+    animateRows: true,
 };
 
 // setup the grid after the page has finished loading
