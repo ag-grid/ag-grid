@@ -1,20 +1,18 @@
-var columnDefs = [
-    { field: 'a' },
-    { field: 'b' },
-    { field: 'c' },
-    { field: 'd' },
-    { field: 'e' },
-    { field: 'f' },
-    { field: 'g' },
-    { field: 'h' },
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' },
+        { field: 'd' },
+        { field: 'e' },
+        { field: 'f' },
+        { field: 'g' },
+        { field: 'h' },
+    ],
     defaultColDef: {
         flex: 1,
         editable: true,
     },
-    columnDefs: columnDefs,
     rowData: getRows(),
     enableRangeSelection: true,
     enableFillHandle: true,

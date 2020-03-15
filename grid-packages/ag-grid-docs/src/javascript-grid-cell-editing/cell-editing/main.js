@@ -1,13 +1,3 @@
-var columnDefs = [
-    { field: 'firstName', width: 100 },
-    { field: 'lastName', width: 100 },
-    { field: 'gender', width: 90 },
-    { field: 'age', width: 70 },
-    { field: 'mood', width: 70 },
-    { field: 'country', width: 100 },
-    { field: 'address', width: 200 }
-];
-
 var rowData = [
     { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland' },
     { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland' },
@@ -48,17 +38,24 @@ function getPinnedBottomData() {
 }
 
 var gridOptions = {
+    columnDefs: [
+        { field: 'firstName' },
+        { field: 'lastName' },
+        { field: 'gender' },
+        { field: 'age' },
+        { field: 'mood' },
+        { field: 'country' },
+        { field: 'address', minWidth: 550 },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 110,
         editable: true,
-        resizable: true
+        resizable: true,
     },
-    columnDefs: columnDefs,
     rowData: rowData,
     pinnedTopRowData: getPinnedTopData(),
     pinnedBottomRowData: getPinnedBottomData(),
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    },
     onRowEditingStarted: function(event) {
         console.log('never called - not doing row editing');
     },

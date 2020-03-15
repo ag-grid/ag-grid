@@ -1,29 +1,28 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete'},
-    {headerName: 'Age', field: 'age'},
-    {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year'},
-    {headerName: 'Date', field: 'date'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
-];
-
 var gridOptions = {
-    // this is a handy way to set defaults onto the columns
+    columnDefs: [
+        { field: 'athlete', minWidth: 180 },
+        { field: 'age' },
+        { field: 'country', minWidth: 160 },
+        { field: 'year' },
+        { field: 'date', minWidth: 160 },
+        { field: 'sport', minWidth: 180 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         editable: true,
         // we use a cell renderer to include a button, so when the button
         // gets clicked, the editing starts.
-        cellRenderer: 'singleClickEditRenderer'
+        cellRenderer: 'singleClickEditRenderer',
     },
-    columnDefs: columnDefs,
     // set the bottom grid to no click editing
     suppressClickEdit: true,
-    components:{
-        singleClickEditRenderer:getRenderer()
+    components: {
+        singleClickEditRenderer: getRenderer()
     }
 };
 
@@ -32,9 +31,7 @@ function getRenderer() {
     }
 
     CellRenderer.prototype.createGui = function () {
-
-
-        var template = '<span><button id="theButton">#</button><span id="theValue" style="padding-left: 4px;"></span></span>';
+        var template = '<span><button id="theButton" style="height: 39px">#</button><span id="theValue" style="padding-left: 4px;"></span></span>';
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = template;
         this.eGui = tempDiv.firstElementChild;

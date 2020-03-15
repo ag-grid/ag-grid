@@ -1,42 +1,3 @@
-var columnDefs = [
-    { field: 'name', width: 100 },
-    {
-        field: 'gender',
-        width: 90,
-        cellRenderer: 'genderCellRenderer',
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            values: ['Male', 'Female'],
-            cellRenderer: 'genderCellRenderer'
-        }
-    },
-    {
-        field: 'country',
-        width: 100,
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: {
-            cellHeight: 50,
-            values: ['Ireland', 'USA']
-        }
-    },
-    {
-        field: 'city', width: 70,
-        cellEditor: 'agRichSelectCellEditor',
-        cellEditorParams: function(params) {
-            var selectedCountry = params.data.country;
-            var allowedCities = countyToCityMap(selectedCountry);
-
-            return {
-                values: allowedCities,
-                formatValue: function(value) {
-                    return value + ' (' + selectedCountry + ')';
-                }
-            };
-        }
-    },
-    { field: 'address', width: 200, cellEditor: 'agLargeTextCellEditor' }
-];
-
 var rowData = [
     {
         name: 'Bob Harrison',
@@ -226,6 +187,56 @@ var rowData = [
     },
 ];
 
+var gridOptions = {
+    columnDefs: [
+        { field: 'name' },
+        {
+            field: 'gender',
+            cellRenderer: 'genderCellRenderer',
+            cellEditor: 'agRichSelectCellEditor',
+            cellEditorParams: {
+                values: ['Male', 'Female'],
+                cellRenderer: 'genderCellRenderer'
+            }
+        },
+        {
+            field: 'country',
+            cellEditor: 'agRichSelectCellEditor',
+            cellEditorParams: {
+                cellHeight: 50,
+                values: ['Ireland', 'USA']
+            }
+        },
+        {
+            field: 'city',
+            cellEditor: 'agRichSelectCellEditor',
+            cellEditorParams: function(params) {
+                var selectedCountry = params.data.country;
+                var allowedCities = countyToCityMap(selectedCountry);
+
+                return {
+                    values: allowedCities,
+                    formatValue: function(value) {
+                        return value + ' (' + selectedCountry + ')';
+                    }
+                };
+            }
+        },
+        { field: 'address', cellEditor: 'agLargeTextCellEditor', minWidth: 550 }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 130,
+        editable: true,
+        resizable: true
+    },
+    components: {
+        'genderCellRenderer': GenderCellRenderer
+    },
+    rowData: rowData,
+    onCellValueChanged: onCellValueChanged
+};
+
 function countyToCityMap(match) {
     var map = {
         'Ireland': ['Dublin', 'Cork', 'Galway'],
@@ -234,22 +245,6 @@ function countyToCityMap(match) {
 
     return map[match];
 }
-
-var gridOptions = {
-    components: {
-        'genderCellRenderer': GenderCellRenderer
-    },
-    columnDefs: columnDefs,
-    rowData: rowData,
-    defaultColDef: {
-        editable: true,
-        resizable: true
-    },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    },
-    onCellValueChanged: onCellValueChanged
-};
 
 function onCellValueChanged(params) {
     var colId = params.column.getId();

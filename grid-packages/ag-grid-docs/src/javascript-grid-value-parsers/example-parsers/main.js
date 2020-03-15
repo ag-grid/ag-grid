@@ -1,8 +1,21 @@
-var columnDefs = [
-    {headerName: "Name", field: "simple", width: 160},
-    {headerName: "Bad Number", field: "numberBad", width: 200},
-    {headerName: "Good Number", field: "numberGood", width: 200, valueParser: numberParser}
-];
+var gridOptions = {
+    columnDefs: [
+        {headerName: "Name", field: "simple" },
+        {headerName: "Bad Number", field: "numberBad" },
+        {headerName: "Good Number", field: "numberGood", valueParser: numberParser}
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
+        resizable: true,
+    },
+    rowData: createRowData(),
+    enableRangeSelection: true,
+    onCellValueChanged: function(event) {
+        console.log('data after changes is: ', event.data);
+    }
+};
+
 
 function numberParser(params) {
     return Number(params.newValue);
@@ -25,19 +38,6 @@ function createRowData() {
 
     return rowData;
 }
-
-var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        editable: true
-    },
-    columnDefs: columnDefs,
-    rowData: createRowData(),
-    enableRangeSelection: true,
-    onCellValueChanged: function(event) {
-        console.log('data after changes is: ', event.data);
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

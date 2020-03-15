@@ -1,39 +1,27 @@
-// this example has items declared globally. bad javascript. but keeps the example simple.
-
-var columnDefs = [
-    {
-        headerName: 'Make',
-        field: 'make',
-        editable: true,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC']
-        }
-    },
-    { headerName: 'Model', field: 'model', editable: true },
-    { headerName: 'Price', field: 'price', editable: true, cellEditor: 'numericCellEditor' },
-    { headerName: 'Suppress Navigable', field: 'field5', editable: true, suppressNavigable: true },
-    { headerName: 'Not Editable', field: 'field6', editable: false }
-];
-
-function getRowData() {
-    var rowData = [];
-    for (var i = 0; i < 10; i++) {
-        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field5: 'Sample 22', field6: 'Sample 23' });
-        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field5: 'Sample 24', field6: 'Sample 25' });
-        rowData.push({ make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field5: 'Sample 26', field6: 'Sample 27' });
-    }
-
-    return rowData;
-}
-
 var gridOptions = {
+    columnDefs: [
+        {
+            field: 'make',
+            cellEditor: 'agSelectCellEditor',
+            cellEditorParams: {
+                values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC']
+            }
+        },
+        {  field: 'model' },
+        {  field: 'price', cellEditor: 'numericCellEditor' },
+        {  headerName: 'Suppress Navigable', field: 'field5', suppressNavigable: true, minWidth: 200 },
+        {  headerName: 'Not Editable', field: 'field6', editable: false }
+    ],
+    defaultColDef: {
+        flex: 1,
+        editable: true,
+    },
     components: {
         numericCellEditor: getNumericCellEditor()
     },
-    columnDefs: columnDefs,
-    rowData: getRowData(),
     editType: 'fullRow',
+    rowData: getRowData(),
+
     onCellValueChanged: function(event) {
         console.log('onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue);
     },
@@ -42,6 +30,16 @@ var gridOptions = {
         console.log('onRowValueChanged: (' + data.make + ', ' + data.model + ', ' + data.price + ', ' + data.field5 + ')');
     }
 };
+
+function getRowData() {
+    var rowData = [];
+    for (var i = 0; i < 10; i++) {
+        rowData.push({ make: 'Toyota', model: 'Celica', price: 35000 + i * 1000, field5: 'Sample 22', field6: 'Sample 23' });
+        rowData.push({ make: 'Ford', model: 'Mondeo', price: 32000 + i * 1000, field5: 'Sample 24', field6: 'Sample 25' });
+        rowData.push({ make: 'Porsche', model: 'Boxter', price: 72000 + i * 1000, field5: 'Sample 26', field6: 'Sample 27' });
+    }
+    return rowData;
+}
 
 function onBtStopEditing() {
     gridOptions.api.stopEditing();
@@ -144,5 +142,4 @@ function getNumericCellEditor() {
 document.addEventListener('DOMContentLoaded', function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });

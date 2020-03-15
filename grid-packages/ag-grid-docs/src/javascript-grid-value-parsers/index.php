@@ -63,6 +63,6 @@ interface ValueParserParams {
     </li>
 </ul>
 
-<?= grid_example('Value Parsers', 'example-parsers', 'generated') ?>
+<?= grid_example('Value Parsers', 'example-parsers', 'generated', ['exampleHeight' => 550]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

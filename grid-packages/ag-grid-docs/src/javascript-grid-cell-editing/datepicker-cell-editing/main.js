@@ -1,3 +1,27 @@
+var columnDefs = [
+    { field: 'athlete' },
+    { field: 'date', editable: true, cellEditor: 'datePicker' },
+    { field: 'age', maxWidth: 110 },
+    { field: 'country' },
+    { field: 'year', maxWidth: 120 },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
+];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+    },
+    components:{
+        datePicker: getDatePicker()
+    },
+};
+
 function getDatePicker() {
     // function to act as a class
     function Datepicker() {}
@@ -44,27 +68,6 @@ function getDatePicker() {
 
     return Datepicker;
 }
-
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete'},
-    {headerName: 'Date', field: 'date', editable: true, cellEditor: 'datePicker'},
-    {headerName: 'Age', field: 'age'},
-    {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
-];
-
-var gridOptions = {
-    components:{
-        datePicker: getDatePicker()
-    },
-    columnDefs: columnDefs,
-    rowData: null
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
