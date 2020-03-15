@@ -39,7 +39,7 @@ var gridOptions = {
     }
 };
 
-let updateRowData = function (data) {
+function updateRowData(data) {
     var rowData = data.slice(0, 100);
     var currentDate = new Date();
     var currentYear = currentDate.getFullYear();
