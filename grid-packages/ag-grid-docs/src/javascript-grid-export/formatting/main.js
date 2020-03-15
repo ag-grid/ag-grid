@@ -85,8 +85,8 @@ function getUIValue(checkboxSelector, onWindow) {
     if (!getBooleanValue(checkboxSelector)) {
         return false;
     }
-    var factory = document.querySelector(checkboxSelector + 'Value').value;
-    return factory();
+
+    return document.querySelector(checkboxSelector + 'Value').value;
 }
 
 function makeCustomContent () {
