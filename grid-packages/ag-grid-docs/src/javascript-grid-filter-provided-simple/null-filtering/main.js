@@ -1,9 +1,8 @@
 var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', width: 150},
+    { field: 'athlete' },
     {
-        headerName: 'Age',
         field: 'age',
-        width: 90,
+        maxWidth: 120,
         filter: 'agNumberColumnFilter',
         filterParams: {
             includeBlanksInEquals: false,
@@ -12,9 +11,7 @@ var columnDefs = [
         }
     },
     {
-        headerName: 'Date',
         field: 'date',
-        width: 145,
         filter: 'agDateColumnFilter',
         filterParams: {
             comparator: function(filterLocalDateAtMidnight, cellValue) {
@@ -40,18 +37,21 @@ var columnDefs = [
             includeBlanksInGreaterThan: false
         }
     },
-    {   headerName: 'Description',
+    {
+        headerName: 'Description',
         valueGetter: '"Age is " + data.age + " and Date is " + data.date',
-        width: 400
+        minWidth: 340
     },
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        filter: true
-    },
     columnDefs: columnDefs,
-    rowData: null
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
+    }
 };
 
 function changeNull(toChange, value) {

@@ -969,6 +969,8 @@
   .ag-theme-blue .ag-checkbox .ag-input-wrapper,
   .ag-theme-blue .ag-radio-button .ag-input-wrapper {
     overflow: visible; }
+  .ag-theme-blue .ag-range-field .ag-input-wrapper {
+    height: 100%; }
   .ag-theme-blue .ag-toggle-button {
     flex: none;
     width: unset;
@@ -1046,6 +1048,7 @@
   .ag-theme-blue .ag-select .ag-picker-field-wrapper {
     background-color: #fff;
     min-height: 20px;
+    height: 20px;
     cursor: default; }
   .ag-theme-blue .ag-select .ag-picker-field-display {
     margin: 4px;
@@ -1053,7 +1056,6 @@
     overflow: hidden;
     text-overflow: ellipsis; }
   .ag-theme-blue .ag-select .ag-picker-field-icon {
-    height: 100%;
     display: flex;
     align-items: center; }
   .ag-theme-blue .ag-select.ag-disabled {
@@ -1140,14 +1142,13 @@
   .ag-theme-blue .ag-picker-field-wrapper {
     border: 1px solid #9bc2e6;
     border-radius: 5px; }
-  .ag-theme-blue .ag-picker-field-display {
-    width: 12px;
-    height: 12px; }
   .ag-theme-blue .ag-picker-field-button {
     background-color: #fff;
     color: #222; }
   .ag-theme-blue .ag-dialog.ag-color-dialog {
     border-radius: 5px; }
+  .ag-theme-blue .ag-color-picker .ag-picker-field-display {
+    height: 12px; }
   .ag-theme-blue .ag-color-panel {
     padding: 4px; }
   .ag-theme-blue .ag-spectrum-color {
@@ -2016,7 +2017,7 @@
   .ag-theme-blue .ag-column-drop-cell {
     background: #ddebf7;
     border-radius: 16px;
-    min-height: 16px;
+    height: 16px;
     padding: 0 2px; }
   .ag-theme-blue .ag-column-drop-cell-text {
     margin: 0 4px; }
@@ -2244,10 +2245,10 @@
       width: 12px;
       background-color: #fff;
       border-radius: 6px;
-      transition: transform 100ms;
+      transition: left 100ms;
       border: 1px solid #222; }
     .ag-theme-blue .ag-toggle-button-input-wrapper.ag-checked::before {
-      transform: translateX(12px);
+      left: calc(100% - 12px);
       border-color: #222; }
   .ag-theme-blue .ag-radio-button-input-wrapper {
     font-family: "agGridClassic";
@@ -2293,7 +2294,7 @@
   .ag-theme-blue input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
-    height: 12px;
+    height: 100%;
     background: none;
     overflow: visible; }
     .ag-theme-blue input[type='range']::-webkit-slider-runnable-track {
@@ -2319,7 +2320,9 @@
       height: 3px;
       background-color: #9bc2e6;
       border-radius: 0px;
-      border-radius: 0px; }
+      border-radius: 0px;
+      color: transparent;
+      width: calc(100% - 2px); }
     .ag-theme-blue input[type='range']::-webkit-slider-thumb {
       margin: 0;
       padding: 0;

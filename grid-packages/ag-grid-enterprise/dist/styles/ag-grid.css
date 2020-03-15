@@ -430,7 +430,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   height: 100%;
   width: 8px;
   top: 0;
-  cursor: col-resize; }
+  cursor: ew-resize; }
   .ag-ltr .ag-header-cell-resize {
     right: -4px; }
   .ag-rtl .ag-header-cell-resize {
@@ -1258,7 +1258,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex; }
 
 .ag-tool-panel-horizontal-resize {
-  cursor: col-resize;
+  cursor: ew-resize;
   height: 100%;
   position: absolute;
   top: 0;

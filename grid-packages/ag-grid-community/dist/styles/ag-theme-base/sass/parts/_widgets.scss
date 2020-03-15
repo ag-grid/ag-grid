@@ -7,6 +7,12 @@
         }
     }
 
+    .ag-range-field {
+        .ag-input-wrapper {
+            height: 100%;
+        }
+    }
+
     .ag-toggle-button {
         flex: none;
         width: unset;
@@ -117,6 +123,7 @@
         .ag-picker-field-wrapper {
             background-color: ag-param(background-color);
             min-height: ag-param(list-item-height);
+            height: ag-param(list-item-height);
             cursor: default;
         }
         .ag-picker-field-display {
@@ -126,7 +133,6 @@
             text-overflow: ellipsis;
         }
         .ag-picker-field-icon {
-            height: 100%;
             display: flex;
             align-items: center;
         }
@@ -263,11 +269,6 @@
             box-shadow: ag-param(input-focus-box-shadow);
         }
     }
-
-    .ag-picker-field-display {
-        width: ag-param(icon-size);
-        height: ag-param(icon-size);
-    }
     
     .ag-picker-field-button {
         background-color: ag-param(background-color);
@@ -276,6 +277,10 @@
 
     .ag-dialog.ag-color-dialog {
         border-radius: 5px;
+    }
+
+    .ag-color-picker .ag-picker-field-display {
+        height: ag-param(icon-size);
     }
 
     .ag-color-panel {
@@ -605,12 +610,12 @@
         width: ag-param(toggle-button-height);
         background-color: ag-param(toggle-button-switch-background-color);
         border-radius: ag-param(toggle-button-height) / 2;
-        transition: transform 100ms;
+        transition: left 100ms;
         border: $border-width solid ag-param(toggle-button-switch-border-color);
     }
 
     &.ag-checked::before {
-        transform: translateX(ag-param(toggle-button-width) - ag-param(toggle-button-height));
+        left: calc(100% - #{ag-param(toggle-button-height)} );
         border-color: ag-param(toggle-button-on-border-color);
     }
 }
@@ -687,7 +692,7 @@
 @mixin ag-range {
     -webkit-appearance: none;
     width: 100%;
-    height: ag-param(icon-size);
+    height: 100%;
     background: none;
     overflow: visible;
 
@@ -701,6 +706,8 @@
 
     &::-ms-track {
         @include ag-internal-range-track;
+        color: transparent;
+        width: calc(100% - 2px);
     }
 
     &::-webkit-slider-thumb {
@@ -710,7 +717,6 @@
 
     &::-ms-thumb {
         @include ag-internal-range-thumb;
-        // height: 8.4px;
     }
     &::-moz-ag-range-thumb {
         @include ag-internal-range-thumb;

@@ -5,19 +5,24 @@ var getRandom = function(start, finish) {
     return Math.floor(Math.random() * (finish - start) + start);
 };
 
-var columnDefs = [
-    { field: "athlete", width: 150 },
-    { headerName: 'Day of the Week', field: 'dayOfTheWeek', width: 150 },
-    { field: "age", width: 90 },
-    { field: "country", width: 120 },
-    { field: "sport", width: 110 },
-    { field: "gold", width: 100 },
-    { field: "silver", width: 100 },
-    { field: "bronze", width: 100 }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: "athlete", minWidth: 150 },
+        { headerName: 'Day of the Week', field: 'dayOfTheWeek', minWidth: 180 },
+        { field: "age", maxWidth: 90 },
+        { field: "country", minWidth: 150 },
+        { field: "year", maxWidth: 90 },
+        { field: "date", minWidth: 150 },
+        { field: "sport", minWidth: 150 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        editable: true
+    },
     enableRangeSelection: true,
     enableFillHandle: true,
     fillOperation: function(params) {
@@ -33,10 +38,6 @@ var gridOptions = {
         var idxOfLast = daysList.indexOf(lastValue);
 
         return daysList[(idxOfLast + 1) % daysList.length];
-    },
-    rowData: null,
-    defaultColDef: {
-        editable: true
     }
 };
 

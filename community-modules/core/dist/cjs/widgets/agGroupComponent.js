@@ -105,6 +105,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.prototype.toggleGroupExpand = function (expanded) {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
+            this.refreshChildDisplay();
             utils_1._.setDisplayed(this.eContainer, true);
             return this;
         }

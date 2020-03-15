@@ -1,8 +1,6 @@
 var columnDefs = [
     {
-        headerName: "Athlete",
         field: "athlete",
-        width: 150,
         filter: 'agTextColumnFilter',
         filterParams: {
             filterOptions: ['contains', 'notContains'],
@@ -26,9 +24,7 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Country",
         field: "country",
-        width: 120,
         filterParams: {
             filterOptions: ['contains'],
             textCustomComparator: function(_, value, filterText) {
@@ -56,18 +52,14 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Year",
         field: "year",
-        width: 90,
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['inRange']
         }
     },
     {
-        headerName: "Sport",
         field: "sport",
-        width: 90,
         filter: 'agTextColumnFilter',
         filterParams: {
             defaultOption: 'startsWith'
@@ -77,6 +69,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
+        flex: 1,
         sortable: true,
         filter: true
     },

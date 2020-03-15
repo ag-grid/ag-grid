@@ -9,7 +9,6 @@ import { _ } from "../../../utils";
 export class DefaultDateComponent extends Component implements IDateComp {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
     @RefSelector('eDateInput') private eDateInput: AgInputTextField;
 
     private listener: () => void;
@@ -31,11 +30,15 @@ export class DefaultDateComponent extends Component implements IDateComp {
         }
 
         this.listener = params.onDateChanged;
-        this.addDestroyableEventListener(this.eDateInput.getGui(), 'input', this.listener);
+
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', (e) => {
+            if (e.target !== document.activeElement) { return; }
+            this.listener();
+        });
     }
 
     public getDate(): Date {
-        return _.parseYyyyMmDdToDate(this.eDateInput.getValue(), "-");
+        return _.getDateFromString(this.eDateInput.getValue());
     }
 
     public setDate(date: Date): void {

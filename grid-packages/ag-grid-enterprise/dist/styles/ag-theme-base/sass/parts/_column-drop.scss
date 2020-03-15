@@ -6,7 +6,7 @@
     .ag-column-drop-cell {
         background: ag-param(chip-background-color);
         border-radius: ag-param(grid-size) * 4;
-        min-height: ag-param(grid-size) * 4;
+        height: ag-param(grid-size) * 4;
         padding: 0 ag-param(grid-size) / 2;
     }
 

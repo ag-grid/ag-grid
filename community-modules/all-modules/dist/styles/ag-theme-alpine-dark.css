@@ -220,6 +220,8 @@
   .ag-theme-alpine-dark .ag-checkbox .ag-input-wrapper,
   .ag-theme-alpine-dark .ag-radio-button .ag-input-wrapper {
     overflow: visible; }
+  .ag-theme-alpine-dark .ag-range-field .ag-input-wrapper {
+    height: 100%; }
   .ag-theme-alpine-dark .ag-toggle-button {
     flex: none;
     width: unset;
@@ -301,6 +303,7 @@
   .ag-theme-alpine-dark .ag-select .ag-picker-field-wrapper {
     background-color: #181d1f;
     min-height: 30px;
+    height: 30px;
     cursor: default; }
   .ag-theme-alpine-dark .ag-select .ag-picker-field-display {
     margin: 4px;
@@ -308,7 +311,6 @@
     overflow: hidden;
     text-overflow: ellipsis; }
   .ag-theme-alpine-dark .ag-select .ag-picker-field-icon {
-    height: 100%;
     display: flex;
     align-items: center; }
   .ag-theme-alpine-dark .ag-select.ag-disabled {
@@ -397,14 +399,13 @@
     border-radius: 5px; }
     .ag-theme-alpine-dark .ag-picker-field-wrapper:focus {
       box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6); }
-  .ag-theme-alpine-dark .ag-picker-field-display {
-    width: 16px;
-    height: 16px; }
   .ag-theme-alpine-dark .ag-picker-field-button {
     background-color: #181d1f;
     color: #fff; }
   .ag-theme-alpine-dark .ag-dialog.ag-color-dialog {
     border-radius: 5px; }
+  .ag-theme-alpine-dark .ag-color-picker .ag-picker-field-display {
+    height: 16px; }
   .ag-theme-alpine-dark .ag-color-panel {
     padding: 6px; }
   .ag-theme-alpine-dark .ag-spectrum-color {
@@ -1273,7 +1274,7 @@
   .ag-theme-alpine-dark .ag-column-drop-cell {
     background: rgba(255, 255, 255, 0.07);
     border-radius: 24px;
-    min-height: 24px;
+    height: 24px;
     padding: 0 3px; }
   .ag-theme-alpine-dark .ag-column-drop-cell-text {
     margin: 0 6px; }
@@ -1504,10 +1505,10 @@
       width: 18px;
       background-color: #181d1f;
       border-radius: 9px;
-      transition: transform 100ms;
+      transition: left 100ms;
       border: 1px solid #999; }
     .ag-theme-alpine-dark .ag-toggle-button-input-wrapper.ag-checked::before {
-      transform: translateX(10px);
+      left: calc(100% - 18px);
       border-color: #2196f3; }
   .ag-theme-alpine-dark .ag-radio-button-input-wrapper {
     font-family: "agGridAlpine";
@@ -1555,7 +1556,7 @@
   .ag-theme-alpine-dark input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
-    height: 16px;
+    height: 100%;
     background: none;
     overflow: visible; }
     .ag-theme-alpine-dark input[type='range']::-webkit-slider-runnable-track {
@@ -1581,7 +1582,9 @@
       height: 3px;
       background-color: #68686e;
       border-radius: 3px;
-      border-radius: 3px; }
+      border-radius: 3px;
+      color: transparent;
+      width: calc(100% - 2px); }
     .ag-theme-alpine-dark input[type='range']::-webkit-slider-thumb {
       margin: 0;
       padding: 0;
@@ -1754,9 +1757,6 @@
     padding: 12px; }
   .ag-theme-alpine-dark .ag-column-drop-empty-message {
     color: rgba(255, 255, 255, 0.75); }
-  .ag-theme-alpine-dark .ag-filter-toolpanel-instance-filter {
-    border: none;
-    padding-left: 18px; }
   .ag-theme-alpine-dark .ag-status-bar {
     font-weight: normal; }
   .ag-theme-alpine-dark .ag-status-name-value-value {
@@ -1793,7 +1793,8 @@
   .ag-theme-alpine-dark .ag-filter-toolpanel-group-container {
     padding-left: 6px; }
   .ag-theme-alpine-dark .ag-filter-toolpanel-instance-filter {
-    background: rgba(0, 0, 0, 0.03);
+    border: none;
+    background-color: #222628;
     border-left: dashed 1px #68686e;
     margin-left: 13px;
     padding-left: 8px;

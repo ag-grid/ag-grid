@@ -35,6 +35,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         return _super.call(this, "<div class=\"ag-filter-filter\"><ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
+        var _this = this;
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
         if (utils_1._.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
@@ -46,10 +47,15 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             }
         }
         this.listener = params.onDateChanged;
-        this.addDestroyableEventListener(this.eDateInput.getGui(), 'input', this.listener);
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', function (e) {
+            if (e.target !== document.activeElement) {
+                return;
+            }
+            _this.listener();
+        });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return utils_1._.parseYyyyMmDdToDate(this.eDateInput.getValue(), "-");
+        return utils_1._.getDateFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
         this.eDateInput.setValue(utils_1._.serializeDateToYyyyMmDd(date, "-"));

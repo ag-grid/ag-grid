@@ -146,6 +146,7 @@ export class AgGroupComponent extends Component {
     public toggleGroupExpand(expanded?: boolean): this {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
+            this.refreshChildDisplay();
             _.setDisplayed(this.eContainer, true);
             return this;
         }

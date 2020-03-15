@@ -160,11 +160,6 @@
         color: rgba(ag-param(foreground-color), 0.75);
     }
 
-    .ag-filter-toolpanel-instance-filter {
-        border: none;
-        padding-left: ag-param(grid-size) * 3;
-    }
-
     .ag-status-bar {
         font-weight: normal;
     }
@@ -220,7 +215,8 @@
     }
 
     .ag-filter-toolpanel-instance-filter {
-        background: rgba(0, 0, 0, 0.03);
+        border: none;
+        background-color: ag-param(control-panel-background-color);
         border-left: dashed 1px ag-param(border-color);
         margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
         padding-left: ag-param(icon-size) / 2;

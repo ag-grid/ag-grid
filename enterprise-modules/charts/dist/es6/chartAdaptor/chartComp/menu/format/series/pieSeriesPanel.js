@@ -31,7 +31,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
     }
     PieSeriesPanel.prototype.init = function () {
         var groupParams = {
-            cssIdentifier: 'charts-format-sub-level',
+            cssIdentifier: 'charts-format-top-level',
             direction: 'vertical'
         };
         this.setTemplate(PieSeriesPanel.TEMPLATE, { seriesGroup: groupParams });

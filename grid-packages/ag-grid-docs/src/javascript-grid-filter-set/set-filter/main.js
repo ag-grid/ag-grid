@@ -10,45 +10,48 @@ function irishAthletes() {
         'Ronald Regan',
         'Barack Obama'
     ];
-};
-
-var columnDefs = [
-    {
-        headerName: 'Athlete',
-        field: 'athlete',
-        width: 150,
-        filter: 'agSetColumnFilter',
-        filterParams: {cellHeight: 20, values: irishAthletes(), debounceMs: 1000}
-    },
-    {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
-    {
-        headerName: 'Country',
-        field: 'country',
-        width: 140,
-        cellRenderer: 'countryCellRenderer',
-        keyCreator: countryKeyCreator,
-        filter: 'agSetColumnFilter'
-    },
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110, filter: 'agSetColumnFilter', filterParams: {suppressMiniFilter: true}},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'agNumberColumnFilter'}
-];
+}
 
 var gridOptions = {
+    columnDefs: [
+        {
+            field: "athlete",
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                cellHeight: 20,
+                values: irishAthletes(),
+                debounceMs: 1000
+            }
+        },
+        {
+            field: "sport",
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                suppressMiniFilter: true
+            }
+        },
+        {
+            field: "country",
+            filter: 'agSetColumnFilter',
+            cellRenderer: 'countryCellRenderer',
+            keyCreator: countryKeyCreator,
+        },
+        { field: "age", filter: 'agNumberColumnFilter' },
+        { field: "gold", filter: 'agNumberColumnFilter' },
+        { field: "silver", filter: 'agNumberColumnFilter' },
+        { field: "bronze", filter: 'agNumberColumnFilter' },
+        { field: "total", filter: 'agNumberColumnFilter' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 180,
+        editable: true,
         resizable: true,
-        filter: true
     },
-    components:{
+    components: {
         countryCellRenderer: countryCellRenderer
     },
-    columnDefs: columnDefs,
-    rowData: null,
-    floatingFilter: true
+    floatingFilter: true,
 };
 
 function countryCellRenderer(params) {
@@ -57,8 +60,7 @@ function countryCellRenderer(params) {
 
 function countryKeyCreator(params) {
     var countryObject = params.value;
-    var key = countryObject.name;
-    return key;
+    return countryObject.name;
 }
 
 function patchData(data) {

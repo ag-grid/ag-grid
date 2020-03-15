@@ -968,6 +968,8 @@
   .ag-theme-bootstrap .ag-checkbox .ag-input-wrapper,
   .ag-theme-bootstrap .ag-radio-button .ag-input-wrapper {
     overflow: visible; }
+  .ag-theme-bootstrap .ag-range-field .ag-input-wrapper {
+    height: 100%; }
   .ag-theme-bootstrap .ag-toggle-button {
     flex: none;
     width: unset;
@@ -1043,6 +1045,7 @@
   .ag-theme-bootstrap .ag-select .ag-picker-field-wrapper {
     background-color: #FFF;
     min-height: 20px;
+    height: 20px;
     cursor: default; }
   .ag-theme-bootstrap .ag-select .ag-picker-field-display {
     margin: 4px;
@@ -1050,7 +1053,6 @@
     overflow: hidden;
     text-overflow: ellipsis; }
   .ag-theme-bootstrap .ag-select .ag-picker-field-icon {
-    height: 100%;
     display: flex;
     align-items: center; }
   .ag-theme-bootstrap .ag-select.ag-disabled {
@@ -1134,14 +1136,13 @@
   .ag-theme-bootstrap .ag-picker-field-wrapper {
     border: 1px solid darkgrey;
     border-radius: 5px; }
-  .ag-theme-bootstrap .ag-picker-field-display {
-    width: 12px;
-    height: 12px; }
   .ag-theme-bootstrap .ag-picker-field-button {
     background-color: #FFF;
     color: #000; }
   .ag-theme-bootstrap .ag-dialog.ag-color-dialog {
     border-radius: 5px; }
+  .ag-theme-bootstrap .ag-color-picker .ag-picker-field-display {
+    height: 12px; }
   .ag-theme-bootstrap .ag-color-panel {
     padding: 4px; }
   .ag-theme-bootstrap .ag-spectrum-color {
@@ -1920,7 +1921,7 @@
   .ag-theme-bootstrap .ag-column-drop-cell {
     background: #ecf0f1;
     border-radius: 16px;
-    min-height: 16px;
+    height: 16px;
     padding: 0 2px; }
   .ag-theme-bootstrap .ag-column-drop-cell-text {
     margin: 0 4px; }
@@ -2135,10 +2136,10 @@
       width: 12px;
       background-color: #FFF;
       border-radius: 6px;
-      transition: transform 100ms;
+      transition: left 100ms;
       border: 1px solid #000; }
     .ag-theme-bootstrap .ag-toggle-button-input-wrapper.ag-checked::before {
-      transform: translateX(12px);
+      left: calc(100% - 12px);
       border-color: #000; }
   .ag-theme-bootstrap .ag-radio-button-input-wrapper {
     font-family: "agGridClassic";
@@ -2184,7 +2185,7 @@
   .ag-theme-bootstrap input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
-    height: 12px;
+    height: 100%;
     background: none;
     overflow: visible; }
     .ag-theme-bootstrap input[type='range']::-webkit-slider-runnable-track {
@@ -2210,7 +2211,9 @@
       height: 3px;
       background-color: darkgrey;
       border-radius: 0px;
-      border-radius: 0px; }
+      border-radius: 0px;
+      color: transparent;
+      width: calc(100% - 2px); }
     .ag-theme-bootstrap input[type='range']::-webkit-slider-thumb {
       margin: 0;
       padding: 0;

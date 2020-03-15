@@ -406,7 +406,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 8px;
     top: 0;
 
-    cursor: col-resize;
+    cursor: ew-resize;
 
     // unpinned headers get their rezise handle on the right in normal mode and left in RTL mode
     @include ag-unthemed-rtl((
@@ -1153,7 +1153,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-tool-panel-horizontal-resize {
-    cursor: col-resize;
+    cursor: ew-resize;
     height: 100%;
     position: absolute;
     top: 0;

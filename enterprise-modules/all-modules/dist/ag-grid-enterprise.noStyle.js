@@ -17033,6 +17033,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         return _super.call(this, "<div class=\"ag-filter-filter\"><ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
+        var _this = this;
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
         if (_utils__WEBPACK_IMPORTED_MODULE_3__["_"].isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
@@ -17044,10 +17045,15 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             }
         }
         this.listener = params.onDateChanged;
-        this.addDestroyableEventListener(this.eDateInput.getGui(), 'input', this.listener);
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', function (e) {
+            if (e.target !== document.activeElement) {
+                return;
+            }
+            _this.listener();
+        });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return _utils__WEBPACK_IMPORTED_MODULE_3__["_"].parseYyyyMmDdToDate(this.eDateInput.getValue(), "-");
+        return _utils__WEBPACK_IMPORTED_MODULE_3__["_"].getDateFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
         this.eDateInput.setValue(_utils__WEBPACK_IMPORTED_MODULE_3__["_"].serializeDateToYyyyMmDd(date, "-"));
@@ -31677,7 +31683,7 @@ var HorizontalResizeService = /** @class */ (function () {
         this.oldMsUserSelect = this.eGridDiv.style.msUserSelect;
         this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
-        this.eGridDiv.style.cursor = 'col-resize';
+        this.eGridDiv.style.cursor = 'ew-resize';
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         this.eGridDiv.style.msUserSelect = 'none';
         this.eGridDiv.style.webkitUserSelect = 'none';
@@ -36758,6 +36764,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.prototype.toggleGroupExpand = function (expanded) {
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
+            this.refreshChildDisplay();
             _utils__WEBPACK_IMPORTED_MODULE_3__["_"].setDisplayed(this.eContainer, true);
             return this;
         }
@@ -65512,7 +65519,7 @@ var PieSeriesPanel = /** @class */ (function (_super) {
     }
     PieSeriesPanel.prototype.init = function () {
         var groupParams = {
-            cssIdentifier: 'charts-format-sub-level',
+            cssIdentifier: 'charts-format-top-level',
             direction: 'vertical'
         };
         this.setTemplate(PieSeriesPanel.TEMPLATE, { seriesGroup: groupParams });

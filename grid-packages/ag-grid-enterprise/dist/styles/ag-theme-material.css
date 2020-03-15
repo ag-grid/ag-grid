@@ -967,6 +967,8 @@
   .ag-theme-material .ag-checkbox .ag-input-wrapper,
   .ag-theme-material .ag-radio-button .ag-input-wrapper {
     overflow: visible; }
+  .ag-theme-material .ag-range-field .ag-input-wrapper {
+    height: 100%; }
   .ag-theme-material .ag-toggle-button {
     flex: none;
     width: unset;
@@ -1036,6 +1038,7 @@
   .ag-theme-material .ag-select .ag-picker-field-wrapper {
     background-color: #fff;
     min-height: 40px;
+    height: 40px;
     cursor: default; }
   .ag-theme-material .ag-select .ag-picker-field-display {
     margin: 4px;
@@ -1043,7 +1046,6 @@
     overflow: hidden;
     text-overflow: ellipsis; }
   .ag-theme-material .ag-select .ag-picker-field-icon {
-    height: 100%;
     display: flex;
     align-items: center; }
   .ag-theme-material .ag-select.ag-disabled {
@@ -1131,14 +1133,13 @@
     border-radius: 5px; }
     .ag-theme-material .ag-picker-field-wrapper:focus {
       box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122); }
-  .ag-theme-material .ag-picker-field-display {
-    width: 18px;
-    height: 18px; }
   .ag-theme-material .ag-picker-field-button {
     background-color: #fff;
     color: rgba(0, 0, 0, 0.54); }
   .ag-theme-material .ag-dialog.ag-color-dialog {
     border-radius: 5px; }
+  .ag-theme-material .ag-color-picker .ag-picker-field-display {
+    height: 18px; }
   .ag-theme-material .ag-color-panel {
     padding: 8px; }
   .ag-theme-material .ag-spectrum-color {
@@ -1958,7 +1959,7 @@
   .ag-theme-material .ag-column-drop-cell {
     background: #e2e2e2;
     border-radius: 32px;
-    min-height: 32px;
+    height: 32px;
     padding: 0 4px; }
   .ag-theme-material .ag-column-drop-cell-text {
     margin: 0 8px; }
@@ -2175,10 +2176,10 @@
       width: 18px;
       background-color: #fff;
       border-radius: 9px;
-      transition: transform 100ms;
+      transition: left 100ms;
       border: 1px solid #333; }
     .ag-theme-material .ag-toggle-button-input-wrapper.ag-checked::before {
-      transform: translateX(18px);
+      left: calc(100% - 18px);
       border-color: #ff4081; }
   .ag-theme-material .ag-radio-button-input-wrapper {
     font-family: "agGridMaterial";
@@ -2225,7 +2226,7 @@
   .ag-theme-material input[type='range'] {
     -webkit-appearance: none;
     width: 100%;
-    height: 18px;
+    height: 100%;
     background: none;
     overflow: visible; }
     .ag-theme-material input[type='range']::-webkit-slider-runnable-track {
@@ -2251,7 +2252,9 @@
       height: 3px;
       background-color: #e2e2e2;
       border-radius: 0px;
-      border-radius: 2px; }
+      border-radius: 2px;
+      color: transparent;
+      width: calc(100% - 2px); }
     .ag-theme-material input[type='range']::-webkit-slider-thumb {
       margin: 0;
       padding: 0;

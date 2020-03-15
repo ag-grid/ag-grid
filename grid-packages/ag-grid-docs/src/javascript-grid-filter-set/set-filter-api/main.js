@@ -1,39 +1,36 @@
-var columnDefs = [
-    {
-        headerName: 'Athlete',
-        field: 'athlete',
-        width: 150,
-        filter: 'agSetColumnFilter',
-        filterParams: {cellHeight: 20}
-    },
-    {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
-    {
-        headerName: 'Country',
-        field: 'country',
-        width: 140,
-        cellRenderer: 'countryCellRenderer',
-        keyCreator: countryKeyCreator,
-        filterParams: {
-            // values: ['England', 'France', 'Australia'],
-            newRowsAction: 'keep'
-        }
-    },
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'agNumberColumnFilter'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                cellHeight: 20
+            }
+        },
+        { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
+        {
+            field: 'country',
+            cellRenderer: 'countryCellRenderer',
+            keyCreator: countryKeyCreator,
+            filterParams: {
+                // values: ['England', 'France', 'Australia'],
+                newRowsAction: 'keep'
+            }
+        },
+        { field: 'year', maxWidth: 120 },
+        { field: 'date' },
+        { field: 'sport' },
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        { field: 'silver', filter: 'agNumberColumnFilter' },
+        { field: 'bronze', filter: 'agNumberColumnFilter' },
+        { field: 'total', filter: 'agNumberColumnFilter' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 160,
+        filter: true,
         resizable: true,
-        filter: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
     components: {
         countryCellRenderer: countryCellRenderer
     }
@@ -45,8 +42,7 @@ function countryCellRenderer(params) {
 
 function countryKeyCreator(params) {
     var countryObject = params.value;
-    var key = countryObject.name;
-    return key;
+    return countryObject.name;
 }
 
 function patchData(data) {
