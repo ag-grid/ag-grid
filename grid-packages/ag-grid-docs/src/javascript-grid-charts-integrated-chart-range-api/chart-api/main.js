@@ -26,7 +26,11 @@ function createRowData() {
 
 var gridOptions = {
     defaultColDef: {
-        width: 100,
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         resizable: true
     },
     columnDefs: columnDefs,
