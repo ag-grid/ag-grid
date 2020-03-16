@@ -57,7 +57,7 @@ gridOptionsSecond = {
         it demonstrates the features in an easy to understand way.
     </p>
 
-    <?= grid_example('Aligned Grids', 'aligned-grids', 'multi') ?>
+    <?= grid_example('Aligned Grids', 'aligned-grids', 'multi', ['exampleHeight' => 600, 'showImportsDropdown' => false]) ?>
 
     <h2 id="events">Events</h2>
     <p>
@@ -97,7 +97,7 @@ gridOptionsSecond = {
             widths from the top grid.</li>
     </p>
 
-    <?= grid_example('Aligned Grid as Footer', 'aligned-floating-footer', 'multi') ?>
+    <?= grid_example('Aligned Grid as Footer', 'aligned-floating-footer', 'multi', ['showImportsDropdown' => false]) ?>
 
     <note style="font-style: italic;">
         * The property <code>suppressHorizontalScroll</code> does not work with the browser Edge.
@@ -117,7 +117,7 @@ gridOptionsSecond = {
         group will open / close all the instances of that group in both tables.
     </p>
 
-    <?= grid_example('Aligned Column Groups', 'aligned-column-groups', 'multi') ?>
+    <?= grid_example('Aligned Column Groups', 'aligned-column-groups', 'multi', ['showImportsDropdown' => false]) ?>
 
     <h2 id="event-propagation">Event Propagation</h2>
 

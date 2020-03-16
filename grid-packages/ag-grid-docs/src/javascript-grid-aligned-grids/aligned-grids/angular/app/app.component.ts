@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
@@ -18,7 +18,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
         <ag-grid-angular
                 style="width: 100%; height: 45%"
                 #topGrid
-                class="ag-theme-balham"
+                class="ag-theme-alpine"
                 [rowData]="rowData"
                 [gridOptions]="topOptions"
                 [modules]="modules"
@@ -29,7 +29,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
         <ag-grid-angular
                 style="width: 100%; height: 45%"
                 #bottomGrid
-                class="ag-theme-balham"
+                class="ag-theme-alpine"
                 [rowData]="rowData"
                 [gridOptions]="bottomOptions"
                 [modules]="modules"
@@ -41,31 +41,51 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 export class AppComponent {
     columnDefs;
     rowData;
-    topOptions = {alignedGrids: []};
-    bottomOptions = {alignedGrids: []};
-    modules=AllCommunityModules;
+    topOptions = {
+        alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }
+    };
+    bottomOptions = {
+        alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }
+    };
+    modules = AllCommunityModules;
 
     @ViewChild('topGrid') topGrid;
     @ViewChild('bottomGrid') bottomGrid;
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
-            {headerName: 'Athlete', field: 'athlete', width: 200},
-            {headerName: 'Age', field: 'age', width: 150},
-            {headerName: 'Country', field: 'country', width: 150},
-            {headerName: 'Year', field: 'year', width: 120},
-            {headerName: 'Date', field: 'date', width: 150},
-            {headerName: 'Sport', field: 'sport', width: 150},
+            {field: 'athlete'},
+            {field: 'age'},
+            {field: 'country'},
+            {field: 'year'},
+            {field: 'date'},
+            {field: 'sport'},
             {
                 headerName: 'Medals',
                 children: [
                     {
-                        headerName: "Total", columnGroupShow: 'closed', field: "total",
+                        columnGroupShow: 'closed', field: "total",
                         valueGetter: "data.gold + data.silver + data.bronze", width: 200
                     },
-                    {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
-                    {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
-                    {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
+                    { columnGroupShow: 'open', field: "gold", width: 100},
+                    { columnGroupShow: 'open', field: "silver", width: 100},
+                    { columnGroupShow: 'open', field: "bronze", width: 100}
                 ]
             }
         ];

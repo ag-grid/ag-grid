@@ -1,9 +1,9 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, rowGroupIndex: 0},
-    {headerName: "Age", field: "age", width: 90, rowGroupIndex: 1},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 2},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110, rowGroupIndex: 2}
+    {field: "athlete", width: 150, rowGroupIndex: 0},
+    {field: "age", width: 90, rowGroupIndex: 1},
+    {field: "country", width: 120, rowGroupIndex: 2},
+    {field: "year", width: 90},
+    {field: "date", width: 110, rowGroupIndex: 2}
 ];
 
 var gridOptions = {
@@ -17,6 +17,14 @@ var gridOptions = {
         var childCount = event.node.childrenAfterSort ? event.node.childrenAfterSort.length : 0;
         var newIndex = rowNodeIndex + childCount;
         gridOptions.api.ensureIndexVisible(newIndex);
+    },
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     }
 };
 
@@ -31,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }

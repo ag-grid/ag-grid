@@ -1,8 +1,8 @@
 // specify the columns
 var columnDefs = [
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
+    {field: "make"},
+    {field: "model"},
+    {field: "price"}
 ];
 
 // specify the data
@@ -18,6 +18,14 @@ var gridOptions = {
     rowData: rowData,
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();
+    },
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     }
 };
 

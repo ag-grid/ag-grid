@@ -1,31 +1,30 @@
-
 var columnDefs = [
     {
         headerName: "<span style='background-color: lightblue'>Group 1</span>",
         groupId: "Group1",
         children: [
-            {headerName: "AAA", field: "athlete", pinned: true, width: 100},
-            {headerName: "BBB", field: "age", pinned: true, columnGroupShow: 'open', width: 100},
-            {headerName: "CCC", field: "country", width: 100},
-            {headerName: "DDD", field: "year", columnGroupShow: 'open', width: 100},
-            {headerName: "EEE", field: "date", width: 100},
-            {headerName: "FFF", field: "sport", columnGroupShow: 'open', width: 100},
-            {headerName: "GGG", field: "date", width: 100},
-            {headerName: "HHH", field: "sport", columnGroupShow: 'open', width: 100}
+            {field: "athlete", pinned: true, width: 100},
+            {field: "age", pinned: true, columnGroupShow: 'open', width: 100},
+            {field: "country", width: 100},
+            {field: "year", columnGroupShow: 'open', width: 100},
+            {field: "date", width: 100},
+            {field: "sport", columnGroupShow: 'open', width: 100},
+            {field: "date", width: 100},
+            {field: "sport", columnGroupShow: 'open', width: 100}
         ]
     },
     {
         headerName: "<span style='background-color: lightgreen'>Group 2</span>",
         groupId: "Group2",
         children: [
-            {headerName: "AAA", field: "athlete", pinned: true, width: 100},
-            {headerName: "BBB", field: "age", pinned: true, columnGroupShow: 'open', width: 100},
-            {headerName: "CCC", field: "country", width: 100},
-            {headerName: "DDD", field: "year", columnGroupShow: 'open', width: 100},
-            {headerName: "EEE", field: "date", width: 100},
-            {headerName: "FFF", field: "sport", columnGroupShow: 'open', width: 100},
-            {headerName: "GGG", field: "date", width: 100},
-            {headerName: "HHH", field: "sport", columnGroupShow: 'open', width: 100}
+            {field: "athlete", pinned: true, width: 100},
+            {field: "age", pinned: true, columnGroupShow: 'open', width: 100},
+            {field: "country", width: 100},
+            {field: "year", columnGroupShow: 'open', width: 100},
+            {field: "date", width: 100},
+            {field: "sport", columnGroupShow: 'open', width: 100},
+            {field: "date", width: 100},
+            {field: "sport", columnGroupShow: 'open', width: 100}
         ]
     }
 ];
@@ -33,7 +32,12 @@ var columnDefs = [
 // this is the grid options for the top grid
 var gridOptionsTop = {
     defaultColDef: {
-        resizable: true
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -44,7 +48,12 @@ var gridOptionsTop = {
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
     defaultColDef: {
-        resizable: true
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -61,12 +70,12 @@ function setData(rowData) {
     gridOptionsTop.api.sizeColumnsToFit();
 
     // mix up some columns
-    gridOptionsTop.columnApi.moveColumnByIndex(11,4);
-    gridOptionsTop.columnApi.moveColumnByIndex(11,4);
+    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
+    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDivTop = document.querySelector('#myGridTop');
     new agGrid.Grid(gridDivTop, gridOptionsTop);
 
@@ -78,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             setData(httpResult);
