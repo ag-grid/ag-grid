@@ -484,11 +484,15 @@ ag-Grid SCSS files - replace the <code>style</code> block in <code>src/App.vue</
 <snippet language="scss">
 &lt;style lang="scss"&gt;
   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-  @import "../node_modules/ag-grid-community/src/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+  @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+
+  @include ag-theme-alpine((
+      add-row-background-color: #ACE
+  ));
 &lt;/style&gt;
 </snippet>
 
-<p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
+<p>If everything is configured correctly, the second row of the grid will be blue. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">Sass variable list</a> is available in the themes documentation section.</p>
 

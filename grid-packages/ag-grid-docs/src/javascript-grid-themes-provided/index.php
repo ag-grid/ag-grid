@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Provided Themes</h1>
 
     <p class="lead">
-        The grid comes with a few Provided Themes, and the quickest way to get a nice style onto a grid is to apply one of them.
+        The grid comes with a few provided themes, and the quickest way to get a nice style onto a grid is to apply one of them.
     </p>
 
     <p>
@@ -107,10 +107,6 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        If you're using a <a href="/javascript-grid-download/">prebuilt bundle</a> then CSS <em>may</em> already be embedded in the JavaScript code. If you're using <a href="/javascript-grid-modules/">modules</a> or a build without embedded styles, you'll need to 
-    </p>
-
-    <p>
         Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
     </p>
 
@@ -122,10 +118,10 @@ include '../documentation-main/documentation_header.php';
     <h1 id="customising-themes">Customising themes</h1>
 
     <p>
-        In order to customise a theme, you need to set up your project to be able to compile Sass files. The recommended way to process your project's Scss
+        In order to customise a theme, you need to set up your project to compile Sass files. The recommended way to process your project's Scss
         files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. We provide a
         <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">general webpack example</a> appropriate Vanilla JS and React
-        projects, and an <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">angular example</a> using Angular CLI.
+        projects, and an <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular">angular example</a> using Angular CLI.
     </p>
 
     <p>

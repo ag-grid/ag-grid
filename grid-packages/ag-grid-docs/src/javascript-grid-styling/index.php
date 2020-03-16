@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         The grid is styled using CSS. A set of CSS rules styling the grid is referred to as a theme.
-        The grid comes bundled with <a href="../javascript-grid-themes-provided/">Provided Themes</a>
+        The grid comes bundled with <a href="../javascript-grid-themes-provided/">provided themes</a>
         or you can create you own theme by applying CSS styles to the grid.
     </p>
 
@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 
     <ol class="content">
         <li>
-            Use one of the <a href="../javascript-grid-themes-provided/#customising-themes">provided themes</a>. This is the simplest approach.
+            Use one of the <a href="../javascript-grid-themes-provided/">provided themes</a>. This is the simplest approach.
         </li>
         <li>
             Customise one of the provided themes using
@@ -62,11 +62,7 @@ include '../documentation-main/documentation_header.php';
     <h2>When not to use themes</h2>
 
     <p>
-        Themes are intended to change the overall look and feel of a grid. If you want to style a particular column, or a particular header, consider using either cell and header renderers, or applying CSS classes or styles at the column definition level.
-    </p>
-
-    <p>
-        Sometimes it is possible to achieve the same effect using custom renderers as it is with themes. If so, use whichever one makes more sense for you, there isn't a hard and fast rule.
+        Themes are intended to change the overall look and feel of a grid. If you want to style a particular column, or a particular header, consider using either cell and header renderers, or applying CSS classes or styles at the column definition level. Sometimes it is possible to achieve the same effect using <a href="/javascript-grid-component-types/">custom renderers</a> as it is with themes. If so, use whichever one makes more sense for you.
     </p>
 
     <h2>Avoiding breaking the grid with custom themes</h2>
