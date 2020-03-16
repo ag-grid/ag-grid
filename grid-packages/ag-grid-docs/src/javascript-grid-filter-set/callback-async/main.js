@@ -15,6 +15,7 @@ var gridOptions = {
             headerName: 'Set filter column',
             field: 'value',
             width: 200,
+            flex: 1,
             filter: 'agSetColumnFilter',
             filterParams: {
                 values: function (params) {
