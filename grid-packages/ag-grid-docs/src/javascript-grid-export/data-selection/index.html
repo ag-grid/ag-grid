@@ -26,10 +26,29 @@
     .grid-wrapper {
         flex-grow: 1;
     }
+    .example-error {
+        box-sizing: border-box;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 30px;
+        background-color: #dc3a3a;
+        color: white;
+        transition: top 0.2s;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 5px;
+    }
+
+    .example-error.inactive {
+        top: -30px;
+    }
 </style>
-
+<div class="example-error inactive">
+    <span class="message"></span>
+</div>
 <div class="page-wrapper">
-
     <div class="columns">
         <div class="column">
             <label><input type="checkbox" id="allColumns" /> allColumns = true</label>

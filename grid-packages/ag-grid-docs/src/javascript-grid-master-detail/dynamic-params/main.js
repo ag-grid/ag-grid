@@ -1,15 +1,16 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1
+    },
     masterDetail: true,
-    detailRowHeight: 150,
+    detailRowHeight: 195,
     detailCellRendererParams: function(params) {
         var res = {};
 
@@ -27,11 +28,8 @@ var gridOptions = {
                     { field: 'callId' },
                     { field: 'number' }
                 ],
-                onGridReady: function(params) {
-                    console.log('Using option 1 with columns {callId, number}');
-                },
-                onFirstDataRendered: function(params) {
-                    params.api.sizeColumnsToFit();
+                defaultColDef: {
+                    flex: 1
                 }
             };
         } else {
@@ -43,11 +41,8 @@ var gridOptions = {
                     { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
                     { field: 'switchCode' }
                 ],
-                onGridReady: function(params) {
-                    console.log('Using option 2 with columns {callId, direction, duration, switchCode}');
-                },
-                onFirstDataRendered: function(params) {
-                    params.api.sizeColumnsToFit();
+                defaultColDef: {
+                    flex: 1
                 }
             };
         }
@@ -58,8 +53,6 @@ var gridOptions = {
 };
 
 function onFirstDataRendered(params) {
-    params.api.sizeColumnsToFit();
-
     // arbitrarily expand a row for presentational purposes
     setTimeout(function() {
         var node1 = params.api.getDisplayedRowAtIndex(1);

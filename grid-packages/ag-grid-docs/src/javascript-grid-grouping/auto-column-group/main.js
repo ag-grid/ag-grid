@@ -1,25 +1,28 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup:true},
-    {headerName: "Year", field: "year", width: 90, rowGroup:true},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Date", field: "date", width: 110}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'sport', minWidth: 200 },
+        { field: 'athlete', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+        { field: 'age' },
+        { field: 'date', minWidth: 140 },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         sortable: true,
-        filter: true
+        resizable: true,
     },
-    columnDefs: columnDefs,
-    animateRows: true,
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     enableRangeSelection: true,
-    rowData: null
+    animateRows: true,
 };
 
 // setup the grid after the page has finished loading

@@ -1,27 +1,30 @@
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100},
-    {headerName: "Age", field: "age", width: 90},
-    {
-        headerName: "Country",
-        field: "country",
-        width: 120,
-        rowGroup: true,
-        hide: true,
-        valueGetter: countryValueGetter,
-        keyCreator: countryKeyCreator
-    },
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: null
+    columnDefs: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+        { field: 'age' },
+        {
+            field: "country",
+            rowGroup: true,
+            hide: true,
+            valueGetter: countryValueGetter,
+            keyCreator: countryKeyCreator
+        },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport', minWidth: 200 },
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        resizable: true,
+    },
+    autoGroupColumnDef: {
+        minWidth: 200,
+    }
 };
 
 function countryKeyCreator(params) {

@@ -1,30 +1,26 @@
-var columnDefs = [
-    // to mix it up a bit, here we are using a valueGetter for the year column.
-    // this demonstrates that groupHideOpenParents and restrictToOneGroup works
-    // with value getters also.
-    {headerName: 'Country', showRowGroup: 'country', cellRenderer:'agGroupCellRenderer'},
-    {headerName: 'Year', valueGetter: 'data.year', showRowGroup: 'year', cellRenderer:'agGroupCellRenderer'},
-
-    {headerName: 'Athlete', field: 'athlete', width: 180},
-    {headerName: 'Gold', field: 'gold', aggFunc: 'sum', width: 100},
-    {headerName: 'Silver', field: 'silver', aggFunc: 'sum', width: 100},
-    {headerName: 'Bronze', field: 'bronze', aggFunc: 'sum', width: 100},
-    {headerName: 'Total', field: 'total', aggFunc: 'sum', width: 100},
-
-    {field: 'country', rowGroup: true, hide: true},
-    {field: 'year', rowGroup: true, hide: true}
-];
-
 var gridOptions = {
+    columnDefs: [
+        {headerName: 'Country', showRowGroup: 'country', cellRenderer: 'agGroupCellRenderer', minWidth: 200 },
+        {headerName: 'Year', valueGetter: 'data.year', showRowGroup: 'year', cellRenderer: 'agGroupCellRenderer' },
+
+        { field: 'athlete', minWidth: 200 },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'total', aggFunc: 'sum' },
+
+        {field: 'country', rowGroup: true, hide: true},
+        {field: 'year', rowGroup: true, hide: true},
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         sortable: true,
-        resizable: true
+        resizable: true,
     },
     groupSuppressAutoColumn: true,
-    enableRangeSelection: true,
-    columnDefs: columnDefs,
-    rowData: null,
     groupHideOpenParents: true,
+    enableRangeSelection: true,
     animateRows: true
 };
 

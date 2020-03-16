@@ -1,15 +1,20 @@
-var columnDefs = [
-    {field: 'country', enableRowGroup: true},
-    {field: 'year', enableRowGroup: true},
-    {field: "athlete", width: 180},
-    {field: "gold", aggFunc: 'sum', width: 100},
-    {field: "silver", aggFunc: 'sum', width: 100},
-    {field: "bronze", aggFunc: 'sum', width: 100},
-    {field: "total", aggFunc: 'sum', width: 100}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'country', enableRowGroup: true},
+        { field: 'year', enableRowGroup: true},
+        { field: "athlete", minWidth: 180 },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' },
+        { field: "total", aggFunc: 'sum' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+    },
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
     suppressDragLeaveHidesColumns: true,
     suppressMakeColumnVisibleAfterUnGroup: true,
     rowGroupPanelShow: 'always'

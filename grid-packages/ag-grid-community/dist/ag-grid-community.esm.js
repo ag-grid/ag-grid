@@ -13046,8 +13046,13 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.readOnly;
     };
     AgCheckbox.prototype.setReadOnly = function (readOnly) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
+    };
+    AgCheckbox.prototype.setDisabled = function (disabled) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
         var nextValue = this.getNextValue();
@@ -15551,9 +15556,6 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
     function NumberFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    NumberFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-number-field ref=\"eFloatingFilterInput\"></ag-input-number-field>\n            </div>");
-    };
     NumberFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     };

@@ -1,13 +1,14 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1
+    },
     masterDetail: true,
     detailCellRenderer: 'myDetailCellRenderer',
     detailRowHeight: 70,

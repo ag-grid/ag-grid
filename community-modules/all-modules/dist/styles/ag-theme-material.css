@@ -1253,7 +1253,8 @@
     margin-bottom: 14px; }
   .ag-theme-material .ag-column-select-column-readonly,
   .ag-theme-material .ag-column-select-column-group-readonly {
-    color: rgba(0, 0, 0, 0.38); }
+    color: rgba(0, 0, 0, 0.38);
+    pointer-events: none; }
   .ag-theme-material .ag-ltr .ag-column-select-add-group-indent {
     margin-left: 34px; }
   .ag-theme-material .ag-rtl .ag-column-select-add-group-indent {
@@ -1443,7 +1444,6 @@
   .ag-theme-material .ag-cell-highlight {
     background-color: #fce4ec !important; }
   .ag-theme-material .ag-cell-highlight-animation {
-    background-color: transparent;
     transition: background-color 1s; }
   .ag-theme-material .ag-row {
     height: 48px;
@@ -2121,7 +2121,7 @@
     .ag-theme-material .ag-checkbox-input-wrapper:focus-within, .ag-theme-material .ag-checkbox-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122); }
-    .ag-theme-material .ag-checkbox-input-wrapper:disabled {
+    .ag-theme-material .ag-checkbox-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-material .ag-checkbox-input-wrapper::after {
       content: "";
@@ -2160,7 +2160,7 @@
     .ag-theme-material .ag-toggle-button-input-wrapper:focus-within {
       outline: none;
       box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122); }
-    .ag-theme-material .ag-toggle-button-input-wrapper:disabled {
+    .ag-theme-material .ag-toggle-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-material .ag-toggle-button-input-wrapper.ag-checked {
       background-color: #ff4081;
@@ -2207,7 +2207,7 @@
     .ag-theme-material .ag-radio-button-input-wrapper:focus-within, .ag-theme-material .ag-radio-button-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122); }
-    .ag-theme-material .ag-radio-button-input-wrapper:disabled {
+    .ag-theme-material .ag-radio-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-material .ag-radio-button-input-wrapper::after {
       content: "";

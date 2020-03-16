@@ -12924,8 +12924,13 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.readOnly;
     };
     AgCheckbox.prototype.setReadOnly = function (readOnly) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
         this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
+    };
+    AgCheckbox.prototype.setDisabled = function (disabled) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
         var nextValue = this.getNextValue();

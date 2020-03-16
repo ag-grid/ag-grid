@@ -522,7 +522,8 @@
     margin-bottom: 9px; }
   .ag-theme-alpine-dark .ag-column-select-column-readonly,
   .ag-theme-alpine-dark .ag-column-select-column-group-readonly {
-    color: rgba(255, 255, 255, 0.5); }
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none; }
   .ag-theme-alpine-dark .ag-ltr .ag-column-select-add-group-indent {
     margin-left: 28px; }
   .ag-theme-alpine-dark .ag-rtl .ag-column-select-add-group-indent {
@@ -715,7 +716,6 @@
   .ag-theme-alpine-dark .ag-cell-highlight {
     background-color: #2196f3 !important; }
   .ag-theme-alpine-dark .ag-cell-highlight-animation {
-    background-color: transparent;
     transition: background-color 1s; }
   .ag-theme-alpine-dark .ag-row {
     height: 42px;
@@ -1450,7 +1450,7 @@
     .ag-theme-alpine-dark .ag-checkbox-input-wrapper:focus-within, .ag-theme-alpine-dark .ag-checkbox-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6); }
-    .ag-theme-alpine-dark .ag-checkbox-input-wrapper:disabled {
+    .ag-theme-alpine-dark .ag-checkbox-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-alpine-dark .ag-checkbox-input-wrapper::after {
       content: "";
@@ -1489,7 +1489,7 @@
     .ag-theme-alpine-dark .ag-toggle-button-input-wrapper:focus-within {
       outline: none;
       box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6); }
-    .ag-theme-alpine-dark .ag-toggle-button-input-wrapper:disabled {
+    .ag-theme-alpine-dark .ag-toggle-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-alpine-dark .ag-toggle-button-input-wrapper.ag-checked {
       background-color: #2196f3;
@@ -1537,7 +1537,7 @@
     .ag-theme-alpine-dark .ag-radio-button-input-wrapper:focus-within, .ag-theme-alpine-dark .ag-radio-button-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6); }
-    .ag-theme-alpine-dark .ag-radio-button-input-wrapper:disabled {
+    .ag-theme-alpine-dark .ag-radio-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-alpine-dark .ag-radio-button-input-wrapper::after {
       content: "";

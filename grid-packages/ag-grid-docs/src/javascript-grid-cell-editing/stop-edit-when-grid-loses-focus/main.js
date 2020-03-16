@@ -1,27 +1,25 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete'},
-    {headerName: 'Age', field: 'age'},
-    {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year', cellEditor: 'yearCellEditor'},
-    {headerName: 'Date', field: 'date'},
-    {headerName: 'Sport', field: 'sport'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'},
-    {headerName: 'Total', field: 'total'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'athlete', minWidth: 160 },
+        { field: 'age' },
+        { field: 'country', minWidth: 140 },
+        { field: 'year', cellEditor: 'yearCellEditor' },
+        { field: 'date', minWidth: 140 },
+        { field: 'sport', minWidth: 160 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         editable: true,
-        width: 100,
-        filter: true
     },
     components:{
         yearCellEditor: getYearCellEditor()
     },
-    columnDefs: columnDefs,
-    rowData: null,
     // this property tells grid to stop editing if the
     // grid loses focus
     stopEditingWhenGridLosesFocus: true

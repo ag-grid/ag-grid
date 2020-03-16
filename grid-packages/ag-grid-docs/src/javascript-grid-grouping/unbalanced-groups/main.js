@@ -1,6 +1,4 @@
-
 var rowData = [
-
     {country: 'Ireland', state: null, city: 'Dublin'},
     {country: 'Ireland', state: null, city: 'Galway'},
     {country: 'Ireland', state: null, city: 'Cork'},
@@ -23,39 +21,48 @@ rowData.forEach( function(item, i) {
     item.val2 = ((i + 23) * 17 * 33) % 1000;
 } );
 
-var columnDefs = [
-    {field: "city", type: 'dimension', cellRenderer: 'cityCellRenderer'},
-    {field: "country", type: 'dimension', cellRenderer: 'countryCellRenderer'},
-    {field: "state", type: 'dimension', cellRenderer: 'stateCellRenderer', rowGroup: true},
-    {field: "val1", type: 'numberValue'},
-    {field: "val2", type: 'numberValue'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "city", type: 'dimension', cellRenderer: 'cityCellRenderer' },
+        { field: "country", type: 'dimension', cellRenderer: 'countryCellRenderer', minWidth: 200 },
+        { field: "state", type: 'dimension', cellRenderer: 'stateCellRenderer', rowGroup: true },
+        { field: "val1", type: 'numberValue' },
+        { field: "val2", type: 'numberValue' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        resizable: true,
+    },
+    autoGroupColumnDef: {
+        field: 'city',
+        minWidth: 200,
+    },
+    columnTypes: {
+        'numberValue': {
+            enableValue: true,
+            aggFunc: 'sum',
+            editable: true,
+            valueParser: numberParser,
+        },
+        'dimension': {
+            enableRowGroup: true,
+            enablePivot: true,
+        }
+    },
+<<<<<<< Updated upstream
+    components: {
+=======
     components:{
+>>>>>>> Stashed changes
         cityCellRenderer: cityCellRenderer,
         countryCellRenderer: countryCellRenderer,
         stateCellRenderer: stateCellRenderer
     },
     rowData: rowData,
-    defaultColDef: {
-        resizable: true
-    },
-    columnDefs: columnDefs,
+    groupDefaultExpanded: -1,
     rowGroupPanelShow: 'always',
     animateRows: true,
-    groupDefaultExpanded: -1,
-    autoGroupColumnDef: {
-        field: 'city'
-    },
-    columnTypes: {
-        'numberValue': {
-            enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser
-        },
-        'dimension': {
-            enableRowGroup: true, enablePivot: true
-        }
-    }
 };
 
 var COUNTRY_CODES = {
@@ -99,5 +106,4 @@ function cityCellRenderer(params) {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });

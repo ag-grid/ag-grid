@@ -17,6 +17,9 @@ var accountingCellRenderer = function(params) {
 
 var columnDefs = [
     {
+        field: 'country', rowGroup: true, hide: true
+    },
+    {
         headerName: 'Monthly Data',
         children: [
             {headerName : 'Jan', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
@@ -46,37 +49,35 @@ var columnDefs = [
             {headerName : 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
                 valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}, aggFunc: 'sum'}
         ]
-    },
-    {
-        field: 'country', rowGroupIndex: 0, hide: true
     }
 ];
 
 var gridOptions = {
-    autoGroupColumnDef: {headerName : "Location", field: "city", width: 200,
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 120,
+        sortable: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        headerName : "Location",
+        field: "city",
+        minWidth: 260,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }
     },
     animateRows: true,
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    colWidth: 100,
     rowSelection: 'multiple',
-    onModelUpdated: modelUpdated,
     groupSelectsChildren: true,
     enableRangeSelection: true,
     context: {
         month: 0,
         months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
     },
-    onGridReady: function(event) {
-        event.api.sizeColumnsToFit();
-    }
+    onModelUpdated: modelUpdated,
 };
 
 var monthNames = ['Budget Only', 'Year to Jan', 'Year to Feb', 'Year to Mar', 'Year to Apr', 'Year to May',
@@ -102,6 +103,15 @@ function onQuickFilterChanged(value) {
     gridOptions.api.setQuickFilter(value);
 }
 
+function modelUpdated() {
+    if (gridOptions.rowData) {
+        var model = gridOptions.api.getModel();
+        var totalRows = gridOptions.rowData.length;
+        var processedRows = model.getVirtualRowCount();
+        document.querySelector('#rowCount').innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
+    }
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
@@ -116,16 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
-            gridOptions.api.sizeColumnsToFit();
         }
     };
 });
-
-function modelUpdated() {
-    if (gridOptions.rowData) {
-        var model = gridOptions.api.getModel();
-        var totalRows = gridOptions.rowData.length;
-        var processedRows = model.getVirtualRowCount();
-        document.querySelector('#rowCount').innerHTML = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
-    }
-}

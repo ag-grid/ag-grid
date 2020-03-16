@@ -23,6 +23,7 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     setPassive(passive: boolean): void;
     isReadOnly(): boolean;
     setReadOnly(readOnly: boolean): void;
+    setDisabled(disabled: boolean): this;
     toggle(): void;
     getValue(): boolean;
     setValue(value: boolean | undefined, silent?: boolean): this;

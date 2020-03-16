@@ -48,27 +48,6 @@
             "number": "(07) 40017516"
         }, {
             "name": "susan",
-            "callId": 584,
-            "duration": 22,
-            "switchCode": "SW4",
-            "direction": "In",
-            "number": "(01) 92370908"
-        }, {
-            "name": "susan",
-            "callId": 585,
-            "duration": 68,
-            "switchCode": "SW3",
-            "direction": "In",
-            "number": "(05) 30156166"
-        }, {
-            "name": "susan",
-            "callId": 586,
-            "duration": 119,
-            "switchCode": "SW6",
-            "direction": "In",
-            "number": "(01) 52582587"
-        }, {
-            "name": "susan",
             "callId": 587,
             "duration": 21,
             "switchCode": "SW8",

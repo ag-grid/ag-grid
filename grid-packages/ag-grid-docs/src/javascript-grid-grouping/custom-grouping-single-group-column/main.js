@@ -1,31 +1,34 @@
-var columnDefs = [
-    // one column for showing the groups
-    {headerName: 'Group', cellRenderer:'agGroupCellRenderer', showRowGroup: true},
-
-    // the first group column
-    {headerName: 'Country', field: 'country', rowGroup: true, hide: true},
-    {headerName: 'Year', field: 'year', rowGroup: true, hide: true},
-
-    {headerName: 'Athlete', field: 'athlete'},
-    {headerName: 'Gold', field: 'gold'},
-    {headerName: 'Silver', field: 'silver'},
-    {headerName: 'Bronze', field: 'bronze'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        // one column for showing the groups
+        {
+            headerName: 'Group',
+            cellRenderer: 'agGroupCellRenderer',
+            showRowGroup: true,
+            minWidth: 210,
+        },
+
+        // the first group column
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+
+        { field: 'athlete', minWidth: 200},
+        { field: 'gold'},
+        { field: 'silver'},
+        { field: 'bronze'}
+    ],
     defaultColDef: {
+        flex: 1,
         sortable: true,
         resizable: true
     },
-    columnDefs: columnDefs,
-    animateRows: true,
-    enableRangeSelection: true,
+
     // we are defining the group columns, so tell the grid we don't
     // want it to auto-generate group columns for us
     groupSuppressAutoColumn: true,
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    }
+
+    enableRangeSelection: true,
+    animateRows: true,
 };
 
 // setup the grid after the page has finished loading

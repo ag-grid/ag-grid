@@ -7,39 +7,50 @@ var students = [
     {value: "Sad", type: 'mood'}
 ];
 
-
 var columnDefs = [
     {
-        headerName: "Value",
         field: "value",
-        width: 100,
         editable: true,
-        cellEditorSelector:function (params){
-            if (params.data.type === 'age') return {
-                component: 'numericCellEditor'
-            };
+        cellEditorSelector: function (params) {
+            if (params.data.type === 'age') {
+                return {
+                    component: 'numericCellEditor'
+                };
+            }
 
-            if (params.data.type === 'gender') return {
-                component: 'agRichSelectCellEditor',
-                params: {values: ['Male', 'Female']}
-            };
+            if (params.data.type === 'gender') {
+                return {
+                    component: 'agRichSelectCellEditor',
+                    params: {
+                        values: ['Male', 'Female']
+                    }
+                };
+            }
 
-            if (params.data.type === 'mood') return {
-                component: 'moodEditor'
-            };
+            if (params.data.type === 'mood') {
+                return {
+                    component: 'moodEditor'
+                };
+            }
 
             return null;
         }
     },
-    {headerName: "Type", field: "type", width: 100}
+    { field: "type" }
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: students,
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
+    defaultColDef: {
+        flex: 1
     },
+    rowData: students,
+
+    components:{
+        numericCellEditor: NumericCellEditor,
+        moodEditor: MoodEditor
+    },
+
     onRowEditingStarted: function (event) {
         console.log('never called - not doing row editing');
     },
@@ -51,10 +62,6 @@ var gridOptions = {
     },
     onCellEditingStopped: function (event) {
         console.log('cellEditingStopped');
-    },
-    components:{
-        numericCellEditor: NumericCellEditor,
-        moodEditor: MoodEditor
     }
 };
 

@@ -1613,7 +1613,8 @@
     margin-bottom: 4px; }
   .ag-theme-balham-dark .ag-column-select-column-readonly,
   .ag-theme-balham-dark .ag-column-select-column-group-readonly {
-    color: rgba(245, 245, 245, 0.38); }
+    color: rgba(245, 245, 245, 0.38);
+    pointer-events: none; }
   .ag-theme-balham-dark .ag-ltr .ag-column-select-add-group-indent {
     margin-left: 24px; }
   .ag-theme-balham-dark .ag-rtl .ag-column-select-add-group-indent {
@@ -1806,7 +1807,6 @@
   .ag-theme-balham-dark .ag-cell-highlight {
     background-color: #00B0FF !important; }
   .ag-theme-balham-dark .ag-cell-highlight-animation {
-    background-color: transparent;
     transition: background-color 1s; }
   .ag-theme-balham-dark .ag-row {
     height: 28px;
@@ -2546,7 +2546,7 @@
     .ag-theme-balham-dark .ag-checkbox-input-wrapper:focus-within, .ag-theme-balham-dark .ag-checkbox-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
-    .ag-theme-balham-dark .ag-checkbox-input-wrapper:disabled {
+    .ag-theme-balham-dark .ag-checkbox-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-balham-dark .ag-checkbox-input-wrapper::after {
       content: "";
@@ -2585,7 +2585,7 @@
     .ag-theme-balham-dark .ag-toggle-button-input-wrapper:focus-within {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
-    .ag-theme-balham-dark .ag-toggle-button-input-wrapper:disabled {
+    .ag-theme-balham-dark .ag-toggle-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-balham-dark .ag-toggle-button-input-wrapper.ag-checked {
       background-color: #00B0FF;
@@ -2633,7 +2633,7 @@
     .ag-theme-balham-dark .ag-radio-button-input-wrapper:focus-within, .ag-theme-balham-dark .ag-radio-button-input-wrapper:active {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE; }
-    .ag-theme-balham-dark .ag-radio-button-input-wrapper:disabled {
+    .ag-theme-balham-dark .ag-radio-button-input-wrapper.ag-disabled {
       opacity: 0.5; }
     .ag-theme-balham-dark .ag-radio-button-input-wrapper::after {
       content: "";

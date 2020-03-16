@@ -1,13 +1,11 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
     masterDetail: true,
     embedFullWidthRows: true,
     defaultColDef: {
@@ -22,9 +20,6 @@ var gridOptions = {
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
                 { field: 'switchCode' }
             ],
-            onFirstDataRendered: function(params) {
-                params.api.sizeColumnsToFit();
-            }
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);

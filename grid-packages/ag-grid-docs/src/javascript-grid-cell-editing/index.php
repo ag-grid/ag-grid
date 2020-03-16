@@ -299,7 +299,7 @@ cellDefs.forEach(function(cellDef) {
     </li>
 </ul>
 
-<?= grid_example('Cell Editing', 'cell-editing', 'generated') ?>
+<?= grid_example('Cell Editing', 'cell-editing', 'generated', ['exampleHeight' =>  545]) ?>
 
 <h2>Many Editors One Column</h2>
 
@@ -348,7 +348,7 @@ cellEditorSelector: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 250]) ?>
+<?= grid_example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 450]) ?>
 
 <h2 id="dynamic-parameters">Dynamic Parameters</h2>
 
@@ -389,7 +389,7 @@ cellEditorParams: function(params) {
     </ul>
 </p>
 
-<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Dynamic Parameters', 'dynamic-parameters', 'generated', ['enterprise' => true, 'exampleHeight' => 520]) ?>
 
 <h2 id="enter-key-down">Enter Key Navigation</h2>
 
@@ -413,7 +413,7 @@ cellEditorParams: function(params) {
     The example below demonstrates the focus moving down when <b>Enter</b> is pressed.
 </p>
 
-<?= grid_example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
+<?= grid_example('Enter Key Navigation', 'enter-key-navigation', 'generated', ['exampleHeight' => 555]) ?>
 
 <h2>Example: Datepicker Cell Editing</h2>
 
@@ -506,7 +506,7 @@ cellEditorParams: function(params) {
     </li>
 </ul>
 
-<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Full Row Editing', 'full-row-editing', 'generated', ['enterprise' => true, 'exampleHeight' => 527]) ?>
 
 <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
@@ -539,14 +539,14 @@ cellEditorParams: function(params) {
 
 <p>The grid below has <code>singleClickEdit = true</code> so that editing will start on a cell when you single-click on it.</p>
 
-<?= grid_example('Single Click Editing', 'single-click-editing', 'generated') ?>
+<?= grid_example('Single Click Editing', 'single-click-editing', 'generated', ['exampleHeight' => 520]) ?>
 
 <p>
     The grid below has <code>suppressClickEdit = true</code> so that clicking doesn't started editing. The grid configures a cellRenderer
     with a button to start editing.
 </p>
 
-<?= grid_example('No Click Editing', 'single-click-editing-renderer', 'generated') ?>
+<?= grid_example('No Click Editing', 'single-click-editing-renderer', 'generated', ['exampleHeight' => 520]) ?>
 
 <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
@@ -582,7 +582,7 @@ cellEditorParams: function(params) {
             anywhere on the popup editor, but once you click outside the editor, the popup closes.
         </li>
     </ul>
-<?= grid_example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated') ?>
+<?= grid_example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated', ['exampleHeight' => 510]) ?>
 
 <note>Cell Editing can also be performed via Cell Editor Components; please see <a href="../javascript-grid-cell-editor">
         Cell Editor Components</a> for more information.</note>

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import { AgGridReact } from "@ag-grid-community/react";
-
 import {AllModules} from "@ag-grid-enterprise/all-modules";
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 export default class DetailCellRenderer extends Component {
   constructor(props) {
@@ -17,6 +18,10 @@ export default class DetailCellRenderer extends Component {
         {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
         {field: 'switchCode'}
       ],
+      defaultColDef: {
+        flex: 1,
+        minWidth: 150
+      },
       rowData: props.data.callRecords
     };
 
@@ -33,7 +38,9 @@ export default class DetailCellRenderer extends Component {
         </div>
         <AgGridReact
           id="detailGrid"
+          class="full-width-grid ag-theme-alpine"
           columnDefs={this.state.colDefs}
+          defaultColDef={this.state.defaultColDef}
           rowData={this.state.rowData}
           modules={AllModules}
           debug={true}
