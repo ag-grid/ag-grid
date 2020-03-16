@@ -11,10 +11,11 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
               </div>
              <ag-grid-angular
                  #agGrid 
-                 style="width: 100%; height: 100%;"
+                 style="height: 100%;"
                  id="detailGrid"
-                 class="full-width-grid"
+                 class="full-width-grid ag-theme-alpine"
                  [columnDefs]="colDefs"
+                 [defaultColDef]="defaultColDef"
                  [rowData]="rowData"
                  (gridReady)="onGridReady($event)"
              >
@@ -36,6 +37,12 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
             {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
             {field: 'switchCode'}
         ];
+
+        this.defaultColDef = {
+            flex: 1,
+            minWidth: 150
+        };
+
         this.rowData = params.data.callRecords;
     }
 

@@ -1,13 +1,14 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1
+    },
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
@@ -18,8 +19,8 @@ var gridOptions = {
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
                 { field: 'switchCode' }
             ],
-            onFirstDataRendered: function(params) {
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1
             }
         },
         getDetailRowData: function(params) {
@@ -35,8 +36,6 @@ var gridOptions = {
 };
 
 function onFirstDataRendered(params) {
-    params.api.sizeColumnsToFit();
-
     // arbitrarily expand a row for presentational purposes
     setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
 }

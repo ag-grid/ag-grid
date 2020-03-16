@@ -19,12 +19,16 @@ DetailCellRenderer.prototype.setupDetailGrid = function(callRecords, masterGridA
   var eDetailGrid = this.eGui.querySelector('.full-width-grid');
   new agGrid.Grid(eDetailGrid, {
     columnDefs: [
-      {field: 'callId'},
-      {field: 'direction'},
-      {field: 'number'},
-      {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-      {field: 'switchCode'}
+      { field: 'callId' },
+      { field: 'direction' },
+      { field: 'number' },
+      { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+      { field: 'switchCode' }
     ],
+    defaultColDef: {
+      flex: 1,
+      minWidth: 150
+    },
     rowData: callRecords,
     onGridReady: function(params) {
       var detailGridId = "detail_" + masterRowIndex;
@@ -48,7 +52,7 @@ DetailCellRenderer.prototype.getTemplate = function(data) {
     '    <div class="full-width-detail"><b>Name: </b>'+data.name+'</div>' +
     '    <div class="full-width-detail"><b>Account: </b>'+data.account+'</div>' +
     '  </div>'+
-    '  <div class="full-width-grid ag-theme-balham"></div>' +
+    '  <div class="full-width-grid ag-theme-alpine"></div>' +
     '</div>';
 
   return template;

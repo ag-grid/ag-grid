@@ -40,13 +40,17 @@ var gridOptions = {
     },
     columnTypes: {
         'numberValue': {
-            enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser
+            enableValue: true,
+            aggFunc: 'sum',
+            editable: true,
+            valueParser: numberParser,
         },
         'dimension': {
-            enableRowGroup: true, enablePivot: true
+            enableRowGroup: true,
+            enablePivot: true,
         }
     },
-    components:{
+    components: {
         cityCellRenderer: cityCellRenderer,
         countryCellRenderer: countryCellRenderer,
         stateCellRenderer: stateCellRenderer
