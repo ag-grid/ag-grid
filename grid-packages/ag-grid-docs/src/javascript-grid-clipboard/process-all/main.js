@@ -1,16 +1,73 @@
 var columnDefs = [
-    {field: 'a'},
-    {field: 'b'},
-    {field: 'c'},
-    {field: 'd'},
-    {field: 'e'},
-    {field: 'f'},
-    {field: 'g'},
-    {field: 'h'},
-    {field: 'i'},
-    {field: 'j'},
-    {field: 'k'},
+    { field: 'a' },
+    { field: 'b' },
+    { field: 'c' },
+    { field: 'd' },
+    { field: 'e' },
+    { field: 'f' },
+    { field: 'g' },
+    { field: 'h' },
+    { field: 'i' },
+    { field: 'j' },
+    { field: 'k' }
 ];
+
+var gridOptions = {
+    rowData: createRowData(),
+    columnDefs: columnDefs,
+    enableRangeSelection: true,
+
+    defaultColDef: {
+        editable: true,
+        width: 100,
+
+        cellClassRules: {
+            'cell-green': 'value.startsWith("Green")',
+            'cell-blue': 'value.startsWith("Blue")',
+            'cell-red': 'value.startsWith("Red")',
+            'cell-yellow': 'value.startsWith("Yellow")',
+            'cell-orange': 'value.startsWith("Orange")',
+            'cell-grey': 'value.startsWith("Grey")'
+        }
+    },
+
+    processDataFromClipboard: processDataFromClipboard
+};
+
+function processDataFromClipboard(params) {
+    var containsRed;
+    var containsYellow;
+    var data = params.data;
+
+    for (var i = 0; i<data.length; i++) {
+        var row = data[i];
+        for (var j = 0; j<row.length; j++) {
+            var value = row[j];
+            if (value) {
+                if (value.startsWith('Red')) {
+                    containsRed = true;
+                } else if (value.startsWith('Yellow')) {
+                    containsYellow = true;
+                }
+            }
+        }
+    }
+
+    if (containsRed) {
+        // replace the paste request with another
+        return [
+            ['Orange','Orange'],
+            ['Grey','Grey'],
+        ];
+    }
+
+    if (containsYellow) {
+        // cancels the paste
+        return null;
+    }
+
+    return data;
+}
 
 function createRowData() {
     var data = [];
@@ -31,58 +88,6 @@ function createRowData() {
     }
     return data;
 }
-
-var gridOptions = {
-    rowData: createRowData(),
-    columnDefs: columnDefs,
-    enableRangeSelection: true,
-    defaultColDef: {
-        editable: true,
-        width: 100,
-        cellClassRules: {
-            'cell-green': 'value.startsWith("Green")',
-            'cell-blue': 'value.startsWith("Blue")',
-            'cell-red': 'value.startsWith("Red")',
-            'cell-yellow': 'value.startsWith("Yellow")',
-            'cell-orange': 'value.startsWith("Orange")',
-            'cell-grey': 'value.startsWith("Grey")'
-        }
-    },
-    processDataFromClipboard: function(params) {
-        var containsRed;
-        var containsYellow;
-
-        var data = params.data;
-
-        for (var i = 0; i<data.length; i++) {
-            var row = data[i];
-            for (var j = 0; j<row.length; j++) {
-                var value = row[j];
-                if (value) {
-                    if (value.startsWith('Red')) {
-                        containsRed = true;
-                    } else if (value.startsWith('Yellow')) {
-                        containsYellow = true;
-                    }
-                }
-            }
-        }
-
-        if (containsRed) {
-            // replace the paste request with another
-            return [
-                ['Orange','Orange'],
-                ['Grey','Grey'],
-            ];
-        } else if (containsYellow) {
-            // cancels the paste
-            return null;
-        } else {
-            return data;
-        }
-
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

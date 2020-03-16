@@ -29,12 +29,15 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
+
     columnDefs: columnDefs,
     rowSelection: 'multiple',
+
     rowData: [{
         rawValue: 1,
         dateValue: '2009-04-20T00:00:00.000'
     }],
+
     excelStyles:[
         {
             id: 'booleanType',

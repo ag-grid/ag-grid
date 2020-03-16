@@ -254,7 +254,7 @@ SNIPPET
     If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
     <code>colDef.cellClass</code> and <code>processRowGroupCallback</code>:</p>
 
-<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 300]) ?>
+<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', ['enterprise' => true]) ?>
 
 <h2>Dealing With Errors In Excel</h2>
 

@@ -364,7 +364,7 @@ onGridReady(params) {
     </ul>
 </p>
 
-<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true]) ?>
 
 
 <h2>Dynamically Specify Master Nodes</h2>
@@ -516,7 +516,7 @@ masterGridOptions.getRowHeight = function (params) {
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true]) ?>
 
 <h2>Filtering and Sorting</h2>
 

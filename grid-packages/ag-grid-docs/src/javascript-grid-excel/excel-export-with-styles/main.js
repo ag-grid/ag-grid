@@ -5,9 +5,12 @@ var columnDefs = [
             {
                 headerName: 'Group A',
                 children: [
-                    {headerName: 'Athlete', field: 'athlete', width: 150},
+                    { 
+                        field: 'athlete',
+                        minWidth: 150,
+                        flex: 1
+                    },
                     {
-                        headerName: 'Age',
                         field: 'age',
                         width: 90,
                         cellClass: 'twoDecimalPlaces',
@@ -21,9 +24,10 @@ var columnDefs = [
                         }
                     },
                     {
-                        headerName: 'Country',
                         field: 'country',
-                        width: 120,
+                        minWidth: 200,
+                        resizable: true,
+                        flex: 1,
                         cellClassRules: {
                             redFont: function(params) {
                                 return params.value === 'United States';
@@ -33,7 +37,7 @@ var columnDefs = [
                     {
                         headerName: 'Group',
                         valueGetter: 'data.country.charAt(0)',
-                        width: 75,
+                        width: 100,
                         cellClassRules: {
                             boldBorders: function(params) {
                                 return params.value === 'U';
@@ -42,9 +46,8 @@ var columnDefs = [
                         cellClass: ['redFont', 'greenBackground']
                     },
                     {
-                        headerName: 'Year',
                         field: 'year',
-                        width: 75,
+                        width: 100,
                         cellClassRules: {
                             notInExcel: function(params) {
                                 return true;
@@ -56,17 +59,26 @@ var columnDefs = [
             {
                 headerName: 'Group B',
                 children: [
-                    {headerName: 'Date', field: 'date', width: 110, cellClass: 'dateFormat', valueGetter: function (params) {
-                        var val = params.data.date;
+                    {
+                        field: 'date',
+                        minWidth: 150,
+                        cellClass: 'dateFormat',
+                        valueGetter: function (params) {
+                            var val = params.data.date;
 
-                        if (val.indexOf('/') < 0) { return val; }
+                            if (val.indexOf('/') < 0) { return val; }
 
-                        var split = val.split('/');
+                            var split = val.split('/');
 
-                        return split[2] + '-' + split[1] + '-' + split[0];
+                            return split[2] + '-' + split[1] + '-' + split[0];
 
-                    }},
-                    {headerName: 'Sport', field: 'sport', width: 110},
+                        }
+                    },
+                    {
+                        field: 'sport',
+                        minWidth: 150,
+                        flex: 1
+                    },
                     {
                         headerName: 'Gold',
                         field: 'gold',
@@ -77,9 +89,19 @@ var columnDefs = [
                             }
                         }
                     },
-                    {headerName: 'Silver', field: 'silver', width: 100, cellClass: 'textFormat'},
-                    {headerName: 'Bronze', field: 'bronze', width: 100},
-                    {headerName: 'Total', field: 'total', width: 100}
+                    { 
+                        field: 'silver',
+                        width: 100,
+                        cellClass: 'textFormat'
+                    },
+                    {
+                        field: 'bronze',
+                        width: 100 
+                    },
+                    {
+                        field: 'total',
+                        width: 100
+                    }
                 ]
             }
         ]
@@ -96,8 +118,10 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
+
     columnDefs: columnDefs,
     rowSelection: 'multiple',
+
     pinnedTopRowData: [
         {
             athlete: 'Floating <Top> Athlete',
@@ -112,6 +136,7 @@ var gridOptions = {
             total: 55
         }
     ],
+
     pinnedBottomRowData: [
         {
             athlete: 'Floating <Bottom> Athlete',
@@ -126,6 +151,7 @@ var gridOptions = {
             total: 255
         }
     ],
+
     excelStyles: [
         {
             id: 'greenBackground',

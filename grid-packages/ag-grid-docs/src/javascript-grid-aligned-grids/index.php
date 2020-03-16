@@ -57,7 +57,7 @@ gridOptionsSecond = {
         it demonstrates the features in an easy to understand way.
     </p>
 
-    <?= grid_example('Aligned Grids', 'aligned-grids', 'multi', ['exampleHeight' => 600, 'showImportsDropdown' => false]) ?>
+    <?= grid_example('Aligned Grids', 'aligned-grids', 'multi', ['showImportsDropdown' => false]) ?>
 
     <h2 id="events">Events</h2>
     <p>

@@ -1,33 +1,41 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    { field: "athlete", width: 150 },
+    { field: "age", width: 90 },
+    { field: "country", width: 120 },
+    { field: "year", width: 90 },
+    { field: "date", width: 110 },
+    { field: "sport", width: 110 },
+    { field: "gold", width: 100 },
+    { field: "silver", width: 100 },
+    { field: "bronze", width: 100 },
+    { field: "total", width: 100 }
 ];
 
 var gridOptions = {
     defaultColDef: {
         editable: true
     },
+
     columnDefs: columnDefs,
     enableRangeSelection: true,
     rowSelection: 'multiple',
-    processCellForClipboard: function(params) {
-        return 'C-' + params.value;
-    },
-    processHeaderForClipboard: function(params) {
-        return 'H-' + params.column.getColDef().headerName;
-    },
-    processCellFromClipboard: function(params) {
-        return 'Z-' + params.value;
-    }
+
+    processCellForClipboard: processCellForClipboard,
+    processHeaderForClipboard: processHeaderForClipboard,
+    processCellFromClipboard: processCellFromClipboard
 };
+
+function processCellForClipboard(params) {
+    return 'C-' + params.value;
+}
+
+function processHeaderForClipboard(params) {
+    return 'H-' + params.column.getColDef().headerName;
+}
+
+function processCellFromClipboard(params) {
+    return 'Z-' + params.value;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

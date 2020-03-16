@@ -1,12 +1,12 @@
 var columnDefs = [
-    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-    {headerName: 'Year', field: 'year', width: 75, rowGroup: true},
-    {headerName: 'Name', field: 'athlete', width: 150},
-    {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""'},
-    {headerName: 'Sport', field: 'sport', width: 120, rowGroup: true},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Total', field: 'total', width: 100}
+    { field: 'country', minWidth: 120, flex: 1, rowGroup: true },
+    { field: 'year', width: 100, rowGroup: true },
+    { headerName: 'Name', field: 'athlete', minWidth: 150, flex: 1 },
+    { headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""' },
+    { field: 'sport', width: 120, rowGroup: true },
+    { field: 'silver', width: 100 },
+    { field: 'bronze', width: 100 },
+    { field: 'total', width: 100 }
 ];
 
 function rowGroupCallback(params) {
@@ -34,10 +34,15 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
+
     columnDefs: columnDefs,
+
     autoGroupColumnDef: {
-        cellClass: getIndentClass
+        cellClass: getIndentClass,
+        minWidth: 250,
+        flex: 1
     },
+
     excelStyles: [
         {
             id: 'indent-1',

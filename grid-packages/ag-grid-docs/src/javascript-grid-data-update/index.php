@@ -357,7 +357,7 @@ interface RowNodeTransaction {
         are always added to the top as they are ordered 'latest first'</li>
 </ul>
 
-<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
 
 
 
