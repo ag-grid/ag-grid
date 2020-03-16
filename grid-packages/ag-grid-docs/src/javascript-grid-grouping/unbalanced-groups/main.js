@@ -50,11 +50,7 @@ var gridOptions = {
             enablePivot: true,
         }
     },
-<<<<<<< Updated upstream
-    components: {
-=======
     components:{
->>>>>>> Stashed changes
         cityCellRenderer: cityCellRenderer,
         countryCellRenderer: countryCellRenderer,
         stateCellRenderer: stateCellRenderer
