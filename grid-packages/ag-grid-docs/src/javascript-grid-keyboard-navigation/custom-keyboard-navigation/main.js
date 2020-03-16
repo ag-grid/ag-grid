@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
+    {field: "athlete", minWidth: 170},
+    {field: "age"},
+    {field: "country"},
+    {field: "year"},
+    {field: "date"},
+    {field: "sport"},
+    {field: "gold"},
+    {field: "silver"},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
 // define some handy keycode constants
@@ -22,7 +22,12 @@ var gridOptions = {
     // make all cols editable
     defaultColDef: {
         editable: true,
-        sortable: true
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
+
     },
     navigateToNextCell: this.navigateToNextCell.bind(this),
     tabToNextCell: this.tabToNextCell.bind(this),

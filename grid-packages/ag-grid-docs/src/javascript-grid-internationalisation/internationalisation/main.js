@@ -1,27 +1,30 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    { headerName: "#", width: 50, cellRenderer: 'rowNodeIdRenderer' },
-    { headerName: "Athlete", field: "athlete", width: 150 },
-    { headerName: "Age", field: "age", width: 90, enablePivot: true },
-    { headerName: "Country", field: "country", width: 120, enableRowGroup: true },
-    { headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter' },
-    { headerName: "Date", field: "date", width: 110 },
-    { headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter' },
-    { headerName: "Gold", field: "gold", width: 100, enableValue: true },
-    { headerName: "Silver", field: "silver", width: 100, enableValue: true },
-    { headerName: "Bronze", field: "bronze", width: 100, enableValue: true },
-    { headerName: "Total", field: "total", width: 100, enableValue: true }
+    {headerName: "#", cellRenderer: 'rowNodeIdRenderer'},
+    {field: "athlete"},
+    {field: "age", enablePivot: true},
+    {field: "country, enableRowGroup: true },
+    {field: "year", filter: 'agNumberColumnFilter'},
+    {field: "date"},
+    {field: "sport", filter: 'agTextColumnFilter'},
+    {field: "gold", enableValue: true},
+    {field: "silver", enableValue: true},
+    {field: "bronze", enableValue: true},
+    {field: "total", enableValue: true}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        editable: true,
         sortable: true,
-        resizable: true,
-        filter: true
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     components: {
-        rowNodeIdRenderer: function(params) {
+        rowNodeIdRenderer: function (params) {
             return params.node.id + 1;
         }
     },
@@ -31,8 +34,8 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-            { statusPanel: 'agAggregationComponent' }
+            {statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left'},
+            {statusPanel: 'agAggregationComponent'}
         ]
     },
     paginationPageSize: 500,
@@ -268,12 +271,12 @@ var gridOptions = {
 function setDataSource(allOfTheData) {
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        getRows: function(params) {
+        getRows: function (params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, and a timer is used to give the expereince of
             // an asynchronous call
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            setTimeout(function() {
+            setTimeout(function () {
                 // take a chunk of the array, matching the start and finish times
                 var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
                 var lastRow = -1;
@@ -289,7 +292,7 @@ function setDataSource(allOfTheData) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -298,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

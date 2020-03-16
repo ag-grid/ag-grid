@@ -1,20 +1,28 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
+    {field: "athlete"},
+    {field: "age"},
+    {field: "country"},
+    {field: "year"},
+    {field: "date"},
+    {field: "sport"},
+    {field: "gold"},
+    {field: "silver"},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    enableRtl: true
+    enableRtl: true,
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
+    },
 };
 
 // setup the grid after the page has finished loading

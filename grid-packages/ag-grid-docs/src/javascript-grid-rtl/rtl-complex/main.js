@@ -9,26 +9,26 @@ var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
-    { country: "Ireland", continent: "Europe", language: "English" },
-    { country: "Spain", continent: "Europe", language: "Spanish" },
-    { country: "United Kingdom", continent: "Europe", language: "English" },
-    { country: "France", continent: "Europe", language: "French" },
-    { country: "Germany", continent: "Europe", language: "German" },
-    { country: "Luxembourg", continent: "Europe", language: "French" },
-    { country: "Sweden", continent: "Europe", language: "Swedish" },
-    { country: "Norway", continent: "Europe", language: "Norwegian" },
-    { country: "Italy", continent: "Europe", language: "Italian" },
-    { country: "Greece", continent: "Europe", language: "Greek" },
-    { country: "Iceland", continent: "Europe", language: "Icelandic" },
-    { country: "Portugal", continent: "Europe", language: "Portuguese" },
-    { country: "Malta", continent: "Europe", language: "Maltese" },
-    { country: "Brazil", continent: "South America", language: "Portuguese" },
-    { country: "Argentina", continent: "South America", language: "Spanish" },
-    { country: "Colombia", continent: "South America", language: "Spanish" },
-    { country: "Peru", continent: "South America", language: "Spanish" },
-    { country: "Venezuela", continent: "South America", language: "Spanish" },
-    { country: "Uruguay", continent: "South America", language: "Spanish" },
-    { country: "Belgium", continent: "Europe", language: "French" }
+    {country: "Ireland", continent: "Europe", language: "English"},
+    {country: "Spain", continent: "Europe", language: "Spanish"},
+    {country: "United Kingdom", continent: "Europe", language: "English"},
+    {country: "France", continent: "Europe", language: "French"},
+    {country: "Germany", continent: "Europe", language: "German"},
+    {country: "Luxembourg", continent: "Europe", language: "French"},
+    {country: "Sweden", continent: "Europe", language: "Swedish"},
+    {country: "Norway", continent: "Europe", language: "Norwegian"},
+    {country: "Italy", continent: "Europe", language: "Italian"},
+    {country: "Greece", continent: "Europe", language: "Greek"},
+    {country: "Iceland", continent: "Europe", language: "Icelandic"},
+    {country: "Portugal", continent: "Europe", language: "Portuguese"},
+    {country: "Malta", continent: "Europe", language: "Maltese"},
+    {country: "Brazil", continent: "South America", language: "Portuguese"},
+    {country: "Argentina", continent: "South America", language: "Spanish"},
+    {country: "Colombia", continent: "South America", language: "Spanish"},
+    {country: "Peru", continent: "South America", language: "Spanish"},
+    {country: "Venezuela", continent: "South America", language: "Spanish"},
+    {country: "Uruguay", continent: "South America", language: "Spanish"},
+    {country: "Belgium", continent: "Europe", language: "French"}
 ];
 
 var games = ["Chess", "Cross and Circle", "Daldøs", "Downfall", "DVONN", "Fanorona", "Game of the Generals", "Ghosts",
@@ -80,9 +80,12 @@ var groupColumn = {
 
 var gridOptions = {
     defaultColDef: {
-        resizable: true,
+        editable: true,
         sortable: true,
-        filter: true
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     components: {
         personFilter: PersonFilter
@@ -95,7 +98,7 @@ var gridOptions = {
     animateRows: true,
     statusBar: {
         items: [
-            { component: 'agAggregationComponent' }
+            {component: 'agAggregationComponent'}
         ]
     },
     enableRangeSelection: true,
@@ -234,7 +237,7 @@ var defaultCols = [
                 },
                 pinned: 'right',
                 headerTooltip: "Example tooltip for Language",
-                filterParams: { newRowsAction: 'keep' }
+                filterParams: {newRowsAction: 'keep'}
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
@@ -286,9 +289,9 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: booleanCellRenderer, cellStyle: { "text-align": "center" }, comparator: booleanComparator,
+                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
-                filterParams: { newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer }
+                filterParams: {newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer}
             }
         ]
     },
@@ -300,7 +303,7 @@ var defaultCols = [
             {
                 headerName: "Bank Balance", field: "bankBalance", width: 150, editable: true,
                 filter: WinningsFilter, cellRenderer: currencyRenderer, cellStyle: currencyCssFunc,
-                filterParams: { cellRenderer: currencyRenderer },
+                filterParams: {cellRenderer: currencyRenderer},
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -312,13 +315,17 @@ var defaultCols = [
             },
             {
                 headerName: "Extra Info 1", columnGroupShow: 'open', width: 150, editable: false,
-                sortable: false, suppressMenu: true, cellStyle: { "text-align": "right" },
-                cellRenderer: function () { return 'Abra...'; }
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "right"},
+                cellRenderer: function () {
+                    return 'Abra...';
+                }
             },
             {
                 headerName: "Extra Info 2", columnGroupShow: 'open', width: 150, editable: false,
-                sortable: false, suppressMenu: true, cellStyle: { "text-align": "left" },
-                cellRenderer: function () { return '...cadabra!'; }
+                sortable: false, suppressMenu: true, cellStyle: {"text-align": "left"},
+                cellRenderer: function () {
+                    return '...cadabra!';
+                }
             }
         ],
     },
@@ -328,7 +335,7 @@ var defaultCols = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: { cellRenderer: ratingFilterRenderer }
+        filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
@@ -361,7 +368,7 @@ months.forEach(function (month) {
         },
         newValueHandler: numberNewValueHandler, cellRenderer: currencyRenderer,
         filterCellRenderer: currencyRenderer,
-        cellStyle: { "text-align": "right" }
+        cellStyle: {"text-align": "right"}
     })
 });
 
@@ -413,7 +420,7 @@ function createCols() {
     // there are 22 cols by default
     for (var col = 22; col < colCount; col++) {
         var colName = colNames[col % colNames.length];
-        var colDef = { headerName: colName, field: "col" + col, width: 200, editable: true };
+        var colDef = {headerName: colName, field: "col" + col, width: 200, editable: true};
         columns.push(colDef);
     }
 
@@ -508,6 +515,7 @@ var seed = 123456789;
 var m = Math.pow(2, 32);
 var a = 1103515245;
 var c = 12345;
+
 function pseudoRandom() {
     seed = (a * seed + c) % m;
     return seed / m;
@@ -528,6 +536,7 @@ function rowSelected(event) {
 }
 
 var filterCount = 0;
+
 function onFilterChanged(newFilter) {
     filterCount++;
     var filterCountCopy = filterCount;
@@ -639,7 +648,7 @@ PersonFilter.prototype.getApi = function () {
     var that = this;
     return {
         getModel: function () {
-            var model = { value: that.filterText.value };
+            var model = {value: that.filterText.value};
             return model;
         },
         setModel: function (model) {
@@ -649,8 +658,10 @@ PersonFilter.prototype.getApi = function () {
 };
 
 // lazy, the example doesn't use getModel() and setModel()
-PersonFilter.prototype.getModel = function () { };
-PersonFilter.prototype.setModel = function () { };
+PersonFilter.prototype.getModel = function () {
+};
+PersonFilter.prototype.setModel = function () {
+};
 
 function WinningsFilter() {
 }
@@ -709,14 +720,16 @@ WinningsFilter.prototype.isFilterActive = function () {
 };
 
 // lazy, the example doesn't use getModel() and setModel()
-WinningsFilter.prototype.getModel = function () { };
-WinningsFilter.prototype.setModel = function () { };
+WinningsFilter.prototype.getModel = function () {
+};
+WinningsFilter.prototype.setModel = function () {
+};
 
 function currencyCssFunc(params) {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return { "color": "red", "text-align": "right", "font-weight": "bold" };
+        return {"color": "red", "text-align": "right", "font-weight": "bold"};
     } else {
-        return { "text-align": "right" };
+        return {"text-align": "right"};
     }
 }
 
