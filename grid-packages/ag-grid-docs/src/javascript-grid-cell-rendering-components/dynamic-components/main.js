@@ -57,7 +57,7 @@ function createRowData() {
 }
 
 function refreshEvenRowsCurrencyData() {
-    gridOptions.api.forEachNode(function(rowNode) {
+    gridOptions.api.forEachNode(function (rowNode) {
         if (rowNode.data.value % 2 === 0) {
             rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
         }
@@ -86,13 +86,18 @@ var gridOptions = {
         currencyRenderer: CurrencyRenderer,
         childMessageRenderer: ChildMessageRenderer
     },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     }
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });

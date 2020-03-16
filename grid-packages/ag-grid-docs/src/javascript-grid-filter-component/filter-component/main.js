@@ -1,10 +1,8 @@
 var columnDefs = [
-    {headerName: "Row", field: "row", width: 450},
+    { field: "row"},
     {
-        headerName: "Filter Component",
         field: "name",
         filter: 'partialMatchFilter',
-        width: 430,
         menuTabs:['filterMenuTab']
     }
 ];
@@ -34,7 +32,12 @@ function onClicked() {
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     columnDefs: columnDefs,
     rowData: createRowData(),

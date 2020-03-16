@@ -1,38 +1,44 @@
-
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: PersonFilter},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90, filter: YearFilter},
-    {headerName: "Date", field: "date", width: 110, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+    {field: "athlete", minWidth: 150, filter: PersonFilter},
+    {field: "age", filter: 'agNumberColumnFilter'},
+    {field: "country", minWidth: 150},
+    {field: "year", filter: YearFilter},
+    {
+        field: "date", minWidth: 130, filter: 'agDateColumnFilter', filterParams: {
+            comparator: function (filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                var dateParts = dateAsString.split("/");
+                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                    return 0
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
             }
         }
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter'}
+    },
+    {field: "sport"},
+    {field: "gold", filter: 'agNumberColumnFilter'},
+    {field: "silver", filter: 'agNumberColumnFilter'},
+    {field: "bronze", filter: 'agNumberColumnFilter'},
+    {field: "total", filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     columnDefs: columnDefs,
     rowData: null
@@ -69,6 +75,7 @@ PersonFilter.prototype.setupGui = function (params) {
     this.eFilterText.addEventListener("keyup", listener);
 
     var that = this;
+
     function listener(event) {
         that.filterText = event.target.value;
         params.filterChangedCallback();
@@ -83,9 +90,9 @@ PersonFilter.prototype.doesFilterPass = function (params) {
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+    this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
         var value = valueGetter(params);
-        if (value.toString().toLowerCase().indexOf(filterWord)<0) {
+        if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
             passed = false;
         }
     });
@@ -97,12 +104,12 @@ PersonFilter.prototype.isFilterActive = function () {
     return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
 };
 
-PersonFilter.prototype.getModel = function() {
+PersonFilter.prototype.getModel = function () {
     var model = {value: this.filterText.value};
     return model;
 };
 
-PersonFilter.prototype.setModel = function(model) {
+PersonFilter.prototype.setModel = function (model) {
     this.eFilterText.value = model.value;
 };
 
@@ -115,12 +122,12 @@ YearFilter.prototype.init = function (params) {
         '<div style="display: inline-block; width: 400px;">' +
         '<div style="padding: 10px; background-color: #d3d3d3; text-align: center;">' +
         'This is a very wide filter' +
-        '</div>'+
-        '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">'+
-        '  <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All'+
-        '</label>'+
-        '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">'+
-        '  <input type="radio" name="yearFilter" id="rbSince2010" filter-checkbox="true"/> Since 2010'+
+        '</div>' +
+        '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">' +
+        '  <input type="radio" name="yearFilter" checked="true" id="rbAllYears" filter-checkbox="true"/> All' +
+        '</label>' +
+        '<label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">' +
+        '  <input type="radio" name="yearFilter" id="rbSince2010" filter-checkbox="true"/> Since 2010' +
         '</label>' +
         '</div>';
     this.rbAllYears = this.eGui.querySelector('#rbAllYears');
@@ -149,22 +156,24 @@ YearFilter.prototype.isFilterActive = function () {
     return this.filterActive;
 };
 
-YearFilter.prototype.getModel = function() {
+YearFilter.prototype.getModel = function () {
     var model = {value: this.rbSince2010.checked};
     return model;
 };
 
-YearFilter.prototype.setModel = function(model) {
+YearFilter.prototype.setModel = function (model) {
     this.rbSince2010.checked = model.value;
 };
 
 // this example isn't using getModel() and setModel(),
 // so safe to just leave these empty. don't do this in your code!!!
-YearFilter.prototype.getModel = function() {};
-YearFilter.prototype.setModel = function() {};
+YearFilter.prototype.getModel = function () {
+};
+YearFilter.prototype.setModel = function () {
+};
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -173,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

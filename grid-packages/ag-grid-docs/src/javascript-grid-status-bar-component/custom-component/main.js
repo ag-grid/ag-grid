@@ -1,10 +1,8 @@
 var columnDefs = [
     {
-        headerName: "Row",
         field: "row"
     },
     {
-        headerName: "Name",
         field: "name"
     }
 ];
@@ -29,6 +27,14 @@ function createRowData() {
 }
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
     enableRangeSelection: true,

@@ -1,36 +1,42 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 190, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+    { field: "athlete"},
+    { field: "age", filter: 'agNumberColumnFilter'},
+    { field: "country"},
+    { field: "year"},
+    {
+        field: "date", minWidth: 190, filter: 'agDateColumnFilter', filterParams: {
+            comparator: function (filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                var dateParts = dateAsString.split("/");
+                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-                return 0;
-            }
+                if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+                    return 0;
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
             }
         }
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: false}
+    },
+    { field: "sport"},
+    { field: "gold", filter: 'agNumberColumnFilter'},
+    { field: "silver", filter: 'agNumberColumnFilter'},
+    { field: "bronze", filter: 'agNumberColumnFilter'},
+    { field: "total", filter: false}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
         filter: true,
         resizable: true
     },
@@ -44,7 +50,7 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -53,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

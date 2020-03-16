@@ -1,20 +1,20 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", floatingFilterComponent:'customNumberFloatingFilter',
+    {field: "athlete", filter: 'agTextColumnFilter'},
+    {field: "gold", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'
     },
-    {headerName: "Silver", field: "silver", floatingFilterComponent:'customNumberFloatingFilter',
+    {field: "silver", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'},
-    {headerName: "Bronze", field: "bronze", floatingFilterComponent:'customNumberFloatingFilter',
+    {field: "bronze", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'},
-    {headerName: "Total", field: "total", floatingFilterComponent:'customNumberFloatingFilter',
+    {field: "total", floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true
         }, filter: 'customNumberFilter'}
@@ -22,7 +22,12 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     components:{
         customNumberFloatingFilter: getNumberFloatingFilterComponent(),
@@ -30,10 +35,7 @@ var gridOptions = {
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null,
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
+    rowData: null
 };
 
 function isNumeric(n) {

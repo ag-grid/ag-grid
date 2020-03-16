@@ -1,20 +1,18 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 125, suppressMenu: true},
+    {field: "athlete", suppressMenu: true},
     {
-        headerName: "Age",
         field: "age",
-        width: 90,
         sortable: false,
         headerComponentParams: {menuIcon: 'fa-external-link-alt'}
     },
-    {headerName: "Country", field: "country", width: 120, suppressMenu: true},
-    {headerName: "Year", field: "year", width: 90, sortable: false},
-    {headerName: "Date", field: "date", width: 100, suppressMenu: true},
-    {headerName: "Sport", field: "sport", width: 90, sortable: false},
-    {headerName: "Gold", field: "gold", width: 115, headerComponentParams: {menuIcon: 'fa-cog'}},
-    {headerName: "Silver", field: "silver", width: 90, sortable: false},
-    {headerName: "Bronze", field: "bronze", width: 115, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 90, sortable: false}
+    {field: "country", suppressMenu: true},
+    {field: "year", sortable: false},
+    {field: "date", suppressMenu: true},
+    {field: "sport", sortable: false},
+    {field: "gold", headerComponentParams: {menuIcon: 'fa-cog'}},
+    {field: "silver", sortable: false},
+    {field: "bronze", suppressMenu: true},
+    {field: "total", sortable: false}
 ];
 
 var gridOptions = {
@@ -25,13 +23,15 @@ var gridOptions = {
         agColumnHeader: CustomHeader
     },
     defaultColDef: {
-        width: 100,
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
         headerComponentParams: {
             menuIcon: 'fa-bars'
-        },
-        sortable: true,
-        resizable: true,
-        filter: true
+        }
     }
 };
 

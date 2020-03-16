@@ -34,34 +34,29 @@ function cloneObject(obj) {
 }
 
 var columnDefs = [
-    {headerName: "First Name", field: "first_name", width: 120, editable: true},
-    {headerName: "Last Name", field: "last_name", width: 120, editable: true},
+    { field: "first_name", width: 120, editable: true},
+    {field: "last_name", width: 120, editable: true},
     {
-        headerName: "Gender",
         field: "gender",
         width: 100,
         cellEditor: 'mySimpleCellEditor'
     },
     {
-        headerName: "Age",
         field: "age",
         width: 80,
         cellEditor: 'mySimpleCellEditor'
     },
     {
-        headerName: "Mood",
         field: "mood",
         width: 90,
         cellEditor: 'mySimpleCellEditor'
     },
     {
-        headerName: "Country",
         field: "country",
         width: 110,
         cellEditor: 'mySimpleCellEditor'
     },
     {
-        headerName: "Address",
         field: "address",
         width: 502,
         cellEditor: 'mySimpleCellEditor'
@@ -71,10 +66,15 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        editable: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     rowData: students,
-    components:{
+    components: {
         mySimpleCellEditor: MySimpleCellEditor
     }
 };
@@ -83,9 +83,10 @@ var KEY_BACKSPACE = 8;
 var KEY_F2 = 113;
 var KEY_DELETE = 46;
 
-function MySimpleCellEditor() {}
+function MySimpleCellEditor() {
+}
 
-MySimpleCellEditor.prototype.init = function(params) {
+MySimpleCellEditor.prototype.init = function (params) {
     this.gui = document.createElement('input');
     this.gui.type = 'text';
     this.gui.classList.add('my-simple-editor');
@@ -109,24 +110,24 @@ MySimpleCellEditor.prototype.init = function(params) {
         }
     }
 
-    if (startValue!==null && startValue!==undefined) {
+    if (startValue !== null && startValue !== undefined) {
         this.gui.value = startValue;
     }
 };
 
-MySimpleCellEditor.prototype.getGui = function() {
+MySimpleCellEditor.prototype.getGui = function () {
     return this.gui;
 };
 
-MySimpleCellEditor.prototype.getValue = function() {
+MySimpleCellEditor.prototype.getValue = function () {
     return this.gui.value;
 };
 
-MySimpleCellEditor.prototype.afterGuiAttached = function() {
+MySimpleCellEditor.prototype.afterGuiAttached = function () {
     this.gui.focus();
 };
 
-MySimpleCellEditor.prototype.myCustomFunction = function() {
+MySimpleCellEditor.prototype.myCustomFunction = function () {
     return {
         rowIndex: this.params.rowIndex,
         colId: this.params.column.getId()
@@ -139,9 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
     new agGrid.Grid(gridDiv, gridOptions);
 });
 
-setInterval( function(){
+setInterval(function () {
     var instances = gridOptions.api.getCellEditorInstances();
-    if (instances.length>0) {
+    if (instances.length > 0) {
         var instance = instances[0];
         if (instance.myCustomFunction) {
             var result = instance.myCustomFunction();
