@@ -155,7 +155,7 @@ MenuItemDef {
         </ul>
     </p>
 
-    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400 ]) ?>
 
     <p>
         The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -179,7 +179,7 @@ MenuItemDef {
         to the document body.
     </p>
 
-    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400]) ?>
 
 
 
