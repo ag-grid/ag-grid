@@ -1496,7 +1496,7 @@ var CellComp = /** @class */ (function (_super) {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;

@@ -533,7 +533,7 @@ masterGridOptions.getRowHeight = function (params) {
     Below shows a simple Master / Detail setup which has filtering and sorting enabled in both master and detail grids.
 </p>
 
-<?= grid_example('Filtering with Sort', 'filtering-with-sort', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Filtering with Sort', 'filtering-with-sort', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 <h2>Lazy Load Detail Rows</h2>
 
@@ -574,7 +574,7 @@ var masterGridOptions = {
     in the detail rows:
 </p>
 
-<?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 <h2 id="keeping-row-details">Keeping Detail Rows</h2>
 
@@ -618,7 +618,7 @@ var masterGridOptions = {
     </li>
 </ul>
 
-<?= grid_example('Keep Detail Rows', 'keep-detail-rows', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Keep Detail Rows', 'keep-detail-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 565]) ?>
 
 <h2>Changing Data & Refresh</h2>
 
@@ -653,7 +653,7 @@ var masterGridOptions = {
     To fully understand this example, try opening it in Plunker and remove the <code>suppressRefresh</code> property.
 </note>
 
-<?= grid_example('Suppress Refresh', 'suppress-refresh', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Suppress Refresh', 'suppress-refresh', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 
 <h2>Exporting Master / Detail Data</h2>
@@ -694,7 +694,7 @@ var masterGridOptions = {
     The example below demonstrate how both master and detail data can be exported.
 </p>
 
-<?= grid_example('Exporting Master / Detail Data', 'exporting', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Exporting Master / Detail Data', 'exporting', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
 
 
 <h2>Supported Modes</h2>

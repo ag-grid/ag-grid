@@ -3,45 +3,64 @@ import {HttpClient} from '@angular/common/http';
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
-    styles: [`.bold-row { font-weight: bold; } `],
+    styles: [`.bold-row {
+        font-weight: bold;
+    } `],
     template: `
+        <ag-grid-angular
+                style="width: 100%; height: 420px"
+                #topGrid
+                class="ag-theme-alpine"
+                [modules]="modules"
+                [rowData]="rowData"
+                [gridOptions]="topOptions"
+                [columnDefs]="columnDefs">
+        </ag-grid-angular>
 
-<div style="padding-bottom: 2px;">
-    <button (click)="btSizeColsToFix()">Size Cols to Fit</button>
-</div>
-
-            <ag-grid-angular
-            style="width: 100%; height: 420px"
-            #topGrid
-            class="ag-theme-balham"
-            [modules]="modules"
-            [rowData]="rowData"
-            [gridOptions]="topOptions"
-            [columnDefs]="columnDefs">
-            </ag-grid-angular>
-
-            <ag-grid-angular
-            style="width: 100%; height: 40px"
-            #bottomGrid
-            class="ag-theme-balham"
-            [modules]="modules"
-            [rowData]="bottomData"
-            [gridOptions]="bottomOptions"
-            headerHeight="0"
-            [rowStyle]="{ fontWeight: 'bold' }"
-            [columnDefs]="columnDefs">
-            </ag-grid-angular>
+        <ag-grid-angular
+                style="width: 100%; height: 40px"
+                #bottomGrid
+                class="ag-theme-alpine"
+                [modules]="modules"
+                [rowData]="bottomData"
+                [gridOptions]="bottomOptions"
+                headerHeight="0"
+                [rowStyle]="{ fontWeight: 'bold' }"
+                [columnDefs]="columnDefs">
+        </ag-grid-angular>
     `
 })
 export class AppComponent {
     columnDefs;
     rowData;
-    topOptions = {alignedGrids: [], suppressHorizontalScroll: true};
-    bottomOptions = {alignedGrids: []};
+    topOptions = {
+        alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }
+        ,
+        suppressHorizontalScroll: true
+    };
+    bottomOptions = {
+        alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }
+    };
     modules = AllCommunityModules;
 
     @ViewChild('topGrid') topGrid;
@@ -63,11 +82,11 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
-            {headerName: 'Athlete', field: 'athlete', width: 200},
-            {headerName: 'Age', field: 'age', width: 100},
-            {headerName: 'Country', field: 'country', width: 150},
-            {headerName: 'Year', field: 'year', width: 120},
-            {headerName: 'Sport', field: 'sport', width: 200},
+            {field: 'athlete', width: 200},
+            {field: 'age', width: 100},
+            {field: 'country', width: 150},
+            {field: 'year', width: 120},
+            {field: 'sport', width: 200},
             // in the total col, we have a value getter, which usually means we don't need to provide a field
             // however the master/slave depends on the column id (which is derived from the field if provided) in
             // order ot match up the columns
@@ -77,9 +96,9 @@ export class AppComponent {
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
-            {headerName: 'Gold', field: 'gold', width: 100},
-            {headerName: 'Silver', field: 'silver', width: 100},
-            {headerName: 'Bronze', field: 'bronze', width: 100}
+            {field: 'gold', width: 100},
+            {field: 'silver', width: 100},
+            {field: 'bronze', width: 100}
         ];
 
         this.topOptions.alignedGrids.push(this.bottomOptions);
@@ -92,10 +111,6 @@ export class AppComponent {
         });
     }
 
-    btSizeColsToFix() {
-        this.topGrid.api.sizeColumnsToFit();
-        console.log('btSizeColsToFix ');
-    }
     onGridReady(params) {
         params.api.sizeColumnsToFit();
     }

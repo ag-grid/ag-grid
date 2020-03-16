@@ -1,5 +1,5 @@
 var columnDefs = [
-    {field: "athlete", width: 200},
+    {field: "athlete", minWidth: 170},
     {field: "age"},
     {field: "country"},
     {field: "year"},
@@ -15,7 +15,12 @@ var gridOptions = {
     rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
     },
     onCellKeyDown: onCellKeyDown,
     onCellKeyPress: onCellKeyPress
@@ -29,7 +34,7 @@ function onCellKeyPress(e) {
     console.log('onCellKeyPress', e);
     var keyPressed = e.event.key;
     console.log('Key Pressed = ' + keyPressed);
-    if (keyPressed==='s') {
+    if (keyPressed === 's') {
         var rowNode = e.node;
         var newSelection = !rowNode.selected;
         console.log('setting selection on node ' + rowNode.data.athlete + ' to ' + newSelection);

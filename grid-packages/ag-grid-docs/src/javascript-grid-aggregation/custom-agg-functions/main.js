@@ -1,32 +1,35 @@
 var columnDefs = [
+    { field: "country", rowGroup: true, hide: true},
+    { field: "year", rowGroup: true, hide: true},
+
     // this column uses min and max func
-    {headerName: "minMax(age)", field: "age", width: 90, aggFunc: minAndMaxAggFunction},
+    {headerName: "minMax(age)", field: "age", aggFunc: minAndMaxAggFunction},
     // here we use an average func and specify the function directly
-    {headerName: "avg(age)", field: "age", width: 90, aggFunc: avgAggFunction, enableValue: true},
+    {headerName: "avg(age)", field: "age", aggFunc: avgAggFunction, enableValue: true, minWidth: 200},
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
-    {headerName: "sum(gold)", field: "gold", width: 100, aggFunc: 'sum', enableValue: true},
+    {headerName: "sum(gold)", field: "gold", aggFunc: 'sum', enableValue: true},
     // and these two use the built in sum func
-    {headerName: "abc(silver)", field: "silver", width: 100, aggFunc: '123', enableValue: true},
-    {headerName: "xyz(bronze)", field: "bronze", width: 100, aggFunc: 'xyz', enableValue: true},
-
-    { field: "country", rowGroup: true, hide: true},
-    { field: "year", rowGroup: true, hide: true}
+    {headerName: "abc(silver)", field: "silver", aggFunc: '123', enableValue: true},
+    {headerName: "xyz(bronze)", field: "bronze", aggFunc: 'xyz', enableValue: true},
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
         sortable: true,
         resizable: true,
-        filter: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
+    autoGroupColumnDef: {
+        headerName: "Athlete",
+        field: "athlete",
+        minWidth: 250
+    },
     groupUseEntireRow: false,
     enableRangeSelection: true,
-    autoGroupColumnDef: {
-        headerName: "Athlete", field: "athlete", width: 200
-    },
     suppressAggFuncInHeader: true,
     aggFuncs: {
         // this overrides the grids built in sum function
@@ -43,16 +46,8 @@ var gridOptions = {
         // it will be to late (eg remove 'xyz' from aggFuncs, and you will
         // see the grid complains).
         params.api.addAggFunc('xyz', xyzFunc);
-
-        // this has nothing to do with aggregation, just get cols to fit width
-        gridOptions.api.sizeColumnsToFit();
     },
-    onFirstDataRendered: onFirstDataRendered
 };
-
-function onFirstDataRendered(params) {
-    params.api.sizeColumnsToFit();
-}
 
 function oneTwoThreeFunc(nodes) {
     // this is just an example, rather than working out an aggregation,

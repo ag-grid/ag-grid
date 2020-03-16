@@ -11,7 +11,9 @@ var gridOptions = {
         { field: "model"},
         { field: "price"}
     ],
+
     rowData: rowData,
+
     onGridReady: function (params) {
         params.api.sizeColumnsToFit();
 

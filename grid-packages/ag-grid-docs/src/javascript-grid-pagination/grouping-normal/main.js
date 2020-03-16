@@ -14,7 +14,15 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     pagination: true,
-    paginationPageSize: 10
+    paginationPageSize: 10,
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 190
+    }
 };
 
 // setup the grid after the page has finished loading

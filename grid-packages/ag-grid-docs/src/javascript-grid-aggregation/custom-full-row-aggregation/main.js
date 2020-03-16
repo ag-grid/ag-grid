@@ -1,30 +1,29 @@
-var columnDefs = [
-    {headerName: 'Gold', field: 'gold', width: 100},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Gold*pie', field: 'goldPie', width: 100},
-    {headerName: 'Silver*pie', field: 'silverPie', width: 100},
-    {headerName: 'Bronze*pie', field: 'bronzePie', width: 100},
-    {headerName: 'Country', field: 'country', width: 120, rowGroup: true, hide: true},
-    {headerName: 'Year', field: 'year', width: 90, rowGroup: true, hide: true}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { headerName: 'Gold*pie', field: 'goldPie', minWidth: 200 },
+        { headerName: 'Silver*pie', field: 'silverPie', minWidth: 200 },
+        { headerName: 'Bronze*pie', field: 'bronzePie', minWidth: 200 },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
         sortable: true,
-        filter: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
-    groupUseEntireRow: false,
-    enableRangeSelection: true,
-    groupRowAggNodes: groupRowAggNodes,
-    sideBar: true,
     autoGroupColumnDef: {
         headerName: 'Athlete',
         field: 'athlete',
-        width: 200
-    }
+        minWidth: 250
+    },
+    sideBar: true,
+    groupUseEntireRow: false,
+    enableRangeSelection: true,
+    groupRowAggNodes: groupRowAggNodes,
 };
 
 function groupRowAggNodes(nodes) {

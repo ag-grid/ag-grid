@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Provided Themes</h1>
 
     <p class="lead">
-        The grid comes with a few Provided Themes, and the quickest way to get a nice style onto a grid is to apply one of them.
+        The grid comes with a few provided themes, and the quickest way to get a nice style onto a grid is to apply one of them.
     </p>
 
     <p>
@@ -100,15 +100,11 @@ include '../documentation-main/documentation_header.php';
         <li>Some pre-built bundles, whether <a href="/javascript-grid-download/">downloaded from our website</a> or included in the <code>ag-grid-community</code> <a href="/javascript-grid-npm/">NPM package</a>, already embed the styles. If you are using one of these files you do not need to separately load CSS.</li>
         <li>If you're not using a JS bundle with styles embedded, you need to include the theme's styles in the HTML page with a <code>&lt;link&gt;</code> tag. There are a few ways to do this:</li>
         <ul>
-            <li>If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can <code>require()</code> the correct CSS file from node_modules. This is the recommended approach.</li>
+            <li>If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can <code>require()</code> the correct CSS file from node_modules. This is the recommended approach as webpack will take care of minifying your CSS in production.</li>
             <li>You can copy (manually or as part of your app's build) a CSS file from node_modules and serve it with your app.</li>
-            <li>You can the theme from a free CDN by adding this code to your page <code>&lt;link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules@22.0.0/dist/styles/ag-theme-balham.css"&gt;</code> (note: this is useful for testing but not recommended for production as your app will be unavailable if the unpkg servers are down)</li>
+            <li>You can load the theme from a free CDN by adding this code to your page <code>&lt;link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-balham.css"&gt;</code>, making sure that the CSS version matches the JS version you're using. (Note: this is useful for testing but not recommended for production as your app will be unavailable if the unpkg servers are down)</li>
         </ul>
     </ul>
-
-    <p>
-        If you're using a <a href="/javascript-grid-download/">prebuilt bundle</a> then CSS <em>may</em> already be embedded in the JavaScript code. If you're using <a href="/javascript-grid-modules/">modules</a> or a build without embedded styles, you'll need to 
-    </p>
 
     <p>
         Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
@@ -122,10 +118,10 @@ include '../documentation-main/documentation_header.php';
     <h1 id="customising-themes">Customising themes</h1>
 
     <p>
-        In order to customise a theme, you need to set up your project to be able to compile Sass files. The recommended way to process your project's Scss
+        In order to customise a theme, you need to set up your project to compile Sass files. The recommended way to process your project's Scss
         files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. We provide a
         <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">general webpack example</a> appropriate Vanilla JS and React
-        projects, and an <a href="https://github.com/ag-grid/ag-grid-material/tree/master/angular-material">angular example</a> using Angular CLI.
+        projects, and an <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular">angular example</a> using Angular CLI.
     </p>
 
     <p>
@@ -134,6 +130,7 @@ include '../documentation-main/documentation_header.php';
 
     <snippet language="scss">
 @import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin";
+
 .ag-theme-alpine {
     @include ag-theme-alpine((
         // use theme parameters where possible
@@ -177,13 +174,13 @@ include '../documentation-main/documentation_header.php';
     
     <ol>
         <li>Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our <a href="https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js">theme customisation examples</a> demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).</li>
-            <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name. This ensures that teh grid will us the correct fallback sizes.</li>
+            <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name so that the grid knows what fallback sizes to apply.</li>
             <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
         </ol>
-        
+
         <h2 id="base-theme-parameters">Full list of theme parameters</h2>
         
-        <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the <code>ag-defined</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
+        <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the internal <code>ag-defined</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
 
 <snippet language="scss">
 // Colour of text and icons in primary UI elements like menus

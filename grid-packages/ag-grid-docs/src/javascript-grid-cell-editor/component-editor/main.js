@@ -1,6 +1,5 @@
 var columnDefs = [
     {
-        headerName: "Name",
         field: "name",
         width: 300,
         editable: true,
@@ -24,7 +23,6 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Mood",
         field: "mood",
         cellRenderer: "moodRenderer",
         cellEditor: "moodEditor",
@@ -68,13 +66,18 @@ var gridOptions = {
         moodEditor: MoodEditor,
         numericEditor: NumericEditor
     },
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     }
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
     // gridOptions.api.sizeColumnsToFit();

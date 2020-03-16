@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Change individual icons using CSS</h2>
 
 <p>You can change individual icons by overriding the background images for the respective CSS selector.
-The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
+The following code snippet overrides the Balham theme pin icon used in the drag hint when reordering columns:<p>
 
 <snippet>
 /*
@@ -286,15 +286,17 @@ sortUnSort
     <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-svg-icons">SVG Icons Example</a>.
 </p>
 
+<note>
+    <p>
+        The grid sets the CSS <code>color</code> property on the <code>&lt; span class="ag-icon"&gt;</code> element representing the icon. This works for webfont-based icons, but not for SVG. If you are using SVG for icons, you should ensure that the provided SVG image is already the correct color.
+    </p>
+</note>
+
+<h2>Provided theme icons</h2>
+
 <p>
     Below you can see a list with all available icons for each theme, their names, and download them.
 </p>
-<note>
-    <p>
-        SVG Icons can not have their colour changed in CSS, so themes are not able to set the icon color. This means you will need to
-        add the colors you want to the SVG image itself.
-    </p>
-</note>
 
 <style>
     .nav.nav-tabs .nav-link {
@@ -338,8 +340,8 @@ sortUnSort
         var icons = [
             'aggregation', 'arrows', 'asc', 'cancel', 'chart',
             'checkbox-checked', 'checkbox-indeterminate',
-            'checkbox-unchecked', 'color-picker', 'column',
-            'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
+            'checkbox-unchecked', 'color-picker',
+            'columns', 'contracted', 'copy', 'cross',
             'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
             'grip', 'group', 'last', 'left', 'linked',
             'loading', 'maximize', 'menu', 'minimize', 'next',

@@ -1,34 +1,40 @@
 var columnDefs = [
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum', enableValue: true,
+    { field: "country", rowGroup: true, hide: true },
+    {
+        field: "gold",
+        aggFunc: 'sum',
+        enableValue: true,
         allowedAggFuncs: ['sum','min','max']
     },
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'min', enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'max', enableValue: true},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'avg', enableValue: true},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroup: true},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
+    { field: "silver", aggFunc: 'min', enableValue: true},
+    { field: "bronze", aggFunc: 'max', enableValue: true},
+    { field: "total", aggFunc: 'avg', enableValue: true, minWidth: 200},
+    { field: "age" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        filter: true
-    },
     columnDefs: columnDefs,
-    rowData: null,
-    groupIncludeFooter: true,
-    sideBar: true,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        sortable: true,
+        resizable: true,
+    },
     autoGroupColumnDef: {headerName: "Athlete",
         field: "athlete",
-        width: 200,
+        minWidth: 250,
         cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             footerValueGetter: '"Total (" + x + ")"'
-        }}
-    };
+        }
+    },
+    groupIncludeFooter: true,
+    sideBar: true,
+};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

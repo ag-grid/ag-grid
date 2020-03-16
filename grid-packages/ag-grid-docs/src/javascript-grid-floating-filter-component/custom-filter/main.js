@@ -1,25 +1,27 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: false},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'customNumberFilter', suppressMenu: true},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'customNumberFilter', suppressMenu: true},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'customNumberFilter', suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, filter: 'customNumberFilter', suppressMenu: true}
+    {field: "athlete", width: 150, filter: false},
+    {field: "gold", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {field: "silver", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {field: "bronze", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {field: "total", width: 100, filter: 'customNumberFilter', suppressMenu: true}
 ];
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     components:{
         customNumberFilter: getNumberFilterComponent()
     },
     floatingFilter:true,
     columnDefs: columnDefs,
-    rowData: null,
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
+    rowData: null
 };
 
 function isNumeric(n) {

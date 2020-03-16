@@ -1,21 +1,24 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
-    {headerName: "Year", field: "year", width: 90, pivot: true, enablePivot:true},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", rowGroup: true, enableRowGroup: true },
+        { field: "year", pivot: true, enablePivot: true },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         sortable: true,
         resizable: true
     },
+    autoGroupColumnDef: {
+        minWidth: 250,
+    },
     // set rowData to null or undefined to show loading panel by default
     pivotMode: true,
-    columnDefs: columnDefs
 };
 
 // setup the grid after the page has finished loading

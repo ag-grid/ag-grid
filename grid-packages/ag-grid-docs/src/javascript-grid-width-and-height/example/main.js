@@ -11,13 +11,17 @@ var gridOptions = {
         { field: 'bronze', minWidth: 80},
         { field: 'total', minWidth: 80}
     ],
+
     defaultColDef: {
         resizable: true
     },
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    }
+
+    onFirstDataRendered: onFirstDataRendered
 };
+
+function onFirstDataRendered(params) {
+    params.api.sizeColumnsToFit();
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

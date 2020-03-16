@@ -226,7 +226,7 @@ var gridOptions = {
     animateRows: true,
 
     enableRangeSelection: true,
-    // enableRangeHandle: false,
+    // enableRangeHandle: true,
     enableFillHandle: true,
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 50,

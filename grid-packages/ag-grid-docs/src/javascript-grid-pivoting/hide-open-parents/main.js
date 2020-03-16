@@ -1,7 +1,7 @@
 var columnDefs = [
     // row group columns
-    {headerName: 'Country', field: 'country', rowGroup: true},
-    {headerName: 'Athlete', field: 'athlete', rowGroup: true},
+    { field: 'country', rowGroup: true },
+    { field: 'athlete', rowGroup: true },
 
     // pivot column
     {
@@ -15,23 +15,29 @@ var columnDefs = [
     },
 
     // aggregation columns
-    {headerName: 'Gold', field: 'gold', aggFunc: 'sum'},
-    {headerName: 'Silver', field: 'silver', aggFunc: 'sum'},
-    {headerName: 'Bronze', field: 'bronze', aggFunc: 'sum'},
-    {headerName: 'Total', field: 'total', aggFunc: 'sum'}
+    { field: 'gold', aggFunc: 'sum'},
+    { field: 'silver', aggFunc: 'sum'},
+    { field: 'bronze', aggFunc: 'sum'},
+    { field: 'total', aggFunc: 'sum'}
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 150,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
+        filter: true,
+        resizable: true,
         sortable: true,
-        filter: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 250,
     },
     pivotMode: true,
     groupDefaultExpanded: 9,
-    columnDefs: columnDefs,
     groupHideOpenParents: true,
     groupMultiAutoColumn: true,
     animateRows: true,

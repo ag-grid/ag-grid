@@ -1,9 +1,10 @@
 var columnDefs = [
-    {field: "athlete", width: 200,
+    {
+        field: "athlete", minWidth: 170,
         suppressKeyboardEvent: suppressEnter,
     },
     {field: "age"},
-    {field: "country"},
+    {field: "country", minWidth: 130},
     {field: "year"},
     {field: "date"},
     {field: "sport"},
@@ -27,13 +28,17 @@ var gridOptions = {
     rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 100,
-        editable: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
     },
     enableRangeSelection: true,
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
-    suppressKeyboardEvent: function(params) {
+    suppressKeyboardEvent: function (params) {
         var KEY_A = 65;
         var KEY_C = 67;
         var KEY_V = 86;

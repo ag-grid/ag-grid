@@ -10,7 +10,7 @@ export interface IRangeController {
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
-    isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean;
+    isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
     onDragStart(mouseEvent: MouseEvent): void;

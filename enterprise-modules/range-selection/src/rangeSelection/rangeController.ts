@@ -463,15 +463,28 @@ export class RangeController implements IRangeController {
         return columnInRange && rowInRange;
     }
 
-    public isLastCellOfRange(cellRange: CellRange, cell: CellPosition) {
+    private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
+        const { startRow, endRow } = cellRange;
+        const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        const rangeFirstIndexColumn = cellRange.columns[0];
+        const rangeLastIndexColumn = _.last(cellRange.columns);
+        const lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        const isLastColumn = cell.column === lastRangeColumn;
+
+        return isLastColumn && isLastRow;
+    }
+
+    public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
         const allColumns = this.columnController.getAllDisplayedColumns();
         const allPositions = cellRange.columns.map(c => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        const isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
+
+        const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
         const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
 
-        return isLastColumn && isLastRow;
+        return isRightColumn && isLastRow;
     }
 
     // returns the number of ranges this cell is in

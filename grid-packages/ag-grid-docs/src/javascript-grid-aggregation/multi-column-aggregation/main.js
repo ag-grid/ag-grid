@@ -1,23 +1,27 @@
-var columnDefs = [
-    { field: 'gold', aggFunc: 'sum', valueFormatter: numberFormatter },
-    { field: 'silver', aggFunc: 'sum', valueFormatter: numberFormatter },
-    { headerName: 'Ratio', colId: 'goldSilverRatio',
-        valueGetter: ratioValueGetter, aggFunc: ratioAggFunc, valueFormatter: ratioFormatter},
-    { field: 'country', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
-    { field: 'sport', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
-    { field: 'year', pivot: true, hide: true, suppressColumnsToolPanel: true }
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
+        { field: 'sport', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
+        { field: 'year', pivot: true, hide: true, suppressColumnsToolPanel: true },
+        { field: 'gold', aggFunc: 'sum', valueFormatter: numberFormatter },
+        { field: 'silver', aggFunc: 'sum', valueFormatter: numberFormatter },
+        {
+            headerName: 'Ratio',
+            colId: 'goldSilverRatio',
+            aggFunc: ratioAggFunc,
+            valueGetter: ratioValueGetter,
+            valueFormatter: ratioFormatter
+        },
+    ],
     defaultColDef: {
-        width: 100,
+        flex: 1,
+        minWidth: 150,
         sortable: true,
         filter: true
     },
     autoGroupColumnDef: {
-        width: 220
+        minWidth: 220
     },
-    columnDefs: columnDefs,
     sideBar: true,
     suppressAggFuncInHeader: true
 };

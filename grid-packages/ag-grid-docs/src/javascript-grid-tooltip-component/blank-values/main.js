@@ -1,16 +1,21 @@
 var columnDefs = [
     {headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete'},
     {headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: function(params) {return { value: params.value}; } },
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {field: "sport", width: 110},
+    {field: "gold", width: 100},
+    {field: "silver", width: 100},
+    {field: "bronze", width: 100},
+    {field: "total", width: 100}
 ];
 
 var gridOptions = {
     defaultColDef: {
+        editable: true,
         sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
 
     // set rowData to null or undefined to show loading panel by default

@@ -25,9 +25,11 @@ var gridOptions = {
         { field: 'bronze', minWidth: 80},
         { field: 'total', minWidth: 80}
     ],
+
     defaultColDef: {
         resizable: true
     },
+
     onGridReady: function(params) {
         minRowHeight = params.api.getSizesForCurrentTheme().rowHeight;
         currentRowHeight = minRowHeight;

@@ -1,9 +1,8 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", filter: false},
-    {headerName: "Language", field: "language", filter: false},
-    {headerName: "Name", field: "name", filter: false},
+    {field: "country", filter: false},
+    {field: "language", filter: false},
+    {field: "name", filter: false},
     {
-        headerName: "Gold",
         field: "gold",
         floatingFilterComponent: 'sliderFloatingFilter',
         floatingFilterComponentParams: {
@@ -14,7 +13,6 @@ var columnDefs = [
         suppressMenu: false
     },
     {
-        headerName: "Silver",
         field: "silver",
         filter: 'agNumberColumnFilter',
         floatingFilterComponent: 'sliderFloatingFilter',
@@ -25,7 +23,6 @@ var columnDefs = [
         suppressMenu: false
     },
     {
-        headerName: "Bronze",
         field: "bronze",
         filter: 'agNumberColumnFilter',
         floatingFilterComponent: 'sliderFloatingFilter',
@@ -82,6 +79,14 @@ function createRowData() {
 
 
 var gridOptions = {
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
+    },
     columnDefs: columnDefs,
     rowData: createRowData(),
     floatingFilter: true,

@@ -1,17 +1,21 @@
-
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', filterParams:{
-            debounceMs:2000
-        }},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', filterParams:{
-            debounceMs:0
-        }},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 180, filter:'date', filterParams:{
-            comparator:function (filterLocalDateAtMidnight, cellValue){
+    {
+        field: "athlete", minWidth: 150, filter: 'agTextColumnFilter', filterParams: {
+            debounceMs: 2000
+        }
+    },
+    {
+        field: "age", filter: 'agNumberColumnFilter', filterParams: {
+            debounceMs: 0
+        }
+    },
+    {field: "country"},
+    {field: "year"},
+    {
+        field: "date", minWidth: 180, filter: 'date', filterParams: {
+            comparator: function (filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
-                var dateParts  = dateAsString.split("/");
+                var dateParts = dateAsString.split("/");
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
@@ -26,42 +30,55 @@ var columnDefs = [
                     return 1;
                 }
             }
-        }, floatingFilterComponentParams:{
-            suppressFilterButton:true
-        }},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 150, floatingFilterComponent: 'numberFloatingFilter',
-        floatingFilterComponentParams:{
-            maxValue:7,
-            suppressFilterButton:true
+        }, floatingFilterComponentParams: {
+            suppressFilterButton: true
+        }
+    },
+    {field: "sport"},
+    {
+        field: "gold", floatingFilterComponent: 'numberFloatingFilter',
+        floatingFilterComponentParams: {
+            maxValue: 7,
+            suppressFilterButton: true
         }, filter: 'numberFilter'
     },
-    {headerName: "Silver", field: "silver", width: 150, floatingFilterComponent: 'numberFloatingFilter',
-        floatingFilterComponentParams:{
-            maxValue:3,
-            suppressFilterButton:true
-        }, filter: 'numberFilter'},
-    {headerName: "Bronze", field: "bronze", width: 150, floatingFilterComponent: 'numberFloatingFilter',
-        floatingFilterComponentParams:{
-            maxValue:2,
-            suppressFilterButton:true
-        }, filter: 'numberFilter'},
-    {headerName: "Total", field: "total", width: 150, floatingFilterComponent: 'numberFloatingFilter',
-        floatingFilterComponentParams:{
-            maxValue:5,
-            suppressFilterButton:true
-        }, filter: 'numberFilter'}
+    {
+        field: "silver", floatingFilterComponent: 'numberFloatingFilter',
+        floatingFilterComponentParams: {
+            maxValue: 3,
+            suppressFilterButton: true
+        }, filter: 'numberFilter'
+    },
+    {
+        field: "bronze", floatingFilterComponent: 'numberFloatingFilter',
+        floatingFilterComponentParams: {
+            maxValue: 2,
+            suppressFilterButton: true
+        }, filter: 'numberFilter'
+    },
+    {
+        field: "total", floatingFilterComponent: 'numberFloatingFilter',
+        floatingFilterComponentParams: {
+            maxValue: 5,
+            suppressFilterButton: true
+        }, filter: 'numberFilter'
+    }
 ];
 
 var gridOptions = {
     defaultColDef: {
-        filter: true
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
-    components:{
+    components: {
         numberFloatingFilter: NumberFloatingFilter,
         numberFilter: NumberFilter
     },
-    floatingFilter:true,
+    floatingFilter: true,
     columnDefs: columnDefs,
     rowData: null
 };
@@ -90,7 +107,7 @@ NumberFilter.prototype.setupGui = function () {
         '</div>';
 
     var that = this;
-    this.onFilterChanged = function() {
+    this.onFilterChanged = function () {
         that.extractFilterText();
         that.params.filterChangedCallback();
     };
@@ -112,14 +129,14 @@ NumberFilter.prototype.doesFilterPass = function (params) {
     var value = valueGetter(params);
     var filterValue = this.filterText;
 
-    if (this.isFilterActive()){
+    if (this.isFilterActive()) {
         if (!value) return false;
         return Number(value) > Number(filterValue)
     }
 };
 
 NumberFilter.prototype.isFilterActive = function () {
-    return  this.filterText !== null &&
+    return this.filterText !== null &&
         this.filterText !== undefined &&
         this.filterText !== '' &&
         isNumeric(this.filterText);
@@ -144,7 +161,6 @@ NumberFilter.prototype.destroy = function () {
 };
 
 
-
 function NumberFloatingFilter() {
 }
 
@@ -156,9 +172,9 @@ NumberFloatingFilter.prototype.init = function (params) {
     this.currentValue = 0;
     var that = this;
     this.eSlider.slider({
-        min:0,
-        max:params.maxValue,
-        change: function(e, ui) {
+        min: 0,
+        max: params.maxValue,
+        change: function (e, ui) {
             //Every time the value of the slider changes
             if (!e.originalEvent) {
                 //If this event its triggered from outside. ie setModel() on the parent Filter we
@@ -167,7 +183,7 @@ NumberFloatingFilter.prototype.init = function (params) {
                 return;
             }
             that.currentValue = ui.value;
-            params.parentFilterInstance( function(instance) {
+            params.parentFilterInstance(function (instance) {
                 instance.myMethodForTakingValueFromFloatingFilter(that.buildModel());
             });
         }
@@ -178,11 +194,11 @@ NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
     // When the filter is empty we will receive a null message her
     if (!parentModel) {
         //If there is no filtering set to the minimun
-        this.eSlider.slider( "option", "value", 0 );
+        this.eSlider.slider("option", "value", 0);
         this.currentValue = null;
     } else {
-        if (parentModel.filter !== this.currentValue){
-            this.eSlider.slider( "option", "value", parentModel );
+        if (parentModel.filter !== this.currentValue) {
+            this.eSlider.slider("option", "value", parentModel);
         }
         this.currentValue = parentModel;
     }
@@ -201,7 +217,7 @@ NumberFloatingFilter.prototype.buildModel = function () {
 
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -210,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

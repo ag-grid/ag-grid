@@ -1,29 +1,30 @@
 var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        filter: true,
-        width: 100
-    },
     columnDefs: [
-        {headerName: "Athlete", field: "athlete", enablePivot:true, enableRowGroup:true},
-        {headerName: "Country", field: "country", rowGroup: true, enableRowGroup:true},
-        {headerName: "Sport", field: "sport", rowGroup: true, enablePivot:true, enableRowGroup:true},
-        {headerName: "Year", field: "year", pivot: true, enablePivot:true},
-        {headerName: "Age", field: "age", filter: 'agNumberColumnFilter', enablePivot:true, enableRowGroup:true},
-        {headerName: "Date", field: "date"},
-        {headerName: "Gold", field: "gold", aggFunc: 'sum'},
-        {headerName: "Silver", field: "silver", aggFunc: 'sum'},
-        {headerName: "Bronze", field: "bronze", aggFunc: 'sum'}
+        { field: "country", rowGroup: true, enableRowGroup: true },
+        { field: "sport", rowGroup: true, enablePivot: true, enableRowGroup: true },
+        { field: "athlete", enablePivot: true, enableRowGroup: true },
+        { field: "year", pivot: true, enablePivot: true },
+        { field: "age", filter: 'agNumberColumnFilter', enablePivot: true, enableRowGroup: true },
+        { field: "date" },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
     ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 300,
+    },
+    sideBar: true,
     pivotMode: true,
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     pivotColumnGroupTotals: 'after',
     pivotRowTotals: 'before',
-    autoGroupColumnDef: {
-      width: 200
-    },
-    sideBar: true,
 };
 
 // setup the grid after the page has finished loading

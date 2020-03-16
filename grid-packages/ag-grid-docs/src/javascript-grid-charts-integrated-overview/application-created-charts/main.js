@@ -1,21 +1,21 @@
 "use strict";
 var columnDefs = [
-    { headerName: 'Product', field: 'product', chartDataType: 'category' },
-    { headerName: 'Book', field: 'book', chartDataType: 'category' },
+    { field: 'product', chartDataType: 'category', minWidth: 130 },
+    { field: 'book', chartDataType: 'category' },
 
-    { headerName: 'Current', field: 'current', type: 'measure' },
-    { headerName: 'Previous', field: 'previous', type: 'measure' },
+    { field: 'current', type: 'measure' },
+    { field: 'previous', type: 'measure', minWidth: 130 },
     { headerName: 'PL 1', field: 'pl1', type: 'measure' },
     { headerName: 'PL 2', field: 'pl2', type: 'measure' },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure' },
+    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', minWidth: 130 },
     { headerName: 'SX / PX', field: 'sxPx', type: 'measure' },
 
-    { headerName: 'Trade', field: 'trade', type: 'measure' },
-    { headerName: 'Submitter ID', field: 'submitterID', type: 'measure' },
-    { headerName: 'Submitted Deal ID', field: 'submitterDealID', type: 'measure', width: 150 },
+    { field: 'trade', type: 'measure' },
+    { field: 'submitterID', type: 'measure', minWidth: 130 },
+    { field: 'submitterDealID', type: 'measure', minWidth: 170 },
 
-    { headerName: 'Portfolio', field: 'portfolio' },
-    { headerName: 'Deal Type', field: 'dealType' },
+    { field: 'portfolio', minWidth: 130 },
+    { field: 'dealType', minWidth: 130 },
     { headerName: 'Bid', field: 'bidFlag' }
 ];
 
@@ -24,8 +24,11 @@ var chartRef;
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 120,
+        editable: true,
         sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         resizable: true
     },
     columnTypes: {

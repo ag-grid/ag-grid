@@ -29750,13 +29750,23 @@ var RangeController = /** @class */ (function () {
         return columnInRange && rowInRange;
     };
     RangeController.prototype.isLastCellOfRange = function (cellRange, cell) {
+        var startRow = cellRange.startRow, endRow = cellRange.endRow;
+        var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        var rangeFirstIndexColumn = cellRange.columns[0];
+        var rangeLastIndexColumn = agGridCommunity._.last(cellRange.columns);
+        var lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        var isLastColumn = cell.column === lastRangeColumn;
+        return isLastColumn && isLastRow;
+    };
+    RangeController.prototype.isBottomRightCell = function (cellRange, cell) {
         var allColumns = this.columnController.getAllDisplayedColumns();
         var allPositions = cellRange.columns.map(function (c) { return allColumns.indexOf(c); }).sort(function (a, b) { return a - b; });
         var startRow = cellRange.startRow, endRow = cellRange.endRow;
         var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        var isLastColumn = allColumns.indexOf(cell.column) === agGridCommunity._.last(allPositions);
+        var isRightColumn = allColumns.indexOf(cell.column) === agGridCommunity._.last(allPositions);
         var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
-        return isLastColumn && isLastRow;
+        return isRightColumn && isLastRow;
     };
     // returns the number of ranges this cell is in
     RangeController.prototype.getCellRangeCount = function (cell) {

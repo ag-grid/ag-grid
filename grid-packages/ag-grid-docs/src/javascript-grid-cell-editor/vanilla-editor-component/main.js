@@ -34,10 +34,9 @@ function cloneObject(obj) {
 }
 
 var columnDefs = [
-    {headerName: "First Name", field: "first_name", width: 120, editable: true},
-    {headerName: "Last Name", field: "last_name", width: 120, editable: true},
+    {field: "first_name", width: 120, editable: true},
+    {field: "last_name", width: 120, editable: true},
     {
-        headerName: "Gender",
         field: "gender",
         width: 100,
         editable: true,
@@ -49,14 +48,12 @@ var columnDefs = [
         }
     },
     {
-        headerName: "Age",
         field: "age",
         width: 80,
         editable: true,
         cellEditor: 'numericCellEditor'
     },
     {
-        headerName: "Mood",
         field: "mood",
         width: 100,
         cellRenderer: 'moodCellRenderer',
@@ -64,12 +61,11 @@ var columnDefs = [
         editable: true
     },
     {
-        headerName: "Country",
         field: "country",
         width: 110,
         cellRenderer: 'countryCellRenderer',
         cellEditor: 'agRichSelectCellEditor',
-        keyCreator: function(country) {
+        keyCreator: function (country) {
             return country.name;
         },
         cellEditorParams: {
@@ -83,7 +79,6 @@ var columnDefs = [
         editable: true
     },
     {
-        headerName: "Address",
         field: "address",
         editable: true,
         cellEditor: 'agLargeTextCellEditor',
@@ -98,8 +93,13 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: students,
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
     onRowEditingStarted: function (event) {
         console.log('never called - not doing row editing');
@@ -113,7 +113,7 @@ var gridOptions = {
     onCellEditingStopped: function (event) {
         console.log('cellEditingStopped');
     },
-    components:{
+    components: {
         genderCellRenderer: GenderCellRenderer,
         numericCellEditor: NumericCellEditor,
         moodCellRenderer: MoodCellRenderer,
@@ -164,7 +164,7 @@ NumericCellEditor.prototype.init = function (params) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             if (event.preventDefault) event.preventDefault();
-        } else if (that.isKeyPressedNavigation(event)){
+        } else if (that.isKeyPressedNavigation(event)) {
             event.stopPropagation();
         }
     });
@@ -174,9 +174,9 @@ NumericCellEditor.prototype.init = function (params) {
     this.cancelBeforeStart = charPressIsNotANumber;
 };
 
-NumericCellEditor.prototype.isKeyPressedNavigation = function (event){
-    return event.keyCode===39
-        || event.keyCode===37;
+NumericCellEditor.prototype.isKeyPressedNavigation = function (event) {
+    return event.keyCode === 39
+        || event.keyCode === 37;
 };
 
 

@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
@@ -12,7 +12,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
         <ag-grid-angular
                 style="width: 100%; height: 45%"
                 #topGrid
-                class="ag-theme-balham"
+                class="ag-theme-alpine"
                 (firstDataRendered)="onFirstDataRendered($event)"
                 [defaultColDef]="{
             resizable: true
@@ -28,7 +28,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
         <ag-grid-angular
                 style="width: 100%; height: 45%"
                 #bottomGrid
-                class="ag-theme-balham"
+                class="ag-theme-alpine"
                 (firstDataRendered)="onFirstDataRendered($event)"
                 [defaultColDef]="{
             resizable: true
@@ -43,8 +43,24 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
 export class AppComponent {
     columnDefs;
     rowData;
-    topOptions = {alignedGrids: []};
-    bottomOptions = {alignedGrids: []};
+    topOptions = {alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }};
+    bottomOptions = {alignedGrids: [],
+        defaultColDef: {
+            editable: true,
+            sortable: true,
+            resizable: true,
+            filter: true,
+            flex: 1,
+            minWidth: 100
+        }};
     modules = AllCommunityModules
 
     @ViewChild('topGrid') topGrid;
@@ -56,28 +72,28 @@ export class AppComponent {
                 headerName: "<span style='background-color: lightblue'>Group 1</span>",
                 groupId: 'Group1',
                 children: [
-                    {headerName: 'AAA', field: 'athlete', pinned: true, width: 100},
-                    {headerName: 'BBB', field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-                    {headerName: 'CCC', field: 'country', width: 100},
-                    {headerName: 'DDD', field: 'year', columnGroupShow: 'open', width: 100},
-                    {headerName: 'EEE', field: 'date', width: 100},
-                    {headerName: 'FFF', field: 'sport', columnGroupShow: 'open', width: 100},
-                    {headerName: 'GGG', field: 'date', width: 100},
-                    {headerName: 'HHH', field: 'sport', columnGroupShow: 'open', width: 100}
+                    {field: 'athlete', pinned: true, width: 100},
+                    {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
+                    {field: 'country', width: 100},
+                    {field: 'year', columnGroupShow: 'open', width: 100},
+                    {field: 'date', width: 100},
+                    {field: 'sport', columnGroupShow: 'open', width: 100},
+                    {field: 'date', width: 100},
+                    {field: 'sport', columnGroupShow: 'open', width: 100}
                 ]
             },
             {
                 headerName: "<span style='background-color: lightgreen'>Group 2</span>",
                 groupId: 'Group2',
                 children: [
-                    {headerName: 'AAA', field: 'athlete', pinned: true, width: 100},
-                    {headerName: 'BBB', field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
-                    {headerName: 'CCC', field: 'country', width: 100},
-                    {headerName: 'DDD', field: 'year', columnGroupShow: 'open', width: 100},
-                    {headerName: 'EEE', field: 'date', width: 100},
-                    {headerName: 'FFF', field: 'sport', columnGroupShow: 'open', width: 100},
-                    {headerName: 'GGG', field: 'date', width: 100},
-                    {headerName: 'HHH', field: 'sport', columnGroupShow: 'open', width: 100}
+                    {field: 'athlete', pinned: true, width: 100},
+                    {field: 'age', pinned: true, columnGroupShow: 'open', width: 100},
+                    {field: 'country', width: 100},
+                    {field: 'year', columnGroupShow: 'open', width: 100},
+                    {field: 'date', width: 100},
+                    {field: 'sport', columnGroupShow: 'open', width: 100},
+                    {field: 'date', width: 100},
+                    {field: 'sport', columnGroupShow: 'open', width: 100}
                 ]
             }
         ];

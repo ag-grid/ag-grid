@@ -1,12 +1,24 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
-    {headerName: "Year", field: "year", width: 90, rowGroup: true, enableRowGroup:true, enablePivot:true},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
-];
+var gridOptions = {
+    columnDefs: [
+        { field: "country", rowGroup: true, enableRowGroup: true },
+        { field: "year", rowGroup: true, enableRowGroup: true, enablePivot: true },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 250,
+    },
+    sideBar: 'columns',
+};
 
 function onBtNormal() {
     gridOptions.columnApi.setPivotMode(false);
@@ -25,16 +37,6 @@ function onBtFullPivot() {
     gridOptions.columnApi.setPivotColumns(['year']);
     gridOptions.columnApi.setRowGroupColumns(['country']);
 }
-
-var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        resizable: true
-    },
-    // set rowData to null or undefined to show loading panel by default
-    columnDefs: columnDefs,
-    sideBar: 'columns'
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

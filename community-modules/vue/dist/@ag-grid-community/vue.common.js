@@ -6655,6 +6655,7 @@ var Environment = /** @class */ (function () {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            div.style.position = 'absolute';
             var el = classList.reduce(function (el, currentClass, idx) {
                 if (idx === 0) {
                     _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(el, theme);
@@ -17049,7 +17050,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;

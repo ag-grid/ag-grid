@@ -371,6 +371,10 @@
               {
                 "title": "Provided Themes",
                 "url": "javascript-grid-themes-provided/"
+              },
+              {
+                "title": "Migrating to v23",
+                "url": "javascript-grid-themes-v23-migration/"
               }
             ]
           },

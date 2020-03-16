@@ -75,11 +75,11 @@
         <h6 class="card-subtitle mb-2 text-muted">Angular</h6>
         <img src="../images/flags/united-states.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://www.ng-conf.org" target="_blank"> ng-Conf</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Apr 1-3</p>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Postponed</p>
 
         <img src="../images/flags/no.png" style="height: 13px; width: 18px">
         <a class="learn-more" href="https://ngvikings.org" target="_blank"> ngVikings</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 25-26</p>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Postponed</p>
 
         <img src="../images/flags/united-kingdom.png">
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
@@ -90,7 +90,7 @@
         <h6 class="card-subtitle mb-2 text-muted">React</h6>
         <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://reactsummit.com" target="_blank"> React Summit</a>
-        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Apr 17</p>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Postponed</p>
 
         <img src="../images/flags/united-kingdom.png" style="height: 18px; width: 18px">
         <a class="learn-more" href="https://reactadvanced.com" target="_blank"> React Advanced</a>

@@ -1,20 +1,23 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Age", field: "age", width: 150},
-    {headerName: "Country", field: "country", width: 150},
-    {headerName: "Year", field: "year", width: 120},
-    {headerName: "Date", field: "date", width: 150},
-    {headerName: "Sport", field: "sport", width: 150},
+    {field: "athlete"},
+    {field: "age"},
+    {field: "country"},
+    {field: "year"},
+    {field: "date"},
+    {field: "sport"},
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order to match up the columns
-    {headerName: 'Medals',
+    {
+        headerName: 'Medals',
         children: [
-            {headerName: "Total", columnGroupShow: 'closed', field: "total",
-                valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
+            {
+                columnGroupShow: 'closed', field: "total",
+                valueGetter: "data.gold + data.silver + data.bronze"
+            },
+            {columnGroupShow: 'open', field: "gold"},
+            {columnGroupShow: 'open', field: "silver"},
+            {columnGroupShow: 'open', field: "bronze"}
         ]
     }
 ];
@@ -22,7 +25,12 @@ var columnDefs = [
 // this is the grid options for the top grid
 var gridOptionsTop = {
     defaultColDef: {
-        resizable: true
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -33,7 +41,12 @@ var gridOptionsTop = {
 // this is the grid options for the bottom grid
 var gridOptionsBottom = {
     defaultColDef: {
-        resizable: true
+        editable: true,
+        sortable: true,
+        resizable: true,
+        filter: true,
+        flex: 1,
+        minWidth: 100
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -66,7 +79,7 @@ function setData(rowData) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDivTop = document.querySelector('#myGridTop');
     new agGrid.Grid(gridDivTop, gridOptionsTop);
 
@@ -78,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             setData(httpResult);

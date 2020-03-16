@@ -1,11 +1,3 @@
-// specify the columns
-var columnDefs = [
-    // we're using the auto group column by default!
-    {field: "jobTitle"},
-    {field: "employmentType"}
-];
-
-// specify the data
 var rowData = [
     {orgHierarchy: ['Erica Rogers'], jobTitle: "CEO", employmentType: "Permanent"},
     {orgHierarchy: ['Erica Rogers', 'Malcolm Barrett'], jobTitle: "Exec. Vice President", employmentType: "Permanent"},
@@ -24,22 +16,27 @@ var rowData = [
 ];
 
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // we're using the auto group column by default!
+        {field: "jobTitle"},
+        {field: "employmentType"}
+    ],
+    defaultColDef: {
+        flex: 1,
+    },
+    autoGroupColumnDef: {
+        headerName: "Organisation Hierarchy",
+        minWidth: 300,
+        cellRendererParams: {
+            suppressCount: true
+        }
+    },
     rowData: rowData,
     treeData: true, // enable Tree Data mode
     animateRows: true,
     groupDefaultExpanded: -1, // expand all groups by default
     getDataPath: function(data) {
         return data.orgHierarchy;
-    },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    },
-    autoGroupColumnDef: {
-        headerName: "Organisation Hierarchy",
-        cellRendererParams: {
-            suppressCount: true
-        }
     }
 };
 

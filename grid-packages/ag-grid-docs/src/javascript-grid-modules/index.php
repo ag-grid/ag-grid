@@ -333,6 +333,6 @@ import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 // SCSS Community
 @import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.scss";
-@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-balham/sass/ag-theme-balham.scss";
+@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-balham/sass/ag-theme-balham-mixin.scss";
 </snippet>
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -591,6 +591,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-direction: column;
   flex-direction: column;
   overflow-x: auto; }
+  .ag-column-drop-vertical-list > * {
+    -webkit-box-flex: 0;
+    -ms-flex: none;
+    flex: none; }
 
 .ag-column-drop-empty .ag-column-drop-vertical-list {
   overflow: hidden; }

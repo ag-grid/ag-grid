@@ -1,29 +1,3 @@
-// specify the columns
-var columnDefs = [
-    {
-        field: 'dateModified',
-        comparator: function(d1, d2) {
-            return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;
-        }
-    },
-    {
-        field: 'size',
-        aggFunc: 'sum',
-        valueFormatter: function(params) {
-            return params.value ? Math.round(params.value * 10) / 10 + ' MB' : '0 MB';
-        }
-    }
-];
-
-function getNextId() {
-    if (!window.nextId) {
-        window.nextId = 15;
-    } else {
-        window.nextId++;
-    }
-    return window.nextId;
-}
-
 // specify the data
 var rowData = [
       {
@@ -103,15 +77,40 @@ var rowData = [
     ];
 
 var gridOptions = {
+    columnDefs: [
+        {
+            field: 'dateModified',
+            minWidth: 250,
+            comparator: function(d1, d2) {
+                return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;
+            }
+        },
+        {
+            field: 'size',
+            aggFunc: 'sum',
+            valueFormatter: function(params) {
+                return params.value ? Math.round(params.value * 10) / 10 + ' MB' : '0 MB';
+            }
+        }
+    ],
     defaultColDef: {
+        flex: 1,
+        filter: true,
         sortable: true,
         resizable: true,
-        filter: true
+    },
+    autoGroupColumnDef: {
+        headerName: 'Files',
+        minWidth: 330,
+        cellRendererParams: {
+            checkbox: true,
+            suppressCount: true,
+            innerRenderer: 'fileCellRenderer'
+        }
     },
     components: {
         fileCellRenderer: getFileCellRenderer()
     },
-    columnDefs: columnDefs,
     rowData: rowData,
     treeData: true,
     animateRows: true,
@@ -121,17 +120,17 @@ var gridOptions = {
     },
     getRowNodeId: function(data) {
         return data.id;
-    },
-    autoGroupColumnDef: {
-        headerName: 'Files',
-        width: 250,
-        cellRendererParams: {
-            checkbox: true,
-            suppressCount: true,
-            innerRenderer: 'fileCellRenderer'
-        }
     }
 };
+
+function getNextId() {
+    if (!window.nextId) {
+        window.nextId = 15;
+    } else {
+        window.nextId++;
+    }
+    return window.nextId;
+}
 
 function getFileCellRenderer() {
     function FileCellRenderer() {}

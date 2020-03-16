@@ -18362,7 +18362,7 @@ var CellComp = /** @class */ (function (_super) {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;
@@ -31330,6 +31330,7 @@ var Environment = /** @class */ (function () {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            div.style.position = 'absolute';
             var el = classList.reduce(function (el, currentClass, idx) {
                 if (idx === 0) {
                     _.addCssClass(el, theme);
@@ -37543,13 +37544,23 @@ var RangeController = /** @class */ (function () {
         return columnInRange && rowInRange;
     };
     RangeController.prototype.isLastCellOfRange = function (cellRange, cell) {
+        var startRow = cellRange.startRow, endRow = cellRange.endRow;
+        var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        var rangeFirstIndexColumn = cellRange.columns[0];
+        var rangeLastIndexColumn = _.last(cellRange.columns);
+        var lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        var isLastColumn = cell.column === lastRangeColumn;
+        return isLastColumn && isLastRow;
+    };
+    RangeController.prototype.isBottomRightCell = function (cellRange, cell) {
         var allColumns = this.columnController.getAllDisplayedColumns();
         var allPositions = cellRange.columns.map(function (c) { return allColumns.indexOf(c); }).sort(function (a, b) { return a - b; });
         var startRow = cellRange.startRow, endRow = cellRange.endRow;
         var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        var isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
+        var isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
         var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
-        return isLastColumn && isLastRow;
+        return isRightColumn && isLastRow;
     };
     // returns the number of ranges this cell is in
     RangeController.prototype.getCellRangeCount = function (cell) {
