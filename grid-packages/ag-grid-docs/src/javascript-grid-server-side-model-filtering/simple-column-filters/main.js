@@ -1,6 +1,6 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', type: 'text' },
+        { field: 'athlete', type: 'text', minWidth: 220 },
         { field: 'year',
             filter: 'agNumberColumnFilter',
             filterParams: {
@@ -15,7 +15,7 @@ var gridOptions = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 120,
+        minWidth: 100,
         sortable: true,
         resizable: true,
         menuTabs: ['filterMenuTab']

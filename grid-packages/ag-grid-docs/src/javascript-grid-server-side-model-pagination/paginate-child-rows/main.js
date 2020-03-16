@@ -10,7 +10,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
-        minWidth: 140,
+        minWidth: 100,
         resizable: true,
         sortable: true
     },
