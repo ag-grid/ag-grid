@@ -1,21 +1,24 @@
-var columnDefs = [
-    {headerName: 'Country', field: 'country', width: 120, rowGroup: true, enableRowGroup:true},
-    {headerName: 'Year', field: 'year', width: 90, pivot: true, enablePivot:true},
-    {headerName: 'Gold', field: 'gold', width: 100, aggFunc: 'sum'},
-    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "country", rowGroup: true, enableRowGroup: true },
+        { field: "year", pivot: true, enablePivot: true },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
     defaultColDef: {
-        sortable: true,
+        flex: 1,
+        minWidth: 150,
         filter: true,
+        sortable: true,
         resizable: true
     },
-    columnDefs: columnDefs,
-    suppressAggFuncInHeader: true,
+    autoGroupColumnDef: {
+        minWidth: 250,
+    },
     pivotMode: true,
     sideBar: true,
+    suppressAggFuncInHeader: true,
 };
 
 function clearSort() {

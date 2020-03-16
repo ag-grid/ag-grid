@@ -1,22 +1,25 @@
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
-    {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
-    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, pivot: true},
-    {headerName: "Gold", field: "gold", width: 100, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},
-    {headerName: "Total", field: "total", width: 100, enableValue: true}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "athlete", enableRowGroup: true, enablePivot: true },
+        { field: "age", enableValue: true },
+        { field: "country", enableRowGroup: true, enablePivot: true },
+        { field: "year", enableRowGroup: true, enablePivot: true },
+        { field: "date", enableRowGroup: true, enablePivot: true },
+        { field: "sport", enableRowGroup: true, enablePivot: true, pivot: true },
+        { field: "gold", enableValue: true },
+        { field: "silver", enableValue: true },
+        { field: "bronze", enableValue: true },
+        { field: "total", enableValue: true }
+    ],
     defaultColDef: {
-        resizable: true,
-        filter: true
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        resizable: true
     },
-    columnDefs: columnDefs,
+    autoGroupColumnDef: {
+        minWidth: 300,
+    },
     sideBar: true,
 };
 

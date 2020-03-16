@@ -1,25 +1,27 @@
 var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        filter: true
-    },
     columnDefs: [
-        {headerName: "Athlete", field: "athlete",  minWidth: 150},
-        {headerName: "Age", field: "age", minWidth: 50, filter: 'agNumberColumnFilter'},
-        {headerName: "Country", field: "country", width: 120, rowGroup: true, enableRowGroup:true},
-        {headerName: "Sport", field: "sport", width: 110, pivot: true, enablePivot:true},
-        {headerName: "Year", field: "year", width: 90, pivot: true, enablePivot:true},
-        {headerName: "Date", field: "date", width: 110},
-        {headerName: "Gold", field: "gold", width: 150, aggFunc: 'sum'},
-        {headerName: "Silver", field: "silver", width: 150, aggFunc: 'sum'},
-        {headerName: "Bronze", field: "bronze", width: 150, aggFunc: 'sum'}
+        { field: "country", rowGroup: true, enableRowGroup: true },
+        { field: "athlete" },
+        { field: "age", filter: 'agNumberColumnFilter' },
+        { field: "sport", pivot: true, enablePivot: true },
+        { field: "year", pivot: true, enablePivot: true },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
     ],
-
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 250,
+    },
     pivotMode: true,
-    pivotColumnGroupTotals: 'before',
     sideBar: true,
+    pivotColumnGroupTotals: 'before',
 };
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

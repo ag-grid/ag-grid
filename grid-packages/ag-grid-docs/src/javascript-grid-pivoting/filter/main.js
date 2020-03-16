@@ -1,12 +1,23 @@
-var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, pivot: true,  enablePivot:true},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
-];
+var gridOptions = {
+    columnDefs: [
+        { field: "country", pivot: true, enablePivot: true },
+        { field: "year" },
+        { field: "date" },
+        { field: "sport" },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        sortable: true,
+        resizable: true
+    },
+    pivotMode: true,
+    sideBar: true,
+};
 
 function setTitle(title) {
     document.querySelector('#title').innerText = title;
@@ -72,16 +83,6 @@ function filterUsaAndCanadaEquestrian() {
     });
     setTitle('USA and Canada - Equestrian')
 }
-
-var gridOptions = {
-    defaultColDef: {
-        resizable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    pivotMode: true,
-    sideBar: true,
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
