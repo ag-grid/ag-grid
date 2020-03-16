@@ -1,23 +1,27 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1
+    },
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
                 { field: 'callId' },
                 { field: 'direction' },
-                { field: 'number' },
+                { field: 'number', minWidth: 150 },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                { field: 'switchCode' }
-            ]
+                { field: 'switchCode', minWidth: 150 }
+            ],
+            defaultColDef: {
+                flex: 1
+            },
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);

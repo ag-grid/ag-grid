@@ -1,13 +1,14 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1
+    },
     masterDetail: true,
     enableCellChangeFlash: true,
     detailCellRendererParams: {
@@ -16,18 +17,16 @@ var gridOptions = {
         suppressRefresh: true,
 
         detailGridOptions: {
-            defaultColDef: {
-                sortable: true
-            },
             columnDefs: [
                 { field: 'callId' },
                 { field: 'direction' },
-                { field: 'number' },
+                { field: 'number', minWidth: 150 },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                { field: 'switchCode' }
+                { field: 'switchCode', minWidth: 150 }
             ],
-            onFirstDataRendered: function(params) {
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1,
+                sortable: true
             }
         },
         getDetailRowData: function(params) {
@@ -39,8 +38,6 @@ var gridOptions = {
 };
 
 function onFirstDataRendered(params) {
-    params.api.sizeColumnsToFit();
-
     // arbitrarily expand a row for presentational purposes
     setTimeout(function() { params.api.getDisplayedRowAtIndex(0).setExpanded(true); }, 0);
 }

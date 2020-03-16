@@ -1,25 +1,26 @@
-var columnDefs = [
-    // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'account' },
-    { field: 'calls' },
-    { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        // group cell renderer needed for expand / collapse icons
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' },
+        { field: 'calls' },
+        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+    ],
+    defaultColDef: {
+        flex: 1,
+    },
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
                 { field: 'callId' },
-                { field: 'direction' },
+                { field: 'direction', minWidth: 150 },
                 { field: 'number' },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                { field: 'switchCode' }
+                { field: 'switchCode', minWidth: 150 }
             ],
-            onFirstDataRendered: function(params) {
-                params.api.sizeColumnsToFit();
+            defaultColDef: {
+                flex: 1,
             }
         },
         getDetailRowData: function(params) {
@@ -29,12 +30,7 @@ var gridOptions = {
             }, 1000);
         }
     },
-    onFirstDataRendered: onFirstDataRendered
 };
-
-function onFirstDataRendered(params) {
-    params.api.sizeColumnsToFit();
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
