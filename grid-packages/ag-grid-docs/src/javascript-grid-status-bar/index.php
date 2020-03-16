@@ -103,7 +103,7 @@ gridOptions: {
 </ul>
 </p>
 
-<?= grid_example('Status Bar Simple', 'status-bar-simple', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Status Bar Simple', 'status-bar-simple', 'generated', ['enterprise' => true, 'exampleHeight' => 640]) ?>
 
 <h3>Configuring The Aggregation Panel</h3>
 
