@@ -1843,7 +1843,7 @@ export class CellComp extends Component {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     }
 
     private addSelectionHandle() {
