@@ -86,6 +86,7 @@ export class Environment {
         if (SASS_PROPERTY_BUILDER[key]) {
             const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
+            div.style.position = 'absolute';
             const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
                 if (idx === 0) {
                     _.addCssClass(el, theme);
