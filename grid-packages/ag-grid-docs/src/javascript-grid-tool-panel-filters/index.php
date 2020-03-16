@@ -65,7 +65,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Suppress Options', 'suppress-options', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Suppress Options', 'suppress-options', 'generated', ['enterprise' => true, 'exampleHeight' => 610]) ?>
 
     <h2>Filter Instances</h2>
 
