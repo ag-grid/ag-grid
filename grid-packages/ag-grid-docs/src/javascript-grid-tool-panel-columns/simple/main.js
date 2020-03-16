@@ -2,32 +2,35 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
-            { field: "country", width: 120}
+            { field: "athlete", filter: 'agTextColumnFilter', minWidth: 200},
+            { field: "age" },
+            { field: "country", minWidth: 200 }
         ]
     },
     {
         headerName: 'Competition',
         children: [
-            { field: "year", width: 90 },
-            { field: "date", width: 110 },
+            { field: "year" },
+            { field: "date", minWidth: 180 },
         ]
     },
-    { field: "sport", width: 110 },
+    { field: "sport", minWidth: 200 },
     {
         headerName: 'Medals',
         children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
+            { field: "gold" },
+            { field: "silver" },
+            { field: "bronze" },
+            { field: "total" }
         ]
     }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         // allow every column to be aggregated
         enableValue: true,
         // allow every column to be grouped
@@ -37,7 +40,6 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
-    columnDefs: columnDefs,
     sideBar: 'columns'
 };
 

@@ -1,22 +1,22 @@
-var columnDefs = [
-    {headerName: "Name", field: "athlete", width: 150},
-    {field: "age", width: 90, enableRowGroup: true},
-    {field: "country", width: 120},
-    {field: "year", width: 90},
-    {field: "date", width: 110, suppressColumnsToolPanel: true},
-    {field: "sport", width: 110},
-    {field: "gold", width: 100, aggFunc: 'sum'},
-    {field: "silver", width: 100, aggFunc: 'sum'},
-    {field: "bronze", width: 100, aggFunc: 'sum'},
-    {field: "total", width: 100, aggFunc: 'sum'}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { headerName: "Name", field: "athlete", minWidth: 200 },
+        { field: "age", enableRowGroup: true },
+        { field: "country", minWidth: 200 },
+        { field: "year" },
+        { field: "date", suppressColumnsToolPanel: true, minWidth: 180 },
+        { field: "sport", minWidth: 200 },
+        { field: "gold", aggFunc: 'sum' },
+        { field: "silver", aggFunc: 'sum' },
+        { field: "bronze", aggFunc: 'sum' },
+        { field: "total", aggFunc: 'sum' },
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         sortable: true,
         enablePivot: true
     },
-    columnDefs: columnDefs,
     sideBar: {
         toolPanels: [{
             id: 'columns',

@@ -1,20 +1,76 @@
 var columnDefs = [
-    { headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true },
-    { headerName: "Age", field: "age", width: 90, enableValue: true },
-    { headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, headerValueGetter: countryHeaderValueGetter },
-    { headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true },
-    { headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true },
-    { headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true },
-    { headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true, toolPanelClass: 'tp-gold' },
-    { headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, toolPanelClass: ['tp-silver'] },
     {
-        headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true,
+        field: "athlete",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "age",
+        enableValue: true
+    },
+    {
+        field: "country",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true,
+        headerValueGetter: countryHeaderValueGetter
+    },
+    {
+        field: "year",
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "date",
+        minWidth: 180,
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "sport",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "gold",
+        hide: true,
+        enableValue: true,
+        toolPanelClass: 'tp-gold'
+    },
+    {
+        field: "silver",
+        hide: true,
+        enableValue: true,
+        toolPanelClass: ['tp-silver']
+    },
+    {
+        field: "bronze",
+        hide: true,
+        enableValue: true,
         toolPanelClass: function (params) {
             return 'tp-bronze';
         }
     },
-    { headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100 }
+    {
+        headerName: "Total",
+        field: "totalAgg",
+        valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze",
+    }
 ];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        filter: true
+    },
+    sideBar: 'columns',
+    rowGroupPanelShow: 'always'
+};
 
 function countryHeaderValueGetter(params) {
     switch (params.location) {
@@ -26,17 +82,6 @@ function countryHeaderValueGetter(params) {
         default: return 'Should never happen!';
     }
 }
-
-var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    rowData: null,
-    sideBar: 'columns',
-    rowGroupPanelShow: 'always'
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
