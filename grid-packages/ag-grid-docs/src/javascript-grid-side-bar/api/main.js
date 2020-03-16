@@ -1,14 +1,48 @@
-var columnDefs = [
-    { field: "athlete", width: 150, filter: "agTextColumnFilter" },
-    { field: "age", width: 90},
-    { field: "country", width: 120},
-    { field: "year", width: 90 },
-    { field: "date", width: 110 },
-    { field: "gold", width: 100 },
-    { field: "silver", width: 100 },
-    { field: "bronze", width: 100 },
-    { field: "total", width: 100 }
-];
+var gridOptions = {
+    columnDefs: [
+        { field: "athlete", filter: 'agTextColumnFilter', minWidth: 200 },
+        { field: "age" },
+        { field: "country", minWidth: 200 },
+        { field: "year" },
+        { field: "date", minWidth: 160 },
+        { field: "gold" },
+        { field: "silver" },
+        { field: "bronze" },
+        { field: "total" }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true,
+        sortable: true,
+        filter: true
+    },
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+            },
+            {
+                id: 'filters',
+                labelDefault: 'Filters',
+                labelKey: 'filters',
+                iconKey: 'filter',
+                toolPanel: 'agFiltersToolPanel',
+            }
+        ],
+        defaultToolPanel: 'filters',
+        hiddenByDefault: true
+    }
+};
 
 function setSideBarVisible(value) {
     gridOptions.api.setSideBarVisible(value);
@@ -47,40 +81,6 @@ function setSideBarPosition(position) {
 function getOpenedToolPanelItem() {
     alert(gridOptions.api.getOpenedToolPanelItem());
 }
-
-var gridOptions = {
-    defaultColDef: {
-        // allow every column to be aggregated
-        enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true,
-        sortable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    sideBar: {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel',
-            },
-            {
-                id: 'filters',
-                labelDefault: 'Filters',
-                labelKey: 'filters',
-                iconKey: 'filter',
-                toolPanel: 'agFiltersToolPanel',
-            }
-        ],
-        defaultToolPanel: 'filters',
-        hiddenByDefault: true
-    }
-};
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
