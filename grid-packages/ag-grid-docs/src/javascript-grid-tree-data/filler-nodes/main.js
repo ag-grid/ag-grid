@@ -1,11 +1,3 @@
-// specify the columns
-var columnDefs = [
-    // we're using the auto group column by default!
-    {field: "groupType", valueGetter: function (params) {
-        return params.data ? 'Provided' : 'Filler';
-    }}
-];
-
 // specify the data
 var rowData = [
     {orgHierarchy: ['A']},
@@ -15,19 +7,27 @@ var rowData = [
 ];
 
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-    treeData: true, // enable Tree Data mode
-    animateRows: true,
-    groupDefaultExpanded: -1, // expand all groups by default
-    getDataPath: function(data) {
-        return data.orgHierarchy;
+    columnDefs: [
+        // we're using the auto group column by default!
+        {field: "groupType", valueGetter: function (params) {
+                return params.data ? 'Provided' : 'Filler';
+            }}
+    ],
+    defaultColDef: {
+        flex: 1,
     },
     autoGroupColumnDef: {
         headerName: "Organisation Hierarchy",
         cellRendererParams: {
             suppressCount: true
         }
+    },
+    rowData: rowData,
+    treeData: true, // enable Tree Data mode
+    animateRows: true,
+    groupDefaultExpanded: -1, // expand all groups by default
+    getDataPath: function(data) {
+        return data.orgHierarchy;
     }
 };
 
