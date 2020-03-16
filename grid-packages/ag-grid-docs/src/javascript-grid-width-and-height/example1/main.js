@@ -11,16 +11,19 @@ var gridOptions = {
         { field: 'bronze', minWidth: 80},
         { field: 'total', minWidth: 80}
     ],
+
     defaultColDef: {
         resizable: true
     },
 
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    },
+    onFirstDataRendered: onFirstDataRendered,
 
     onGridSizeChanged: onGridSizeChanged
 };
+
+function onFirstDataRendered(params) {
+    params.api.sizeColumnsToFit();
+}
 
 function onGridSizeChanged(params) {
     // get the current grids width
