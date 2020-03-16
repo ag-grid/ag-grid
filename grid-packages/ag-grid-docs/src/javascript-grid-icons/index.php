@@ -338,8 +338,8 @@ sortUnSort
         var icons = [
             'aggregation', 'arrows', 'asc', 'cancel', 'chart',
             'checkbox-checked', 'checkbox-indeterminate',
-            'checkbox-unchecked', 'color-picker', 'column',
-            'columns', 'contracted', 'copy', 'cross', 'cut', 'data',
+            'checkbox-unchecked', 'color-picker',
+            'columns', 'contracted', 'copy', 'cross',
             'desc', 'expanded', 'eye-slash', 'eye', 'filter', 'first',
             'grip', 'group', 'last', 'left', 'linked',
             'loading', 'maximize', 'menu', 'minimize', 'next',
