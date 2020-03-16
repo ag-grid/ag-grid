@@ -1,3 +1,20 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_23_0_0">
+    <p>Release 23.0.0 (16th Mar 2019)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+    </ul>
+
+    <p>Breaking Changes:</p>
+
+    <ul>
+        <li>
+            AG-3802 - Migrate <code>ag-grid-angular</code> & <code>@ag-grid-community/angular</code> to use the Angular CLI to build.
+            Angular 6+ is now the minimum supported version of Angular.
+        </li>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_22_1_0">
     <p>Release 22.1.0 (6th Dec 2019)</p>
 
