@@ -3,7 +3,7 @@ var columnDefs = [
     {headerName: "#", cellRenderer: 'rowNodeIdRenderer'},
     {field: "athlete"},
     {field: "age", enablePivot: true},
-    {field: "country, enableRowGroup: true },
+    {field: "country", enableRowGroup: true },
     {field: "year", filter: 'agNumberColumnFilter'},
     {field: "date"},
     {field: "sport", filter: 'agTextColumnFilter'},
