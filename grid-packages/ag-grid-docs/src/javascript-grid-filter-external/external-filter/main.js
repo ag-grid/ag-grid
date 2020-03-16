@@ -1,40 +1,43 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+    { field: "athlete", minWidth: 180 },
+    { field: "age", filter: 'agNumberColumnFilter', maxWidth: 80 },
+    { field: "country" },
+    { field: "year", maxWidth: 90 },
+    {
+        field: "date",
+        filter: 'agDateColumnFilter',
+        filterParams: {
+            comparator:function (filterLocalDateAtMidnight, cellValue){
+                var dateAsString = cellValue;
+                var dateParts  = dateAsString.split("/");
+                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                    return 0
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
             }
         }
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter'}
+    },
+    { field: "gold", filter: 'agNumberColumnFilter' },
+    { field: "silver", filter: 'agNumberColumnFilter' },
+    { field: "bronze", filter: 'agNumberColumnFilter' },
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 120,
         filter: true
     },
-    columnDefs: columnDefs,
-    rowData: null,
     animateRows: true,
     isExternalFilterPresent: isExternalFilterPresent,
     doesExternalFilterPass: doesExternalFilterPass

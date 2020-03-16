@@ -1,21 +1,23 @@
 var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', width: 150, filter: 'agTextColumnFilter'},
-    {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
+    { field: 'athlete', filter: 'agTextColumnFilter' },
+    { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
+    { field: 'country' },
+    { field: 'year', maxWidth: 100 },
     {
-        headerName: 'Date',
         field: 'date',
-        width: 145,
         filter: 'agDateColumnFilter',
         filterParams: {
             comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
                 var dateParts = dateAsString.split('/');
-                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+                var cellDate = new Date(
+                    Number(dateParts[2]),
+                    Number(dateParts[1]) - 1,
+                    Number(dateParts[0])
+                );
 
-                if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
                     return 0;
                 }
 
@@ -26,23 +28,25 @@ var columnDefs = [
                 if (cellDate > filterLocalDateAtMidnight) {
                     return 1;
                 }
-            }
-        }
+            },
+            // browserDatePicker: true,
+        },
     },
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'agNumberColumnFilter'}
+    { field: 'sport' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: 'agNumberColumnFilter' },
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        filter: true
-    },
     columnDefs: columnDefs,
-    rowData: null
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        sortable: true,
+    },
 };
 
 function clearFilters() {

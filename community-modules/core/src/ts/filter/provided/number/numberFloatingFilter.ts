@@ -4,13 +4,6 @@ import { TextInputFloatingFilter } from "../../floating/provided/textInputFloati
 
 export class NumberFloatingFilter extends TextInputFloatingFilter {
 
-    protected postConstruct(): void {
-        this.setTemplate(
-            `<div class="ag-floating-filter-input" role="presentation">
-                <ag-input-number-field ref="eFloatingFilterInput"></ag-input-number-field>
-            </div>`);
-    }
-
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }

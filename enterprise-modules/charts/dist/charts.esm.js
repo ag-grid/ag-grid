@@ -15202,9 +15202,6 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
     function NumberFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    NumberFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-number-field ref=\"eFloatingFilterInput\"></ag-input-number-field>\n            </div>");
-    };
     NumberFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     };
@@ -56076,10 +56073,9 @@ var ChartMenu = /** @class */ (function (_super) {
         this.refreshMenuClasses();
     };
     ChartMenu.prototype.showMenu = function (tabName) {
-        var _this = this;
         var tab = this.tabs.indexOf(tabName);
         if (!this.menuPanel) {
-            this.createMenuPanel(tab).then(function () { return _this.showContainer(); });
+            this.createMenuPanel(tab).then(this.showContainer.bind(this));
         }
         else {
             this.showContainer();

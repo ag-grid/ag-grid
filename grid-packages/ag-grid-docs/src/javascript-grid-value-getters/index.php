@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1 id="value-getters">Value Getters</h1>
 
     <p class="lead">
@@ -346,7 +344,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610]) ?>
 
 
 

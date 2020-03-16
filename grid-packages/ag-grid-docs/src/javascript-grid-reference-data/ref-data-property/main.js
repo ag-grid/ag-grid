@@ -23,15 +23,8 @@ var rowData = [
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        filter: true,
-        width: 185,
-        editable: true
-    },
-    rowData: rowData,
     columnDefs: [
         {
-            headerName: "Make",
             field: "make",
             cellEditor: "select",
             cellEditorParams: {
@@ -41,8 +34,8 @@ var gridOptions = {
             refData: carMappings
         },
         {
-            headerName: "Exterior Colour",
             field: "exteriorColour",
+            minWidth: 150,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorParams: {
                 values: extractValues(colourMappings),
@@ -56,8 +49,8 @@ var gridOptions = {
             cellRenderer: colorCellRenderer
         },
         {
-            headerName: "Interior Colour",
             field: "interiorColour",
+            minWidth: 150,
             filter: 'agSetColumnFilter',
             filterParams: {
                 cellRenderer: colorCellRenderer
@@ -68,6 +61,7 @@ var gridOptions = {
         {
             headerName: "Retail Price",
             field: "price",
+            minWidth: 140,
             colId: "retailPrice",
             valueGetter: function (params) {
                 return params.data.price;
@@ -77,6 +71,7 @@ var gridOptions = {
         },
         {
             headerName: "Retail Price (incl Taxes)",
+            minWidth: 205,
             editable: false,
             valueGetter: function (params) {
                 // example of chaining value getters
@@ -85,6 +80,12 @@ var gridOptions = {
             valueFormatter: currencyFormatter
         }
     ],
+    defaultColDef: {
+        flex: 1,
+        filter: true,
+        editable: true
+    },
+    rowData: rowData,
     onCellValueChanged: function (params) {
         // notice that the data always contains the keys rather than values after editing
         console.log("onCellValueChanged: ", params);

@@ -1,17 +1,36 @@
-var columnDefs = [
-    {field: 'a', suppressCellFlash: true},
-    {field: 'b'},
-    {field: 'c'},
-    {field: 'd'},
-    {field: 'e'},
-    {field: 'f'}
-];
-
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
 var data = [];
 var topRowData = [];
 var bottomRowData = [];
+
+var gridOptions = {
+    columnDefs: [
+        {field: 'a', suppressCellFlash: true},
+        {field: 'b'},
+        {field: 'c'},
+        {field: 'd'},
+        {field: 'e'},
+        {field: 'f'}
+    ],
+    defaultColDef: {
+        flex: 1,
+    },
+    rowData: [],
+    pinnedTopRowData: [],
+    pinnedBottomRowData: [],
+    enableCellChangeFlash: true,
+    onGridReady: function(params) {
+        // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
+        // the row animation look nice when you see all the rows
+        data = createData(14);
+        topRowData = createData(2);
+        bottomRowData = createData(2);
+        params.api.setRowData(data);
+        params.api.setPinnedTopRowData(topRowData);
+        params.api.setPinnedBottomRowData(bottomRowData);
+    },
+};
 
 function createData(count) {
     var result = [];
@@ -27,27 +46,6 @@ function createData(count) {
     }
     return result;
 }
-
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: [],
-    pinnedTopRowData: [],
-    pinnedBottomRowData: [],
-    enableCellChangeFlash: true,
-    onGridReady: function(params) {
-        // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
-        // the row animation look nice when you see all the rows
-        data = createData(14);
-        topRowData = createData(2);
-        bottomRowData = createData(2);
-        params.api.setRowData(data);
-        params.api.setPinnedTopRowData(topRowData);
-        params.api.setPinnedBottomRowData(bottomRowData);
-    },
-    onFirstDataRendered: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
 
 function isForceRefreshSelected() {
     return document.querySelector('#forceRefresh').checked;

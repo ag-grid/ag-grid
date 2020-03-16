@@ -1,20 +1,48 @@
 var columnDefs = [
-    {headerName: 'Editable A', field: 'a', editable: true, valueParser: numberValueParser},
-    {headerName: 'Editable B', field: 'b', editable: true, valueParser: numberValueParser},
-    {headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser},
-    {headerName: 'API D', field: 'd', valueParser: numberValueParser, cellRenderer: 'agAnimateShowChangeCellRenderer'},
-    {headerName: 'API E', field: 'e', valueParser: numberValueParser, cellRenderer: 'agAnimateShowChangeCellRenderer'},
+    { headerName: 'Editable A', field: 'a', editable: true, valueParser: numberValueParser },
+    { headerName: 'Editable B', field: 'b', editable: true, valueParser: numberValueParser },
+    { headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser },
+    {
+        headerName: 'API D',
+        field: 'd',
+        minWidth: 140,
+        valueParser: numberValueParser,
+        cellRenderer: 'agAnimateShowChangeCellRenderer',
+    },
+    {
+        headerName: 'API E',
+        field: 'e',
+        minWidth: 140,
+        valueParser: numberValueParser,
+        cellRenderer: 'agAnimateShowChangeCellRenderer',
+    },
     {
         headerName: 'Total',
+        minWidth: 140,
         valueGetter: 'data.a + data.b + data.c + data.d + data.e',
-        cellRenderer: 'agAnimateShowChangeCellRenderer'
+        cellRenderer: 'agAnimateShowChangeCellRenderer',
     },
     {
         headerName: 'Average',
+        minWidth: 140,
         valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5',
-        cellRenderer: 'agAnimateSlideCellRenderer'
+        cellRenderer: 'agAnimateSlideCellRenderer',
     }
 ];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 120,
+        resizable: true,
+        cellClass: 'align-right',
+        valueFormatter: function (params) {
+            return formatNumber(params.value);
+        },
+    },
+    rowData: createRowData()
+};
 
 function createRowData() {
     var rowData = [];
@@ -41,18 +69,6 @@ function formatNumber(number) {
     // i pulled this from stack overflow, i have no idea how it works
     return Math.floor(number).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 }
-
-var gridOptions = {
-    defaultColDef: {
-        valueFormatter: function (params) {
-            return formatNumber(params.value);
-        },
-        cellClass: 'align-right',
-        resizable: true
-    },
-    columnDefs: columnDefs,
-    rowData: createRowData()
-};
 
 function onUpdateSomeValues() {
     var rowCount = gridOptions.api.getDisplayedRowCount();

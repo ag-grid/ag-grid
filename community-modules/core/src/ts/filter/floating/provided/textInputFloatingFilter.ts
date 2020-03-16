@@ -19,7 +19,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     private applyActive: boolean;
 
     @PostConstruct
-    protected postConstruct(): void {
+    private postConstruct(): void {
         this.setTemplate(
             `<div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>

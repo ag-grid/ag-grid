@@ -5,8 +5,6 @@ $pageKeywords = "ag-Grid Value Handlers";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
-
     <h1>Reference Data</h1>
 
     <p class="lead">

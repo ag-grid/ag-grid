@@ -38,6 +38,6 @@ include '../documentation-main/documentation_header.php';
 
 <p> The example below shows the external filters in action.  </p>
 
-<?= grid_example('External Filter', 'external-filter', 'generated') ?>
+<?= grid_example('External Filter', 'external-filter', 'generated', ['exampleHeight' => 580]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

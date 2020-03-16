@@ -28223,10 +28223,9 @@ var ChartMenu = /** @class */ (function (_super) {
         this.refreshMenuClasses();
     };
     ChartMenu.prototype.showMenu = function (tabName) {
-        var _this = this;
         var tab = this.tabs.indexOf(tabName);
         if (!this.menuPanel) {
-            this.createMenuPanel(tab).then(function () { return _this.showContainer(); });
+            this.createMenuPanel(tab).then(this.showContainer.bind(this));
         }
         else {
             this.showContainer();

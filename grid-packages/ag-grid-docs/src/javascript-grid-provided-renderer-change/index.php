@@ -5,8 +5,6 @@ $pageKeywords = "javascript grid changes";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
-
-
     <h1 id="animate-renderer">Change Cell Renderers</h1>
 
     <p class="lead">
@@ -41,7 +39,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-<?= grid_example('Animation Renderers', 'animation-renderers', 'generated') ?>
+<?= grid_example('Animation Renderers', 'animation-renderers', 'generated', ['exampleHeight' => 530]) ?>
 
     <note>
         We hope you like the animation cell renderers. However you can also take inspiration from them,

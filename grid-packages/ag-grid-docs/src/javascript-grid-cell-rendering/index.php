@@ -123,7 +123,7 @@ var colDef3 = function(params) {
     </li>
 </ul>
 
-<?= grid_example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 250]) ?>
+<?= grid_example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', ['enterprise' => true, 'exampleHeight' => 335]) ?>
 
 <h2>Example: Rendering Order</h2>
 

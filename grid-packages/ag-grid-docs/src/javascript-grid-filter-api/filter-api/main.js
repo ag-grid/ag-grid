@@ -1,44 +1,54 @@
-
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agSetColumnFilter'},
-    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            if (dateAsString == null) return -1;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+    { field: 'athlete', filter: 'agSetColumnFilter' },
+    { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
+    { field: 'country' },
+    { field: 'year', maxWidth: 100 },
+    {
+        field: 'date',
+        filter: 'agDateColumnFilter',
+        filterParams: {
+            comparator: function(filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                if (dateAsString == null) return -1;
+                var dateParts = dateAsString.split('/');
+                var cellDate = new Date(
+                    Number(dateParts[2]),
+                    Number(dateParts[1]) - 1,
+                    Number(dateParts[0])
+                );
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
+                if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+                    return 0;
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            }
-        }
-    }},
-    {headerName: "Sport", field: "sport", width: 110, filter: 'agTextColumnFilter'},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
-    {headerName: "Total", field: "total", width: 100, filter: false}
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
+            },
+            // browserDatePicker: true,
+        },
+    },
+    { field: 'sport', filter: 'agSetColumnFilter' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: false },
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        sortable: true,
-        filter: true
-    },
     columnDefs: columnDefs,
-    rowData: null
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        filter: true,
+        sortable: true,
+    },
 };
+
 
 function irelandAndUk() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');

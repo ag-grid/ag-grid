@@ -1,30 +1,71 @@
 var callCount = 1;
 
 var columnDefs = [
-    {headerName: "Q1", field: "q1", type: 'quarterFigure'},
-    {headerName: "Q2", field: "q2", type: 'quarterFigure'},
-    {headerName: "Q3", field: "q3", type: 'quarterFigure'},
-    {headerName: "Q4", field: "q4", type: 'quarterFigure'},
-    {headerName: "Year", field: "year", rowGroup: true, hide: true},
-    {headerName: "Total", colId: "total", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
-        valueGetter: function(params) {
+    { field: "q1", type: 'quarterFigure' },
+    { field: "q2", type: 'quarterFigure' },
+    { field: "q3", type: 'quarterFigure' },
+    { field: "q4", type: 'quarterFigure' },
+    { field: "year", rowGroup: true, hide: true },
+    {
+        headerName: "Total",
+        colId: "total",
+        cellClass: 'number-cell total-col',
+        aggFunc: "sum",
+        valueFormatter: formatNumber,
+        valueGetter: function (params) {
             var q1 = params.getValue('q1');
             var q2 = params.getValue('q2');
             var q3 = params.getValue('q3');
             var q4 = params.getValue('q4');
             var result = q1 + q2 + q3 + q4;
-            console.log('Total Value Getter ('+callCount+', '+params.column.getId()+'): ' + [q1,q2,q3,q4].join(', ') + ' = ' + result);
+            console.log('Total Value Getter (' + callCount + ', ' + params.column.getId() + '): ' + [q1, q2, q3, q4].join(', ') + ' = ' + result);
             callCount++;
             return result;
         }
     },
-    {headerName: "Total x 10", cellClass: 'number-cell total-col', valueFormatter: formatNumber,
+    {
+        headerName: "Total x 10",
+        cellClass: 'number-cell total-col',
+        aggFunc: "sum",
+        minWidth: 120,
+        valueFormatter: formatNumber,
         valueGetter: function(params) {
             var total = params.getValue('total');
             return total * 10;
         }
     }
 ];
+
+var gridOptions = {
+    columnDefs: columnDefs,
+    defaultColDef: {
+        flex: 1,
+        resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 130
+    },
+    columnTypes: {
+        quarterFigure: {
+            editable: true, cellClass: 'number-cell', aggFunc: 'sum',
+            valueFormatter: formatNumber,
+            valueParser: function numberParser(params) {
+                return Number(params.newValue);
+            }
+        }
+    },
+    rowData: createRowData(),
+    suppressAggFuncInHeader: true,
+    enableCellChangeFlash: true,
+    enableRangeSelection: true,
+    groupDefaultExpanded: 1,
+    getRowNodeId: function(data) {
+        return data.id;
+    },
+    onCellValueChanged: function() {
+        console.log('onCellValueChanged');
+    }
+};
 
 function createRowData() {
     var rowData = [];
@@ -74,8 +115,13 @@ function onUpdateOneValue() {
 }
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
         resizable: true
+    },
+    autoGroupColumnDef: {
+        minWidth: 130
     },
     columnTypes: {
         quarterFigure: {
@@ -86,13 +132,14 @@ var gridOptions = {
             }
         }
     },
-    getRowNodeId: function(data) { return data.id; },
+    rowData: createRowData(),
     suppressAggFuncInHeader: true,
     enableCellChangeFlash: true,
-    columnDefs: columnDefs,
-    rowData: createRowData(),
     enableRangeSelection: true,
     groupDefaultExpanded: 1,
+    getRowNodeId: function(data) {
+        return data.id;
+    },
     onCellValueChanged: function() {
         console.log('onCellValueChanged');
     }
@@ -102,5 +149,4 @@ var gridOptions = {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
 });

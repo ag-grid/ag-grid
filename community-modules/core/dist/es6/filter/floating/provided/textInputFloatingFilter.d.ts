@@ -9,7 +9,7 @@ export declare abstract class TextInputFloatingFilter extends SimpleFloatingFilt
     private eFloatingFilterInput;
     protected params: IFloatingFilterParams;
     private applyActive;
-    protected postConstruct(): void;
+    private postConstruct;
     protected getDefaultDebounceMs(): number;
     onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
     init(params: IFloatingFilterParams): void;

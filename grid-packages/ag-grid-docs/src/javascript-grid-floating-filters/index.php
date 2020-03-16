@@ -62,7 +62,7 @@ gridOptions = {
     </li>
 </ul>
 
-<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Floating Filter', 'floating-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 615]) ?>
 
 <h2>Provided Floating Filters</h2>
 

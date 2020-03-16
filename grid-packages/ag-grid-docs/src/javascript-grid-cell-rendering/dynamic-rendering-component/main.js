@@ -1,4 +1,4 @@
-var students = [
+var rowData = [
     {value: 14, type: 'age'},
     {value: 'female', type: 'gender'},
     {value: "Happy", type: 'mood'},
@@ -7,45 +7,37 @@ var students = [
     {value: "Sad", type: 'mood'}
 ];
 
-
-var columnDefs = [
-    {
-        headerName: "Value",
-        field: "value",
-        width: 100
-    },
-    {
-        headerName: "Rendered Value",
-        field: "value",
-        width: 100,
-        cellRendererSelector:function (params) {
-            var moodDetails = {
-                component: 'moodCellRenderer'
-            };
-
-            var genderDetails = {
-                component: 'genderCellRenderer',
-                params: {values: ['Male', 'Female']}
-            };
-
-            if (params.data.type === 'gender')
-                return genderDetails;
-            else if (params.data.type === 'mood')
-                return moodDetails;
-            else
-                return null;
-
-        }
-    },
-    {headerName: "Type", field: "type", width: 100}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: students,
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
+    columnDefs: [
+        { field: "value" },
+        {
+            headerName: "Rendered Value",
+            field: "value",
+            cellRendererSelector: function (params) {
+                var moodDetails = {
+                    component: 'moodCellRenderer'
+                };
+
+                var genderDetails = {
+                    component: 'genderCellRenderer',
+                    params: {values: ['Male', 'Female']}
+                };
+
+                if (params.data.type === 'gender')
+                    return genderDetails;
+                else if (params.data.type === 'mood')
+                    return moodDetails;
+                else
+                    return null;
+
+            }
+        },
+        { field: "type" }
+    ],
+    defaultColDef: {
+        flex: 1
     },
+    rowData: rowData,
     onRowEditingStarted: function (event) {
         console.log('never called - not doing row editing');
     },

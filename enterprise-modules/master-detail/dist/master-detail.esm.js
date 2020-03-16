@@ -15425,9 +15425,6 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
     function NumberFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    NumberFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-number-field ref=\"eFloatingFilterInput\"></ag-input-number-field>\n            </div>");
-    };
     NumberFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     };
