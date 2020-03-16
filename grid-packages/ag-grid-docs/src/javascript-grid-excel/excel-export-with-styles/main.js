@@ -5,14 +5,9 @@ var columnDefs = [
             {
                 headerName: 'Group A',
                 children: [
-                    { 
-                        field: 'athlete',
-                        minWidth: 150,
-                        flex: 1
-                    },
+                    {  field: 'athlete', minWidth: 200  },
                     {
                         field: 'age',
-                        width: 90,
                         cellClass: 'twoDecimalPlaces',
                         cellClassRules: {
                             greenBackground: function(params) {
@@ -26,8 +21,6 @@ var columnDefs = [
                     {
                         field: 'country',
                         minWidth: 200,
-                        resizable: true,
-                        flex: 1,
                         cellClassRules: {
                             redFont: function(params) {
                                 return params.value === 'United States';
@@ -37,7 +30,6 @@ var columnDefs = [
                     {
                         headerName: 'Group',
                         valueGetter: 'data.country.charAt(0)',
-                        width: 100,
                         cellClassRules: {
                             boldBorders: function(params) {
                                 return params.value === 'U';
@@ -47,7 +39,6 @@ var columnDefs = [
                     },
                     {
                         field: 'year',
-                        width: 100,
                         cellClassRules: {
                             notInExcel: function(params) {
                                 return true;
@@ -74,34 +65,18 @@ var columnDefs = [
 
                         }
                     },
+                    { field: 'sport', minWidth: 150 },
                     {
-                        field: 'sport',
-                        minWidth: 150,
-                        flex: 1
-                    },
-                    {
-                        headerName: 'Gold',
                         field: 'gold',
-                        width: 100,
                         cellClassRules: {
                             boldBorders: function(params) {
                                 return params.value > 2;
                             }
                         }
                     },
-                    { 
-                        field: 'silver',
-                        width: 100,
-                        cellClass: 'textFormat'
-                    },
-                    {
-                        field: 'bronze',
-                        width: 100 
-                    },
-                    {
-                        field: 'total',
-                        width: 100
-                    }
+                    { field: 'silver', cellClass: 'textFormat' },
+                    { field: 'bronze' },
+                    { field: 'total', }
                 ]
             }
         ]
@@ -116,7 +91,10 @@ var gridOptions = {
             }
         },
         sortable: true,
-        filter: true
+        filter: true,
+        resizable: true,
+        minWidth: 100,
+        flex: 1
     },
 
     columnDefs: columnDefs,

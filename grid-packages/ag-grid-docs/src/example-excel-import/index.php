@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>The spreadsheet can be downloaded <a href="https://www.ag-grid.com/example-excel-import/OlymicData.xlsx">here.</a></p>
 
-    <?= grid_example('Import Excel into ag-Grid', 'excel-import', 'vanilla', ['showResult' => true, 'exampleHeight' => 460, 'extras' => ['xlsx-style']]) ?>
+    <?= grid_example('Import Excel into ag-Grid', 'excel-import', 'vanilla', ['showResult' => true, 'exampleHeight' => 500, 'extras' => ['xlsx-style']]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

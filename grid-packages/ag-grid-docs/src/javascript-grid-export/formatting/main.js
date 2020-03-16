@@ -5,21 +5,17 @@ var columnDefs = [
             {
                 headerName: 'When and Where',
                 children: [
-                    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-                    {headerName: 'Year', field: 'year', width: 75, rowGroup: true}
+                    { field: 'country', minWidth: 200, rowGroup: true},
+                    { field: 'year', rowGroup: true }
                 ]
             },
             {
                 headerName: 'Athlete',
                 children: [
-                    {headerName: 'Name', field: 'athlete', width: 150},
-                    {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""'},
-                    {
-                        headerName: 'Age',
-                        field: 'age',
-                        width: 90
-                    },
-                    {headerName: 'Sport', field: 'sport', width: 120, rowGroup: true}
+                    { headerName: 'Name', field: 'athlete', minWidth: 150 },
+                    { headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""' },
+                    { field: 'age' },
+                    { field: 'sport', minWidth: 150, rowGroup: true }
                 ]
             }
         ]
@@ -27,13 +23,13 @@ var columnDefs = [
     {
         headerName: 'Medal Fields',
         children: [
-            {headerName: 'Date', field: 'date', width: 110},
+            { field: 'date', minWidth: 150 },
             {
                 headerName: 'Medal Types',
                 children: [
-                    {headerName: 'Silver', field: 'silver', width: 100},
-                    {headerName: 'Bronze', field: 'bronze', width: 100},
-                    {headerName: 'Total', field: 'total', width: 100}
+                    { field: 'silver' },
+                    { field: 'bronze' },
+                    { field: 'total' }
                 ]
             }
         ]
@@ -43,10 +39,19 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         sortable: true,
-        filter: true
+        filter: true,
+        resizable: true,
+        minWidth: 100
     },
+
+    autoGroupColumnDef: {
+        flex: 1,
+        minWidth: 250
+    },
+
     columnDefs: columnDefs,
     rowSelection: 'multiple',
+
     pinnedTopRowData: [
         {
             athlete: 'Floating Top Athlete',

@@ -1,3 +1,26 @@
+var gridOptions = {
+    columnDefs: [
+        { field: "athlete", minWidth: 180 },
+        { field: "age" },
+        { field: "country", minWidth: 150 },
+        { field: "year"},
+        { field: "date", minWidth: 130 },
+        { field: "sport", minWidth: 100},
+        { field: "gold"},
+        { field: "silver"},
+        { field: "bronze"},
+        { field: "total"}
+    ],
+
+    defaultColDef: {
+        resizable: true,
+        minWidth: 80,
+        flex: 1
+    },
+
+    rowData: []
+};
+
 // XMLHttpRequest in promise format
 function makeRequest(method, url, success, error) {
     var httpRequest = new XMLHttpRequest();
@@ -86,32 +109,6 @@ function importExcel() {
         }
     );
 }
-
-// specify the columns
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 350},
-    {headerName: "Age", field: "age", width: 100},
-    {headerName: "Country", field: "country", width: 350},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
-];
-
-// no row data to begin with
-var rowData = [];
-
-// let the grid know which columns and what data to use
-var gridOptions = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-    onGridReady: function () {
-        gridOptions.api.sizeColumnsToFit();
-    }
-};
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.

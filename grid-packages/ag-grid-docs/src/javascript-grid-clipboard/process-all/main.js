@@ -19,7 +19,9 @@ var gridOptions = {
 
     defaultColDef: {
         editable: true,
-        width: 100,
+        minWidth: 120,
+        resizable: true,
+        flex: 1,
 
         cellClassRules: {
             'cell-green': 'value.startsWith("Green")',

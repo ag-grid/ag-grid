@@ -1,36 +1,19 @@
-var columnDefs = [
-    {
-        headerName: 'As provided',
-        field: "rawValue",
-        width: 150
-    },
-    {
-        headerName: 'As boolean',
-        field: "rawValue",
-        width: 150,
-        cellClass: 'booleanType'
-    },
-    {
-        headerName: 'As string',
-        field: "rawValue",
-        width: 150,
-        cellClass: 'stringType'
-    },
-    {
-        headerName: 'Date',
-        field: "dateValue",
-        width: 150,
-        cellClass: 'dateType'
-    }
-];
-
 var gridOptions = {
+    columnDefs: [
+        { headerName: 'As provided', field: "rawValue" },
+        { headerName: 'As boolean', field: "rawValue", cellClass: 'booleanType' },
+        { headerName: 'As string', field: "rawValue", cellClass: 'stringType' },
+        { headerName: 'Date', field: "dateValue", cellClass: 'dateType', minWidth: 220 }
+    ],
+
     defaultColDef: {
         sortable: true,
-        filter: true
+        filter: true,
+        minWidth: 100,
+        resizable: true,
+        flex: 1
     },
 
-    columnDefs: columnDefs,
     rowSelection: 'multiple',
 
     rowData: [{

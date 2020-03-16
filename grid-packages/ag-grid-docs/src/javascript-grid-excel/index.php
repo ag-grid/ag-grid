@@ -246,7 +246,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true, 'exampleHeight' => 815]) ?>
 
 <h2>Example: Styling Row Groups</h2>
 
