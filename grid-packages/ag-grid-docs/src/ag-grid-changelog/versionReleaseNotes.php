@@ -4,6 +4,35 @@
     <p>Feature Highlights:</p>
 
     <ul>
+        <li>
+            AG-3110 - Allow charts to be created outside of grid
+            (see <a href="/javascript-charts-overview/">Standalone Charting</a>).
+        </li>
+
+        <li>
+            AG-2832 - Add new 'Alpine Theme'
+            (see <a href="/javascript-grid-themes-provided/#themes-summary">Themes Summary</a>).
+        </li>
+
+        <li>AG-3872 - Improve Server-side Row Model docs and examples
+            (see <a href="/javascript-grid-server-side-model/">Server-side Row Model</a>).
+        </li>
+
+        <li>
+            AG-2025 - Add keyboard navigation to context menu
+            (see <a href="/javascript-grid-context-menu/">Context Menu</a>).
+
+        </li>
+
+        <li>
+            AG-3203 - Add API to download charts
+            (see <a href="/javascript-grid-charts-integrated-chart-range-api/#saving-and-restoring-charts">Saving and Restoring Charts</a>).
+        </li>
+
+        <li>
+            AG-3678 - Add additional chart lifecycle events to aid persisting charts
+            (see <a href="/javascript-grid-charts-integrated-chart-events/">Chart Events</a>).
+        </li>
     </ul>
 
     <p>Breaking Changes:</p>
@@ -13,6 +42,26 @@
             AG-3802 - Migrate <code>ag-grid-angular</code> & <code>@ag-grid-community/angular</code> to use the Angular CLI to build.
             Angular 6+ is now the minimum supported version of Angular.
         </li>
+
+
+        <li>
+            AG-3110 - Tooltip renderer params: if a series has no `title` set, the tooltip renderer
+            will receive the `title` as it, it won't be set to the value of the `yName` as before.
+        </li>
+        <li>
+            AG-3110 - Legend API changes:
+            legend.padding -> legend.spacing
+            legend.itemPaddingX -> legend.layoutHorizontalSpacing
+            legend.itemPaddingY -> legend.layoutVerticalSpacing
+            legend.markerPadding -> legend.itemSpacing
+            legend.markerStrokeWidth -> legend.strokeWidth
+            legend.labelColor -> legend.textColor
+            legend.labelFontStyle -> legend.fontStyle
+            legend.labelFontWeight -> legend.fontWeight
+            legend.labelFontSize -> legend.fontSize
+            legend.labelFontFamily -> legend.fontFamily
+        </li>
+    </ul>
 </div>
 
 <div class="note" style="display: none" fixVersionNote id="fix_version_22_1_0">
