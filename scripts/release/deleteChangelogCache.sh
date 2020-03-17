@@ -9,7 +9,7 @@ function checkFileExists {
     fi
 }
 
-checkFileExists ~/aggrid/aggrid.txt
+checkFileExists ~/Documents/aggrid/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_ssh
 checkFileExists ~/Documents/aggrid/aggrid/.creds
 
