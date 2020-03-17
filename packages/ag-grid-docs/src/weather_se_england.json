@@ -1,0 +1,110 @@
+[
+  {
+    "Month": "Jan",
+    "Max temp (C)": 7.5,
+    "Min temp (C)": 1.7,
+    "Days of air frost (days)": 10,
+    "Sunshine (hours)": 58.8,
+    "Rainfall (mm)": 80.1,
+    "Days of rainfall >= 1 mm (days)": 13
+  },
+  {
+    "Month": "Feb",
+    "Max temp (C)": 7.7,
+    "Min temp (C)": 1.4,
+    "Days of air frost (days)": 10,
+    "Sunshine (hours)": 78.8,
+    "Rainfall (mm)": 55.1,
+    "Days of rainfall >= 1 mm (days)": 10
+  },
+  {
+    "Month": "Mar",
+    "Max temp (C)": 10.5,
+    "Min temp (C)": 3,
+    "Days of air frost (days)": 6,
+    "Sunshine (hours)": 114.3,
+    "Rainfall (mm)": 57.6,
+    "Days of rainfall >= 1 mm (days)": 11
+  },
+  {
+    "Month": "Apr",
+    "Max temp (C)": 13.2,
+    "Min temp (C)": 4.3,
+    "Days of air frost (days)": 3,
+    "Sunshine (hours)": 169.8,
+    "Rainfall (mm)": 53.7,
+    "Days of rainfall >= 1 mm (days)": 10
+  },
+  {
+    "Month": "May",
+    "Max temp (C)": 16.7,
+    "Min temp (C)": 7.3,
+    "Days of air frost (days)": 1,
+    "Sunshine (hours)": 200.7,
+    "Rainfall (mm)": 54.6,
+    "Days of rainfall >= 1 mm (days)": 9
+  },
+  {
+    "Month": "Jun",
+    "Max temp (C)": 19.6,
+    "Min temp (C)": 10.1,
+    "Days of air frost (days)": 0,
+    "Sunshine (hours)": 201.4,
+    "Rainfall (mm)": 51.2,
+    "Days of rainfall >= 1 mm (days)": 8
+  },
+  {
+    "Month": "Jul",
+    "Max temp (C)": 22,
+    "Min temp (C)": 12.2,
+    "Days of air frost (days)": 0,
+    "Sunshine (hours)": 214.9,
+    "Rainfall (mm)": 51.7,
+    "Days of rainfall >= 1 mm (days)": 8
+  },
+  {
+    "Month": "Aug",
+    "Max temp (C)": 21.8,
+    "Min temp (C)": 12.1,
+    "Days of air frost (days)": 0,
+    "Sunshine (hours)": 203.9,
+    "Rainfall (mm)": 57.4,
+    "Days of rainfall >= 1 mm (days)": 8
+  },
+  {
+    "Month": "Sep",
+    "Max temp (C)": 18.9,
+    "Min temp (C)": 10.1,
+    "Days of air frost (days)": 0,
+    "Sunshine (hours)": 149.1,
+    "Rainfall (mm)": 62.3,
+    "Days of rainfall >= 1 mm (days)": 9
+  },
+  {
+    "Month": "Oct",
+    "Max temp (C)": 14.8,
+    "Min temp (C)": 7.4,
+    "Days of air frost (days)": 1,
+    "Sunshine (hours)": 113.4,
+    "Rainfall (mm)": 92.8,
+    "Days of rainfall >= 1 mm (days)": 12
+  },
+  {
+    "Month": "Nov",
+    "Max temp (C)": 10.7,
+    "Min temp (C)": 4.2,
+    "Days of air frost (days)": 5,
+    "Sunshine (hours)": 71.4,
+    "Rainfall (mm)": 87.3,
+    "Days of rainfall >= 1 mm (days)": 12
+  },
+  {
+    "Month": "Dec",
+    "Max temp (C)": 7.9,
+    "Min temp (C)": 2,
+    "Days of air frost (days)": 10,
+    "Sunshine (hours)": 51.1,
+    "Rainfall (mm)": 83.8,
+    "Days of rainfall >= 1 mm (days)": 12
+  }
+]
