@@ -85,7 +85,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Row Grouping', 'row-grouping', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
+<?= grid_example('Row Grouping', 'row-grouping', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql']]) ?>
 
 <note>
     <p>
@@ -136,7 +136,7 @@ gridOptions: {
 </snippet>
 
 
-<?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
+<?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql']]) ?>
 
 
 <h2>Purging Groups</h2>
@@ -192,7 +192,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
+<?= grid_example('Purging Caches', 'purging-caches', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql']]) ?>
 
 <h2>Preserving Group State</h2>
 
@@ -244,7 +244,7 @@ function getRows(params) {
 </ul>
 </p>
 
-<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
+<?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql']]) ?>
 
 <h2>Complex Columns</h2>
 
@@ -283,7 +283,7 @@ function getRows(params) {
     with dot notation, ie <code>year.name</code>
 </p>
 
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'extras' => ['alasql']]) ?>
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql']]) ?>
 
 <h2>Next Up</h2>
 

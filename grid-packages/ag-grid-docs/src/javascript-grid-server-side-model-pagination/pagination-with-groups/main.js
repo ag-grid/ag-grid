@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
-        { field: "athlete" },
+        { field: "athlete", minWidth: 190 },
         { field: "gold", aggFunc: 'sum' },
         { field: "silver", aggFunc: 'sum' },
         { field: "bronze", aggFunc: 'sum' }
@@ -9,7 +9,7 @@ var gridOptions = {
 
     defaultColDef: {
         flex: 1,
-        minWidth: 140,
+        minWidth: 90,
         resizable: true,
         sortable: true
     },

@@ -271,7 +271,7 @@ SNIPPET
     position and pushes data to the client based on the viewport position.
 </p>
 
-<?= grid_example('Viewport Example', 'viewport', 'generated', ['enterprise'=> true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Viewport Example', 'viewport', 'generated', ['enterprise'=> true]) ?>
 
 <h2>Example Viewport with Pagination</h2>
 

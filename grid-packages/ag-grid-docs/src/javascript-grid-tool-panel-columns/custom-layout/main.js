@@ -1,30 +1,61 @@
-var columnDefs = [
-    {
-        headerName: 'Athlete',
-        children: [
-            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
-            { field: "country", width: 120}
-        ]
+var gridOptions = {
+    columnDefs: [
+        {
+            headerName: 'Athlete',
+            children: [
+                { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
+                { field: "age" },
+                { field: "country", minWidth: 200 }
+            ]
+        },
+        {
+            headerName: 'Competition',
+            children: [
+                { field: "year" },
+                { field: "date", minWidth: 180 },
+            ]
+        },
+        { colId: 'sport', field: "sport", minWidth: 200 },
+        {
+            headerName: 'Medals',
+            children: [
+                { field: "gold" },
+                { field: "silver" },
+                { field: "bronze" },
+                { field: "total" }
+            ]
+        }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        // allow every column to be aggregated
+        enableValue: true,
+        // allow every column to be grouped
+        enableRowGroup: true,
+        // allow every column to be pivoted
+        enablePivot: true,
+        filter: true,
+        sortable: true,
+        resizable: true,
     },
-    {
-        headerName: 'Competition',
-        children: [
-            { field: "year", width: 90 },
-            { field: "date", width: 110 },
-        ]
-    },
-    { colId: 'sport', field: "sport", width: 110 },
-    {
-        headerName: 'Medals',
-        children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
-        ]
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    // prevents custom layout changing when columns are reordered in the grid
+                    suppressSyncLayoutWithGrid: true
+                }
+            },
+        ],
+        defaultToolPanel: 'columns'
     }
-];
+};
 
 var sortedToolPanelColumnDefs = [
     {
@@ -38,21 +69,27 @@ var sortedToolPanelColumnDefs = [
     {
         headerName: 'Competition',
         children: [
-            { field: "date", width: 110 },
-            { field: "year", width: 90 },
+            { field: "date" },
+            { field: "year" },
         ]
     },
     {
         headerName: 'Medals',
         children: [
-            { field: "bronze", width: 100 },
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "total", width: 100 }
+            { field: "bronze" },
+            { field: "gold" },
+            { field: "silver" },
+            { field: "total" }
         ]
     },
-    { colId: 'sport', field: "sport", width: 110 },
+    { colId: 'sport', field: "sport" },
 ];
+
+function setCustomSortLayout() {
+    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
+    columnToolPanel.setColumnLayout(sortedToolPanelColumnDefs);
+}
+
 
 var customToolPanelColumnDefs = [
     {
@@ -74,7 +111,7 @@ var customToolPanelColumnDefs = [
         children: [
             { field: "total" },
             { field: "bronze" },
-            { 
+            {
                 headerName: 'Dummy Group 3',
                 children: [
                     { field: "silver" },
@@ -84,41 +121,6 @@ var customToolPanelColumnDefs = [
         ]
     }
 ];
-
-var gridOptions = {
-    defaultColDef: {
-        // allow every column to be aggregated
-        enableValue: true,
-        // allow every column to be grouped
-        enableRowGroup: true,
-        // allow every column to be pivoted
-        enablePivot: true,
-        sortable: true,
-        filter: true
-    },
-    columnDefs: columnDefs,
-    sideBar: {
-        toolPanels: [
-            {
-                id: 'columns',
-                labelDefault: 'Columns',
-                labelKey: 'columns',
-                iconKey: 'columns',
-                toolPanel: 'agColumnsToolPanel',
-                toolPanelParams: {
-                    // prevents custom layout changing when columns are reordered in the grid
-                    suppressSyncLayoutWithGrid: true
-                }
-            },
-        ],
-        defaultToolPanel: 'columns'
-    }
-};
-
-function setCustomSortLayout() {
-    var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');
-    columnToolPanel.setColumnLayout(sortedToolPanelColumnDefs);
-}
 
 function setCustomGroupLayout() {
     var columnToolPanel = gridOptions.api.getToolPanelInstance('columns');

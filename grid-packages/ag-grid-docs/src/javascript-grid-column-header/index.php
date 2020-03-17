@@ -131,7 +131,7 @@ pivotGroupHeaderHeight:100,
         </li>
     </ul>
 
-    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+    <?= grid_example('Header Height and Text Orientation', 'text-orientation', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -141,7 +141,7 @@ pivotGroupHeaderHeight:100,
         descriptions at the top of the page
     </p>
 
-    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+    <?= grid_example('Dynamic Header Height', 'dynamic-height', 'generated', ['enterprise' => true]) ?>
 
     <h2 id="customHeader">Custom Header</h2>
     <p>

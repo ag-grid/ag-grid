@@ -6,11 +6,11 @@ var gridOptions = {
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
-    masterDetail: true,
-    embedFullWidthRows: true,
     defaultColDef: {
         width: 300
     },
+    masterDetail: true,
+    embedFullWidthRows: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [

@@ -26,7 +26,7 @@ var gridOptions = {
         sortable: true
     },
     autoGroupColumnDef: {
-        flex: 1
+        minWidth: 200,
     },
     // use the server-side row model
     rowModelType: 'serverSide',

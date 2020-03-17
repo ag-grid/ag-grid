@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         { field: 'id', maxWidth: 75 },
-        { field: 'athlete', minWidth: 175 },
+        { field: 'athlete', minWidth: 190 },
         { field: 'age' },
         { field: 'year' },
         { field: 'gold' },
@@ -11,7 +11,7 @@ var gridOptions = {
 
     defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 90,
         resizable: true
     },
 

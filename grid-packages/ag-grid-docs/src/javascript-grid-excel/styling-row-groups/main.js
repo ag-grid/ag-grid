@@ -1,43 +1,29 @@
-var columnDefs = [
-    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
-    {headerName: 'Year', field: 'year', width: 75, rowGroup: true},
-    {headerName: 'Name', field: 'athlete', width: 150},
-    {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""'},
-    {headerName: 'Sport', field: 'sport', width: 120, rowGroup: true},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Total', field: 'total', width: 100}
-];
-
-function rowGroupCallback(params) {
-    return params.node.key;
-}
-
-function getIndentClass(params) {
-    var indent = 0;
-    var node = params.node;
-    while (node && node.parent) {
-        indent++;
-        node = node.parent;
-    }
-    return ["indent-" + indent];
-}
-
-function onBtnExportDataAsExcel() {
-    gridOptions.api.exportDataAsExcel({
-        processRowGroupCallback: rowGroupCallback
-    });
-}
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'country', minWidth: 120, rowGroup: true },
+        { field: 'year', rowGroup: true },
+        { headerName: 'Name', field: 'athlete', minWidth: 150 },
+        { headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""' },
+        { field: 'sport', minWidth: 120, rowGroup: true },
+        { field: 'silver' },
+        { field: 'bronze '},
+        { field: 'total' }
+    ],
+
     defaultColDef: {
         sortable: true,
-        filter: true
+        filter: true,
+        resizable: true,
+        minWidth: 100,
+        flex: 1
     },
-    columnDefs: columnDefs,
+
     autoGroupColumnDef: {
-        cellClass: getIndentClass
+        cellClass: getIndentClass,
+        minWidth: 250,
+        flex: 1
     },
+
     excelStyles: [
         {
             id: 'indent-1',
@@ -63,6 +49,26 @@ var gridOptions = {
         }
     ]
 };
+
+function rowGroupCallback(params) {
+    return params.node.key;
+}
+
+function getIndentClass(params) {
+    var indent = 0;
+    var node = params.node;
+    while (node && node.parent) {
+        indent++;
+        node = node.parent;
+    }
+    return ["indent-" + indent];
+}
+
+function onBtnExportDataAsExcel() {
+    gridOptions.api.exportDataAsExcel({
+        processRowGroupCallback: rowGroupCallback
+    });
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

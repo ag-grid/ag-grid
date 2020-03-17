@@ -304,7 +304,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Side Bar API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
 
 <h2>Next Up</h2>
 

@@ -1,21 +1,24 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', width: 150},
-    {headerName: 'Age', field: 'age', width: 90},
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
-    {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100},
-    {headerName: 'Silver', field: 'silver', width: 100},
-    {headerName: 'Bronze', field: 'bronze', width: 100},
-    {headerName: 'Total', field: 'total', width: 100}
-];
-
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 200 },
+        { field: 'year' },
+        { field: 'date', minWidth: 180 },
+        { field: 'sport', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
+    ],
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        resizable: true
+    },
     enableRangeSelection: true,
+    allowContextMenuWithControlKey: true,
     getContextMenuItems: getContextMenuItems,
-    allowContextMenuWithControlKey: true
 };
 
 function createFlagImg(flag) {

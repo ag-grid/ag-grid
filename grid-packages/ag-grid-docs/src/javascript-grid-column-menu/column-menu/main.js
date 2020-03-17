@@ -1,21 +1,34 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110, menuTabs:['filterMenuTab','generalMenuTab','columnsMenuTab']},
-    {headerName: "Sport", field: "sport", width: 110, menuTabs:['filterMenuTab','columnsMenuTab']},
-    {headerName: "Gold", field: "gold", width: 100, menuTabs:['generalMenuTab','gibberishMenuTab']},
-    {headerName: "Silver", field: "silver", width: 100, menuTabs:[]},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    { field: "athlete", minWidth: 200 },
+    { field: "age" },
+    { field: "country", minWidth: 200 },
+    { field: "year" },
+    {
+        field: "date",
+        minWidth: 180,
+        menuTabs: ['filterMenuTab','generalMenuTab','columnsMenuTab'],
+    },
+    {
+        field: "sport",
+        minWidth: 200,
+        menuTabs:['filterMenuTab','columnsMenuTab'],
+    },
+    {
+        field: "gold",
+        menuTabs: ['generalMenuTab','gibberishMenuTab'],
+    },
+    { field: "silver", menuTabs:[] },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         filter: true
     },
-    columnDefs: columnDefs,
     getMainMenuItems: getMainMenuItems,
     postProcessPopup: function(params) {
         // check callback is for menu

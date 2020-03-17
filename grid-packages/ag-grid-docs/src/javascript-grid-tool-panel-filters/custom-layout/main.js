@@ -2,26 +2,26 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
-            { field: "country", width: 120}
+            { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
+            { field: "age" },
+            { field: "country", minWidth: 200 }
         ]
     },
     {
         headerName: 'Competition',
         children: [
-            { field: "year", width: 90 },
-            { field: "date", width: 110 },
+            { field: "year"  },
+            { field: "date", minWidth: 180 },
         ]
     },
-    { colId: 'sport', field: "sport", width: 110 },
+    { colId: 'sport', field: "sport", minWidth: 200 },
     {
         headerName: 'Medals',
         children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
+            { field: "gold" },
+            { field: "silver" },
+            { field: "bronze" },
+            { field: "total" }
         ]
     }
 ];
@@ -38,17 +38,17 @@ var sortedToolPanelColumnDefs = [
     {
         headerName: 'Competition',
         children: [
-            { field: "date", width: 110 },
-            { field: "year", width: 90 },
+            { field: "date" },
+            { field: "year" },
         ]
     },
     {
         headerName: 'Medals',
         children: [
-            { field: "bronze", width: 100 },
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "total", width: 100 }
+            { field: "bronze" },
+            { field: "gold" },
+            { field: "silver" },
+            { field: "total" }
         ]
     },
     { colId: 'sport', field: "sport", width: 110 },

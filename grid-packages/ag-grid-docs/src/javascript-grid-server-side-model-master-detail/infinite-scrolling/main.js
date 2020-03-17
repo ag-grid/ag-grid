@@ -23,10 +23,10 @@ var gridOptions = {
         detailGridOptions: {
             columnDefs: [
                 {field: 'callId'},
-                {field: 'direction'},
+                {field: 'direction' },
                 {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                {field: 'switchCode'},
-                {field: 'number'},
+                {field: 'switchCode', minWidth: 150},
+                {field: 'number', minWidth: 180 },
             ],
             defaultColDef: {
                 flex: 1

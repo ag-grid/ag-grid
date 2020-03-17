@@ -3,42 +3,27 @@ var columnDefs = [
         groupId: 'athleteGroupId',
         headerName: 'Athlete',
         children: [
-            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-            { field: "age", width: 90},
+            { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
+            { field: "age" },
             {
                 groupId: 'competitionGroupId',
                 headerName: 'Competition',
                 children: [
-                    { field: "year", width: 90 },
-                    { field: "date", width: 110 },
+                    { field: "year" },
+                    { field: "date", minWidth: 180 },
                 ]
             },
-            { field: "country", width: 120}
+            { field: "country", minWidth: 200}
         ]
     },
-    { colId: 'sport', field: "sport", width: 110 },
+    { colId: 'sport', field: "sport", minWidth: 200 },
     {
-        headerName: 'Nesting level 1',
+        headerName: 'Medals',
         children: [
-            {
-                headerName: 'Nesting level 2',
-                children: [
-                    {
-                        headerName: 'Nesting level 3',
-                        children: [
-                            {
-                                headerName: 'Nesting level 4',
-                                children: [
-                                    { field: "gold", width: 100 },
-                                    { field: "silver", width: 100 },
-                                    { field: "bronze", width: 100 },
-                                    { field: "total", width: 100 }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
+            { field: "gold" },
+            { field: "silver" },
+            { field: "bronze" },
+            { field: "total" }
         ]
     }
 ];
@@ -46,8 +31,10 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        width: 110,
-        filter: true
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true,
     },
     sideBar: 'filters',
     onGridReady: function(params) {

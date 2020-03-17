@@ -93,7 +93,7 @@ class ExampleRunnerController {
         if (options.exampleHeight) {
             this.iframeStyle.height = isNaN(options.exampleHeight) ? options.exampleHeight : options.exampleHeight + "px";
         } else {
-            this.iframeStyle.height = '500px';
+            this.iframeStyle.height = '600px';
         }
 
         this.selectedTab = options.showResult === false ? "code" : "result";
